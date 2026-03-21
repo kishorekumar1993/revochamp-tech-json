@@ -1,0 +1,219 @@
+{
+  "slug": "dart-collection-if-for",
+  "course": "Dart",
+  "title": "Dart Collection If and For – Conditional and Iterative Collection Elements",
+  "meta": {
+    "title": "Dart Collection If/For: Build Lists, Sets, and Maps Dynamically",
+    "description": "Learn how to use if and for inside collection literals in Dart. Create collections conditionally and iteratively with concise syntax. Includes examples for List, Set, Map, and nesting.",
+    "keywords": [
+      "Dart collection if",
+      "Dart collection for",
+      "Dart conditional collection elements",
+      "Dart list if for",
+      "Dart map if for",
+      "Dart set comprehension",
+      "Dart spread operator with if for"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Collection If and For?"
+    },
+    {
+      "type": "text",
+      "value": "Dart allows you to use `if` and `for` inside collection literals (lists, sets, and maps). This feature, introduced in Dart 2.3, lets you build collections dynamically in a declarative way. It's especially useful for UI code in Flutter, where you often need to conditionally include widgets or generate multiple widgets from a list of data."
+    },
+    {
+      "type": "heading",
+      "value": "Collection `if`"
+    },
+    {
+      "type": "text",
+      "value": "The `if` element lets you conditionally include an element or a spread inside a collection. The condition must be a boolean expression. If the condition is true, the element or spread is included; otherwise, it's omitted."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  bool includeThree = true;\n  var numbers = [1, 2, if (includeThree) 3, 4];\n  print(numbers); // [1, 2, 3, 4]\n  \n  includeThree = false;\n  numbers = [1, 2, if (includeThree) 3, 4];\n  print(numbers); // [1, 2, 4]\n}"
+    },
+    {
+      "type": "text",
+      "value": "You can also use `if-else` inside collections. The `else` clause provides an alternative element when the condition is false."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  bool isLoggedIn = true;\n  var menu = [\n    'Home',\n    if (isLoggedIn) 'Profile' else 'Login',\n    'Settings',\n  ];\n  print(menu); // [Home, Profile, Settings]\n  \n  isLoggedIn = false;\n  menu = [\n    'Home',\n    if (isLoggedIn) 'Profile' else 'Login',\n    'Settings',\n  ];\n  print(menu); // [Home, Login, Settings]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Collection `for`"
+    },
+    {
+      "type": "text",
+      "value": "The `for` element allows you to iterate over an iterable and include elements generated from each iteration. It's like a loop inside the collection literal."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var baseNumbers = [1, 2, 3];\n  var doubled = [for (var n in baseNumbers) n * 2];\n  print(doubled); // [2, 4, 6]\n}"
+    },
+    {
+      "type": "text",
+      "value": "You can also use the index if you need it, by iterating over a range or using `asMap()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var fruits = ['apple', 'banana', 'cherry'];\n  var withIndex = [\n    for (int i = 0; i < fruits.length; i++)\n      '${i + 1}: ${fruits[i]}'\n  ];\n  print(withIndex); // [1: apple, 2: banana, 3: cherry]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Combining `if` and `for` with Spread"
+    },
+    {
+      "type": "text",
+      "value": "You can mix `if`, `for`, and the spread operator (`...`) to build complex collections concisely."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  bool showExtra = true;\n  var extraItems = [4, 5];\n  var numbers = [\n    1,\n    2,\n    if (showExtra) ...extraItems,\n    for (var i = 6; i <= 8; i++) i,\n    9,\n  ];\n  print(numbers); // [1, 2, 4, 5, 6, 7, 8, 9]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using `if` and `for` in Sets"
+    },
+    {
+      "type": "text",
+      "value": "Sets also support `if` and `for`. The syntax is identical to lists."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  bool includeD = true;\n  var letters = {\n    'a',\n    'b',\n    'c',\n    if (includeD) 'd',\n    for (var i = 0; i < 3; i++) 'e$i',\n  };\n  print(letters); // {a, b, c, d, e0, e1, e2}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using `if` and `for` in Maps"
+    },
+    {
+      "type": "text",
+      "value": "Maps also support `if` and `for`, but you need to provide key‑value pairs. For `for`, you can generate entries."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  bool includeAge = true;\n  var person = {\n    'name': 'Alice',\n    if (includeAge) 'age': 30,\n    for (var i = 1; i <= 2; i++) 'key$i': 'value$i',\n  };\n  print(person); // {name: Alice, age: 30, key1: value1, key2: value2}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Nested Collection `for`"
+    },
+    {
+      "type": "text",
+      "value": "You can nest `for` loops inside each other to create more complex structures, like a multiplication table."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var rows = [1, 2, 3];\n  var cols = [1, 2, 3];\n  var table = [\n    for (var r in rows)\n      [for (var c in cols) r * c]\n  ];\n  print(table); // [[1, 2, 3], [2, 4, 6], [3, 6, 9]]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Real‑World Example: Flutter Widgets"
+    },
+    {
+      "type": "text",
+      "value": "This feature is extremely common in Flutter for building UI conditionally or from lists. For instance, a `Column` with children generated from a list of items:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Flutter example (conceptual)\nColumn(\n  children: [\n    Text('Header'),\n    if (items.isNotEmpty) ...[\n      for (var item in items)\n        ListTile(title: Text(item)),\n    ] else\n      Text('No items'),\n    Text('Footer'),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Collection `if` conditionally includes an element or spread.",
+        "- Collection `for` iterates and includes generated elements.",
+        "- Both work in list, set, and map literals.",
+        "- Combine with spread `...` for flexible inclusion of multiple elements.",
+        "- Use `if-else` to provide alternative elements.",
+        "- Nested `for` loops are allowed for multi‑level generation.",
+        "- This feature makes collection building declarative and readable, especially in Flutter UI code."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use `else` with collection `if`?",
+      "answer": "Yes, Dart supports `if-else` inside collections. For example: `[if (condition) 'yes' else 'no']`."
+    },
+    {
+      "question": "What's the difference between collection `for` and the `forEach()` method?",
+      "answer": "Collection `for` is used to *generate* elements inside a collection literal. The `forEach()` method performs an action on each element of an existing collection but does not create a new collection."
+    },
+    {
+      "question": "Can I nest collection `for` loops?",
+      "answer": "Yes, you can nest `for` loops to create multi‑dimensional structures, like a list of lists representing a multiplication table."
+    },
+    {
+      "question": "Is collection `if/for` available in all collection types?",
+      "answer": "Yes, it works in `List`, `Set`, and `Map` literals. For maps, the `for` must produce key‑value pairs (e.g., `'key$i': value`)."
+    },
+    {
+      "question": "Does collection `if/for` affect performance?",
+      "answer": "No, it's a compile‑time feature that expands into the equivalent code. It has no runtime overhead compared to writing the same logic manually."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  bool isWeekend = true;\n  var days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];\n  \n  var schedule = [\n    'Wake up',\n    if (isWeekend) 'Relax' else 'Go to work',\n    for (var day in days) 'Meeting on $day',\n    'Sleep',\n  ];\n  \n  for (var item in schedule) {\n    print(item);\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the output of this code?\n\nvoid main() {\n  bool flag = true;\n  var list = [1, if (flag) 2, 3];\n  print(list);\n}",
+      "options": ["[1, 3]", "[1, 2, 3]", "[1, 2, 3] with a warning", "Error"],
+      "answer": 1
+    },
+    {
+      "question": "What does the following code produce?\n\nvoid main() {\n  var list = [for (int i = 1; i <= 3; i++) i * i];\n  print(list);\n}",
+      "options": ["[1, 4, 9]", "[1, 2, 3]", "[1, 4, 9, 16]", "Error"],
+      "answer": 0
+    },
+    {
+      "question": "Which of the following correctly uses `if-else` inside a list?",
+      "options": [
+        "[if (x > 0) then 'positive' else 'negative']",
+        "[if (x > 0) 'positive' else 'negative']",
+        "[x > 0 ? 'positive' : 'negative']",
+        "Both B and C are valid, but C is ternary, not collection if-else"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How would you include all elements of a nullable list `extra?` inside another list without causing an error if `extra` is null?",
+      "options": [
+        "[...extra]",
+        "[...?extra]",
+        "[if (extra != null) ...extra]",
+        "Both B and C work, but B is the null‑aware spread"
+      ],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "dart-spread-operator",
+    "dart-list",
+    "dart-set",
+    "dart-map",
+    "dart-conditions",
+    "dart-loops"
+  ]
+}

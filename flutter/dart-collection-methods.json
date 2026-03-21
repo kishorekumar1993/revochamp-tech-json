@@ -1,0 +1,407 @@
+{
+  "slug": "dart-collection-methods",
+  "course": "Dart",
+  "title": "Dart Collection Methods – Complete Guide with Examples",
+  "meta": {
+    "title": "Dart Collection Methods: forEach, map, where, reduce, fold, and More",
+    "description": "Master Dart collection methods – forEach, map, where, any, every, reduce, fold, expand, sort, shuffle, and other powerful operations on Lists, Sets, and Maps with practical examples.",
+    "keywords": [
+      "Dart collection methods",
+      "Dart Iterable methods",
+      "Dart forEach",
+      "Dart map",
+      "Dart where",
+      "Dart reduce",
+      "Dart fold",
+      "Dart sort",
+      "Dart collection operations"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Collection Methods?"
+    },
+    {
+      "type": "text",
+      "value": "Dart provides a rich set of methods to work with collections like List, Set, and Map. These methods allow you to iterate, transform, filter, combine, and reduce collections in a functional and expressive way. Most of these methods come from the `Iterable` class, which List and Set implement, and from the `Map` class itself. Mastering these methods will make your code more concise, readable, and less error‑prone."
+    },
+    {
+      "type": "heading",
+      "value": "1. Iteration Methods"
+    },
+    {
+      "type": "heading",
+      "value": "`forEach()`"
+    },
+    {
+      "type": "text",
+      "value": "Executes a function on each element of the collection. It does not return a value (just performs side effects)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3];\n  numbers.forEach(print); // prints 1, 2, 3\n  \n  var fruits = {'apple', 'banana'};\n  fruits.forEach((fruit) => print('I like $fruit'));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Transformation Methods"
+    },
+    {
+      "type": "heading",
+      "value": "`map()`"
+    },
+    {
+      "type": "text",
+      "value": "Transforms each element into a new value. Returns a new lazy `Iterable`; call `toList()` or `toSet()` to materialise."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3];\n  var squares = numbers.map((n) => n * n).toList();\n  print(squares); // [1, 4, 9]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`expand()`"
+    },
+    {
+      "type": "text",
+      "value": "Transforms each element into zero or more elements. Returns a flattened iterable."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var pairs = [[1, 2], [3, 4]];\n  var flattened = pairs.expand((pair) => pair).toList();\n  print(flattened); // [1, 2, 3, 4]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Filtering Methods"
+    },
+    {
+      "type": "heading",
+      "value": "`where()`"
+    },
+    {
+      "type": "text",
+      "value": "Returns a new lazy iterable containing only elements that satisfy the given predicate."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3, 4, 5];\n  var even = numbers.where((n) => n % 2 == 0).toList();\n  print(even); // [2, 4]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`firstWhere()`, `lastWhere()`, `singleWhere()`"
+    },
+    {
+      "type": "text",
+      "value": "Find the first, last, or only element matching a condition. Provide an optional `orElse` function if no element is found."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3, 4, 5];\n  var firstEven = numbers.firstWhere((n) => n % 2 == 0); // 2\n  var lastEven = numbers.lastWhere((n) => n % 2 == 0);   // 4\n  var single = numbers.singleWhere((n) => n == 3);       // 3\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Checking Conditions"
+    },
+    {
+      "type": "heading",
+      "value": "`any()` and `every()`"
+    },
+    {
+      "type": "text",
+      "value": "`any` returns true if at least one element satisfies the condition. `every` returns true if all elements satisfy the condition."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3];\n  print(numbers.any((n) => n > 2));  // true\n  print(numbers.every((n) => n > 0)); // true\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`contains()`"
+    },
+    {
+      "type": "text",
+      "value": "Checks if the collection contains a specific element (uses `==` equality)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var fruits = ['apple', 'banana'];\n  print(fruits.contains('banana')); // true\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Reduction Methods"
+    },
+    {
+      "type": "heading",
+      "value": "`reduce()`"
+    },
+    {
+      "type": "text",
+      "value": "Combines all elements using a given function. The collection must not be empty. The result type is the same as the element type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3, 4];\n  var sum = numbers.reduce((a, b) => a + b); // 10\n  var product = numbers.reduce((a, b) => a * b); // 24\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`fold()`"
+    },
+    {
+      "type": "text",
+      "value": "Similar to `reduce`, but takes an initial value and can return a different type. Safe for empty collections."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3];\n  var sum = numbers.fold(0, (prev, element) => prev + element); // 6\n  var concatenated = numbers.fold('', (prev, element) => '$prev$element'); // '123'\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Sorting and Ordering"
+    },
+    {
+      "type": "heading",
+      "value": "`sort()` (List only)"
+    },
+    {
+      "type": "text",
+      "value": "Sorts the list in place. You can provide a custom comparison function."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [3, 1, 4, 2];\n  numbers.sort(); // [1, 2, 3, 4]\n  \n  var names = ['Charlie', 'Alice', 'Bob'];\n  names.sort((a, b) => a.length.compareTo(b.length)); // sort by length\n  print(names); // [Bob, Alice, Charlie]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`reversed` (List only)"
+    },
+    {
+      "type": "text",
+      "value": "Returns an iterable of the elements in reverse order. To get a list, call `toList()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3];\n  var reversed = numbers.reversed.toList(); // [3, 2, 1]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`shuffle()` (List only)"
+    },
+    {
+      "type": "text",
+      "value": "Randomly shuffles the list in place."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:math';\n\nvoid main() {\n  var numbers = [1, 2, 3, 4, 5];\n  numbers.shuffle(); // random order\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Taking and Skipping"
+    },
+    {
+      "type": "heading",
+      "value": "`take()`, `skip()`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3, 4, 5];\n  var firstTwo = numbers.take(2).toList(); // [1, 2]\n  var afterTwo = numbers.skip(2).toList();  // [3, 4, 5]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`takeWhile()`, `skipWhile()`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3, -1, 4];\n  var positive = numbers.takeWhile((n) => n > 0).toList(); // [1, 2, 3]\n  var afterNegative = numbers.skipWhile((n) => n > 0).toList(); // [-1, 4]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "8. Converting Between Collections"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var list = [1, 2, 3, 2];\n  var set = list.toSet(); // {1, 2, 3}\n  var newList = set.toList(); // [1, 2, 3]\n  \n  var map = {1: 'one', 2: 'two'};\n  var entries = map.entries.toList(); // list of MapEntry objects\n}"
+    },
+    {
+      "type": "heading",
+      "value": "9. Map‑Specific Methods"
+    },
+    {
+      "type": "heading",
+      "value": "`keys`, `values`, `entries`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var map = {'a': 1, 'b': 2, 'c': 3};\n  print(map.keys);   // (a, b, c)\n  print(map.values); // (1, 2, 3)\n  print(map.entries); // (MapEntry(a: 1), MapEntry(b: 2), MapEntry(c: 3))\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`putIfAbsent()`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var map = {'a': 1};\n  map.putIfAbsent('b', () => 2); // adds b:2\n  map.putIfAbsent('a', () => 99); // does nothing, a already exists\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`update()` and `updateAll()`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var map = {'a': 1, 'b': 2};\n  map.update('a', (value) => value * 10); // a:10\n  map.update('c', (value) => 3, ifAbsent: () => 3); // adds c:3\n  map.updateAll((key, value) => value * 2); // double all values\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`removeWhere()`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var map = {'a': 1, 'b': 2, 'c': 3};\n  map.removeWhere((key, value) => value.isOdd); // removes a and c\n}"
+    },
+    {
+      "type": "heading",
+      "value": "10. Set‑Specific Methods"
+    },
+    {
+      "type": "heading",
+      "value": "`union()`, `intersection()`, `difference()`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var a = {1, 2, 3};\n  var b = {3, 4, 5};\n  print(a.union(b));        // {1, 2, 3, 4, 5}\n  print(a.intersection(b)); // {3}\n  print(a.difference(b));   // {1, 2}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`retainAll()` and `removeAll()`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var set = {1, 2, 3, 4};\n  set.retainAll({2, 3});   // keeps only 2 and 3\n  set.removeAll({3});       // removes 3, set now {2}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Chaining Methods"
+    },
+    {
+      "type": "text",
+      "value": "Many collection methods return iterables, so you can chain them to perform complex transformations in a readable way."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3, 4, 5, 6];\n  var result = numbers\n      .where((n) => n.isEven)            // [2, 4, 6]\n      .map((n) => n * n)                 // [4, 16, 36]\n      .toList();\n  print(result); // [4, 16, 36]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Sample data: list of people with name and age\n  var people = [\n    {'name': 'Alice', 'age': 30},\n    {'name': 'Bob', 'age': 25},\n    {'name': 'Charlie', 'age': 35},\n    {'name': 'Diana', 'age': 28},\n  ];\n  \n  // 1. Get names of people older than 28\n  var namesOver28 = people\n      .where((person) => person['age'] > 28)\n      .map((person) => person['name'])\n      .toList();\n  print('Over 28: $namesOver28'); // [Alice, Charlie]\n  \n  // 2. Calculate average age\n  double totalAge = people.fold(0, (sum, person) => sum + person['age']);\n  double averageAge = totalAge / people.length;\n  print('Average age: $averageAge');\n  \n  // 3. Sort by age (ascending)\n  var sorted = [...people]..sort((a, b) => a['age'].compareTo(b['age']));\n  print('Sorted by age: $sorted');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `forEach` performs an action on each element.",
+        "- `map` transforms each element into something new.",
+        "- `where` filters elements based on a condition.",
+        "- `any` and `every` test conditions across the collection.",
+        "- `reduce` and `fold` combine elements into a single value.",
+        "- Lists have additional methods like `sort`, `shuffle`, and `reversed`.",
+        "- Maps have `keys`, `values`, `entries`, `putIfAbsent`, `update`, and `removeWhere`.",
+        "- Sets support mathematical operations: `union`, `intersection`, `difference`.",
+        "- Methods can be chained to create powerful data processing pipelines."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `map()` and `forEach()`?",
+      "answer": "`map()` returns a new lazy iterable containing the results of applying a function to each element. It is used for transformation. `forEach()` executes a function on each element for side effects and does not return anything."
+    },
+    {
+      "question": "Can I use `where()` on a Map?",
+      "answer": "Maps do not directly have a `where()` method, but you can use `entries.where()` to filter entries based on key or value, then convert back to a map with `Map.fromEntries()`."
+    },
+    {
+      "question": "What's the difference between `reduce()` and `fold()`?",
+      "answer": "`reduce()` combines elements using a function and returns a value of the same type as the elements. It cannot be used on an empty collection. `fold()` takes an initial value of any type and can combine elements into a different type; it works even on empty collections."
+    },
+    {
+      "question": "Are collection methods lazy?",
+      "answer": "Methods like `map()`, `where()`, `take()`, `skip()` are lazy – they don't process elements until you iterate over the result (e.g., with `toList()` or `forEach`). Methods like `reduce()`, `fold()`, `any()`, `every()` are eager and process immediately."
+    },
+    {
+      "question": "How do I sort a list in descending order?",
+      "answer": "You can pass a custom comparator to `sort()`: `list.sort((a, b) => b.compareTo(a))` for numbers, or use `reversed` after sorting: `list.sort(); var reversed = list.reversed.toList();`"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  var numbers = [5, 2, 8, 1, 9, 3];\n  \n  // Chain methods: filter even numbers, square them, sort descending\n  var result = numbers\n      .where((n) => n.isEven)\n      .map((n) => n * n)\n      .toList()\n      ..sort((a, b) => b.compareTo(a));\n  \n  print('Original: $numbers');\n  print('Processed: $result');\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does the `map()` method return?",
+      "options": [
+        "A new List",
+        "A new Iterable (lazy)",
+        "A new Set",
+        "The original collection modified"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method would you use to check if at least one element in a list satisfies a condition?",
+      "options": ["every()", "contains()", "any()", "some()"],
+      "answer": 2
+    },
+    {
+      "question": "What is the difference between `reduce` and `fold`?",
+      "options": [
+        "`reduce` works on empty collections, `fold` does not",
+        "`fold` takes an initial value and can return a different type",
+        "There is no difference",
+        "`reduce` can only be used on numbers"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method is only available on List, not on Iterable?",
+      "options": ["map()", "where()", "sort()", "forEach()"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "dart-list",
+    "dart-set",
+    "dart-map",
+    "dart-functions"
+  ]
+}

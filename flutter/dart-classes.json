@@ -1,0 +1,222 @@
+{
+  "slug": "dart-classes",
+  "course": "Dart",
+  "title": "Dart Classes and Objects – Complete Beginner to Advanced Guide",
+  "meta": {
+    "title": "Dart Classes & Objects Tutorial (With Examples & Constructors)",
+    "description": "Master Dart classes and objects with real examples. Learn constructors, methods, getters, setters, static members, and OOP concepts step-by-step.",
+    "keywords": [
+      "Dart classes tutorial",
+      "Dart objects example",
+      "Dart OOP concepts",
+      "Dart constructors types",
+      "Dart getters setters",
+      "Dart static keyword",
+      "Dart encapsulation",
+      "learn Dart programming"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Class in Dart?"
+    },
+    {
+      "type": "text",
+      "value": "A class is a blueprint used to create objects. It defines properties (variables) and behaviors (methods). In Dart, everything is treated as an object, making classes a core concept of the language."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Class Example"
+    },
+    {
+      "type": "text",
+      "value": "A class is defined using the `class` keyword. It contains fields (data) and methods (functions)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Person {\n  String name = '';\n  int age = 0;\n\n  void sayHello() {\n    print('Hello, my name is $name');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Creating Objects (Instances)"
+    },
+    {
+      "type": "text",
+      "value": "Objects are created using constructors. The `new` keyword is optional in Dart."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var person = Person();\n  person.name = 'Alice';\n  person.age = 30;\n  person.sayHello();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Constructors in Dart"
+    },
+    {
+      "type": "text",
+      "value": "Constructors initialize objects. If not defined, Dart automatically provides a default constructor."
+    },
+    {
+      "type": "heading",
+      "value": "Parameterized Constructor"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Person {\n  String name;\n  int age;\n\n  Person(this.name, this.age);\n\n  void introduce() {\n    print('I am $name and I am $age years old');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Named Constructors"
+    },
+    {
+      "type": "text",
+      "value": "Named constructors allow multiple ways to create objects."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Person {\n  String name;\n  int age;\n\n  Person(this.name, this.age);\n\n  Person.guest() {\n    name = 'Guest';\n    age = 18;\n  }\n\n  Person.fromJson(Map<String, dynamic> json)\n      : name = json['name'],\n        age = json['age'];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using the `this` Keyword"
+    },
+    {
+      "type": "text",
+      "value": "`this` refers to the current instance of the class and is used to avoid naming conflicts."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Point {\n  int x, y;\n\n  Point(int x, int y) {\n    this.x = x;\n    this.y = y;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Getters and Setters (Important Fix)"
+    },
+    {
+      "type": "text",
+      "value": "Use private variables with getters and setters to control access and validation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Rectangle {\n  double _width;\n  double height;\n\n  Rectangle(this._width, this.height);\n\n  double get area => _width * height;\n\n  set width(double value) {\n    if (value > 0) {\n      _width = value;\n    } else {\n      throw ArgumentError('Width must be positive');\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Static Members"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MathUtils {\n  static const double pi = 3.14159;\n\n  static int add(int a, int b) => a + b;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Encapsulation in Dart"
+    },
+    {
+      "type": "text",
+      "value": "Dart uses library-level privacy. Variables starting with `_` are private to the file."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class BankAccount {\n  String _accountNumber;\n  double _balance = 0;\n\n  BankAccount(this._accountNumber);\n\n  void deposit(double amount) {\n    if (amount > 0) _balance += amount;\n  }\n\n  double get balance => _balance;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Complete Real-World Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Student {\n  String name;\n  int age;\n  final int id;\n  static int _nextId = 1000;\n\n  Student(this.name, this.age) : id = _nextId++;\n\n  Student.anonymous()\n      : name = 'Anonymous',\n        age = 0,\n        id = _nextId++;\n\n  void introduce() {\n    print('Student #$id: $name, $age years old');\n  }\n\n  String get description => 'ID $id: $name ($age)';\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Always use constructor shorthand when possible",
+        "- Use `_` for private fields",
+        "- Prefer `final` for immutable data",
+        "- Use named constructors for clarity",
+        "- Avoid heavy logic inside constructors",
+        "- Keep classes small and focused"
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can a class be private in Dart?",
+      "answer": "Dart doesn't have `private` keywords. Instead, library‑level privacy is achieved by prefixing an identifier with `_`. If you want a class to be private to a file, place it in its own file and don't export it."
+    },
+    {
+      "question": "What is the difference between a class and an object?",
+      "answer": "A class is a blueprint (definition), while an object is an instance created from that blueprint. For example, `Person` is a class; `var alice = Person('Alice', 30)` creates an object `alice`."
+    },
+    {
+      "question": "Can a class extend multiple classes?",
+      "answer": "No, Dart supports single inheritance – a class can extend only one superclass. However, you can implement multiple interfaces and use mixins to reuse code from multiple sources."
+    },
+    {
+      "question": "What is the purpose of a constructor?",
+      "answer": "A constructor initializes a new instance of a class. It sets initial values for fields and performs any setup required before the object is used."
+    },
+    {
+      "question": "How do you make a variable read‑only from outside the class?",
+      "answer": "Declare it as `final` (if set once) or make it private (`_var`) and provide only a getter (no setter)."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class Car {\n  String brand;\n  int year;\n\n  Car(this.brand, this.year);\n\n  void describe() {\n    print('$brand car from $year');\n  }\n}\n\nvoid main() {\n  var car = Car('Toyota', 2023);\n  car.describe();\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which keyword is used to define a class in Dart?",
+      "options": ["class", "object", "struct", "define"],
+      "answer": 0
+    },
+    {
+      "question": "What does `this` refer to in Dart?",
+      "options": [
+        "Parent class",
+        "Current instance",
+        "Static context",
+        "Constructor only"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of a constructor?",
+      "options": [
+        "Delete objects",
+        "Initialize objects",
+        "Print values",
+        "Run loops"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What will be the output?\n\nclass A {\n  static int count = 0;\n  A() { count++; }\n}\n\nvoid main() {\n  A();\n  A();\n  print(A.count);\n}",
+      "options": ["0", "1", "2", "Error"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "dart-constructors",
+    "dart-inheritance",
+    "dart-mixins",
+    "dart-oop-overview",
+    "dart-functions"
+  ]
+}

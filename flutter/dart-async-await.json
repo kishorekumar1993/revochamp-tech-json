@@ -1,0 +1,205 @@
+{
+  "slug": "dart-async-await",
+  "course": "Dart",
+  "title": "Dart Async/Await – Asynchronous Programming Made Easy",
+  "meta": {
+    "title": "Dart Async/Await Tutorial: Futures, Async, and Await Explained",
+    "description": "Learn asynchronous programming in Dart using async and await. Understand Futures, error handling, multiple futures, and best practices with practical examples.",
+    "keywords": [
+      "Dart async await",
+      "Dart Future",
+      "Dart asynchronous programming",
+      "Dart async function",
+      "Dart await keyword",
+      "Dart Future.then",
+      "Dart error handling async"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Asynchronous Programming?"
+    },
+    {
+      "type": "text",
+      "value": "Asynchronous programming allows your program to perform time‑consuming tasks (like network requests, file I/O, or database queries) without blocking the main thread. Instead of waiting for the task to complete, the program continues executing other code and gets notified when the task is done. This is essential for building responsive applications, especially in Flutter."
+    },
+    {
+      "type": "heading",
+      "value": "Futures: The Building Block"
+    },
+    {
+      "type": "text",
+      "value": "A `Future` represents a potential value or error that will be available at some time in the future. You can think of it as a promise that a value will be delivered later. Dart provides two ways to work with Futures: using the `.then()` callback or using `async`/`await`. The latter is more readable and recommended."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Simulate a network request\n  Future<String> fetchData() {\n    return Future.delayed(Duration(seconds: 2), () => 'Data loaded');\n  }\n\n  // Using .then()\n  fetchData().then((data) {\n    print(data);\n  });\n\n  print('Waiting...');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "The `async` and `await` Keywords"
+    },
+    {
+      "type": "text",
+      "value": "The `async` keyword marks a function as asynchronous. It tells Dart that the function will return a `Future`. Inside an `async` function, you can use `await` to pause execution until a Future completes, without blocking the thread. The `await` expression returns the value of the Future (or throws an error if the Future completes with an error)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<String> fetchData() async {\n  await Future.delayed(Duration(seconds: 2));\n  return 'Data loaded';\n}\n\nvoid main() async {\n  print('Start');\n  String data = await fetchData();\n  print(data);\n  print('End');\n}\n// Output:\n// Start\n// (2 second pause)\n// Data loaded\n// End"
+    },
+    {
+      "type": "text",
+      "value": "Note that `main()` itself can be `async`. This is common in command‑line apps and Flutter's `main()` can also be async if needed."
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling with try/catch"
+    },
+    {
+      "type": "text",
+      "value": "When you use `await`, errors from the Future are thrown as exceptions. You can catch them using a regular `try`/`catch` block, just like synchronous code."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<String> fetchData() async {\n  await Future.delayed(Duration(seconds: 1));\n  throw Exception('Network error');\n}\n\nvoid main() async {\n  try {\n    String data = await fetchData();\n    print(data);\n  } catch (e) {\n    print('Caught error: $e');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Multiple Awaits and Sequential Execution"
+    },
+    {
+      "type": "text",
+      "value": "When you need to perform several asynchronous tasks one after another, you can simply `await` each one in order. They will run sequentially."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<int> fetchUserId() async {\n  await Future.delayed(Duration(seconds: 1));\n  return 42;\n}\n\nFuture<String> fetchUserData(int id) async {\n  await Future.delayed(Duration(seconds: 1));\n  return 'User data for id $id';\n}\n\nvoid main() async {\n  int id = await fetchUserId();\n  String data = await fetchUserData(id);\n  print(data); // takes ~2 seconds total\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Running Futures in Parallel: `Future.wait`"
+    },
+    {
+      "type": "text",
+      "value": "If you have multiple independent asynchronous tasks, you can run them concurrently using `Future.wait`. It takes a list of Futures and returns a Future that completes when all of them are done, yielding a list of results."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<String> fetchFirst() async {\n  await Future.delayed(Duration(seconds: 2));\n  return 'First';\n}\n\nFuture<String> fetchSecond() async {\n  await Future.delayed(Duration(seconds: 1));\n  return 'Second';\n}\n\nvoid main() async {\n  var results = await Future.wait([fetchFirst(), fetchSecond()]);\n  print(results); // ['First', 'Second'] (takes ~2 seconds, not 3)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Async* and Streams (Brief Overview)"
+    },
+    {
+      "type": "text",
+      "value": "For multiple values over time, Dart uses `Stream`. An `async*` function returns a `Stream` and uses `yield` to emit values. This is beyond the scope of async/await but is another important asynchronous concept."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Always mark functions that use `await` with `async`.",
+        "- Prefer `async`/`await` over `.then()` for readability.",
+        "- Use `try`/`catch` to handle errors in async functions.",
+        "- Use `Future.wait` for concurrent independent tasks.",
+        "- Be careful with long‑running synchronous code inside an async function; it still blocks the event loop."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<String> fetchUser(int id) async {\n  // Simulate network delay\n  await Future.delayed(Duration(seconds: 1));\n  if (id <= 0) throw Exception('Invalid user ID');\n  return 'User$id';\n}\n\nFuture<void> main() async {\n  print('Fetching users...');\n\n  try {\n    // Sequential\n    var user1 = await fetchUser(1);\n    print(user1);\n\n    // Parallel\n    var ids = [2, 3, 4];\n    var futures = ids.map((id) => fetchUser(id));\n    var users = await Future.wait(futures);\n    print(users);\n\n    // Error case\n    var badUser = await fetchUser(-1);\n    print(badUser);\n  } catch (e) {\n    print('Error: $e');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `async` marks a function that returns a `Future`.",
+        "- `await` pauses the function until a Future completes.",
+        "- Use `try`/`catch` to handle errors in async code.",
+        "- `Future.wait` runs multiple Futures concurrently.",
+        "- Async/await makes asynchronous code look and behave like synchronous code, improving readability."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `async` and `async*`?",
+      "answer": "`async` is used for functions that return a single value wrapped in a `Future`. `async*` is used for functions that return a stream of values (`Stream`) and uses `yield` to emit each value."
+    },
+    {
+      "question": "Can I use `await` outside an `async` function?",
+      "answer": "No, `await` can only be used inside a function marked `async`. This includes the top‑level of a Dart program – you cannot use `await` directly in `main()` unless `main()` is marked `async`."
+    },
+    {
+      "question": "What happens if I forget `await` on a Future?",
+      "answer": "The Future will start running, but you won't wait for its result. The code will continue immediately, and you'll have no way to access the value or handle errors unless you use `.then()`."
+    },
+    {
+      "question": "How do I handle multiple dependent async calls?",
+      "answer": "You can await each one sequentially, or if they can run in parallel but you need all results before proceeding, use `Future.wait`."
+    },
+    {
+      "question": "Can I use `async`/`await` with `Stream`?",
+      "answer": "Yes, you can use `await for` to iterate over a stream asynchronously. For example: `await for (var value in myStream) { ... }`."
+    },
+    {
+      "question": "Does `await` block the main thread?",
+      "answer": "No, `await` does not block the thread. It tells the function to suspend execution and lets the event loop handle other tasks. When the Future completes, the function resumes from where it left off."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "Future<String> fetchData() async {\n  await Future.delayed(Duration(seconds: 2));\n  return 'Hello, async world!';\n}\n\nvoid main() async {\n  print('Fetching...');\n  String data = await fetchData();\n  print(data);\n}"
+  },
+  "quiz": [
+    {
+      "question": "What keyword is used to mark a function as asynchronous in Dart?",
+      "options": ["await", "async", "future", "defer"],
+      "answer": 1
+    },
+    {
+      "question": "What does `await` do?",
+      "options": [
+        "Pauses the entire program until a Future completes",
+        "Pauses the current function until a Future completes, without blocking the event loop",
+        "Starts a Future and continues immediately",
+        "Throws an error if the Future fails"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you run multiple independent Futures concurrently and wait for all of them?",
+      "options": ["await Future.all()", "await Future.wait([...])", "await Future.any([...])", "Use a for loop with await"],
+      "answer": 1
+    },
+    {
+      "question": "What is the return type of an async function that returns a string?",
+      "options": ["String", "Future<String>", "Future", "String?"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-futures",
+    "dart-streams",
+    "dart-error-handling",
+    "dart-event-loop"
+  ]
+}

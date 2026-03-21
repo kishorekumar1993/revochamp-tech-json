@@ -1,0 +1,230 @@
+{
+  "slug": "dart-conditions",
+  "course": "Dart",
+  "title": "Dart Conditions – If, Else, Switch and Conditional Expressions",
+  "meta": {
+    "title": "Dart Conditional Statements: If, Else, Switch with Examples",
+    "description": "Learn how to control flow in Dart using if, else if, else, switch, and ternary operator. Includes practical examples and quiz.",
+    "keywords": [
+      "Dart if else",
+      "Dart switch case",
+      "Dart conditional statements",
+      "Dart ternary operator",
+      "Dart control flow",
+      "Dart decision making"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Conditional Statements?"
+    },
+    {
+      "type": "text",
+      "value": "Conditional statements allow your program to make decisions based on certain conditions. They execute different blocks of code depending on whether a condition is true or false. Dart provides several ways to handle conditions: `if`, `else if`, `else`, `switch`, and the ternary operator."
+    },
+    {
+      "type": "heading",
+      "value": "1. The `if` Statement"
+    },
+    {
+      "type": "text",
+      "value": "The `if` statement executes a block of code only if the specified condition evaluates to `true`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int age = 18;\n  \n  if (age >= 18) {\n    print('You are eligible to vote.');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. The `if-else` Statement"
+    },
+    {
+      "type": "text",
+      "value": "The `if-else` statement provides an alternative block of code to execute when the condition is `false`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int age = 16;\n  \n  if (age >= 18) {\n    print('You can vote.');\n  } else {\n    print('You are too young to vote.');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. The `else if` Ladder"
+    },
+    {
+      "type": "text",
+      "value": "When you have multiple conditions, you can chain them using `else if`. Only the first true condition's block is executed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int score = 85;\n  \n  if (score >= 90) {\n    print('Grade: A');\n  } else if (score >= 80) {\n    print('Grade: B');\n  } else if (score >= 70) {\n    print('Grade: C');\n  } else {\n    print('Grade: F');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Nested `if` Statements"
+    },
+    {
+      "type": "text",
+      "value": "You can place `if` statements inside another `if` or `else` block to check more complex conditions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int age = 20;\n  bool hasID = true;\n  \n  if (age >= 18) {\n    if (hasID) {\n      print('You can enter the club.');\n    } else {\n      print('You need an ID.');\n    }\n  } else {\n    print('You are too young.');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Ternary Operator (`condition ? expr1 : expr2`)"
+    },
+    {
+      "type": "text",
+      "value": "The ternary operator is a shorthand for simple `if-else` statements. It returns one of two expressions based on a condition."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int age = 20;\n  String status = (age >= 18) ? 'Adult' : 'Minor';\n  print(status); // Adult\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. The `switch` Statement"
+    },
+    {
+      "type": "text",
+      "value": "The `switch` statement is used when you need to compare a variable against many constant values. It's cleaner than a long `else if` ladder."
+    },
+    {
+      "type": "list",
+      "value": [
+        "- The `switch` expression is evaluated once.",
+        "- It is compared with each `case` label using `==`.",
+        "- If a match is found, the corresponding block runs until a `break` is encountered.",
+        "- The `default` case is optional and runs if no case matches."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String grade = 'B';\n  \n  switch (grade) {\n    case 'A':\n      print('Excellent!');\n      break;\n    case 'B':\n      print('Good job!');\n      break;\n    case 'C':\n      print('Fair.');\n      break;\n    case 'D':\n    case 'F':\n      print('Need improvement.');\n      break;\n    default:\n      print('Invalid grade.');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Switch with Enum"
+    },
+    {
+      "type": "text",
+      "value": "Using `switch` with enums is a common and powerful pattern in Dart. It ensures you handle all possible values."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "enum TrafficLight { red, yellow, green }\n\nvoid main() {\n  TrafficLight light = TrafficLight.red;\n  \n  switch (light) {\n    case TrafficLight.red:\n      print('Stop');\n      break;\n    case TrafficLight.yellow:\n      print('Caution');\n      break;\n    case TrafficLight.green:\n      print('Go');\n      break;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "8. Null‑Aware Conditions"
+    },
+    {
+      "type": "text",
+      "value": "Dart provides special operators to handle nullable values in conditions:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `?.` : Safe member access (returns null if the object is null).",
+        "- `??` : If‑null operator (returns left side if not null, else right side).",
+        "- `??=` : Null‑aware assignment (assigns only if the variable is null)."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String? name;\n  \n  // Using ?? to provide default value\n  String displayName = name ?? 'Guest';\n  print(displayName); // Guest\n  \n  // Using ?. for safe access\n  print(name?.length); // null\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int temperature = 25;\n  \n  // if-else chain\n  if (temperature > 30) {\n    print('It\\'s hot!');\n  } else if (temperature > 20) {\n    print('Nice weather.');\n  } else {\n    print('It\\'s cold.');\n  }\n  \n  // Ternary\n  String weather = (temperature > 25) ? 'Warm' : 'Cool';\n  print(weather);\n  \n  // Switch with enum\n  enum Day { monday, tuesday, wednesday, thursday, friday, saturday, sunday }\n  Day today = Day.wednesday;\n  \n  switch (today) {\n    case Day.saturday:\n    case Day.sunday:\n      print('Weekend!');\n      break;\n    default:\n      print('Weekday.');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `if`, `else if`, `else` for general conditional logic.",
+        "- The ternary operator `? :` is a concise replacement for simple `if-else`.",
+        "- Use `switch` when comparing a variable against many constant values.",
+        "- Always include `break` in each `case` (except when intentionally falling through).",
+        "- Enums work perfectly with `switch` and ensure exhaustiveness.",
+        "- Null‑aware operators help you handle nullable values safely in conditions."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use `else if` without a final `else`?",
+      "answer": "Yes, the final `else` is optional. You can have an `if` followed by any number of `else if` blocks and no final `else`. If none of the conditions are true, no code in that chain will execute."
+    },
+    {
+      "question": "What's the difference between `if-else` and `switch`?",
+      "answer": "`if-else` is best for complex conditions involving ranges, logical operators, or different types. `switch` is ideal when you're comparing a single variable against many constant values, and it can be more readable and faster in such cases."
+    },
+    {
+      "question": "Can I use `switch` with strings?",
+      "answer": "Yes, Dart allows `switch` on strings, integers, and enums. For example, you can `switch (dayString) { case 'Monday': ... }`."
+    },
+    {
+      "question": "Is the ternary operator just a shorter `if-else`?",
+      "answer": "Yes, the ternary operator `condition ? expr1 : expr2` is a concise way to return one of two values based on a condition. It's an expression, so it can be used inside larger expressions. However, for complex branching, prefer `if-else` for clarity."
+    },
+    {
+      "question": "How do null-aware operators help in conditions?",
+      "answer": "Null-aware operators like `?.`, `??`, and `??=` allow you to write concise code that handles nullable values without explicit `if (x != null)` checks. For example, `x?.isEven` returns `null` if `x` is null, and `y ?? 0` provides a default value if `y` is null."
+    },
+    {
+      "question": "Can I have multiple conditions in a single `if` statement?",
+      "answer": "Yes, you can combine conditions using logical operators `&&` (AND) and `||` (OR). For example: `if (age >= 18 && hasID) { ... }`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  int number = 7;\n  \n  if (number % 2 == 0) {\n    print('$number is even');\n  } else {\n    print('$number is odd');\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the output of this code?\n\nvoid main() {\n  int x = 5;\n  if (x > 3) print('A');\n  if (x > 7) print('B');\n  else print('C');\n}",
+      "options": ["A", "A C", "B C", "A B C"],
+      "answer": 1
+    },
+    {
+      "question": "Which statement is best suited for checking a variable against many constant values?",
+      "options": ["if-else", "switch", "ternary operator", "while loop"],
+      "answer": 1
+    },
+    {
+      "question": "What is the value of `result` after executing `var result = (5 > 3) ? 'yes' : 'no';`?",
+      "options": ["yes", "no", "true", "false"],
+      "answer": 0
+    },
+    {
+      "question": "In a `switch` statement, what keyword is used to exit a case?",
+      "options": ["continue", "exit", "break", "return"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "dart-operators",
+    "dart-variables",
+    "dart-loops",
+    "dart-null-safety"
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "slug": "dart-constructors",
+  "course": "Dart",
+  "title": "Dart Constructors – Complete Guide with Examples",
+  "meta": {
+    "title": "Dart Constructors: Default, Named, Factory, Constant and More",
+    "description": "Master Dart constructors – default, parameterized, named, redirecting, constant, and factory constructors. Learn with real examples and best practices.",
+    "keywords": [
+      "Dart constructors",
+      "Dart named constructor",
+      "Dart factory constructor",
+      "Dart constant constructor",
+      "Dart redirecting constructor",
+      "Dart constructor examples",
+      "Dart object initialization"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Constructor?"
+    },
+    {
+      "type": "text",
+      "value": "A constructor is a special method used to initialize an object when it is created. It has the same name as the class and no return type. Dart provides several types of constructors to give you flexibility in how objects are created and initialized."
+    },
+    {
+      "type": "heading",
+      "value": "1. Default Constructor"
+    },
+    {
+      "type": "text",
+      "value": "If you don't define a constructor, Dart provides a default constructor with no arguments. It doesn't do anything but allows you to create an instance."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Person {\n  String name = '';\n  int age = 0;\n}\n\nvoid main() {\n  var p = Person(); // default constructor called\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Parameterized Constructor"
+    },
+    {
+      "type": "text",
+      "value": "You can define a constructor that takes parameters to set initial values. The most concise syntax uses `this.property` in the parameter list."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Person {\n  String name;\n  int age;\n\n  Person(this.name, this.age);\n}\n\nvoid main() {\n  var p = Person('Alice', 30);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Named Constructors"
+    },
+    {
+      "type": "text",
+      "value": "Named constructors allow a class to have multiple constructors with different names. They are useful for providing different ways to create an object."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Person {\n  String name;\n  int age;\n\n  Person(this.name, this.age);\n\n  Person.guest() {\n    name = 'Guest';\n    age = 18;\n  }\n\n  Person.fromJson(Map<String, dynamic> json)\n      : name = json['name'],\n        age = json['age'];\n}\n\nvoid main() {\n  var p1 = Person('Bob', 25);\n  var p2 = Person.guest();\n  var p3 = Person.fromJson({'name': 'Charlie', 'age': 28});\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Redirecting Constructors"
+    },
+    {
+      "type": "text",
+      "value": "A redirecting constructor delegates its work to another constructor in the same class. It has an empty body and uses `this` followed by the target constructor."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Point {\n  int x, y;\n\n  Point(this.x, this.y);\n\n  // Redirects to the main constructor\n  Point.origin() : this(0, 0);\n}\n\nvoid main() {\n  var p = Point.origin(); // x=0, y=0\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Constant Constructors"
+    },
+    {
+      "type": "text",
+      "value": "If a class produces objects that never change, you can make its constructor `const`. This allows the objects to be compile‑time constants, saving memory and improving performance."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ImmutablePoint {\n  final int x, y;\n\n  const ImmutablePoint(this.x, this.y);\n}\n\nvoid main() {\n  var p1 = const ImmutablePoint(1, 2);\n  var p2 = const ImmutablePoint(1, 2);\n  print(identical(p1, p2)); // true (same instance)\n}"
+    },
+    {
+      "type": "text",
+      "value": "All fields must be `final` for a constant constructor to work."
+    },
+    {
+      "type": "heading",
+      "value": "6. Factory Constructors"
+    },
+    {
+      "type": "text",
+      "value": "A factory constructor doesn't always create a new instance. It can return an existing instance (e.g., from a cache) or an instance of a subtype. It uses the `factory` keyword."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Logger {\n  final String name;\n  static final Map<String, Logger> _cache = {};\n\n  factory Logger(String name) {\n    return _cache.putIfAbsent(name, () => Logger._internal(name));\n  }\n\n  Logger._internal(this.name);\n}\n\nvoid main() {\n  var log1 = Logger('UI');\n  var log2 = Logger('UI');\n  print(identical(log1, log2)); // true (same cached instance)\n}"
+    },
+    {
+      "type": "text",
+      "value": "Factory constructors are also commonly used to implement the singleton pattern or to perform complex initialization before returning an instance."
+    },
+    {
+      "type": "heading",
+      "value": "Initializer List"
+    },
+    {
+      "type": "text",
+      "value": "You can add an initializer list before the constructor body to initialize fields, assert conditions, or call super constructors. It's separated by a colon `:`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Person {\n  String name;\n  int age;\n\n  Person(String name, int age)\n      : assert(age >= 0),\n        name = name,\n        age = age;\n}\n\nvoid main() {\n  var p = Person('Alice', 30);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Calling Superclass Constructors"
+    },
+    {
+      "type": "text",
+      "value": "By default, a constructor calls the superclass's default constructor. You can explicitly call a specific super constructor using the initializer list."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Animal {\n  String name;\n  Animal(this.name);\n}\n\nclass Dog extends Animal {\n  String breed;\n\n  Dog(String name, this.breed) : super(name);\n}\n\nvoid main() {\n  var d = Dog('Rex', 'Labrador');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting to initialize non‑nullable fields**: Ensure every field gets a value either directly, in the constructor, or in the initializer list.",
+        "- **Using `this` in initializer list before super call**: You cannot reference `this` in the initializer list until after the super constructor has been called.",
+        "- **Overusing factory constructors**: Only use them when you need to return an existing instance or perform logic before creation.",
+        "- **Not making constant constructors when possible**: If a class is immutable, consider adding a `const` constructor to allow compile‑time constants."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Interview Questions"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Q: What is the difference between a named constructor and a factory constructor?**\n  A: A named constructor always creates a new instance of the class, while a factory constructor can return an existing instance or a subtype.",
+        "- **Q: Can a class have both a default constructor and a named constructor?**\n  A: Yes, a class can have multiple constructors, including the default (if you don't define any) and named ones.",
+        "- **Q: When would you use a constant constructor?**\n  A: When the class represents an immutable value and you want objects that can be compile‑time constants (e.g., for performance or canonicalization).",
+        "- **Q: What is an initializer list used for?**\n  A: To initialize fields before the constructor body runs, assert conditions, or call a super constructor."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Constructors initialize objects. They have the same name as the class and no return type.",
+        "- Dart supports default, parameterized, named, redirecting, constant, and factory constructors.",
+        "- Use initializer lists to set fields or assert conditions before the constructor body.",
+        "- Call superclass constructors using `super()` in the initializer list.",
+        "- Factory constructors give you control over instance creation (caching, singletons, etc.).",
+        "- Constant constructors (`const`) create compile‑time constants and must have all `final` fields."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can a constructor be private?",
+      "answer": "Yes, by using the underscore `_` before the constructor name (e.g., `_MyClass()`). This is useful for implementing singletons or factory methods that control instance creation."
+    },
+    {
+      "question": "Do constructors support optional parameters?",
+      "answer": "Yes, constructors can have optional positional or named parameters, just like functions. For example: `Person([this.name = 'Guest'])` or `Person({this.age = 18})`."
+    },
+    {
+      "question": "Can a constructor be `async`?",
+      "answer": "No, constructors cannot be asynchronous. If you need to perform async work, consider a factory constructor that returns a `Future` or a separate static async method that creates an instance after async initialization."
+    },
+    {
+      "question": "What is the difference between `this()` and `super()` in a constructor?",
+      "answer": "`this()` calls another constructor in the same class; it's used for constructor redirection. `super()` calls a constructor of the superclass; it must be called in the initializer list before the constructor body."
+    },
+    {
+      "question": "Can a class have multiple constructors?",
+      "answer": "Yes, Dart classes can have multiple constructors – one default (or parameterized) and any number of named constructors. This provides flexibility in object creation."
+    },
+    {
+      "question": "What happens if I don't define any constructor?",
+      "answer": "Dart automatically provides a default constructor with no arguments. It simply calls the superclass's no‑argument constructor and does nothing else."
+    },
+    {
+      "question": "Can a constructor be `const` and `factory` at the same time?",
+      "answer": "No, a constructor cannot be both `const` and `factory`. `const` constructors must create new objects, while `factory` constructors may return existing ones."
+    },
+    {
+      "question": "How do I write a constructor that validates parameters before initializing fields?",
+      "answer": "You can use an initializer list with `assert` or run validation in the constructor body after the fields are initialized. For example: `Person(this.name) : assert(name.isNotEmpty);`"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class User {\n  String name;\n  int age;\n  \n  User(this.name, this.age);\n  \n  User.guest() : this('Guest', 18);\n  \n  void introduce() {\n    print('I am $name, $age years old');\n  }\n}\n\nvoid main() {\n  var u1 = User('Alice', 30);\n  var u2 = User.guest();\n  u1.introduce();\n  u2.introduce();\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which keyword is used to define a factory constructor?",
+      "options": ["factory", "static", "new", "create"],
+      "answer": 0
+    },
+    {
+      "question": "What is the output of this code?\n\nclass A {\n  final int x;\n  const A(this.x);\n}\n\nvoid main() {\n  var a1 = const A(5);\n  var a2 = const A(5);\n  print(identical(a1, a2));\n}",
+      "options": ["true", "false", "null", "Error"],
+      "answer": 0
+    },
+    {
+      "question": "How do you call a superclass constructor in Dart?",
+      "options": ["super() in the initializer list", "super() in the constructor body", "parent()", "base()"],
+      "answer": 0
+    },
+    {
+      "question": "Which constructor type can return an existing object instead of creating a new one?",
+      "options": ["Default", "Named", "Factory", "Constant"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "dart-classes",
+    "dart-inheritance",
+    "dart-factory-constructor",
+    "dart-singleton"
+  ]
+}

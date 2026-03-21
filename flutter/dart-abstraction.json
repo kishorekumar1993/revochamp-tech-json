@@ -1,0 +1,217 @@
+{
+  "slug": "dart-abstraction",
+  "course": "Dart",
+  "title": "Dart Abstraction – Abstract Classes and Methods",
+  "meta": {
+    "title": "Dart Abstraction: Abstract Classes, Methods, and Interfaces",
+    "description": "Learn abstraction in Dart – abstract classes, abstract methods, implementing interfaces, and how to design flexible, maintainable code with practical examples.",
+    "keywords": [
+      "Dart abstraction",
+      "Dart abstract class",
+      "Dart abstract method",
+      "Dart interface",
+      "Dart implements",
+      "Dart OOP abstraction",
+      "Dart programming"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Abstraction?"
+    },
+    {
+      "type": "text",
+      "value": "Abstraction is one of the fundamental principles of object‑oriented programming. It means hiding the complex implementation details and showing only the essential features of an object. In Dart, abstraction is achieved using **abstract classes** and **interfaces**. Abstraction helps in reducing complexity and isolates the impact of changes."
+    },
+    {
+      "type": "heading",
+      "value": "Abstract Classes"
+    },
+    {
+      "type": "text",
+      "value": "An abstract class is a class that cannot be instantiated directly. It is declared using the `abstract` keyword. Abstract classes may contain both abstract methods (without a body) and concrete methods (with an implementation). They serve as blueprints for other classes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class Animal {\n  String name;\n\n  Animal(this.name);\n\n  // Abstract method – no body\n  void makeSound();\n\n  // Concrete method\n  void sleep() {\n    print('$name is sleeping.');\n  }\n}\n\nclass Dog extends Animal {\n  Dog(String name) : super(name);\n\n  @override\n  void makeSound() {\n    print('$name barks.');\n  }\n}\n\nvoid main() {\n  // Animal a = Animal('pet'); // Error: Cannot instantiate abstract class\n  Dog dog = Dog('Buddy');\n  dog.makeSound(); // Buddy barks.\n  dog.sleep();     // Buddy is sleeping.\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Abstract Methods"
+    },
+    {
+      "type": "text",
+      "value": "An abstract method is a method declared without an implementation. It must be overridden by any non‑abstract subclass. Abstract methods can only exist inside abstract classes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class Shape {\n  double area(); // abstract method\n\n  void display() {\n    print('Area: ${area()}');\n  }\n}\n\nclass Circle extends Shape {\n  double radius;\n\n  Circle(this.radius);\n\n  @override\n  double area() => 3.14 * radius * radius;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Interfaces (Implicit)"
+    },
+    {
+      "type": "text",
+      "value": "In Dart, every class implicitly defines an interface containing all its instance members. A class can implement one or more interfaces using the `implements` keyword. When a class implements an interface, it must provide concrete implementations of all members of that interface (even if they were already implemented in the interface class)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Flyable {\n  void fly() {}\n}\n\nclass Bird implements Flyable {\n  @override\n  void fly() {\n    print('Bird flies');\n  }\n}\n\nclass Airplane implements Flyable {\n  @override\n  void fly() {\n    print('Airplane flies');\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "Unlike `extends`, `implements` does not inherit any implementation – you must provide everything."
+    },
+    {
+      "type": "heading",
+      "value": "Abstract Classes vs Interfaces"
+    },
+    {
+      "type": "text",
+      "value": "Both abstract classes and interfaces help define contracts, but they have differences:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- An abstract class can have both abstract and concrete methods, and can have fields. It is used when you want to share code among several closely related classes.",
+        "- An interface (via `implements`) can only declare methods (and getters/setters) but provides no implementation. A class can implement multiple interfaces.",
+        "- In practice, you often use abstract classes as base classes and interfaces to define capabilities."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Using `implements` with Multiple Interfaces"
+    },
+    {
+      "type": "text",
+      "value": "Dart allows a class to implement multiple interfaces, which is useful for mixing in different capabilities."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Swimmable {\n  void swim() {}\n}\n\nclass Walkable {\n  void walk() {}\n}\n\nclass Duck implements Swimmable, Walkable {\n  @override\n  void swim() {\n    print('Duck swims');\n  }\n\n  @override\n  void walk() {\n    print('Duck walks');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Abstract Classes with Factory Constructors"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to control object creation. Abstract classes can have factory constructors to return instances of concrete subclasses (e.g., based on some input)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class Shape {\n  factory Shape(String type) {\n    if (type == 'circle') return Circle(5);\n    if (type == 'square') return Square(4);\n    throw ArgumentError('Unknown shape type');\n  }\n\n  double area();\n}\n\nclass Circle implements Shape {\n  double radius;\n  Circle(this.radius);\n  @override\n  double area() => 3.14 * radius * radius;\n}\n\nclass Square implements Shape {\n  double side;\n  Square(this.side);\n  @override\n  double area() => side * side;\n}\n\nvoid main() {\n  Shape shape = Shape('circle');\n  print(shape.area()); // 78.5\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Trying to instantiate an abstract class (compile error).",
+        "- Forgetting to override an abstract method in a concrete subclass (compile error).",
+        "- Using `implements` when you meant `extends` – losing code reuse.",
+        "- Making a class abstract unnecessarily."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class PaymentProcessor {\n  void processPayment(double amount);\n\n  void validateAmount(double amount) {\n    if (amount <= 0) {\n      throw ArgumentError('Amount must be positive');\n    }\n  }\n}\n\nclass CreditCardProcessor extends PaymentProcessor {\n  @override\n  void processPayment(double amount) {\n    validateAmount(amount);\n    print('Processing credit card payment of \\$$amount');\n  }\n}\n\nclass PayPalProcessor extends PaymentProcessor {\n  @override\n  void processPayment(double amount) {\n    validateAmount(amount);\n    print('Processing PayPal payment of \\$$amount');\n  }\n}\n\nvoid main() {\n  PaymentProcessor processor = CreditCardProcessor();\n  processor.processPayment(100.0);\n\n  processor = PayPalProcessor();\n  processor.processPayment(200.0);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Abstraction hides implementation details and exposes only essential features.",
+        "- Abstract classes (declared with `abstract`) cannot be instantiated and may contain abstract methods.",
+        "-Abstract methods have no body and must be overridden in concrete subclasses.",
+        "- Every class defines an implicit interface; use `implements` to enforce that interface.",
+        "- A class can implement multiple interfaces, but can extend only one class.",
+        "- Use abstract classes for code reuse among related classes; use interfaces to define capabilities."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can an abstract class have constructors?",
+      "answer": "Yes, an abstract class can have constructors. They are called when a concrete subclass is instantiated. This is useful for initializing fields defined in the abstract class."
+    },
+    {
+      "question": "Can an abstract class have fields?",
+      "answer": "Yes, abstract classes can have instance fields, which are inherited by subclasses. This is one advantage over interfaces (which cannot have fields)."
+    },
+    {
+      "question": "What is the difference between an abstract class and an interface?",
+      "answer": "An abstract class can provide partial implementation (concrete methods and fields) and can have constructors. An interface (via `implements`) only declares members – the implementing class must provide all implementations. Also, a class can implement multiple interfaces but extend only one abstract class."
+    },
+    {
+      "question": "Can I create an instance of an abstract class?",
+      "answer": "No, you cannot instantiate an abstract class directly. However, you can instantiate a concrete subclass."
+    },
+    {
+      "question": "Do I have to use the `abstract` keyword for a class that contains an abstract method?",
+      "answer": "Yes, if a class has at least one abstract method, it must be declared `abstract`. Otherwise, you'll get a compile error."
+    },
+    {
+      "question": "Can an abstract class implement an interface?",
+      "answer": "Yes, an abstract class can implement one or more interfaces using `implements`. It can then either implement the required methods or leave them abstract for subclasses to implement."
+    },
+    {
+      "question": "What happens if a concrete class extends an abstract class but doesn't override all abstract methods?",
+      "answer": "The concrete class must override all abstract methods; otherwise, the class itself becomes abstract and must be declared `abstract`. The compiler will flag this as an error."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "abstract class Animal {\n  void speak();\n  void sleep() {\n    print('Sleeping...');\n  }\n}\n\nclass Dog extends Animal {\n  @override\n  void speak() {\n    print('Woof!');\n  }\n}\n\nvoid main() {\n  var dog = Dog();\n  dog.speak();\n  dog.sleep();\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which keyword is used to declare an abstract class in Dart?",
+      "options": ["abstract", "interface", "base", "virtual"],
+      "answer": 0
+    },
+    {
+      "question": "Can an abstract class be instantiated?",
+      "options": ["Yes", "No", "Only if it has no abstract methods", "Only with a factory constructor"],
+      "answer": 1
+    },
+    {
+      "question": "What must a concrete subclass do when it extends an abstract class?",
+      "options": [
+        "Override all concrete methods",
+        "Override all abstract methods",
+        "Implement at least one method",
+        "Call the super constructor"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How many interfaces can a Dart class implement?",
+      "options": ["0", "1", "2", "Any number"],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "dart-classes",
+    "dart-interfaces",
+    "dart-inheritance",
+    "dart-polymorphism"
+  ]
+}

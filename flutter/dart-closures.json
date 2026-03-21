@@ -1,0 +1,200 @@
+{
+  "slug": "dart-closures",
+  "course": "Dart",
+  "title": "Dart Closures – Capturing Variables with Anonymous Functions",
+  "meta": {
+    "title": "Dart Closures: A Complete Guide with Examples",
+    "description": "Learn about closures in Dart – how anonymous functions capture variables from their lexical scope, creating stateful functions and enabling powerful programming patterns.",
+    "keywords": [
+      "Dart closures",
+      "Dart closure example",
+      "Dart lexical scope",
+      "Dart variable capture",
+      "Dart anonymous function",
+      "Dart function scope",
+      "Dart programming"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Closure?"
+    },
+    {
+      "type": "text",
+      "value": "A closure is a function that captures variables from its surrounding lexical scope. In other words, a closure 'remembers' the environment in which it was created, even after that environment is no longer active. This allows the function to access and modify those captured variables, creating functions with private state."
+    },
+    {
+      "type": "text",
+      "value": "In Dart, every function is a closure because functions can access variables defined in their outer scope. However, the term is often used specifically for anonymous functions that outlive the scope where they were defined (e.g., when returned from another function)."
+    },
+    {
+      "type": "heading",
+      "value": "Lexical Scoping"
+    },
+    {
+      "type": "text",
+      "value": "Before understanding closures, you need to understand lexical scoping. In Dart, the scope of a variable is determined by where it is declared in the code. Inner functions can access variables from outer functions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void outerFunction() {\n  int outerVar = 10;\n\n  void innerFunction() {\n    // innerFunction can access outerVar\n    print(outerVar); // 10\n  }\n\n  innerFunction();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Simple Closure"
+    },
+    {
+      "type": "text",
+      "value": "When you return an inner function, it continues to have access to the outer function's variables, even after the outer function has finished executing. That returned function is a closure."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Function makeCounter() {\n  int count = 0; // captured variable\n\n  return () {\n    count++; // access and modify captured variable\n    return count;\n  };\n}\n\nvoid main() {\n  var counter = makeCounter();\n  print(counter()); // 1\n  print(counter()); // 2\n  print(counter()); // 3\n\n  var anotherCounter = makeCounter();\n  print(anotherCounter()); // 1 (separate closure, separate state)\n}"
+    },
+    {
+      "type": "text",
+      "value": "Each call to `makeCounter` creates a new closure with its own `count` variable. The closures keep the variable alive as long as they exist."
+    },
+    {
+      "type": "heading",
+      "value": "How Closures Work"
+    },
+    {
+      "type": "text",
+      "value": "When a function is created, it captures a reference to the variables it uses from the surrounding scopes. These variables are stored in a special context object that persists as long as the closure exists. This is why closures can have private state."
+    },
+    {
+      "type": "heading",
+      "value": "Closures in Callbacks"
+    },
+    {
+      "type": "text",
+      "value": "Closures are extremely useful in asynchronous programming and event handlers, where you want to remember some state for later."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var buttons = ['Button1', 'Button2', 'Button3'];\n\n  for (var i = 0; i < buttons.length; i++) {\n    // Create a closure that captures i\n    var button = buttons[i];\n    // Simulate a button click handler\n    var handler = () {\n      print('$button clicked');\n    };\n    // Later, when the button is clicked\n    handler();\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "If you didn't capture `i` correctly in a loop, you might get unexpected behavior. Closures capture variables by reference, so you need to be careful with loop variables."
+    },
+    {
+      "type": "heading",
+      "value": "Common Pitfall: Capturing Loop Variables"
+    },
+    {
+      "type": "text",
+      "value": "A classic mistake is creating closures inside a loop that capture the loop variable. By the time the closure is executed, the loop variable may have changed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  List<Function> functions = [];\n\n  for (var i = 0; i < 3; i++) {\n    functions.add(() => print(i)); // captures i by reference\n  }\n\n  for (var f in functions) {\n    f(); // prints 3, 3, 3 (if i was var), or 0,1,2 if using final?\n  }\n}\n// In Dart, with var, it prints 3,3,3 because there's only one i variable.\n// To fix, introduce a new local variable each iteration."
+    },
+    {
+      "type": "text",
+      "value": "The solution is to create a new variable inside the loop that holds the current value."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  List<Function> functions = [];\n\n  for (var i = 0; i < 3; i++) {\n    var current = i; // new variable each iteration\n    functions.add(() => print(current));\n  }\n\n  for (var f in functions) {\n    f(); // prints 0, 1, 2\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Closures and Asynchronous Code"
+    },
+    {
+      "type": "text",
+      "value": "Closures are essential in async programming, especially with `Future.then` or `Stream.listen`. They capture the necessary state to handle the result later."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<String> fetchData() async {\n  await Future.delayed(Duration(seconds: 1));\n  return 'Data';\n}\n\nvoid main() {\n  var id = 42;\n  fetchData().then((data) {\n    // This closure captures id\n    print('Data for id $id: $data');\n  });\n  print('Waiting...');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- A closure is a function that captures variables from its lexical scope.",
+        "- Closures enable functions to have private state that persists between calls.",
+        "- Each closure instance has its own copy of captured variables.",
+        "- Be careful when capturing loop variables – create a new local variable to capture the current value.",
+        "- Closures are heavily used in callbacks, event handlers, and functional programming."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between a closure and a regular function?",
+      "answer": "All functions in Dart are technically closures because they can access variables from outer scopes. However, the term is often used for functions that outlive the scope where they were created (e.g., returned from another function) and that maintain captured variables."
+    },
+    {
+      "question": "How does Dart manage memory for closures?",
+      "answer": "When a closure captures variables, those variables are moved to the heap (if necessary) and remain alive as long as the closure itself is reachable. The garbage collector frees them when the closure is no longer referenced."
+    },
+    {
+      "question": "Can a closure capture a variable that is later modified?",
+      "answer": "Yes, closures capture variables by reference, so if the original variable changes after the closure is created, the closure will see the new value. This can lead to surprises, especially with loop variables."
+    },
+    {
+      "question": "How do I fix the loop capture issue?",
+      "answer": "Create a new variable inside the loop body that holds the current value, and capture that variable instead. In Dart, using `final` or `var` inside the loop creates a fresh variable each iteration."
+    },
+    {
+      "question": "Are closures only for anonymous functions?",
+      "answer": "No, named functions can also be closures if they are defined inside another function and reference outer variables. However, anonymous functions are the most common use case."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  Function makeAdder(int addBy) {\n    return (int i) => i + addBy;\n  }\n\n  var add5 = makeAdder(5);\n  var add10 = makeAdder(10);\n\n  print(add5(3)); // 8\n  print(add10(3)); // 13\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is a closure?",
+      "options": [
+        "A function that has a name",
+        "A function that captures variables from its lexical scope",
+        "A class that contains only static methods",
+        "A built‑in Dart library"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What will the following code print?\n\nvoid main() {\n  var funcs = [];\n  for (var i = 0; i < 3; i++) {\n    funcs.add(() => print(i));\n  }\n  for (var f in funcs) { f(); }\n}",
+      "options": ["0 1 2", "3 3 3", "2 2 2", "Error"],
+      "answer": 1
+    },
+    {
+      "question": "How can you fix the loop capture problem?",
+      "options": [
+        "Use `final` instead of `var` for the loop variable",
+        "Create a new variable inside the loop and capture it",
+        "Use `async`/`await`",
+        "Use a `while` loop instead"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "In Dart, do closures capture variables by value or by reference?",
+      "options": ["By value", "By reference", "It depends on the type", "Only primitives are captured by value"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-functions",
+    "dart-lambdas",
+    "dart-higher-order-functions",
+    "dart-scope"
+  ]
+}

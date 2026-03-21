@@ -1,0 +1,227 @@
+{
+  "slug": "dart-callable-classes",
+  "course": "Dart",
+  "title": "Dart Callable Classes – Making Instances Callable Like Functions",
+  "meta": {
+    "title": "Dart Callable Classes: Using the `call` Method to Make Objects Callable",
+    "description": "Learn how to create callable classes in Dart by implementing the `call` method. Use instances as functions, pass them as callbacks, and build functional-style APIs.",
+    "keywords": [
+      "Dart callable class",
+      "Dart call method",
+      "Dart callable objects",
+      "Dart function-like class",
+      "Dart callable example",
+      "Dart callable callback",
+      "Dart functional programming"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Callable Class?"
+    },
+    {
+      "type": "text",
+      "value": "A callable class is a class that defines a `call` method. When an instance of such a class is invoked like a function (i.e., using parentheses with arguments), the `call` method is executed. This feature allows objects to behave like functions, enabling you to use them as callbacks, create function‑like objects with state, and build expressive APIs."
+    },
+    {
+      "type": "heading",
+      "value": "Defining a Callable Class"
+    },
+    {
+      "type": "text",
+      "value": "To make a class callable, simply add a method named `call`. It can have any parameters and return type. The method can be synchronous or asynchronous."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Greeter {\n  String name;\n  Greeter(this.name);\n\n  // The call method – makes instances callable\n  void call() {\n    print('Hello, I am $name');\n  }\n}\n\nvoid main() {\n  var greeter = Greeter('Alice');\n  greeter(); // Calls the `call` method\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Call Method with Parameters"
+    },
+    {
+      "type": "text",
+      "value": "The `call` method can accept parameters, just like a regular function. This allows you to use your callable objects as custom functions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Adder {\n  int addBy;\n\n  Adder(this.addBy);\n\n  int call(int x) => x + addBy;\n}\n\nvoid main() {\n  var add5 = Adder(5);\n  print(add5(10)); // 15\n\n  var add10 = Adder(10);\n  print(add10(7)); // 17\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Named and Optional Parameters"
+    },
+    {
+      "type": "text",
+      "value": "You can use all Dart parameter features in the `call` method: positional, optional, named, required, etc. This makes callable objects flexible."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Logger {\n  void call(String message, {String level = 'INFO'}) {\n    print('[$level] $message');\n  }\n}\n\nvoid main() {\n  var log = Logger();\n  log('App started'); // [INFO] App started\n  log('Error occurred', level: 'ERROR'); // [ERROR] Error occurred\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Callable Classes as Callbacks"
+    },
+    {
+      "type": "text",
+      "value": "Because callable objects behave like functions, they can be used anywhere a function is expected, such as callbacks for `forEach`, `map`, or custom APIs."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Multiplier {\n  final int factor;\n  Multiplier(this.factor);\n\n  int call(int x) => x * factor;\n}\n\nvoid main() {\n  var numbers = [1, 2, 3, 4];\n  var doubleIt = Multiplier(2);\n  var tripled = numbers.map(Multiplier(3)).toList();\n\n  print(numbers.map(doubleIt).toList()); // [2, 4, 6, 8]\n  print(tripled); // [3, 6, 9, 12]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Stateful Callable Objects"
+    },
+    {
+      "type": "text",
+      "value": "One powerful aspect of callable classes is that they can maintain state across invocations. This is like a closure, but with explicit fields and methods."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Counter {\n  int _count = 0;\n\n  int call() {\n    return ++_count;\n  }\n}\n\nvoid main() {\n  var counter = Counter();\n  print(counter()); // 1\n  print(counter()); // 2\n  print(counter()); // 3\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Generic Callable Classes"
+    },
+    {
+      "type": "text",
+      "value": "You can make your callable classes generic, allowing them to work with different types while preserving type safety."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Parser<T> {\n  T Function(String) parser;\n\n  Parser(this.parser);\n\n  T call(String input) => parser(input);\n}\n\nvoid main() {\n  var intParser = Parser<int>((s) => int.parse(s));\n  var doubleParser = Parser<double>((s) => double.parse(s));\n\n  print(intParser('42')); // 42\n  print(doubleParser('3.14')); // 3.14\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Async Callable Classes"
+    },
+    {
+      "type": "text",
+      "value": "The `call` method can be `async` or return a `Future`, making the object callable asynchronously."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DelayPrinter {\n  Duration delay;\n\n  DelayPrinter(this.delay);\n\n  Future<void> call(String message) async {\n    await Future.delayed(delay);\n    print(message);\n  }\n}\n\nvoid main() async {\n  var printer = DelayPrinter(Duration(seconds: 1));\n  await printer('Hello after 1 second');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Function‑like objects with configuration**: e.g., multipliers, loggers with level.",
+        "- **Stateful callbacks**: counters, accumulators, caches.",
+        "- **Fluent DSLs**: design APIs where objects can be called with parentheses.",
+        "- **Dependency injection**: replace simple functions with more complex objects.",
+        "- **Mocking**: create test‑friendly callable objects that track calls."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use callable classes when you need state or configuration that a simple function cannot provide.",
+        "- Keep the `call` method focused; avoid side effects unless intended.",
+        "- Document the expected usage (especially if the object is used as a callback).",
+        "- Use generic callable classes to maintain type safety when working with multiple types."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Operation {\n  final String name;\n  final int Function(int, int) _operation;\n\n  Operation(this.name, this._operation);\n\n  int call(int a, int b) {\n    print('Executing $name');\n    return _operation(a, b);\n  }\n}\n\nvoid main() {\n  var add = Operation('Addition', (a, b) => a + b);\n  var multiply = Operation('Multiplication', (a, b) => a * b);\n\n  print(add(5, 3)); // Executing Addition\n                    // 8\n  print(multiply(5, 3)); // Executing Multiplication\n                         // 15\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Implement the `call` method to make a class callable.",
+        "- Callable objects can be used anywhere a function is expected.",
+        "- They can have state, configuration, and generic parameters.",
+        "- Use callable classes for function‑like objects that need more than just a function."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can a class have more than one `call` method?",
+      "answer": "No, a class can have only one method named `call`. However, you can use method overloading by using optional parameters or named parameters to vary the signature."
+    },
+    {
+      "question": "What is the difference between a callable class and a closure?",
+      "answer": "A closure is a function that captures variables from its surrounding scope. A callable class is an object with a `call` method. Both can be used as functions, but the class can have multiple methods, fields, and can be passed around more explicitly. Use callable classes when you need more structure or when you want to reuse the same logic with different configurations."
+    },
+    {
+      "question": "Can a callable class be used as a type for a function parameter?",
+      "answer": "Yes, because the instance itself is a valid object, and Dart will treat it as a function. For example, you can pass a callable object to a function expecting a `void Function()`."
+    },
+    {
+      "question": "Is it possible to make a callable class that returns a `Future`?",
+      "answer": "Yes, just make the `call` method `async` or have it return `Future<T>`. The instance can then be used with `await`."
+    },
+    {
+      "question": "Can I extend a callable class?",
+      "answer": "Yes, callable classes are regular classes; you can extend them and override the `call` method if needed."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class Multiplier {\n  final int factor;\n  Multiplier(this.factor);\n  int call(int x) => x * factor;\n}\n\nvoid main() {\n  var doubleIt = Multiplier(2);\n  var numbers = [1, 2, 3];\n  print(numbers.map(doubleIt).toList()); // [2, 4, 6]\n}"
+  },
+  "quiz": [
+    {
+      "question": "What method must be implemented to make a class callable?",
+      "options": ["apply", "invoke", "call", "execute"],
+      "answer": 2
+    },
+    {
+      "question": "What is the output of this code?\n\nclass Adder {\n  int addBy;\n  Adder(this.addBy);\n  int call(int x) => x + addBy;\n}\nvoid main() {\n  var add5 = Adder(5);\n  print(add5(10));\n}",
+      "options": ["5", "10", "15", "Error"],
+      "answer": 2
+    },
+    {
+      "question": "Can a callable class have named parameters?",
+      "options": ["Yes", "No", "Only if the class is generic", "Only in Dart 3.0+"],
+      "answer": 0
+    },
+    {
+      "question": "What is a key advantage of a callable class over a simple function?",
+      "options": [
+        "It can be used as a callback",
+        "It can maintain state across invocations",
+        "It can be asynchronous",
+        "It can be called with parentheses"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-functions",
+    "dart-classes",
+    "dart-closures",
+    "dart-higher-order-functions"
+  ]
+}
