@@ -1,0 +1,208 @@
+{
+  "slug": "dart-polymorphism",
+  "course": "Dart",
+  "title": "Dart Polymorphism – A Complete Guide with Examples",
+  "meta": {
+    "title": "Dart Polymorphism: Method Overriding, Types, and Best Practices",
+    "description": "Learn polymorphism in Dart – compile‑time vs runtime polymorphism, method overriding, the role of interfaces, and how to write flexible code with examples.",
+    "keywords": [
+      "Dart polymorphism",
+      "Dart method overriding",
+      "Dart compile-time polymorphism",
+      "Dart runtime polymorphism",
+      "Dart dynamic dispatch",
+      "Dart covariant",
+      "Dart OOP"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Polymorphism?"
+    },
+    {
+      "type": "text",
+      "value": "Polymorphism is a core concept in object‑oriented programming that allows objects of different types to respond to the same method call in their own way. The word comes from Greek meaning 'many forms'. In Dart, polymorphism enables you to write more flexible and reusable code by treating objects of different classes through a common interface."
+    },
+    {
+      "type": "heading",
+      "value": "Types of Polymorphism"
+    },
+    {
+      "type": "text",
+      "value": "Polymorphism is generally divided into two categories:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Compile‑time polymorphism (static binding)** – achieved through method overloading or operator overloading. However, Dart does **not** support traditional method overloading based on different parameter lists. Instead, you can use optional parameters or named parameters to simulate similar behaviour.",
+        "- **Runtime polymorphism (dynamic binding)** – achieved through method overriding, where a subclass provides its own implementation of a method defined in its superclass. This is the primary form of polymorphism in Dart."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Polymorphism through Inheritance (Method Overriding)"
+    },
+    {
+      "type": "text",
+      "value": "When a subclass overrides a method from its superclass, you can call that method on a variable of the superclass type that actually holds an instance of the subclass. At runtime, Dart determines which method to invoke based on the actual object type – this is called **dynamic dispatch**."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Animal {\n  void speak() {\n    print('Animal makes a sound');\n  }\n}\n\nclass Dog extends Animal {\n  @override\n  void speak() {\n    print('Dog barks');\n  }\n}\n\nclass Cat extends Animal {\n  @override\n  void speak() {\n    print('Cat meows');\n  }\n}\n\nvoid main() {\n  Animal myPet = Dog();\n  myPet.speak(); // Output: Dog barks\n\n  myPet = Cat();\n  myPet.speak(); // Output: Cat meows\n}"
+    },
+    {
+      "type": "text",
+      "value": "In this example, `myPet` is declared as an `Animal`, but at runtime it refers to a `Dog` and then a `Cat`. The appropriate `speak()` method is called each time."
+    },
+    {
+      "type": "heading",
+      "value": "Polymorphism with Interfaces (Implicit Interfaces)"
+    },
+    {
+      "type": "text",
+      "value": "Every class in Dart implicitly defines an interface containing all its instance members. A class can implement one or more interfaces, which forces it to provide concrete implementations of those members. This allows different classes to be used interchangeably through the interface type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Flyable {\n  void fly() {}\n}\n\nclass Bird implements Flyable {\n  @override\n  void fly() {\n    print('Bird flies');\n  }\n}\n\nclass Airplane implements Flyable {\n  @override\n  void fly() {\n    print('Airplane flies');\n  }\n}\n\nvoid makeItFly(Flyable thing) {\n  thing.fly();\n}\n\nvoid main() {\n  makeItFly(Bird());      // Bird flies\n  makeItFly(Airplane());  // Airplane flies\n}"
+    },
+    {
+      "type": "heading",
+      "value": "The `is` and `as` Operators for Type Checking and Casting"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to check the actual type of an object at runtime. Use `is` (or `is!`) to test the type, and `as` to cast to a more specific type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void describe(Animal animal) {\n  if (animal is Dog) {\n    print('It\\'s a dog!');\n  } else if (animal is Cat) {\n    print('It\\'s a cat!');\n  }\n}\n\nvoid main() {\n  Animal a = Dog();\n  describe(a); // It's a dog!\n\n  // Using as to cast\n  Dog? dog = a as Dog?; // safe because we know a is a Dog\n}"
+    },
+    {
+      "type": "heading",
+      "value": "The `covariant` Keyword"
+    },
+    {
+      "type": "text",
+      "value": "When overriding a method, you can use the `covariant` keyword to narrow the type of a parameter. This tells Dart that the override accepts a more specific subtype of the original parameter type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Animal {}\nclass Dog extends Animal {}\n\nclass AnimalHandler {\n  void handle(Animal animal) {\n    print('Handling animal');\n  }\n}\n\nclass DogHandler extends AnimalHandler {\n  @override\n  void handle(covariant Dog animal) {\n    print('Handling dog');\n  }\n}\n\nvoid main() {\n  DogHandler handler = DogHandler();\n  handler.handle(Dog()); // OK\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Polymorphism with `dynamic` (Use with Caution)"
+    },
+    {
+      "type": "text",
+      "value": "Dart's `dynamic` type disables static type checking, allowing any method call. This is a form of polymorphism, but it sacrifices type safety. Prefer using interfaces or inheritance instead."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  dynamic thing = Dog();\n  thing.speak(); // Works, but no type safety\n  thing.unknownMethod(); // Runtime error\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Polymorphism with Generics"
+    },
+    {
+      "type": "text",
+      "value": "Generics allow you to write code that works with a variety of types while preserving type safety. For example, a `List<T>` can hold any type, but you still get static checking when you use it."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "T identity<T>(T value) {\n  return value;\n}\n\nvoid main() {\n  print(identity<int>(42));\n  print(identity<String>('Hello'));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Polymorphism allows objects of different types to be treated uniformly through a common interface.",
+        "- In Dart, the main form of polymorphism is **runtime polymorphism** achieved by overriding methods.",
+        "- Dart does not support traditional method overloading; use optional/named parameters instead.",
+        "- Use `implements` to enforce interface contracts and achieve polymorphism across unrelated classes.",
+        "- The `is` and `as` operators help with type checking and casting.",
+        "- `covariant` lets you narrow parameter types in overrides.",
+        "- Prefer using explicit interfaces over `dynamic` for type safety."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Does Dart support method overloading?",
+      "answer": "No, Dart does not support traditional method overloading where multiple methods share the same name but have different parameter signatures. You can simulate similar behaviour using optional parameters, named parameters, or by using `dynamic` (though not recommended)."
+    },
+    {
+      "question": "What is the difference between `extends` and `implements` in terms of polymorphism?",
+      "answer": "`extends` creates a subclass that inherits the superclass's implementation; you can override methods to provide polymorphic behaviour. `implements` forces a class to provide its own implementation of all members of the interface; it also enables polymorphism through that interface type, but without code reuse."
+    },
+    {
+      "question": "Can I achieve polymorphism without inheritance?",
+      "answer": "Yes, by using interfaces (implicitly via `implements`) or by using mixins. Any class that implements the same interface can be used polymorphically through that interface type."
+    },
+    {
+      "question": "What is the `covariant` keyword and when should I use it?",
+      "answer": "`covariant` allows you to narrow the type of a parameter when overriding a method. Use it when you want an override to accept a more specific subtype than the original method. It tells the analyzer that the override is intentionally more restrictive."
+    },
+    {
+      "question": "How does polymorphism work with collections?",
+      "answer": "You can have a collection of a supertype (e.g., `List<Animal>`) that holds instances of various subtypes (e.g., `Dog`, `Cat`). When you iterate and call a method, the appropriate overridden version is called."
+    },
+    {
+      "question": "What is dynamic dispatch?",
+      "answer": "Dynamic dispatch is the mechanism by which a call to an overridden method is resolved at runtime based on the actual type of the object, not the reference type. This is what enables runtime polymorphism."
+    },
+    {
+      "question": "Is it better to use `dynamic` or interfaces for polymorphism?",
+      "answer": "Always prefer interfaces or inheritance over `dynamic`. `dynamic` bypasses static type checking and can lead to runtime errors. Interfaces provide a contract and maintain type safety."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class Shape {\n  void draw() {\n    print('Drawing a shape');\n  }\n}\n\nclass Circle extends Shape {\n  @override\n  void draw() {\n    print('Drawing a circle');\n  }\n}\n\nclass Square extends Shape {\n  @override\n  void draw() {\n    print('Drawing a square');\n  }\n}\n\nvoid main() {\n  List<Shape> shapes = [Circle(), Square()];\n  for (var shape in shapes) {\n    shape.draw();\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the output of this code?\n\nclass A { void foo() { print('A'); } }\nclass B extends A { @override void foo() { print('B'); } }\nvoid main() { A obj = B(); obj.foo(); }",
+      "options": ["A", "B", "Error", "Nothing"],
+      "answer": 1
+    },
+    {
+      "question": "Which keyword is used to narrow a parameter type in an overridden method?",
+      "options": ["narrow", "covariant", "specific", "specialize"],
+      "answer": 1
+    },
+    {
+      "question": "Does Dart support compile‑time polymorphism through method overloading?",
+      "options": ["Yes, fully", "Only with dynamic", "No, but you can use optional parameters", "Yes, using the `overload` keyword"],
+      "answer": 2
+    },
+    {
+      "question": "What does the `as` operator do?",
+      "options": [
+        "Checks the type of an object",
+        "Casts an object to a type",
+        "Creates a new object",
+        "Assigns a value"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-classes",
+    "dart-inheritance",
+    "dart-interfaces",
+    "dart-abstract-classes"
+  ]
+}

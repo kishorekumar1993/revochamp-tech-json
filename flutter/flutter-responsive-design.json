@@ -1,0 +1,246 @@
+{
+  "slug": "flutter-responsive-design",
+  "course": "Flutter",
+  "title": "Flutter Responsive Design – Build Adaptive UIs for Any Screen",
+  "meta": {
+    "title": "Flutter Responsive Design: Create Adaptive UIs for All Devices",
+    "description": "Learn how to build responsive Flutter apps using MediaQuery, LayoutBuilder, OrientationBuilder, and breakpoints. Make your UI adapt to different screen sizes and orientations.",
+    "keywords": [
+      "Flutter responsive design",
+      "Flutter adaptive UI",
+      "MediaQuery Flutter",
+      "LayoutBuilder",
+      "OrientationBuilder",
+      "Responsive layouts",
+      "Flutter breakpoints"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Responsive Design?"
+    },
+    {
+      "type": "text",
+      "value": "Responsive design means that your app's layout adapts to the screen size and orientation of the device. It ensures that your app looks good and functions well on everything from small phones to large tablets, foldables, and desktop windows. In Flutter, there are several tools to achieve this: `MediaQuery`, `LayoutBuilder`, `OrientationBuilder`, and flexible widgets like `Flexible` and `Expanded`. This guide will teach you how to build truly responsive Flutter apps."
+    },
+    {
+      "type": "heading",
+      "value": "MediaQuery – The Device Screen"
+    },
+    {
+      "type": "text",
+      "value": "`MediaQuery` provides information about the current device's screen size, orientation, pixel density, and more. You can use it to get the screen dimensions and adjust your UI accordingly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final screenSize = MediaQuery.of(context).size;\nfinal width = screenSize.width;\nfinal height = screenSize.height;\n\n// Use width to conditionally layout\nif (width > 600) {\n  // Tablet or desktop layout\n} else {\n  // Mobile layout\n}"
+    },
+    {
+      "type": "heading",
+      "value": "OrientationBuilder – Reacting to Orientation"
+    },
+    {
+      "type": "text",
+      "value": "`OrientationBuilder` rebuilds its child when the device orientation changes. It gives you the current `Orientation` (portrait or landscape). This is useful for switching between a vertical list and a grid, for example."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "OrientationBuilder(\n  builder: (context, orientation) {\n    return GridView.count(\n      crossAxisCount: orientation == Orientation.portrait ? 2 : 4,\n      children: [...],\n    );\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "LayoutBuilder – Knowing Parent Constraints"
+    },
+    {
+      "type": "text",
+      "value": "`LayoutBuilder` gives you the constraints imposed by the parent widget. This is more powerful than `MediaQuery` because it reacts to the available space within the layout, not just the screen size. It's ideal for widgets that need to adapt to the space they're given (e.g., inside a drawer or a dialog)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "LayoutBuilder(\n  builder: (context, constraints) {\n    if (constraints.maxWidth > 600) {\n      return Row(...); // wide layout\n    } else {\n      return Column(...); // narrow layout\n    }\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "FractionallySizedBox – Percentage‑Based Sizing"
+    },
+    {
+      "type": "text",
+      "value": "`FractionallySizedBox` sizes its child to a fraction of the available space. This is great for creating flexible layouts without hard‑coded pixel values."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "FractionallySizedBox(\n  widthFactor: 0.5, // 50% of parent width\n  heightFactor: 0.3, // 30% of parent height\n  child: Container(color: Colors.blue),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Flexible and Expanded – Share Space Dynamically"
+    },
+    {
+      "type": "text",
+      "value": "`Flexible` and `Expanded` are used inside `Row`, `Column`, and `Flex` to distribute space among children. `Expanded` forces the child to fill the remaining space; `Flexible` allows the child to shrink to its natural size but still be flexible."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Row(\n  children: [\n    Flexible(\n      flex: 1,\n      child: Text('This can wrap'),\n    ),\n    Expanded(\n      flex: 2,\n      child: Text('This expands twice as much'),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Responsive Breakpoints – Classic Approach"
+    },
+    {
+      "type": "text",
+      "value": "Define breakpoints to switch between layouts. Common breakpoints are:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Mobile: < 600 dp",
+        "- Tablet: 600 – 1200 dp",
+        "- Desktop: > 1200 dp"
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "bool isMobile(BuildContext context) => MediaQuery.of(context).size.width < 600;\nbool isTablet(BuildContext context) =>\n    MediaQuery.of(context).size.width >= 600 &&\n    MediaQuery.of(context).size.width < 1200;\nbool isDesktop(BuildContext context) =>\n    MediaQuery.of(context).size.width >= 1200;"
+    },
+    {
+      "type": "heading",
+      "value": "Adaptive vs Responsive"
+    },
+    {
+      "type": "text",
+      "value": "Responsive design usually refers to the layout adapting to screen size (e.g., columns rearrange). Adaptive design goes further: it changes the UI components themselves to suit the platform (e.g., using `Cupertino` widgets on iOS vs `Material` on Android). Flutter makes it easy to create both:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "if (Theme.of(context).platform == TargetPlatform.iOS) {\n  return CupertinoButton(...);\n} else {\n  return ElevatedButton(...);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Responsive Patterns"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Mobile**: Single column, bottom navigation bar.",
+        "- **Tablet**: Two‑column layout with side navigation or a master‑detail view.",
+        "- **Desktop**: Multi‑column, side panels, keyboard shortcuts, larger spacing."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Avoid hard‑coded pixel values; use percentages, flexible widgets, and layout builders.",
+        "- Test on multiple screen sizes (use device preview in Flutter DevTools).",
+        "- Use `MediaQuery.of(context).size` sparingly; prefer `LayoutBuilder` when the size is needed within a subtree.",
+        "- Create reusable responsive widgets that accept width constraints.",
+        "- Use `MediaQuery`'s `padding` to respect safe areas (notches, status bars)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Using `MediaQuery` inside a `build` method that rebuilds often** – can cause performance issues; store values in `initState` or use `LayoutBuilder`.",
+        "- **Not testing on different screen sizes** – assumptions about layout may break.",
+        "- **Using `Expanded` inside a `Column` without `Flexible` for wrapping** – may cause overflow.",
+        "- **Hard‑coding font sizes** – use `MediaQuery.textScaler` or responsive font sizes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Responsive design adapts layout to screen size and orientation.",
+        "-`MediaQuery` provides screen dimensions and orientation.",
+        "- `LayoutBuilder` gives you available space constraints from the parent.",
+        "- `OrientationBuilder` reacts to device orientation changes.",
+        "- Use `Flexible`, `Expanded`, and `FractionallySizedBox` for flexible sizing.",
+        "- Define breakpoints to switch between layouts.",
+        "- Always test on multiple devices and orientations."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `MediaQuery` and `LayoutBuilder`?",
+      "answer": "`MediaQuery` gives you information about the device screen (size, orientation, etc.). `LayoutBuilder` gives you the constraints imposed by the parent widget in the tree. `LayoutBuilder` is more precise for sub‑layouts because it reflects the actual available space, not the whole screen."
+    },
+    {
+      "question": "How do I make fonts responsive?",
+      "answer": "You can use `MediaQuery.textScaler` to get a text scaler, or use `MediaQuery.of(context).size.width` to calculate font size as a percentage of screen width. However, it's often better to let the user control font size via system settings and use `textScaleFactor` appropriately."
+    },
+    {
+      "question": "What is the difference between `Expanded` and `Flexible`?",
+      "answer": "`Expanded` forces the child to fill the remaining space (it is a shorthand for `Flexible(fit: FlexFit.tight)`). `Flexible` allows the child to take space but also lets it be smaller if its intrinsic size is smaller; it can be used to create flexible layouts where children can shrink."
+    },
+    {
+      "question": "Should I use `MediaQuery` directly in the `build` method?",
+      "answer": "It's fine, but be aware that `MediaQuery` triggers a rebuild when the screen rotates or the size changes. If you only need the value for an initial layout, you can store it in `initState` and listen to orientation changes with `OrientationBuilder` if needed."
+    },
+    {
+      "question": "How do I handle different screen densities (pixel density) for images?",
+      "answer": "Use `AssetImage` with `flutter`'s automatic resolution‑aware image handling. Place images in `2.0x`, `3.0x` folders. For network images, you may need to serve different resolutions based on screen size."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(const MyApp());\n\nclass MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Responsive Demo',\n      home: Scaffold(\n        appBar: AppBar(title: const Text('Responsive Layout')),\n        body: SafeArea(\n          child: Padding(\n            padding: const EdgeInsets.all(16),\n            child: LayoutBuilder(\n              builder: (context, constraints) {\n                if (constraints.maxWidth > 600) {\n                  // Wide layout\n                  return Row(\n                    children: [\n                      Expanded(\n                        child: Container(\n                          color: Colors.blue.shade100,\n                          padding: const EdgeInsets.all(16),\n                          child: const Center(child: Text('Left Panel')),\n                        ),\n                      ),\n                      const SizedBox(width: 16),\n                      Expanded(\n                        child: Container(\n                          color: Colors.green.shade100,\n                          padding: const EdgeInsets.all(16),\n                          child: const Center(child: Text('Right Panel')),\n                        ),\n                      ),\n                    ],\n                  );\n                } else {\n                  // Narrow layout\n                  return Column(\n                    children: [\n                      Expanded(\n                        child: Container(\n                          color: Colors.blue.shade100,\n                          padding: const EdgeInsets.all(16),\n                          child: const Center(child: Text('Top Panel')),\n                        ),\n                      ),\n                      const SizedBox(height: 16),\n                      Expanded(\n                        child: Container(\n                          color: Colors.green.shade100,\n                          padding: const EdgeInsets.all(16),\n                          child: const Center(child: Text('Bottom Panel')),\n                        ),\n                      ),\n                    ],\n                  );\n                }\n              },\n            ),\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget gives you the screen dimensions?",
+      "options": ["LayoutBuilder", "MediaQuery", "OrientationBuilder", "FractionallySizedBox"],
+      "answer": 1
+    },
+    {
+      "question": "What does `LayoutBuilder` provide?",
+      "options": [
+        "Screen size and orientation",
+        "Constraints from the parent widget",
+        "The device's pixel density",
+        "The text scaling factor"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you make a widget take 50% of its parent's width?",
+      "options": [
+        "Container(width: MediaQuery.of(context).size.width * 0.5)",
+        "SizedBox(width: 0.5, child: ...)",
+        "FractionallySizedBox(widthFactor: 0.5, child: ...)",
+        "Expanded(child: ...)"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which breakpoint is commonly used for tablet layouts?",
+      "options": ["< 600", ">= 600 and < 1200", ">= 1200", ">= 800"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-layout",
+    "flutter-mediaquery",
+    "flutter-flexible",
+    "flutter-adaptive"
+  ]
+}

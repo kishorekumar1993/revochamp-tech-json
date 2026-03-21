@@ -1,0 +1,221 @@
+{
+  "slug": "dart-isolates",
+  "course": "Dart",
+  "title": "Dart Isolates – Parallelism and Concurrency",
+  "meta": {
+    "title": "Dart Isolates: A Complete Guide to Concurrent Programming",
+    "description": "Learn about isolates in Dart – how to run code in parallel, communicate between isolates, handle CPU‑intensive tasks, and use Isolate.spawn with practical examples.",
+    "keywords": [
+      "Dart isolates",
+      "Dart concurrency",
+      "Dart Isolate.spawn",
+      "Dart SendPort ReceivePort",
+      "Dart parallel programming",
+      "Dart background tasks",
+      "Dart compute"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Isolates?"
+    },
+    {
+      "type": "text",
+      "value": "In Dart, all Dart code runs inside **isolates**. An isolate is a separate execution context with its own memory heap and its own event loop. Isolates do not share memory; they communicate by passing messages (like how processes communicate). This design avoids many concurrency bugs (like race conditions) and allows Dart to run on multiple cores efficiently."
+    },
+    {
+      "type": "text",
+      "value": "The main isolate (where `main()` runs) is created automatically. You can spawn additional isolates to perform heavy computations in parallel without blocking the main event loop."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Isolates?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **CPU‑intensive tasks** – image processing, JSON parsing, complex calculations.",
+        "- **Keeping UI responsive** – move heavy work off the main isolate (especially important in Flutter).",
+        "- **True parallelism** – on multi‑core devices, isolates can run simultaneously."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Spawning an Isolate"
+    },
+    {
+      "type": "text",
+      "value": "To create a new isolate, use `Isolate.spawn(entryPoint, message)`. The entry point must be a top‑level function or a static method that takes a single argument. The new isolate starts running that function."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:isolate';\n\nvoid heavyTask(String message) {\n  print('Isolate received: $message');\n  // Do some heavy work\n  for (int i = 0; i < 5; i++) {\n    print('Isolate working... $i');\n  }\n}\n\nvoid main() async {\n  print('Main start');\n  await Isolate.spawn(heavyTask, 'Hello from main');\n  print('Main continues (non‑blocking)');\n  await Future.delayed(Duration(seconds: 2)); // wait to see isolate output\n}"
+    },
+    {
+      "type": "text",
+      "value": "Note: `Isolate.spawn` is asynchronous and returns a future that completes with the isolate reference. The new isolate runs independently."
+    },
+    {
+      "type": "heading",
+      "value": "Communicating Between Isolates"
+    },
+    {
+      "type": "text",
+      "value": "Because isolates don't share memory, you need to pass messages using ports. A `ReceivePort` listens for incoming messages, and a `SendPort` sends messages to a specific receive port. Typically, the main isolate creates a receive port and sends its send port to the child isolate."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:isolate';\n\nvoid worker(SendPort sendPort) {\n  sendPort.send('Hello from isolate');\n}\n\nvoid main() async {\n  // Create a ReceivePort for the main isolate\n  ReceivePort receivePort = ReceivePort();\n\n  // Spawn the isolate, passing the send port of the receive port\n  await Isolate.spawn(worker, receivePort.sendPort);\n\n  // Listen for messages from the isolate\n  receivePort.listen((message) {\n    print('Received: $message');\n    receivePort.close();\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Two‑Way Communication"
+    },
+    {
+      "type": "text",
+      "value": "Often you need the child isolate to send data back. You can set up a dedicated receive port in the child and send its send port to the main isolate. The main isolate then uses that send port to send messages to the child."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:isolate';\n\nvoid worker(SendPort mainSendPort) async {\n  // Create a receive port for this isolate\n  ReceivePort childReceivePort = ReceivePort();\n  // Send its send port back to the main isolate\n  mainSendPort.send(childReceivePort.sendPort);\n\n  // Now listen for messages from the main isolate\n  childReceivePort.listen((message) {\n    print('Child received: $message');\n    if (message == 'ping') {\n      mainSendPort.send('pong');\n    }\n  });\n}\n\nvoid main() async {\n  ReceivePort mainReceivePort = ReceivePort();\n\n  await Isolate.spawn(worker, mainReceivePort.sendPort);\n\n  // Wait for the child to send its send port\n  SendPort childSendPort = await mainReceivePort.first;\n\n  // Now we can send messages to the child\n  childSendPort.send('ping');\n\n  // Listen for responses\n  mainReceivePort.listen((message) {\n    if (message != childSendPort) {\n      print('Main received: $message');\n    }\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Long‑Lived Isolates and Streaming"
+    },
+    {
+      "type": "text",
+      "value": "You can keep an isolate alive for multiple tasks. The pattern above sets up a permanent communication channel. For simpler one‑off tasks, you can create a short‑lived isolate that exits after sending a result."
+    },
+    {
+      "type": "heading",
+      "value": "The `compute()` Function (Flutter)"
+    },
+    {
+      "type": "text",
+      "value": "In Flutter, the `compute()` function provides a convenient way to run a function in a separate isolate and get a single result. It's ideal for offloading a one‑time heavy task."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/foundation.dart';\n\nint heavySum(int n) {\n  int sum = 0;\n  for (int i = 0; i < n; i++) sum += i;\n  return sum;\n}\n\nvoid main() async {\n  int result = await compute(heavySum, 1000000);\n  print('Sum: $result');\n}"
+    },
+    {
+      "type": "text",
+      "value": "Note: `compute` is Flutter‑specific; it wraps isolate creation and communication for you."
+    },
+    {
+      "type": "heading",
+      "value": "What Can Be Sent Between Isolates?"
+    },
+    {
+      "type": "text",
+      "value": "Messages must be **serializable**. You can send primitive types, lists, maps, strings, and custom objects if they are serializable (e.g., using `dart:convert`). You cannot send objects with native resources (like file handles) or closures."
+    },
+    {
+      "type": "heading",
+      "value": "Common Pitfalls"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting to close ports** – unused ports prevent garbage collection.",
+        "- **Sending unsendable objects** – leads to runtime errors.",
+        "- **Main isolate blocking** – isolates help, but if the main isolate is blocked, the UI freezes anyway.",
+        "- **Too many isolates** – spawning isolates has overhead; reuse them if you have many tasks."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Isolates are independent workers with their own memory and event loop.",
+        "- Use `Isolate.spawn` to create a new isolate.",
+        "- Communication is via `SendPort` and `ReceivePort`.",
+        "- Use isolates for CPU‑intensive tasks to keep the UI responsive.",
+        "- In Flutter, `compute` simplifies one‑off isolate tasks.",
+        "- Always close ports when done to avoid leaks."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between an isolate and a thread?",
+      "answer": "Threads share memory and require synchronization (locks). Isolates do not share memory; they communicate only via message passing. This eliminates data races and makes concurrency simpler."
+    },
+    {
+      "question": "Can multiple isolates run at the same time?",
+      "answer": "Yes, on multi‑core devices, isolates can run in true parallel. On a single‑core device, they are still concurrent but time‑sliced."
+    },
+    {
+      "question": "How many isolates can I spawn?",
+      "answer": "There is no hard limit, but each isolate has its own memory overhead. Spawning hundreds might be impractical. For many tasks, consider using a pool of isolates."
+    },
+    {
+      "question": "Can I access the same file from two isolates?",
+      "answer": "Yes, but you must coordinate access because isolates don't share memory. You could use a single isolate to manage file I/O and send file contents via messages."
+    },
+    {
+      "question": "What is the difference between `Isolate.spawn` and `Isolate.spawnUri`?",
+      "answer": "`Isolate.spawn` creates a new isolate from the same code. `Isolate.spawnUri` creates an isolate from a different Dart file (or even a different URI)."
+    },
+    {
+      "question": "Do isolates have their own global variables?",
+      "answer": "Yes, each isolate has its own global namespace. Static variables are not shared."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "defaultCode": ""
+  },
+  "quiz": [
+    {
+      "question": "What is the primary way isolates communicate?",
+      "options": [
+        "Shared memory",
+        "Message passing via ports",
+        "Global variables",
+        "File I/O"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which function in Flutter simplifies running a function in an isolate?",
+      "options": ["Isolate.run()", "compute()", "spawn()", "isolate()"],
+      "answer": 1
+    },
+    {
+      "question": "What happens if you send an unsendable object to an isolate?",
+      "options": [
+        "It is automatically serialized",
+        "It causes a runtime error",
+        "It works but may be slow",
+        "The isolate crashes silently"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How many isolates can a Dart program have?",
+      "options": [
+        "Only one",
+        "Two (main and child)",
+        "As many as system resources allow",
+        "Limited to 64"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "dart-async-await",
+    "dart-future",
+    "dart-event-loop",
+    "flutter-compute"
+  ]
+}

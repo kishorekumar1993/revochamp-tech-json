@@ -1,0 +1,194 @@
+{
+  "slug": "flutter-setstate",
+  "course": "Flutter",
+  "title": "Flutter setState – A Complete Guide to Stateful Widgets",
+  "meta": {
+    "title": "Flutter setState: Update UI in StatefulWidgets with Examples",
+    "description": "Learn how to use setState in Flutter to update the UI dynamically. Master state management in StatefulWidget, best practices, common mistakes, and performance tips.",
+    "keywords": [
+      "Flutter setState",
+      "StatefulWidget",
+      "Flutter state management",
+      "setState example",
+      "Flutter update UI",
+      "Flutter stateful widget",
+      "Flutter rebuild"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is setState?"
+    },
+    {
+      "type": "text",
+      "value": "`setState` is a method provided by `StatefulWidget` that tells Flutter that the state of the widget has changed and that the UI should be rebuilt. It is the simplest form of state management in Flutter and is perfect for managing local state that belongs to a single widget. When you call `setState`, you pass a callback that modifies the state variables. After the callback finishes, Flutter schedules a rebuild of the widget, updating the UI with the new values."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "To use `setState`, your widget must extend `StatefulWidget` and you must have a corresponding `State` class. Inside the `State` class, you call `setState` to update variables. The typical pattern is:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Counter extends StatefulWidget {\n  @override\n  _CounterState createState() => _CounterState();\n}\n\nclass _CounterState extends State<Counter> {\n  int _count = 0;\n\n  void _increment() {\n    setState(() {\n      _count++;\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      children: [\n        Text('Count: $_count'),\n        ElevatedButton(\n          onPressed: _increment,\n          child: Text('Increment'),\n        ),\n      ],\n    );\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "Notice that `_count` is a member variable of the `_CounterState` class. The `setState` callback modifies it, and then the `build` method is called again, reflecting the new value."
+    },
+    {
+      "type": "heading",
+      "value": "When to Use setState"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Local state** that only affects a single widget or a small subtree.",
+        "- **Simple interactions** like toggles, counters, text fields, and animations.",
+        "- When you don't need to share state across multiple widgets.",
+        "- For prototyping or small apps where more complex state management would be overkill."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Performance Considerations"
+    },
+    {
+      "type": "text",
+      "value": "`setState` rebuilds the entire widget subtree of the `State` object. To keep your app fast:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Keep the widget tree small** under the state that calls `setState`. If possible, split large widgets into smaller ones so that only the affected part rebuilds.",
+        "- **Avoid calling `setState` unnecessarily**, e.g., inside loops or without actual changes.",
+        "- **Use `const` widgets** wherever possible to avoid unnecessary rebuilds.",
+        "- **Don't call `setState` after the widget is disposed**. Always check `mounted` before calling `setState` in asynchronous callbacks."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Calling `setState` without changing any state**: This causes unnecessary rebuilds. Only call it when state actually changes.",
+        "- **Modifying state outside `setState`**: If you modify a state variable without wrapping it in `setState`, the UI won't update, leading to bugs.",
+        "- **Calling `setState` in `build`**: This creates an infinite loop because `setState` triggers `build`, which calls `setState` again.",
+        "- **Forgetting to check `mounted` in asynchronous callbacks**: If you call `setState` after a Future completes but the widget has been disposed, you'll get an error. Always use `if (mounted)` before calling `setState`.",
+        "- **Creating large, monolithic `State` widgets**: This makes rebuilds expensive. Break your UI into smaller widgets."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Advanced: Updating Multiple Variables"
+    },
+    {
+      "type": "text",
+      "value": "You can update multiple state variables in a single `setState` call. Flutter will batch the rebuild. For example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void _updateBoth() {\n  setState(() {\n    _count++;\n    _isToggled = !_isToggled;\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using setState with TextEditingController"
+    },
+    {
+      "type": "text",
+      "value": "When you need to display the text of a `TextField` elsewhere, you can listen to changes with a `TextEditingController` and call `setState` to update the UI."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class _MyState extends State<MyWidget> {\n  final TextEditingController _controller = TextEditingController();\n  String _display = '';\n\n  @override\n  void initState() {\n    super.initState();\n    _controller.addListener(() {\n      setState(() {\n        _display = _controller.text;\n      });\n    });\n  }\n\n  @override\n  void dispose() {\n    _controller.dispose();\n    super.dispose();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      children: [\n        TextField(controller: _controller),\n        Text('You typed: $_display'),\n      ],\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `setState` is used in `StatefulWidget` to update the UI.",
+        "- Call it inside a function that modifies the state variables.",
+        "- Only update variables that are actually used in the `build` method.",
+        "- Keep the rebuild scope small by splitting widgets.",
+        "- Always check `mounted` before calling `setState` in asynchronous code.",
+        "- For shared state across widgets, consider using a state management solution like `Provider`, `Bloc`, or `Riverpod`."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use setState in a StatelessWidget?",
+      "answer": "No, `setState` is only available in `StatefulWidget` because it requires the `State` object to hold the mutable state. If you need to update UI, you must use a `StatefulWidget`."
+    },
+    {
+      "question": "What happens if I call setState after the widget is disposed?",
+      "answer": "Flutter throws a `FlutterError` (in debug mode) or a `setState() called after dispose()` message. To avoid this, always check `if (mounted)` before calling `setState`, especially inside futures or callbacks."
+    },
+    {
+      "question": "Does setState rebuild the whole widget tree?",
+      "answer": "No, it rebuilds only the subtree of the `State` object that called `setState`. However, if your `State` widget contains a large subtree, all its children will be rebuilt. To optimize, split the widget tree into smaller widgets that rebuild independently."
+    },
+    {
+      "question": "How do I know when to use setState vs other state management solutions?",
+      "answer": "Use `setState` for local state that doesn't need to be shared. For state that is used across multiple widgets, or for complex app state, consider `Provider`, `Riverpod`, `Bloc`, or other solutions."
+    },
+    {
+      "question": "Can I call setState from outside the State class?",
+      "answer": "Not directly. You need to provide a callback that the State class can call. For example, you can pass a function from the parent to the child that calls `setState` in the parent."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'setState Demo',\n      home: Scaffold(\n        appBar: AppBar(title: Text('Counter')),\n        body: Center(child: CounterWidget()),\n      ),\n    );\n  }\n}\n\nclass CounterWidget extends StatefulWidget {\n  @override\n  _CounterWidgetState createState() => _CounterWidgetState();\n}\n\nclass _CounterWidgetState extends State<CounterWidget> {\n  int _count = 0;\n  bool _isVisible = true;\n\n  void _increment() {\n    setState(() {\n      _count++;\n    });\n  }\n\n  void _toggleVisibility() {\n    setState(() {\n      _isVisible = !_isVisible;\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        if (_isVisible)\n          Text(\n            'Count: $_count',\n            style: TextStyle(fontSize: 24),\n          ),\n        SizedBox(height: 20),\n        ElevatedButton(\n          onPressed: _increment,\n          child: Text('Increment'),\n        ),\n        SizedBox(height: 10),\n        ElevatedButton(\n          onPressed: _toggleVisibility,\n          child: Text(_isVisible ? 'Hide Count' : 'Show Count'),\n        ),\n      ],\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "In which type of widget can you use setState?",
+      "options": ["StatelessWidget", "StatefulWidget", "Both", "None"],
+      "answer": 1
+    },
+    {
+      "question": "What does setState do?",
+      "options": [
+        "It modifies the widget tree directly",
+        "It marks the widget as dirty and schedules a rebuild",
+        "It permanently changes the widget's properties",
+        "It updates the app's theme"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you check if the widget is still mounted before calling setState in an async callback?",
+      "options": ["if (this.isAlive)", "if (this.mounted)", "if (mounted)", "if (context.isMounted)"],
+      "answer": 2
+    },
+    {
+      "question": "What happens if you call setState inside the build method?",
+      "options": [
+        "The UI updates correctly",
+        "It causes an infinite loop and the app freezes",
+        "It throws an error immediately",
+        "It works but is inefficient"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-statefulwidget",
+    "flutter-statelesswidget",
+    "flutter-state-management",
+    "flutter-provider"
+  ]
+}

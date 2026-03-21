@@ -1,0 +1,204 @@
+{
+  "slug": "flutter-gradient",
+  "course": "Flutter",
+  "title": "Flutter Gradients – Linear, Radial, and Sweep Gradients",
+  "meta": {
+    "title": "Flutter Gradients: Linear, Radial, Sweep Gradients with Examples",
+    "description": "Learn how to use gradients in Flutter. Create LinearGradient, RadialGradient, SweepGradient, apply to Container, Text, CustomPaint, and more.",
+    "keywords": [
+      "Flutter gradient",
+      "LinearGradient",
+      "RadialGradient",
+      "SweepGradient",
+      "Flutter decoration",
+      "Flutter UI",
+      "Flutter styling"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Gradients?"
+    },
+    {
+      "type": "text",
+      "value": "Gradients are smooth transitions between two or more colors. In Flutter, gradients are used to add depth and visual interest to UI elements. Flutter provides three types of gradients: `LinearGradient` (colors transition along a line), `RadialGradient` (colors transition from a center point outward), and `SweepGradient` (colors transition around a center point). Gradients are typically applied via `BoxDecoration` to a `Container` or `DecoratedBox`, but can also be used for text, custom painters, and more."
+    },
+    {
+      "type": "heading",
+      "value": "LinearGradient – A Straight Line Transition"
+    },
+    {
+      "type": "text",
+      "value": "`LinearGradient` creates a gradient along a straight line. You specify a list of colors and optional stops, plus a `begin` and `end` `Alignment` (or `FractionalOffset`) to define the direction."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  width: 200,\n  height: 200,\n  decoration: BoxDecoration(\n    gradient: LinearGradient(\n      begin: Alignment.topLeft,\n      end: Alignment.bottomRight,\n      colors: [Colors.red, Colors.blue],\n      // stops: [0.0, 1.0] // optional, defaults to evenly spaced\n    ),\n  ),\n)"
+    },
+    {
+      "type": "text",
+      "value": "You can also use `Alignment` constants like `Alignment.centerLeft`, or create custom offsets with `Alignment(x, y)`. For more control, you can use `FractionalOffset` which ranges from 0.0 to 1.0 in both axes."
+    },
+    {
+      "type": "heading",
+      "value": "RadialGradient – Circular Transition"
+    },
+    {
+      "type": "text",
+      "value": "`RadialGradient` radiates from a center point. The gradient begins at `center` and spreads outward to the `radius`. You can also define `focal` (a secondary focus point) for a more dramatic effect."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  width: 200,\n  height: 200,\n  decoration: BoxDecoration(\n    gradient: RadialGradient(\n      center: Alignment.center,\n      radius: 0.8,\n      colors: [Colors.yellow, Colors.orange, Colors.red],\n      stops: [0.0, 0.5, 1.0],\n    ),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "SweepGradient – Angular Transition"
+    },
+    {
+      "type": "text",
+      "value": "`SweepGradient` creates a gradient that rotates around a center point, like a color wheel. It's great for loading indicators or circular progress."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  width: 200,\n  height: 200,\n  decoration: BoxDecoration(\n    gradient: SweepGradient(\n      center: Alignment.center,\n      startAngle: 0.0,\n      endAngle: 2 * 3.14159, // full circle\n      colors: [Colors.red, Colors.orange, Colors.yellow, Colors.green, Colors.blue, Colors.indigo, Colors.purple, Colors.red],\n    ),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Applying Gradients to Text"
+    },
+    {
+      "type": "text",
+      "value": "To apply a gradient to text, you can use `ShaderMask` or `RichText` with a `TextSpan` and `TextStyle` that includes a `foreground` paint. The `ShaderMask` approach is simpler for entire text blocks."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ShaderMask(\n  shaderCallback: (bounds) {\n    return LinearGradient(\n      colors: [Colors.purple, Colors.pink],\n      begin: Alignment.topLeft,\n      end: Alignment.bottomRight,\n    ).createShader(bounds);\n  },\n  child: const Text(\n    'Gradient Text',\n    style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Gradients on CustomPaint"
+    },
+    {
+      "type": "text",
+      "value": "For custom shapes, you can use the `CustomPaint` widget and create a `CustomPainter` that uses a `Paint` with a shader created from the gradient. This gives you full control over the drawing area."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class GradientCirclePainter extends CustomPainter {\n  @override\n  void paint(Canvas canvas, Size size) {\n    final paint = Paint()\n      ..shader = LinearGradient(\n        colors: [Colors.blue, Colors.green],\n        begin: Alignment.topLeft,\n        end: Alignment.bottomRight,\n      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));\n    canvas.drawCircle(size.center(Offset.zero), size.width / 2, paint);\n  }\n\n  @override\n  bool shouldRepaint(CustomPainter oldDelegate) => false;\n}\n\nCustomPaint(\n  size: Size(200, 200),\n  painter: GradientCirclePainter(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Using `Colors` list with inconsistent stops**: If you provide stops, you must provide one stop per color, and they must be in increasing order (0.0 to 1.0).",
+        "- **Forgetting `BoxDecoration`**: Gradients can only be applied via `BoxDecoration` (for containers) or directly via `Paint` in custom painting; you cannot set `gradient` directly on a `Container` without decoration.",
+        "- **Mixing `Alignment` and `FractionalOffset`**: They are different types; use the appropriate one for the property (e.g., `begin` expects `Alignment`).",
+        "- **Not specifying `colors` with at least two colors**: A gradient needs at least two colors; otherwise it's just a solid color.",
+        "- **Applying gradient to text without `ShaderMask`**: Directly setting `gradient` on `TextStyle` is not supported; use `ShaderMask` or `RichText`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- For smooth transitions, use colors with similar brightness or a gradient from a color scheme library.",
+        "- Use `const` for gradient definitions that don't change to improve performance.",
+        "- Precompute gradients that are reused across multiple widgets to avoid unnecessary allocations.",
+        "- When applying gradients to text, ensure the text remains readable – use high contrast or darken the gradient beneath.",
+        "- Test gradients on different background colors to ensure visibility."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `LinearGradient` for straight line transitions.",
+        "- Use `RadialGradient` for circular transitions.",
+        "- Use `SweepGradient` for angular transitions (like color wheels).",
+        "- Gradients are applied through `BoxDecoration` (for containers) or through `Paint` shaders (for custom drawing).",
+        "- For text, wrap the text in `ShaderMask` with a gradient shader.",
+        "- Provide stops for fine control over color placement."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I apply a gradient to an image?",
+      "answer": "Yes, you can stack a `Container` with a gradient on top of an image using a `Stack`, or you can use `DecoratedBox` to combine the image and gradient. For example: `Stack(children: [Image.asset(...), Container(decoration: BoxDecoration(gradient: ...))])`."
+    },
+    {
+      "question": "How do I make a gradient repeat?",
+      "answer": "Flutter's built‑in gradients do not repeat automatically. You can simulate repetition by using a `CustomPainter` that tiles the gradient, or use a `Shader` with `TileMode.repeated` when creating a shader manually. For simple cases, you might use a larger gradient area with `Alignment` outside the bounds."
+    },
+    {
+      "question": "What is the difference between `Alignment` and `FractionalOffset`?",
+      "answer": "Both represent a point relative to a rectangle. `Alignment` uses coordinates where (-1, -1) is top‑left, (1, 1) is bottom‑right, and (0, 0) is center. `FractionalOffset` uses coordinates where (0, 0) is top‑left, (1, 1) is bottom‑right. Some gradient properties use `Alignment`, others use `FractionalOffset`. Always check the property's type."
+    },
+    {
+      "question": "How do I create a gradient border?",
+      "answer": "You can achieve a gradient border by using a `Container` with a gradient as the background, and then another `Container` with a solid color as the child, leaving a small gap (border). Or use a `CustomPainter` to draw the border with a gradient stroke. A simpler method is to use `BoxDecoration` with `gradient` and a `border` of `Border.all` – but the border will be a solid color, not gradient. For gradient borders, custom painting is the most flexible."
+    },
+    {
+      "question": "Can I animate a gradient?",
+      "answer": "Yes, you can animate the `begin`, `end`, `colors`, or `stops` by using an `AnimationController` and rebuilding a widget that contains the gradient. Wrap the gradient in an `AnimatedBuilder` and update the values."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Gradients Demo')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Container(\n                width: 150,\n                height: 150,\n                decoration: BoxDecoration(\n                  gradient: LinearGradient(\n                    colors: [Colors.purple, Colors.orange],\n                    begin: Alignment.topLeft,\n                    end: Alignment.bottomRight,\n                  ),\n                ),\n              ),\n              SizedBox(height: 20),\n              Container(\n                width: 150,\n                height: 150,\n                decoration: BoxDecoration(\n                  gradient: RadialGradient(\n                    colors: [Colors.yellow, Colors.red],\n                    radius: 0.8,\n                  ),\n                ),\n              ),\n              SizedBox(height: 20),\n              ShaderMask(\n                shaderCallback: (bounds) => LinearGradient(\n                  colors: [Colors.green, Colors.blue],\n                  begin: Alignment.topLeft,\n                  end: Alignment.bottomRight,\n                ).createShader(bounds),\n                child: Text(\n                  'Gradient Text',\n                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),\n                ),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which class is used to define a gradient that transitions along a straight line?",
+      "options": ["LinearGradient", "RadialGradient", "SweepGradient", "Gradient"],
+      "answer": 0
+    },
+    {
+      "question": "How do you apply a gradient to a Container?",
+      "options": [
+        "Directly via the `gradient` property",
+        "Inside a `BoxDecoration` in the `decoration` property",
+        "Using `Container.gradient`",
+        "By wrapping with a `Gradient` widget"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What widget is commonly used to apply a gradient to text?",
+      "options": ["GradientText", "ShaderMask", "TextGradient", "TextShader"],
+      "answer": 1
+    },
+    {
+      "question": "What does `stops` in a gradient define?",
+      "options": [
+        "The direction of the gradient",
+        "The positions where each color starts",
+        "The radius of the gradient",
+        "The number of colors"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-container",
+    "flutter-decoration",
+    "flutter-text",
+    "flutter-custom-paint"
+  ]
+}

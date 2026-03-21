@@ -1,0 +1,240 @@
+{
+  "slug": "flutter-getx",
+  "course": "Flutter",
+  "title": "Flutter GetX – The Complete Guide to High‑Performance State Management",
+  "meta": {
+    "title": "Flutter GetX Tutorial: State Management, Navigation, and Dependency Injection",
+    "description": "Learn GetX for Flutter – reactive state management, dependency injection, routing, and utilities. Build scalable apps with less boilerplate.",
+    "keywords": [
+      "Flutter GetX",
+      "GetX state management",
+      "GetX navigation",
+      "GetX controller",
+      "reactive state",
+      "dependency injection",
+      "GetX tutorial"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is GetX?"
+    },
+    {
+      "type": "text",
+      "value": "GetX is an all‑in‑one Flutter package that provides high‑performance state management, intelligent dependency injection, and route management in a single solution. It is known for its simplicity, minimal boilerplate, and excellent performance. GetX combines reactive state management (using `.obs` variables), simple state management (via `GetBuilder`), dependency injection, navigation, and other utilities like internationalization, themes, and snackbars."
+    },
+    {
+      "type": "heading",
+      "value": "Why GetX?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Minimal boilerplate**: GetX reduces the amount of code needed to manage state and navigation.",
+        "- **High performance**: GetX only updates widgets that depend on changed values (reactive) or uses `Obx` for fine‑grained reactivity.",
+        "- **All‑in‑one**: State management, navigation, dependency injection, and more in one package.",
+        "- **Simple syntax**: No complex BuildContext manipulation for navigation or state.",
+        "- **Good for both small and large apps**: Scales well."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Adding GetX to Your Project"
+    },
+    {
+      "type": "text",
+      "value": "Add the `get` package to your `pubspec.yaml`:\n\n```yaml\ndependencies:\n  get: ^4.6.5\n```\n\nThen run `flutter pub get`.\n\nReplace `MaterialApp` with `GetMaterialApp` in your `main.dart` to enable GetX features."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() {\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'GetX Demo',\n      home: HomePage(),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Reactive State Management with .obs and Obx"
+    },
+    {
+      "type": "text",
+      "value": "The most common way to manage reactive state in GetX is to make variables `.obs` (observable) and wrap UI that uses them in `Obx` or `GetX`. When the observable changes, only the widgets inside `Obx` rebuild."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterController extends GetxController {\n  var count = 0.obs;\n\n  void increment() => count++;\n  void decrement() => count--;\n}"
+    },
+    {
+      "type": "text",
+      "value": "In your UI:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomePage extends StatelessWidget {\n  final CounterController c = Get.put(CounterController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetX Counter')),\n      body: Center(\n        child: Obx(() => Text('Count: ${c.count}', style: TextStyle(fontSize: 24))),\n      ),\n      floatingActionButton: Row(\n        mainAxisAlignment: MainAxisAlignment.end,\n        children: [\n          FloatingActionButton(\n            onPressed: c.increment,\n            child: Icon(Icons.add),\n          ),\n          SizedBox(width: 10),\n          FloatingActionButton(\n            onPressed: c.decrement,\n            child: Icon(Icons.remove),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Simple State Management with GetBuilder"
+    },
+    {
+      "type": "text",
+      "value": "For better performance in large apps, you can use `GetBuilder` which only updates when you manually call `update()` on the controller. This avoids the overhead of observing every variable."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterController extends GetxController {\n  int count = 0;\n\n  void increment() {\n    count++;\n    update(); // triggers rebuild of GetBuilder widgets\n  }\n}\n\n// In UI\nGetBuilder<CounterController>(\n  builder: (controller) => Text('Count: ${controller.count}'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Dependency Injection"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides several ways to inject dependencies: `Get.put`, `Get.lazyPut`, `Get.find`, and `Get.create`. These manage the lifecycle of controllers and services automatically."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Put instance\nGet.put(CounterController());\n\n// Lazy initialization (created when first needed)\nGet.lazyPut(() => CounterController());\n\n// Find instance anywhere\nfinal controller = Get.find<CounterController>();\n\n// Create a new instance each time\nGet.create(() => CounterController());"
+    },
+    {
+      "type": "heading",
+      "value": "Navigation"
+    },
+    {
+      "type": "text",
+      "value": "GetX simplifies navigation with named routes, and you can navigate without context."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Navigate to new screen\nGet.to(SecondPage());\n\n// Navigate with named route (define in GetMaterialApp routes)\nGet.toNamed('/second');\n\n// Pop\nGet.back();\n\n// Replace current screen\nGet.off(ThirdPage());\n\n// Remove all previous screens\nGet.offAll(LoginPage());\n\n// Pass arguments\nGet.to(DetailPage(), arguments: {'id': 42});\n\n// Receive arguments\nvar args = Get.arguments;\n"
+    },
+    {
+      "type": "heading",
+      "value": "Snackbars, Dialogs, and BottomSheets"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides easy‑to‑use methods for showing snackbars, dialogs, and bottom sheets without needing BuildContext."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Snackbar\nGet.snackbar('Title', 'Message', snackPosition: SnackPosition.BOTTOM);\n\n// Dialog\nGet.defaultDialog(title: 'Alert', middleText: 'This is a dialog');\n\n// BottomSheet\nGet.bottomSheet(Container(color: Colors.white, height: 200));"
+    },
+    {
+      "type": "heading",
+      "value": "Internationalization and Themes"
+    },
+    {
+      "type": "text",
+      "value": "GetX also includes built‑in support for translations and themes, making it easy to create multilingual and theme‑switchable apps."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetMaterialApp(\n  translations: MyTranslations(),\n  locale: Locale('en', 'US'),\n  fallbackLocale: Locale('en', 'US'),\n  theme: lightTheme,\n  darkTheme: darkTheme,\n  themeMode: ThemeMode.system,\n  home: HomePage(),\n)\n\n// Change theme\nGet.changeTheme(lightTheme);\n\n// Change language\nGet.updateLocale(Locale('fr', 'FR'));"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Use `GetX` or `Obx` for reactive state** when you need fine‑grained updates.",
+        "- **Use `GetBuilder` for simple state** with manual `update()` to avoid overhead.",
+        "- **Use `Get.lazyPut` for controllers that may not be needed immediately** to improve startup time.",
+        "- **Always dispose of resources** if needed using `onClose` in the controller.",
+        "- **Keep controllers small and focused** – one controller per feature/screen is a good practice.",
+        "- **Use named routes** for better organisation."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Not using `GetMaterialApp`**: Some GetX features (like `Get.to`) may still work, but others (like navigation with routes) won't.",
+        "- **Using `Obx` with non‑observable variables**: `Obx` only tracks `.obs` variables; if you change a plain variable, the UI won't update.",
+        "- **Calling `update()` unnecessarily** in `GetBuilder` – only call when state actually changes.",
+        "- **Not disposing of controllers**: GetX disposes controllers automatically when the route is removed, but if you use `Get.create`, you need to manage disposal.",
+        "- **Over‑using `Get.put` in many places**: Use dependency injection to centralise instance creation."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- GetX is a powerful all‑in‑one solution for state management, navigation, and dependency injection.",
+        "- Use `.obs` and `Obx` for reactive, auto‑updating state.",
+        "- Use `GetBuilder` for manual updates to optimise performance.",
+        "- Navigation is context‑free and simple.",
+        "- GetX provides many utilities like snackbars, dialogs, and internationalisation.",
+        "- Always use `GetMaterialApp` to enable all features."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between GetX and Provider?",
+      "answer": "GetX is a more complete solution that includes state management, navigation, and dependency injection. Provider focuses solely on state management and requires additional packages for navigation. GetX offers a reactive approach with `.obs` and `Obx` that is often more concise, and it doesn't require BuildContext for navigation. However, Provider is more aligned with Flutter's core concepts and may be preferred in some teams."
+    },
+    {
+      "question": "Should I use `Obx` or `GetBuilder`?",
+      "answer": "`Obx` is simpler and automatically rebuilds when any `.obs` variable used inside changes. `GetBuilder` gives you more control: it rebuilds only when you explicitly call `update()`. For performance, `GetBuilder` can be more efficient in large apps because you can control rebuilds. For small to medium apps, `Obx` is often sufficient."
+    },
+    {
+      "question": "How do I pass data between screens in GetX?",
+      "answer": "You can pass arguments using `Get.to(DetailPage(), arguments: data)`. In the receiving screen, access `Get.arguments`. For more structured data, you can also use a controller and share it between pages (using `Get.put` and `Get.find`)."
+    },
+    {
+      "question": "Does GetX work with Flutter Web?",
+      "answer": "Yes, GetX works on all platforms supported by Flutter, including web. However, some navigation features may behave slightly differently, but it's fully functional."
+    },
+    {
+      "question": "How do I test GetX controllers?",
+      "answer": "You can create a controller instance manually and test its methods. For widget tests, you can wrap your widget with `GetMaterialApp` and use `Get.put` or `Get.lazyPut` to inject the controller. The `get_test` package provides additional helpers."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() {\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'GetX Demo',\n      home: HomePage(),\n    );\n  }\n}\n\nclass CounterController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n  void decrement() => count--;\n}\n\nclass HomePage extends StatelessWidget {\n  final CounterController c = Get.put(CounterController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetX Counter')),\n      body: Center(\n        child: Obx(() => Text('Count: ${c.count}', style: TextStyle(fontSize: 24))),\n      ),\n      floatingActionButton: Row(\n        mainAxisAlignment: MainAxisAlignment.end,\n        children: [\n          FloatingActionButton(\n            onPressed: c.decrement,\n            child: Icon(Icons.remove),\n          ),\n          SizedBox(width: 10),\n          FloatingActionButton(\n            onPressed: c.increment,\n            child: Icon(Icons.add),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget should you use to enable GetX features in your app?",
+      "options": ["MaterialApp", "CupertinoApp", "GetMaterialApp", "GetApp"],
+      "answer": 2
+    },
+    {
+      "question": "How do you make a variable reactive in GetX?",
+      "options": ["Use `var count = 0;`", "Use `RxInt count = 0;`", "Use `var count = 0.obs;`", "Use `GetVariable(0)`"],
+      "answer": 2
+    },
+    {
+      "question": "Which widget rebuilds when an observable changes?",
+      "options": ["GetBuilder", "Obx", "GetX", "All of the above"],
+      "answer": 3
+    },
+    {
+      "question": "How do you navigate to a new screen without a BuildContext?",
+      "options": ["Get.to(Page())", "Navigator.push(context, Page())", "RouteManager.go(Page())", "GetX.navigate(Page())"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-provider",
+    "flutter-riverpod",
+    "flutter-bloc",
+    "flutter-state-management"
+  ]
+}

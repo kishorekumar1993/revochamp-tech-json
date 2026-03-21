@@ -1,0 +1,108 @@
+{
+  "slug": "flutter-wrap-widget",
+  "course": "Flutter",
+  "title": "Flutter Wrap Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Wrap Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Wrap to display children in multiple horizontal or vertical runs. Understand spacing, run spacing, alignment, and when to use Wrap vs Row/Column.",
+    "keywords": [
+      "Flutter Wrap",
+      "Wrap widget",
+      "multi-line layout",
+      "spacing",
+      "runAlignment",
+      "Flow layout"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Wrap in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Wrap is a layout widget that displays its children in multiple horizontal or vertical runs. When there's not enough space in the current run, it creates a new run. It's perfect for displaying chips, tags, or any collection of items that need to flow like text."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Wrap(\n  spacing: 8.0, // gap between adjacent children\n  runSpacing: 4.0, // gap between runs (lines)\n  children: [\n    Chip(label: Text('Flutter')),\n    Chip(label: Text('Dart')),\n    Chip(label: Text('Widget')),\n    Chip(label: Text('Layout')),\n    Chip(label: Text('Wrap')),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**direction**: Axis.horizontal (default) or Axis.vertical.",
+        "**alignment**: How to align children within a run (e.g., `WrapAlignment.start`, `center`, `end`, `spaceBetween`).",
+        "**spacing**: Space between children along the main axis.",
+        "**runAlignment**: How to align runs along the cross axis.",
+        "**runSpacing**: Space between runs.",
+        "**crossAxisAlignment**: How to align children within a run in the cross axis (e.g., `start`, `end`, `center`).",
+        "**textDirection**, **verticalDirection**: Control the order."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Wrap vs Row/Column"
+    },
+    {
+      "type": "text",
+      "value": "Use Row/Column when you have a fixed number of items that should stay in one line. Use Wrap when the number of items can vary and you want them to automatically wrap to the next line."
+    },
+    {
+      "type": "heading",
+      "value": "Common Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Tags or chips in a blog post.",
+        "Keyword lists.",
+        "Photo galleries that wrap.",
+        "Filter buttons that adapt to screen width."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Wrap automatically moves children to the next line when they don't fit.",
+        "Control gaps with `spacing` and `runSpacing`.",
+        "Align runs with `runAlignment`.",
+        "Wrap is more flexible than Row/Column for dynamic content."
+      ]
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Wrap Example')),\n        body: Padding(\n          padding: const EdgeInsets.all(8.0),\n          child: Wrap(\n            spacing: 10,\n            runSpacing: 10,\n            children: List.generate(15, (index) => Chip(label: Text('Item $index'))),\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does Wrap do when its children don't fit in the current line?",
+      "options": [
+        "It overflows",
+        "It creates a new line (run)",
+        "It shrinks the children",
+        "It throws an error"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-row-column",
+    "flutter-chip",
+    "flutter-flow",
+    "flutter-listview"
+  ]
+}

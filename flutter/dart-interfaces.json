@@ -1,0 +1,207 @@
+{
+  "slug": "dart-interfaces",
+  "course": "Dart",
+  "title": "Dart Interfaces – Implicit Interfaces and the `implements` Keyword",
+  "meta": {
+    "title": "Dart Interfaces: A Complete Guide with Examples",
+    "description": "Learn about interfaces in Dart – every class defines an interface. Understand how to use `implements` to enforce contracts, implement multiple interfaces, and design flexible APIs.",
+    "keywords": [
+      "Dart interface",
+      "Dart implements",
+      "Dart implicit interface",
+      "Dart multiple interfaces",
+      "Dart contract",
+      "Dart OOP",
+      "Dart programming"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is an Interface?"
+    },
+    {
+      "type": "text",
+      "value": "An interface defines a contract that a class must adhere to. It specifies a set of methods and properties that the class must implement, but it does not provide any implementation itself. In many languages (like Java), you declare an interface explicitly. In Dart, however, **every class implicitly defines an interface** containing all its instance members (methods, getters, setters). This means you can use any class as an interface."
+    },
+    {
+      "type": "heading",
+      "value": "The `implements` Keyword"
+    },
+    {
+      "type": "text",
+      "value": "To make a class adhere to an interface (i.e., to implement the contract of another class), use the `implements` keyword. The implementing class must provide concrete implementations for **all** members (methods, getters, setters) of the interface class."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// This class acts as an interface\nclass Flyable {\n  void fly() {}\n  int get altitude;\n}\n\n// Bird implements the Flyable interface\nclass Bird implements Flyable {\n  @override\n  void fly() {\n    print('Bird is flying');\n  }\n\n  @override\n  int get altitude => 1000;\n}\n\nvoid main() {\n  Bird bird = Bird();\n  bird.fly();\n  print('Altitude: ${bird.altitude}');\n}"
+    },
+    {
+      "type": "text",
+      "value": "Notice that even though `Flyable` is a class with empty method bodies, when another class implements it, it must provide its own versions of `fly()` and the getter `altitude`. The original implementation (if any) is **not** inherited – only the signature matters."
+    },
+    {
+      "type": "heading",
+      "value": "Implementing Multiple Interfaces"
+    },
+    {
+      "type": "text",
+      "value": "One of the key benefits of interfaces is that a class can implement multiple interfaces, enabling it to fulfill multiple contracts. This is different from inheritance, where a class can only extend one superclass."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Swimmable {\n  void swim() {}\n}\n\nclass Walkable {\n  void walk() {}\n}\n\nclass Duck implements Swimmable, Walkable {\n  @override\n  void swim() {\n    print('Duck swims');\n  }\n\n  @override\n  void walk() {\n    print('Duck walks');\n  }\n}\n\nvoid main() {\n  Duck duck = Duck();\n  duck.swim();\n  duck.walk();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Abstract Classes as Interfaces"
+    },
+    {
+      "type": "text",
+      "value": "You can also use abstract classes to define interfaces. Abstract classes can contain both abstract methods (without implementation) and concrete methods. When another class `implements` an abstract class, it must implement all members (both abstract and concrete)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class Drawable {\n  void draw(); // abstract\n  void info() {\n    print('This is a drawable object');\n  }\n}\n\nclass Circle implements Drawable {\n  @override\n  void draw() {\n    print('Drawing a circle');\n  }\n\n  @override\n  void info() {\n    print('Circle info'); // Must implement even though it had a body\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Difference Between `extends` and `implements`"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`extends`** creates a subclass that **inherits** the implementation of the superclass. You can override methods but you don't have to implement every method (you get them for free).",
+        "- **`implements`** makes the class adhere to an interface – it must provide its own implementation for **all** members of the implemented class. No code is inherited.",
+        "- A class can `extend` only one class, but can `implements` multiple interfaces."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Using `@override` with Interfaces"
+    },
+    {
+      "type": "text",
+      "value": "When you implement a method from an interface, it's good practice (though optional) to use the `@override` annotation. This helps the compiler ensure you're actually overriding a member, and it improves code readability."
+    },
+    {
+      "type": "heading",
+      "value": "Interface vs Abstract Class vs Mixin"
+    },
+    {
+      "type": "text",
+      "value": "It's important to understand the differences between these three code reuse mechanisms:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Interface (via `implements`)**: No implementation inheritance, only contract. Can implement multiple.",
+        "- **Abstract class (via `extends`)**: Can have both abstract and concrete methods, fields, constructors. Can only extend one.",
+        "- **Mixin (via `with`)**: Provides implementation but is not meant to be instantiated; can be mixed into multiple classes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use interfaces to define capabilities that can be implemented by unrelated classes.",
+        "- Name interfaces according to the ability they represent (e.g., `Flyable`, `Comparable`, `Iterable`).",
+        "- Keep interfaces small and focused (Interface Segregation Principle).",
+        "- Prefer `abstract class` over a concrete class as an interface if you want to provide some base implementation (but be aware it will still require full implementation when used with `implements`).",
+        "- When a class implements multiple interfaces, ensure there are no conflicting method signatures; if there are, you must provide a single implementation that satisfies all."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Define several interfaces (as classes)\nclass Printable {\n  void printData() {}\n}\n\nclass Storable {\n  void save() {}\n  void load() {}\n}\n\nclass Serializable {\n  String toJson() => '';\n}\n\n// A class that implements multiple interfaces\nclass Document implements Printable, Storable, Serializable {\n  String content;\n\n  Document(this.content);\n\n  @override\n  void printData() {\n    print('Printing document: $content');\n  }\n\n  @override\n  void save() {\n    print('Saving document...');\n  }\n\n  @override\n  void load() {\n    print('Loading document...');\n  }\n\n  @override\n  String toJson() {\n    return '{\"content\": \"$content\"}';\n  }\n}\n\nvoid main() {\n  Document doc = Document('Hello, Dart!');\n  doc.printData();\n  doc.save();\n  print('JSON: ${doc.toJson()}');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- In Dart, every class defines an implicit interface.",
+        "- Use `implements` to make a class adhere to one or more interfaces.",
+        "- When implementing an interface, you must provide implementations for **all** members of that interface.",
+        "- A class can implement multiple interfaces but extend only one superclass.",
+        "- Interfaces are ideal for defining contracts that multiple unrelated classes can fulfill."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Does Dart have an `interface` keyword?",
+      "answer": "No, Dart does not have a separate `interface` keyword. Instead, every class implicitly defines an interface. You use the `implements` keyword to make a class implement that interface."
+    },
+    {
+      "question": "Can a class implement an interface without providing all methods?",
+      "answer": "No, the implementing class must provide concrete implementations for **every** member of the interface. If it fails to do so, you'll get a compile‑time error. The class can be declared `abstract` if you want to leave some methods unimplemented."
+    },
+    {
+      "question": "What happens if two interfaces have a method with the same name?",
+      "answer": "The class must provide a single implementation that satisfies both interfaces. Dart's type system will ensure that the implementation matches the signatures of both. If the signatures are incompatible (different parameter types), you'll get a compile error."
+    },
+    {
+      "question": "Can I implement a class that already has implementation?",
+      "answer": "Yes, you can. The implementation in the original class is ignored when used as an interface; the implementing class must provide its own implementation."
+    },
+    {
+      "question": "When should I use `implements` vs `extends`?",
+      "answer": "Use `extends` when you want to inherit behavior and possibly override parts of it. Use `implements` when you only want to enforce a contract and you're providing all the implementation yourself. Often you'll combine both: `extends` one class and `implements` several interfaces."
+    },
+    {
+      "question": "Can I use a mixin as an interface?",
+      "answer": "Yes, a mixin can also be used as an interface with `implements`. But that would require the implementing class to provide all the mixin's methods, losing the code reuse that mixins offer. It's better to use `with` for mixins."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class Greetable {\n  void greet() {}\n}\n\nclass Person implements Greetable {\n  String name;\n  Person(this.name);\n\n  @override\n  void greet() {\n    print('Hello, my name is $name');\n  }\n}\n\nvoid main() {\n  Person p = Person('Alice');\n  p.greet();\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you make a class implement an interface in Dart?",
+      "options": ["extends", "implements", "with", "interface"],
+      "answer": 1
+    },
+    {
+      "question": "How many interfaces can a Dart class implement?",
+      "options": ["0", "1", "2", "Any number"],
+      "answer": 3
+    },
+    {
+      "question": "When a class implements an interface, what must it do?",
+      "options": [
+        "Inherit the implementation",
+        "Provide its own implementation for all members of the interface",
+        "Only implement abstract methods",
+        "Use the `@override` annotation for every method"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "True or False: In Dart, you must use the `interface` keyword to define an interface.",
+      "options": ["True", "False"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-classes",
+    "dart-abstract-classes",
+    "dart-mixins",
+    "dart-inheritance"
+  ]
+}

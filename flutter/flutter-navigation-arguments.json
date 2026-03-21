@@ -1,0 +1,218 @@
+{
+  "slug": "flutter-navigation-arguments",
+  "course": "Flutter",
+  "title": "Flutter Navigation Arguments – Passing Data Between Screens",
+  "meta": {
+    "title": "Flutter Navigation Arguments: Pass Data Between Screens",
+    "description": "Learn how to pass data between screens in Flutter using Navigator. Pass arguments via MaterialPageRoute, extract them with ModalRoute, and handle complex objects.",
+    "keywords": [
+      "Flutter navigation arguments",
+      "Flutter pass data between screens",
+      "Navigator push arguments",
+      "ModalRoute arguments",
+      "Flutter route settings",
+      "Flutter onGenerateRoute",
+      "Flutter navigation"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Pass Arguments?"
+    },
+    {
+      "type": "text",
+      "value": "In any non‑trivial app, you'll need to send data from one screen to another when the user navigates. For example, tapping a product in a list should take you to a detail screen that knows which product to display. Flutter's `Navigator` allows you to pass arguments in several ways, from simple primitive values to complex objects. This guide covers the most common patterns for passing data between screens."
+    },
+    {
+      "type": "heading",
+      "value": "Passing Arguments with MaterialPageRoute"
+    },
+    {
+      "type": "text",
+      "value": "When pushing a new route using `MaterialPageRoute`, you can include an `arguments` parameter in the route's `settings`. The `settings` object holds metadata about the route, including `arguments`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Navigator.push(\n  context,\n  MaterialPageRoute(\n    builder: (context) => DetailScreen(),\n    settings: RouteSettings(\n      arguments: 'Hello from first screen', // can be any object\n    ),\n  ),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Extracting Arguments in the Destination Screen"
+    },
+    {
+      "type": "text",
+      "value": "In the destination widget, you can retrieve the arguments using `ModalRoute.of(context)`. This gives you the current route, from which you can access the `settings.arguments`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DetailScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    // Extract arguments\n    final args = ModalRoute.of(context)!.settings.arguments as String;\n\n    return Scaffold(\n      appBar: AppBar(title: Text('Detail')),\n      body: Center(child: Text('Received: $args')),\n    );\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "You should cast the argument to the expected type. Always handle cases where the argument might be missing or of the wrong type."
+    },
+    {
+      "type": "heading",
+      "value": "Passing Complex Objects"
+    },
+    {
+      "type": "text",
+      "value": "You can pass any object as an argument – a Map, a custom class, or even a function. For custom classes, it's a good practice to make them immutable and possibly implement `toString` for debugging. For example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Product {\n  final int id;\n  final String name;\n  final double price;\n\n  const Product({required this.id, required this.name, required this.price});\n}\n\n// Pushing\nNavigator.push(\n  context,\n  MaterialPageRoute(\n    builder: (context) => ProductDetailScreen(),\n    settings: RouteSettings(arguments: product),\n  ),\n);\n\n// Extracting\nfinal product = ModalRoute.of(context)!.settings.arguments as Product;"
+    },
+    {
+      "type": "heading",
+      "value": "Named Routes with Arguments"
+    },
+    {
+      "type": "text",
+      "value": "If you use named routes (defined in `MaterialApp`'s `routes`), you can pass arguments by using `Navigator.pushNamed` with a separate `arguments` parameter."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MaterialApp(\n  initialRoute: '/',\n  routes: {\n    '/': (context) => HomeScreen(),\n    '/detail': (context) => DetailScreen(),\n  },\n  onGenerateRoute: (settings) {\n    // Alternatively, use onGenerateRoute for dynamic routes\n    if (settings.name == '/detail') {\n      final args = settings.arguments;\n      return MaterialPageRoute(\n        builder: (context) => DetailScreen(),\n        settings: settings,\n      );\n    }\n    return null;\n  },\n)\n\n// Pushing with arguments\nNavigator.pushNamed(\n  context,\n  '/detail',\n  arguments: 'My argument',\n);"
+    },
+    {
+      "type": "text",
+      "value": "With `onGenerateRoute`, you can handle dynamic route names (e.g., `/product/123`) as well. For that, you'd parse the route path to extract the ID. However, for simplicity, using arguments is often sufficient."
+    },
+    {
+      "type": "heading",
+      "value": "Returning Data Back to the Previous Screen"
+    },
+    {
+      "type": "text",
+      "value": "When you pop a route, you can also return data to the previous screen using `Navigator.pop(context, result)`. The previous screen can wait for the result with `await Navigator.push(...)`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// On the first screen\nfinal result = await Navigator.push(\n  context,\n  MaterialPageRoute(builder: (context) => SecondScreen()),\n);\nprint('Result: $result');\n\n// On the second screen\nNavigator.pop(context, 'Data to return');"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting to cast**: Always cast the arguments to the expected type. Use `as` and handle potential type errors.",
+        "- **Not checking for null**: The arguments might be null if the route was created without arguments. Use null checks or provide default values.",
+        "- **Passing mutable objects**: If you pass a mutable object, changes in the destination screen might affect the original (if you later modify it). Consider making objects immutable or passing copies.",
+        "- **Using `settings.arguments` without casting**: This returns `Object?`, so you must cast it to the correct type.",
+        "- **Not handling edge cases**: If the argument type is wrong, your app will crash. Validate or use `if (args is String)` before casting."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use a dedicated model class to pass complex data.",
+        "- For large or sensitive data, consider using a state management solution (like Provider, Riverpod) instead of passing through routes.",
+        "- When using named routes with arguments, consider using `onGenerateRoute` to centralize argument parsing.",
+        "- Always document what arguments a screen expects (e.g., using comments).",
+        "- Use `const` for route arguments that are constant values."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Arguments are passed via `RouteSettings.arguments` in `MaterialPageRoute`.",
+        "- Retrieve arguments in the destination using `ModalRoute.of(context)!.settings.arguments`.",
+        "- You can pass any object, including custom classes, as arguments.",
+        "- Named routes also support arguments through `Navigator.pushNamed` and `onGenerateRoute`.",
+        "- Use `await Navigator.push` and `Navigator.pop` to return data back to the previous screen.",
+        "- Always cast and handle potential null or type mismatches to avoid runtime errors."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I pass a function as an argument?",
+      "answer": "Yes, you can pass any object, including functions. However, be careful because passing functions can lead to unintended side effects and may make it harder to test. For callbacks, it's often better to define a callback in the destination widget's constructor."
+    },
+    {
+      "question": "How do I pass arguments with `Navigator.pushReplacement`?",
+      "answer": "The same way – you create a `MaterialPageRoute` with `settings.arguments`. The replacement route receives the arguments like any other route."
+    },
+    {
+      "question": "How can I pass arguments to the initial route?",
+      "answer": "Use `MaterialApp`'s `onGenerateRoute` to create the initial route with arguments. Alternatively, you can set the initial route using a custom `RouteInformationParser` (more advanced). For simple cases, you can store arguments in a global or use a state management solution."
+    },
+    {
+      "question": "What is the difference between `settings.arguments` and passing parameters via constructor?",
+      "answer": "When you use `MaterialPageRoute(builder: (context) => MyWidget(data: data))`, you're passing data through the constructor. That's perfectly fine and simpler for direct navigation. The `settings.arguments` approach is useful when you need to extract arguments in a common way, especially with named routes or when you have a generic wrapper screen."
+    },
+    {
+      "question": "Can I pass a `Future` as an argument?",
+      "answer": "Yes, but you should be cautious about the lifecycle. If the Future hasn't completed when the screen is built, you'll need to handle the loading state inside the screen, or you can await it before pushing."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Nav Arguments Demo',\n      home: HomeScreen(),\n    );\n  }\n}\n\nclass HomeScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Home')),\n      body: Center(\n        child: ElevatedButton(\n          onPressed: () {\n            Navigator.push(\n              context,\n              MaterialPageRoute(\n                builder: (context) => DetailScreen(),\n                settings: RouteSettings(\n                  arguments: 'Hello from Home!',\n                ),\n              ),\n            );\n          },\n          child: Text('Go to Detail'),\n        ),\n      ),\n    );\n  }\n}\n\nclass DetailScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final args = ModalRoute.of(context)!.settings.arguments as String;\n    return Scaffold(\n      appBar: AppBar(title: Text('Detail')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Received: $args'),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () => Navigator.pop(context),\n              child: Text('Go Back'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you pass arguments when pushing a route with `MaterialPageRoute`?",
+      "options": [
+        "In the `builder` function as a constructor parameter",
+        "In the `settings` property with `RouteSettings.arguments`",
+        "In the `onTap` callback",
+        "You can't pass arguments with `MaterialPageRoute`"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you retrieve arguments in the destination screen?",
+      "options": [
+        "Navigator.of(context).arguments",
+        "Route.of(context).arguments",
+        "ModalRoute.of(context)!.settings.arguments",
+        "context.arguments"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What should you do after retrieving an argument to ensure type safety?",
+      "options": [
+        "Use `toString()`",
+        "Use `as` to cast to the expected type",
+        "Print the argument",
+        "Nothing, it's already typed"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you return data to the previous screen?",
+      "options": [
+        "Navigator.pop(context, data)",
+        "Navigator.pushReplacement(context, data)",
+        "Navigator.popAndPush(context, data)",
+        "context.pop(data)"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-navigation",
+    "flutter-routes",
+    "flutter-material-app",
+    "flutter-state-management"
+  ]
+}

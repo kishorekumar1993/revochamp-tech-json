@@ -1,0 +1,277 @@
+{
+  "slug": "flutter-riverpod",
+  "course": "Flutter",
+  "title": "Flutter Riverpod – The Complete Guide to Reactive State Management",
+  "meta": {
+    "title": "Flutter Riverpod Tutorial: State Management with Riverpod",
+    "description": "Learn Riverpod for Flutter state management – providers, ref.watch, ref.read, StateProvider, FutureProvider, StateNotifierProvider, and best practices.",
+    "keywords": [
+      "Flutter Riverpod",
+      "Riverpod state management",
+      "Riverpod provider",
+      "ref.watch",
+      "StateProvider",
+      "FutureProvider",
+      "StateNotifierProvider",
+      "Flutter reactive state"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Riverpod?"
+    },
+    {
+      "type": "text",
+      "value": "Riverpod is a reactive state management library for Flutter that is built on top of the Provider package but offers several improvements. It is compile‑safe, scalable, and works seamlessly with Flutter’s reactive paradigm. Riverpod provides a way to define providers that encapsulate state and logic, and then allows widgets to read or listen to that state efficiently. It eliminates the need for BuildContext in many cases and prevents common pitfalls like accessing a provider before it exists."
+    },
+    {
+      "type": "heading",
+      "value": "Why Riverpod?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Compile‑safe**: No runtime errors for missing providers.",
+        "- **Unified API**: One consistent way to handle all types of state (simple values, futures, streams, mutable state).",
+        "- **Scoped providers**: Providers can be overridden for specific parts of the widget tree.",
+        "- **Auto‑dispose**: Providers can clean up resources automatically when no longer used.",
+        "- **Testable**: Providers can be easily mocked and overridden in tests."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Adding Riverpod to Your Project"
+    },
+    {
+      "type": "text",
+      "value": "Add the `riverpod` package to your `pubspec.yaml`:\n\n```yaml\ndependencies:\n  flutter_riverpod: ^2.4.0\n  riverpod: ^2.4.0\n```\n\nThen run `flutter pub get`.\n\nFor code generation, you may also need `riverpod_annotation` and `build_runner`, but we’ll start with the simple API."
+    },
+    {
+      "type": "heading",
+      "value": "Core Concepts"
+    },
+    {
+      "type": "text",
+      "value": "Riverpod revolves around **providers**. A provider is a declaration of a piece of state or a service. Providers are global, but they can be overridden locally. Widgets interact with providers using `ref` objects obtained from `ConsumerWidget` or `Consumer` widgets."
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Simple Provider"
+    },
+    {
+      "type": "text",
+      "value": "The simplest provider is `Provider`, which just returns a value. Use it for services or immutable data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final helloWorldProvider = Provider<String>((ref) => 'Hello, Riverpod!');"
+    },
+    {
+      "type": "heading",
+      "value": "StateProvider for Mutable State"
+    },
+    {
+      "type": "text",
+      "value": "`StateProvider` holds a mutable piece of state that can be read and written."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final counterProvider = StateProvider<int>((ref) => 0);\n\n// In a widget:\nfinal count = ref.watch(counterProvider); // reads\nref.read(counterProvider.notifier).state++; // writes"
+    },
+    {
+      "type": "heading",
+      "value": "FutureProvider for Asynchronous Data"
+    },
+    {
+      "type": "text",
+      "value": "`FutureProvider` handles asynchronous operations and manages loading, data, and error states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final userProvider = FutureProvider<User>((ref) async {\n  final response = await http.get(Uri.parse('https://api.example.com/user'));\n  return User.fromJson(jsonDecode(response.body));\n});"
+    },
+    {
+      "type": "text",
+      "value": "In your widget, you can watch the provider and react to its state:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final user = ref.watch(userProvider);\nreturn user.when(\n  data: (user) => Text(user.name),\n  error: (error, stack) => Text('Error: $error'),\n  loading: () => CircularProgressIndicator(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "StateNotifierProvider for Complex State"
+    },
+    {
+      "type": "text",
+      "value": "For more complex state that requires methods to modify it, use `StateNotifierProvider` with a `StateNotifier` subclass. This is similar to `ChangeNotifier` but with better integration with Riverpod."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Todo {\n  final String id;\n  final String description;\n  final bool completed;\n  Todo({required this.id, required this.description, this.completed = false});\n}\n\nclass TodoListNotifier extends StateNotifier<List<Todo>> {\n  TodoListNotifier() : super([]);\n\n  void addTodo(String description) {\n    state = [...state, Todo(id: DateTime.now().toString(), description: description)];\n  }\n\n  void toggleTodo(String id) {\n    state = state.map((todo) {\n      if (todo.id == id) return Todo(id: todo.id, description: todo.description, completed: !todo.completed);\n      return todo;\n    }).toList();\n  }\n}\n\nfinal todoListProvider = StateNotifierProvider<TodoListNotifier, List<Todo>>((ref) => TodoListNotifier());"
+    },
+    {
+      "type": "heading",
+      "value": "Reading Providers in Widgets"
+    },
+    {
+      "type": "text",
+      "value": "To access providers, you need a `ref` object. This is available in:\n- `ConsumerWidget` (a StatelessWidget that has a `ref` parameter in its `build` method)\n- `ConsumerStatefulWidget` (StatefulWidget with `ref` in the State)\n- `Consumer` (a widget that exposes `ref` to its builder)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterWidget extends ConsumerWidget {\n  @override\n  Widget build(BuildContext context, WidgetRef ref) {\n    final count = ref.watch(counterProvider);\n    return Text('$count');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "ref.watch vs ref.read vs ref.listen"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`ref.watch`**: Listens to a provider and rebuilds the widget when the provider’s value changes. Use it to display state.",
+        "- **`ref.read`**: Reads the provider’s value once without listening. Use it for actions (like button taps).",
+        "- **`ref.listen`**: Listens to changes without rebuilding the widget; useful for side effects like showing a snackbar."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Inside a widget\nfinal count = ref.watch(counterProvider); // rebuilds when counter changes\n\nElevatedButton(\n  onPressed: () => ref.read(counterProvider.notifier).state++,\n  child: Text('Increment'),\n)\n\nref.listen<CounterState>(counterProvider, (previous, next) {\n  if (next.value == 10) {\n    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Reached 10!')));\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Provider Modifiers"
+    },
+    {
+      "type": "text",
+      "value": "Riverpod provides modifiers to adjust provider behavior:\n- **`.family`**: Allows you to pass parameters to a provider.\n- **`.autoDispose`**: Automatically disposes the provider when it is no longer used (e.g., when the widget that watches it is removed)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Family provider with autoDispose\nfinal userProvider = FutureProvider.autoDispose.family<User, String>((ref, userId) async {\n  return fetchUser(userId);\n});\n\n// Usage\nfinal user = ref.watch(userProvider('123'));"
+    },
+    {
+      "type": "heading",
+      "value": "Scoping Providers"
+    },
+    {
+      "type": "text",
+      "value": "You can override a provider for a part of the widget tree using `ProviderScope`. This is useful for testing or providing different values in different parts of the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ProviderScope(\n  overrides: [\n    counterProvider.overrideWithValue(42),\n  ],\n  child: MyApp(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Use `ref.watch` only where needed** – avoid watching providers high in the tree to prevent large rebuilds.",
+        "- **Prefer `ConsumerWidget` over `Consumer`** for simpler code.",
+        "- **Use `.autoDispose` for providers that are not used throughout the app’s lifetime.**",
+        "- **Name providers clearly** (e.g., `counterProvider`, `todoListNotifier`).",
+        "- **Separate providers into logical files** to keep your codebase organized."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Calling `ref.watch` inside a callback** – This can cause the widget to rebuild at unexpected times. Use `ref.read` instead.",
+        "- **Not disposing resources** – Use `autoDispose` or override `dispose` in your notifier to clean up streams, controllers, etc.",
+        "- **Using `ref.read` to watch a provider** – `ref.read` does not rebuild the widget; use `ref.watch` for listening.",
+        "- **Passing providers as parameters** – Instead, use `ref.watch` inside the widget to get the value."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Riverpod is a modern, compile‑safe state management solution.",
+        "- Providers are the building blocks; they can be simple values, futures, streams, or mutable state.",
+        "- Use `ConsumerWidget` to get a `ref` in your widgets.",
+        "- `ref.watch` rebuilds the widget; `ref.read` gets a value without listening; `ref.listen` reacts to changes.",
+        "- Use `.family` to pass parameters, and `.autoDispose` to clean up resources.",
+        "- Scope providers with `ProviderScope` to override values in subtrees."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between Riverpod and Provider?",
+      "answer": "Provider is an older library that relies on BuildContext and can cause runtime errors if a provider is missing. Riverpod is a rewrite that is compile‑safe, does not require BuildContext, supports scoping, and has a unified API for different types of state. Riverpod also provides better testability and auto‑dispose functionality."
+    },
+    {
+      "question": "How do I combine multiple providers?",
+      "answer": "You can watch one provider inside another using `ref.watch`. For example, a provider that depends on another provider: `final userGreetingProvider = Provider<String>((ref) => 'Hello, ${ref.watch(userProvider).name}');`"
+    },
+    {
+      "question": "How do I handle loading and error states with Riverpod?",
+      "answer": "For asynchronous providers like `FutureProvider` and `StreamProvider`, you can use the `.when` method on the returned `AsyncValue`. This gives you a clean way to handle loading, data, and error states."
+    },
+    {
+      "question": "Can I use Riverpod with existing ChangeNotifier code?",
+      "answer": "Yes, you can wrap a `ChangeNotifier` with `ChangeNotifierProvider` (from `flutter_riverpod`) or use `StateNotifierProvider` for a more Riverpod‑native approach. However, Riverpod’s own `StateNotifier` is more efficient."
+    },
+    {
+      "question": "How do I test a widget that uses Riverpod?",
+      "answer": "Wrap your widget in a `ProviderScope` with overrides for the providers you want to mock. Then you can use `ref.read` or `ref.watch` inside your tests to verify state."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_riverpod/flutter_riverpod.dart';\n\nfinal counterProvider = StateProvider<int>((ref) => 0);\n\nvoid main() {\n  runApp(ProviderScope(child: MyApp()));\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Riverpod Demo')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              CounterDisplay(),\n              SizedBox(height: 20),\n              Row(\n                mainAxisAlignment: MainAxisAlignment.center,\n                children: [\n                  CounterButton(delta: -1, text: '-'),\n                  SizedBox(width: 20),\n                  CounterButton(delta: 1, text: '+'),\n                ],\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}\n\nclass CounterDisplay extends ConsumerWidget {\n  @override\n  Widget build(BuildContext context, WidgetRef ref) {\n    final count = ref.watch(counterProvider);\n    return Text('Count: $count', style: TextStyle(fontSize: 24));\n  }\n}\n\nclass CounterButton extends ConsumerWidget {\n  final int delta;\n  final String text;\n  CounterButton({required this.delta, required this.text});\n\n  @override\n  Widget build(BuildContext context, WidgetRef ref) {\n    return ElevatedButton(\n      onPressed: () => ref.read(counterProvider.notifier).state += delta,\n      child: Text(text),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget should you use to get a `ref` object in a stateless widget?",
+      "options": ["StatelessWidget", "ConsumerWidget", "StatefulWidget", "ProviderWidget"],
+      "answer": 1
+    },
+    {
+      "question": "What method is used to listen to a provider and rebuild when it changes?",
+      "options": ["ref.read", "ref.watch", "ref.listen", "ref.observe"],
+      "answer": 1
+    },
+    {
+      "question": "How do you make a provider accept parameters?",
+      "options": [".family", ".param", ".args", ".withParam"],
+      "answer": 0
+    },
+    {
+      "question": "What does `autoDispose` do?",
+      "options": [
+        "Automatically destroys the provider when the app closes",
+        "Automatically disposes the provider when it is no longer used",
+        "Prevents the provider from being garbage collected",
+        "Keeps the provider alive forever"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-provider",
+    "flutter-state-management",
+    "flutter-bloc",
+    "flutter-getx"
+  ]
+}

@@ -1,0 +1,210 @@
+{
+  "slug": "flutter-border-radius",
+  "course": "Flutter",
+  "title": "Flutter Border Radius – Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter Border Radius: Circular, Only, and Custom Corner Rounding",
+    "description": "Learn how to use BorderRadius in Flutter to create rounded corners. Master BorderRadius.circular, BorderRadius.only, BorderRadius.vertical, BorderRadius.horizontal, and apply them to Container, Card, ClipRRect, and ShapeDecoration.",
+    "keywords": [
+      "Flutter BorderRadius",
+      "rounded corners Flutter",
+      "BorderRadius.circular",
+      "BorderRadius.only",
+      "Flutter rounded container",
+      "Flutter custom corners",
+      "Flutter UI"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BorderRadius?"
+    },
+    {
+      "type": "text",
+      "value": "`BorderRadius` is a class in Flutter that defines the rounding of corners of a rectangle. It is used with `BoxDecoration`, `ShapeDecoration`, `ClipRRect`, `RoundedRectangleBorder`, and other widgets that accept a `BorderRadiusGeometry`. Understanding how to round corners is essential for creating modern, visually appealing UI designs, such as cards, buttons, images, and dialogs."
+    },
+    {
+      "type": "heading",
+      "value": "BorderRadius.circular – Uniform Rounding"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to create rounded corners is `BorderRadius.circular(radius)`. It applies the same radius to all four corners."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  width: 200,\n  height: 200,\n  decoration: BoxDecoration(\n    color: Colors.blue,\n    borderRadius: BorderRadius.circular(20.0),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "BorderRadius.only – Custom Corner Rounding"
+    },
+    {
+      "type": "text",
+      "value": "Use `BorderRadius.only` when you need different radii for different corners. The `topLeft`, `topRight`, `bottomLeft`, `bottomRight` parameters take `Radius` objects."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  width: 200,\n  height: 200,\n  decoration: BoxDecoration(\n    color: Colors.green,\n    borderRadius: BorderRadius.only(\n      topLeft: Radius.circular(20),\n      topRight: Radius.circular(40),\n      bottomLeft: Radius.circular(0),\n      bottomRight: Radius.circular(60),\n    ),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "BorderRadius.vertical and BorderRadius.horizontal"
+    },
+    {
+      "type": "text",
+      "value": "For rounding only the top or bottom corners, use `BorderRadius.vertical`. Similarly, `BorderRadius.horizontal` rounds the left or right corners."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Rounds only top corners\nBorderRadius.vertical(top: Radius.circular(20));\n\n// Rounds only bottom corners\nBorderRadius.vertical(bottom: Radius.circular(20));\n\n// Rounds only left corners\nBorderRadius.horizontal(left: Radius.circular(20));\n\n// Rounds only right corners\nBorderRadius.horizontal(right: Radius.circular(20));"
+    },
+    {
+      "type": "heading",
+      "value": "Applying BorderRadius to Different Widgets"
+    },
+    {
+      "type": "text",
+      "value": "`BorderRadius` is not limited to `Container`. You can use it with:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`Card`**: The `shape` property accepts a `RoundedRectangleBorder` with `borderRadius`.",
+        "- **`ClipRRect`**: Rounds the corners of any child widget (e.g., images).",
+        "- **`Image`**: Wrap with `ClipRRect` to round image corners.",
+        "- **`Button`**: Use `ElevatedButton.styleFrom` with `shape` (requires a `RoundedRectangleBorder`).",
+        "- **`Dialog`**: Use `shape` property of `AlertDialog` or `Dialog`.",
+        "- **`ExpansionTile`**, etc."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Rounded Card\nCard(\n  shape: RoundedRectangleBorder(\n    borderRadius: BorderRadius.circular(20),\n  ),\n  child: ...\n)\n\n// Rounded Image\nClipRRect(\n  borderRadius: BorderRadius.circular(20),\n  child: Image.network('https://example.com/image.jpg'),\n)\n\n// Rounded Button\nElevatedButton(\n  style: ElevatedButton.styleFrom(\n    shape: RoundedRectangleBorder(\n      borderRadius: BorderRadius.circular(30),\n    ),\n  ),\n  onPressed: () {},\n  child: Text('Rounded Button'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced: Using Radius with Circle"
+    },
+    {
+      "type": "text",
+      "value": "`Radius` can also be created with `Radius.elliptical(x, y)` for non‑uniform radii. This is useful for more complex shapes, but usually `Radius.circular` is sufficient."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BorderRadius.only(\n  topLeft: Radius.elliptical(20, 10),\n  bottomRight: Radius.elliptical(30, 15),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Using `BorderRadius` directly on `ClipRRect`**: `ClipRRect` expects a `BorderRadiusGeometry`, which `BorderRadius` implements. That's fine. But forgetting to set `clipBehavior` to `Clip.antiAlias` can result in jagged edges.",
+        "- **Applying `BorderRadius` to a `Container` without `BoxDecoration`**: The `borderRadius` property only exists inside `BoxDecoration`. You cannot set `borderRadius` directly on a `Container`.",
+        "- **Mixing `BorderRadius.circular` with `Radius`**: `BorderRadius.circular` accepts a double, while `BorderRadius.only` requires `Radius` objects. They are different; don't mix them incorrectly.",
+        "- **Using too large radii**: A radius larger than half the width/height will produce a pill shape; be intentional about your design.",
+        "- **Forgetting to use `ClipRRect` for images**: `Image` does not have a built‑in borderRadius; you must wrap it with `ClipRRect` or use `Container` with decoration."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- For consistent design, define a constant for the corner radius (e.g., `const kBorderRadius = 12.0`).",
+        "- Use `ClipRRect` for clipping images; combine with `Image.network` for smooth corners.",
+        "- For interactive widgets (buttons, cards), ensure the radius is consistent with the Material Design guidelines (e.g., buttons often use 30dp radius).",
+        "- When creating custom shapes, prefer `RoundedRectangleBorder` over directly applying a `BorderRadius` to a `ClipPath` unless you need irregular shapes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `BorderRadius.circular` rounds all corners equally.",
+        "- `BorderRadius.only` lets you set different radii per corner.",
+        "- `BorderRadius.vertical` / `horizontal` round top/bottom or left/right corners.",
+        "- Apply to `Container` via `BoxDecoration`, to `Card` via `shape`, to images via `ClipRRect`, and to buttons via `ElevatedButton.styleFrom`.",
+        "- Use `Radius.elliptical` for non‑circular rounding.",
+        "- Always test on different screen sizes to avoid unexpected clipping."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I round only the top corners?",
+      "answer": "Use `BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))`. Alternatively, `BorderRadius.vertical(top: Radius.circular(20))`."
+    },
+    {
+      "question": "Can I use BorderRadius with a Container that has a border?",
+      "answer": "Yes, include both `border` and `borderRadius` in the `BoxDecoration`. The border will follow the rounded shape."
+    },
+    {
+      "question": "What is the difference between `BorderRadius.circular(20)` and `Radius.circular(20)`?",
+      "answer": "`BorderRadius.circular(20)` creates a `BorderRadius` object where all corners have a circular radius of 20. `Radius.circular(20)` creates a `Radius` object that can be used for a single corner. They are not interchangeable; `BorderRadius` is a collection of four radii."
+    },
+    {
+      "question": "How do I make a circular image?",
+      "answer": "Use `ClipOval` or set `borderRadius: BorderRadius.circular(1000)` on a `ClipRRect` with the image. For a perfect circle, make the image dimensions equal and the radius half the size. Or use `CircleAvatar` which automatically clips to a circle."
+    },
+    {
+      "question": "Does BorderRadius work on Flutter Web?",
+      "answer": "Yes, it works on all platforms. The rounding is applied via CSS borders under the hood on web, but the API is consistent."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('BorderRadius Demo')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Container(\n                width: 150,\n                height: 150,\n                decoration: BoxDecoration(\n                  color: Colors.blue,\n                  borderRadius: BorderRadius.circular(20),\n                ),\n                child: Center(child: Text('Container')),\n              ),\n              SizedBox(height: 20),\n              Card(\n                shape: RoundedRectangleBorder(\n                  borderRadius: BorderRadius.only(\n                    topLeft: Radius.circular(30),\n                    bottomRight: Radius.circular(30),\n                  ),\n                ),\n                child: Container(\n                  width: 150,\n                  height: 100,\n                  child: Center(child: Text('Card')),\n                ),\n              ),\n              SizedBox(height: 20),\n              ClipRRect(\n                borderRadius: BorderRadius.circular(40),\n                child: Image.network(\n                  'https://picsum.photos/150/150',\n                  width: 150,\n                  height: 150,\n                  fit: BoxFit.cover,\n                ),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method creates a BorderRadius with all corners rounded equally?",
+      "options": ["BorderRadius.all", "BorderRadius.every", "BorderRadius.circular", "BorderRadius.uniform"],
+      "answer": 2
+    },
+    {
+      "question": "How do you apply a BorderRadius to a Container?",
+      "options": [
+        "Container(borderRadius: ...)",
+        "Container(decoration: BoxDecoration(borderRadius: ...))",
+        "Container(shape: ...)",
+        "Container.clip: ..."
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget would you use to round the corners of an image?",
+      "options": ["Container", "ClipRRect", "Image.borderRadius", "RoundedImage"],
+      "answer": 1
+    },
+    {
+      "question": "What does `BorderRadius.vertical(top: Radius.circular(10))` do?",
+      "options": [
+        "Rounds only the top‑left corner",
+        "Rounds only the top‑right corner",
+        "Rounds both top corners",
+        "Rounds all corners"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "flutter-container",
+    "flutter-card",
+    "flutter-clipping",
+    "flutter-decoration"
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "slug": "flutter-sizedbox-widget",
+  "course": "Flutter",
+  "title": "Flutter SizedBox Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter SizedBox Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter SizedBox to create fixed spaces, control widget sizes, and add gaps in layouts. Understand width, height, and common use cases with simple examples.",
+    "keywords": [
+      "Flutter SizedBox",
+      "SizedBox",
+      "fixed size box",
+      "spacing",
+      "width",
+      "height",
+      "Flutter layout"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is SizedBox in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "SizedBox is a simple box with a specified size. It can be used to: (1) add fixed empty space between widgets, (2) constrain a child to a specific width and height, or (3) create a placeholder with exact dimensions. It's one of the most frequently used widgets for layout spacing."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "You can create a SizedBox with just a width and/or height. If you provide a child, it will be forced to those dimensions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Empty space 20 pixels wide\nSizedBox(width: 20)\n\n// Empty space 10 pixels tall\nSizedBox(height: 10)\n\n// A red square exactly 50x50\nSizedBox(\n  width: 50,\n  height: 50,\n  child: Container(color: Colors.red),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**width**: The width in logical pixels. If null, it will try to match the parent's width (if no child) or the child's width.",
+        "**height**: The height in logical pixels. If null, it will try to match the parent's height (if no child) or the child's height.",
+        "**child**: An optional widget to place inside the box. The child will be constrained to the given dimensions."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Using SizedBox for Spacing"
+    },
+    {
+      "type": "text",
+      "value": "The most common use is to add fixed gaps between widgets, especially in Columns and Rows."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Column(\n  children: [\n    Text('Top'),\n    SizedBox(height: 20),\n    Text('Middle'),\n    SizedBox(height: 20),\n    Text('Bottom'),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Constraining a Child"
+    },
+    {
+      "type": "text",
+      "value": "Wrap a widget with SizedBox to give it a fixed size, overriding its own size preferences."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "SizedBox(\n  width: 200,\n  height: 100,\n  child: ElevatedButton(\n    onPressed: () {},\n    child: Text('Wide Button'),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "SizedBox.expand"
+    },
+    {
+      "type": "text",
+      "value": "Use `SizedBox.expand()` to create a box that expands to fill the available space from its parent."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "SizedBox.expand(\n  child: Container(color: Colors.blue),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using SizedBox with no dimensions and no child**: It becomes invisible and takes no space.",
+        "**Assuming SizedBox always forces its size on the child**: It does, but if the child has tighter constraints, it may not work (e.g., a Text with unbounded width).",
+        "**Using SizedBox for flexible spacing**: If you need proportional spacing, use Expanded or Spacer instead."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "SizedBox is perfect for fixed‑size gaps and constraining children.",
+        "Use `width` and `height` to set dimensions; omit one to let it be determined by parent/child.",
+        "`SizedBox.shrink()` creates a zero‑sized box (useful for hiding widgets).",
+        "`SizedBox.expand()` fills the available space."
+      ]
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('SizedBox Example')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Container(color: Colors.red, child: Text('No SizedBox')),\n              SizedBox(height: 20),\n              Container(color: Colors.green, child: Text('After 20px gap')),\n              SizedBox(height: 20),\n              SizedBox(\n                width: 150,\n                height: 50,\n                child: Container(color: Colors.blue, child: Center(child: Text('150x50'))),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What happens if you create a SizedBox with no width, no height, and no child?",
+      "options": [
+        "It throws an error",
+        "It becomes a zero‑sized invisible box",
+        "It expands to fill the parent",
+        "It takes the size of its parent"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you create a SizedBox that expands to fill all available space?",
+      "options": [
+        "SizedBox(expand: true)",
+        "SizedBox.expand()",
+        "SizedBox(fill: true)",
+        "SizedBox(expand: true, child: ...)"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-container",
+    "flutter-row-column",
+    "flutter-expanded",
+    "flutter-spacer"
+  ]
+}

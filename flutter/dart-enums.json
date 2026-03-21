@@ -1,0 +1,226 @@
+{
+  "slug": "dart-enums",
+  "course": "Dart",
+  "title": "Dart Enums – Complete Guide with Examples",
+  "meta": {
+    "title": "Dart Enums: Simple and Enhanced Enums with Examples",
+    "description": "Learn how to use enums in Dart – simple enums, enhanced enums with fields and methods, switch statements, and best practices for clean code.",
+    "keywords": [
+      "Dart enum",
+      "Dart enhanced enum",
+      "Dart enum methods",
+      "Dart enum switch",
+      "Dart enum values",
+      "Dart enum best practices",
+      "Dart 2.17 enum"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Enums?"
+    },
+    {
+      "type": "text",
+      "value": "Enums (short for enumerations) are a way to define a set of named constants. They are useful when you have a fixed set of related values, like days of the week, status codes, or user roles. In Dart, enums are more powerful than in many other languages – since Dart 2.17, you can create **enhanced enums** that have fields, constructors, methods, and can even implement interfaces."
+    },
+    {
+      "type": "heading",
+      "value": "Simple Enum"
+    },
+    {
+      "type": "text",
+      "value": "The simplest enum is defined using the `enum` keyword followed by the name and a list of constant values."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "enum Status {\n  pending,\n  processing,\n  completed,\n  failed\n}\n\nvoid main() {\n  Status status = Status.pending;\n  print(status); // Status.pending\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Enum Properties"
+    },
+    {
+      "type": "text",
+      "value": "Every enum has a few built‑in properties:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`.name`** – returns the string name of the enum value (e.g., `'pending'`).",
+        "- **`.index`** – returns the zero‑based index of the enum value.",
+        "- **`.values`** – returns a list of all enum values (of type `List<Enum>`)."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "enum Status {\n  pending,\n  processing,\n  completed,\n  failed\n}\n\nvoid main() {\n  Status s = Status.pending;\n  print(s.name);   // pending\n  print(s.index);  // 0\n\n  for (var status in Status.values) {\n    print(status.name);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Enums in Switch Statements"
+    },
+    {
+      "type": "text",
+      "value": "One of the most common uses of enums is in `switch` statements. Since enums have a finite set of values, you can easily handle all cases without a default (but it's good practice to include `default` or handle all cases)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void printStatusMessage(Status status) {\n  switch (status) {\n    case Status.pending:\n      print('Your request is pending.');\n      break;\n    case Status.processing:\n      print('We are processing your request.');\n      break;\n    case Status.completed:\n      print('Request completed successfully.');\n      break;\n    case Status.failed:\n      print('Request failed.');\n      break;\n  }\n}\n\nvoid main() {\n  printStatusMessage(Status.completed);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Enhanced Enums (Dart 2.17+)"
+    },
+    {
+      "type": "text",
+      "value": "With Dart 2.17, enums can have constructors, fields, and methods. This makes them much more powerful and allows you to attach additional data to each enum value."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "enum Status {\n  pending('⏳', 'Waiting'),\n  processing('🔄', 'In progress'),\n  completed('✅', 'Done'),\n  failed('❌', 'Error');\n\n  final String icon;\n  final String message;\n\n  const Status(this.icon, this.message);\n\n  String get display => '$icon $message';\n}\n\nvoid main() {\n  Status status = Status.pending;\n  print(status.display); // ⏳ Waiting\n  print(status.message); // Waiting\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Enhanced Enum with Methods"
+    },
+    {
+      "type": "text",
+      "value": "You can add methods to enums, including getters, setters (though not recommended), and even implement interfaces."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "enum Grade {\n  A(90, 'Excellent'),\n  B(80, 'Good'),\n  C(70, 'Satisfactory'),\n  D(60, 'Pass'),\n  F(0, 'Fail');\n\n  final int minScore;\n  final String description;\n\n  const Grade(this.minScore, this.description);\n\n  bool isPassing() => this != F;\n\n  @override\n  String toString() => '$name ($description)';\n}\n\nvoid main() {\n  Grade grade = Grade.B;\n  print(grade);                // B (Good)\n  print(grade.isPassing());    // true\n  print(grade.minScore);       // 80\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Enums Implementing Interfaces"
+    },
+    {
+      "type": "text",
+      "value": "Enhanced enums can implement interfaces, allowing them to behave polymorphically."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class CanDescribe {\n  String describe();\n}\n\nenum Vehicle implements CanDescribe {\n  car('🚗', 4),\n  motorcycle('🏍️', 2),\n  bicycle('🚲', 2);\n\n  final String icon;\n  final int wheels;\n\n  const Vehicle(this.icon, this.wheels);\n\n  @override\n  String describe() => '$icon A vehicle with $wheels wheels.';\n}\n\nvoid main() {\n  Vehicle v = Vehicle.car;\n  print(v.describe()); // 🚗 A vehicle with 4 wheels.\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Using `const` on enum instances**: Enhanced enums require `const` constructors. Always mark the constructor as `const`.",
+        "- **Forgetting to handle all cases in a switch**: With simple enums, it's okay to use a default; with enhanced enums, you can still use a default, but it's better to cover all cases.",
+        "- **Over‑engineering simple enums**: If you just need a fixed set of names, a simple enum is enough. Use enhanced enums only when you need extra data or behaviour."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use enums when you have a fixed, known set of values.",
+        "- Prefer enums over string constants for type safety.",
+        "- In switch statements, handle all enum values to avoid missing cases (the analyzer can help with exhaustiveness checking).",
+        "- For enhanced enums, keep fields `final` and constructors `const` to maintain immutability."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "enum HttpStatus {\n  ok(200, 'OK'),\n  created(201, 'Created'),\n  badRequest(400, 'Bad Request'),\n  unauthorized(401, 'Unauthorized'),\n  notFound(404, 'Not Found'),\n  serverError(500, 'Internal Server Error');\n\n  final int code;\n  final String message;\n\n  const HttpStatus(this.code, this.message);\n\n  bool isSuccess() => code >= 200 && code < 300;\n  bool isClientError() => code >= 400 && code < 500;\n  bool isServerError() => code >= 500;\n\n  @override\n  String toString() => '$code $message';\n}\n\nvoid main() {\n  var status = HttpStatus.notFound;\n  print(status);                 // 404 Not Found\n  print(status.isSuccess());     // false\n  print(status.isClientError()); // true\n\n  for (var s in HttpStatus.values) {\n    print(s);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Enums define a fixed set of named constants.",
+        "- Simple enums are defined with `enum Name { value1, value2 }`.",
+        "- Use `.name`, `.index`, and `.values` to get information about enum values.",
+        "- Enhanced enums (Dart 2.17+) can have fields, constructors, methods, and implement interfaces.",
+        "- Enhanced enums must use `const` constructors and all fields must be `final`.",
+        "- Enums are perfect for status codes, roles, categories, and other fixed sets."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can an enum have multiple constructors?",
+      "answer": "Yes, an enhanced enum can have multiple named constructors, as long as they call the main constructor (via `this`). For example: `enum Color { red(0xFF0000), green(0x00FF00), blue(0x0000FF); const Color(this.hex); Color.fromHex(String hex) : this(int.parse(hex, radix: 16)); }`"
+    },
+    {
+      "question": "Are enums comparable?",
+      "answer": "Yes, enums are comparable. You can use `==` and `hashCode` are defined based on the enum value identity. For sorting, you can use `.index`."
+    },
+    {
+      "question": "Can I add methods to a simple enum?",
+      "answer": "No, simple enums (without fields) cannot have methods. To add methods, you must use an enhanced enum (with a constructor and fields)."
+    },
+    {
+      "question": "How do I get the string name of an enum value?",
+      "answer": "Use the `.name` property: `MyEnum.someValue.name` returns `'someValue'`. This is available for all enums."
+    },
+    {
+      "question": "Can I create an enum with integer values like in C#?",
+      "answer": "Yes, in Dart you can associate integer values with each enum instance using fields. The index is always available, but you can define a custom field if you need a different numeric value."
+    },
+    {
+      "question": "What is the difference between an enum and a class with static constants?",
+      "answer": "Enums give you a distinct type, can be used in switch statements with exhaustiveness checking, and provide a fixed set of instances. A class with static constants doesn't give you the same type safety and can't be easily enumerated."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "enum Weather {\n  sunny('☀️', 'Clear skies'),\n  cloudy('☁️', 'Overcast'),\n  rainy('🌧️', 'Rain showers'),\n  snowy('❄️', 'Snowfall');\n\n  final String icon;\n  final String description;\n\n  const Weather(this.icon, this.description);\n\n  @override\n  String toString() => '$icon $description';\n}\n\nvoid main() {\n  Weather today = Weather.sunny;\n  print(today); // ☀️ Clear skies\n\n  for (var w in Weather.values) {\n    print(w);\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you get the string name of an enum value?",
+      "options": [".string", ".name", ".toString()", ".value"],
+      "answer": 1
+    },
+    {
+      "question": "What keyword is required for enhanced enum constructors?",
+      "options": ["new", "final", "const", "static"],
+      "answer": 2
+    },
+    {
+      "question": "Which of the following is NOT a property of all enums?",
+      "options": [".values", ".index", ".name", ".toString()"],
+      "answer": 3
+    },
+    {
+      "question": "In a switch statement, what does handling all enum values without a default achieve?",
+      "options": [
+        "Better performance",
+        "Exhaustiveness checking (the analyzer warns if you miss a case)",
+        "Less code",
+        "Faster execution"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-classes",
+    "dart-constructors",
+    "dart-advanced-types",
+    "dart-switch-expressions"
+  ]
+}

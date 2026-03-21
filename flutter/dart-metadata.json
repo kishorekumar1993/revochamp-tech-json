@@ -1,0 +1,218 @@
+{
+  "slug": "dart-metadata",
+  "course": "Dart",
+  "title": "Dart Metadata – Annotations and Code Generation",
+  "meta": {
+    "title": "Dart Metadata: Using Annotations for Code Generation and Documentation",
+    "description": "Learn about metadata (annotations) in Dart – @override, @deprecated, @required, creating custom annotations, and using them with code generation tools.",
+    "keywords": [
+      "Dart metadata",
+      "Dart annotations",
+      "Dart @override",
+      "Dart @deprecated",
+      "Dart custom annotation",
+      "Dart code generation",
+      "Dart mirrors"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Metadata (Annotations)?"
+    },
+    {
+      "type": "text",
+      "value": "Metadata (also called annotations) are used to provide additional information about your code. They are denoted by the `@` symbol followed by an identifier. Annotations can be attached to libraries, classes, methods, fields, parameters, and more. Dart comes with several built‑in annotations, and you can also define your own. Annotations are often used by tools (like the Dart analyzer, documentation generators, and code generation packages) to provide extra behavior or information."
+    },
+    {
+      "type": "heading",
+      "value": "Built‑in Annotations"
+    },
+    {
+      "type": "text",
+      "value": "Dart provides a few built‑in annotations that are recognized by the analyzer and the compiler:"
+    },
+    {
+      "type": "heading",
+      "value": "1. `@override`"
+    },
+    {
+      "type": "text",
+      "value": "Indicates that a method overrides a method from a superclass. If the superclass method does not exist, the analyzer will report an error. This helps catch typos or mismatched signatures."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Animal {\n  void makeSound() {}\n}\n\nclass Dog extends Animal {\n  @override\n  void makeSound() {\n    print('Bark');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. `@deprecated`"
+    },
+    {
+      "type": "text",
+      "value": "Marks a library element as deprecated (discouraged). The analyzer will show a warning when the element is used. You can optionally provide a message explaining the deprecation and suggesting alternatives."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@deprecated\n// or @Deprecated('Use newMethod instead')\nvoid oldMethod() {}\n\nvoid main() {\n  oldMethod(); // warning\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. `@required` (from `meta` package)"
+    },
+    {
+      "type": "text",
+      "value": "Indicates that a named parameter is required. The analyzer will warn if the parameter is omitted. This is commonly used in Flutter constructors. It is not built‑in; you must import `package:meta/meta.dart`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:meta/meta.dart';\n\nclass MyWidget {\n  final String title;\n  MyWidget({@required this.title});\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. `@immutable` (from `meta` package)"
+    },
+    {
+      "type": "text",
+      "value": "Indicates that a class is immutable (all fields are `final`). The analyzer will warn if the class has non‑final fields."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:meta/meta.dart';\n\n@immutable\nclass Point {\n  final int x, y;\n  const Point(this.x, this.y);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. `@protected` (from `meta` package)"
+    },
+    {
+      "type": "text",
+      "value": "Indicates that a member should be used only within its own library or by subclasses. The analyzer will warn if accessed from outside."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Base {\n  @protected\n  void internalMethod() {}\n}\n\nclass Sub extends Base {\n  void call() {\n    internalMethod(); // OK\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Creating Custom Annotations"
+    },
+    {
+      "type": "text",
+      "value": "You can define your own annotations by creating a class whose constructors can be invoked with `const`. The class name (or a constant of that type) becomes the annotation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Todo {\n  final String description;\n  final String? assignee;\n  final DateTime? due;\n\n  const Todo(this.description, {this.assignee, this.due});\n}\n\n@Todo('Refactor this method', assignee: 'Alice')\nvoid complexMethod() {}\n\n@Todo('Add error handling')\nvoid riskyFunction() {}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Annotations with Code Generation"
+    },
+    {
+      "type": "text",
+      "value": "Custom annotations are most powerful when used with code generation tools like `build_runner` and packages such as `json_serializable`, `freezed`, or `riverpod`. These packages read annotations at build time and generate code based on them. For example, `json_serializable` uses `@JsonSerializable` to generate `fromJson` and `toJson` methods."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:json_annotation/json_annotation.dart';\n\npart 'user.g.dart';\n\n@JsonSerializable()\nclass User {\n  final String name;\n  final int age;\n\n  User(this.name, this.age);\n\n  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);\n  Map<String, dynamic> toJson() => _$UserToJson(this);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Accessing Annotations at Runtime (Mirrors)"
+    },
+    {
+      "type": "text",
+      "value": "Dart’s `dart:mirrors` library allows you to inspect annotations at runtime. However, mirrors are not available on all platforms (e.g., Flutter web), and they can increase code size. For most cases, compile‑time code generation is preferred over runtime reflection."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:mirrors';\n\nclass Info {\n  final String message;\n  const Info(this.message);\n}\n\n@Info('Important class')\nclass MyClass {}\n\nvoid main() {\n  var mirror = reflectClass(MyClass);\n  var metadata = mirror.metadata;\n  for (var m in metadata) {\n    if (m.reflectee is Info) {\n      print((m.reflectee as Info).message);\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Annotations (metadata) are attached to code elements using `@`.",
+        "- Built‑in annotations include `@override`, `@deprecated`, and `@required` (from meta).",
+        "- Custom annotations are defined as `const` classes.",
+        "- Annotations are widely used for code generation (e.g., `json_serializable`).",
+        "- Use `dart:mirrors` for runtime inspection, but prefer compile‑time generation."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use annotations on libraries?",
+      "answer": "Yes, annotations can be placed on `library` declarations. For example: `@Todo('Refactor this library') library my_lib;`. They can also be placed on top‑level declarations like `import` and `export`."
+    },
+    {
+      "question": "Do annotations affect runtime performance?",
+      "answer": "Annotations themselves are just metadata; they do not impact runtime performance unless you use mirrors to inspect them. Code generation tools use them at build time, so there’s no runtime overhead."
+    },
+    {
+      "question": "What is the difference between `@deprecated` and `@Deprecated`?",
+      "answer": "`@deprecated` is an older annotation; `@Deprecated` (with a capital D) is the modern version that accepts a message. Both work, but `@Deprecated` is preferred because you can provide a deprecation message. Example: `@Deprecated('Use newMethod instead')`."
+    },
+    {
+      "question": "Can I create an annotation with parameters?",
+      "answer": "Yes, define a `const` constructor with parameters. When applying the annotation, you can pass those parameters as you would with a normal constructor call (using positional or named parameters)."
+    },
+    {
+      "question": "Are annotations inherited?",
+      "answer": "No, annotations are not inherited by subclasses. If you annotate a superclass, its subclasses do not automatically get that annotation."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class Author {\n  final String name;\n  const Author(this.name);\n}\n\n@Author('John Doe')\nclass Book {\n  final String title;\n  const Book(this.title);\n}\n\nvoid main() {\n  // You can't directly access annotations at runtime without mirrors,\n  // but they are used by tools.\n  print('Book class is annotated with Author.');\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which annotation is used to indicate a method overrides a superclass method?",
+      "options": ["@override", "@Overrides", "@overrideMethod", "@Override"],
+      "answer": 0
+    },
+    {
+      "question": "What must a custom annotation class have to be usable as an annotation?",
+      "options": [
+        "A default constructor",
+        "A const constructor",
+        "A static method",
+        "An abstract method"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which package provides the `@required` annotation?",
+      "options": ["dart:core", "dart:annotations", "package:meta", "package:annotations"],
+      "answer": 2
+    },
+    {
+      "question": "How can annotations be processed at build time?",
+      "options": [
+        "Using mirrors",
+        "Using code generation with build_runner",
+        "Using the dart runtime",
+        "Annotations cannot be processed"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-classes",
+    "dart-constructors",
+    "dart-code-generation",
+    "dart-mirrors"
+  ]
+}

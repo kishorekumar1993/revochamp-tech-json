@@ -1,0 +1,199 @@
+{
+  "slug": "flutter-positioned-widget",
+  "course": "Flutter",
+  "title": "Flutter Positioned – Absolute Positioning inside Stack",
+  "meta": {
+    "title": "Flutter Positioned Widget: Absolute Positioning with Stack",
+    "description": "Learn how to use Positioned to place widgets at exact coordinates within a Stack. Control top, bottom, left, right, width, height, and understand constraints.",
+    "keywords": [
+      "Flutter Positioned",
+      "Positioned widget",
+      "Flutter Stack",
+      "absolute positioning",
+      "Flutter layout",
+      "Flutter overlapping widgets",
+      "Flutter coordinates"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the Positioned Widget?"
+    },
+    {
+      "type": "text",
+      "value": "`Positioned` is a widget that controls where a child of a `Stack` is placed. It allows you to set absolute coordinates (top, bottom, left, right) relative to the `Stack`’s edges, as well as optionally specify a width and height. It is only valid when used as a direct child of a `Stack`. `Positioned` gives you precise control over the placement of widgets, making it ideal for creating overlays, badges, floating action buttons, and complex UI arrangements."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "Wrap a child with `Positioned` and provide at least one of `top`, `bottom`, `left`, or `right` (or a combination). The child will be positioned relative to the corresponding edge of the `Stack`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Stack(\n  children: [\n    Container(color: Colors.grey, width: 300, height: 300),\n    Positioned(\n      top: 50,\n      left: 50,\n      child: Container(width: 50, height: 50, color: Colors.red),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Positioning Properties"
+    },
+    {
+      "type": "text",
+      "value": "The `Positioned` widget has several properties to control placement and size:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`top`**: Distance from the top edge of the `Stack`.",
+        "- **`bottom`**: Distance from the bottom edge.",
+        "- **`left`**: Distance from the left edge.",
+        "- **`right`**: Distance from the right edge.",
+        "- **`width`**: Explicit width of the child (if both left and right are given, width is ignored).",
+        "- **`height`**: Explicit height of the child (if both top and bottom are given, height is ignored)."
+      ]
+    },
+    {
+      "type": "text",
+      "value": "If you specify both `top` and `bottom`, the widget is vertically constrained between those edges; the height is determined by the space available (or the child's natural height). Similarly, `left` and `right` together stretch the widget horizontally. If you set `width` or `height` along with opposite edges, the explicit size takes precedence and the edges may be ignored (or cause an assertion if they conflict)."
+    },
+    {
+      "type": "heading",
+      "value": "Examples"
+    },
+    {
+      "type": "heading",
+      "value": "1. Corner Badge"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Stack(\n  children: [\n    Image.network('https://picsum.photos/200'),\n    Positioned(\n      top: 0,\n      right: 0,\n      child: Container(\n        padding: EdgeInsets.all(8),\n        decoration: BoxDecoration(\n          color: Colors.red,\n          shape: BoxShape.circle,\n        ),\n        child: Text('5', style: TextStyle(color: Colors.white)),\n      ),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "2. Stretched Overlay"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Stack(\n  children: [\n    Container(width: 200, height: 200, color: Colors.blue),\n    Positioned(\n      left: 20,\n      right: 20,\n      top: 50,\n      child: Container(\n        height: 50,\n        color: Colors.white.withOpacity(0.8),\n        child: Center(child: Text('Overlay')),\n      ),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "3. Centered Floating Button (without FAB)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Stack(\n  children: [\n    Container(color: Colors.grey, width: 300, height: 300),\n    Positioned(\n      left: 0,\n      right: 0,\n      bottom: 20,\n      child: Center(\n        child: ElevatedButton(\n          onPressed: () {},\n          child: Text('Centered Button'),\n        ),\n      ),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Positioned vs Align vs Padding"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`Positioned`**: Absolute positioning within a `Stack`. You specify exact pixel offsets from edges. The `Stack` must be the parent.",
+        "- **`Align`**: Positions a child within its parent based on a fraction (e.g., `Alignment.topRight`). It does not require a `Stack` and is often used with `Container` or `SizedBox`.",
+        "- **`Padding`**: Adds space around the child, but does not change the child's position relative to the parent edges; it only adds empty space inside the parent."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Using `Positioned` outside a `Stack`**: This causes a runtime error because `Positioned` only works inside a `Stack`.",
+        "- **Specifying conflicting constraints**: For example, setting both `left` and `right` and also `width` can cause an assertion. Flutter prefers the explicit `width`/`height` over the edge constraints.",
+        "- **Forgetting to give the `Stack` a size**: If the `Stack` itself has no size (e.g., no width/height and no positioned children that give it size), the positioned child may not be visible. Ensure the `Stack` has a bounded size (e.g., via a parent `Container` or an expanding child).",
+        "- **Not handling overflow**: If a `Positioned` child extends beyond the `Stack` bounds, it may be clipped (depending on the `Stack`'s `clipBehavior`). Use `clipBehavior: Clip.none` to allow overflow, but be mindful of UI boundaries."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `Positioned` is used inside a `Stack` to place children at absolute coordinates.",
+        "- Specify `top`, `bottom`, `left`, `right` to position relative to the `Stack`'s edges.",
+        "- Use `width` and `height` to explicitly size the child.",
+        "- When both opposite edges (e.g., `left` and `right`) are given, the child is stretched; explicit `width` overrides this.",
+        "- Always ensure the `Stack` has a defined size, otherwise positioned children may not behave as expected.",
+        "- For simple alignment without absolute coordinates, consider `Align` or `Padding`."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use `Positioned` to create a button that floats over a list?",
+      "answer": "Yes. Wrap the list in a `Stack`, then add the button as a `Positioned` child. Make sure the `Stack` has a size (e.g., it expands to the full screen via `Scaffold` body). You may need to give the list a fixed height or use `Expanded` to occupy remaining space."
+    },
+    {
+      "question": "How do I make a `Positioned` child fill the entire Stack?",
+      "answer": "Set `top: 0, bottom: 0, left: 0, right: 0`. This will stretch the child to fill the whole `Stack`. If you also set `width` or `height`, they will override the stretch. Alternatively, use the `Positioned.fill` constructor: `Positioned.fill(child: ...)`."
+    },
+    {
+      "question": "Why does my `Positioned` child not appear?",
+      "answer": "Possible reasons: (1) The `Stack` has no size – ensure it is constrained (e.g., wrap it in a `SizedBox` or use `Expanded`). (2) The `Positioned` child might be behind another child due to order; the children are painted in order, so later children appear on top. (3) The coordinates might be negative or outside the `Stack` bounds and `clipBehavior` is `Clip.hardEdge`."
+    },
+    {
+      "question": "What is the difference between `Positioned` and `Positioned.fill`?",
+      "answer": "`Positioned.fill` is a convenience constructor that sets `top: 0, bottom: 0, left: 0, right: 0`. It's equivalent to a `Positioned` with all edges set to zero, causing the child to fill the entire `Stack`."
+    },
+    {
+      "question": "Can I use `Positioned` with `AnimatedPositioned`?",
+      "answer": "Yes, `AnimatedPositioned` is a version that animates changes to `top`, `bottom`, `left`, `right`, `width`, `height`. It's useful for smooth transitions."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Positioned Demo')),\n        body: Center(\n          child: SizedBox(\n            width: 300,\n            height: 300,\n            child: Stack(\n              clipBehavior: Clip.none,\n              children: [\n                Container(color: Colors.blue),\n                Positioned(\n                  top: 20,\n                  left: 20,\n                  child: Container(width: 50, height: 50, color: Colors.red),\n                ),\n                Positioned(\n                  bottom: 10,\n                  right: 10,\n                  child: Container(width: 40, height: 40, color: Colors.green),\n                ),\n                Positioned(\n                  left: 0,\n                  right: 0,\n                  bottom: 0,\n                  child: Container(\n                    height: 50,\n                    color: Colors.black.withOpacity(0.5),\n                    child: Center(child: Text('Stretched Footer', style: TextStyle(color: Colors.white))),\n                  ),\n                ),\n              ],\n            ),\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget must be the parent of a Positioned widget?",
+      "options": ["Container", "Column", "Stack", "Row"],
+      "answer": 2
+    },
+    {
+      "question": "How do you make a Positioned child stretch to fill the entire Stack?",
+      "options": [
+        "Set `top: 0, bottom: 0, left: 0, right: 0`",
+        "Set `fill: true`",
+        "Use `Positioned.fill()` constructor",
+        "Both A and C"
+      ],
+      "answer": 3
+    },
+    {
+      "question": "What happens if you set both `left` and `right` and also set `width`?",
+      "options": [
+        "The `width` is ignored",
+        "The `width` overrides the stretch and may cause an assertion if constraints conflict",
+        "Both are applied, resulting in a stretched width",
+        "The child is centered"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which of the following is NOT a valid property of Positioned?",
+      "options": ["top", "bottom", "center", "left"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "flutter-stack",
+    "flutter-align",
+    "flutter-animated-positioned",
+    "flutter-layout"
+  ]
+}

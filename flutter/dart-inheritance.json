@@ -1,0 +1,225 @@
+{
+  "slug": "dart-inheritance",
+  "course": "Dart",
+  "title": "Dart Inheritance – Extending Classes and Reusing Code",
+  "meta": {
+    "title": "Dart Inheritance: Extend Classes, Override Methods, and More",
+    "description": "Learn inheritance in Dart – how to extend classes, use super, override methods, and understand single inheritance. Includes practical examples and quiz.",
+    "keywords": [
+      "Dart inheritance",
+      "Dart extend class",
+      "Dart super keyword",
+      "Dart method overriding",
+      "Dart single inheritance",
+      "Dart subclass",
+      "Dart OOP inheritance"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Inheritance?"
+    },
+    {
+      "type": "text",
+      "value": "Inheritance is a fundamental concept of object‑oriented programming that allows a class to inherit properties and methods from another class. The class that inherits is called a **subclass** (or child class), and the class it inherits from is called a **superclass** (or parent class). Inheritance promotes code reuse and establishes a hierarchical relationship between classes."
+    },
+    {
+      "type": "heading",
+      "value": "Single Inheritance in Dart"
+    },
+    {
+      "type": "text",
+      "value": "Dart supports **single inheritance** – a class can extend only one superclass. This keeps the inheritance hierarchy simple and avoids the complexities of multiple inheritance (like the diamond problem). However, Dart provides mixins as a way to reuse code from multiple sources."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax: Using `extends`"
+    },
+    {
+      "type": "text",
+      "value": "To create a subclass, use the `extends` keyword followed by the superclass name. The subclass automatically inherits all non‑private members (fields and methods) of the superclass."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Animal {\n  String name;\n\n  Animal(this.name);\n\n  void eat() {\n    print('$name is eating.');\n  }\n}\n\nclass Dog extends Animal {\n  Dog(String name) : super(name);\n\n  void bark() {\n    print('$name is barking.');\n  }\n}\n\nvoid main() {\n  var dog = Dog('Buddy');\n  dog.eat();  // Inherited from Animal\n  dog.bark(); // Defined in Dog\n}"
+    },
+    {
+      "type": "heading",
+      "value": "The `super` Keyword"
+    },
+    {
+      "type": "text",
+      "value": "The `super` keyword refers to the superclass. It is used to call superclass constructors, methods, or access superclass properties. In the constructor, `super()` must be called in the initializer list."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Person {\n  String name;\n  int age;\n\n  Person(this.name, this.age);\n\n  void introduce() {\n    print('Hi, I am $name and I am $age years old.');\n  }\n}\n\nclass Student extends Person {\n  String school;\n\n  Student(String name, int age, this.school) : super(name, age);\n\n  @override\n  void introduce() {\n    super.introduce(); // Call the superclass method\n    print('I study at $school.');\n  }\n}\n\nvoid main() {\n  var student = Student('Alice', 20, 'Dart University');\n  student.introduce();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Method Overriding"
+    },
+    {
+      "type": "text",
+      "value": "A subclass can override a method from the superclass by providing its own implementation. Use the `@override` annotation (optional but recommended) to indicate that you are intentionally overriding a method. The overridden method must have the same signature (return type and parameters)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Shape {\n  void draw() {\n    print('Drawing a shape.');\n  }\n}\n\nclass Circle extends Shape {\n  @override\n  void draw() {\n    print('Drawing a circle.');\n  }\n}\n\nvoid main() {\n  Shape shape = Circle();\n  shape.draw(); // Output: Drawing a circle.\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Inheritance and Constructors"
+    },
+    {
+      "type": "text",
+      "value": "Constructors are not inherited, but a subclass must call a constructor of the superclass. If the superclass doesn't have a default constructor (a constructor with no parameters), you must explicitly call a specific superclass constructor using `super` in the initializer list."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Vehicle {\n  String brand;\n\n  Vehicle(this.brand); // No default constructor\n}\n\nclass Car extends Vehicle {\n  String model;\n\n  Car(String brand, this.model) : super(brand); // Must call super\n}\n\nvoid main() {\n  var car = Car('Toyota', 'Camry');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Preventing Inheritance: `final` and `sealed` Classes"
+    },
+    {
+      "type": "text",
+      "value": "You can prevent a class from being extended by marking it `final` (cannot be extended) or `sealed` (can be extended only within the same library). This is useful for creating immutable or restricted hierarchies."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final class Constants {\n  static const pi = 3.14;\n}\n\n// class MyClass extends Constants {} // Error\n\nsealed class Result {}\n\nclass Success extends Result {}\nclass Error extends Result {}"
+    },
+    {
+      "type": "heading",
+      "value": "The `covariant` Keyword"
+    },
+    {
+      "type": "text",
+      "value": "When overriding a method, you can narrow the type of a parameter using the `covariant` keyword. This allows you to accept a more specific subtype than the superclass method."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Animal {}\nclass Dog extends Animal {}\n\nclass AnimalHandler {\n  void handle(Animal animal) {\n    print('Handling animal');\n  }\n}\n\nclass DogHandler extends AnimalHandler {\n  @override\n  void handle(covariant Dog animal) {\n    print('Handling dog');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting to call `super` when the superclass has no default constructor** – leads to a compile error.",
+        "- **Accidentally overriding a method without `@override`** – can lead to subtle bugs if the superclass method signature changes.",
+        "- **Overriding a method and changing its parameter type** – not allowed unless using `covariant`.",
+        "- **Trying to extend a `final` class** – compile error.",
+        "- **Confusing inheritance with composition** – sometimes composition is a better design choice."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Employee {\n  String name;\n  double salary;\n\n  Employee(this.name, this.salary);\n\n  void work() {\n    print('$name is working.');\n  }\n\n  void displayInfo() {\n    print('Name: $name, Salary: \\$$salary');\n  }\n}\n\nclass Manager extends Employee {\n  int teamSize;\n\n  Manager(String name, double salary, this.teamSize) : super(name, salary);\n\n  @override\n  void work() {\n    super.work();\n    print('$name is also managing a team of $teamSize people.');\n  }\n\n  void conductMeeting() {\n    print('$name is conducting a meeting.');\n  }\n}\n\nvoid main() {\n  var emp = Employee('John', 50000);\n  emp.work();\n  emp.displayInfo();\n\n  var mgr = Manager('Alice', 80000, 5);\n  mgr.work();\n  mgr.conductMeeting();\n  mgr.displayInfo();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Inheritance allows a class to reuse code from another class.",
+        "- Use `extends` to create a subclass.",
+        "- Dart supports single inheritance only.",
+        "- Use `super` to refer to the superclass and call its constructor or methods.",
+        "- Override methods with `@override` to provide subclass‑specific behavior.",
+        "-A subclass must call a superclass constructor (implicitly or explicitly).",
+        "- Use `final` or `sealed` to prevent inheritance.",
+        "- The `covariant` keyword allows narrowing parameter types in overrides."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can a Dart class extend multiple classes?",
+      "answer": "No, Dart supports single inheritance – a class can only extend one superclass. However, you can implement multiple interfaces and use mixins to reuse code from multiple sources."
+    },
+    {
+      "question": "How do I call the superclass constructor?",
+      "answer": "Use `super()` in the initializer list of the subclass constructor. For example: `Dog(String name) : super(name);`."
+    },
+    {
+      "question": "What is the difference between `extends` and `implements`?",
+      "answer": "`extends` creates a subclass that inherits the implementation of the superclass. `implements` forces a class to provide its own implementation of all methods and properties declared in the implemented class (or interface). A class can implement multiple interfaces."
+    },
+    {
+      "question": "Is the `@override` annotation mandatory?",
+      "answer": "No, it's optional. However, it's a good practice because it tells the reader that the method is intended to override a superclass method, and it helps the compiler catch errors if the superclass method signature changes."
+    },
+    {
+      "question": "Can I override a property (field)?",
+      "answer": "In Dart, fields are not overridden; they are hidden. If you declare a field with the same name in a subclass, it shadows the superclass field. To achieve polymorphic behavior, use getters and setters."
+    },
+    {
+      "question": "What is the `covariant` keyword used for?",
+      "answer": "It allows you to narrow the type of a parameter when overriding a method. For example, you can override `void handle(Animal animal)` with `void handle(covariant Dog animal)`."
+    },
+    {
+      "question": "How can I prevent a class from being extended?",
+      "answer": "Mark the class as `final` (cannot be extended anywhere) or `sealed` (can only be extended within the same library). For example: `final class MyClass {}`."
+    },
+    {
+      "question": "Can a subclass access private members of the superclass?",
+      "answer": "No, private members (those starting with `_`) are only accessible within the same library (file). If the subclass is in a different file, it cannot access them."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class Animal {\n  String name;\n  Animal(this.name);\n  void speak() {\n    print('$name makes a sound.');\n  }\n}\n\nclass Dog extends Animal {\n  Dog(String name) : super(name);\n  @override\n  void speak() {\n    print('$name barks.');\n  }\n}\n\nvoid main() {\n  var dog = Dog('Rex');\n  dog.speak();\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which keyword is used to create a subclass in Dart?",
+      "options": ["implements", "extends", "with", "inherits"],
+      "answer": 1
+    },
+    {
+      "question": "How many classes can a Dart class extend?",
+      "options": ["0", "1", "2", "Unlimited"],
+      "answer": 1
+    },
+    {
+      "question": "What does the `super` keyword refer to?",
+      "options": [
+        "The current class",
+        "The superclass",
+        "The object's parent in the widget tree",
+        "A static method"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the output of this code?\n\nclass A {\n  void foo() { print('A'); }\n}\nclass B extends A {\n  @override\n  void foo() { print('B'); }\n}\nvoid main() { A obj = B(); obj.foo(); }",
+      "options": ["A", "B", "Error", "Nothing"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-classes",
+    "dart-constructors",
+    "dart-mixins",
+    "dart-abstract-classes"
+  ]
+}

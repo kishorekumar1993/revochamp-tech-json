@@ -1,0 +1,216 @@
+{
+  "slug": "flutter-text-widget",
+  "course": "Flutter",
+  "title": "Flutter Text Widget – A Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter Text Widget Tutorial: Styling, Overflow, and More",
+    "description": "Learn how to use the Text widget in Flutter to display text. Master styling, alignment, overflow handling, maxLines, softWrap, and best practices.",
+    "keywords": [
+      "Flutter Text widget",
+      "Text widget",
+      "Flutter text styling",
+      "Text overflow",
+      "TextAlign",
+      "Flutter typography",
+      "Flutter UI"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the Text Widget?"
+    },
+    {
+      "type": "text",
+      "value": "The `Text` widget is one of the most fundamental widgets in Flutter. It displays a string of text with a single style. You can customize its appearance using the `style` property, control alignment, handle overflow, and more. The `Text` widget is lightweight and used everywhere – from app bars to buttons to long paragraphs."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Text('Hello, Flutter!')"
+    },
+    {
+      "type": "text",
+      "value": "This will display the string with the default theme's text style (usually the `bodyMedium` style)."
+    },
+    {
+      "type": "heading",
+      "value": "Styling Text with TextStyle"
+    },
+    {
+      "type": "text",
+      "value": "The `style` property takes a `TextStyle` object that can define font size, weight, color, decoration, font family, and more."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Text(\n  'Hello, Flutter!',\n  style: TextStyle(\n    fontSize: 24,\n    fontWeight: FontWeight.bold,\n    color: Colors.blue,\n    decoration: TextDecoration.underline,\n    fontFamily: 'Poppins',\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Text Alignment"
+    },
+    {
+      "type": "text",
+      "value": "Use `textAlign` to control how the text is aligned within its parent. The available values are: `TextAlign.left`, `right`, `center`, `justify`, `start`, `end`. The default depends on the text direction."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Text(\n  'Centered text',\n  textAlign: TextAlign.center,\n)"
+    },
+    {
+      "type": "text",
+      "value": "For `textAlign` to have an effect, the widget's parent must provide enough width (e.g., a `Container` with a width, or a `SizedBox`). In a `Column`, the text may not be centered horizontally unless the parent is constrained."
+    },
+    {
+      "type": "heading",
+      "value": "Handling Text Overflow"
+    },
+    {
+      "type": "text",
+      "value": "When text exceeds the available space, you can control the overflow behavior using the `overflow` property. Common values:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`TextOverflow.clip`** – cuts off the text at the edge.",
+        "- **`TextOverflow.ellipsis`** – adds `…` at the end.",
+        "- **`TextOverflow.fade`** – fades out the text.",
+        "- **`TextOverflow.visible`** – allows the text to overflow its bounds."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Text(\n  'This is a very long text that will definitely overflow the available space.',\n  overflow: TextOverflow.ellipsis,\n  maxLines: 1,\n)"
+    },
+    {
+      "type": "text",
+      "value": "You often combine `overflow` with `maxLines` to limit the number of lines."
+    },
+    {
+      "type": "heading",
+      "value": "Line Control: maxLines and softWrap"
+    },
+    {
+      "type": "text",
+      "value": "- **`maxLines`**: Limits the number of lines. Use with `overflow` to show an ellipsis when the limit is reached.\n- **`softWrap`**: If `true`, the text will wrap onto new lines when it reaches the edge. If `false`, it will overflow horizontally (and `maxLines` may be ignored). By default, `softWrap` is `true`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Text(\n  'This is a long text that will wrap onto multiple lines automatically.',\n  softWrap: true,\n)\n\nText(\n  'This text will be limited to two lines and show an ellipsis if longer.',\n  maxLines: 2,\n  overflow: TextOverflow.ellipsis,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Using Text with Theme"
+    },
+    {
+      "type": "text",
+      "value": "Instead of hard‑coding styles, you can leverage the app's theme. Use `Theme.of(context).textTheme` to access predefined text styles like `headlineMedium`, `titleLarge`, `bodyMedium`, etc. This ensures consistency across the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Text(\n  'Headline',\n  style: Theme.of(context).textTheme.headlineMedium,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Text Direction and Locale"
+    },
+    {
+      "type": "text",
+      "value": "You can control the text direction (e.g., for Arabic, Hebrew) using `textDirection`. The locale can be specified with `locale` to influence rendering of certain characters."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Text(\n  'مرحبا',\n  textDirection: TextDirection.rtl,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `Text` displays a string with a single style.",
+        "- Use `style` with `TextStyle` to customize font, color, size, etc.",
+        "- Control alignment with `textAlign`.",
+        "- Manage overflow with `overflow` and `maxLines`.",
+        "- Use `softWrap` to allow line breaks.",
+        "- Prefer theme‑based styles for consistency and adaptability.",
+        "- Always handle text overflow to avoid layout errors."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I make text bold?",
+      "answer": "Set `fontWeight: FontWeight.bold` in the `TextStyle`. You can also use other weights like `FontWeight.w500`, `FontWeight.w800`, etc."
+    },
+    {
+      "question": "How do I change the text color?",
+      "answer": "Set `color: Colors.red` (or any color) in the `TextStyle`. You can also use `Theme.of(context).primaryColor` to match the app theme."
+    },
+    {
+      "question": "What is the difference between `overflow: TextOverflow.ellipsis` and `overflow: TextOverflow.fade`?",
+      "answer": "`ellipsis` adds `…` at the end of the truncated text; `fade` gradually fades out the text at the edge, creating a smooth effect. Both require the text to be constrained (e.g., inside a `Container` with a width)."
+    },
+    {
+      "question": "Why does `textAlign` not work inside a `Row`?",
+      "answer": "In a `Row`, the child text widget may not have a flexible width; it sizes itself to its content. To center text inside a `Row`, wrap it with `Expanded` or `Flexible` to give it available space."
+    },
+    {
+      "question": "Can I apply a gradient to text?",
+      "answer": "Directly, no. Use `ShaderMask` to apply a gradient to the whole text. Alternatively, you can use `RichText` with `WidgetSpan` and a custom painter, but that's complex. For simple cases, `ShaderMask` works well."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Text Widget Demo')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Text(\n                'Hello, Flutter!',\n                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),\n              ),\n              SizedBox(height: 20),\n              Text(\n                'This text is centered and will wrap automatically if it is very long. It uses the default theme style and softWrap.',\n                textAlign: TextAlign.center,\n                softWrap: true,\n              ),\n              SizedBox(height: 20),\n              Container(\n                width: 200,\n                child: Text(\n                  'This is a long text that will be clipped with an ellipsis because it is constrained to a fixed width.',\n                  overflow: TextOverflow.ellipsis,\n                  maxLines: 1,\n                ),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which property of Text is used to limit the number of lines?",
+      "options": ["maxLine", "lines", "maxLines", "lineLimit"],
+      "answer": 2
+    },
+    {
+      "question": "How do you make text bold?",
+      "options": ["TextStyle(weight: 'bold')", "TextStyle(fontWeight: FontWeight.bold)", "TextStyle(bold: true)", "Text(bold: true)"],
+      "answer": 1
+    },
+    {
+      "question": "What does `TextOverflow.ellipsis` do?",
+      "options": [
+        "Adds three dots at the end of the text",
+        "Fades out the text",
+        "Clips the text without any indication",
+        "Allows the text to overflow"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What is the purpose of `softWrap`?",
+      "options": [
+        "To wrap text onto new lines",
+        "To add a soft shadow",
+        "To enable animations",
+        "To make text selectable"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-textfield",
+    "flutter-richtext",
+    "flutter-theme",
+    "flutter-typography"
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "slug": "dart-generics",
+  "course": "Dart",
+  "title": "Dart Generics – Type‑Safe Code with Reusable Components",
+  "meta": {
+    "title": "Dart Generics: Generic Classes, Functions, and Constraints",
+    "description": "Learn how to use generics in Dart to write reusable, type‑safe code. Covers generic types, generic functions, generic classes, type bounds, and best practices.",
+    "keywords": [
+      "Dart generics",
+      "Dart generic class",
+      "Dart generic function",
+      "Dart type parameter",
+      "Dart type safety",
+      "Dart extends",
+      "Dart generic constraints"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Generics?"
+    },
+    {
+      "type": "text",
+      "value": "Generics enable you to write code that works with different types while still maintaining type safety. Instead of using `dynamic` (which disables type checking), generics allow you to specify a type parameter that is resolved at compile time. This leads to reusable components (like collections) that are safe and efficient. Dart's collection classes, such as `List<E>` and `Map<K,V>`, are prime examples of generics."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Generics?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Type safety** – catch type errors at compile time.",
+        "- **Code reuse** – write a single class or function that works with many types.",
+        "- **Eliminates casting** – no need for explicit casts, reducing runtime errors.",
+        "- **Better documentation** – the expected type is clear from the signature."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Generic Functions"
+    },
+    {
+      "type": "text",
+      "value": "You can declare a generic function by placing a type parameter in angle brackets before the return type. The type parameter can be used in parameters and return types."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "T identity<T>(T value) {\n  return value;\n}\n\nvoid main() {\n  int x = identity<int>(42);\n  String s = identity<String>('Hello');\n  // Type inference works too\n  var y = identity(3.14); // inferred as double\n  print('$x, $s, $y');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Generic Classes"
+    },
+    {
+      "type": "text",
+      "value": "A class can have one or more type parameters. You can then instantiate the class with specific types. This is how built‑in collections work."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Box<T> {\n  T _content;\n\n  Box(this._content);\n\n  T get content => _content;\n  void setContent(T value) => _content = value;\n}\n\nvoid main() {\n  Box<int> intBox = Box<int>(42);\n  print(intBox.content); // 42\n\n  Box<String> stringBox = Box<String>('Hello');\n  print(stringBox.content); // Hello\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Multiple Type Parameters"
+    },
+    {
+      "type": "text",
+      "value": "You can use multiple type parameters, separated by commas. This is common for key‑value containers like maps."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Pair<K, V> {\n  K key;\n  V value;\n\n  Pair(this.key, this.value);\n\n  @override\n  String toString() => '$key → $value';\n}\n\nvoid main() {\n  var pair = Pair<int, String>(1, 'one');\n  print(pair); // 1 → one\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Type Constraints with `extends`"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to restrict the types that can be used with a generic. Use the `extends` keyword to specify an upper bound. The type parameter must be a subtype of the bound."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class NumberBox<T extends num> {\n  T value;\n  NumberBox(this.value);\n\n  T add(T other) {\n    return (value + other) as T; // OK because T is numeric\n  }\n}\n\nvoid main() {\n  var intBox = NumberBox<int>(10);\n  print(intBox.add(5)); // 15\n\n  var doubleBox = NumberBox<double>(3.14);\n  print(doubleBox.add(2.86)); // 6.0\n\n  // var stringBox = NumberBox<String>('test'); // Error: String is not a subtype of num\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using `Comparable` with Bounds"
+    },
+    {
+      "type": "text",
+      "value": "Constraints are often used to ensure that types can be compared or have specific methods. For example, you can require that a type implements `Comparable`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Max<T extends Comparable<T>> {\n  T max(T a, T b) {\n    return a.compareTo(b) >= 0 ? a : b;\n  }\n}\n\nvoid main() {\n  var max = Max<int>();\n  print(max.max(5, 10)); // 10\n\n  var maxString = Max<String>();\n  print(maxString.max('apple', 'banana')); // banana\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Generic Methods in Non‑Generic Classes"
+    },
+    {
+      "type": "text",
+      "value": "Even if a class isn't generic, you can still have generic methods inside it. The type parameter is scoped to the method."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Utility {\n  static T identity<T>(T value) => value;\n\n  static T getFirst<T>(List<T> list) => list[0];\n}\n\nvoid main() {\n  print(Utility.identity(42));\n  print(Utility.getFirst(['a', 'b', 'c'])); // a\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Understanding `dynamic` vs Generics"
+    },
+    {
+      "type": "text",
+      "value": "Using `dynamic` bypasses type checking entirely, which can lead to runtime errors. Generics preserve type information, catching mistakes early."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  List<dynamic> dynamicList = [1, 'two', 3];\n  dynamicList.add(4); // allowed, but type unsafe\n\n  List<int> intList = [1, 2, 3];\n  // intList.add('four'); // Compile error – type safe\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Generics allow writing type‑safe, reusable code.",
+        "- Use `<T>` for type parameters in classes, methods, and functions.",
+        "- Multiple type parameters are supported (e.g., `<K, V>`).",
+        "- Use `extends` to constrain type parameters to a supertype.",
+        "- Generics help avoid casting and reduce runtime errors.",
+        "- Prefer generics over `dynamic` when possible."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `List` and `List<dynamic>`?",
+      "answer": "`List` without a type parameter is shorthand for `List<dynamic>`, meaning it can hold any type, but you lose type safety. `List<dynamic>` allows mixing types; `List<int>` restricts to integers and gives compile‑time type checking."
+    },
+    {
+      "question": "Can I use `extends` with multiple bounds?",
+      "answer": "Yes, you can use `extends` to require a class to extend a superclass and implement interfaces. For example: `class C<T extends A & B>`. The bound can combine a superclass (at most one) and any number of interfaces using `&`."
+    },
+    {
+      "question": "How does Dart handle generic type erasure?",
+      "answer": "Dart does not have type erasure like Java; type parameters are reified, meaning the type is available at runtime. You can check types with `is` (e.g., `list is List<int>`)."
+    },
+    {
+      "question": "Can I instantiate a generic type?",
+      "answer": "Not directly. For example, you cannot write `T()` if T is a type parameter. You need to pass a factory or a constructor function to create instances."
+    },
+    {
+      "question": "What are the naming conventions for type parameters?",
+      "answer": "Common conventions: `E` for element type (in collections), `K` and `V` for key and value, `T` for a single type, `S` and `U` for additional types. Use descriptive names when appropriate (e.g., `KeyType`, `ValueType`)."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class Box<T> {\n  T value;\n  Box(this.value);\n  void display() => print('Box contains: $value');\n}\n\nvoid main() {\n  Box<int> intBox = Box(42);\n  intBox.display();\n\n  Box<String> strBox = Box('Hello');\n  strBox.display();\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the purpose of generics in Dart?",
+      "options": [
+        "To write code that works with any type without type safety",
+        "To write reusable, type‑safe code",
+        "To make code run faster",
+        "To replace classes"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you declare a generic function with a type parameter T?",
+      "options": [
+        "T function<T>(T value) {}",
+        "<T> T function(T value) {}",
+        "function<T>(T value) {}",
+        "T function(T value) {}"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What does `class Box<T extends num>` mean?",
+      "options": [
+        "Box can only contain num values",
+        "T must be a subtype of num",
+        "T must be exactly num",
+        "T can be any type"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which of the following is a valid generic constraint?",
+      "options": ["T extends Comparable", "T implements Comparable", "T is Comparable", "T as Comparable"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "dart-classes",
+    "dart-collection-methods",
+    "dart-type-system",
+    "dart-interfaces"
+  ]
+}

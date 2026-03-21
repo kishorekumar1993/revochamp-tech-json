@@ -1,0 +1,237 @@
+{
+  "slug": "dart-loops",
+  "course": "Dart",
+  "title": "Dart Loops – For, While, Do-While and Iteration",
+  "meta": {
+    "title": "Dart Loops: For, While, Do-While with Examples",
+    "description": "Master loops in Dart – for loop, while, do-while, for-in, forEach, break, continue, and labels. Includes practical examples and quiz.",
+    "keywords": [
+      "Dart loops",
+      "Dart for loop",
+      "Dart while loop",
+      "Dart do-while",
+      "Dart for-in loop",
+      "Dart forEach",
+      "Dart break continue",
+      "Dart iteration"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Loops?"
+    },
+    {
+      "type": "text",
+      "value": "Loops are used to execute a block of code repeatedly. They are essential for iterating over collections, performing repetitive tasks, and controlling program flow. Dart provides several types of loops to handle different iteration scenarios."
+    },
+    {
+      "type": "heading",
+      "value": "1. The `for` Loop"
+    },
+    {
+      "type": "text",
+      "value": "The classic `for` loop repeats a block of code a specific number of times. It consists of three parts: initialization, condition, and increment/decrement."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  for (int i = 0; i < 5; i++) {\n    print('Iteration: $i');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. The `for-in` Loop"
+    },
+    {
+      "type": "text",
+      "value": "The `for-in` loop simplifies iterating over collections like lists, sets, and maps. It automatically extracts each element."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  List<String> names = ['Alice', 'Bob', 'Charlie'];\n  \n  for (var name in names) {\n    print('Hello, $name');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. The `while` Loop"
+    },
+    {
+      "type": "text",
+      "value": "The `while` loop executes a block of code as long as a given condition is true. The condition is checked before each iteration."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int count = 0;\n  \n  while (count < 3) {\n    print('Count: $count');\n    count++;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. The `do-while` Loop"
+    },
+    {
+      "type": "text",
+      "value": "The `do-while` loop is similar to `while`, but it guarantees that the code block executes at least once because the condition is checked after the iteration."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int number = 5;\n  \n  do {\n    print('Number is $number');\n    number--;\n  } while (number > 0);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. The `forEach()` Method"
+    },
+    {
+      "type": "text",
+      "value": "Dart collections have a `forEach()` method that applies a function to each element. It's a functional alternative to loops."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3, 4, 5];\n  \n  numbers.forEach((num) {\n    print('Square of $num is ${num * num}');\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Loop Control: `break` and `continue`"
+    },
+    {
+      "type": "text",
+      "value": "Use `break` to exit a loop prematurely, and `continue` to skip the current iteration and move to the next."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  for (int i = 0; i < 10; i++) {\n    if (i == 5) break;        // exit loop when i is 5\n    if (i % 2 == 0) continue; // skip even numbers\n    print(i);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Labeled Loops"
+    },
+    {
+      "type": "text",
+      "value": "When you have nested loops, you can use labels with `break` or `continue` to specify which loop to affect."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  outerLoop: for (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n      if (i == 1 && j == 1) break outerLoop;\n      print('i = $i, j = $j');\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Complete Examples"
+    },
+    {
+      "type": "text",
+      "value": "Here are more practical examples demonstrating loops in action:"
+    },
+    {
+      "type": "heading",
+      "value": "Example 1: Sum of Numbers"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int sum = 0;\n  for (int i = 1; i <= 10; i++) {\n    sum += i;\n  }\n  print('Sum of 1 to 10 is $sum'); // 55\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Example 2: Iterating a Map"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  Map<String, int> ages = {'Alice': 30, 'Bob': 25, 'Charlie': 35};\n  \n  ages.forEach((name, age) {\n    print('$name is $age years old');\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Example 3: Finding Prime Numbers"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "bool isPrime(int n) {\n  if (n <= 1) return false;\n  for (int i = 2; i <= n ~/ 2; i++) {\n    if (n % i == 0) return false;\n  }\n  return true;\n}\n\nvoid main() {\n  for (int i = 2; i <= 20; i++) {\n    if (isPrime(i)) {\n      print('$i is prime');\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `for` loop when you know the number of iterations in advance.",
+        "- Use `for-in` to iterate over collections concisely.",
+        "- Use `while` when the number of iterations is unknown and depends on a condition.",
+        "- Use `do-while` when you need the loop body to execute at least once.",
+        "- `forEach()` provides a functional way to process each element.",
+        "- `break` exits a loop; `continue` skips to the next iteration.",
+        "- Labels help control nested loops."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `for` and `for-in` loops?",
+      "answer": "The `for` loop gives you an index and is useful when you need to know the position of each element or when you need to iterate a specific number of times. The `for-in` loop is simpler and more readable when you just need to process each element of a collection without caring about the index."
+    },
+    {
+      "question": "When should I use `while` vs `do-while`?",
+      "answer": "Use `while` when the condition is checked before the first iteration – the loop body may never execute. Use `do-while` when you need the loop body to execute at least once, regardless of the condition. In a `do-while`, the condition is checked after the first iteration."
+    },
+    {
+      "question": "Can I use `break` and `continue` in all loops?",
+      "answer": "Yes, `break` and `continue` work in `for`, `for-in`, `while`, and `do-while` loops. `break` exits the loop entirely, while `continue` skips the rest of the current iteration and proceeds to the next one."
+    },
+    {
+      "question": "What are labeled loops and when are they useful?",
+      "answer": "Labeled loops allow you to name a loop and then use `break` or `continue` with that label to control which nested loop is affected. This is especially useful when you have nested loops and need to break out of an outer loop from inside an inner loop."
+    },
+    {
+      "question": "How do I iterate over a map using a loop?",
+      "answer": "You can iterate over a map using its `forEach` method: `map.forEach((key, value) { ... });`. Alternatively, you can loop over `map.keys` or `map.entries` and then access the values."
+    },
+    {
+      "question": "What's the difference between `forEach` and a regular loop?",
+      "answer": "`forEach` is a method on iterable collections that applies a function to each element. It's more functional and concise, but you cannot use `break` or `continue` inside it, and it doesn't provide an index. Regular loops give you more control (index, break/continue)."
+    },
+    {
+      "question": "Can I create an infinite loop in Dart?",
+      "answer": "Yes, you can create an infinite loop with `while (true) { ... }` or `for (;;) { ... }`. Be careful to include a condition that eventually exits the loop (using `break`) to avoid freezing your program."
+    },
+    {
+      "question": "How do I loop through a list with index using a `for-in` loop?",
+      "answer": "`for-in` doesn't directly provide an index. To get both index and element, you can use `asMap()`: `for (var entry in list.asMap().entries) { var index = entry.key; var value = entry.value; }`. Or stick with a traditional `for` loop."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  // Write a loop to print numbers 1 to 5\n  for (int i = 1; i <= 5; i++) {\n    print(i);\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the output of this code?\n\nvoid main() {\n  for (int i = 0; i < 3; i++) {\n    if (i == 1) continue;\n    print(i);\n  }\n}",
+      "options": ["0 1 2", "0 2", "0 1", "1 2"],
+      "answer": 1
+    },
+    {
+      "question": "Which loop guarantees at least one execution?",
+      "options": ["for", "while", "do-while", "for-in"],
+      "answer": 2
+    },
+    {
+      "question": "What keyword is used to exit a loop immediately?",
+      "options": ["exit", "break", "stop", "return"],
+      "answer": 1
+    },
+    {
+      "question": "Which loop is best for iterating over all elements of a list?",
+      "options": ["for with index", "while", "do-while", "for-in"],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "dart-conditions",
+    "dart-operators",
+    "dart-functions",
+    "dart-list"
+  ]
+}

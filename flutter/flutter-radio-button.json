@@ -1,0 +1,212 @@
+{
+  "slug": "flutter-radio-button",
+  "course": "Flutter",
+  "title": "Flutter Radio Button – Complete Guide with RadioListTile",
+  "meta": {
+    "title": "Flutter Radio Button: Radio and RadioListTile Tutorial",
+    "description": "Learn how to use Radio and RadioListTile in Flutter. Create radio groups, customize appearance, integrate with forms, and handle selection with best practices.",
+    "keywords": [
+      "Flutter Radio",
+      "RadioListTile",
+      "Flutter radio button",
+      "radio group Flutter",
+      "Flutter form radio",
+      "Flutter selection",
+      "Flutter UI"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Radio Button?"
+    },
+    {
+      "type": "text",
+      "value": "A radio button is a UI element that allows the user to select exactly one option from a set. In Flutter, the `Radio` widget provides a simple circular button, while `RadioListTile` combines a radio button with a label, making it easier to use in forms and lists. Radio buttons are commonly used for gender selection, payment methods, or any exclusive choice."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Radio Widget"
+    },
+    {
+      "type": "text",
+      "value": "The `Radio` widget is the simplest form. It requires three parameters: `value`, `groupValue`, and `onChanged`. The `value` is the unique identifier for this radio button. The `groupValue` is the currently selected value. When the user taps the radio, `onChanged` is called with the radio's `value`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "int? _selectedValue = 1;\n\nRow(\n  children: [\n    Radio<int>(\n      value: 1,\n      groupValue: _selectedValue,\n      onChanged: (value) => setState(() => _selectedValue = value),\n    ),\n    Text('Option 1'),\n    Radio<int>(\n      value: 2,\n      groupValue: _selectedValue,\n      onChanged: (value) => setState(() => _selectedValue = value),\n    ),\n    Text('Option 2'),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Using RadioListTile for Better UI"
+    },
+    {
+      "type": "text",
+      "value": "`RadioListTile` wraps a radio button and a label (title, subtitle, etc.) in a single widget. It handles the layout and provides a larger tap target. It also integrates well with `ListTile` and forms."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "RadioListTile<int>(\n  value: 1,\n  groupValue: _selectedValue,\n  title: Text('Option 1'),\n  subtitle: Text('Description for option 1'),\n  onChanged: (value) => setState(() => _selectedValue = value),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Radio Group"
+    },
+    {
+      "type": "text",
+      "value": "A radio group is simply a set of `Radio` or `RadioListTile` widgets that share the same `groupValue`. The type parameter (e.g., `<int>`, `<String>`) ensures type safety. You can use any type as the group value."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "enum Gender { male, female, other }\n\nGender? _selectedGender;\n\nColumn(\n  children: Gender.values.map((gender) {\n    return RadioListTile<Gender>(\n      value: gender,\n      groupValue: _selectedGender,\n      title: Text(gender.name.toUpperCase()),\n      onChanged: (value) => setState(() => _selectedGender = value),\n    );\n  }).toList(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Customizing Radio Buttons"
+    },
+    {
+      "type": "text",
+      "value": "You can customize the radio button's color, size, and other properties:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`activeColor`**: Color when selected.",
+        "- **`fillColor`**: Overrides the fill color (MaterialStateProperty).",
+        "- **`visualDensity`**: Adjusts the compactness.",
+        "- **`materialTapTargetSize`**: Controls the tap target size."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Radio<int>(\n  value: 1,\n  groupValue: _selectedValue,\n  activeColor: Colors.green,\n  visualDensity: VisualDensity.compact,\n  onChanged: (value) => setState(() => _selectedValue = value),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Integrating with Forms"
+    },
+    {
+      "type": "text",
+      "value": "To use radio buttons in a `Form`, you can wrap them in a `FormField` or use `RadioListTile` inside a `Form` with a `GlobalKey`. For validation, you can create a custom form field that manages the radio group."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class RadioFormField extends FormField<int> {\n  RadioFormField({\n    required int? initialValue,\n    required FormFieldSetter<int> onSaved,\n    required FormFieldValidator<int> validator,\n  }) : super(\n          initialValue: initialValue,\n          onSaved: onSaved,\n          validator: validator,\n          builder: (FormFieldState<int> state) {\n            return Column(\n              children: [\n                RadioListTile<int>(\n                  value: 1,\n                  groupValue: state.value,\n                  title: Text('Option 1'),\n                  onChanged: (value) => state.didChange(value),\n                ),\n                RadioListTile<int>(\n                  value: 2,\n                  groupValue: state.value,\n                  title: Text('Option 2'),\n                  onChanged: (value) => state.didChange(value),\n                ),\n                if (state.hasError)\n                  Text(\n                    state.errorText!,\n                    style: TextStyle(color: Colors.red),\n                  ),\n              ],\n            );\n          },\n        );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Not updating `groupValue` in `onChanged`**: The radio won't visually update.",
+        "- **Using different `value` types in the same group**: Mixing `int` and `String` will break the group.",
+        "- **Forgetting to call `setState`** (if using StatefulWidget) to rebuild when selection changes.",
+        "- **Not providing a `groupValue`**: The radio will be indeterminate (no selection).",
+        "- **Using `RadioListTile` without a `title`**: The tile may be empty; always provide at least a title."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `RadioListTile` for a better user experience – larger tap area, integrated label.",
+        "- Use `enum` for group values to avoid magic numbers/strings.",
+        "- For forms, either use a custom `FormField` or manage the selection separately and validate in the form submission.",
+        "- Keep the number of radio options reasonable; for many options, consider a dropdown."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `Radio` provides a simple circular button; `RadioListTile` adds a label and larger tap area.",
+        "- All radio buttons in a group share the same `groupValue` and `onChanged` updates it.",
+        "- Use `enum` for type‑safe group values.",
+        "- Customize colors and density with properties like `activeColor`.",
+        "- For forms, create a custom `FormField` or use `RadioListTile` inside a `Form` with manual validation."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I set a default selected radio?",
+      "answer": "Initialize the `groupValue` with one of the radio `value`s. For example, `int? _selected = 1;` makes the radio with `value: 1` selected initially."
+    },
+    {
+      "question": "Can I use radio buttons with a `ListTile` without `RadioListTile`?",
+      "answer": "Yes, you can combine a `Radio` widget with a `Text` inside a `Row` or a `ListTile`. But `RadioListTile` is built specifically for that purpose and handles layout and touch events better."
+    },
+    {
+      "question": "How do I make a radio button disabled?",
+      "answer": "Set `onChanged: null`. The radio will appear disabled (usually greyed out) and won't respond to taps."
+    },
+    {
+      "question": "Can I use radio buttons with a `Form` without creating a custom field?",
+      "answer": "Yes, you can manage the radio selection in the widget state and read the value on form submission, but you won't get automatic validation. A custom `FormField` is cleaner for validation."
+    },
+    {
+      "question": "What is the difference between `Radio` and `RadioListTile`?",
+      "answer": "`Radio` is just the button itself. `RadioListTile` combines the radio button with a title, subtitle, and optional leading/trailing widgets. It uses the same tap area for the entire tile, making it easier to select."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Radio Demo',\n      home: Scaffold(\n        appBar: AppBar(title: Text('Radio Button Example')),\n        body: Padding(\n          padding: const EdgeInsets.all(16.0),\n          child: Center(child: RadioDemo()),\n        ),\n      ),\n    );\n  }\n}\n\nclass RadioDemo extends StatefulWidget {\n  @override\n  _RadioDemoState createState() => _RadioDemoState();\n}\n\nclass _RadioDemoState extends State<RadioDemo> {\n  String? _selectedOption = 'Option 1';\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        RadioListTile<String>(\n          value: 'Option 1',\n          groupValue: _selectedOption,\n          title: Text('Option 1'),\n          onChanged: (value) => setState(() => _selectedOption = value),\n        ),\n        RadioListTile<String>(\n          value: 'Option 2',\n          groupValue: _selectedOption,\n          title: Text('Option 2'),\n          onChanged: (value) => setState(() => _selectedOption = value),\n        ),\n        RadioListTile<String>(\n          value: 'Option 3',\n          groupValue: _selectedOption,\n          title: Text('Option 3'),\n          onChanged: (value) => setState(() => _selectedOption = value),\n        ),\n        SizedBox(height: 20),\n        Text('Selected: ${_selectedOption ?? 'none'}'),\n      ],\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which property determines which radio is selected?",
+      "options": ["value", "groupValue", "selected", "checked"],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of `RadioListTile`?",
+      "options": [
+        "To create a list of radio buttons",
+        "To combine a radio button with a title and subtitle",
+        "To manage radio groups automatically",
+        "To style radio buttons"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you disable a radio button?",
+      "options": [
+        "Set `enabled: false`",
+        "Set `onChanged: null`",
+        "Set `disabled: true`",
+        "Set `active: false`"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What happens if `groupValue` does not match any radio's `value`?",
+      "options": [
+        "No radio is selected",
+        "The first radio is selected",
+        "An error is thrown",
+        "The last radio is selected"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-form",
+    "flutter-checkbox",
+    "flutter-listtile",
+    "flutter-switch"
+  ]
+}

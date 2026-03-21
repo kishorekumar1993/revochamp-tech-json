@@ -1,0 +1,236 @@
+{
+  "slug": "flutter-card",
+  "course": "Flutter",
+  "title": "Flutter Card Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Card Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Card to create beautiful material design surfaces. Understand elevation, shape, margin, child, and how to combine with ListTile, with simple examples.",
+    "keywords": [
+      "Flutter Card",
+      "Card widget",
+      "elevation",
+      "shape",
+      "margin",
+      "ListTile",
+      "material design",
+      "Flutter layout"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Card in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Card is a Material Design widget that represents a piece of paper with slightly rounded corners and a shadow (elevation). It's used to group related information – like a product preview, a user profile summary, or an article teaser – in a visually distinct container. Cards are a fundamental building block of modern UIs."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "Using Card is straightforward: just wrap any widget (often a Column, ListTile, or Image) with a Card. By default, the Card has a slight elevation and rounded corners."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Card(\n  child: Text('This is a card'),\n)"
+    },
+    {
+      "type": "text",
+      "value": "You can place multiple widgets inside by using a Column or a ListTile."
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**child**: The widget inside the card (usually a `Column`, `ListTile`, `Image`, or `Container`).",
+        "**elevation**: Controls the size of the drop shadow. Higher values make the card appear higher above the surface.",
+        "**shape**: Defines the card's border shape. Common shapes are `RoundedRectangleBorder` and `CircleBorder`.",
+        "**color**: The background color of the card.",
+        "**margin**: Empty space around the card (outside the card's border).",
+        "**shadowColor**: The color of the drop shadow.",
+        "**borderOnForeground**: Whether to paint the border on top of the child.",
+        "**clipBehavior**: How to clip the card if its content overflows (default `Clip.none`)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Elevation and Shadow"
+    },
+    {
+      "type": "text",
+      "value": "The `elevation` property gives the card a 3D feel. The default elevation is 1.0, but you can increase it to make the card stand out more."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Card(\n  elevation: 4.0,\n  child: Padding(\n    padding: EdgeInsets.all(16.0),\n    child: Text('Higher elevation'),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Shape Customization"
+    },
+    {
+      "type": "text",
+      "value": "Use the `shape` property to change the card's border radius, make it a circle, or add a custom border."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Rounded rectangle with 20px radius\nCard(\n  shape: RoundedRectangleBorder(\n    borderRadius: BorderRadius.circular(20.0),\n  ),\n  child: ...\n)\n\n// Circular card (useful for avatars)\nCard(\n  shape: CircleBorder(),\n  child: Container(width: 100, height: 100, color: Colors.blue),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Adding Margins and Internal Padding"
+    },
+    {
+      "type": "text",
+      "value": "To separate a card from surrounding widgets, use `margin`. To add space between the card's border and its child, wrap the child with `Padding`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Card(\n  margin: EdgeInsets.all(8.0),\n  child: Padding(\n    padding: EdgeInsets.all(16.0),\n    child: Text('Padded content'),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Cards with ListTile"
+    },
+    {
+      "type": "text",
+      "value": "A very common pattern is to put a `ListTile` inside a Card to create a consistent, tappable list item with an icon, title, and subtitle."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Card(\n  child: ListTile(\n    leading: Icon(Icons.person, size: 40),\n    title: Text('John Doe'),\n    subtitle: Text('Flutter Developer'),\n    trailing: Icon(Icons.more_vert),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Cards in a ListView"
+    },
+    {
+      "type": "text",
+      "value": "Cards are often used inside a `ListView` to create a scrollable list of items."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ListView(\n  children: [\n    Card(child: ListTile(title: Text('Item 1'))),\n    Card(child: ListTile(title: Text('Item 2'))),\n    Card(child: ListTile(title: Text('Item 3'))),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "InkWell and Gestures"
+    },
+    {
+      "type": "text",
+      "value": "Card itself does not have an `onTap` property. To make a card tappable and show a ripple effect, wrap its child (or the whole card) with an `InkWell`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Card(\n  child: InkWell(\n    onTap: () { print('Card tapped'); },\n    child: Padding(\n      padding: EdgeInsets.all(16.0),\n      child: Text('Tap me'),\n    ),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Profile cards**: Show user avatar, name, and a short bio.",
+        "**Product cards**: Display an image, title, price, and a buy button.",
+        "**Article previews**: Include a headline, a summary, and an image.",
+        "**Dashboard tiles**: Represent different sections of an app with icons and numbers.",
+        "**Media galleries**: Combine an image with a caption."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Forgetting to give the card a child**: A Card with no child will be invisible (zero size).",
+        "**Over‑elevation**: Using very high elevations (e.g., 24) can look unnatural; stick to 1–6 for typical cards.",
+        "**Not handling overflow**: If the child is too large, the card might overflow. Use `clipBehavior: Clip.antiAlias` to clip the content.",
+        "**Putting too much content inside a single card**: Cards should group related information, but avoid making them too tall.",
+        "**Ignoring margin and padding**: Without margin, cards stick together; without padding, content touches the edges.",
+        "**Misusing shape**: Using `CircleBorder` with a rectangular child can cause unexpected clipping."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Card is a Material Design container with rounded corners and a shadow.",
+        "Use `elevation` to control the shadow depth.",
+        "Customize the border with `shape`.",
+        "Add external spacing with `margin`, internal spacing with `Padding` inside the child.",
+        "Cards work great with `ListTile` and inside `ListView`.",
+        "To add tap handling, wrap the child with `InkWell`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. How do you change the corner radius of a Card?\n2. What is the difference between `margin` and `padding` in the context of a Card?\n3. How would you make a Card tappable and show a ripple effect?\n4. Can you use a `CircleAvatar` inside a Card? Give an example.\n5. What happens if you set `elevation: 0` on a Card?\n6. How do you create a card that spans the full width of its parent but has a fixed height?\n7. Why might you need to set `clipBehavior` on a Card?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Card Example')),\n        body: Padding(\n          padding: const EdgeInsets.all(8.0),\n          child: ListView(\n            children: [\n              Card(\n                elevation: 2.0,\n                child: ListTile(\n                  leading: Icon(Icons.person, color: Colors.blue),\n                  title: Text('John Doe'),\n                  subtitle: Text('Flutter Developer'),\n                  trailing: Icon(Icons.arrow_forward_ios, size: 16),\n                ),\n              ),\n              Card(\n                elevation: 4.0,\n                shape: RoundedRectangleBorder(\n                  borderRadius: BorderRadius.circular(15.0),\n                ),\n                child: Padding(\n                  padding: const EdgeInsets.all(16.0),\n                  child: Column(\n                    crossAxisAlignment: CrossAxisAlignment.start,\n                    children: [\n                      Text('Product Title', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),\n                      SizedBox(height: 8),\n                      Text('This is a short description of the product. It looks great inside a card!'),\n                    ],\n                  ),\n                ),\n              ),\n              Card(\n                color: Colors.amber.shade50,\n                child: InkWell(\n                  onTap: () {},\n                  child: Padding(\n                    padding: const EdgeInsets.all(12.0),\n                    child: Row(\n                      children: [\n                        Icon(Icons.favorite, color: Colors.red),\n                        SizedBox(width: 16),\n                        Text('Tap this card for a surprise!'),\n                      ],\n                    ),\n                  ),\n                ),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which property of Card controls the size of its drop shadow?",
+      "options": [
+        "shadow",
+        "elevation",
+        "borderRadius",
+        "depth"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you make a Card tappable with a ripple effect?",
+      "options": [
+        "Card(onTap: ...)",
+        "Wrap the Card's child with InkWell",
+        "Set the Card's `clickable` property",
+        "Wrap the Card with GestureDetector"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the default shape of a Card?",
+      "options": [
+        "CircleBorder",
+        "RoundedRectangleBorder with radius 4.0",
+        "BeveledRectangleBorder",
+        "StadiumBorder"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-container",
+    "flutter-listview",
+    "flutter-listtile",
+    "flutter-material",
+    "flutter-inkwell"
+  ]
+}

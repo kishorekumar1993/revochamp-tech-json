@@ -1,0 +1,185 @@
+{
+  "slug": "flutter-expanded",
+  "course": "Flutter",
+  "title": "Flutter Expanded Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Expanded Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Expanded to distribute space in Rows, Columns, and Flex widgets. Understand flex factor, how Expanded differs from Flexible, and common use cases with simple examples.",
+    "keywords": [
+      "Flutter Expanded",
+      "Expanded widget",
+      "flex factor",
+      "Row Expanded",
+      "Column Expanded",
+      "Flexible vs Expanded",
+      "Flutter layout"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Expanded in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Expanded is a widget that expands its child to fill the available space along the main axis of a Row, Column, or Flex. It's a shorthand for using Flexible with `fit: FlexFit.tight`. In simple terms, if you have a Row and you want one child to take all remaining space, wrap that child with Expanded."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "To use Expanded, place it inside a Row, Column, or Flex. Give it a child, and optionally a `flex` factor to control how much space it takes relative to other Expanded children."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Row(\n  children: [\n    Container(width: 50, color: Colors.red),\n    Expanded(\n      child: Container(color: Colors.green),\n    ),\n    Container(width: 50, color: Colors.blue),\n  ],\n)"
+    },
+    {
+      "type": "text",
+      "value": "Here, the red and blue containers have fixed widths, while the green one (wrapped in Expanded) fills all the remaining horizontal space."
+    },
+    {
+      "type": "heading",
+      "value": "How Expanded Works"
+    },
+    {
+      "type": "text",
+      "value": "Expanded is only useful inside a Row, Column, or Flex (collectively called flex parents). It tells the parent that this child should be forced to fill the available space along the main axis. The parent then divides the remaining space among all Expanded (and Flexible) children according to their `flex` values."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**flex** (default 1): An integer that determines the proportion of the remaining space this child should take. If you have two Expanded widgets with flex 1 and 2, the second one gets twice as much space.",
+        "**child**: The widget that will be forced to expand. It can be any widget (Container, Text, etc.) and will be constrained to fill the allocated area."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Expanded vs Flexible"
+    },
+    {
+      "type": "text",
+      "value": "Expanded is actually a specialized version of Flexible. The difference lies in how they treat the child's sizing:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Expanded** uses `FlexFit.tight`, meaning the child is forced to fill the available space. If the child has its own size constraints, they are overridden.",
+        "**Flexible** uses `FlexFit.loose` by default, meaning the child can be smaller than the available space. It's allowed to size itself based on its own needs."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Row(\n  children: [\n    Flexible(\n      fit: FlexFit.loose,\n      child: Container(color: Colors.yellow, height: 50),\n    ),\n    Expanded(\n      child: Container(color: Colors.orange, height: 50),\n    ),\n  ],\n)\n\n// The Flexible child may shrink if its content is small;\n// the Expanded child always expands to fill the remaining space."
+    },
+    {
+      "type": "heading",
+      "value": "Using flex Factor"
+    },
+    {
+      "type": "text",
+      "value": "The `flex` property allows you to distribute space proportionally. This is essential for creating flexible layouts that adapt to different screen sizes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Row(\n  children: [\n    Expanded(\n      flex: 2,\n      child: Container(color: Colors.red),\n    ),\n    Expanded(\n      flex: 1,\n      child: Container(color: Colors.green),\n    ),\n    Expanded(\n      flex: 1,\n      child: Container(color: Colors.blue),\n    ),\n  ],\n)\n\n// Total flex = 4. Red gets 2/4 of space, green gets 1/4, blue gets 1/4."
+    },
+    {
+      "type": "heading",
+      "value": "Common Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Making a widget fill remaining space in a Row/Column** – The most common use.",
+        "**Creating flexible navigation bars** – e.g., a row of buttons with one taking all extra space to push others apart.",
+        "**Building responsive forms** – Input fields that stretch to fill available width.",
+        "**Centering content while allowing it to grow** – Combine Expanded with Center for dynamic sizing."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using Expanded outside a Row/Column/Flex** – Expanded must be a direct child of a flex widget. Placing it elsewhere (e.g., inside a Container) will cause a layout exception.",
+        "**Putting multiple Expanded widgets with no constraints** – If the parent Row/Column itself is unbounded (e.g., inside a ListView without setting shrinkWrap), Expanded won't know how much space to take and will throw an error.",
+        "**Assuming Expanded respects the child's intrinsic size** – Expanded forces its child to fill the space; if you need the child to be smaller, use Flexible with `FlexFit.loose`.",
+        "**Confusing main axis direction** – Remember that Expanded works along the main axis of the parent. For a Row, it expands horizontally; for a Column, vertically.",
+        "**Forgetting that flex values are relative** – They only matter in relation to other flex children. A single Expanded with flex 2 behaves exactly like flex 1."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Expanded must be a direct child of a Row, Column, or Flex.",
+        "It forces its child to fill the available space along the main axis.",
+        "Use `flex` to distribute space proportionally among multiple Expanded widgets.",
+        "Expanded is a shorthand for `Flexible(fit: FlexFit.tight)`.",
+        "For children that should not be forced to fill, use `Flexible` with `FlexFit.loose`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. What is the difference between Expanded and Flexible?\n2. Can you use Expanded inside a Container? Why or why not?\n3. How does the `flex` property work? If you have three Expanded widgets with flex 1, 2, and 3, how much space does each get?\n4. What happens if you put an Expanded widget inside a Column that is itself inside another Expanded? Explain the constraints.\n5. How would you create a layout where two widgets share the available space in a 3:1 ratio?\n6. Why might you get a \"RenderFlex children have non-zero flex but incoming height constraints are unbounded\" error? How do you fix it?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() {\n  runApp(\n    MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Expanded Example')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Container(\n                height: 100,\n                color: Colors.grey[300],\n                child: Row(\n                  children: [\n                    Expanded(\n                      flex: 2,\n                      child: Container(color: Colors.red),\n                    ),\n                    Expanded(\n                      flex: 1,\n                      child: Container(color: Colors.green),\n                    ),\n                    Expanded(\n                      flex: 1,\n                      child: Container(color: Colors.blue),\n                    ),\n                  ],\n                ),\n              ),\n              SizedBox(height: 20),\n              Container(\n                height: 100,\n                color: Colors.grey[300],\n                child: Row(\n                  children: [\n                    Container(width: 50, color: Colors.yellow),\n                    Expanded(\n                      child: Container(color: Colors.orange),\n                    ),\n                    Container(width: 50, color: Colors.purple),\n                  ],\n                ),\n              ),\n            ],\n          ),\n        ),\n      ),\n    ),\n  );\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does Expanded do when placed inside a Row?",
+      "options": [
+        "Expands the child to fill all available vertical space",
+        "Expands the child to fill all available horizontal space",
+        "Expands the child to fill all available space in both directions",
+        "Shrinks the child to its minimum size"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the default `flex` value of Expanded?",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "It has no default; you must specify it"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget would you use if you want a child to take available space but also allow it to be smaller than that space?",
+      "options": [
+        "Expanded",
+        "Flexible with FlexFit.tight",
+        "Flexible with FlexFit.loose",
+        "Container with width: double.infinity"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "flutter-row-column",
+    "flutter-flexible",
+    "flutter-container",
+    "flutter-sizedbox",
+    "flutter-layout-builder"
+  ]
+}

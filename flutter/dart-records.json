@@ -1,0 +1,215 @@
+{
+  "slug": "dart-records",
+  "course": "Dart",
+  "title": "Dart Records – Lightweight, Immutable Data Structures",
+  "meta": {
+    "title": "Dart Records: A Complete Guide with Examples",
+    "description": "Learn about records in Dart 3.0 – anonymous immutable data structures. Create records, access fields, use pattern matching, and understand when to use them over classes.",
+    "keywords": [
+      "Dart records",
+      "Dart 3.0 records",
+      "Dart tuple",
+      "Dart immutable data",
+      "Dart pattern matching",
+      "Dart record syntax",
+      "Dart positional vs named fields"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Records?"
+    },
+    {
+      "type": "text",
+      "value": "Introduced in Dart 3.0, **records** are anonymous, immutable data structures that let you bundle multiple values together without declaring a full class. They are similar to tuples in other languages. Records can have both positional fields (like in a tuple) and named fields. They are perfect for returning multiple values from a function or grouping related data temporarily."
+    },
+    {
+      "type": "heading",
+      "value": "Syntax of Records"
+    },
+    {
+      "type": "text",
+      "value": "Records are written using parentheses `()` containing a comma‑separated list of expressions. The type of a record is inferred, but you can also annotate it explicitly. There are two styles: positional fields (ordered) and named fields (named)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Positional record (tuple-like)\nvar point = (10, 20);\n\n// Named record\nvar person = (name: 'Alice', age: 30);\n\n// Mixed (positional and named)\nvar mixed = (1, 'hello', flag: true);"
+    },
+    {
+      "type": "heading",
+      "value": "Creating Records"
+    },
+    {
+      "type": "text",
+      "value": "You can create records using literal syntax. The type is automatically inferred. If you need to specify the type explicitly (e.g., for a variable declaration or function return), you can use the record type syntax: `(int, String)` for positional, or `({int age, String name})` for named. Named fields are enclosed in curly braces."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Positional record\n  (int, String) data = (42, 'answer');\n\n  // Named record\n  ({int x, int y}) point = (x: 10, y: 20);\n\n  // Mixed\n  (int, {String name}) mixed = (100, name: 'Alice');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Accessing Record Fields"
+    },
+    {
+      "type": "text",
+      "value": "Fields in a record are accessed differently depending on whether they are positional or named:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Positional fields** are accessed using the `$` operator followed by the field index (starting at 1). For example, `record.$1` is the first field.",
+        "- **Named fields** are accessed using dot notation (e.g., `record.name`)."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var point = (10, 20);\n  print(point.$1); // 10\n  print(point.$2); // 20\n\n  var person = (name: 'Alice', age: 30);\n  print(person.name); // Alice\n  print(person.age);  // 30\n\n  var mixed = (1, 'hello', flag: true);\n  print(mixed.$1);      // 1\n  print(mixed.$2);      // hello\n  print(mixed.flag);    // true\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Record Types and Type Safety"
+    },
+    {
+      "type": "text",
+      "value": "Records are **structural types**. Two records are the same type if they have the same shape (same number of fields, same field types, same named field names). The field names matter for named fields; for positional fields, only the order matters."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  (int, String) a = (1, 'hello');\n  (int, String) b = (2, 'world');\n  // a and b have the same type\n\n  // Different shape → different type\n  (int, String) c = (3, 'x');\n  (String, int) d = ('x', 3); // Error: type mismatch\n\n  // Named fields must match exactly\n  ({int x, int y}) p1 = (x: 1, y: 2);\n  ({int y, int x}) p2 = (x: 1, y: 2); // same shape, order doesn't matter\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Pattern Matching with Records"
+    },
+    {
+      "type": "text",
+      "value": "One of the most powerful features of records is using them with **pattern matching** (also introduced in Dart 3.0). You can destructure records in variable declarations, `switch` statements, and more."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Destructuring in variable declaration\n  var (x, y) = (10, 20);\n  print('x=$x, y=$y');\n\n  // With named fields\n  var (name: userName, age: userAge) = (name: 'Alice', age: 30);\n  print('$userName is $userAge');\n\n  // Destructuring in a loop\n  var points = [(1, 2), (3, 4)];\n  for (var (x, y) in points) {\n    print('Point: $x, $y');\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "Pattern matching also works in `switch` statements, allowing you to match and destructure records in a single go."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void describe(Object value) {\n  switch (value) {\n    case (int a, int b):\n      print('Tuple of ints: ($a, $b)');\n    case (String s,):\n      print('Single string: $s');\n    case (name: String n, age: int a):\n      print('Person: $n is $a years old');\n    default:\n      print('Something else');\n  }\n}\n\nvoid main() {\n  describe((1, 2));\n  describe(('hello',));\n  describe((name: 'Bob', age: 25));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Records vs Classes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Records** are lightweight, anonymous, and immutable. They are best for temporary grouping of data or returning multiple values from a function.",
+        "- **Classes** provide names, methods, private fields, and can be extended. Use classes when you need behaviour, encapsulation, or identity beyond the data."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Records"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Returning multiple values from a function without creating a wrapper class.",
+        "- Lightweight grouping of related data that is only used locally.",
+        "- As keys in maps (records are value‑based, so two records with same content are equal).",
+        "- In pattern matching for concise data extraction."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Records are anonymous, immutable data structures introduced in Dart 3.0.",
+        "- They can have positional fields (accessed with `$1`, `$2`, …) and named fields (accessed with dot).",
+        "- Record types are structural; two records with the same shape are compatible.",
+        "- Records shine when used with pattern matching (destructuring).",
+        "- Use records for temporary data grouping; use classes for full‑fledged objects."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can records contain mutable fields?",
+      "answer": "No, records are immutable. Once created, you cannot change their fields. If you need mutability, use a class."
+    },
+    {
+      "question": "How do I compare two records for equality?",
+      "answer": "Records are compared by value using `==`. Two records are equal if they have the same shape and each corresponding field is equal. This is a value‑based comparison, not reference equality."
+    },
+    {
+      "question": "Can records have methods?",
+      "answer": "No, records are pure data containers; they cannot have methods. For behaviour, you should use a class."
+    },
+    {
+      "question": "What is the maximum number of positional fields in a record?",
+      "answer": "Dart doesn't enforce a hard limit, but for practical reasons, you should keep the number reasonable (e.g., ≤ 5). If you need many fields, consider using a class with named parameters."
+    },
+    {
+      "question": "Can I use records as keys in a map?",
+      "answer": "Yes, because records implement `==` and `hashCode` based on their fields, they work well as keys in maps and sets."
+    },
+    {
+      "question": "Are records available in older Dart versions?",
+      "answer": "No, records were introduced in Dart 3.0. If you're using an older version, you need to upgrade to Dart 3+."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  // Create a record\n  var point = (10, 20);\n  print('Coordinates: (${point.$1}, ${point.$2})');\n\n  // Destructure it\n  var (x, y) = point;\n  print('Destructured: x=$x, y=$y');\n\n  // Named record\n  var person = (name: 'Alice', age: 30);\n  print('Person: ${person.name}, ${person.age}');\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you access the first positional field of a record `r`?",
+      "options": ["r[0]", "r.first", "r.$1", "r.1"],
+      "answer": 2
+    },
+    {
+      "question": "What is the type of `var rec = (a: 1, b: 'two');`?",
+      "options": [
+        "Map<String, dynamic>",
+        "({int a, String b})",
+        "(int, String)",
+        "Record"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Can records contain both positional and named fields?",
+      "options": ["Yes", "No", "Only in Dart 3.1+", "Only with a special syntax"],
+      "answer": 0
+    },
+    {
+      "question": "How do you destructure a record `(x, y)` in a variable declaration?",
+      "options": [
+        "var {x, y} = rec;",
+        "var (x, y) = rec;",
+        "var [x, y] = rec;",
+        "var x = rec.$1, y = rec.$2;"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-patterns",
+    "dart-classes",
+    "dart-immutable-data",
+    "dart-3-features"
+  ]
+}

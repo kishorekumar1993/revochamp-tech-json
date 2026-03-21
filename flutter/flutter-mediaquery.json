@@ -1,0 +1,193 @@
+{
+  "slug": "flutter-mediaquery",
+  "course": "Flutter",
+  "title": "Flutter MediaQuery Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter MediaQuery: Complete Guide with Examples",
+    "description": "Learn how to use MediaQuery in Flutter for responsive design. Understand MediaQueryData, screen size, orientation, padding, and best practices with simple examples.",
+    "keywords": [
+      "Flutter MediaQuery",
+      "MediaQueryData",
+      "responsive Flutter",
+      "screen size",
+      "orientation",
+      "devicePixelRatio",
+      "textScaleFactor",
+      "Flutter layout"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is MediaQuery in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "MediaQuery is a powerful widget that provides information about the current device and app settings. It gives you access to the screen's dimensions, orientation, pixel density, text scaling factor, keyboard insets, and much more. MediaQuery is essential for creating responsive layouts that adapt to different screen sizes and device capabilities."
+    },
+    {
+      "type": "heading",
+      "value": "Accessing MediaQuery Data"
+    },
+    {
+      "type": "text",
+      "value": "To get the current MediaQuery data, use `MediaQuery.of(context)`. This returns a `MediaQueryData` object containing all the information about the device. You can then read properties like `size`, `orientation`, `devicePixelRatio`, etc."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Widget build(BuildContext context) {\n  final mediaQuery = MediaQuery.of(context);\n  final screenWidth = mediaQuery.size.width;\n  final screenHeight = mediaQuery.size.height;\n  final orientation = mediaQuery.orientation;\n\n  return Text('Width: $screenWidth, Height: $screenHeight, Orientation: $orientation');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties of MediaQueryData"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**size** – The dimensions of the screen (in logical pixels).",
+        "**width** – Shortcut for `size.width`.",
+        "**height** – Shortcut for `size.height`.",
+        "**orientation** – Whether the device is in portrait or landscape (`Orientation.portrait` / `Orientation.landscape`).",
+        "**devicePixelRatio** – The number of device pixels for each logical pixel (used for scaling images).",
+        "**textScaleFactor** – The user's preferred font size scaling (e.g., for accessibility).",
+        "**padding** – The insets that parts of the display might be obscured by system UI (like the status bar or notches).",
+        "**viewPadding** – Similar to padding, but includes areas that are physically present (e.g., rounded corners).",
+        "**viewInsets** – The parts of the display that are completely obscured (like the keyboard).",
+        "**alwaysUse24HourFormat** – Whether the user prefers 24‑hour time format.",
+        "**platformBrightness** – The current brightness mode (light/dark theme)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Building Responsive Layouts"
+    },
+    {
+      "type": "text",
+      "value": "MediaQuery is the foundation of responsive design in Flutter. You can use its properties to change the layout based on screen size or orientation. For example, you might show a different number of columns in a grid depending on the screen width."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Widget build(BuildContext context) {\n  final width = MediaQuery.of(context).size.width;\n  int crossAxisCount = width > 600 ? 3 : 2;\n\n  return GridView.count(\n    crossAxisCount: crossAxisCount,\n    children: List.generate(20, (index) => Card(child: Center(child: Text('Item $index')))),\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Considerations: MediaQuery.of vs. Specific Getters"
+    },
+    {
+      "type": "text",
+      "value": "Calling `MediaQuery.of(context)` rebuilds the widget whenever **any** property of MediaQuery changes (e.g., orientation, text scale factor, or even the keyboard appearance). This can cause unnecessary rebuilds. To optimise performance, Flutter 3.10 introduced specific getters like `MediaQuery.sizeOf(context)` and `MediaQuery.orientationOf(context)`. These only trigger rebuilds when the specific property changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ❌ Rebuilds on any MediaQuery change\nfinal width = MediaQuery.of(context).size.width;\n\n// ✅ Rebuilds only when size changes\nfinal width = MediaQuery.sizeOf(context).width;\n\n// ✅ Rebuilds only when orientation changes\nfinal orientation = MediaQuery.orientationOf(context);"
+    },
+    {
+      "type": "heading",
+      "value": "Modifying MediaQuery"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to modify the MediaQuery for a subtree. For instance, you might want to remove system padding from a widget or force a different text scale factor. You can use `MediaQuery.removePadding`, `MediaQuery.removeViewInsets`, or wrap a widget with a new `MediaQuery` widget and provide your own `MediaQueryData`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MediaQuery.removePadding(\n  context: context,\n  removeTop: true,\n  child: ListView(/* ... */),\n)\n\n// Override text scale factor (e.g., disable user scaling)\nMediaQuery(\n  data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),\n  child: MyWidget(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Orientation Changes"
+    },
+    {
+      "type": "text",
+      "value": "You can listen to orientation changes using `OrientationBuilder`, which internally uses MediaQuery. It rebuilds only when the orientation changes, making it efficient."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "OrientationBuilder(\n  builder: (context, orientation) {\n    return GridView.count(\n      crossAxisCount: orientation == Orientation.portrait ? 2 : 4,\n      children: /* ... */,\n    );\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Calling MediaQuery.of(context) before the widget is inserted in the tree**: This happens if you call it in a constructor or before `build`. Always call it inside `build` or in a place where context is valid.",
+        "**Assuming MediaQuery is always available**: If you haven't placed a `MaterialApp` or `WidgetsApp` above, there will be no MediaQuery. Make sure your app is wrapped accordingly.",
+        "**Not handling null context**: In some edge cases, `MediaQuery.of(context)` might throw if no ancestor provides it. Use `maybeOf` if you're unsure.",
+        "**Overusing MediaQuery.of() and causing rebuilds**: Use specific getters (`sizeOf`, `orientationOf`) where possible.",
+        "**Forgetting that padding and viewInsets include system UI**: When placing content at the bottom, remember to account for the keyboard using `viewInsets.bottom`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "MediaQuery provides essential information about the device and app settings.",
+        "Use `MediaQuery.of(context)` to get the data; use specific getters (`sizeOf`, `orientationOf`) for better performance.",
+        "Responsive layouts often depend on `size.width` or `orientation`.",
+        "You can modify MediaQuery for a subtree using `MediaQuery` widget or helper methods like `removePadding`.",
+        "Always consider the impact of keyboard and system UI insets on your layout."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. What is the difference between `MediaQuery.of(context).size` and `MediaQuery.sizeOf(context)`?\n2. How would you create a layout that changes from a list to a grid when the device is rotated?\n3. Explain the difference between `padding`, `viewPadding`, and `viewInsets` in MediaQueryData.\n4. How can you disable the user's system‑level text scaling inside a specific part of your app?\n5. What happens if you try to access MediaQuery before a MaterialApp? How would you handle that?\n6. Describe a scenario where you would use `MediaQuery.removePadding`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() {\n  runApp(const MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: const Text('MediaQuery Example')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Text('Screen width: ${MediaQuery.sizeOf(context).width.toStringAsFixed(1)}'),\n              Text('Screen height: ${MediaQuery.sizeOf(context).height.toStringAsFixed(1)}'),\n              Text('Orientation: ${MediaQuery.orientationOf(context)}'),\n              Text('Text scale factor: ${MediaQuery.textScaleFactorOf(context)}'),\n              const SizedBox(height: 20),\n              const Text('Rotate your device to see changes!'),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you get the current screen width using MediaQuery?",
+      "options": [
+        "MediaQuery.of(context).width",
+        "MediaQuery.sizeOf(context).width",
+        "Both A and B are valid, but B is more efficient",
+        "MediaQuery.getWidth(context)"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which MediaQuery property gives you the area obscured by the keyboard?",
+      "options": [
+        "padding",
+        "viewPadding",
+        "viewInsets",
+        "keyboardInsets"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What does `OrientationBuilder` use internally to detect orientation changes?",
+      "options": [
+        "LayoutBuilder",
+        "MediaQuery",
+        "CustomPaint",
+        "WidgetsBindingObserver"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-layout-builder",
+    "flutter-orientationbuilder",
+    "flutter-responsive",
+    "flutter-sizedbox",
+    "flutter-expanded"
+  ]
+}

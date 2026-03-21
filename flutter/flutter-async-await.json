@@ -1,0 +1,192 @@
+{
+  "slug": "flutter-async-await",
+  "course": "Flutter",
+  "title": "Flutter Async/Await – Writing Clean Asynchronous Code",
+  "meta": {
+    "title": "Flutter Async/Await: Complete Guide with Examples",
+    "description": "Learn how to use async and await in Flutter to perform asynchronous operations like network calls and database queries without blocking the UI. Includes best practices and error handling.",
+    "keywords": [
+      "Flutter async await",
+      "async await Flutter",
+      "Flutter asynchronous programming",
+      "Flutter network requests",
+      "Flutter Future",
+      "Flutter UI responsiveness"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Async and Await?"
+    },
+    {
+      "type": "text",
+      "value": "Asynchronous programming allows your app to perform time‑consuming tasks (like network requests, file I/O, or database queries) without freezing the user interface. In Flutter, you can use `async` and `await` to write asynchronous code that looks like synchronous code, making it easier to read and maintain. The `async` keyword marks a function as asynchronous, and `await` is used to wait for a `Future` to complete without blocking the main thread."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<String> fetchData() async {\n  await Future.delayed(Duration(seconds: 2)); // simulate network delay\n  return 'Data loaded';\n}\n\nvoid main() async {\n  print('Start');\n  String data = await fetchData();\n  print(data); // Data loaded\n  print('End');\n}"
+    },
+    {
+      "type": "text",
+      "value": "The `async` function returns a `Future` automatically. Inside, you can use `await` to pause execution until the `Future` completes, but the thread is free to handle other events. When the `Future` completes, the function resumes with the result."
+    },
+    {
+      "type": "heading",
+      "value": "Using Async/Await in Flutter Widgets"
+    },
+    {
+      "type": "text",
+      "value": "In Flutter, you often need to perform async work in response to user actions or when the widget initializes. The typical places are:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`initState`**: For loading initial data (e.g., fetch user profile).",
+        "- **`onPressed` callbacks**: For actions like submitting a form or fetching more data.",
+        "- **`FutureBuilder`**: To handle async state reactively."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Example: Loading Data in initState"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class _MyHomePageState extends State<MyHomePage> {\n  String _data = '';\n\n  @override\n  void initState() {\n    super.initState();\n    _loadData();\n  }\n\n  Future<void> _loadData() async {\n    String result = await fetchData();\n    setState(() {\n      _data = result;\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      body: Center(\n        child: Text(_data.isEmpty ? 'Loading...' : _data),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "Note: `initState` cannot be marked `async` because it must return `void`. Instead, you call an async function and use `setState` to update the UI when the future completes."
+    },
+    {
+      "type": "heading",
+      "value": "Handling Errors"
+    },
+    {
+      "type": "text",
+      "value": "Use `try`/`catch` to handle errors in async functions. This is essential for user‑friendly error messages."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<void> _loadData() async {\n  try {\n    String result = await fetchData();\n    setState(() => _data = result);\n  } catch (e) {\n    setState(() => _data = 'Error: $e');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Async/Await with FutureBuilder"
+    },
+    {
+      "type": "text",
+      "value": "`FutureBuilder` is often a cleaner way to handle async data without manual state management. You provide a future and a builder that receives a snapshot. The builder is called when the future completes, with `snapshot.hasData`, `snapshot.hasError`, and `snapshot.data` available."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "FutureBuilder<String>(\n  future: fetchData(),\n  builder: (context, snapshot) {\n    if (snapshot.connectionState == ConnectionState.waiting) {\n      return CircularProgressIndicator();\n    } else if (snapshot.hasError) {\n      return Text('Error: ${snapshot.error}');\n    } else if (snapshot.hasData) {\n      return Text(snapshot.data!);\n    } else {\n      return Text('No data');\n    }\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Pitfalls and Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Don't forget `await`**: Calling an async function without `await` will start it but not wait for completion. This can lead to race conditions.",
+        "- **Avoid `async` in build methods**: The `build` method is called often; starting an async operation inside it will restart on every rebuild. Use `initState` or `FutureBuilder`.",
+        "- **Check `mounted` before calling `setState`**: After an async operation, the widget might have been disposed. Use `if (mounted)` to avoid memory leaks.",
+        "- **Cancel ongoing operations if needed**: If the widget is disposed while an async operation is running, use a flag to ignore the result."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example: User Profile Loader"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Async/Await Demo')),\n        body: Center(child: UserProfile()), \n      ),\n    );\n  }\n}\n\nclass UserProfile extends StatefulWidget {\n  @override\n  _UserProfileState createState() => _UserProfileState();\n}\n\nclass _UserProfileState extends State<UserProfile> {\n  String _userName = '';\n  bool _isLoading = false;\n\n  Future<String> fetchUserName() async {\n    await Future.delayed(Duration(seconds: 2)); // simulate network call\n    // Simulate an error condition\n    // throw Exception('Failed to load user');\n    return 'John Doe';\n  }\n\n  Future<void> _loadUser() async {\n    setState(() => _isLoading = true);\n    try {\n      String name = await fetchUserName();\n      if (mounted) {\n        setState(() => _userName = name);\n      }\n    } catch (e) {\n      if (mounted) {\n        ScaffoldMessenger.of(context).showSnackBar(\n          SnackBar(content: Text('Error: $e')),\n        );\n      }\n    } finally {\n      if (mounted) {\n        setState(() => _isLoading = false);\n      }\n    }\n  }\n\n  @override\n  void initState() {\n    super.initState();\n    _loadUser();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        if (_isLoading)\n          CircularProgressIndicator()\n        else\n          Text(\n            _userName.isEmpty ? 'No user' : 'Hello, $_userName',\n            style: TextStyle(fontSize: 24),\n          ),\n        SizedBox(height: 20),\n        ElevatedButton(\n          onPressed: _loadUser,\n          child: Text('Reload'),\n        ),\n      ],\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `async` marks a function that returns a `Future`.",
+        "- `await` pauses the function until the `Future` completes, without blocking the UI.",
+        "- Use `try`/`catch` to handle errors in async code.",
+        "- In Flutter, perform async work in `initState`, `onPressed`, or `FutureBuilder`.",
+        "- Always check `mounted` before calling `setState` after an async operation.",
+        "- Prefer `FutureBuilder` for reactive async UI."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use `async` in the `build` method?",
+      "answer": "Technically you can, but it's discouraged. The `build` method can be called many times, and each call would start a new async operation, leading to performance issues and flickering. Use `initState`, `FutureBuilder`, or call async functions from user actions instead."
+    },
+    {
+      "question": "What happens if I call an async function without `await`?",
+      "answer": "The function runs, but you don't wait for its completion. This can lead to race conditions or missing results. It's usually a mistake unless you intentionally fire‑and‑forget (e.g., logging). Use `unawaited` from `package:flutter/foundation.dart` to ignore the future explicitly."
+    },
+    {
+      "question": "How do I cancel an async operation when the widget is disposed?",
+      "answer": "Futures themselves are not cancelable. You can use a boolean flag (like `_isDisposed`) to ignore the result when the widget is no longer mounted. Alternatively, use `CancelableOperation` from `package:async` for more advanced cancellation."
+    },
+    {
+      "question": "What's the difference between `FutureBuilder` and using `setState` after an async operation?",
+      "answer": "`FutureBuilder` automatically manages the subscription and rebuilds the UI based on the future's state. It also handles the loading and error states elegantly. Using `setState` manually gives you more control but requires you to manage state and lifecycle yourself. `FutureBuilder` is often simpler for one‑time loads."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Async/Await Demo')),\n        body: Center(child: DataLoader()),\n      ),\n    );\n  }\n}\n\nclass DataLoader extends StatefulWidget {\n  @override\n  _DataLoaderState createState() => _DataLoaderState();\n}\n\nclass _DataLoaderState extends State<DataLoader> {\n  String _message = 'Press button to load data';\n  bool _loading = false;\n\n  Future<String> fetchData() async {\n    await Future.delayed(Duration(seconds: 2));\n    return 'Data loaded successfully!';\n  }\n\n  Future<void> _onLoad() async {\n    setState(() => _loading = true);\n    try {\n      String data = await fetchData();\n      if (mounted) {\n        setState(() => _message = data);\n      }\n    } catch (e) {\n      if (mounted) {\n        setState(() => _message = 'Error: $e');\n      }\n    } finally {\n      if (mounted) {\n        setState(() => _loading = false);\n      }\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        if (_loading)\n          CircularProgressIndicator()\n        else\n          Text(_message, style: TextStyle(fontSize: 18)),\n        SizedBox(height: 20),\n        ElevatedButton(\n          onPressed: _loading ? null : _onLoad,\n          child: Text('Load Data'),\n        ),\n      ],\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does the `await` keyword do in an async function?",
+      "options": [
+        "It starts a new thread",
+        "It pauses the function until a Future completes, without blocking the UI",
+        "It cancels the Future",
+        "It converts a Future into a Stream"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method should you avoid marking as `async`?",
+      "options": ["initState", "onPressed", "build", "a custom async function"],
+      "answer": 2
+    },
+    {
+      "question": "How do you handle errors in an async function?",
+      "options": ["Use try/catch", "Use .catchError", "Both A and B", "Use onError"],
+      "answer": 2
+    },
+    {
+      "question": "Why should you check `mounted` before calling `setState` after an async operation?",
+      "options": [
+        "To avoid a memory leak",
+        "To prevent the widget from rebuilding unnecessarily",
+        "To prevent an error if the widget has been disposed",
+        "Both A and C"
+      ],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "flutter-future",
+    "flutter-futurebuilder",
+    "flutter-error-handling",
+    "flutter-stream"
+  ]
+}

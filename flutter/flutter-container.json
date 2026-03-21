@@ -1,0 +1,235 @@
+{
+  "slug": "flutter-container",
+  "course": "Flutter",
+  "title": "Flutter Container Widget – Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter Container Widget Tutorial (With Examples) | Complete Guide",
+    "description": "Learn how to use Container in Flutter – padding, margin, decoration, constraints, and sizing. Includes practical examples and best practices.",
+    "keywords": [
+      "Flutter Container",
+      "Container widget",
+      "Flutter layout",
+      "Container decoration",
+      "Flutter box constraints",
+      "Flutter UI design"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Container in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "`Container` is a versatile widget that combines common painting, positioning, and sizing widgets. It's one of the most frequently used widgets in Flutter because it provides a simple way to add padding, margins, borders, background color, or decoration to a child widget. `Container` can be thought of as a box that can hold a single child and style it according to your needs."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  child: Text('Hello, Flutter!'),\n  padding: EdgeInsets.all(16.0),\n  color: Colors.blue,\n)"
+    },
+    {
+      "type": "text",
+      "value": "In its simplest form, you provide a child and some styling. The above creates a blue box with 16 pixels of padding around the text."
+    },
+    {
+      "type": "heading",
+      "value": "Common Properties"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`child`**: The widget inside the container (can be null).",
+        "- **`padding`**: Empty space inside the container around the child.",
+        "- **`margin`**: Empty space outside the container.",
+        "- **`color`**: Background color (cannot be used together with `decoration`).",
+        "- **`decoration`**: A `BoxDecoration` for more complex styling (border, gradient, shadow).",
+        "- **`width` / `height`**: Fixed dimensions (in logical pixels).",
+        "- **`alignment`**: Aligns the child within the container (e.g., `Alignment.center`).",
+        "- **`constraints`**: Additional sizing constraints (e.g., `BoxConstraints(maxWidth: 200)`).",
+        "- **`transform`**: Applies a transformation (e.g., `Matrix4.rotationZ(0.2)`)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Padding and Margin"
+    },
+    {
+      "type": "text",
+      "value": "`padding` adds space **inside** the container, between the container's edges and its child. `margin` adds space **outside** the container, separating it from neighboring widgets. Both are `EdgeInsetsGeometry` objects."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),\n  padding: EdgeInsets.all(16),\n  color: Colors.green,\n  child: Text('Padded and Margined'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Decoration: BoxDecoration"
+    },
+    {
+      "type": "text",
+      "value": "For rich styling, use `decoration` with `BoxDecoration`. It supports:\n- **`color`** (background, but can't be used if `color` property is set)\n- **`borderRadius`** (rounded corners)\n- **`boxShadow`** (drop shadows)\n- **`gradient`** (linear, radial, sweep)\n- **`border`** (border around the container)\n- **`image`** (background image)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  width: 200,\n  height: 200,\n  decoration: BoxDecoration(\n    gradient: LinearGradient(\n      colors: [Colors.red, Colors.blue],\n      begin: Alignment.topLeft,\n      end: Alignment.bottomRight,\n    ),\n    borderRadius: BorderRadius.circular(16),\n    boxShadow: [\n      BoxShadow(\n        color: Colors.grey.withOpacity(0.5),\n        spreadRadius: 5,\n        blurRadius: 7,\n        offset: Offset(0, 3),\n      ),\n    ],\n  ),\n  child: Center(\n    child: Text(\n      'Gradient Container',\n      style: TextStyle(color: Colors.white, fontSize: 18),\n    ),\n  ),\n)"
+    },
+    {
+      "type": "text",
+      "value": "Note: You cannot set both `color` and `decoration`. If you need a background color with decoration, include the color inside the `BoxDecoration`."
+    },
+    {
+      "type": "heading",
+      "value": "Sizing and Constraints"
+    },
+    {
+      "type": "text",
+      "value": "`Container` tries to size itself to its child, but you can override this by providing `width`, `height`, or `constraints`. If no child is given and no explicit size, the container expands to fill the available space (like a `SizedBox.expand`). The actual size is also affected by the parent's constraints."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Fixed size\nContainer(\n  width: 100,\n  height: 100,\n  color: Colors.orange,\n)\n\n// Expand to fill parent (since no child)\nContainer(\n  color: Colors.purple,\n)\n\n// Constrained size\nContainer(\n  constraints: BoxConstraints(maxWidth: 200, minHeight: 50),\n  child: Text('This container cannot be wider than 200 pixels'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Container vs Other Widgets"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **SizedBox**: Use when you only need a fixed size or a simple space.\n- **ColoredBox**: If you only need a background color, `ColoredBox` is more efficient.\n- **DecoratedBox**: For decoration without padding or margin.\n- **Padding / Align**: Specialized widgets for single purposes.\n- **Container** is convenient but can be overkill for simple use cases. Use the most specific widget for clarity and performance."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Using both `color` and `decoration` (throws an assertion).",
+        "- Forgetting that `padding` and `margin` are separate; mixing them up leads to unexpected spacing.",
+        "- Assuming a `Container` without a child will always fill the available space (it will, but only if constraints allow).",
+        "- Using `Container` when a simpler widget like `SizedBox` or `ColoredBox` would suffice – this can hurt performance in large lists."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Always use `const` constructors when possible for compile‑time constants (e.g., `const Container()`).",
+        "- For reusable styles, consider extracting the decoration into a variable or using a `Theme`.",
+        "- Use `SizedBox.shrink()` or `Container.shrink()` to create empty widgets when needed.",
+        "- Prefer `EdgeInsets.only`, `EdgeInsets.symmetric`, or `EdgeInsets.fromLTRB` for specific paddings."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(const MyApp());\n\nclass MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: const Text('Container Demo')),\n        body: Center(\n          child: Container(\n            width: 200,\n            height: 200,\n            decoration: BoxDecoration(\n              borderRadius: BorderRadius.circular(20),\n              gradient: const LinearGradient(\n                colors: [Colors.pink, Colors.purple],\n                begin: Alignment.topLeft,\n                end: Alignment.bottomRight,\n              ),\n              boxShadow: const [\n                BoxShadow(\n                  color: Colors.black26,\n                  blurRadius: 10,\n                  offset: Offset(0, 5),\n                ),\n              ],\n            ),\n            padding: const EdgeInsets.all(20),\n            child: const Text(\n              'Hello!',\n              style: TextStyle(color: Colors.white, fontSize: 24),\n            ),\n          ),\n        ),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `Container` is a multi‑purpose widget for styling and positioning a child.",
+        "- Use `padding` for internal spacing, `margin` for external spacing.",
+        "- For complex styling (borders, gradients, shadows), use `decoration` with `BoxDecoration`.",
+        "- You cannot set both `color` and `decoration`; use `decoration` with a `color` inside.",
+        "- Container sizes itself to its child, but can be constrained by `width`, `height`, or `constraints`.",
+        "- Always consider using a more specific widget for performance when possible."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use both `color` and `decoration` in a Container?",
+      "answer": "No, `Container` throws an assertion if you set both. Use `color` inside the `BoxDecoration` if you need a background color with additional styling."
+    },
+    {
+      "question": "What is the difference between `padding` and `margin`?",
+      "answer": "`padding` adds space inside the container, between its edges and the child. `margin` adds space outside the container, between the container and its parent or siblings."
+    },
+    {
+      "question": "How does Container determine its size?",
+      "answer": "If a `width` and/or `height` are provided, the container respects those. Otherwise, it tries to size itself to its child. If there is no child and no size, the container expands to fill the available space given by its parent constraints."
+    },
+    {
+      "question": "Is Container expensive to use?",
+      "answer": "Container is slightly heavier than more specialized widgets like `SizedBox` or `ColoredBox` because it combines multiple functions. For performance‑critical code (e.g., long lists), use the simpler widgets when possible."
+    },
+    {
+      "question": "Can Container have multiple children?",
+      "answer": "No, Container can only have one child. If you need multiple children, wrap them in a `Column`, `Row`, `Stack`, or `ListView` inside the container."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() {\n  runApp(\n    MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Container Example')),\n        body: Center(\n          child: Container(\n            width: 150,\n            height: 150,\n            decoration: BoxDecoration(\n              color: Colors.teal,\n              borderRadius: BorderRadius.circular(20),\n            ),\n            child: Center(\n              child: Text(\n                'Hello',\n                style: TextStyle(color: Colors.white, fontSize: 24),\n              ),\n            ),\n          ),\n        ),\n      ),\n    ),\n  );\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the purpose of Container in Flutter?",
+      "options": [
+        "To only hold text",
+        "To combine painting, positioning, and sizing of a child",
+        "To replace all layout widgets",
+        "To manage app state"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which property adds space outside the Container?",
+      "options": [
+        "padding",
+        "margin",
+        "alignment",
+        "decoration"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What happens if you set both `color` and `decoration` on a Container?",
+      "options": [
+        "The decoration is ignored",
+        "The color is applied and decoration is applied on top",
+        "The app crashes with an assertion error",
+        "The container renders with only the color"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which widget is a more performant alternative if you only need a background color?",
+      "options": [
+        "SizedBox",
+        "ColoredBox",
+        "DecoratedBox",
+        "Padding"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-sizedbox",
+    "flutter-padding",
+    "flutter-decorated-box",
+    "flutter-stack"
+  ]
+}

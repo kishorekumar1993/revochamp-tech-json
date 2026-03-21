@@ -1,0 +1,220 @@
+{
+  "slug": "flutter-image-widget",
+  "course": "Flutter",
+  "title": "Flutter Image Widget – Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter Image Widget: Network, Asset, File, and More",
+    "description": "Learn how to use Image in Flutter – load images from network, assets, file system; control fit, alignment, caching, and handle loading errors.",
+    "keywords": [
+      "Flutter Image",
+      "Image.network",
+      "Image.asset",
+      "Image.file",
+      "Flutter image fit",
+      "Flutter image loading",
+      "Flutter cached network image"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the Image Widget?"
+    },
+    {
+      "type": "text",
+      "value": "The `Image` widget in Flutter displays images from various sources: network URLs, local assets, device file system, or memory. It's a versatile widget that supports many display options, including fit, alignment, repeat, and error handling. Images are loaded asynchronously, and Flutter provides built‑in caching for network images."
+    },
+    {
+      "type": "heading",
+      "value": "Image Constructors"
+    },
+    {
+      "type": "text",
+      "value": "Flutter provides several named constructors to load images from different sources:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`Image.network`**: Loads an image from a URL.",
+        "- **`Image.asset`**: Loads an image from the app's asset bundle.",
+        "- **`Image.file`**: Loads an image from a file on the device.",
+        "- **`Image.memory`**: Loads an image from a `Uint8List` (byte array).",
+        "- **`Image`**: Takes an `ImageProvider` for more advanced use."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Image from Network"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Image.network(\n  'https://example.com/image.jpg',\n  width: 200,\n  height: 200,\n)"
+    },
+    {
+      "type": "text",
+      "value": "Network images are cached automatically by Flutter's image cache (up to a limit). You can also control caching with `cacheWidth` and `cacheHeight` to downscale the image before decoding."
+    },
+    {
+      "type": "heading",
+      "value": "Image from Assets"
+    },
+    {
+      "type": "text",
+      "value": "First, declare the asset in `pubspec.yaml`. Then reference it with `Image.asset`. Flutter automatically selects the correct resolution variant based on the device pixel ratio if you organise images with `2.0x`, `3.0x` folders."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Image.asset('assets/images/logo.png')"
+    },
+    {
+      "type": "heading",
+      "value": "Image from File"
+    },
+    {
+      "type": "text",
+      "value": "For images from the device file system (e.g., a photo picked by the user), use `Image.file`. You'll need a `File` object from `dart:io`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:io';\n\nImage.file(File('/path/to/image.jpg'))"
+    },
+    {
+      "type": "heading",
+      "value": "Controlling Image Fit"
+    },
+    {
+      "type": "text",
+      "value": "The `fit` property determines how the image is inscribed into the available space. Common values:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`BoxFit.cover`**: Scales the image to fill the entire box, cropping if necessary.",
+        "- **`BoxFit.contain`**: Scales the image to fit within the box while preserving aspect ratio (may leave empty space).",
+        "- **`BoxFit.fill`**: Stretches the image to fill the box, possibly distorting it.",
+        "- **`BoxFit.fitWidth`**: Scales to match the box's width, cropping height if needed.",
+        "- **`BoxFit.fitHeight`**: Scales to match the box's height, cropping width if needed."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Image.network(\n  'https://example.com/wide.jpg',\n  width: 200,\n  height: 200,\n  fit: BoxFit.cover,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Alignment"
+    },
+    {
+      "type": "text",
+      "value": "When the image is larger than the available space, `alignment` controls how it is positioned within the box. For example, `Alignment.topLeft` anchors the image to the top left."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Image.network(\n  'https://example.com/large.jpg',\n  width: 100,\n  height: 100,\n  alignment: Alignment.center,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling"
+    },
+    {
+      "type": "text",
+      "value": "You can handle loading errors with the `errorBuilder` and `frameBuilder`. `errorBuilder` is called when the image fails to load; `frameBuilder` can show a placeholder while loading."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Image.network(\n  'https://invalid.url/image.jpg',\n  errorBuilder: (context, error, stackTrace) => Icon(Icons.broken_image),\n  frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {\n    if (wasSynchronouslyLoaded) return child;\n    return CircularProgressIndicator();\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Caching and Performance"
+    },
+    {
+      "type": "text",
+      "value": "Flutter's `Image.network` uses a memory cache. To have more control over caching (e.g., disk cache), use the `cached_network_image` package. For large images, set `cacheWidth` and `cacheHeight` to avoid decoding the full image."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Image.network(\n  url,\n  cacheWidth: 300,\n  cacheHeight: 300,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `Image.network` for remote images, `Image.asset` for bundled assets, `Image.file` for local files.",
+        "- Control image scaling with `fit` and positioning with `alignment`.",
+        "- Provide `errorBuilder` and `frameBuilder` for a better user experience.",
+        "- Optimise memory usage with `cacheWidth` and `cacheHeight`.",
+        "- For advanced caching, consider `cached_network_image`."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I display a placeholder while a network image loads?",
+      "answer": "Use the `frameBuilder` to show a `CircularProgressIndicator` until the image is loaded. Alternatively, use the `cached_network_image` package which provides a built‑in placeholder."
+    },
+    {
+      "question": "How can I make an image circular?",
+      "answer": "Wrap the `Image` widget with `ClipOval` or use `CircleAvatar` with `backgroundImage`. For a `ClipOval`, set `clipBehavior: Clip.antiAlias`."
+    },
+    {
+      "question": "Why is my asset image not showing?",
+      "answer": "Make sure the asset is declared in `pubspec.yaml` under `flutter.assets`, and the path is correct. Also run `flutter pub get` to ensure assets are included. Check the case sensitivity of the file name."
+    },
+    {
+      "question": "How do I load an image from a base64 string?",
+      "answer": "Use `Image.memory` with the decoded bytes. For example: `Image.memory(base64Decode(base64String))`."
+    },
+    {
+      "question": "What's the difference between `Image.network` and `CachedNetworkImage`?",
+      "answer": "`Image.network` uses an in‑memory cache, but images are lost when the app restarts. `CachedNetworkImage` provides disk caching, placeholders, error widgets, and progress indicators out of the box."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Image Demo')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Image.network(\n                'https://picsum.photos/200/200',\n                width: 150,\n                height: 150,\n                fit: BoxFit.cover,\n              ),\n              SizedBox(height: 20),\n              Image.asset('assets/images/flutter_logo.png', width: 100),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which constructor is used to load an image from a URL?",
+      "options": ["Image.file", "Image.asset", "Image.network", "Image.memory"],
+      "answer": 2
+    },
+    {
+      "question": "What does `BoxFit.cover` do?",
+      "options": [
+        "Stretches the image to fill the box",
+        "Scales the image to fit inside the box",
+        "Scales the image to cover the box, possibly cropping",
+        "Centers the image without scaling"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "How do you handle image loading errors?",
+      "options": ["errorBuilder", "onError", "catchError", "errorCallback"],
+      "answer": 0
+    },
+    {
+      "question": "How can you limit the memory used by a large network image?",
+      "options": ["Set `maxWidth` and `maxHeight`", "Set `cacheWidth` and `cacheHeight`", "Use `resize`", "It's automatic"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-assets",
+    "flutter-image-network",
+    "flutter-cached-image",
+    "flutter-icon-widget"
+  ]
+}

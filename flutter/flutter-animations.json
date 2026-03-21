@@ -1,0 +1,219 @@
+{
+  "slug": "flutter-animations",
+  "course": "Flutter",
+  "title": "Flutter Animations – Implicit and Explicit Animations",
+  "meta": {
+    "title": "Flutter Animations: Complete Guide with Examples",
+    "description": "Learn how to create beautiful animations in Flutter. Master implicit animations (AnimatedContainer, AnimatedOpacity) and explicit animations (AnimationController, Tween, AnimatedBuilder).",
+    "keywords": [
+      "Flutter animations",
+      "AnimatedContainer",
+      "AnimationController",
+      "Tween",
+      "AnimatedBuilder",
+      "Flutter implicit animations",
+      "Flutter explicit animations"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Animations in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Animations bring your app to life. They provide visual feedback, guide user attention, and create a polished user experience. Flutter offers two main approaches to animations: **implicit animations** (easy, for simple property changes) and **explicit animations** (full control over animation curves, timing, and composition). This guide covers both, giving you the tools to create everything from subtle fades to complex choreographed sequences."
+    },
+    {
+      "type": "heading",
+      "value": "Implicit Animations (Simple, Automatic)"
+    },
+    {
+      "type": "text",
+      "value": "Implicit animations are widgets that automatically animate when you change their properties. They are perfect for simple transitions like fading, scaling, rotating, or changing color/size. Common implicit widgets: `AnimatedContainer`, `AnimatedOpacity`, `AnimatedPadding`, `AnimatedAlign`, `AnimatedPositioned`, `AnimatedDefaultTextStyle`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ImplicitAnimationDemo extends StatefulWidget {\n  @override\n  _ImplicitAnimationDemoState createState() => _ImplicitAnimationDemoState();\n}\n\nclass _ImplicitAnimationDemoState extends State<ImplicitAnimationDemo> {\n  bool _selected = false;\n\n  @override\n  Widget build(BuildContext context) {\n    return GestureDetector(\n      onTap: () => setState(() => _selected = !_selected),\n      child: AnimatedContainer(\n        duration: Duration(milliseconds: 300),\n        curve: Curves.easeInOut,\n        width: _selected ? 200 : 100,\n        height: _selected ? 200 : 100,\n        color: _selected ? Colors.blue : Colors.red,\n        child: Center(\n          child: Text('Tap me', style: TextStyle(color: Colors.white)),\n        ),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "In this example, tapping toggles a boolean, and the `AnimatedContainer` animates between sizes and colors over 300ms."
+    },
+    {
+      "type": "heading",
+      "value": "Explicit Animations (Full Control)"
+    },
+    {
+      "type": "text",
+      "value": "Explicit animations give you complete control over the animation lifecycle. You use an `AnimationController` to drive the animation, `Tween` to define the range of values, and an `AnimatedBuilder` or `AnimatedWidget` to rebuild the widget with the current animation value. This pattern is ideal for complex, continuous, or looping animations."
+    },
+    {
+      "type": "heading",
+      "value": "AnimationController"
+    },
+    {
+      "type": "text",
+      "value": "The `AnimationController` produces a value from 0.0 to 1.0 over a specified duration. It can be started, stopped, repeated, or reversed. You must dispose it in `dispose()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "late AnimationController _controller;\n\n@override\nvoid initState() {\n  super.initState();\n  _controller = AnimationController(\n    vsync: this, // required: provide a TickerProvider (like StatefulWidget)\n    duration: Duration(seconds: 2),\n  );\n}\n\n@override\nvoid dispose() {\n  _controller.dispose();\n  super.dispose();\n}\n\nvoid _startAnimation() {\n  _controller.forward(); // or .repeat(), .reverse(), .stop()\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Tween"
+    },
+    {
+      "type": "text",
+      "value": "A `Tween` maps the controller's 0.0–1.0 range to a different range of values. For example, to animate between two colors, use `ColorTween`. To animate position, use `Tween<Offset>` or `Tween<double>` for scale, opacity, etc."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final colorTween = ColorTween(begin: Colors.red, end: Colors.blue);\nfinal sizeTween = Tween<double>(begin: 50, end: 200);\n\n// Access current value inside an animation builder\nColor currentColor = colorTween.evaluate(_controller);\ndouble currentSize = sizeTween.evaluate(_controller);"
+    },
+    {
+      "type": "heading",
+      "value": "AnimatedBuilder – Efficient Rebuilding"
+    },
+    {
+      "type": "text",
+      "value": "`AnimatedBuilder` listens to an animation and rebuilds only the parts that depend on it. It's more efficient than a full widget rebuild. You provide a `builder` that returns the widget tree, and an optional `child` that won't rebuild (performance optimization)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "AnimatedBuilder(\n  animation: _controller,\n  builder: (context, child) {\n    return Transform.scale(\n      scale: sizeTween.evaluate(_controller),\n      child: Container(\n        color: colorTween.evaluate(_controller),\n        width: 100,\n        height: 100,\n        child: child,\n      ),\n    );\n  },\n  child: const Text('I don\\'t rebuild'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "AnimatedWidget – Reusable Animated Widgets"
+    },
+    {
+      "type": "text",
+      "value": "`AnimatedWidget` is a base class for creating widgets that listen to an animation and rebuild when it changes. It's a cleaner alternative to `AnimatedBuilder` when you have a single animation to listen to and want to encapsulate the logic."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FadeInWidget extends AnimatedWidget {\n  final Widget child;\n\n  FadeInWidget({required Animation<double> animation, required this.child})\n      : super(listenable: animation);\n\n  @override\n  Widget build(BuildContext context) {\n    final animation = listenable as Animation<double>;\n    return Opacity(\n      opacity: animation.value,\n      child: child,\n    );\n  }\n}\n\n// Usage\nFadeInWidget(\n  animation: _controller,\n  child: Text('Fading in'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Animation Patterns"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Fade transition**: Use `AnimatedOpacity` or a `Tween<double>` with `Opacity` widget.",
+        "- **Size transition**: Use `AnimatedContainer` or `Tween<double>` with `Transform.scale`.",
+        "- **Position transition**: Use `AnimatedPositioned` (inside a `Stack`) or `SlideTransition`.",
+        "- **Rotation**: Use `AnimatedBuilder` with `Transform.rotate` and a `Tween<double>`.",
+        "- **Color transition**: Use `AnimatedContainer` or `ColorTween` with `AnimatedBuilder`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Curves and Intervals"
+    },
+    {
+      "type": "text",
+      "value": "Curves control the rate of change of an animation. Flutter provides many built‑in curves: `Curves.linear`, `Curves.easeIn`, `Curves.easeOut`, `Curves.bounceIn`, etc. You can also create custom curves. Apply a curve by passing it to the `AnimationController` or by using `CurvedAnimation`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final curvedAnimation = CurvedAnimation(\n  parent: _controller,\n  curve: Curves.easeInOutBack,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Staggered Animations"
+    },
+    {
+      "type": "text",
+      "value": "Staggered animations sequence multiple animations using a single `AnimationController`. You can use `Interval` to delay or overlap parts of the animation. For example, you might fade in one element, then slide another, then rotate a third."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final opacityAnimation = Tween<double>(begin: 0, end: 1).animate(\n  CurvedAnimation(\n    parent: _controller,\n    curve: Interval(0.0, 0.5, curve: Curves.easeOut),\n  ),\n);\nfinal scaleAnimation = Tween<double>(begin: 0, end: 1).animate(\n  CurvedAnimation(\n    parent: _controller,\n    curve: Interval(0.3, 1.0, curve: Curves.elasticOut),\n  ),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Implicit animations (e.g., `AnimatedContainer`) are simple and automatic for property changes.",
+        "- Explicit animations use `AnimationController`, `Tween`, and `AnimatedBuilder` for full control.",
+        "- Always dispose of `AnimationController` in `dispose()`.",
+        "- Use `CurvedAnimation` to apply easing curves.",
+        "- For multiple animations, use staggered intervals with a single controller.",
+        "- `AnimatedWidget` is great for reusable animated components."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "When should I use implicit vs explicit animations?",
+      "answer": "Use implicit animations when you want to animate a single property change in response to a state change. They are easy and require minimal code. Use explicit animations when you need more control, such as looping, reversing, or synchronising multiple animations, or when you want to animate continuously without a state change (e.g., a loading spinner)."
+    },
+    {
+      "question": "What is `TickerProvider` and why do I need it for `AnimationController`?",
+      "answer": "`AnimationController` needs a `TickerProvider` to provide a `Ticker` that drives the animation. In a `StatefulWidget`, you can use `this` as the vsync by mixing in `SingleTickerProviderStateMixin` (for one controller) or `TickerProviderStateMixin` (for multiple)."
+    },
+    {
+      "question": "How do I animate a custom widget property?",
+      "answer": "Use an `AnimatedBuilder` or `AnimatedWidget` that reads an animation value and applies it to your widget's property (e.g., `Transform.rotate` for rotation). You can also create a custom `ImplicitlyAnimatedWidget` by extending it, but that's advanced."
+    },
+    {
+      "question": "Can I use `setState` with animations?",
+      "answer": "Yes, but it's inefficient. The recommended way is to use `AnimatedBuilder` which only rebuilds the parts that depend on the animation. Using `setState` would rebuild the whole widget tree each frame, causing performance issues."
+    },
+    {
+      "question": "How do I make an animation repeat forever?",
+      "answer": "Call `_controller.repeat()` after initialising the controller. You can also set `_controller.repeat(reverse: true)` to ping‑pong."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(const MyApp());\n\nclass MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Animation Demo',\n      home: const AnimatedBox(),\n    );\n  }\n}\n\nclass AnimatedBox extends StatefulWidget {\n  const AnimatedBox({super.key});\n\n  @override\n  _AnimatedBoxState createState() => _AnimatedBoxState();\n}\n\nclass _AnimatedBoxState extends State<AnimatedBox>\n    with SingleTickerProviderStateMixin {\n  late AnimationController _controller;\n  late Animation<double> _sizeAnimation;\n  late Animation<Color?> _colorAnimation;\n\n  @override\n  void initState() {\n    super.initState();\n    _controller = AnimationController(\n      duration: const Duration(seconds: 1),\n      vsync: this,\n    );\n\n    _sizeAnimation = Tween<double>(begin: 50, end: 150).animate(\n      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),\n    );\n\n    _colorAnimation = ColorTween(begin: Colors.blue, end: Colors.red).animate(\n      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),\n    );\n  }\n\n  @override\n  void dispose() {\n    _controller.dispose();\n    super.dispose();\n  }\n\n  void _toggleAnimation() {\n    if (_controller.isCompleted) {\n      _controller.reverse();\n    } else {\n      _controller.forward();\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: const Text('Animated Box')),\n      body: Center(\n        child: GestureDetector(\n          onTap: _toggleAnimation,\n          child: AnimatedBuilder(\n            animation: _controller,\n            builder: (context, child) {\n              return Container(\n                width: _sizeAnimation.value,\n                height: _sizeAnimation.value,\n                color: _colorAnimation.value,\n                child: const Center(\n                  child: Text('Tap me', style: TextStyle(color: Colors.white)),\n                ),\n              );\n            },\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget is best for animating a color change without writing a controller?",
+      "options": ["AnimatedContainer", "AnimatedBuilder", "AnimatedColor", "ColorTween"],
+      "answer": 0
+    },
+    {
+      "question": "What is the role of `AnimationController` in explicit animations?",
+      "options": [
+        "It defines the range of values to animate between",
+        "It drives the animation by producing values from 0 to 1 over time",
+        "It applies a curve to the animation",
+        "It disposes the animation"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What method should you call to release an `AnimationController`?",
+      "options": ["release()", "dispose()", "close()", "stop()"],
+      "answer": 1
+    },
+    {
+      "question": "Which widget rebuilds only the parts that depend on the animation?",
+      "options": ["AnimatedBuilder", "AnimatedWidget", "AnimatedContainer", "AnimationController"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-hero-animation",
+    "flutter-animated-widgets",
+    "flutter-transitions",
+    "flutter-advanced-animations"
+  ]
+}

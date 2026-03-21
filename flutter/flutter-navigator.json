@@ -1,0 +1,182 @@
+{
+  "slug": "flutter-navigator",
+  "course": "Flutter",
+  "title": "Flutter Navigator Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Navigator: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Navigator for screen navigation. Understand push, pop, named routes, passing data, onGenerateRoute, and best practices with simple examples.",
+    "keywords": [
+      "Flutter Navigator",
+      "Flutter navigation",
+      "push and pop",
+      "named routes",
+      "pass data between screens",
+      "onGenerateRoute",
+      "MaterialPageRoute"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Navigator in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Navigator is a widget that manages a stack of Route objects. In simple terms, it's the engine that handles moving between screens (or pages) in your app. When you push a new route, it goes on top of the stack; when you pop, you return to the previous route. Flutter provides a powerful and flexible navigation system that works on iOS, Android, and the web."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Navigation: push and pop"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to navigate to a new screen is by using `Navigator.push()` and `Navigator.pop()`. You wrap the new screen in a `MaterialPageRoute` which provides a platform‑adaptive transition."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// On first screen (e.g., HomeScreen)\nElevatedButton(\n  onPressed: () {\n    Navigator.push(\n      context,\n      MaterialPageRoute(builder: (context) => SecondScreen()),\n    );\n  },\n  child: Text('Go to Second Screen'),\n);\n\n// Inside SecondScreen, to go back:\nElevatedButton(\n  onPressed: () {\n    Navigator.pop(context);\n  },\n  child: Text('Back'),\n);"
+    },
+    {
+      "type": "text",
+      "value": "When you call `pop`, the current screen is removed from the stack and the previous screen becomes visible again."
+    },
+    {
+      "type": "heading",
+      "value": "Named Routes"
+    },
+    {
+      "type": "text",
+      "value": "For larger apps, managing direct widget references can become messy. Named routes allow you to define route names in the `MaterialApp` and navigate using those names."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MaterialApp(\n  initialRoute: '/',\n  routes: {\n    '/': (context) => HomeScreen(),\n    '/details': (context) => DetailsScreen(),\n    '/settings': (context) => SettingsScreen(),\n  },\n)\n\n// Navigate using name\nNavigator.pushNamed(context, '/details');\n\n// Pop back\nNavigator.pop(context);"
+    },
+    {
+      "type": "text",
+      "value": "This approach centralizes your route definitions and makes navigation more readable."
+    },
+    {
+      "type": "heading",
+      "value": "Passing Data Between Screens"
+    },
+    {
+      "type": "text",
+      "value": "Often you need to send data to the new screen, or receive data back. With named routes, you can pass arguments using the `arguments` parameter."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Sending data\nNavigator.pushNamed(\n  context,\n  '/details',\n  arguments: {'id': 42, 'name': 'Product X'},\n);\n\n// Receiving data in the destination screen\nclass DetailsScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;\n    return Scaffold(\n      appBar: AppBar(title: Text(args['name'])),\n      body: Center(child: Text('Product ID: ${args['id']}')),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Returning Data from a Screen"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want a result back from the screen you pushed. You can use `Navigator.pop(context, result)` and await the `push` call."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Pushing and awaiting result\nfinal result = await Navigator.pushNamed(context, '/picker');\nprint('User selected: $result');\n\n// In the picker screen, when user makes a selection\nNavigator.pop(context, 'Apple');"
+    },
+    {
+      "type": "heading",
+      "value": "onGenerateRoute and Route Settings"
+    },
+    {
+      "type": "text",
+      "value": "For dynamic route handling (e.g., parsing URLs, handling unknown routes), you can use `onGenerateRoute`. It gives you full control over the route creation based on the `RouteSettings`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MaterialApp(\n  onGenerateRoute: (settings) {\n    if (settings.name == '/details') {\n      final args = settings.arguments as Map;\n      return MaterialPageRoute(\n        builder: (context) => DetailsScreen(id: args['id']),\n      );\n    }\n    // Fallback for unknown routes\n    return MaterialPageRoute(builder: (context) => NotFoundScreen());\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Not wrapping the app in a MaterialApp or CupertinoApp**: Navigator relies on the context provided by these widgets. Without them, `Navigator.of(context)` will fail.",
+        "**Using context incorrectly**: `context` must be from a widget that is a descendant of the Navigator. Usually, the context from the current screen's `build` method is fine.",
+        "**Forgetting to handle the back button**: On Android, the physical back button automatically pops the route. However, if you want to intercept or disable it, you need `WillPopScope`.",
+        "**Passing arguments without type safety**: Using `Map` for arguments is flexible but error‑prone. Consider using strongly‑typed objects or `arguments` as a custom class.",
+        "**Not awaiting pop when expecting a result**: If you need data back, always `await` the `push` call and handle the case where the user cancels (pop returns null)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Navigator manages a stack of routes. `push` adds a route, `pop` removes it.",
+        "Use `MaterialPageRoute` for platform‑adaptive transitions.",
+        "Named routes (`routes` map) simplify navigation in larger apps.",
+        "Pass data using the `arguments` parameter and retrieve it with `ModalRoute.of(context)!.settings.arguments`.",
+        "Return data by passing a value to `pop` and awaiting the `push` call.",
+        "`onGenerateRoute` gives you full control for dynamic routes and error handling.",
+        "Always ensure your `BuildContext` is valid for navigation (usually inside the widget tree of a screen)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. How does Navigator work internally?\n2. What is the difference between `Navigator.push` and `Navigator.pushNamed`?\n3. How would you pass data from a second screen back to the first?\n4. Explain the purpose of `onGenerateRoute` and when you would use it instead of the `routes` map.\n5. How can you handle deep links in Flutter using Navigator?\n6. What is `WillPopScope` and when would you use it?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      initialRoute: '/',\n      routes: {\n        '/': (context) => HomeScreen(),\n        '/details': (context) => DetailsScreen(),\n      },\n    );\n  }\n}\n\nclass HomeScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Home')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Welcome!'),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () async {\n                final result = await Navigator.pushNamed(context, '/details', arguments: 'Hello from Home');\n                ScaffoldMessenger.of(context).showSnackBar(\n                  SnackBar(content: Text('Result: $result')),\n                );\n              },\n              child: Text('Go to Details'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass DetailsScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final message = ModalRoute.of(context)!.settings.arguments as String;\n    return Scaffold(\n      appBar: AppBar(title: Text('Details')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Message received: $message'),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () => Navigator.pop(context, 'Data from Details'),\n              child: Text('Go back with data'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you navigate to a new screen and remove the current one from the stack?",
+      "options": [
+        "Navigator.push(context, route)",
+        "Navigator.pushReplacement(context, route)",
+        "Navigator.pop(context)",
+        "Navigator.pushAndRemoveUntil(context, route, (route) => false)"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you retrieve arguments passed to a named route?",
+      "options": [
+        "ModalRoute.of(context)!.settings.arguments",
+        "Navigator.of(context).arguments",
+        "RouteSettings.of(context).arguments",
+        "MediaQuery.of(context).arguments"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Which widget allows you to intercept the Android back button?",
+      "options": [
+        "BackButtonInterceptor",
+        "WillPopScope",
+        "PopScope",
+        "NavigatorObserver"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-materialapp",
+    "flutter-routes",
+    "flutter-arguments",
+    "flutter-willpopscope",
+    "flutter-container"
+  ]
+}

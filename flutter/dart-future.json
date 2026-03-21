@@ -1,0 +1,224 @@
+{
+  "slug": "dart-future",
+  "course": "Dart",
+  "title": "Dart Future – Asynchronous Programming with Futures",
+  "meta": {
+    "title": "Dart Future Tutorial: Complete Guide with Examples",
+    "description": "Learn about Dart Futures – what they are, how to create them, handle results, chain operations, combine multiple Futures, and handle errors. Includes practical examples and quiz.",
+    "keywords": [
+      "Dart Future",
+      "Dart async",
+      "Dart Future.then",
+      "Dart Future.wait",
+      "Dart async programming",
+      "Dart Future error handling",
+      "Dart Future API"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Future?"
+    },
+    {
+      "type": "text",
+      "value": "A `Future` represents a potential value or error that will be available at some time in the future. It's a core part of Dart's asynchronous programming model. Instead of blocking the program while waiting for an operation (like a network request, file I/O, or timer), a Future allows the program to continue executing other code and be notified when the result is ready."
+    },
+    {
+      "type": "text",
+      "value": "Futures can be in one of two states: uncompleted or completed. When completed, they either complete with a value or with an error."
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Future"
+    },
+    {
+      "type": "text",
+      "value": "There are several ways to create a Future in Dart:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`Future.value`** – creates a Future that completes immediately with a given value.",
+        "- **`Future.error`** – creates a Future that completes immediately with an error.",
+        "- **`Future.delayed`** – creates a Future that completes after a specified duration.",
+        "- **`Future.sync`** – creates a Future that runs a function synchronously and then completes with its result (or error).",
+        "- **Using `async` functions** – any `async` function automatically returns a Future."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Immediate value\n  Future<int> immediate = Future.value(42);\n  \n  // Immediate error\n  Future<String> error = Future.error('Something went wrong');\n  \n  // Delayed completion\n  Future<String> delayed = Future.delayed(Duration(seconds: 2), () => 'Data loaded');\n  \n  // Using async function\n  Future<int> asyncFuture() async {\n    return 42;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using `then()` to Handle Completion"
+    },
+    {
+      "type": "text",
+      "value": "The most basic way to handle a Future's result is with the `.then()` method. It takes a callback that will be called with the value when the Future completes successfully."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  Future<String> future = Future.delayed(Duration(seconds: 1), () => 'Hello');\n  \n  future.then((value) {\n    print(value); // Hello\n  });\n  \n  print('Waiting...');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Errors with `catchError`"
+    },
+    {
+      "type": "text",
+      "value": "You can handle errors by chaining a `.catchError()` callback. It works similarly to a catch block."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  Future<String> future = Future.error(Exception('Network error'));\n  \n  future\n    .then((value) => print(value))\n    .catchError((error) {\n      print('Caught error: $error');\n    });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using `whenComplete` for Cleanup"
+    },
+    {
+      "type": "text",
+      "value": "The `.whenComplete()` callback runs regardless of whether the Future completes with a value or an error. It's useful for cleanup actions (like closing a file or hiding a loading spinner)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  Future<String> future = Future.delayed(Duration(seconds: 1), () => 'Data');\n  \n  future\n    .then((value) => print(value))\n    .catchError((error) => print(error))\n    .whenComplete(() => print('Done'));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Chaining Futures"
+    },
+    {
+      "type": "text",
+      "value": "You can chain multiple asynchronous operations by returning a Future from a `.then()` callback. This avoids nested callbacks (callback hell)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<String> fetchUserId() {\n  return Future.delayed(Duration(seconds: 1), () => 'user123');\n}\n\nFuture<String> fetchUserData(String id) {\n  return Future.delayed(Duration(seconds: 1), () => 'Data for $id');\n}\n\nvoid main() {\n  fetchUserId()\n    .then((id) => fetchUserData(id))\n    .then((data) => print(data))\n    .catchError((error) => print(error));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Working with Multiple Futures"
+    },
+    {
+      "type": "text",
+      "value": "Dart provides several static methods for working with multiple Futures:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`Future.wait`** – waits for all Futures to complete, then gives a list of results. If any Future completes with an error, `wait` completes with that error.",
+        "- **`Future.any`** – completes with the result of the first Future that completes (success or error).",
+        "- **`Future.doWhile`** – performs an action repeatedly until it returns `false`."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  var future1 = Future.delayed(Duration(seconds: 2), () => 'First');\n  var future2 = Future.delayed(Duration(seconds: 1), () => 'Second');\n  var future3 = Future.error('Error');\n\n  // Future.wait\n  Future.wait([future1, future2])\n    .then((results) => print(results)) // ['First', 'Second']\n    .catchError((e) => print(e));\n\n  // Future.any\n  Future.any([future1, future2])\n    .then((first) => print(first)); // 'Second' (completes first)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Async/Await: A Cleaner Alternative"
+    },
+    {
+      "type": "text",
+      "value": "While you can use `.then()` and `.catchError()`, the `async`/`await` syntax is often more readable. An `async` function returns a Future, and `await` pauses the function until the Future completes. Error handling is done with `try`/`catch`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<void> main() async {\n  try {\n    String id = await fetchUserId();\n    String data = await fetchUserData(id);\n    print(data);\n  } catch (e) {\n    print('Error: $e');\n  }\n}\n\nFuture<String> fetchUserId() async {\n  await Future.delayed(Duration(seconds: 1));\n  return 'user123';\n}\n\nFuture<String> fetchUserData(String id) async {\n  await Future.delayed(Duration(seconds: 1));\n  return 'Data for $id';\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- A Future represents a value or error that will be available later.",
+        "- Create Futures using `Future.value`, `Future.error`, `Future.delayed`, or by writing `async` functions.",
+        "- Use `.then()` to handle successful completion, `.catchError()` for errors, and `.whenComplete()` for cleanup.",
+        "- Chain Futures by returning a new Future from `.then()`.",
+        "- Use `Future.wait` to run multiple Futures concurrently and wait for all to complete.",
+        "- Prefer `async`/`await` for cleaner, more readable asynchronous code."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `Future` and `Stream`?",
+      "answer": "A Future represents a single value (or error) that will be available at some point. A Stream represents a sequence of multiple values (or errors) delivered over time."
+    },
+    {
+      "question": "Can a Future complete more than once?",
+      "answer": "No, a Future can only complete once – either with a value or with an error. Once completed, its state is final."
+    },
+    {
+      "question": "What happens if I don't handle an error on a Future?",
+      "answer": "Unhandled errors on a Future may cause the program to terminate (if they reach the top level). In Flutter, they can cause the app to crash. Always handle errors, either with `.catchError()` or with `try`/`catch` when using `await`."
+    },
+    {
+      "question": "How do I create a Future that completes after a delay?",
+      "answer": "Use `Future.delayed(Duration(seconds: n), () => result)`."
+    },
+    {
+      "question": "Is `async`/`await` slower than using `.then()`?",
+      "answer": "No, `async`/`await` is syntactic sugar that compiles to the same underlying mechanism. There is no performance penalty."
+    },
+    {
+      "question": "Can I cancel a Future?",
+      "answer": "Dart's Future does not have a built‑in cancellation mechanism. For cancelable operations, consider using packages like `dart_async` or design your code so that the Future's operation can be aborted (e.g., using a `Completer`)."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  Future<String> fetchGreeting() {\n    return Future.delayed(Duration(seconds: 2), () => 'Hello, Future!');\n  }\n\n  print('Fetching...');\n  fetchGreeting().then((greeting) => print(greeting));\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does a Future represent?",
+      "options": [
+        "A value that is always available synchronously",
+        "A potential value or error that will be available later",
+        "A collection of multiple values",
+        "An error handler"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method is used to handle successful completion of a Future?",
+      "options": ["catchError()", "whenComplete()", "then()", "complete()"],
+      "answer": 2
+    },
+    {
+      "question": "What does `Future.wait` do?",
+      "options": [
+        "Waits for the first Future to complete",
+        "Waits for all Futures to complete and returns a list of results",
+        "Executes Futures sequentially",
+        "Cancels all pending Futures"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you create a Future that completes immediately with the value 42?",
+      "options": ["Future(42)", "Future.value(42)", "Future.delayed(42)", "Future.complete(42)"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-async-await",
+    "dart-stream",
+    "dart-error-handling",
+    "dart-event-loop"
+  ]
+}

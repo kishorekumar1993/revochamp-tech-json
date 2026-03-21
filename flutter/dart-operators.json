@@ -1,0 +1,327 @@
+{
+  "slug": "dart-operators",
+  "course": "Dart",
+  "title": "Dart Operators – Arithmetic, Logical, Relational and More",
+  "meta": {
+    "title": "Dart Operators: Complete Guide with Examples",
+    "description": "Learn all Dart operators – arithmetic, relational, logical, bitwise, assignment, type test, cascade, and null-aware operators. Includes code snippets and quiz.",
+    "keywords": [
+      "Dart operators",
+      "Dart arithmetic operators",
+      "Dart logical operators",
+      "Dart relational operators",
+      "Dart bitwise operators",
+      "Dart type test operators",
+      "Dart null-aware operators",
+      "Dart cascade notation"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Operators?"
+    },
+    {
+      "type": "text",
+      "value": "Operators are special symbols used to perform operations on operands (values and variables). Dart supports a rich set of operators similar to other C‑style languages. Understanding operators is essential for writing expressions and controlling program flow."
+    },
+    {
+      "type": "heading",
+      "value": "1. Arithmetic Operators"
+    },
+    {
+      "type": "text",
+      "value": "Arithmetic operators perform basic mathematical operations."
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `+` : Addition",
+        "- `-` : Subtraction",
+        "- `*` : Multiplication",
+        "- `/` : Division (returns double)",
+        "- `~/` : Integer division (returns int)",
+        "- `%` : Modulo (remainder)"
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int a = 10, b = 3;\n  print(a + b);   // 13\n  print(a - b);   // 7\n  print(a * b);   // 30\n  print(a / b);   // 3.3333333333333335 (double)\n  print(a ~/ b);  // 3 (integer division)\n  print(a % b);   // 1 (remainder)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Relational (Comparison) Operators"
+    },
+    {
+      "type": "text",
+      "value": "These operators compare two values and return a boolean (`true` or `false`)."
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `==` : Equal to",
+        "- `!=` : Not equal to",
+        "- `>`  : Greater than",
+        "- `<`  : Less than",
+        "- `>=` : Greater than or equal to",
+        "- `<=` : Less than or equal to"
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int x = 5, y = 8;\n  print(x == y); // false\n  print(x != y); // true\n  print(x > y);  // false\n  print(x < y);  // true\n  print(x >= 5); // true\n  print(y <= 8); // true\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Type Test Operators"
+    },
+    {
+      "type": "text",
+      "value": "These operators check the type of an object at runtime."
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `is`  : True if the object has the specified type",
+        "- `is!` : True if the object does not have the specified type"
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var value = 'Hello';\n  print(value is String);   // true\n  print(value is int);      // false\n  print(value is! bool);    // true\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Logical Operators"
+    },
+    {
+      "type": "text",
+      "value": "Logical operators combine boolean expressions."
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `&&` : Logical AND (true if both operands are true)",
+        "- `||` : Logical OR (true if at least one operand is true)",
+        "- `!`  : Logical NOT (inverts the boolean value)"
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  bool sunny = true, warm = false;\n  print(sunny && warm); // false\n  print(sunny || warm); // true\n  print(!sunny);        // false\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Bitwise Operators"
+    },
+    {
+      "type": "text",
+      "value": "These operators work on integers at the bit level."
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `&`  : Bitwise AND",
+        "- `|`  : Bitwise OR",
+        "- `^`  : Bitwise XOR",
+        "- `~`  : Bitwise NOT (unary)",
+        "- `<<` : Left shift",
+        "- `>>` : Right shift"
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int a = 5; // binary 0101\n  int b = 3; // binary 0011\n  print(a & b);  // 0001 -> 1\n  print(a | b);  // 0111 -> 7\n  print(a ^ b);  // 0110 -> 6\n  print(a << 1); // 1010 -> 10\n  print(a >> 1); // 0010 -> 2\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Assignment Operators"
+    },
+    {
+      "type": "text",
+      "value": "Assign values to variables. Compound operators combine assignment with another operation."
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `=`  : Simple assignment",
+        "- `+=` : Add and assign (e.g., `a += b` means `a = a + b`)",
+        "- `-=` : Subtract and assign",
+        "- `*=` : Multiply and assign",
+        "- `/=` : Divide and assign",
+        "- `~/=` : Integer divide and assign",
+        "- `%=` : Modulo and assign",
+        "- `<<=` : Left shift and assign",
+        "- `>>=` : Right shift and assign",
+        "- `&=` : Bitwise AND and assign",
+        "- `^=` : Bitwise XOR and assign",
+        "- `|=` : Bitwise OR and assign"
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int a = 10;\n  a += 5;  // a = a + 5 -> 15\n  print(a);\n  a ~/= 2; // a = a ~/ 2 -> 7\n  print(a);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Conditional (Ternary) Operator"
+    },
+    {
+      "type": "text",
+      "value": "The ternary operator `condition ? expr1 : expr2` evaluates to `expr1` if condition is true, otherwise `expr2`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int age = 18;\n  String status = (age >= 18) ? 'Adult' : 'Minor';\n  print(status); // Adult\n}"
+    },
+    {
+      "type": "heading",
+      "value": "8. Cascade Notation (`..`)"
+    },
+    {
+      "type": "text",
+      "value": "The cascade operator allows you to perform multiple operations on the same object. It returns the original object, not the result of each operation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Person {\n  String name = '';\n  int age = 0;\n  void sayHello() => print('Hi, I am $name');\n}\n\nvoid main() {\n  Person person = Person()\n    ..name = 'Alice'\n    ..age = 30\n    ..sayHello();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "9. Null‑Aware Operators"
+    },
+    {
+      "type": "text",
+      "value": "Dart provides special operators to handle nullable values safely."
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `?.` : Safe member access (returns null if the object is null)",
+        "- `??` : If‑null operator (returns left side if not null, else right side)",
+        "- `??=` : Null‑aware assignment (assigns only if the variable is null)"
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String? name;\n  print(name?.length);   // null (safe access)\n  \n  String displayName = name ?? 'Guest';\n  print(displayName);    // Guest\n  \n  name ??= 'Alice';\n  print(name);           // Alice (assigned because it was null)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Operator Precedence"
+    },
+    {
+      "type": "text",
+      "value": "Operators have a defined precedence that determines the order in which they are evaluated in an expression. Use parentheses `()` to override precedence and make expressions clearer."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int result = 5 + 3 * 2;   // 5 + (3 * 2) = 11\n  print(result);\n  result = (5 + 3) * 2;     // (5 + 3) * 2 = 16\n  print(result);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Mixing various operators\n  int a = 15, b = 4;\n  double c = 10.5;\n  \n  // Arithmetic + relational + logical\n  if ((a ~/ b > 3) && (c > 10)) {\n    print('Condition met');\n  }\n  \n  // Ternary + assignment\n  int min = (a < b) ? a : b;\n  print('Minimum: $min');\n  \n  // Cascade on a list\n  var numbers = [1, 2, 3]\n    ..add(4)\n    ..removeAt(0);\n  print(numbers); // [2, 3, 4]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Operators are symbols that perform operations on one or more operands.",
+        "- Dart includes arithmetic, relational, type test, logical, bitwise, assignment, conditional, cascade, and null‑aware operators.",
+        "- Use `is` and `is!` to check types at runtime.",
+        "- The cascade operator `..` lets you chain operations on the same object.",
+        "- Null‑aware operators (`?.`, `??`, `??=`) help you write safe code with nullable variables.",
+        "- Operator precedence can be controlled with parentheses."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `/` and `~/` in Dart?",
+      "answer": "The `/` operator performs floating-point division and always returns a `double`. The `~/` operator performs integer division, truncating any fractional part and returning an `int`. For example, `10 / 3` = 3.333..., while `10 ~/ 3` = 3."
+    },
+    {
+      "question": "How do I test if an object is of a certain type?",
+      "answer": "Use the `is` operator: `if (obj is String) { ... }`. To test that it is NOT a certain type, use `is!`: `if (obj is! int) { ... }`."
+    },
+    {
+      "question": "What is the null-aware operator `??` used for?",
+      "answer": "The `??` operator returns the left operand if it's not null; otherwise, it returns the right operand. It's commonly used to provide default values for nullable expressions: `String name = userName ?? 'Guest';`."
+    },
+    {
+      "question": "Can I use `&&` and `||` with non-boolean values?",
+      "answer": "No, in Dart logical operators `&&` and `||` work only with boolean expressions. If you need to handle other types, you must convert them to bool (e.g., using `!= null` or explicit comparison)."
+    },
+    {
+      "question": "What is the cascade operator `..` and how does it work?",
+      "answer": "The cascade operator allows you to perform multiple operations on the same object without repeating the object reference. It returns the original object, enabling method chaining. For example: `list..add(1)..add(2)..remove(1);`"
+    },
+    {
+      "question": "How do I combine assignment with an operation?",
+      "answer": "Dart provides compound assignment operators like `+=`, `-=`, `*=`, etc. For example, `a += 5` is equivalent to `a = a + 5`. These work for most operators, including bitwise (`&=`, `|=`, `^=`)."
+    },
+    {
+      "question": "What is operator precedence and why does it matter?",
+      "answer": "Operator precedence determines the order in which operators are evaluated in an expression. For example, multiplication has higher precedence than addition, so `2 + 3 * 4` is evaluated as `2 + (3 * 4) = 14`. You can use parentheses `()` to override precedence."
+    },
+    {
+      "question": "How do I check if two objects are equal?",
+      "answer": "Use the `==` operator. Note that in Dart, `==` checks for value equality (calls the `==` method of the object). For reference equality (whether two references point to the same object), use the `identical()` function."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  // Experiment with operators\n  int x = 10, y = 3;\n  print('x + y = ${x + y}');\n  print('x ~/ y = ${x ~/ y}');\n  print('x > y = ${x > y}');\n  print('x is int = ${x is int}');\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the output of `print(10 ~/ 3);`?",
+      "options": ["3.333", "3", "3.0", "Error"],
+      "answer": 1
+    },
+    {
+      "question": "Which operator checks if an object is of a specific type?",
+      "options": ["==", "is", "as", "typeof"],
+      "answer": 1
+    },
+    {
+      "question": "What does the `??` operator do?",
+      "options": [
+        "Returns the left operand if it's not null, otherwise the right operand",
+        "Returns the right operand if left is null",
+        "Performs a null check and throws an error",
+        "Assigns a value only if the variable is null"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Which operator is used to chain multiple method calls on the same object?",
+      "options": ["..", ".", "?.", "=>"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "dart-variables",
+    "dart-syntax",
+    "dart-functions",
+    "dart-null-safety"
+  ]
+}

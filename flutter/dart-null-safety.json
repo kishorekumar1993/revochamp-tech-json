@@ -1,0 +1,302 @@
+{
+  "slug": "dart-null-safety",
+  "course": "Dart",
+  "title": "Dart Null Safety – A Complete Guide",
+  "meta": {
+    "title": "Dart Null Safety: ?, !, late, and Null-Aware Operators",
+    "description": "Learn Dart's sound null safety – nullable vs non‑nullable types, the ? and ! operators, late variables, null‑aware operators (??, ??=, ?.), type promotion, and migration tips.",
+    "keywords": [
+      "Dart null safety",
+      "Dart nullable types",
+      "Dart late keyword",
+      "Dart null-aware operators",
+      "Dart null assertion operator",
+      "Dart type promotion",
+      "Dart sound null safety"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Null Safety?"
+    },
+    {
+      "type": "text",
+      "value": "Null safety is a feature in Dart that helps you avoid null reference errors – those dreaded runtime crashes where you try to use a variable that unexpectedly contains `null`. With null safety, variables are non‑nullable by default, meaning they cannot contain `null` unless you explicitly allow it. This moves null checks from runtime to compile time, making your code more robust and predictable."
+    },
+    {
+      "type": "heading",
+      "value": "Nullable vs Non‑Nullable Types"
+    },
+    {
+      "type": "text",
+      "value": "In Dart, every type now has a nullable counterpart. By default, types are non‑nullable. To allow a variable to hold `null`, add a `?` after the type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int nonNullable = 42;     // cannot be null\n  // nonNullable = null;     // Error\n  \n  int? nullable = 42;       // can be null\n  nullable = null;          // OK\n}"
+    },
+    {
+      "type": "heading",
+      "value": "The `?` Operator (Nullable Type)"
+    },
+    {
+      "type": "text",
+      "value": "Adding `?` to a type creates a nullable version. You can assign either a value of that type or `null`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String? name;       // initialised as null\n  print(name);         // null\n  name = 'Alice';\n  print(name.length);  // OK after assignment\n}"
+    },
+    {
+      "type": "heading",
+      "value": "The `!` Operator (Null Assertion)"
+    },
+    {
+      "type": "text",
+      "value": "Use the `!` operator when you are absolutely sure that a nullable variable is not `null` at that point. It asserts that the value is non‑null and returns it as a non‑nullable type. If you're wrong, it throws a runtime error – so use it sparingly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String? maybeName = getName();\n  int length = maybeName!.length; // throws if maybeName is null\n}\n\nString? getName() => 'Alice';"
+    },
+    {
+      "type": "heading",
+      "value": "The `late` Keyword"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you know a variable will be initialised before it's used, but not immediately at declaration. Use `late` to tell Dart to trust you. If you fail to initialise it before use, you get a runtime error."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  late String description;\n  // print(description); // would throw LateInitializationError\n  description = 'Hello';\n  print(description); // OK\n}"
+    },
+    {
+      "type": "text",
+      "value": "`late` is also useful for lazy initialisation – expensive computations that should only run when the variable is first accessed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HeavyData {\n  late String data = _loadData(); // called only when used\n  \n  String _loadData() {\n    print('Loading...');\n    return 'big data';\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Null‑Aware Operators"
+    },
+    {
+      "type": "text",
+      "value": "Dart provides several operators to handle nullable values safely and concisely."
+    },
+    {
+      "type": "heading",
+      "value": "`?.` – Safe Member Access"
+    },
+    {
+      "type": "text",
+      "value": "Access a property or method only if the object is not null; otherwise, the expression evaluates to null."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String? name;\n  print(name?.length); // null (no error)\n  \n  name = 'Dart';\n  print(name?.length); // 4\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`??` – If‑Null Operator"
+    },
+    {
+      "type": "text",
+      "value": "Returns the left operand if it's not null; otherwise returns the right operand."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String? name;\n  String displayName = name ?? 'Guest';\n  print(displayName); // Guest\n}"
+    },
+    {
+      "type": "heading",
+      "value": "`??=` – Null‑Aware Assignment"
+    },
+    {
+      "type": "text",
+      "value": "Assigns a value to a variable only if that variable is currently null. If it's already non‑null, the assignment is ignored."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String? name;\n  name ??= 'Alice';\n  print(name); // Alice\n  \n  name ??= 'Bob';\n  print(name); // still Alice (already set)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Type Promotion"
+    },
+    {
+      "type": "text",
+      "value": "Dart's flow analysis can promote nullable types to non‑nullable within certain scopes after a null check, allowing you to use them safely without the `!` operator."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String? nullable = 'Hello';\n  \n  if (nullable != null) {\n    // nullable is promoted to String (non‑nullable) here\n    print(nullable.length); // no ! needed\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "This also works with `is` checks and logical operators like `&&` and `||`."
+    },
+    {
+      "type": "heading",
+      "value": "Working with Collections"
+    },
+    {
+      "type": "text",
+      "value": "Collections can also be nullable, and their elements can be nullable. Be careful with type arguments."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  List<int?> nullableElements = [1, null, 3];\n  List<int>? nullableList = null;\n  \n  // Safe access\n  int? first = nullableElements[0]; // 1\n  int? second = nullableElements[1]; // null\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Migration from Pre‑Null Safety"
+    },
+    {
+      "type": "text",
+      "value": "If you have existing Dart code without null safety, you can migrate using `dart migrate`. The tool helps you add `?`, `late`, and other null safety features. After migration, run `dart pub get` and fix any remaining analysis issues."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Prefer non‑nullable types** – only make a variable nullable if `null` is a meaningful state.",
+        "- **Use `late` for non‑nullable variables that are initialised after construction (e.g., dependency injection).",
+        "- **Avoid overusing `!`** – prefer safe access (`?.`) or explicit null checks with promotion.",
+        "- **Use `??` for default values** – it's clearer than a ternary with a null check.",
+        "- **Take advantage of type promotion** – write code that naturally checks for null before use.",
+        "- **Be explicit with collection types** – decide whether the collection itself can be null or its elements."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Nullable variables\n  String? userName;\n  int? age;\n  \n  // Simulate fetching data\n  userName = fetchUserName();\n  age = fetchAge();\n  \n  // Safe access\n  print('Hello, ${userName ?? 'Guest'}!');\n  \n  // Type promotion after check\n  if (age != null) {\n    print('You are $age years old.');\n  }\n  \n  // Null‑aware assignment\n  String? nickname;\n  nickname ??= userName;\n  print('Nickname: $nickname');\n  \n  // late variable\n  late String fullName = getFullName();\n  print('Full name: $fullName');\n}\n\nString? fetchUserName() => 'Alice';\nint? fetchAge() => 30;\nString getFullName() => 'Alice Smith';"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Null safety eliminates null reference errors at compile time.",
+        "- Types are non‑nullable by default; add `?` to allow null.",
+        "- Use `late` for variables initialised after declaration.",
+        "- Null‑aware operators (`?.`, `??`, `??=`) provide safe and concise handling.",
+        "- Type promotion lets you use nullable variables as non‑nullable after checks.",
+        "- Migrate existing code with `dart migrate`."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is null safety and why should I use it?",
+      "answer": "Null safety is a feature that prevents variables from containing `null` unless explicitly allowed. It eliminates null reference errors at compile time, making your code more robust and predictable. It also improves performance by enabling optimizations."
+    },
+    {
+      "question": "How do I make a variable nullable?",
+      "answer": "Add a `?` after the type: `int? nullableInt;`. This variable can now hold either an integer or `null`."
+    },
+    {
+      "question": "What is the difference between `?` and `!`?",
+      "answer": "`?` is used to declare a nullable type (e.g., `String? name`). `!` is the null assertion operator used to tell the compiler that you are sure a nullable variable is not null at that point, converting it to a non‑nullable type. If you're wrong, it throws a runtime error."
+    },
+    {
+      "question": "When should I use `late`?",
+      "answer": "Use `late` for non‑nullable variables that are initialized after the constructor runs (e.g., dependency injection, init methods) or for lazy initialization of expensive resources. But be careful: accessing a `late` variable before it's initialized throws a `LateInitializationError`."
+    },
+    {
+      "question": "What are null-aware operators?",
+      "answer": "Dart provides several null-aware operators: `?.` (safe member access), `??` (if‑null operator), and `??=` (null‑aware assignment). They allow concise and safe handling of nullable values without explicit `if` checks."
+    },
+    {
+      "question": "How does type promotion work with null safety?",
+      "answer": "After a null check (e.g., `if (nullable != null)`), Dart promotes the nullable variable to a non‑nullable type within that scope, so you can safely access its members without using `!`. This also works with `&&`, `||`, and `is` checks."
+    },
+    {
+      "question": "How do I migrate existing Dart code to null safety?",
+      "answer": "Use the `dart migrate` tool. It analyzes your code and suggests where to add `?`, `late`, `required`, etc. After migration, run `dart pub get` and fix any remaining analysis issues. It's recommended to migrate in small, incremental steps."
+    },
+    {
+      "question": "Can collections have nullable elements?",
+      "answer": "Yes, you can have collections with nullable element types, e.g., `List<int?>` can contain `int` or `null`. The collection itself can also be nullable: `List<int>?` means the list reference can be null, but if it's non‑null, its elements are non‑nullable."
+    },
+    {
+      "question": "What's the difference between `??` and `??=`?",
+      "answer": "`??` returns the left operand if it's not null; otherwise it returns the right operand. It's an expression. `??=` assigns the right value to the left operand only if the left operand is null, and it returns the new value. It's a compound assignment operator."
+    },
+    {
+      "question": "Is null safety optional in Dart?",
+      "answer": "Since Dart 2.12, null safety is the default. However, you can still use legacy code without null safety, but mixing null‑safe and non‑null‑safe code requires careful migration. It's recommended to migrate all code to null safety."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  String? name = null;\n  \n  // Try using null-aware operators\n  print('Hello, ${name ?? 'World'}!');\n  \n  // Safe access\n  print('Length: ${name?.length}');\n  \n  // Null-aware assignment\n  name ??= 'Dart';\n  print('Now name is: $name');\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you declare a nullable integer in Dart?",
+      "options": ["int? number", "int number?", "nullable int number", "int number = null"],
+      "answer": 0
+    },
+    {
+      "question": "What does the `??` operator do?",
+      "options": [
+        "Returns the left operand if it's not null, otherwise the right operand",
+        "Returns the right operand if left is null",
+        "Performs a null check and throws an error",
+        "Assigns a value only if the variable is null"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What happens if you access a `late` variable before it's initialised?",
+      "options": [
+        "It returns null",
+        "It throws a LateInitializationError",
+        "It returns a default value",
+        "It compiles but may crash at runtime"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is type promotion in Dart?",
+      "options": [
+        "Automatically converting a nullable type to non‑nullable after a null check",
+        "Manually casting a variable with `as`",
+        "Using `!` to assert non‑null",
+        "Declaring a variable with `var`"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "dart-variables",
+    "dart-functions",
+    "dart-operators",
+    "dart-classes"
+  ]
+}

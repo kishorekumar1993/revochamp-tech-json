@@ -1,0 +1,292 @@
+{
+  "slug": "dart-map",
+  "course": "Dart",
+  "title": "Dart Map – Complete Guide with Examples",
+  "meta": {
+    "title": "Dart Map: Create, Access, and Manipulate Key‑Value Pairs",
+    "description": "Master Dart Map – unordered collection of key‑value pairs. Learn creation, accessing values, adding/updating entries, iterating, and common methods with practical examples.",
+    "keywords": [
+      "Dart Map",
+      "Dart HashMap",
+      "Map in Dart",
+      "Dart collection",
+      "Dart Map methods",
+      "Dart key-value pairs",
+      "Dart dictionary"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Map in Dart?"
+    },
+    {
+      "type": "text",
+      "value": "A Map is an unordered collection of key‑value pairs. Each key must be unique, but values can be duplicated. Maps are also known as dictionaries or associative arrays in other languages. They are useful for storing data that can be looked up by a unique identifier, such as a user ID to user details, or a word to its definition."
+    },
+    {
+      "type": "heading",
+      "value": "Creating Maps"
+    },
+    {
+      "type": "text",
+      "value": "Dart offers several ways to create maps, depending on your needs."
+    },
+    {
+      "type": "heading",
+      "value": "1. Map Literal"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var fruits = {'apple': 'red', 'banana': 'yellow', 'grape': 'purple'}; // Map<String, String>\n  Map<int, String> users = {1: 'Alice', 2: 'Bob'};                       // explicit types\n  print(fruits); // {apple: red, banana: yellow, grape: purple}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Empty Map"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var emptyMap = <String, int>{};          // empty Map<String, int>\n  Map<String, double> anotherEmpty = {};   // also empty\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Using `Map.from()`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var original = {'a': 1, 'b': 2};\n  var copy = Map.from(original); // {'a': 1, 'b': 2}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Using `Map.of()`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var copy = Map.of({'a': 1, 'b': 2}); // also {'a': 1, 'b': 2}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Using `Map.fromIterable()`"
+    },
+    {
+      "type": "text",
+      "value": "Creates a map from an iterable, using functions to generate keys and values."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var list = ['apple', 'banana', 'cherry'];\n  var map = Map.fromIterable(list,\n      key: (item) => item[0],          // first letter as key\n      value: (item) => item.length);    // length as value\n  print(map); // {a: 5, b: 6, c: 6}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Using `Map.fromIterables()`"
+    },
+    {
+      "type": "text",
+      "value": "Creates a map from separate iterables of keys and values."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var keys = ['name', 'age', 'city'];\n  var values = ['Alice', 30, 'New York'];\n  var map = Map.fromIterables(keys, values);\n  print(map); // {name: Alice, age: 30, city: New York}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Using `Map.identity()`"
+    },
+    {
+      "type": "text",
+      "value": "Creates an identity‑based map, which uses `identical()` rather than `==` for key equality. Useful when keys are objects and you want to distinguish them even if their content is the same."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var map = Map.identity();\n  var key1 = Object();\n  var key2 = Object();\n  map[key1] = 'value1';\n  map[key2] = 'value2';\n  print(map.length); // 2\n}"
+    },
+    {
+      "type": "heading",
+      "value": "8. Unmodifiable Map"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var fixed = Map.unmodifiable({'a': 1, 'b': 2});\n  // fixed['c'] = 3; // Throws UnsupportedError\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Accessing Values"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var fruits = {'apple': 'red', 'banana': 'yellow'};\n  print(fruits['apple']);        // red\n  print(fruits['mango']);        // null (key not found)\n  \n  // Using .containsKey to check before access\n  if (fruits.containsKey('banana')) {\n    print('Banana is ${fruits['banana']}');\n  }\n  \n  // Get all keys or values\n  print(fruits.keys);   // (apple, banana)\n  print(fruits.values); // (red, yellow)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Adding and Updating Entries"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var map = {'a': 1, 'b': 2};\n  \n  // Add or update a single entry\n  map['c'] = 3;        // add new\n  map['a'] = 10;       // update existing\n  \n  // Add multiple entries\n  map.addAll({'d': 4, 'e': 5});\n  \n  // Add only if key is absent\n  map.putIfAbsent('f', () => 6); // adds f:6\n  map.putIfAbsent('a', () => 99); // does nothing because 'a' exists\n  \n  print(map); // {a: 10, b: 2, c: 3, d: 4, e: 5, f: 6}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Removing Entries"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var map = {'a': 1, 'b': 2, 'c': 3, 'd': 4};\n  \n  map.remove('b');           // removes key 'b'\n  map.removeWhere((key, value) => value % 2 == 0); // removes keys with even values\n  map.clear();               // removes all\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Iterating Over a Map"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var fruits = {'apple': 'red', 'banana': 'yellow', 'grape': 'purple'};\n  \n  // Iterate over keys\n  for (var key in fruits.keys) {\n    print('$key is ${fruits[key]}');\n  }\n  \n  // Iterate over values\n  for (var color in fruits.values) {\n    print('Color: $color');\n  }\n  \n  // Iterate over entries (key-value pairs)\n  fruits.forEach((key, value) {\n    print('$key → $value');\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Map Methods and Properties"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `keys` – returns an iterable of all keys.",
+        "- `values` – returns an iterable of all values.",
+        "- `entries` – returns an iterable of `MapEntry` objects.",
+        "- `length` – number of key‑value pairs.",
+        "- `isEmpty` / `isNotEmpty` – checks if the map is empty.",
+        "- `containsKey(key)` – checks if a key exists.",
+        "- `containsValue(value)` – checks if a value exists (slower).",
+        "- `update(key, update, {ifAbsent})` – updates an existing entry.",
+        "- `updateAll(update)` – updates all entries.",
+        "- `removeWhere(condition)` – removes entries that satisfy a condition.",
+        "- `cast()` – casts the map to a different type.",
+        "- `map()` – transforms each entry into a new value (returns an iterable)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Using `update` and `updateAll`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var map = {'a': 1, 'b': 2};\n  \n  // update a single key\n  map.update('a', (value) => value * 10); // a:10\n  map.update('c', (value) => 3, ifAbsent: () => 3); // adds c:3\n  \n  // update all values\n  map.updateAll((key, value) => value * 2); // a:20, b:4, c:6\n  print(map);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Collection If and For with Maps"
+    },
+    {
+      "type": "text",
+      "value": "Map literals also support collection `if` and `for` for conditional and computed entries."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  bool includeExtra = true;\n  var map = {\n    'a': 1,\n    'b': 2,\n    if (includeExtra) 'c': 3,\n    for (var i in [4, 5]) 'd$i': i,\n  };\n  print(map); // {a: 1, b: 2, c: 3, d4: 4, d5: 5}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Create a map of user data\n  var users = {\n    1: 'Alice',\n    2: 'Bob',\n    3: 'Charlie',\n  };\n  \n  // Add a new user\n  users[4] = 'Diana';\n  \n  // Update an existing user\n  users[2] = 'Robert';\n  \n  // Check if a user exists\n  if (users.containsKey(3)) {\n    print('User 3 is ${users[3]}');\n  }\n  \n  // Remove a user\n  users.remove(1);\n  \n  // Iterate over all users\n  users.forEach((id, name) {\n    print('ID $id: $name');\n  });\n  \n  // Get all names\n  var names = users.values.toList();\n  print('All names: $names');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Maps store key‑value pairs with unique keys.",
+        "- Use map literals `{}` with type arguments to create maps.",
+        "- Access values with `map[key]` (returns `null` if key not found).",
+        "- Add or update entries using `map[key] = value`.",
+        "- Remove entries with `remove()`, `removeWhere()`, or `clear()`.",
+        "- Iterate over keys, values, or entries using `forEach` or loops.",
+        "- Common methods: `containsKey`, `containsValue`, `putIfAbsent`, `addAll`, `update`, `updateAll`.",
+        "- Collection `if` and `for` work inside map literals.",
+        "- Choose the right map constructor for your use case: `Map.from`, `Map.of`, `Map.fromIterable`, `Map.fromIterables`, `Map.identity`, `Map.unmodifiable`."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I check if a key exists in a Dart Map?",
+      "answer": "Use the `containsKey()` method: `if (myMap.containsKey('someKey')) { ... }`. You can also check `myMap['someKey'] != null`, but this won't work if the value can legitimately be `null`."
+    },
+    {
+      "question": "How do I get all keys or all values from a map?",
+      "answer": "Use the `keys` and `values` properties: `var allKeys = myMap.keys;` returns an iterable of keys; `var allValues = myMap.values;` returns an iterable of values. Convert to a list with `.toList()` if needed."
+    },
+    {
+      "question": "How do I iterate over a map?",
+      "answer": "You can iterate using `forEach`: `myMap.forEach((key, value) { ... });`. Alternatively, loop over `keys` or `entries`: `for (var entry in myMap.entries) { print(entry.key); print(entry.value); }`."
+    },
+    {
+      "question": "How do I merge two maps?",
+      "answer": "Use the spread operator: `var merged = {...map1, ...map2};`. If there are duplicate keys, the second map's value overwrites the first's. You can also use `addAll()`: `map1.addAll(map2);` modifies map1 in place."
+    },
+    {
+      "question": "What is the difference between `Map.from` and `Map.of`?",
+      "answer": "`Map.from` expects a `Map` and allows you to specify a different key/value type (it does a cast). `Map.of` also expects a `Map` but infers the types from the argument; it's more type‑safe. For most cases, prefer `Map.of` for copying a map of the same type."
+    },
+    {
+      "question": "How do I create a map from a list of objects?",
+      "answer": "Use `Map.fromIterable()` or `Map.fromIterables()`. For example: `Map.fromIterable(list, key: (item) => item.id, value: (item) => item.name)`. Or if you have separate lists of keys and values, use `Map.fromIterables(keys, values)`."
+    },
+    {
+      "question": "How do I handle nullable values in a map?",
+      "answer": "If your map can contain `null` values, be careful when using `map[key]` to check for existence, because it returns `null` both when the key is absent and when the value is `null`. Use `containsKey()` to distinguish."
+    },
+    {
+      "question": "What is the difference between `HashMap`, `LinkedHashMap`, and the default Map?",
+      "answer": "The default `Map` literal (`{}`) creates a `LinkedHashMap` that preserves insertion order. `HashMap` is unordered and slightly more efficient but does not guarantee order. `LinkedHashMap` is usually what you want. You can import `dart:collection` to use `HashMap` or `LinkedHashMap` explicitly if needed."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  // Create a map of capitals\n  var capitals = {\n    'France': 'Paris',\n    'Japan': 'Tokyo',\n    'India': 'New Delhi',\n  };\n  \n  // Add a new capital\n  capitals['Italy'] = 'Rome';\n  \n  // Print all capitals\n  capitals.forEach((country, capital) {\n    print('The capital of $country is $capital');\n  });\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the output of this code?\n\nvoid main() {\n  var map = {'a': 1, 'b': 2};\n  print(map['c']);\n}",
+      "options": ["0", "null", "Error", "false"],
+      "answer": 1
+    },
+    {
+      "question": "How do you add a new key‑value pair to an existing map?",
+      "options": ["map.add('key', 'value')", "map.put('key', 'value')", "map['key'] = 'value'", "map.insert('key', 'value')"],
+      "answer": 2
+    },
+    {
+      "question": "Which method adds a value only if the key is not already present?",
+      "options": ["addIfAbsent()", "putIfAbsent()", "addAll()", "updateIfAbsent()"],
+      "answer": 1
+    },
+    {
+      "question": "What does `map.keys` return?",
+      "options": ["A List of keys", "An Iterable of keys", "A Set of keys", "A Map of keys"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-list",
+    "dart-set",
+    "dart-collection-methods",
+    "dart-functions"
+  ]
+}

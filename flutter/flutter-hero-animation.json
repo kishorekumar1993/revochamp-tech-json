@@ -1,0 +1,228 @@
+{
+  "slug": "flutter-hero-animation",
+  "course": "Flutter",
+  "title": "Flutter Hero Animation – Smooth Shared Element Transitions",
+  "meta": {
+    "title": "Flutter Hero Animation: Shared Element Transitions Made Easy",
+    "description": "Learn how to create beautiful Hero animations in Flutter to smoothly transition widgets between screens. Covers hero tags, custom transitions, flight shuttles, and best practices.",
+    "keywords": [
+      "Flutter Hero animation",
+      "shared element transition",
+      "Flutter Hero widget",
+      "Hero tag",
+      "Flutter animation",
+      "page transition",
+      "Flutter shared element"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Hero Animation?"
+    },
+    {
+      "type": "text",
+      "value": "A Hero animation is a shared element transition where a widget appears to 'fly' from one screen to another. It's often used for images, avatars, or any prominent element that the user taps to see more details. Flutter's built‑in `Hero` widget makes it easy to create these smooth, delightful transitions with minimal code."
+    },
+    {
+      "type": "heading",
+      "value": "How Hero Works"
+    },
+    {
+      "type": "text",
+      "value": "The `Hero` widget requires a unique **tag** (usually a string) that identifies the widget. When a route push/pop occurs, Flutter looks for a `Hero` with the same tag on both the source and destination screens. It then creates an overlay that animates the widget from the source position and size to the destination position and size, while fading the original widgets in/out."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Hero Animation"
+    },
+    {
+      "type": "text",
+      "value": "To create a hero transition, wrap the widget you want to animate with a `Hero` widget on both screens, using the same tag. Usually, the source screen's hero is inside an `InkWell` or `GestureDetector` to handle tap navigation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Source screen\nHero(\n  tag: 'avatar',\n  child: CircleAvatar(\n    radius: 40,\n    backgroundImage: NetworkImage('https://example.com/avatar.jpg'),\n  ),\n)\n\n// Destination screen\nHero(\n  tag: 'avatar',\n  child: CircleAvatar(\n    radius: 100,\n    backgroundImage: NetworkImage('https://example.com/avatar.jpg'),\n  ),\n)"
+    },
+    {
+      "type": "text",
+      "value": "When you navigate from the source screen to the destination screen, the avatar will smoothly animate from the small size to the large size, creating a seamless effect."
+    },
+    {
+      "type": "heading",
+      "value": "Hero Tags"
+    },
+    {
+      "type": "text",
+      "value": "The tag can be any object, but it's typically a string. For lists, you might use a unique identifier like an index or an item's ID. If you use the same tag on multiple heroes in the same route, Flutter will throw an error. Keep tags unique per route."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In a list, use the item's unique ID as tag\nListView.builder(\n  itemCount: items.length,\n  itemBuilder: (context, index) {\n    final item = items[index];\n    return GestureDetector(\n      onTap: () => Navigator.push(context, MaterialPageRoute(\n        builder: (_) => DetailPage(item: item),\n      )),\n      child: Hero(\n        tag: 'image_${item.id}',\n        child: Image.network(item.imageUrl),\n      ),\n    );\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Customizing the Hero Transition"
+    },
+    {
+      "type": "text",
+      "value": "You can customize the transition using the `flightShuttleBuilder`, `placeholderBuilder`, and `createRectTween` properties."
+    },
+    {
+      "type": "heading",
+      "value": "Flight Shuttle Builder"
+    },
+    {
+      "type": "text",
+      "value": "`flightShuttleBuilder` lets you replace the flying widget with a custom widget during the transition. It gives you access to the context, the hero's size and position, and the animation progress."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Hero(\n  tag: 'image',\n  flightShuttleBuilder: (flightContext, animation, flightDirection, fromHeroContext, toHeroContext) {\n    final fromWidget = fromHeroContext.widget;\n    final toWidget = toHeroContext.widget;\n    return AnimatedBuilder(\n      animation: animation,\n      builder: (context, child) {\n        return Transform.scale(\n          scale: 0.5 + animation.value * 0.5,\n          child: child,\n        );\n      },\n      child: fromWidget,\n    );\n  },\n  child: Image.network('...'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Placeholder Builder"
+    },
+    {
+      "type": "text",
+      "value": "`placeholderBuilder` allows you to show a placeholder while the hero is flying. This is useful when you want to keep the original widget visible (or fade it) during the transition."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Hero(\n  tag: 'image',\n  placeholderBuilder: (context, size, child) => Opacity(\n    opacity: 0.5,\n    child: child,\n  ),\n  child: Image.network('...'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Custom Rect Tween"
+    },
+    {
+      "type": "text",
+      "value": "`createRectTween` lets you control how the hero's bounds animate (e.g., using a curved motion). You can supply your own `RectTween` subclass."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Hero(\n  tag: 'image',\n  createRectTween: (begin, end) {\n    return MaterialRectCenterArcTween(begin: begin, end: end); // arc motion\n  },\n  child: Image.network('...'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Heroes with Different Widget Types"
+    },
+    {
+      "type": "text",
+      "value": "Heroes can animate between different widget types (e.g., a `CircleAvatar` to a `ClipRRect` image). As long as the `Hero` widget has the same tag, Flutter will interpolate the size, position, and other visual properties. You may need to provide a `flightShuttleBuilder` if the default transition doesn't look good."
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Duplicate tags in the same route**: Each Hero tag must be unique per route.",
+        "- **Forgetting to wrap both source and destination**: Both screens must have a `Hero` with the same tag.",
+        "- **Using a non‑unique tag in lists**: Use unique identifiers (e.g., item ID) to avoid collisions.",
+        "- **Not disposing controllers**: If you create custom animations, remember to dispose them.",
+        "- **Over‑complicating with custom builders**: Start simple; only add customisation if needed."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Use unique tags**: For lists, combine a prefix with the item's ID (e.g., `'image_${item.id}'`).",
+        "- **Test with different screen sizes**: The animation should look good on all devices.",
+        "- **Keep the hero widget focused**: The hero should be the only widget animating; use `child` for the content.",
+        "- **Use `flightShuttleBuilder` sparingly**: Only when you need special effects; the default transition is often sufficient.",
+        "- **Consider performance**: Heroes are efficient, but avoid heavy widgets inside the hero if possible."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Hero animations create seamless shared element transitions.",
+        "- Use the same `tag` on both the source and destination `Hero` widgets.",
+        "- Tags must be unique per route.",
+        "- Customize transitions with `flightShuttleBuilder`, `placeholderBuilder`, and `createRectTween`.",
+        "- Heroes work between different widget types (e.g., `CircleAvatar` to `Image`).",
+        "- Always test with real data to ensure smooth animations."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use Hero with different widget types?",
+      "answer": "Yes, as long as the widget is a `Hero` with the same tag on both screens, Flutter will animate the size and position. For complex widgets, you may need a custom `flightShuttleBuilder` to ensure a smooth visual transition."
+    },
+    {
+      "question": "What happens if two Heroes have the same tag on the same screen?",
+      "answer": "Flutter will throw an assertion error because the tag must be unique per route. Use a unique identifier, especially in lists."
+    },
+    {
+      "question": "How do I animate a hero that is part of a list?",
+      "answer": "Generate a unique tag based on the item's identifier. For example: `Hero(tag: 'item_${item.id}', child: ...)`. When navigating, pass that identifier to the detail screen and use the same tag there."
+    },
+    {
+      "question": "Can I combine Hero with HeroControllerScope?",
+      "answer": "You don't normally need to. `HeroControllerScope` is used when you have custom navigators. For standard `MaterialPageRoute`, the default hero controller works fine."
+    },
+    {
+      "question": "How do I disable hero animation for a specific navigation?",
+      "answer": "You can wrap the hero in a `Hero` with `enabled: false`, or use a `Navigator` without the default `HeroController` (not recommended). Usually, you keep the hero for smooth transitions."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(const MyApp());\n\nclass MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Hero Demo',\n      home: const HomeScreen(),\n    );\n  }\n}\n\nclass HomeScreen extends StatelessWidget {\n  const HomeScreen({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: const Text('Hero Example')),\n      body: Center(\n        child: GestureDetector(\n          onTap: () {\n            Navigator.push(\n              context,\n              MaterialPageRoute(builder: (_) => const DetailScreen()),\n            );\n          },\n          child: Hero(\n            tag: 'hero',\n            child: Container(\n              width: 100,\n              height: 100,\n              color: Colors.blue,\n              child: const Icon(\n                Icons.star,\n                size: 50,\n                color: Colors.white,\n              ),\n            ),\n          ),\n        ),\n      ),\n    );\n  }\n}\n\nclass DetailScreen extends StatelessWidget {\n  const DetailScreen({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: const Text('Detail')),\n      body: Center(\n        child: Hero(\n          tag: 'hero',\n          child: Container(\n            width: 200,\n            height: 200,\n            color: Colors.blue,\n            child: const Icon(\n              Icons.star,\n              size: 100,\n              color: Colors.white,\n            ),\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the purpose of the `tag` property in a Hero widget?",
+      "options": [
+        "To identify the hero for animations",
+        "To label the hero in the widget tree",
+        "To set the hero's priority",
+        "To group heroes together"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What happens if two Heroes on the same screen have the same tag?",
+      "options": [
+        "They both animate",
+        "The first one is ignored",
+        "Flutter throws an assertion error",
+        "They share the same animation"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which property allows you to replace the flying widget during the transition?",
+      "options": ["flightShuttleBuilder", "placeholderBuilder", "createRectTween", "child"],
+      "answer": 0
+    },
+    {
+      "question": "Can Hero animate between a `CircleAvatar` and a `ClipRRect`?",
+      "options": ["Yes", "No", "Only if both are images", "Only with a custom flightShuttleBuilder"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-animations",
+    "flutter-navigation",
+    "flutter-transition",
+    "flutter-animated-widgets"
+  ]
+}

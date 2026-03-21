@@ -1,0 +1,135 @@
+{
+  "slug": "flutter-statelesswidget",
+  "course": "Flutter",
+  "title": "Flutter StatelessWidget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter StatelessWidget Explained with Examples | Complete Guide",
+    "description": "Learn Flutter StatelessWidget with simple examples. Understand when to use it, its limitations, and how it differs from StatefulWidget in this beginner-friendly guide.",
+    "keywords": [
+      "Flutter StatelessWidget",
+      "StatelessWidget example",
+      "Flutter UI basics",
+      "difference between Stateless and StatefulWidget",
+      "Flutter tutorial for beginners",
+      "immutable widgets in Flutter"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is StatelessWidget in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "A StatelessWidget is a widget that describes part of the user interface which does not depend on any mutable state. Once built, it never changes – it is immutable. StatelessWidgets are ideal for static content that does not need to update dynamically, such as text, icons, or images that remain the same."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use StatelessWidget?"
+    },
+    {
+      "type": "text",
+      "value": "You should use StatelessWidget when your UI does not need to change after it is rendered. It is simpler, more performant (no state management overhead), and easier to test. Examples include: app logos, static text, decorative icons, and any UI that only depends on external parameters passed via the constructor."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Structure of StatelessWidget"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyStatelessWidget extends StatelessWidget {\n  final String title;\n\n  const MyStatelessWidget({Key? key, required this.title}) : super(key: key);\n\n  @override\n  Widget build(BuildContext context) {\n    return Container(\n      child: Text(title),\n    );\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "A StatelessWidget only needs to override the `build` method. It can accept parameters (like `title`) through its constructor, but those values are final – they cannot change after the widget is created."
+    },
+    {
+      "type": "heading",
+      "value": "Example: Greeting Widget"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\n\nclass GreetingWidget extends StatelessWidget {\n  final String name;\n\n  const GreetingWidget({Key? key, required this.name}) : super(key: key);\n\n  @override\n  Widget build(BuildContext context) {\n    return Center(\n      child: Text(\n        'Hello, $name!',\n        style: const TextStyle(fontSize: 24),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "In this example, the `GreetingWidget` receives a `name` parameter. The displayed text will always be based on that initial value – it cannot be updated later without recreating the widget."
+    },
+    {
+      "type": "heading",
+      "value": "StatelessWidget vs StatefulWidget"
+    },
+    {
+      "type": "text",
+      "value": "- **StatelessWidget**: Immutable, no internal state, rebuilds only when the parent widget rebuilds. Ideal for static content.\n- **StatefulWidget**: Mutable, can change over time, triggers rebuilds via `setState()`. Ideal for interactive elements.\n\nIf your UI can be fully described by the constructor arguments, always prefer StatelessWidget."
+    },
+    {
+      "type": "heading",
+      "value": "When Not to Use StatelessWidget"
+    },
+    {
+      "type": "text",
+      "value": "Avoid StatelessWidget if your widget needs to:\n- Respond to user input (like button taps) that changes its appearance.\n- Handle animations or timers.\n- Fetch data asynchronously and display the result.\n- Depend on InheritedWidget updates.\n\nIn those cases, use StatefulWidget or other state management solutions."
+    },
+    {
+      "type": "heading",
+      "value": "Key Points"
+    },
+    {
+      "type": "text",
+      "value": "- StatelessWidgets are immutable and have no internal state.\n- They are built once (or when the parent rebuilds).\n- All member variables should be final.\n- They are simpler and more performant than StatefulWidgets.\n- Use them for static UI components."
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. What is the difference between StatelessWidget and StatefulWidget?\n2. Can StatelessWidget have mutable fields? Why not?\n3. When would you choose StatelessWidget over StatefulWidget?\n4. How does a StatelessWidget rebuild?\n5. Can you use `setState()` in a StatelessWidget?\n6. What are the performance implications of using StatelessWidget?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  runApp(\n    MaterialApp(\n      home: Scaffold(\n        body: GreetingWidget(name: 'Flutter Learner'),\n      ),\n    ),\n  );\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is a key characteristic of StatelessWidget?",
+      "options": [
+        "It can change its internal state.",
+        "It is immutable.",
+        "It always has a `setState()` method.",
+        "It cannot accept constructor parameters."
+      ],
+      "answer": 1
+    },
+    {
+      "question": "When should you use StatelessWidget?",
+      "options": [
+        "When the UI depends on changing data.",
+        "When you need to handle animations.",
+        "When the UI is static and only depends on input parameters.",
+        "When you need to use timers."
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which method must be overridden in a StatelessWidget?",
+      "options": [
+        "initState()",
+        "build()",
+        "setState()",
+        "dispose()"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-statefulwidget",
+    "flutter-basic-widgets",
+    "flutter-ui-fundamentals",
+    "flutter-const-constructor"
+  ]
+}

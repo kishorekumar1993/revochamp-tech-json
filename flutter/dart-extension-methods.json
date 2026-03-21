@@ -1,0 +1,198 @@
+{
+  "slug": "dart-extension-methods",
+  "course": "Dart",
+  "title": "Dart Extension Methods – Adding Functionality to Existing Types",
+  "meta": {
+    "title": "Dart Extension Methods: Add Methods to Existing Classes",
+    "description": "Learn how to use extension methods in Dart to add new functionality to existing classes (including built‑in types) without modifying them. Includes syntax, examples, and best practices.",
+    "keywords": [
+      "Dart extension methods",
+      "Dart extensions",
+      "Dart on keyword",
+      "Dart extension syntax",
+      "Dart add method to String",
+      "Dart generic extension",
+      "Dart extension example"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Extension Methods?"
+    },
+    {
+      "type": "text",
+      "value": "Extension methods allow you to add new functionality to existing libraries and types without creating a subclass or modifying the original source. This is especially useful when you want to enhance built‑in types like `String`, `List`, or `int` with your own utility methods. Extensions were introduced in Dart 2.7 and have become a powerful tool for making code more expressive and reusable."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "text",
+      "value": "An extension is declared with the `extension` keyword followed by a name and the `on` clause specifying the type being extended. Inside the extension body, you define methods (and optionally getters, setters, operators)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension NumberParsing on String {\n  int parseInt() {\n    return int.parse(this);\n  }\n\n  double parseDouble() {\n    return double.parse(this);\n  }\n}\n\nvoid main() {\n  var number = '42';\n  print(number.parseInt()); // 42\n  print('3.14'.parseDouble()); // 3.14\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Extension with Generics"
+    },
+    {
+      "type": "text",
+      "value": "You can define extensions on generic types, which is very useful for collections. The type parameter is declared after the extension name."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension ListExtensions<T> on List<T> {\n  T get second {\n    if (length < 2) throw RangeError('List must have at least 2 elements');\n    return this[1];\n  }\n\n  List<T> reversedList() {\n    return reversed.toList();\n  }\n}\n\nvoid main() {\n  var numbers = [1, 2, 3];\n  print(numbers.second); // 2\n  print(numbers.reversedList()); // [3, 2, 1]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Adding Getters and Setters"
+    },
+    {
+      "type": "text",
+      "value": "Extensions can also define getters and setters, making them feel like native properties."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension StringExtensions on String {\n  bool get isEmail {\n    return RegExp(r'^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$').hasMatch(this);\n  }\n\n  String get capitalized =>\n      isEmpty ? this : this[0].toUpperCase() + substring(1);\n}\n\nvoid main() {\n  print('user@example.com'.isEmail); // true\n  print('hello'.capitalized); // Hello\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Extension Operators"
+    },
+    {
+      "type": "text",
+      "value": "You can define operators inside extensions, enabling custom behavior with existing operators."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension IntExtensions on int {\n  int operator [](int index) {\n    return this >> (index * 8) & 0xFF;\n  }\n}\n\nvoid main() {\n  int value = 0x12345678;\n  print(value[0]); // 0x78 (least significant byte)\n  print(value[1]); // 0x56\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Static Methods and Fields"
+    },
+    {
+      "type": "text",
+      "value": "Extensions cannot have static fields, but they can have static helper methods. However, static members are not accessed via the extended instance; they are called on the extension name itself."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension StringHelpers on String {\n  static String repeat(String s, int count) {\n    return s * count;\n  }\n}\n\nvoid main() {\n  print(StringHelpers.repeat('ha', 3)); // hahaha\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Conflicts and Resolution"
+    },
+    {
+      "type": "text",
+      "value": "If multiple extensions define the same method name for the same type, Dart uses the closest import or the one explicitly specified. You can also qualify the extension to resolve ambiguity."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension A on String {\n  void foo() => print('A');\n}\n\nextension B on String {\n  void foo() => print('B');\n}\n\nvoid main() {\n  // If both extensions are imported, call via extension name\n  'test'.A.foo(); // A\n  'test'.B.foo(); // B\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Extending Nullable Types"
+    },
+    {
+      "type": "text",
+      "value": "You can also write extensions on nullable types (using `?`). This allows you to call methods safely on potentially null values."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension NullableStringExtensions on String? {\n  bool get isNullOrEmpty => this == null || this!.isEmpty;\n\n  String orDefault(String defaultValue) => this ?? defaultValue;\n}\n\nvoid main() {\n  String? maybeNull;\n  print(maybeNull.isNullOrEmpty); // true\n  print(maybeNull.orDefault('Default')); // Default\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Extensions add new functionality to existing types without subclassing.",
+        "- Use `extension Name on Type` syntax.",
+        "- Extensions can define methods, getters, setters, and operators.",
+        "- Generic extensions work with collection types.",
+        "- Extensions can be qualified to resolve naming conflicts.",
+        "- They are a great way to keep code clean and expressive."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I add fields to a class with extensions?",
+      "answer": "No, extensions cannot add instance fields. They can only add methods, getters, setters, and operators. If you need state, consider a subclass or a wrapper class."
+    },
+    {
+      "question": "Do extensions override existing methods?",
+      "answer": "No. If an extension defines a method with the same name as an existing instance method, the instance method takes precedence. Extensions cannot override built‑in methods."
+    },
+    {
+      "question": "Can I use extensions on null?",
+      "answer": "Yes, by writing an extension on a nullable type (e.g., `extension X on String?`). Then you can call the extension methods on nullable instances without explicit null checks."
+    },
+    {
+      "question": "How do I import an extension?",
+      "answer": "Extensions are imported like any other Dart code. If the extension is in a separate file, import that file. The extension's methods become available automatically on the extended type within that scope."
+    },
+    {
+      "question": "Can I have private extension members?",
+      "answer": "Yes, you can prefix members with `_` to make them private to the library, just like regular class members."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "extension StringExtensions on String {\n  bool get isPalindrome {\n    String cleaned = replaceAll(RegExp(r'\\s+'), '').toLowerCase();\n    return cleaned == cleaned.split('').reversed.join();\n  }\n}\n\nvoid main() {\n  print('racecar'.isPalindrome); // true\n  print('hello'.isPalindrome);   // false\n}"
+  },
+  "quiz": [
+    {
+      "question": "What keyword is used to declare an extension in Dart?",
+      "options": ["extend", "extension", "with", "on"],
+      "answer": 1
+    },
+    {
+      "question": "Can an extension add instance fields to a class?",
+      "options": ["Yes", "No", "Only if the class is not final", "Only with the `field` keyword"],
+      "answer": 1
+    },
+    {
+      "question": "How do you define a generic extension for List?",
+      "options": [
+        "extension ListExtensions on List {}",
+        "extension ListExtensions<T> on List<T> {}",
+        "extension ListExtensions<T> extends List<T> {}",
+        "extension ListExtensions<T> implements List<T> {}"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "If two extensions define the same method name for the same type, how can you call a specific version?",
+      "options": [
+        "By the order of imports",
+        "By using the extension name as a prefix: `'str'.MyExtension.method()`",
+        "By using the `as` keyword",
+        "It's impossible"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-classes",
+    "dart-generics",
+    "dart-mixins",
+    "dart-collection-methods"
+  ]
+}

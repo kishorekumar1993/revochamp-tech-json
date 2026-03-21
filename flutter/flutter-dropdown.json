@@ -1,0 +1,198 @@
+{
+  "slug": "flutter-dropdown",
+  "course": "Flutter",
+  "title": "Flutter Dropdown – Complete Guide with DropdownButton",
+  "meta": {
+    "title": "Flutter Dropdown Tutorial: DropdownButton and DropdownButtonFormField",
+    "description": "Learn how to create dropdown menus in Flutter using DropdownButton and DropdownButtonFormField. Customize appearance, handle selection, and integrate with forms.",
+    "keywords": [
+      "Flutter Dropdown",
+      "DropdownButton",
+      "DropdownButtonFormField",
+      "Flutter dropdown menu",
+      "Flutter dropdown example",
+      "Flutter form dropdown",
+      "Flutter selection"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Dropdown in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "A dropdown is a UI component that allows the user to select one option from a list. In Flutter, you can use `DropdownButton` for simple selections and `DropdownButtonFormField` when you need to integrate with a `Form` (validation, saving). Dropdowns are great for choosing from a limited set of options, such as gender, country, or category."
+    },
+    {
+      "type": "heading",
+      "value": "Basic DropdownButton"
+    },
+    {
+      "type": "text",
+      "value": "A `DropdownButton` requires three main parameters: `value` (the currently selected item), `items` (a list of `DropdownMenuItem` widgets), and `onChanged` (a callback that receives the new value)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "String? _selectedItem;\n\nDropdownButton<String>(\n  value: _selectedItem,\n  hint: Text('Select an option'),\n  items: ['Option 1', 'Option 2', 'Option 3'].map((String value) {\n    return DropdownMenuItem<String>(\n      value: value,\n      child: Text(value),\n    );\n  }).toList(),\n  onChanged: (String? newValue) {\n    setState(() {\n      _selectedItem = newValue;\n    });\n  },\n)"
+    },
+    {
+      "type": "text",
+      "value": "The `value` must match one of the `DropdownMenuItem` values, otherwise the dropdown may show nothing or the hint."
+    },
+    {
+      "type": "heading",
+      "value": "Using DropdownMenuItem"
+    },
+    {
+      "type": "text",
+      "value": "`DropdownMenuItem` is the widget that represents each option. It can contain any widget (e.g., a row with an icon and text)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "DropdownMenuItem<String>(\n  value: 'dart',\n  child: Row(\n    children: [\n      Icon(Icons.code),\n      SizedBox(width: 8),\n      Text('Dart'),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Customizing Appearance"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`hint`**: Placeholder text when no value is selected.",
+        "- **`disabledHint`**: Hint when the dropdown is disabled.",
+        "- **`elevation`**: Elevation of the dropdown menu (shadow).",
+        "- **`icon`**: The icon to the right of the selected item.",
+        "- **`iconSize`**: Size of the dropdown icon.",
+        "- **`style`**: Text style for the selected item.",
+        "- **`dropdownColor`**: Background color of the dropdown menu.",
+        "- **`isExpanded`**: Whether the dropdown should take the full width of its parent."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "DropdownButton<String>(\n  value: _selectedItem,\n  hint: Text('Choose'),\n  elevation: 8,\n  icon: Icon(Icons.arrow_drop_down),\n  style: TextStyle(color: Colors.blue, fontSize: 16),\n  dropdownColor: Colors.grey.shade100,\n  isExpanded: true,\n  items: ...\n)"
+    },
+    {
+      "type": "heading",
+      "value": "DropdownButtonFormField for Forms"
+    },
+    {
+      "type": "text",
+      "value": "`DropdownButtonFormField` is a wrapper that integrates with `Form` and provides validation and saving. It works similarly to `DropdownButton` but adds `validator` and `onSaved` callbacks."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final _formKey = GlobalKey<FormState>();\nString? _selectedGender;\n\nForm(\n  key: _formKey,\n  child: Column(\n    children: [\n      DropdownButtonFormField<String>(\n        value: _selectedGender,\n        decoration: InputDecoration(labelText: 'Gender'),\n        items: ['Male', 'Female', 'Other'].map((String value) {\n          return DropdownMenuItem<String>(\n            value: value,\n            child: Text(value),\n          );\n        }).toList(),\n        onChanged: (newValue) {\n          setState(() => _selectedGender = newValue);\n        },\n        validator: (value) {\n          if (value == null || value.isEmpty) {\n            return 'Please select a gender';\n          }\n          return null;\n        },\n        onSaved: (value) {\n          // Save to a model\n        },\n      ),\n      ElevatedButton(\n        onPressed: () {\n          if (_formKey.currentState!.validate()) {\n            _formKey.currentState!.save();\n            // process\n          }\n        },\n        child: Text('Submit'),\n      ),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Dynamic Items from API"
+    },
+    {
+      "type": "text",
+      "value": "You can load dropdown items asynchronously, for example from a REST API. Use `FutureBuilder` or state management to update the `items` when data arrives."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<List<String>> fetchCountries() async {\n  // simulate network call\n  await Future.delayed(Duration(seconds: 1));\n  return ['USA', 'Canada', 'UK', 'Germany'];\n}\n\nclass CountryDropdown extends StatefulWidget {\n  @override\n  _CountryDropdownState createState() => _CountryDropdownState();\n}\n\nclass _CountryDropdownState extends State<CountryDropdown> {\n  late Future<List<String>> _future;\n  String? _selectedCountry;\n\n  @override\n  void initState() {\n    super.initState();\n    _future = fetchCountries();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return FutureBuilder<List<String>>(\n      future: _future,\n      builder: (context, snapshot) {\n        if (snapshot.connectionState == ConnectionState.waiting) {\n          return CircularProgressIndicator();\n        }\n        if (snapshot.hasError) {\n          return Text('Error: ${snapshot.error}');\n        }\n        final items = snapshot.data!;\n        return DropdownButton<String>(\n          value: _selectedCountry,\n          hint: Text('Select country'),\n          items: items.map((country) {\n            return DropdownMenuItem<String>(\n              value: country,\n              child: Text(country),\n            );\n          }).toList(),\n          onChanged: (value) => setState(() => _selectedCountry = value),\n        );\n      },\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Not providing a `value` that matches an item**: If `value` is set to a string not in `items`, the dropdown will show `hint` or nothing. Ensure `value` is one of the item values.",
+        "- **Forgetting to update `value` in `onChanged`**: If you don't call `setState` to update the value, the dropdown won't visually change.",
+        "- **Not disposing of controllers**: If you use `TextEditingController` inside dropdown (unlikely), dispose them.",
+        "- **Using `null` as `value` without a `hint`**: The dropdown will show an empty line; always provide a `hint` or make sure `value` is non‑null.",
+        "- **Mixing `DropdownButtonFormField` with `Form` without a `GlobalKey`**: The form won't be able to validate/save."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `DropdownButtonFormField` when you need validation or form integration.",
+        "- Provide a `hint` to give the user context.",
+        "- For large lists, consider using a searchable dropdown or a modal with a list.",
+        "- Use `isExpanded: true` to make the dropdown fill available width.",
+        "- Handle `null` values gracefully; you might allow no selection initially."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `DropdownButton` is the basic dropdown widget.",
+        "- `DropdownMenuItem` defines each option; it can contain any widget.",
+        "- Use `value`, `items`, and `onChanged` to control the dropdown.",
+        "- For forms, use `DropdownButtonFormField` which adds validation and saving.",
+        "- Items can be built dynamically from data sources."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I set a default value in a DropdownButton?",
+      "answer": "Set the `value` property to one of the `DropdownMenuItem` values. If you want no initial selection, set `value` to `null` and provide a `hint`."
+    },
+    {
+      "question": "How do I make the dropdown take the full width of its parent?",
+      "answer": "Set `isExpanded: true`. The dropdown will expand to fill the available width. For `DropdownButtonFormField`, you can wrap it in a `SizedBox` or use `decoration`'s constraints."
+    },
+    {
+      "question": "How can I create a searchable dropdown?",
+      "answer": "Flutter doesn't provide a built‑in searchable dropdown. You can use a package like `dropdown_search` or build your own by combining a `TextField` with a `ListView` inside a popup."
+    },
+    {
+      "question": "What is the difference between `DropdownButton` and `PopupMenuButton`?",
+      "answer": "`DropdownButton` is designed for selecting one value from a list and is typically used inline in forms. `PopupMenuButton` creates a popup menu that appears on tap, often used for actions (like a three‑dot menu). Both have different aesthetics and use cases."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Dropdown Demo',\n      home: Scaffold(\n        appBar: AppBar(title: Text('Dropdown Example')),\n        body: Padding(\n          padding: const EdgeInsets.all(16.0),\n          child: Center(child: DropdownDemo()),\n        ),\n      ),\n    );\n  }\n}\n\nclass DropdownDemo extends StatefulWidget {\n  @override\n  _DropdownDemoState createState() => _DropdownDemoState();\n}\n\nclass _DropdownDemoState extends State<DropdownDemo> {\n  String? _selectedFruit;\n  final List<String> _fruits = ['Apple', 'Banana', 'Orange', 'Mango'];\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        DropdownButton<String>(\n          value: _selectedFruit,\n          hint: Text('Select a fruit'),\n          isExpanded: true,\n          items: _fruits.map((String fruit) {\n            return DropdownMenuItem<String>(\n              value: fruit,\n              child: Text(fruit),\n            );\n          }).toList(),\n          onChanged: (String? newValue) {\n            setState(() {\n              _selectedFruit = newValue;\n            });\n          },\n        ),\n        SizedBox(height: 20),\n        Text('Selected: ${_selectedFruit ?? 'none'}'),\n      ],\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget is used to represent each option in a DropdownButton?",
+      "options": ["DropdownItem", "MenuItem", "DropdownMenuItem", "Option"],
+      "answer": 2
+    },
+    {
+      "question": "What property controls the currently selected item?",
+      "options": ["selected", "value", "initialValue", "defaultValue"],
+      "answer": 1
+    },
+    {
+      "question": "How do you make the dropdown expand to the full width of its parent?",
+      "options": ["fullWidth: true", "isExpanded: true", "width: double.infinity", "expand: true"],
+      "answer": 1
+    },
+    {
+      "question": "Which widget should you use if you need validation in a form?",
+      "options": ["DropdownButton", "DropdownButtonFormField", "FormDropdown", "DropdownFormField"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-form",
+    "flutter-textfield",
+    "flutter-picker",
+    "flutter-listview"
+  ]
+}

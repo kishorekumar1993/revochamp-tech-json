@@ -1,0 +1,198 @@
+{
+  "slug": "flutter-stack",
+  "course": "Flutter",
+  "title": "Flutter Stack Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Stack Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Stack to overlay widgets. Understand alignment, Positioned, fit, overflow, and more with simple examples.",
+    "keywords": [
+      "Flutter Stack",
+      "Flutter Positioned",
+      "overlay widgets",
+      "stack alignment",
+      "stack fit",
+      "stack overflow",
+      "Flutter layout"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Stack in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Stack is a layout widget that positions its children relative to its edges. Children can overlap—later children are painted on top of earlier children. This makes Stack perfect for creating overlays, badges, gradients, and complex UI compositions. Stack is based on the Flex widget but doesn't arrange children in a line; instead, it lets you place them anywhere within its bounds."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "To use a Stack, simply give it a list of children. By default, children are placed in the top‑left corner. You can later move them using the Positioned widget. Here’s a minimal example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Stack(\n  children: [\n    Container(width: 200, height: 200, color: Colors.red),\n    Container(width: 150, height: 150, color: Colors.green),\n    Container(width: 100, height: 100, color: Colors.blue),\n  ],\n)"
+    },
+    {
+      "type": "text",
+      "value": "This creates three colored squares stacked on top of each other, all aligned to the top‑left corner. The blue square (last child) appears on top of the green and red ones."
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties Explained"
+    },
+    {
+      "type": "text",
+      "value": "Stack provides several properties to control how children are laid out:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**children**: The list of widgets to display. Later children are drawn on top.",
+        "**alignment**: Aligns children that aren’t wrapped in Positioned. Default is `AlignmentDirectional.topStart` (top‑left in left‑to‑right locales). You can use values like `Alignment.center`, `Alignment.bottomRight`, etc.",
+        "**fit**: Determines how non‑positioned children size themselves. `StackFit.loose` (default) lets them keep their original size; `StackFit.expand` forces them to expand to the Stack's size.",
+        "**clipBehavior**: Controls whether content that overflows the Stack is clipped. Options: `Clip.none`, `Clip.hardEdge`, `Clip.antiAlias`, `Clip.antiAliasWithSaveLayer`. Default is `Clip.hardEdge`.",
+        "**overflow**: Deprecated, use `clipBehavior` instead."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Alignment Examples"
+    },
+    {
+      "type": "text",
+      "value": "The `alignment` property affects all children that are **not** wrapped in `Positioned`. Here's how to center the non‑positioned children:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Stack(\n  alignment: Alignment.center,\n  children: [\n    Container(width: 200, height: 200, color: Colors.red),\n    Container(width: 150, height: 150, color: Colors.green),\n    Container(width: 100, height: 100, color: Colors.blue),\n  ],\n)"
+    },
+    {
+      "type": "text",
+      "value": "Now all squares are centered within the Stack. The largest one (red) determines the Stack's size because it's the biggest child (unless you constrain the Stack externally)."
+    },
+    {
+      "type": "heading",
+      "value": "Using Positioned for Precise Control"
+    },
+    {
+      "type": "text",
+      "value": "To place a child at an exact offset from the Stack's edges, wrap it in a `Positioned` widget. You can set `top`, `right`, `bottom`, `left`, `width`, and `height`. For example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Stack(\n  children: [\n    Container(width: 300, height: 300, color: Colors.yellow),\n    Positioned(\n      top: 20,\n      left: 20,\n      child: Container(width: 100, height: 100, color: Colors.red),\n    ),\n    Positioned(\n      bottom: 30,\n      right: 30,\n      child: Container(width: 80, height: 80, color: Colors.blue),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "text",
+      "value": "The yellow container is non‑positioned and will be placed according to the Stack's alignment (top‑left by default). The red one is 20 pixels from the top and left, while the blue one is 30 from the bottom and right."
+    },
+    {
+      "type": "heading",
+      "value": "Stack with Non‑positioned Children"
+    },
+    {
+      "type": "text",
+      "value": "If you mix positioned and non‑positioned children, the non‑positioned ones are aligned using the Stack's `alignment` and also influence the Stack's size. The Stack sizes itself to contain all non‑positioned children plus any positioned children that have both width/height or are fully constrained. Positioned children without explicit size don't contribute to the Stack's size, so the Stack might shrink to fit only the non‑positioned ones."
+    },
+    {
+      "type": "heading",
+      "value": "Common Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Badges and notifications**: Place a small circle on top of an icon using Stack and Positioned.",
+        "**Overlapping images**: Create a photo collage with partially overlapping pictures.",
+        "**Gradients overlays**: Stack a gradient container above an image.",
+        "**Custom progress indicators**: Overlay a spinner on top of content.",
+        "**Floating action buttons**: Simulate a FAB over a bottom sheet."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Forgetting that later children paint on top**: Always put the bottommost widget first.",
+        "**Not constraining the Stack**: If all children are positioned and have no size, the Stack shrinks to zero size and becomes invisible. Provide at least one sized child or wrap the Stack with a SizedBox.",
+        "**Misunderstanding `fit`**: Using `StackFit.expand` without constraints can cause unexpected expansion. Make sure the parent provides enough space.",
+        "**Overflow not visible**: If a positioned child goes outside the Stack, it may be clipped. Adjust `clipBehavior` to `Clip.none` to allow overflow (but be careful with layout)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Stack overlays its children; later children appear on top.",
+        "Use `alignment` to position all non‑positioned children.",
+        "Use `Positioned` to place a child at specific coordinates.",
+        "The Stack sizes itself to contain its non‑positioned children and fully‑constrained positioned children.",
+        "Set `clipBehavior` to control overflow clipping.",
+        "`StackFit.expand` forces non‑positioned children to fill the Stack."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. How does Stack determine its own size?\n2. What's the difference between a positioned and a non‑positioned child in a Stack?\n3. How can you create a red circle badge in the top‑right corner of an icon using Stack?\n4. Explain the `fit` property of Stack and when you would use `StackFit.expand`.\n5. What happens if you put two `Positioned` widgets with the same `top` and `left` values? Which one appears on top?\n6. How would you make a Stack take the full screen size and then center all its children?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() {\n  runApp(\n    MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Stack Example')),\n        body: Center(\n          child: Stack(\n            alignment: Alignment.center,\n            children: [\n              Container(\n                width: 200,\n                height: 200,\n                color: Colors.yellow,\n              ),\n              Positioned(\n                top: 20,\n                left: 20,\n                child: Container(\n                  width: 60,\n                  height: 60,\n                  color: Colors.red,\n                ),\n              ),\n              Positioned(\n                bottom: 20,\n                right: 20,\n                child: Container(\n                  width: 60,\n                  height: 60,\n                  color: Colors.blue,\n                ),\n              ),\n            ],\n          ),\n        ),\n      ),\n    ),\n  );\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does the `alignment` property of Stack do?",
+      "options": [
+        "Aligns all children relative to the Stack's center",
+        "Aligns only positioned children",
+        "Aligns children that are not wrapped in Positioned",
+        "Aligns the Stack itself within its parent"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which widget allows you to place a child at an exact offset inside a Stack?",
+      "options": [
+        "Align",
+        "Positioned",
+        "Container",
+        "Padding"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "If you have a Stack with only Positioned children and none of them specify both width and height, what happens?",
+      "options": [
+        "The Stack expands to fill its parent",
+        "The Stack becomes as small as possible (zero size)",
+        "The children become visible but the Stack is invisible",
+        "The Stack throws an error"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-row-column",
+    "flutter-container",
+    "flutter-positioned",
+    "flutter-align",
+    "flutter-sizedbox"
+  ]
+}

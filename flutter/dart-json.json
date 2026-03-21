@@ -1,0 +1,196 @@
+{
+  "slug": "dart-json",
+  "course": "Dart",
+  "title": "Dart JSON – Parsing and Serialization",
+  "meta": {
+    "title": "Dart JSON Tutorial: Parse and Serialize JSON with Examples",
+    "description": "Learn how to work with JSON in Dart – parse JSON strings, serialize objects, handle nested data, and use json_serializable for production‑ready code.",
+    "keywords": [
+      "Dart JSON",
+      "Dart jsonDecode",
+      "Dart jsonEncode",
+      "Dart json_serializable",
+      "Dart JSON serialization",
+      "Dart JSON parsing",
+      "Dart convert"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is JSON?"
+    },
+    {
+      "type": "text",
+      "value": "JSON (JavaScript Object Notation) is a lightweight data interchange format. It's easy for humans to read and write, and easy for machines to parse and generate. In Dart, JSON is commonly used for API communication, configuration files, and data storage. The `dart:convert` library provides built‑in support for JSON encoding and decoding."
+    },
+    {
+      "type": "heading",
+      "value": "Basic JSON Operations"
+    },
+    {
+      "type": "text",
+      "value": "Dart's `dart:convert` library provides two core functions: `jsonDecode` to parse a JSON string into a Dart object, and `jsonEncode` to convert a Dart object back to a JSON string."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:convert';\n\nvoid main() {\n  // JSON string\n  String jsonString = '{\"name\":\"Alice\",\"age\":30}';\n\n  // Parse JSON -> Dart Map\n  Map<String, dynamic> user = jsonDecode(jsonString);\n  print(user['name']); // Alice\n  print(user['age']);  // 30\n\n  // Encode Dart object -> JSON string\n  Map<String, dynamic> data = {'product': 'Laptop', 'price': 999.99};\n  String encoded = jsonEncode(data);\n  print(encoded); // {\"product\":\"Laptop\",\"price\":999.99}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Parsing JSON to Dart Objects"
+    },
+    {
+      "type": "text",
+      "value": "While working with raw maps is fine for simple cases, for larger applications you'll want to convert JSON into typed Dart objects (classes). This gives you type safety and better code organization."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class User {\n  final String name;\n  final int age;\n\n  User(this.name, this.age);\n\n  // Factory constructor to create a User from JSON\n  factory User.fromJson(Map<String, dynamic> json) {\n    return User(\n      json['name'] as String,\n      json['age'] as int,\n    );\n  }\n\n  // Method to convert User to JSON\n  Map<String, dynamic> toJson() => {\n        'name': name,\n        'age': age,\n      };\n}\n\nvoid main() {\n  String jsonString = '{\"name\":\"Bob\",\"age\":25}';\n  Map<String, dynamic> jsonMap = jsonDecode(jsonString);\n  User user = User.fromJson(jsonMap);\n  print(user.name); // Bob\n  print(user.age);  // 25\n\n  // Serialize back to JSON\n  print(jsonEncode(user.toJson())); // {\"name\":\"Bob\",\"age\":25}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Nested JSON"
+    },
+    {
+      "type": "text",
+      "value": "Real‑world JSON often contains nested objects and arrays. You can handle these by creating corresponding classes and using them inside the `fromJson` and `toJson` methods."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Address {\n  final String street;\n  final String city;\n\n  Address(this.street, this.city);\n\n  factory Address.fromJson(Map<String, dynamic> json) => Address(\n        json['street'] as String,\n        json['city'] as String,\n      );\n\n  Map<String, dynamic> toJson() => {'street': street, 'city': city};\n}\n\nclass Person {\n  final String name;\n  final Address address;\n\n  Person(this.name, this.address);\n\n  factory Person.fromJson(Map<String, dynamic> json) => Person(\n        json['name'] as String,\n        Address.fromJson(json['address']),\n      );\n\n  Map<String, dynamic> toJson() => {\n        'name': name,\n        'address': address.toJson(),\n      };\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Working with Lists of Objects"
+    },
+    {
+      "type": "text",
+      "value": "When the JSON contains an array of objects, you can map each element to your Dart class."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String jsonString = '[{\"name\":\"Alice\",\"age\":30},{\"name\":\"Bob\",\"age\":25}]';\n  List<dynamic> jsonList = jsonDecode(jsonString);\n  List<User> users = jsonList.map((item) => User.fromJson(item)).toList();\n  print(users.length); // 2\n  print(users[0].name); // Alice\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling"
+    },
+    {
+      "type": "text",
+      "value": "JSON parsing can fail if the data is malformed or if the structure doesn't match expectations. Always handle exceptions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void parseUser(String jsonString) {\n  try {\n    Map<String, dynamic> jsonMap = jsonDecode(jsonString);\n    User user = User.fromJson(jsonMap);\n    print('User: ${user.name}');\n  } on FormatException catch (e) {\n    print('Invalid JSON: $e');\n  } catch (e) {\n    print('Unexpected error: $e');\n  }\n}\n\nvoid main() {\n  parseUser('{\"name\":\"Alice\",\"age\":30}'); // OK\n  parseUser('{\"name\":\"Bob\"}'); // Missing age – will throw a type error\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using `json_serializable` (Code Generation)"
+    },
+    {
+      "type": "text",
+      "value": "Manually writing `fromJson` and `toJson` methods can become tedious, especially for large classes. The `json_serializable` package generates these methods for you. Add the following dependencies to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  json_annotation: ^4.8.1\n\ndev_dependencies:\n  build_runner: ^2.4.0\n  json_serializable: ^6.7.0"
+    },
+    {
+      "type": "text",
+      "value": "Then annotate your class with `@JsonSerializable()` and use the generated part file."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:json_annotation/json_annotation.dart';\n\npart 'user.g.dart';\n\n@JsonSerializable()\nclass User {\n  final String name;\n  final int age;\n\n  User(this.name, this.age);\n\n  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);\n  Map<String, dynamic> toJson() => _$UserToJson(this);\n}"
+    },
+    {
+      "type": "text",
+      "value": "Run `dart run build_runner build` to generate the `user.g.dart` file containing the serialization logic."
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `jsonDecode` to parse JSON strings and `jsonEncode` to convert objects to JSON.",
+        "- Create factory constructors (`fromJson`) and `toJson` methods to convert between JSON and Dart objects.",
+        "- Handle nested JSON by creating corresponding nested classes.",
+        "- Always catch `FormatException` when parsing JSON from external sources.",
+        "- For larger projects, use `json_serializable` to automate boilerplate serialization code."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `jsonDecode` and `jsonDecode`? (typo fix) Actually the correct is `jsonDecode` vs `jsonEncode`. `jsonDecode` parses JSON to Dart objects; `jsonEncode` converts Dart objects to JSON strings.",
+      "answer": "`jsonDecode` takes a JSON string and returns a Dart object (usually `Map<String, dynamic>` or `List<dynamic>`). `jsonEncode` takes a Dart object (like a map, list, or custom object with `toJson`) and returns a JSON string."
+    },
+    {
+      "question": "Why do I get a `_InternalLinkedHashMap` instead of a custom class?",
+      "answer": "`jsonDecode` returns plain maps and lists. You need to manually map these to your custom classes using `fromJson` constructors or use a package like `json_serializable`."
+    },
+    {
+      "question": "How do I handle optional fields in JSON?",
+      "answer": "You can use nullable types and null‑aware operators. For example, `int? age` and in `fromJson`, do `age: json['age'] as int?`. For default values, you can provide a fallback: `json['age'] ?? 0`."
+    },
+    {
+      "question": "What is the purpose of the `@JsonKey` annotation?",
+      "answer": "It allows you to customize the serialization of a field, for example if the JSON key name is different from the field name (`@JsonKey(name: 'user_name')`), to ignore a field, or to provide a default value."
+    },
+    {
+      "question": "Can I parse JSON to a typed list directly?",
+      "answer": "`jsonDecode` returns `List<dynamic>`. You can map it to a typed list with `.map((item) => MyClass.fromJson(item)).toList()`."
+    },
+    {
+      "question": "Is `json_serializable` only for Flutter?",
+      "answer": "No, it works for any Dart project (including console, server, and Flutter). It uses Dart's build system to generate code at compile time."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'dart:convert';\n\nvoid main() {\n  String jsonString = '{\"name\":\"Flutter\",\"year\":2024}';\n  Map<String, dynamic> data = jsonDecode(jsonString);\n  print('Name: ${data['name']}');\n  print('Year: ${data['year']}');\n\n  Map<String, dynamic> response = {'status': 'success', 'data': data};\n  String encoded = jsonEncode(response);\n  print('Encoded: $encoded');\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which function is used to parse a JSON string into a Dart object?",
+      "options": ["jsonParse()", "jsonDecode()", "jsonEncode()", "jsonStringify()"],
+      "answer": 1
+    },
+    {
+      "question": "What does `jsonEncode` return?",
+      "options": ["A Map", "A List", "A String", "A dynamic object"],
+      "answer": 2
+    },
+    {
+      "question": "When using `json_serializable`, which annotation is required on the class?",
+      "options": ["@JsonSerializable", "@JsonCodec", "@Serializable", "@Json"],
+      "answer": 0
+    },
+    {
+      "question": "How do you handle a missing key in JSON to avoid runtime errors?",
+      "options": [
+        "Use try-catch",
+        "Check `json.containsKey(key)` or provide a default value",
+        "Use a `null` check",
+        "It's not possible"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-http",
+    "dart-api-client",
+    "dart-files",
+    "dart-serialization"
+  ]
+}

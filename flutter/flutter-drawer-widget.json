@@ -1,0 +1,202 @@
+{
+  "slug": "flutter-drawer-widget",
+  "course": "Flutter",
+  "title": "Flutter Drawer – Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter Drawer: Create Navigation Drawers with Examples",
+    "description": "Learn how to implement navigation drawers in Flutter. Master Drawer widget, DrawerHeader, ListTile, closing behavior, and customizing appearance.",
+    "keywords": [
+      "Flutter Drawer",
+      "Navigation drawer",
+      "DrawerHeader",
+      "ListTile",
+      "Flutter menu",
+      "Scaffold drawer",
+      "Flutter navigation"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Drawer in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "A `Drawer` is a panel that slides in from the side of a `Scaffold`, typically used for navigation. It is a common UI pattern in mobile apps, providing access to different screens or actions without taking up permanent screen space. In Flutter, you add a drawer by setting the `drawer` property of a `Scaffold`. The drawer usually contains a `DrawerHeader` and a list of `ListTile`s for navigation items."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Drawer Implementation"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Scaffold(\n  appBar: AppBar(title: Text('Drawer Demo')),\n  drawer: Drawer(\n    child: ListView(\n      children: [\n        DrawerHeader(\n          decoration: BoxDecoration(color: Colors.blue),\n          child: Text('Header', style: TextStyle(color: Colors.white, fontSize: 24)),\n        ),\n        ListTile(\n          leading: Icon(Icons.home),\n          title: Text('Home'),\n          onTap: () { Navigator.pop(context); },\n        ),\n        ListTile(\n          leading: Icon(Icons.settings),\n          title: Text('Settings'),\n          onTap: () { Navigator.pop(context); },\n        ),\n      ],\n    ),\n  ),\n)"
+    },
+    {
+      "type": "text",
+      "value": "The drawer opens when the user taps the menu icon in the app bar or swipes from the edge. Tapping a `ListTile` typically closes the drawer (using `Navigator.pop(context)`) and navigates to another screen."
+    },
+    {
+      "type": "heading",
+      "value": "DrawerHeader – Customizing the Header"
+    },
+    {
+      "type": "text",
+      "value": "`DrawerHeader` is a Material widget that provides a decorative header. You can put any widget inside, but it's common to use a `Column` with an avatar, name, and email. You can also use `UserAccountsDrawerHeader` for a pre‑styled header with an account switcher."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "UserAccountsDrawerHeader(\n  accountName: Text('John Doe'),\n  accountEmail: Text('john@example.com'),\n  currentAccountPicture: CircleAvatar(\n    backgroundImage: NetworkImage('https://example.com/avatar.jpg'),\n  ),\n  otherAccountsPictures: [\n    CircleAvatar(child: Text('A')),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Navigating with Drawer"
+    },
+    {
+      "type": "text",
+      "value": "To navigate to a new screen when a drawer item is tapped, you typically use `Navigator.push` to go to a new route. After pushing, you may want to close the drawer – either manually (by calling `Navigator.pop(context)`) or automatically if you're using `pushReplacement` (the drawer closes because the scaffold is replaced). The common pattern is:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ListTile(\n  leading: Icon(Icons.people),\n  title: Text('Profile'),\n  onTap: () {\n    Navigator.pop(context); // close drawer\n    Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilePage()));\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Closing the Drawer Programmatically"
+    },
+    {
+      "type": "text",
+      "value": "The drawer closes automatically when you call `Navigator.pop(context)`. If you need to close it from a deeper widget, you can use the `Scaffold` state: `Scaffold.of(context).closeDrawer()`. However, that's only available if you have a `Scaffold` ancestor. Alternatively, you can use the `Navigator.pop(context)` from anywhere inside the drawer's widget tree."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Inside a child of the drawer\nElevatedButton(\n  onPressed: () => Navigator.pop(context),\n  child: Text('Close'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Customizing Drawer Appearance"
+    },
+    {
+      "type": "text",
+      "value": "You can customize the drawer's width, background color, and shape using the `Drawer` widget's properties. The `Drawer` itself is a `Material` widget, so you can set its `elevation`, `color`, and `shape`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Drawer(\n  elevation: 16.0,\n  backgroundColor: Colors.grey.shade100,\n  shape: RoundedRectangleBorder(\n    borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20)),\n  ),\n  child: ...,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Adding a Scrollable Drawer"
+    },
+    {
+      "type": "text",
+      "value": "If the drawer content is too tall, wrap it in a `ListView`. The `Drawer` itself is a `Material` that can contain any widget; `ListView` provides scrolling."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "drawer: Drawer(\n  child: ListView(\n    padding: EdgeInsets.zero,\n    children: [\n      DrawerHeader(...),\n      ...List.generate(20, (index) => ListTile(title: Text('Item $index'))),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting to close the drawer**: After navigating, the drawer stays open unless you call `Navigator.pop(context)`.",
+        "- **Using `Scaffold.of(context)` without a Scaffold ancestor**: In the drawer's builder, `Scaffold.of(context)` returns the correct scaffold because the drawer is inside the scaffold's tree. However, if you're inside a separate widget, ensure you have a `BuildContext` with a `Scaffold` ancestor.",
+        "- **Not handling large content**: Without a `ListView`, the drawer may overflow.",
+        "- **Using a `Drawer` without a `Scaffold`**: The drawer only works as a child of `Scaffold`.",
+        "- **Not providing unique keys for list items**: If you have dynamic items, use `Key` to preserve state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `DrawerHeader` or `UserAccountsDrawerHeader` for a consistent header.",
+        "- For navigation items, use `ListTile` with an icon and text.",
+        "- After navigation, always close the drawer (`Navigator.pop(context)`).",
+        "- For long drawers, wrap content in a `ListView`.",
+        "- Use `const` for static widgets to improve performance."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- A drawer is added via the `drawer` property of `Scaffold`.",
+        "- The drawer typically contains a `DrawerHeader` and a list of `ListTile`s.",
+        "- Use `Navigator.pop(context)` to close the drawer.",
+        "- Customize width, color, and shape with `Drawer` properties.",
+        "- Wrap content in a `ListView` if it might exceed the screen height."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I open the drawer programmatically?",
+      "answer": "Use the `ScaffoldState`: `Scaffold.of(context).openDrawer()`. You must have a `Scaffold` ancestor and ensure the context is below it. Alternatively, use a `GlobalKey<ScaffoldState>`."
+    },
+    {
+      "question": "How do I show a drawer on the right side?",
+      "answer": "Use the `endDrawer` property of `Scaffold` instead of `drawer`. It slides from the right side. The behavior is otherwise identical."
+    },
+    {
+      "question": "Can I have both a drawer and an end drawer?",
+      "answer": "Yes, you can set both `drawer` and `endDrawer`. The end drawer slides from the right."
+    },
+    {
+      "question": "How do I change the drawer width?",
+      "answer": "Wrap the `Drawer` in a `SizedBox` with a specified width. However, the drawer's width is usually set by the system's edge swipe detection. To override, you may need to use a custom `ModalDrawer` or `Drawer` with `constraints`. The simplest is to set the `Drawer`'s `child` to a `SizedBox` with a width, but that may not respect the edge swipe area. For full control, consider using a custom `Drawer` implementation."
+    },
+    {
+      "question": "Why does my drawer close when I tap outside?",
+      "answer": "That's the default behavior – tapping outside the drawer or swiping the screen dismisses it. You can control this by wrapping the drawer in a `WillPopScope` if you need to intercept, but it's rarely necessary."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Drawer Demo',\n      home: HomePage(),\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Drawer Example')),\n      drawer: Drawer(\n        child: ListView(\n          padding: EdgeInsets.zero,\n          children: [\n            DrawerHeader(\n              decoration: BoxDecoration(\n                gradient: LinearGradient(\n                  colors: [Colors.blue, Colors.purple],\n                ),\n              ),\n              child: Column(\n                crossAxisAlignment: CrossAxisAlignment.start,\n                children: [\n                  CircleAvatar(\n                    radius: 30,\n                    backgroundImage: NetworkImage('https://via.placeholder.com/150'),\n                  ),\n                  SizedBox(height: 10),\n                  Text('User Name', style: TextStyle(color: Colors.white, fontSize: 20)),\n                  Text('user@example.com', style: TextStyle(color: Colors.white70)),\n                ],\n              ),\n            ),\n            ListTile(\n              leading: Icon(Icons.home),\n              title: Text('Home'),\n              onTap: () {\n                Navigator.pop(context);\n                // Navigate or just show a snackbar\n                ScaffoldMessenger.of(context).showSnackBar(\n                  SnackBar(content: Text('Home selected')),\n                );\n              },\n            ),\n            ListTile(\n              leading: Icon(Icons.settings),\n              title: Text('Settings'),\n              onTap: () {\n                Navigator.pop(context);\n                ScaffoldMessenger.of(context).showSnackBar(\n                  SnackBar(content: Text('Settings selected')),\n                );\n              },\n            ),\n            Divider(),\n            ListTile(\n              leading: Icon(Icons.info),\n              title: Text('About'),\n              onTap: () {\n                Navigator.pop(context);\n                ScaffoldMessenger.of(context).showSnackBar(\n                  SnackBar(content: Text('About selected')),\n                );\n              },\n            ),\n          ],\n        ),\n      ),\n      body: Center(\n        child: Text('Swipe from left or tap the menu icon'),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which property of Scaffold is used to add a drawer?",
+      "options": ["sideMenu", "drawer", "navigationDrawer", "menu"],
+      "answer": 1
+    },
+    {
+      "question": "How do you close the drawer programmatically?",
+      "options": ["Scaffold.of(context).closeDrawer()", "Navigator.pop(context)", "Drawer.close()", "Both A and B are valid"],
+      "answer": 3
+    },
+    {
+      "question": "Which widget is commonly used as the header of a drawer?",
+      "options": ["DrawerHeader", "AppBar", "ListTile", "Container"],
+      "answer": 0
+    },
+    {
+      "question": "How can you add a drawer that slides from the right side?",
+      "options": ["endDrawer", "rightDrawer", "trailingDrawer", "sideDrawer"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-scaffold",
+    "flutter-listtile",
+    "flutter-navigation",
+    "flutter-appbar"
+  ]
+}

@@ -1,0 +1,241 @@
+
+{
+  "slug": "flutter-theme",
+  "course": "Flutter",
+  "title": "Flutter Theme Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Theme: Complete Guide with Examples",
+    "description": "Learn how to use Theme in Flutter to style your entire app consistently. Understand ThemeData, light and dark themes, text themes, color schemes, and best practices with simple examples.",
+    "keywords": [
+      "Flutter Theme",
+      "ThemeData",
+      "light theme",
+      "dark theme",
+      "color scheme",
+      "text theme",
+      "app theming",
+      "Flutter styling"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Theme in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Theme is a powerful system in Flutter that allows you to define and apply consistent styling across your entire app. It centralizes colors, typography, shapes, and other visual properties, making it easy to maintain a uniform look and feel. With themes, you can switch between light and dark modes, customize individual components, and even create your own theme extensions."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage: ThemeData"
+    },
+    {
+      "type": "text",
+      "value": "Themes are typically defined in the `MaterialApp` widget using the `theme` (for light mode) and `darkTheme` parameters. You provide a `ThemeData` object that describes the colors, fonts, and shapes for your app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MaterialApp(\n  theme: ThemeData(\n    primaryColor: Colors.blue,\n    brightness: Brightness.light,\n    fontFamily: 'Roboto',\n  ),\n  darkTheme: ThemeData(\n    brightness: Brightness.dark,\n    primaryColor: Colors.teal,\n  ),\n  themeMode: ThemeMode.system, // follows system setting\n  home: MyHomePage(),\n)"
+    },
+    {
+      "type": "text",
+      "value": "Now throughout your app, you can access the current theme using `Theme.of(context)`."
+    },
+    {
+      "type": "heading",
+      "value": "Accessing Theme Properties"
+    },
+    {
+      "type": "text",
+      "value": "Once you've defined a theme, you can use `Theme.of(context)` to retrieve the current theme data and use its properties. This is especially useful for colors and text styles."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  color: Theme.of(context).primaryColor,\n  child: Text(\n    'Hello',\n    style: Theme.of(context).textTheme.headlineMedium,\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties of ThemeData"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**brightness**: `Brightness.light` or `Brightness.dark`. Influences default colors of many widgets.",
+        "**primaryColor**: The primary background color for app bars, buttons, etc.",
+        "**colorScheme**: A modern way to define colors. Replaces the older `primaryColor`, `accentColor`, etc. It includes `primary`, `secondary`, `surface`, `error`, and more.",
+        "**textTheme**: Defines the default text styles (displayLarge, headlineMedium, bodyLarge, etc.).",
+        "**fontFamily**: Default font for text.",
+        "**appBarTheme**: Customizes the appearance of AppBars.",
+        "**buttonTheme**: Customizes button styles (older approach; prefer `elevatedButtonTheme`).",
+        "**elevatedButtonTheme**, **textButtonTheme**, **outlinedButtonTheme**: Specific button themes.",
+        "**inputDecorationTheme**: For TextFields and forms.",
+        "**cardTheme**: For Cards.",
+        "**dividerTheme**: For Dividers.",
+        "**iconTheme**: Default icon color and size."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Using ColorScheme (Modern Approach)"
+    },
+    {
+      "type": "text",
+      "value": "Flutter now recommends using `colorScheme` for theming colors. It provides a complete set of semantic colors that work well with both light and dark themes. You can create one easily with `ColorScheme.fromSeed()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "theme: ThemeData(\n  colorScheme: ColorScheme.fromSeed(\n    seedColor: Colors.blue,\n    brightness: Brightness.light,\n  ),\n  useMaterial3: true, // enable Material 3 design\n)"
+    },
+    {
+      "type": "text",
+      "value": "This automatically generates a full color scheme based on your seed color, including primary, secondary, tertiary, and surface variants."
+    },
+    {
+      "type": "heading",
+      "value": "Light and Dark Theme Switching"
+    },
+    {
+      "type": "text",
+      "value": "To support both light and dark modes, define both `theme` and `darkTheme`, then set `themeMode`. You can also let users toggle the mode by changing the `themeMode` dynamically."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MaterialApp(\n  theme: ThemeData.light(), // built-in light theme\n  darkTheme: ThemeData.dark(), // built-in dark theme\n  themeMode: ThemeMode.dark, // force dark mode\n)"
+    },
+    {
+      "type": "text",
+      "value": "For more control, you can customize the dark theme by copying the light theme and adjusting brightness:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "darkTheme: ThemeData(\n  colorScheme: ColorScheme.fromSeed(\n    seedColor: Colors.blue,\n    brightness: Brightness.dark,\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Text Themes"
+    },
+    {
+      "type": "text",
+      "value": "`textTheme` defines the typography scale for your app. You can override individual styles while keeping others."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "theme: ThemeData(\n  textTheme: TextTheme(\n    headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),\n    bodyMedium: TextStyle(fontSize: 16, color: Colors.grey[800]),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Theme Extensions"
+    },
+    {
+      "type": "text",
+      "value": "For custom app‑specific styles, you can create a `ThemeExtension`. This allows you to add your own properties to the theme and access them with `Theme.of(context).extension<MyColors>()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyColors extends ThemeExtension<MyColors> {\n  final Color brandColor;\n  final Color dangerColor;\n\n  MyColors({required this.brandColor, required this.dangerColor});\n\n  @override\n  MyColors copyWith({Color? brandColor, Color? dangerColor}) {\n    return MyColors(\n      brandColor: brandColor ?? this.brandColor,\n      dangerColor: dangerColor ?? this.dangerColor,\n    );\n  }\n\n  @override\n  MyColors lerp(ThemeExtension<MyColors>? other, double t) {\n    if (other is! MyColors) return this;\n    return MyColors(\n      brandColor: Color.lerp(brandColor, other.brandColor, t)!,\n      dangerColor: Color.lerp(dangerColor, other.dangerColor, t)!,\n    );\n  }\n}\n\n// Usage in ThemeData\nThemeData(\n  extensions: [MyColors(brandColor: Colors.purple, dangerColor: Colors.red)],\n)\n\n// Access later\nfinal myColors = Theme.of(context).extension<MyColors>()!;\nContainer(color: myColors.brandColor);"
+    },
+    {
+      "type": "heading",
+      "value": "Local Theme Overrides"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want to change the theme for a specific part of the widget tree. Use `Theme` widget with a copy of the current theme."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Theme(\n  data: Theme.of(context).copyWith(\n    textTheme: TextTheme(bodyMedium: TextStyle(color: Colors.red)),\n  ),\n  child: SomeWidget(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Not using `Theme.of(context)`** – Hardcoding colors instead of using theme values makes your app hard to maintain and prevents easy theme switching.",
+        "**Confusing `primaryColor` with `colorScheme.primary`**: The modern approach uses `colorScheme`. If you set both, they might conflict. Prefer `colorScheme`.",
+        "**Forgetting to set `useMaterial3`**: Material 3 is the default for new Flutter apps, but you need to enable it explicitly if you want the latest design.",
+        "**Overriding too much**: You don't need to redefine every property. Start from a base theme and override only what you need.",
+        "**Not providing a dark theme**: Users expect dark mode support; if you don't provide one, your app may look broken in dark mode.",
+        "**Using `Theme.of(context)` before the theme is available**: Ensure your `BuildContext` is under a `MaterialApp` that provides the theme."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Define themes in `MaterialApp` using `theme` and `darkTheme`.",
+        "Use `Theme.of(context)` to access the current theme anywhere.",
+        "Prefer `colorScheme` for defining colors; it's the modern and flexible approach.",
+        "Text styles are managed via `textTheme`; use predefined names (headlineMedium, bodyLarge, etc.).",
+        "For custom properties, create a `ThemeExtension`.",
+        "Override themes locally with the `Theme` widget and `copyWith`.",
+        "Always consider both light and dark themes for a polished app."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. How does theme inheritance work in Flutter?\n2. What is the difference between `ThemeData` and `Theme` widget?\n3. Explain the purpose of `colorScheme` and how it differs from using `primaryColor` directly.\n4. How would you implement a dark mode toggle in your app?\n5. What are `ThemeExtension`s and when would you use them?\n6. How can you override the text style for all buttons without changing the global text theme?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Theme Demo',\n      theme: ThemeData(\n        colorScheme: ColorScheme.fromSeed(\n          seedColor: Colors.teal,\n          brightness: Brightness.light,\n        ),\n        useMaterial3: true,\n        textTheme: TextTheme(\n          headlineMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),\n          bodyLarge: TextStyle(fontSize: 16),\n        ),\n      ),\n      darkTheme: ThemeData(\n        colorScheme: ColorScheme.fromSeed(\n          seedColor: Colors.teal,\n          brightness: Brightness.dark,\n        ),\n        useMaterial3: true,\n      ),\n      themeMode: ThemeMode.system,\n      home: MyHomePage(),\n    );\n  }\n}\n\nclass MyHomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(\n        title: Text('Theme Example'),\n      ),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text(\n              'Current Theme',\n              style: Theme.of(context).textTheme.headlineMedium,\n            ),\n            SizedBox(height: 20),\n            Text(\n              'Primary color: ${Theme.of(context).colorScheme.primary}',\n              style: Theme.of(context).textTheme.bodyLarge,\n            ),\n            SizedBox(height: 10),\n            Text(\n              'Brightness: ${Theme.of(context).brightness}',\n              style: Theme.of(context).textTheme.bodyLarge,\n            ),\n            SizedBox(height: 30),\n            ElevatedButton(\n              onPressed: () {},\n              child: Text('Sample Button'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you access the current theme's primary color?",
+      "options": [
+        "Theme.of(context).primaryColor",
+        "Theme.of(context).colorScheme.primary",
+        "Both are valid, but colorScheme is the modern approach",
+        "MediaQuery.of(context).primaryColor"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What parameter in MaterialApp allows you to switch between light and dark themes based on the system setting?",
+      "options": [
+        "themeMode: ThemeMode.system",
+        "darkTheme: ThemeData.dark()",
+        "themeMode: ThemeMode.followSystem",
+        "systemTheme: true"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Which class would you use to add custom, app‑specific properties to the theme?",
+      "options": [
+        "ThemeExtension",
+        "CustomTheme",
+        "AppTheme",
+        "ThemeData.custom"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-materialapp",
+    "flutter-text",
+    "flutter-container",
+    "flutter-colorscheme",
+    "flutter-dark-mode"
+  ]
+}

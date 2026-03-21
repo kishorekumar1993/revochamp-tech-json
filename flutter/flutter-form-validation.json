@@ -1,0 +1,227 @@
+{
+  "slug": "flutter-form-validation",
+  "course": "Flutter",
+  "title": "Flutter Form Validation – Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter Form Validation: Validate TextFormField with Examples",
+    "description": "Learn how to validate forms in Flutter using TextFormField, custom validators, async validation, autovalidateMode, and best practices for error handling.",
+    "keywords": [
+      "Flutter form validation",
+      "TextFormField validator",
+      "Flutter validate email",
+      "async validator",
+      "autovalidateMode",
+      "Flutter form field error",
+      "Flutter input validation"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Validate Forms?"
+    },
+    {
+      "type": "text",
+      "value": "Form validation ensures that user input meets the required criteria before it is submitted. It prevents invalid data from being sent to your backend, improves user experience by providing immediate feedback, and reduces bugs. In Flutter, the `Form` widget combined with `TextFormField` provides a powerful way to validate user input. This guide covers everything from basic required field validation to advanced async checks."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Validation with TextFormField"
+    },
+    {
+      "type": "text",
+      "value": "`TextFormField` has a `validator` property that takes a function returning a `String?`. If the function returns a non‑null string, that string is displayed as an error below the field. Returning `null` means the field is valid."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "TextFormField(\n  decoration: InputDecoration(labelText: 'Name'),\n  validator: (value) {\n    if (value == null || value.isEmpty) {\n      return 'Please enter your name';\n    }\n    return null;\n  },\n)"
+    },
+    {
+      "type": "text",
+      "value": "The validator is called automatically when the form is validated (e.g., `_formKey.currentState!.validate()`). It's also called on each change if `autovalidateMode` is set to `AutovalidateMode.onUserInteraction`."
+    },
+    {
+      "type": "heading",
+      "value": "Using a GlobalKey<FormState>"
+    },
+    {
+      "type": "text",
+      "value": "To validate a form, you need a `GlobalKey<FormState>`. This key gives you access to the form's state, allowing you to call `validate()` and `save()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final _formKey = GlobalKey<FormState>();\n\nForm(\n  key: _formKey,\n  child: Column(\n    children: [\n      TextFormField(\n        validator: (value) => value!.isEmpty ? 'Required' : null,\n      ),\n      ElevatedButton(\n        onPressed: () {\n          if (_formKey.currentState!.validate()) {\n            // all fields are valid\n          }\n        },\n        child: Text('Submit'),\n      ),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Validators"
+    },
+    {
+      "type": "text",
+      "value": "Here are reusable validator functions for common scenarios:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Required field**: `if (value == null || value.isEmpty) return 'Required';`",
+        "- **Email validation**: `if (!RegExp(r'^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$').hasMatch(value)) return 'Invalid email';`",
+        "- **Minimum length**: `if (value.length < 6) return 'At least 6 characters';`",
+        "- **Number validation**: `if (double.tryParse(value) == null) return 'Must be a number';`",
+        "- **Password confirmation**: compare with another field's value (store both in state)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "AutovalidateMode"
+    },
+    {
+      "type": "text",
+      "value": "`autovalidateMode` controls when validation errors are displayed. Options:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`AutovalidateMode.disabled`** (default): Errors appear only after `validate()` is called (e.g., on submit).",
+        "- **`AutovalidateMode.onUserInteraction`**: Errors appear as soon as the user starts typing or changes the field.",
+        "- **`AutovalidateMode.always`**: Errors are always shown, even before user interaction (use with caution)."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Form(\n  key: _formKey,\n  autovalidateMode: AutovalidateMode.onUserInteraction,\n  child: ...\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Custom FormField for Complex Validations"
+    },
+    {
+      "type": "text",
+      "value": "If you need validation for custom input (like a group of radio buttons or a date picker), you can create a `FormField` widget that manages its own validation state. Here's an example for a radio group:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class RadioFormField extends FormField<int> {\n  RadioFormField({\n    required int? initialValue,\n    required FormFieldSetter<int> onSaved,\n    required FormFieldValidator<int> validator,\n  }) : super(\n          initialValue: initialValue,\n          onSaved: onSaved,\n          validator: validator,\n          builder: (FormFieldState<int> state) {\n            return Column(\n              children: [\n                RadioListTile<int>(\n                  value: 1,\n                  groupValue: state.value,\n                  title: Text('Option 1'),\n                  onChanged: (value) => state.didChange(value),\n                ),\n                RadioListTile<int>(\n                  value: 2,\n                  groupValue: state.value,\n                  title: Text('Option 2'),\n                  onChanged: (value) => state.didChange(value),\n                ),\n                if (state.hasError)\n                  Text(\n                    state.errorText!,\n                    style: TextStyle(color: Colors.red),\n                  ),\n              ],\n            );\n          },\n        );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Async Validation"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to check a field against a server (e.g., username availability). You can't return a `Future` directly from `validator`, so you need to manage async validation manually. A common pattern is to use a `StatefulWidget` with a loading indicator and an error state, and call validation on user input."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AsyncValidationExample extends StatefulWidget {\n  @override\n  _AsyncValidationExampleState createState() => _AsyncValidationExampleState();\n}\n\nclass _AsyncValidationExampleState extends State<AsyncValidationExample> {\n  final _formKey = GlobalKey<FormState>();\n  final _usernameController = TextEditingController();\n  String? _usernameError;\n  bool _checking = false;\n\n  Future<void> _checkUsername(String username) async {\n    setState(() => _checking = true);\n    await Future.delayed(Duration(seconds: 1)); // simulate network call\n    final exists = username == 'admin'; // pretend check\n    setState(() {\n      _checking = false;\n      _usernameError = exists ? 'Username already taken' : null;\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Form(\n      key: _formKey,\n      child: Column(\n        children: [\n          TextFormField(\n            controller: _usernameController,\n            decoration: InputDecoration(\n              labelText: 'Username',\n              errorText: _usernameError,\n              suffixIcon: _checking\n                  ? SizedBox(\n                      width: 20,\n                      height: 20,\n                      child: CircularProgressIndicator(strokeWidth: 2),\n                    )\n                  : null,\n            ),\n            onChanged: (value) => _checkUsername(value),\n            validator: (value) {\n              if (value == null || value.isEmpty) return 'Required';\n              // async result will override this\n              return null;\n            },\n          ),\n          ElevatedButton(\n            onPressed: () async {\n              if (_formKey.currentState!.validate()) {\n                await _checkUsername(_usernameController.text);\n                if (_usernameError == null) {\n                  // proceed\n                }\n              }\n            },\n            child: Text('Submit'),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use reusable validator functions to keep code DRY.",
+        "- Set `autovalidateMode` to `onUserInteraction` for immediate feedback, but be careful not to overwhelm the user with errors before they finish typing.",
+        "- Provide clear, actionable error messages (e.g., 'Password must be at least 8 characters' rather than 'Invalid').",
+        "- Validate on submit as well; even if you use `onUserInteraction`, always call `validate()` before submission to ensure all fields are valid.",
+        "- Use `GlobalKey<FormState>` for each form, and don't reuse the same key across multiple forms.",
+        "- For complex forms, consider using a state management solution like Provider or BLoC to separate validation logic from UI."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Not calling `validate()` before submission**: The form may be submitted with invalid data.",
+        "- **Returning `null` from validator on error**: The error message won't be shown.",
+        "- **Using `null` check without handling empty strings**: `value.isEmpty` will throw if `value` is null; always check null first.",
+        "- **Not setting `autovalidateMode`**: Errors only appear after first submit, which can be confusing.",
+        "- **Using the same `GlobalKey` for multiple forms**: This will cause conflicts.",
+        "- **Forgetting to dispose controllers** (if you use them in validation)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `GlobalKey<FormState>` to manage a form.",
+        "- Define `validator` functions that return `String?` – `null` means valid.",
+        "- Use `autovalidateMode` to control when errors appear.",
+        "- Create reusable validators for common cases (email, required, etc.).",
+        "- For custom widgets, use `FormField` to integrate validation.",
+        "- Handle async validation with manual state management and loading indicators."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I clear validation errors after resetting a form?",
+      "answer": "Call `_formKey.currentState!.reset()` to reset the form and clear all fields and validation errors. If you need to manually clear errors for a specific field, you can use `FormFieldState`'s `reset` or set the field's controller and call `setState`."
+    },
+    {
+      "question": "Can I validate a form without a GlobalKey?",
+      "answer": "You can, but you won't be able to call `validate()` programmatically. You would have to manage the validation state manually, which is more error‑prone. Using a key is the recommended approach."
+    },
+    {
+      "question": "How do I validate a field only when it's focused?",
+      "answer": "Combine `FocusNode` and listen to focus changes. When focus is lost, you can trigger validation. For this, you may need to store the field's validator and call it manually, or use a custom `TextFormField` with a `focusNode` listener."
+    },
+    {
+      "question": "What is the difference between `validator` and `onSaved`?",
+      "answer": "`validator` is used to check the field's value and return an error message; it's called when the form is validated. `onSaved` is called when `_formKey.currentState!.save()` is called, allowing you to store the field's value in a model."
+    },
+    {
+      "question": "Can I combine multiple validators for one field?",
+      "answer": "Yes, write a function that runs each validator and returns the first error, or use a package like `validators`. For example: `validator: (value) => required(value) ?? email(value) ?? minLength(value, 6)`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Validation Demo',\n      home: Scaffold(\n        appBar: AppBar(title: Text('Form Validation')),\n        body: Padding(\n          padding: const EdgeInsets.all(16.0),\n          child: RegistrationForm(),\n        ),\n      ),\n    );\n  }\n}\n\nclass RegistrationForm extends StatefulWidget {\n  @override\n  _RegistrationFormState createState() => _RegistrationFormState();\n}\n\nclass _RegistrationFormState extends State<RegistrationForm> {\n  final _formKey = GlobalKey<FormState>();\n  final _nameController = TextEditingController();\n  final _emailController = TextEditingController();\n  final _passwordController = TextEditingController();\n\n  @override\n  void dispose() {\n    _nameController.dispose();\n    _emailController.dispose();\n    _passwordController.dispose();\n    super.dispose();\n  }\n\n  String? _validateName(String? value) {\n    if (value == null || value.isEmpty) return 'Name is required';\n    return null;\n  }\n\n  String? _validateEmail(String? value) {\n    if (value == null || value.isEmpty) return 'Email is required';\n    final regex = RegExp(r'^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$');\n    if (!regex.hasMatch(value)) return 'Enter a valid email';\n    return null;\n  }\n\n  String? _validatePassword(String? value) {\n    if (value == null || value.isEmpty) return 'Password is required';\n    if (value.length < 6) return 'Password must be at least 6 characters';\n    return null;\n  }\n\n  void _submit() {\n    if (_formKey.currentState!.validate()) {\n      ScaffoldMessenger.of(context).showSnackBar(\n        SnackBar(content: Text('Form submitted successfully!')),\n      );\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Form(\n      key: _formKey,\n      autovalidateMode: AutovalidateMode.onUserInteraction,\n      child: Column(\n        children: [\n          TextFormField(\n            controller: _nameController,\n            decoration: InputDecoration(labelText: 'Name'),\n            validator: _validateName,\n          ),\n          SizedBox(height: 16),\n          TextFormField(\n            controller: _emailController,\n            decoration: InputDecoration(labelText: 'Email'),\n            keyboardType: TextInputType.emailAddress,\n            validator: _validateEmail,\n          ),\n          SizedBox(height: 16),\n          TextFormField(\n            controller: _passwordController,\n            decoration: InputDecoration(labelText: 'Password'),\n            obscureText: true,\n            validator: _validatePassword,\n          ),\n          SizedBox(height: 24),\n          ElevatedButton(\n            onPressed: _submit,\n            child: Text('Register'),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does the `validator` function in TextFormField return when the input is valid?",
+      "options": ["true", "false", "null", "An empty string"],
+      "answer": 2
+    },
+    {
+      "question": "Which property controls when validation errors are displayed?",
+      "options": ["validationMode", "validateMode", "autovalidateMode", "errorDisplayMode"],
+      "answer": 2
+    },
+    {
+      "question": "How do you trigger validation on all fields of a form?",
+      "options": ["_formKey.currentState!.check()", "_formKey.currentState!.validate()", "_formKey.validate()", "Form.validateAll()"],
+      "answer": 1
+    },
+    {
+      "question": "What does `AutovalidateMode.onUserInteraction` do?",
+      "options": [
+        "Errors appear only on submit",
+        "Errors appear as the user types or changes the field",
+        "Errors appear always, even before typing",
+        "Errors never appear"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-form",
+    "flutter-textfield",
+    "flutter-async-await",
+    "flutter-validation"
+  ]
+}

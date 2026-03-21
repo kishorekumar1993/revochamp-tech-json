@@ -1,0 +1,239 @@
+{
+  "slug": "flutter-custom-widget",
+  "course": "Flutter",
+  "title": "Flutter Custom Widgets – Build Reusable Components",
+  "meta": {
+    "title": "Flutter Custom Widgets: Create Reusable Components",
+    "description": "Learn how to create custom widgets in Flutter. Master composition, stateless vs stateful custom widgets, parameters, callbacks, and best practices for reusable UI components.",
+    "keywords": [
+      "Flutter custom widget",
+      "create custom widget Flutter",
+      "Flutter widget composition",
+      "Flutter reusable components",
+      "Flutter stateless custom widget",
+      "Flutter stateful custom widget",
+      "Flutter widget best practices"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Create Custom Widgets?"
+    },
+    {
+      "type": "text",
+      "value": "As your Flutter app grows, you'll find yourself repeating the same UI patterns. Custom widgets allow you to encapsulate these patterns into reusable components. This improves code maintainability, reduces duplication, and makes your code easier to test. Custom widgets can be as simple as a styled button or as complex as a whole form. Flutter encourages composition – you build new widgets by combining existing ones."
+    },
+    {
+      "type": "heading",
+      "value": "Types of Custom Widgets"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Stateless custom widget**: For widgets that don't need to change over time. They are built once and rely only on their constructor parameters.",
+        "- **Stateful custom widget**: For widgets that have mutable state that changes over time (e.g., animations, user input)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Stateless Custom Widget"
+    },
+    {
+      "type": "text",
+      "value": "A stateless widget is the simplest form. It extends `StatelessWidget` and overrides the `build` method. It receives parameters through its constructor and uses them to build its UI."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CustomButton extends StatelessWidget {\n  final String label;\n  final VoidCallback? onPressed;\n\n  const CustomButton({\n    super.key,\n    required this.label,\n    this.onPressed,\n  });\n\n  @override\n  Widget build(BuildContext context) {\n    return ElevatedButton(\n      onPressed: onPressed,\n      style: ElevatedButton.styleFrom(\n        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),\n        shape: RoundedRectangleBorder(\n          borderRadius: BorderRadius.circular(12),\n        ),\n      ),\n      child: Text(\n        label,\n        style: const TextStyle(fontSize: 16),\n      ),\n    );\n  }\n}\n\n// Usage\nCustomButton(\n  label: 'Click Me',\n  onPressed: () => print('Clicked'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Basic Stateful Custom Widget"
+    },
+    {
+      "type": "text",
+      "value": "When your widget needs to manage mutable state, use `StatefulWidget`. You create a class that extends `StatefulWidget` and a corresponding `State` class that holds the mutable state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterWidget extends StatefulWidget {\n  final int initialCount;\n\n  const CounterWidget({super.key, this.initialCount = 0});\n\n  @override\n  _CounterWidgetState createState() => _CounterWidgetState();\n}\n\nclass _CounterWidgetState extends State<CounterWidget> {\n  late int _count;\n\n  @override\n  void initState() {\n    super.initState();\n    _count = widget.initialCount;\n  }\n\n  void _increment() {\n    setState(() {\n      _count++;\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      children: [\n        Text('Count: $_count', style: Theme.of(context).textTheme.titleLarge),\n        ElevatedButton(\n          onPressed: _increment,\n          child: const Text('Increment'),\n        ),\n      ],\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Passing Callbacks"
+    },
+    {
+      "type": "text",
+      "value": "To communicate from a custom widget back to its parent, pass a callback function. This keeps the widget reusable and decoupled."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CustomSwitch extends StatelessWidget {\n  final bool value;\n  final ValueChanged<bool> onChanged;\n\n  const CustomSwitch({\n    super.key,\n    required this.value,\n    required this.onChanged,\n  });\n\n  @override\n  Widget build(BuildContext context) {\n    return Switch(\n      value: value,\n      onChanged: onChanged,\n      activeColor: Colors.blue,\n    );\n  }\n}\n\n// Usage in parent\nCustomSwitch(\n  value: _isSwitched,\n  onChanged: (newValue) {\n    setState(() {\n      _isSwitched = newValue;\n    });\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Composition – Building from Smaller Widgets"
+    },
+    {
+      "type": "text",
+      "value": "The most common way to create custom widgets is by composing existing Flutter widgets. This is more flexible and maintainable than subclassing widgets. For example, a custom card widget might combine `Container`, `Column`, and `Text`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfileCard extends StatelessWidget {\n  final String name;\n  final String email;\n  final VoidCallback? onTap;\n\n  const ProfileCard({\n    super.key,\n    required this.name,\n    required this.email,\n    this.onTap,\n  });\n\n  @override\n  Widget build(BuildContext context) {\n    return Card(\n      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),\n      child: InkWell(\n        onTap: onTap,\n        child: Padding(\n          padding: const EdgeInsets.all(16),\n          child: Row(\n            children: [\n              const CircleAvatar(\n                child: Icon(Icons.person),\n              ),\n              const SizedBox(width: 16),\n              Expanded(\n                child: Column(\n                  crossAxisAlignment: CrossAxisAlignment.start,\n                  children: [\n                    Text(\n                      name,\n                      style: const TextStyle(\n                        fontSize: 18,\n                        fontWeight: FontWeight.bold,\n                      ),\n                    ),\n                    Text(\n                      email,\n                      style: const TextStyle(color: Colors.grey),\n                    ),\n                  ],\n                ),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using `const` Constructors"
+    },
+    {
+      "type": "text",
+      "value": "Mark your widget constructor as `const` whenever possible. This allows Flutter to cache the widget and avoid unnecessary rebuilds. It's especially important for widgets that are instantiated many times (e.g., in lists)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyIcon extends StatelessWidget {\n  final IconData icon;\n\n  const MyIcon({super.key, required this.icon});\n\n  @override\n  Widget build(BuildContext context) {\n    return Icon(icon);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Passing `key` Parameter"
+    },
+    {
+      "type": "text",
+      "value": "Always include `super.key` in your widget constructor and pass it to the `super` call. This allows the parent to assign a `Key` to your widget, which helps Flutter identify it during tree reconciliation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CustomWidget extends StatelessWidget {\n  const CustomWidget({super.key}); // super.key automatically passed\n\n  @override\n  Widget build(BuildContext context) { ... }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Generic Custom Widgets"
+    },
+    {
+      "type": "text",
+      "value": "You can make custom widgets generic to work with different data types. For example, a widget that displays a list of items can accept a generic type for the data model."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DataList<T> extends StatelessWidget {\n  final List<T> items;\n  final Widget Function(T) itemBuilder;\n\n  const DataList({\n    super.key,\n    required this.items,\n    required this.itemBuilder,\n  });\n\n  @override\n  Widget build(BuildContext context) {\n    return ListView.builder(\n      itemCount: items.length,\n      itemBuilder: (context, index) => itemBuilder(items[index]),\n    );\n  }\n}\n\n// Usage\nDataList<User>(\n  items: users,\n  itemBuilder: (user) => ListTile(title: Text(user.name)),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Keep widgets small and focused**: Each widget should do one thing well.",
+        "- **Use `const` constructors**: Reduces rebuilds and improves performance.",
+        "- **Always pass `key`**: Make your widgets keyable to preserve state.",
+        "- **Prefer composition over inheritance**: Combine existing widgets rather than extending them.",
+        "- **Use named parameters**: Makes the widget API self‑documenting.",
+        "- **Add required parameters for essential data**: Use `required` for mandatory fields.",
+        "- **Add documentation**: Use `///` comments to explain the widget's purpose and parameters."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Creating state inside a stateless widget**: Stateless widgets cannot have mutable state; use `StatefulWidget`.",
+        "- **Not disposing controllers in stateful widgets**: Always dispose of `TextEditingController`, `AnimationController`, etc.",
+        "- **Using `setState` unnecessarily**: Only update when the state actually changes.",
+        "- **Hard‑coding styles**: Make styles customizable through parameters or theme.",
+        "- **Not using `const` where possible**: Missed optimization opportunities."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Custom widgets promote code reuse and maintainability.",
+        "- Stateless widgets are for static UI; stateful widgets for dynamic UI.",
+        "- Pass callbacks to communicate changes to the parent.",
+        "- Compose widgets to build complex UIs.",
+        "- Always include `super.key` and make constructors `const` when possible.",
+        "- Follow the same naming conventions as Flutter's built‑in widgets (PascalCase)."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "When should I create a custom widget instead of using a helper method?",
+      "answer": "Custom widgets are more efficient because they can be marked `const` and have their own `BuildContext`, which allows better performance and state isolation. Helper methods rebuild every time the parent rebuilds, whereas custom widgets can be reused and are cached. Use custom widgets for reusable, self‑contained UI pieces."
+    },
+    {
+      "question": "How do I choose between `StatelessWidget` and `StatefulWidget`?",
+      "answer": "If the widget's appearance only depends on its constructor parameters and does not change over time, use `StatelessWidget`. If the widget needs to manage internal state that changes (e.g., animations, user input), use `StatefulWidget`."
+    },
+    {
+      "question": "Can I pass data from a child widget to its parent without callbacks?",
+      "answer": "The recommended way is to pass a callback function. For more complex scenarios, you can use state management solutions like `Provider`, `Bloc`, or `Riverpod` to share data across the widget tree."
+    },
+    {
+      "question": "Should I use `const` for all widgets?",
+      "answer": "Use `const` whenever the widget is truly constant (all its parameters are also constant). This allows Flutter to reuse the instance, saving memory and rebuild time. It's especially beneficial for widgets that are created many times, like in a list."
+    },
+    {
+      "question": "How do I make my custom widget accept a child?",
+      "answer": "Add a `Widget? child` parameter to your constructor. Then include it in your `build` method. You can also use `children` for multiple widgets."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(const MyApp());\n\nclass MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Custom Widget Demo',\n      home: Scaffold(\n        appBar: AppBar(title: const Text('Custom Widgets')),\n        body: const Center(\n          child: CustomButton(\n            label: 'Press Me',\n            onPressed: null, // You can add an onPressed in real app\n          ),\n        ),\n      ),\n    );\n  }\n}\n\nclass CustomButton extends StatelessWidget {\n  final String label;\n  final VoidCallback? onPressed;\n\n  const CustomButton({\n    super.key,\n    required this.label,\n    this.onPressed,\n  });\n\n  @override\n  Widget build(BuildContext context) {\n    return ElevatedButton(\n      onPressed: onPressed,\n      style: ElevatedButton.styleFrom(\n        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),\n        shape: RoundedRectangleBorder(\n          borderRadius: BorderRadius.circular(30),\n        ),\n      ),\n      child: Text(\n        label,\n        style: const TextStyle(fontSize: 18),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which class should you extend to create a stateless custom widget?",
+      "options": ["StatefulWidget", "StatelessWidget", "Widget", "CustomWidget"],
+      "answer": 1
+    },
+    {
+      "question": "How do you pass a callback from a custom widget to its parent?",
+      "options": [
+        "Using a `setState` call",
+        "Passing a function parameter",
+        "Using a global variable",
+        "Using `InheritedWidget`"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of marking a custom widget constructor as `const`?",
+      "options": [
+        "To allow the widget to be immutable and improve performance",
+        "To prevent the widget from being rebuilt",
+        "To make the widget private",
+        "To enable hot reload"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Which parameter should you always include in a custom widget constructor?",
+      "options": ["child", "key", "color", "onTap"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-stateless-widget",
+    "flutter-stateful-widget",
+    "flutter-composition",
+    "flutter-keys"
+  ]
+}

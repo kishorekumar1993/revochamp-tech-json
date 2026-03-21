@@ -1,0 +1,212 @@
+{
+  "slug": "dart-http",
+  "course": "Dart",
+  "title": "Dart HTTP – Making HTTP Requests with Examples",
+  "meta": {
+    "title": "Dart HTTP: Make GET, POST Requests with Examples",
+    "description": "Learn how to perform HTTP requests in Dart using the http package. Includes GET, POST, PUT, DELETE, handling JSON, error handling, and best practices.",
+    "keywords": [
+      "Dart HTTP",
+      "Dart http package",
+      "Dart GET request",
+      "Dart POST request",
+      "Dart REST API",
+      "Dart fetch JSON",
+      "Dart http client"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction to HTTP in Dart"
+    },
+    {
+      "type": "text",
+      "value": "Making HTTP requests is a common task for any application that communicates with web services. Dart provides the `http` package, which is a simple, easy‑to‑use library for sending HTTP requests. It supports GET, POST, PUT, DELETE, and other methods, and handles both synchronous and asynchronous operations. This guide will teach you how to use the `http` package effectively."
+    },
+    {
+      "type": "text",
+      "value": "First, add the package to your `pubspec.yaml`:\n\n```yaml\ndependencies:\n  http: ^1.2.0\n```\n\nThen run `dart pub get` to install it."
+    },
+    {
+      "type": "heading",
+      "value": "Basic GET Request"
+    },
+    {
+      "type": "text",
+      "value": "The `http.get()` function sends a GET request to a URL. It returns a `Future<Response>`. The response contains status code, headers, and body."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:http/http.dart' as http;\n\nvoid main() async {\n  var url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');\n  var response = await http.get(url);\n\n  if (response.statusCode == 200) {\n    print('Response body: ${response.body}');\n  } else {\n    print('Request failed with status: ${response.statusCode}');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "GET with Headers"
+    },
+    {
+      "type": "text",
+      "value": "You can add custom headers by passing a `headers` map."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "var response = await http.get(\n  Uri.parse('https://api.example.com/data'),\n  headers: {\n    'Authorization': 'Bearer your_token',\n    'User-Agent': 'Dart App',\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "POST Request"
+    },
+    {
+      "type": "text",
+      "value": "To send data with POST, pass a body (usually a map encoded to JSON or form data)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:convert';\n\nvoid main() async {\n  var url = Uri.parse('https://jsonplaceholder.typicode.com/posts');\n  var response = await http.post(\n    url,\n    headers: {'Content-Type': 'application/json'},\n    body: jsonEncode({\n      'title': 'Hello',\n      'body': 'This is a post',\n      'userId': 1,\n    }),\n  );\n\n  if (response.statusCode == 201) {\n    print('Created: ${response.body}');\n  } else {\n    print('Error: ${response.statusCode}');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "PUT and DELETE"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// PUT\nvar putResponse = await http.put(\n  Uri.parse('https://jsonplaceholder.typicode.com/posts/1'),\n  body: jsonEncode({'title': 'Updated'}),\n  headers: {'Content-Type': 'application/json'},\n);\n\n// DELETE\nvar deleteResponse = await http.delete(\n  Uri.parse('https://jsonplaceholder.typicode.com/posts/1'),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Handling JSON Response"
+    },
+    {
+      "type": "text",
+      "value": "Most APIs return JSON. Use `jsonDecode` from `dart:convert` to parse the response body."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:convert';\n\nvoid main() async {\n  var url = Uri.parse('https://jsonplaceholder.typicode.com/posts');\n  var response = await http.get(url);\n\n  if (response.statusCode == 200) {\n    List<dynamic> posts = jsonDecode(response.body);\n    for (var post in posts) {\n      print('Title: ${post['title']}');\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling"
+    },
+    {
+      "type": "text",
+      "value": "Always handle network errors and HTTP errors gracefully. Use try/catch and check status codes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  try {\n    var response = await http.get(Uri.parse('https://example.com/data'));\n    if (response.statusCode == 200) {\n      // process\n    } else {\n      print('HTTP error: ${response.statusCode}');\n    }\n  } catch (e) {\n    print('Network error: $e');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using a Client for Multiple Requests"
+    },
+    {
+      "type": "text",
+      "value": "If you need to make multiple requests to the same host, use a `Client` to reuse a connection and benefit from keep‑alive."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "var client = http.Client();\ntry {\n  var response1 = await client.get(Uri.parse('https://example.com/api/1'));\n  var response2 = await client.get(Uri.parse('https://example.com/api/2'));\n} finally {\n  client.close();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Timeout"
+    },
+    {
+      "type": "text",
+      "value": "You can set a timeout on requests to avoid waiting indefinitely."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "var response = await http.get(\n  Uri.parse('https://example.com/slow'),\n).timeout(Duration(seconds: 5));"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Add the `http` package to your dependencies.",
+        "- Use `http.get()`, `http.post()`, etc., to send requests.",
+        "- Always convert URIs with `Uri.parse()`.",
+        "- Check `response.statusCode` to handle errors.",
+        "- Use `jsonDecode` to parse JSON responses.",
+        "- For multiple requests, use a `Client` for efficiency.",
+        "- Set timeouts to prevent hanging."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I need to import `dart:convert` to use `jsonEncode` and `jsonDecode`?",
+      "answer": "Yes, those functions are part of `dart:convert`. You must import it when working with JSON."
+    },
+    {
+      "question": "What if the API returns data in a different format (like XML)?",
+      "answer": "You'll need to parse the response body accordingly. The `http` package just gives you the raw string; you can then use an XML parser library."
+    },
+    {
+      "question": "How do I send form‑urlencoded data?",
+      "answer": "Set the `Content-Type` header to `application/x-www-form-urlencoded` and pass the body as a string with key‑value pairs encoded (e.g., `'key1=value1&key2=value2'`)."
+    },
+    {
+      "question": "Can I cancel an ongoing request?",
+      "answer": "The built‑in `http` package does not support cancellation directly. You can use the `Client` and cancel the connection by closing it, but that's not fine‑grained. For better control, consider `dart:io`'s `HttpClient` or third‑party packages."
+    },
+    {
+      "question": "Is it safe to use `http` in a Flutter app?",
+      "answer": "Yes, it's safe and widely used. However, for Android, you may need to add internet permission to `AndroidManifest.xml`. For iOS, add network access to `Info.plist` (or use App Transport Security settings)."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "defaultCode": "// HTTP requests require a network connection.\n// This example is for local testing.\nimport 'package:http/http.dart' as http;\nimport 'dart:convert';\n\nvoid main() async {\n  var url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');\n  var response = await http.get(url);\n  if (response.statusCode == 200) {\n    var data = jsonDecode(response.body);\n    print('Title: ${data['title']}');\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which package is commonly used to make HTTP requests in Dart?",
+      "options": ["dart:http", "dart:network", "http", "flutter_http"],
+      "answer": 2
+    },
+    {
+      "question": "What method is used to send a POST request with the `http` package?",
+      "options": ["http.get", "http.post", "http.send", "http.request"],
+      "answer": 1
+    },
+    {
+      "question": "How do you parse a JSON response body?",
+      "options": [
+        "response.json()",
+        "jsonDecode(response.body)",
+        "response.parse()",
+        "decode(response.body)"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the recommended way to handle multiple requests to the same host?",
+      "options": [
+        "Use multiple `http.get` calls",
+        "Create a `Client` and reuse it",
+        "Use `Future.wait`",
+        "Set a timeout"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-json",
+    "dart-async-await",
+    "dart-api-client",
+    "dart-network"
+  ]
+}

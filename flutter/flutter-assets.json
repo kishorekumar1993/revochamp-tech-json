@@ -1,0 +1,243 @@
+{
+  "slug": "flutter-assets",
+  "course": "Flutter",
+  "title": "Flutter Assets – Images, Fonts, and Files",
+  "meta": {
+    "title": "Flutter Assets: Manage Images, Fonts, and Files",
+    "description": "Learn how to add and use images, fonts, JSON files, and other assets in Flutter. Understand resolution-aware images, asset bundles, and best practices.",
+    "keywords": [
+      "Flutter assets",
+      "Flutter images",
+      "Flutter fonts",
+      "asset management",
+      "pubspec.yaml assets",
+      "Flutter AssetImage",
+      "Flutter resolution-aware images"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Assets in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Assets are files that are bundled with your app and can be accessed at runtime. They include images, fonts, JSON files, configuration files, and any other static data. Flutter uses a `pubspec.yaml` file to declare which assets are part of the application. Assets are served from the app's bundle and are accessible via the `rootBundle` or through specialized widgets like `Image.asset`."
+    },
+    {
+      "type": "heading",
+      "value": "Adding Assets to Your Project"
+    },
+    {
+      "type": "text",
+      "value": "To add an asset, place it in a folder (commonly `assets/images`, `assets/fonts`, etc.) and declare it in the `pubspec.yaml` under the `flutter` section."
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "flutter:\n  assets:\n    - assets/images/logo.png\n    - assets/images/background.jpg\n    - assets/data/config.json"
+    },
+    {
+      "type": "text",
+      "value": "You can also include entire folders:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "flutter:\n  assets:\n    - assets/images/"
+    },
+    {
+      "type": "text",
+      "value": "This includes all files directly under `assets/images/`. However, it does not include sub‑folders recursively; you must list each subfolder or file separately."
+    },
+    {
+      "type": "heading",
+      "value": "Using Images"
+    },
+    {
+      "type": "text",
+      "value": "The `Image` widget can load images from assets using `Image.asset`. You can specify the asset path and optional parameters like `fit`, `width`, `height`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Image.asset('assets/images/logo.png', width: 100, height: 100)\n\n// With package (for package assets)\nImage.asset('package:my_package/assets/logo.png')"
+    },
+    {
+      "type": "heading",
+      "value": "Resolution‑Aware Images"
+    },
+    {
+      "type": "text",
+      "value": "Flutter automatically picks the correct image variant based on the device pixel ratio. You should organise images with the following naming convention:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `assets/images/logo.png` – default (1.0x) resolution",
+        "- `assets/images/2.0x/logo.png` – for 2.0 pixel ratio devices",
+        "- `assets/images/3.0x/logo.png` – for 3.0 pixel ratio devices"
+      ]
+    },
+    {
+      "type": "text",
+      "value": "Then reference the default path: `Image.asset('assets/images/logo.png')` and Flutter will choose the appropriate variant. This works for all asset types (not just images)."
+    },
+    {
+      "type": "heading",
+      "value": "Using Fonts"
+    },
+    {
+      "type": "text",
+      "value": "Custom fonts are added in `pubspec.yaml` under `flutter.fonts`. You can declare a family and list the font files."
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "flutter:\n  fonts:\n    - family: Roboto\n      fonts:\n        - asset: assets/fonts/Roboto-Regular.ttf\n        - asset: assets/fonts/Roboto-Bold.ttf\n          weight: 700\n        - asset: assets/fonts/Roboto-Italic.ttf\n          style: italic"
+    },
+    {
+      "type": "text",
+      "value": "Then use the font family in `TextStyle`:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Text('Hello', style: TextStyle(fontFamily: 'Roboto', fontWeight: FontWeight.bold))"
+    },
+    {
+      "type": "heading",
+      "value": "Loading Raw Assets"
+    },
+    {
+      "type": "text",
+      "value": "For arbitrary files (e.g., JSON, text), you can load them using `rootBundle.loadString` or `rootBundle.load`. For example, to load a JSON configuration:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/services.dart' show rootBundle;\n\nFuture<String> loadConfig() async {\n  return await rootBundle.loadString('assets/data/config.json');\n}\n\n// Then parse with jsonDecode."
+    },
+    {
+      "type": "heading",
+      "value": "Asset Bundles in Packages"
+    },
+    {
+      "type": "text",
+      "value": "If you are developing a package, you should place assets inside the package's `lib` folder (e.g., `lib/assets/`). When referencing them, use the package syntax:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Image.asset('packages/my_package/assets/logo.png')"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Organise assets in folders** (e.g., `assets/images`, `assets/fonts`, `assets/data`).",
+        "- **Use resolution‑aware images** to support different screen densities.",
+        "- **Keep asset paths as constants** to avoid typos: `const kLogoPath = 'assets/images/logo.png';`.",
+        "- **Compress images** to reduce app size (use tools like `flutter pub run flutter_launcher_icons` or online optimizers).",
+        "- **Use `.ttf` or `.otf` fonts**; avoid excessive font weights if not used.",
+        "- **Declare assets explicitly** rather than using folders to avoid including unintended files."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Not including assets in `pubspec.yaml`**: Assets are not bundled automatically; you must list them.",
+        "- **Wrong indentation in `pubspec.yaml`**: YAML indentation errors cause assets to be ignored.",
+        "- **Using `Image.asset` with a path that does not exist** – runtime error.",
+        "- **Forgetting to add `uses-material-design: true`** if using Material Icons (but not directly related to custom assets).",
+        "- **Mixing up resolution‑aware folder names**: They must be exactly `2.0x`, `3.0x` (no spaces).",
+        "- **Not clearing cache after adding assets**: Sometimes you need to restart the app to see new assets."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Assets are declared in `pubspec.yaml` under `flutter.assets` and `flutter.fonts`.",
+        "- Use `Image.asset` for images, `TextStyle(fontFamily: ...)` for custom fonts.",
+        "- Flutter supports resolution‑aware images with `2.0x` and `3.0x` folders.",
+        "- Load raw assets with `rootBundle.loadString` or `rootBundle.load`.",
+        "- Always test assets on multiple devices to ensure correct resolution selection."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I add an SVG image?",
+      "answer": "Flutter doesn't support SVG natively. Use the `flutter_svg` package. Add it to your `pubspec.yaml`, then use `SvgPicture.asset('assets/images/icon.svg')`."
+    },
+    {
+      "question": "What is the difference between `Image.asset` and `AssetImage`?",
+      "answer": "`Image.asset` is a convenience widget that returns an `Image` widget using `AssetImage`. `AssetImage` is an `ImageProvider` that can be used in `Image` directly: `Image(image: AssetImage('assets/logo.png'))`."
+    },
+    {
+      "question": "How do I use assets in tests?",
+      "answer": "In integration tests, assets are available normally. In unit tests, you may need to use `rootBundle` or mock the asset loading. For widget tests, you can use `AssetBundle` override."
+    },
+    {
+      "question": "Can I have asset variants for different screen sizes (not just density)?",
+      "answer": "Flutter's built‑in resolution‑aware only handles density. For different screen sizes (e.g., tablet vs phone), you can manually switch assets using `MediaQuery` or `LayoutBuilder` and load different asset paths."
+    },
+    {
+      "question": "How do I access assets from a package I've created?",
+      "answer": "Place assets inside the package's `lib/` folder (e.g., `lib/assets/`). Then in the consuming app, you can reference them with `packages/your_package_name/assets/...`. The package's `pubspec.yaml` must list the assets."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Asset Demo')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Image.asset('assets/images/example.png', width: 100, height: 100),\n              SizedBox(height: 20),\n              Text(\n                'Custom Font',\n                style: TextStyle(fontFamily: 'YourFont', fontSize: 24),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Where do you declare assets in a Flutter project?",
+      "options": ["pubspec.yaml", "AndroidManifest.xml", "Info.plist", "main.dart"],
+      "answer": 0
+    },
+    {
+      "question": "How do you reference a 2x version of an image?",
+      "options": [
+        "Image.asset('assets/images/logo@2x.png')",
+        "Place the image in `assets/images/2.0x/logo.png` and reference `assets/images/logo.png`",
+        "Image.asset('assets/images/logo_2x.png')",
+        "Set a pixel ratio in the widget"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What method do you use to load a text asset as a string?",
+      "options": ["rootBundle.loadString()", "rootBundle.readString()", "AssetBundle.loadString()", "loadAsset()"],
+      "answer": 0
+    },
+    {
+      "question": "What happens if you declare `assets/images/` in `pubspec.yaml`?",
+      "options": [
+        "All files directly under that folder are included",
+        "All files in that folder and subfolders are included",
+        "Only the folder itself is included",
+        "Nothing, it's invalid syntax"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-image",
+    "flutter-fonts",
+    "flutter-theme",
+    "flutter-pubspec"
+  ]
+}

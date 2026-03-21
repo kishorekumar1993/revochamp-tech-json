@@ -1,0 +1,193 @@
+{
+  "slug": "flutter-bottom-navigation-bar",
+  "course": "Flutter",
+  "title": "Flutter BottomNavigationBar – Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter BottomNavigationBar: Build Tab Bars with Examples",
+    "description": "Learn how to use BottomNavigationBar in Flutter to create a bottom tab bar. Master item selection, styling, handling back navigation, and best practices.",
+    "keywords": [
+      "Flutter BottomNavigationBar",
+      "Bottom navigation bar",
+      "Flutter bottom tab bar",
+      "Flutter navigation",
+      "Flutter tab bar",
+      "Flutter UI"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BottomNavigationBar?"
+    },
+    {
+      "type": "text",
+      "value": "`BottomNavigationBar` is a widget that displays a row of icons and labels at the bottom of the screen. It's commonly used for navigating between the top‑level views of an app (e.g., home, search, profile). The selected item is visually highlighted, and when the user taps an item, the app updates the displayed content. This widget is a fundamental part of Material Design and provides a consistent navigation experience on mobile."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Implementation"
+    },
+    {
+      "type": "text",
+      "value": "The simplest use involves a `StatefulWidget` that holds the current selected index. You provide a list of `BottomNavigationBarItem` widgets to the `items` property, and set `currentIndex` to the selected one. The `onTap` callback updates the index and (usually) the content."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyHomePage extends StatefulWidget {\n  @override\n  _MyHomePageState createState() => _MyHomePageState();\n}\n\nclass _MyHomePageState extends State<MyHomePage> {\n  int _selectedIndex = 0;\n\n  static const List<Widget> _pages = [\n    HomePage(),\n    SearchPage(),\n    ProfilePage(),\n  ];\n\n  void _onItemTapped(int index) {\n    setState(() {\n      _selectedIndex = index;\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('BottomNavigationBar')),\n      body: _pages[_selectedIndex],\n      bottomNavigationBar: BottomNavigationBar(\n        items: const <BottomNavigationBarItem>[\n          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),\n          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),\n          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),\n        ],\n        currentIndex: _selectedIndex,\n        onTap: _onItemTapped,\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Customizing Appearance"
+    },
+    {
+      "type": "text",
+      "value": "`BottomNavigationBar` offers several properties to control its look:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`type`**: `BottomNavigationBarType.fixed` (all items visible) or `shifting` (selected item expands; usually for 3+ items).",
+        "- **`selectedItemColor`**: Color of the selected icon and label.",
+        "- **`unselectedItemColor`**: Color of unselected items.",
+        "- **`backgroundColor`**: Background color of the bar.",
+        "- **`elevation`**: Elevation (shadow) of the bar.",
+        "- **`showSelectedLabels`** and **`showUnselectedLabels`**: Control label visibility.",
+        "- **`iconSize`**: Size of the icons."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BottomNavigationBar(\n  type: BottomNavigationBarType.fixed,\n  selectedItemColor: Colors.blue,\n  unselectedItemColor: Colors.grey,\n  backgroundColor: Colors.white,\n  elevation: 8,\n  showSelectedLabels: true,\n  showUnselectedLabels: false,\n  iconSize: 28,\n  // ... items, currentIndex, onTap\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Back Navigation with IndexedStack"
+    },
+    {
+      "type": "text",
+      "value": "When using multiple pages, each page might have its own navigation stack. A common approach is to use an `IndexedStack` to keep all pages alive, so their navigation state is preserved when switching tabs. The `IndexedStack` displays only the selected index but keeps all children in memory."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "body: IndexedStack(\n  index: _selectedIndex,\n  children: _pages,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Combining with Routes (Navigator)"
+    },
+    {
+      "type": "text",
+      "value": "For more complex navigation where each tab has its own navigation stack, you can embed a `Navigator` inside each page. This allows per‑tab navigation history. A common pattern is to use a `TabNavigator` widget that holds a `Navigator` for that tab."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TabNavigator extends StatelessWidget {\n  final String tabName;\n  final Widget child;\n\n  TabNavigator({required this.tabName, required this.child});\n\n  @override\n  Widget build(BuildContext context) {\n    return Navigator(\n      initialRoute: '/',\n      onGenerateRoute: (settings) {\n        if (settings.name == '/') {\n          return MaterialPageRoute(builder: (_) => child);\n        }\n        // handle other routes within the tab\n        return null;\n      },\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting to call `setState`**: The bar won't update the selected index without calling `setState` in `onTap`.",
+        "- **Using too many items**: For 4+ items, consider using `type: BottomNavigationBarType.shifting` for better UX.",
+        "- **Not handling back navigation**: When the user presses the back button, you may want to exit the app or navigate to the previous screen inside the tab. Using `IndexedStack` with `WillPopScope` can help.",
+        "- **Changing the list of items after building**: The list of items should be static; changing it requires a new `BottomNavigationBar` to be built.",
+        "- **Over‑customizing**: Making the bar too tall or using large icons can break the Material Design guidelines."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Keep the number of items between 3 and 5. For 5+ items, consider alternatives like a drawer or tab bar.",
+        "- Provide both an icon and a label for each item to aid accessibility.",
+        "- Use `IndexedStack` to preserve page state if needed.",
+        "- For deep navigation within a tab, use separate `Navigator` instances per tab.",
+        "- Test on different screen sizes; on tablets, you might prefer a navigation rail."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `BottomNavigationBar` is used for top‑level navigation with icons and labels.",
+        "- The widget is typically placed inside `Scaffold`'s `bottomNavigationBar` property.",
+        "- Use a `StatefulWidget` with `currentIndex` and `onTap` to update the selected page.",
+        "- Customize colors, icon size, and behavior with properties like `selectedItemColor`, `type`, etc.",
+        "- Use `IndexedStack` to keep pages alive when switching tabs.",
+        "- For per‑tab navigation history, consider using separate `Navigator` instances."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I change the background color of the selected item?",
+      "answer": "Use `selectedItemColor` to change the icon and label color. To change the background behind the selected item, you would need to use the `type: BottomNavigationBarType.shifting` and provide a custom `backgroundColor` for each item? Actually, shifting style animates the background behind the selected item; you can control the color using `selectedItemColor` (the ripple effect). For a solid background, you might need to implement a custom widget."
+    },
+    {
+      "question": "Can I have a BottomNavigationBar without labels?",
+      "answer": "Yes, set `showSelectedLabels: false` and `showUnselectedLabels: false`. The bar will show only icons. However, for accessibility, consider providing labels via tooltips or semantic labels."
+    },
+    {
+      "question": "How do I handle the back button to exit the app from the first tab?",
+      "answer": "Wrap your `Scaffold` with a `WillPopScope` and override `onWillPop`. Check the current index; if it's 0, allow exit (or show a confirmation). Otherwise, set the index to 0 and return false."
+    },
+    {
+      "question": "What's the difference between `fixed` and `shifting` type?",
+      "answer": "`fixed` shows all items with the same size; suitable for 3‑4 items. `shifting` gives more space to the selected item, animating its icon and label; it's ideal for 4‑5 items and provides a richer visual effect."
+    },
+    {
+      "question": "How do I add a badge or notification indicator to a tab?",
+      "answer": "You can use `BottomNavigationBarItem`'s `icon` as a `Stack` containing the icon and a `Positioned` badge. For example: `icon: Stack(children: [Icon(Icons.message), Positioned(... Badge())])`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'BottomNav Demo',\n      home: BottomNavDemo(),\n    );\n  }\n}\n\nclass BottomNavDemo extends StatefulWidget {\n  @override\n  _BottomNavDemoState createState() => _BottomNavDemoState();\n}\n\nclass _BottomNavDemoState extends State<BottomNavDemo> {\n  int _currentIndex = 0;\n\n  final List<Widget> _pages = [\n    Center(child: Text('Home Page', style: TextStyle(fontSize: 24))),\n    Center(child: Text('Search Page', style: TextStyle(fontSize: 24))),\n    Center(child: Text('Profile Page', style: TextStyle(fontSize: 24))),\n  ];\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('BottomNavigationBar')),\n      body: _pages[_currentIndex],\n      bottomNavigationBar: BottomNavigationBar(\n        currentIndex: _currentIndex,\n        onTap: (index) => setState(() => _currentIndex = index),\n        items: const [\n          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),\n          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),\n          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),\n        ],\n        selectedItemColor: Colors.blue,\n        unselectedItemColor: Colors.grey,\n        type: BottomNavigationBarType.fixed,\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which property of Scaffold is used to add a bottom navigation bar?",
+      "options": ["bottom", "bottomNavigationBar", "navigationBar", "footer"],
+      "answer": 1
+    },
+    {
+      "question": "How do you update the selected tab when the user taps a different item?",
+      "options": [
+        "Set the `currentIndex` property directly",
+        "Call `setState` inside the `onTap` callback to update the index",
+        "Use a `StreamBuilder`",
+        "It updates automatically"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget can you use to keep all pages alive so their state is preserved when switching tabs?",
+      "options": ["PageView", "IndexedStack", "Stack", "Container"],
+      "answer": 1
+    },
+    {
+      "question": "What is the recommended maximum number of items in a bottom navigation bar?",
+      "options": ["3", "5", "7", "No limit"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-scaffold",
+    "flutter-navigation",
+    "flutter-tabbar",
+    "flutter-indexed-stack"
+  ]
+}

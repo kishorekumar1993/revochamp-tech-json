@@ -1,0 +1,199 @@
+{
+  "slug": "flutter-row-column",
+  "course": "Flutter",
+  "title": "Flutter Row and Column Widgets Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Row & Column Widgets: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Row and Column widgets to create flexible layouts. Understand mainAxisAlignment, crossAxisAlignment, Expanded, and more with simple examples.",
+    "keywords": [
+      "Flutter Row",
+      "Flutter Column",
+      "Flutter layout",
+      "Row vs Column",
+      "mainAxisAlignment",
+      "crossAxisAlignment",
+      "Expanded widget",
+      "Flexible widget"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Row and Column in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Row and Column are two of the most fundamental layout widgets in Flutter. They allow you to arrange other widgets in a horizontal line (Row) or a vertical line (Column). Think of them as simple building blocks that help you create almost any design—from a row of icons to a complex profile screen. Both are based on the Flex widget, which gives them powerful alignment and spacing features."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "Using a Row or Column is straightforward: you give them a list of children, and they place them next to each other. Here are the simplest examples:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Row example: three icons in a horizontal line\nRow(\n  children: [\n    Icon(Icons.star, color: Colors.yellow),\n    Icon(Icons.star, color: Colors.yellow),\n    Icon(Icons.star, color: Colors.yellow),\n  ],\n)\n\n// Column example: three texts stacked vertically\nColumn(\n  children: [\n    Text('Top'),\n    Text('Middle'),\n    Text('Bottom'),\n  ],\n)"
+    },
+    {
+      "type": "text",
+      "value": "When you run this, you'll see the icons appear side-by-side, and the texts one above the other. It’s that easy to start arranging widgets!"
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties Explained"
+    },
+    {
+      "type": "text",
+      "value": "To control exactly how your children are placed, Row and Column offer several properties. Let’s look at each one with simple explanations:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**children**: The list of widgets you want to arrange. This is required.",
+        "**mainAxisAlignment**: Controls how the children are spaced along the main axis (the direction of the row/column). For a Row, the main axis is horizontal; for a Column, it’s vertical. Options include:",
+        "  - `MainAxisAlignment.start` (default): children are grouped at the beginning.",
+        "  - `MainAxisAlignment.end`: children are grouped at the end.",
+        "  - `MainAxisAlignment.center`: children are grouped in the middle.",
+        "  - `MainAxisAlignment.spaceBetween`: first child at start, last at end, equal space between.",
+        "  - `MainAxisAlignment.spaceAround`: equal space around each child.",
+        "  - `MainAxisAlignment.spaceEvenly`: equal space between, before, and after each child.",
+        "**crossAxisAlignment**: Controls how children are aligned in the opposite direction (cross axis). For a Row, cross axis is vertical; for a Column, it’s horizontal. Options:",
+        "  - `CrossAxisAlignment.start`: align to top (Row) or left (Column).",
+        "  - `CrossAxisAlignment.end`: align to bottom (Row) or right (Column).",
+        "  - `CrossAxisAlignment.center` (default): center align.",
+        "  - `CrossAxisAlignment.stretch`: stretch children to fill the cross axis.",
+        "  - `CrossAxisAlignment.baseline`: align children by their text baseline (requires text).",
+        "**mainAxisSize**: Determines how much space the row/column should take. `MainAxisSize.max` (default) means expand to fill the available space; `MainAxisSize.min` means shrink to fit the children.",
+        "**verticalDirection** and **textDirection**: Change the order of children. For example, `verticalDirection: VerticalDirection.up` stacks children from bottom to top."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Alignment Examples"
+    },
+    {
+      "type": "text",
+      "value": "Let's see these properties in action with a practical example. Here’s a Row that spreads its children evenly and centers them vertically:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Row(\n  mainAxisAlignment: MainAxisAlignment.spaceEvenly,\n  crossAxisAlignment: CrossAxisAlignment.center,\n  children: [\n    Container(width: 50, height: 50, color: Colors.red),\n    Container(width: 50, height: 80, color: Colors.green),\n    Container(width: 50, height: 30, color: Colors.blue),\n  ],\n)"
+    },
+    {
+      "type": "text",
+      "value": "The three containers have different heights, but because `crossAxisAlignment` is `center`, they all sit in the middle of the Row's height. And `spaceEvenly` ensures there's equal horizontal space around each."
+    },
+    {
+      "type": "heading",
+      "value": "Making Children Flexible: Expanded and Flexible"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want one child to take all the remaining space, or to share space with others proportionally. That's where `Expanded` and `Flexible` come in. Wrap any child with `Expanded` to make it fill the leftover space along the main axis."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Row(\n  children: [\n    Expanded(\n      flex: 2, // takes 2 parts of the free space\n      child: Container(color: Colors.red),\n    ),\n    Expanded(\n      flex: 1, // takes 1 part\n      child: Container(color: Colors.green),\n    ),\n    Container(width: 50, color: Colors.blue), // fixed width, no expansion\n  ],\n)"
+    },
+    {
+      "type": "text",
+      "value": "In this example, the red container gets twice as much space as the green one, while the blue one keeps its fixed width. The `flex` property (default 1) determines the proportion of free space each Expanded child receives. `Flexible` works similarly but allows its child to be smaller if needed (it doesn't force it to fill all the space)."
+    },
+    {
+      "type": "heading",
+      "value": "Row vs Column: Which One to Use?"
+    },
+    {
+      "type": "text",
+      "value": "Choosing between Row and Column depends entirely on the direction you need: horizontal or vertical. You can also nest them—for example, a Column can contain Rows, and those Rows can contain Columns. This nesting is how you build complex layouts like grids, cards, and entire screens."
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "text",
+      "value": "Here are a few pitfalls to avoid:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Overflow errors**: If your Row or Column has more children than can fit on the screen, you'll see a yellow/black striped area. Fix this by wrapping children that can shrink with `Expanded` or by using `ListView` instead.",
+        "**Confusing mainAxisAlignment and crossAxisAlignment**: Always remember: main = direction of the row/column; cross = the other direction. A good mnemonic: Main axis is the direction you're 'main'ly arranging.",
+        "**Trying to stretch children without constraints**: Using `CrossAxisAlignment.stretch` works only if the Row/Column itself has constraints. If you put a Row inside another unbounded container (like a Column without a fixed height), stretching might not work. Wrap the Row with a `SizedBox` or `Container` with a height to fix this."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Row arranges children horizontally, Column vertically.",
+        "Use `mainAxisAlignment` to control spacing along the main axis.",
+        "Use `crossAxisAlignment` to align children along the opposite axis.",
+        "Wrap children with `Expanded` to make them take available space.",
+        "`mainAxisSize.min` makes the Row/Column only as big as its children.",
+        "Nest Rows and Columns to create complex layouts."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. What's the difference between `mainAxisAlignment` and `crossAxisAlignment`?\n2. How does `Expanded` differ from `Flexible`? Can you give an example when to use each?\n3. How would you create a layout with two buttons at the bottom of the screen, one on the left and one on the right? (Hint: Use a Row with `mainAxisAlignment: spaceBetween` inside a Column.)\n4. What happens if a Row has more children than can fit? How do you fix it?\n5. Can you nest a Row inside a Column? Show a real-world scenario.\n6. Explain the flex factor: if you have three Expanded widgets with flex 1, 2, and 3, how much space does each get?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() {\n  runApp(\n    MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Row & Column Example')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Text('Hello, Flutter!'),\n              SizedBox(height: 20),\n              Row(\n                mainAxisAlignment: MainAxisAlignment.spaceEvenly,\n                children: [\n                  Icon(Icons.favorite, color: Colors.red),\n                  Icon(Icons.thumb_up, color: Colors.blue),\n                  Icon(Icons.share, color: Colors.green),\n                ],\n              ),\n            ],\n          ),\n        ),\n      ),\n    ),\n  );\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does `mainAxisAlignment` control in a Row?",
+      "options": [
+        "Vertical alignment of children",
+        "Horizontal alignment of children",
+        "The order of children",
+        "The size of children"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget would you use to make a child of a Row fill the remaining space?",
+      "options": [
+        "Container",
+        "Padding",
+        "Expanded",
+        "Align"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "If you want to add space evenly between, before, and after children in a Column, which `mainAxisAlignment` do you use?",
+      "options": [
+        "spaceBetween",
+        "spaceAround",
+        "spaceEvenly",
+        "center"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "flutter-container",
+    "flutter-stack",
+    "flutter-text",
+    "flutter-sizedbox",
+    "flutter-expanded"
+  ]
+}

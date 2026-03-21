@@ -1,0 +1,277 @@
+{
+  "slug": "flutter-performance",
+  "course": "Flutter",
+  "title": "Flutter Performance – Optimize Your App for Speed",
+  "meta": {
+    "title": "Flutter Performance: Optimize Your App for Speed",
+    "description": "Learn how to optimize Flutter apps for performance. Tips on using const, keys, ListView.builder, avoiding rebuilds, using RepaintBoundary, async operations, and profiling.",
+    "keywords": [
+      "Flutter performance",
+      "Flutter optimization",
+      "Flutter rebuild",
+      "Flutter const widget",
+      "ListView.builder",
+      "Flutter profiler",
+      "Flutter best practices"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Performance Matters"
+    },
+    {
+      "type": "text",
+      "value": "Performance is a critical aspect of any mobile app. A slow, janky app leads to poor user experience, lower ratings, and reduced engagement. Flutter is designed to deliver high performance out of the box, but certain practices can degrade performance. This guide covers essential optimization techniques to keep your Flutter apps smooth and responsive."
+    },
+    {
+      "type": "heading",
+      "value": "1. Use `const` Widgets Whenever Possible"
+    },
+    {
+      "type": "text",
+      "value": "The `const` keyword tells Flutter that a widget is constant and does not change. This allows Flutter to reuse the same instance across rebuilds, avoiding unnecessary allocations and comparisons."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Instead of:\nText('Hello');\n\n// Use:\nconst Text('Hello');"
+    },
+    {
+      "type": "text",
+      "value": "Marking widgets as `const` is especially important in large lists, complex layouts, and inside build methods that run frequently. Use `const` constructors for your own widgets when possible."
+    },
+    {
+      "type": "heading",
+      "value": "2. Avoid Unnecessary Rebuilds with `const` and `RepaintBoundary`"
+    },
+    {
+      "type": "text",
+      "value": "Flutter rebuilds parts of the widget tree when state changes. To prevent over‑rebuilding:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Use `const` widgets** – as above.",
+        "- **Split large widgets into smaller ones** so only affected parts rebuild.",
+        "- **Use `RepaintBoundary`** to isolate expensive parts of the UI from repaints (e.g., animations).",
+        "- **Avoid creating new closures or objects inside build methods** that cause rebuilds (e.g., pass a reference to a method rather than creating a new `VoidCallback` each time)."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Bad: creates new closure every build\nElevatedButton(\n  onPressed: () { setState(() {}); },\n  child: Text('Click'),\n)\n\n// Good: reference a method\nvoid _onPressed() { setState(() {}); }\n// ...\nElevatedButton(\n  onPressed: _onPressed,\n  child: const Text('Click'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "3. Use `ListView.builder` for Large Lists"
+    },
+    {
+      "type": "text",
+      "value": "`ListView.builder` lazily builds items only when they scroll into view, instead of building all at once. This drastically reduces memory and build time for long lists."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Bad: builds all items upfront\nListView(\n  children: List.generate(1000, (i) => Text('Item $i')),\n)\n\n// Good: builds on demand\nListView.builder(\n  itemCount: 1000,\n  itemBuilder: (context, index) => Text('Item $index'),\n)"
+    },
+    {
+      "type": "text",
+      "value": "Similarly, use `GridView.builder` and `PageView.builder` for other scrollable widgets."
+    },
+    {
+      "type": "heading",
+      "value": "4. Use `ValueKey` to Preserve State"
+    },
+    {
+      "type": "text",
+      "value": "When you reorder or modify a list, using `Key` helps Flutter differentiate widgets and preserve their state. `ValueKey` with a unique identifier is a good practice."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ListView.builder(\n  itemCount: items.length,\n  itemBuilder: (context, index) {\n    return Card(\n      key: ValueKey(items[index].id), // Unique identifier\n      child: Text(items[index].name),\n    );\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "5. Optimize Images and Assets"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Use the correct image format** – WebP is often smaller than PNG.",
+        "- **Provide responsive images** – use `MediaQuery` to load appropriately sized images.",
+        "- **Cache images** – `Image.network` caches automatically; consider using `cached_network_image` for advanced caching.",
+        "- **Avoid using `Image.asset` with large images in many places** – use `precacheImage` to load them ahead of time."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "6. Use `FutureBuilder` and `StreamBuilder` Efficiently"
+    },
+    {
+      "type": "text",
+      "value": "These builders rebuild on each snapshot change. To avoid unnecessary rebuilds, ensure the `future` or `stream` references are stable (e.g., store them in the state)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Bad: creates new Future each build\nFutureBuilder(\n  future: fetchData(), // new Future each time\n  builder: ...\n)\n\n// Good: keep Future in state\nfinal future = fetchData();\nFutureBuilder(\n  future: future,\n  builder: ...\n)"
+    },
+    {
+      "type": "heading",
+      "value": "7. Use `AnimatedBuilder` with `Listenable` to Reduce Rebuilds"
+    },
+    {
+      "type": "text",
+      "value": "Instead of calling `setState` inside an animation that triggers a full rebuild, use `AnimatedBuilder` which only rebuilds the part that depends on the animation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "AnimatedBuilder(\n  animation: controller,\n  builder: (context, child) {\n    return Transform.rotate(\n      angle: controller.value,\n      child: child,\n    );\n  },\n  child: const FlutterLogo(), // This part does not rebuild\n)"
+    },
+    {
+      "type": "heading",
+      "value": "8. Avoid Expensive Operations in `build`"
+    },
+    {
+      "type": "text",
+      "value": "The `build` method can be called many times. Avoid performing heavy computations, file I/O, or network calls inside it. Do them in `initState` or asynchronously."
+    },
+    {
+      "type": "heading",
+      "value": "9. Use `Offstage` to Keep Widgets in the Tree but Hidden"
+    },
+    {
+      "type": "text",
+      "value": "Instead of conditionally building widgets with `if` statements, which may recreate them, you can use `Offstage` to keep them in the tree but hidden. This is useful for maintaining state when toggling visibility."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Offstage(\n  offstage: !_visible,\n  child: MyWidget(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "10. Profile Your App"
+    },
+    {
+      "type": "text",
+      "value": "Use the Flutter DevTools profiler to identify performance bottlenecks. Run your app in profile mode (`flutter run --profile`) and inspect the timeline. Look for:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Long build times",
+        "- Excessive repaints",
+        "- Heavy layout passes",
+        "- Janky animations"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "11. Use `const` for Widgets in Lists"
+    },
+    {
+      "type": "text",
+      "value": "If you have static items in a list, mark them as `const`. This saves memory and build time."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ListView(\n  children: const [\n    ListTile(title: Text('Item 1')),\n    ListTile(title: Text('Item 2')),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "12. Avoid Large `setState` Scopes"
+    },
+    {
+      "type": "text",
+      "value": "Only call `setState` on the part of the widget tree that actually needs to update. If you have a complex widget, consider splitting into smaller widgets so that changes are isolated."
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `const` widgets as much as possible.",
+        "- Use lazy builders (`ListView.builder`) for long lists.",
+        "- Isolate rebuilds with `RepaintBoundary`.",
+        "- Avoid creating new objects in `build` methods.",
+        "- Profile your app to find real bottlenecks.",
+        "- Use keys to preserve widget state.",
+        "- Optimize images and assets.",
+        "- Keep `setState` scopes small."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I know if my app is performing well?",
+      "answer": "Run your app in profile mode (`flutter run --profile`) and use the Flutter DevTools timeline to measure frame rendering times. Aim for 60fps (or 120fps on high‑refresh‑rate screens)."
+    },
+    {
+      "question": "What is the difference between `const` and `final`?",
+      "answer": "`const` means the value is a compile‑time constant; the same instance is reused. `final` means the variable can be set only once, but the value is determined at runtime. For performance, `const` is preferred because it reduces allocations."
+    },
+    {
+      "question": "Does using many `const` widgets affect readability?",
+      "answer": "Not significantly. It's a standard practice in Flutter to mark widgets that are constant. Many Flutter developers consider it a good habit that also communicates intent."
+    },
+    {
+      "question": "How can I debug excessive rebuilds?",
+      "answer": "Use `debugPrint` or the Flutter DevTools 'Rebuild Count' feature. You can also override `debugFillProperties` in your widgets to see when they are rebuilt."
+    },
+    {
+      "question": "What is the cost of using `RepaintBoundary`?",
+      "answer": "It's very cheap. It creates a separate layer, which can reduce repaints of its children. It's especially useful for complex widgets that animate independently."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What is the main benefit of using `const` widgets?",
+      "options": [
+        "Better readability",
+        "Reduced memory usage and rebuilds",
+        "Faster compilation",
+        "Automatic theming"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget should you use for a very long list to avoid building all items at once?",
+      "options": ["ListView", "SingleChildScrollView", "ListView.builder", "Column"],
+      "answer": 2
+    },
+    {
+      "question": "What is the purpose of `RepaintBoundary`?",
+      "options": [
+        "To restrict repaints to a certain area",
+        "To isolate a subtree from repaints",
+        "To create a new isolate",
+        "To prevent the app from repainting at all"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you profile a Flutter app?",
+      "options": [
+        "Run `flutter run --release` and use the DevTools timeline",
+        "Run `flutter run --profile` and use the DevTools timeline",
+        "Run `flutter build` and check the console output",
+        "Use the Android Profiler"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-const",
+    "flutter-listview",
+    "flutter-animations",
+    "flutter-state-management"
+  ]
+}

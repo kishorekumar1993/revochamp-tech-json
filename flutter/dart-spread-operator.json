@@ -1,0 +1,228 @@
+{
+  "slug": "dart-spread-operator",
+  "course": "Dart",
+  "title": "Dart Spread Operator – ... and ...? with Examples",
+  "meta": {
+    "title": "Dart Spread Operator: Combine Collections with ... and ...?",
+    "description": "Learn how to use the spread operator (...) in Dart to combine Lists, Sets, and Maps. Also covers null‑aware spread (...?) and collection if/for with spreads.",
+    "keywords": [
+      "Dart spread operator",
+      "Dart ... operator",
+      "Dart null-aware spread",
+      "Dart collection spread",
+      "Dart combine lists",
+      "Dart spread with map",
+      "Dart collection if for"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the Spread Operator?"
+    },
+    {
+      "type": "text",
+      "value": "The spread operator (`...`) was introduced in Dart 2.3 and provides a concise way to insert multiple elements into a collection. It 'spreads' the elements of an existing collection into a new collection literal. This is especially useful when you want to combine collections, add all elements from one collection to another, or conditionally include elements."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var list1 = [1, 2, 3];\n  var list2 = [0, ...list1, 4]; // [0, 1, 2, 3, 4]\n  print(list2);\n}"
+    },
+    {
+      "type": "text",
+      "value": "The `...list1` expands to `1, 2, 3` inside the new list literal."
+    },
+    {
+      "type": "heading",
+      "value": "Spread with Lists"
+    },
+    {
+      "type": "text",
+      "value": "You can use the spread operator anywhere inside a list literal to insert all elements of another list."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3];\n  var moreNumbers = [4, 5, 6];\n  var combined = [...numbers, ...moreNumbers];\n  print(combined); // [1, 2, 3, 4, 5, 6]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Spread with Sets"
+    },
+    {
+      "type": "text",
+      "value": "The spread operator works similarly with sets. Note that sets maintain uniqueness, so duplicates are automatically removed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var set1 = {1, 2, 3};\n  var set2 = {3, 4, 5};\n  var combined = {...set1, ...set2};\n  print(combined); // {1, 2, 3, 4, 5}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Spread with Maps"
+    },
+    {
+      "type": "text",
+      "value": "For maps, the spread operator inserts all key‑value pairs from another map. If there are duplicate keys, later spreads override earlier ones."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var map1 = {'a': 1, 'b': 2};\n  var map2 = {'b': 3, 'c': 4};\n  var combined = {...map1, ...map2};\n  print(combined); // {a: 1, b: 3, c: 4} (b is overwritten)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Null‑Aware Spread Operator (`...?`)"
+    },
+    {
+      "type": "text",
+      "value": "When the collection you want to spread might be `null`, use the null‑aware spread operator `...?`. If the expression is `null`, it simply contributes nothing instead of throwing an error."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  List<int>? maybeList;\n  var list = [1, 2, ...?maybeList, 3];\n  print(list); // [1, 2, 3] – no error\n  \n  maybeList = [4, 5];\n  list = [1, 2, ...?maybeList, 3];\n  print(list); // [1, 2, 4, 5, 3]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Combining Spread with Collection `if` and `for`"
+    },
+    {
+      "type": "text",
+      "value": "You can mix spread operators with collection `if` and `for` to build collections dynamically."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  bool includeExtra = true;\n  var extraNumbers = [4, 5];\n  \n  var numbers = [\n    1,\n    2,\n    if (includeExtra) ...extraNumbers,\n    3,\n  ];\n  print(numbers); // [1, 2, 4, 5, 3]\n}"
+    },
+    {
+      "type": "text",
+      "value": "Notice that inside the `if` block we used `...extraNumbers` to spread the list. This is a very powerful pattern for conditional inclusion of multiple elements."
+    },
+    {
+      "type": "heading",
+      "value": "Using Spread with Function Arguments"
+    },
+    {
+      "type": "text",
+      "value": "Although the spread operator is primarily for collection literals, you can also use it to pass a list as multiple positional arguments to a function using the `...` syntax inside a function call (this is a different feature called 'spread in argument lists' introduced in Dart 3.0)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void printNumbers(int a, int b, int c) {\n  print('$a, $b, $c');\n}\n\nvoid main() {\n  var numbers = [1, 2, 3];\n  printNumbers(...numbers); // 1, 2, 3\n}"
+    },
+    {
+      "type": "text",
+      "value": "This is useful when you have a list and want to pass its elements as individual arguments."
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Combine multiple lists\n  var fruits = ['apple', 'banana'];\n  var berries = ['strawberry', 'blueberry'];\n  var allFruits = [...fruits, ...berries];\n  print('Fruits: $allFruits');\n  \n  // Merge maps (later keys override)\n  var defaults = {'theme': 'light', 'fontSize': 14};\n  var userPrefs = {'theme': 'dark'};\n  var settings = {...defaults, ...userPrefs};\n  print('Settings: $settings'); // {theme: dark, fontSize: 14}\n  \n  // Null‑aware spread\n  List<String>? extraColors;\n  var colors = ['red', 'green', ...?extraColors, 'blue'];\n  print('Colors: $colors');\n  \n  // Conditional spread with if\n  bool showAdmin = true;\n  var adminFeatures = ['manage users', 'view logs'];\n  var menu = [\n    'home',\n    'profile',\n    if (showAdmin) ...adminFeatures,\n    'settings',\n  ];\n  print('Menu: $menu');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- The spread operator `...` inserts all elements of a collection into another collection literal.",
+        "- Works with Lists, Sets, and Maps.",
+        "- For maps, later spreads override keys from earlier spreads.",
+        "- Use `...?` to safely spread a nullable collection – if it's `null`, nothing is inserted.",
+        "- Combine with collection `if` and `for` for dynamic collection building.",
+        "- Spread can also be used to pass list elements as individual function arguments (Dart 3+)."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the spread operator and why would I use it?",
+      "answer": "The spread operator `...` expands an iterable (like a list, set, or map) into individual elements inside a collection literal. It's useful for combining collections, inserting all elements of one collection into another, and conditionally including multiple elements in a concise way."
+    },
+    {
+      "question": "What is the difference between `...` and `...?`?",
+      "answer": "`...` spreads a collection, but throws an error if the collection is `null`. `...?` is the null‑aware spread operator – if the collection is `null`, it simply adds nothing (no error). Always use `...?` when the spread expression might be `null`."
+    },
+    {
+      "question": "Can I use the spread operator with Sets?",
+      "answer": "Yes, you can use `...` inside a set literal to include all elements of another set or list. Duplicates are automatically removed because sets enforce uniqueness. For example: `{1, 2, ...anotherSet, 3}`."
+    },
+    {
+      "question": "How does spread work with Maps?",
+      "answer": "When spreading a map, all key‑value pairs are inserted. If the same key appears in multiple maps, later spreads override earlier ones. For example: `{...map1, ...map2}` – if both have the same key, the value from `map2` will be used."
+    },
+    {
+      "question": "Can I combine spread with collection `if` and `for`?",
+      "answer": "Yes, you can use `...` inside a collection `if` or `for` to conditionally insert multiple elements. For example: `[if (show) ...extraItems]` adds all elements of `extraItems` only if `show` is true."
+    },
+    {
+      "question": "What happens if I spread an empty collection?",
+      "answer": "Spreading an empty collection adds nothing. For example, `[1, 2, ...[], 3]` results in `[1, 2, 3]`. This is safe and useful when the collection might be empty."
+    },
+    {
+      "question": "Can I use spread inside a function call?",
+      "answer": "In Dart 3.0 and later, you can use `...` to pass a list as multiple positional arguments to a function. For example: `printNumbers(...[1, 2, 3])` calls `printNumbers(1, 2, 3)`. The list length must match the number of parameters."
+    },
+    {
+      "question": "Are there any performance concerns with using spread?",
+      "answer": "Spreading creates a new collection and copies elements, so for very large collections it may have a performance cost. However, for typical use cases it's efficient and the readability benefits outweigh any minor overhead."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  var listA = [1, 2, 3];\n  var listB = [4, 5, 6];\n  var combined = [...listA, ...listB];\n  print('Combined: $combined');\n  \n  var mapA = {'x': 10, 'y': 20};\n  var mapB = {'y': 99, 'z': 30};\n  var merged = {...mapA, ...mapB};\n  print('Merged map: $merged');\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the output of this code?\n\nvoid main() {\n  var a = [1, 2];\n  var b = [3, 4];\n  var c = [0, ...a, ...b, 5];\n  print(c);\n}",
+      "options": ["[0, 1, 2, 3, 4, 5]", "[0, [1, 2], [3, 4], 5]", "[0, 1, 2, 5]", "Error"],
+      "answer": 0
+    },
+    {
+      "question": "What does the null‑aware spread operator `...?` do when the spread expression is null?",
+      "options": [
+        "Throws an exception",
+        "Inserts a null element",
+        "Inserts nothing",
+        "Skips the entire collection literal"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Given `var map1 = {'a': 1}; var map2 = {'a': 2, 'b': 3};`, what is `{...map1, ...map2}`?",
+      "options": [
+        "{a: 1, a: 2, b: 3}",
+        "{a: 1, b: 3}",
+        "{a: 2, b: 3}",
+        "{a: 1, b: 3, a: 2}"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which operator would you use to safely spread a nullable list inside another list?",
+      "options": ["...", "...?", "??", "?."],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-list",
+    "dart-set",
+    "dart-map",
+    "dart-collection-methods",
+    "dart-conditions"
+  ]
+}

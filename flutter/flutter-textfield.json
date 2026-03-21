@@ -1,0 +1,263 @@
+{
+  "slug": "flutter-textfield",
+  "course": "Flutter",
+  "title": "Flutter TextField – Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter TextField Tutorial: Input Handling, Controllers, Focus, and Formatting",
+    "description": "Learn how to use TextField and TextFormField in Flutter. Master controllers, focus management, input validation, formatting, and best practices for building professional forms.",
+    "keywords": [
+      "Flutter TextField",
+      "TextFormField",
+      "TextEditingController",
+      "Flutter input",
+      "Flutter focus management",
+      "Flutter text input formatting",
+      "Flutter form field"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is TextField in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "`TextField` is a Material Design widget that allows users to enter text. It's one of the most commonly used input widgets in Flutter. For forms with validation, you'll often use `TextFormField`, which is a wrapper around `TextField` that integrates with the `Form` widget. This guide covers both, with a focus on practical usage, customization, and best practices."
+    },
+    {
+      "type": "heading",
+      "value": "Basic TextField"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "TextField(\n  decoration: InputDecoration(\n    labelText: 'Enter your name',\n    hintText: 'e.g., John Doe',\n    border: OutlineInputBorder(),\n  ),\n)"
+    },
+    {
+      "type": "text",
+      "value": "The simplest form of a `TextField` uses an `InputDecoration` to provide labels, hint text, borders, and icons. The `labelText` appears inside the field when empty and moves above when focused."
+    },
+    {
+      "type": "heading",
+      "value": "Controlling Text with TextEditingController"
+    },
+    {
+      "type": "text",
+      "value": "To read or modify the text programmatically, use a `TextEditingController`. You can also listen to changes with `addListener`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final _controller = TextEditingController();\n\n@override\nvoid dispose() {\n  _controller.dispose();\n  super.dispose();\n}\n\nTextField(\n  controller: _controller,\n  decoration: InputDecoration(labelText: 'Name'),\n)\n\n// Read the current text\nString text = _controller.text;\n\n// Set text\n_controller.text = 'Initial value';\n\n// Listen to changes\n_controller.addListener(() {\n  print(_controller.text);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Input Decoration"
+    },
+    {
+      "type": "text",
+      "value": "`InputDecoration` is used to customize the appearance. Key properties:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`labelText`**: A label that animates above the field when focused.",
+        "- **`hintText`**: A hint that disappears when the user starts typing.",
+        "- **`prefixIcon` / `suffixIcon`**: Icons at the start/end of the field.",
+        "- **`prefixText` / `suffixText`**: Text before/after the input.",
+        "- **`border` / `enabledBorder` / `focusedBorder`**: Define the field's border.",
+        "- **`filled`** and **`fillColor`**: For filled background.",
+        "- **`errorText`**: Displays an error message below the field.",
+        "- **`counterText`**: Character counter text."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "TextField(\n  decoration: InputDecoration(\n    labelText: 'Username',\n    hintText: 'Choose a unique username',\n    prefixIcon: Icon(Icons.person),\n    suffixIcon: Icon(Icons.check),\n    filled: true,\n    fillColor: Colors.grey.shade100,\n    border: OutlineInputBorder(\n      borderRadius: BorderRadius.circular(12),\n    ),\n    errorText: _hasError ? 'Username already taken' : null,\n    counterText: '${_controller.text.length}/20',\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Keyboard Types and Actions"
+    },
+    {
+      "type": "text",
+      "value": "Control the keyboard type and action buttons with `keyboardType` and `textInputAction`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "TextField(\n  keyboardType: TextInputType.emailAddress,\n  textInputAction: TextInputAction.next,\n  decoration: InputDecoration(labelText: 'Email'),\n)\n\nTextField(\n  keyboardType: TextInputType.number,\n  textInputAction: TextInputAction.done,\n  decoration: InputDecoration(labelText: 'Age'),\n)"
+    },
+    {
+      "type": "text",
+      "value": "Common `TextInputAction` values: `next`, `done`, `go`, `search`, `send`. The action button on the keyboard changes accordingly."
+    },
+    {
+      "type": "heading",
+      "value": "Obscure Text (Password Fields)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "TextField(\n  obscureText: true,\n  decoration: InputDecoration(labelText: 'Password'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Focus Management"
+    },
+    {
+      "type": "text",
+      "value": "Use `FocusNode` to control focus programmatically and respond to focus changes. Always dispose of focus nodes to avoid memory leaks."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final _focusNode = FocusNode();\n\n@override\nvoid dispose() {\n  _focusNode.dispose();\n  super.dispose();\n}\n\nTextField(\n  focusNode: _focusNode,\n  decoration: InputDecoration(labelText: 'Focus me'),\n)\n\n// Request focus\n_focusNode.requestFocus();\n\n// Remove focus\n_focusNode.unfocus();\n\n// Listen to focus changes\n_focusNode.addListener(() {\n  if (_focusNode.hasFocus) {\n    print('Field focused');\n  }\n});"
+    },
+    {
+      "type": "text",
+      "value": "For moving focus between fields, use `FocusScope.of(context).nextFocus()` or set `textInputAction` to `TextInputAction.next` and handle `onFieldSubmitted`."
+    },
+    {
+      "type": "heading",
+      "value": "Input Formatters"
+    },
+    {
+      "type": "text",
+      "value": "`inputFormatters` allow you to restrict or modify the input as the user types. Common formatters: `FilteringTextInputFormatter`, `LengthLimitingTextInputFormatter`, and custom ones."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/services.dart';\n\nTextField(\n  inputFormatters: [\n    FilteringTextInputFormatter.digitsOnly, // only digits\n    LengthLimitingTextInputFormatter(10),  // max 10 characters\n  ],\n  decoration: InputDecoration(labelText: 'Phone'),\n)\n\n// Custom formatter example\nclass CapitalizeFormatter extends TextInputFormatter {\n  @override\n  TextEditingValue formatEditUpdate(\n    TextEditingValue oldValue,\n    TextEditingValue newValue,\n  ) {\n    return newValue.copyWith(\n      text: newValue.text.toUpperCase(),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "TextFormField for Forms"
+    },
+    {
+      "type": "text",
+      "value": "`TextFormField` is a variant that integrates with `Form` and provides validation and saving capabilities. Use it inside a `Form` widget with a `GlobalKey<FormState>`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final _formKey = GlobalKey<FormState>();\n\nForm(\n  key: _formKey,\n  child: Column(\n    children: [\n      TextFormField(\n        decoration: InputDecoration(labelText: 'Name'),\n        validator: (value) {\n          if (value == null || value.isEmpty) {\n            return 'Please enter your name';\n          }\n          return null;\n        },\n        onSaved: (value) {\n          // Save the value to a variable\n        },\n      ),\n      ElevatedButton(\n        onPressed: () {\n          if (_formKey.currentState!.validate()) {\n            _formKey.currentState!.save();\n            // Process data\n          }\n        },\n        child: Text('Submit'),\n      ),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Handling User Input in Real Time"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "TextField(\n  onChanged: (value) {\n    // Called every time the text changes\n    setState(() {\n      _text = value;\n    });\n  },\n  onSubmitted: (value) {\n    // Called when the user presses the submit button on the keyboard\n    print('Submitted: $value');\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Always dispose of `TextEditingController` and `FocusNode` objects to prevent memory leaks.",
+        "- Use `TextFormField` with `Form` for validation and saving.",
+        "- Provide clear `InputDecoration` with appropriate `labelText` and `hintText`.",
+        "- For numeric inputs, set `keyboardType: TextInputType.number` and consider using `inputFormatters` to enforce digits only.",
+        "- Use `textInputAction` to control keyboard behavior (next, done, etc.).",
+        "- Avoid heavy logic inside `onChanged`; use throttling or debouncing if needed."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Not disposing controllers and focus nodes** – leads to memory leaks.",
+        "- **Using `TextField` inside a `Form` without `TextFormField`** – validation won't work.",
+        "- **Forgetting to wrap `TextField` in a `Material` or `MaterialApp`** – text field will look plain and won't get Material styling.",
+        "- **Using `onChanged` for validation without debouncing** – may cause performance issues.",
+        "- **Not handling the case when `controller.text` is null** – always check before using.",
+        "- **Setting `obscureText` to true but still storing password in plain text** – remember to hash before storing."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `TextField` for simple text input; `TextFormField` for validation and forms.",
+        "-Control text with `TextEditingController`.",
+        "- Customize appearance with `InputDecoration`.",
+        "- Manage focus with `FocusNode`.",
+        "- Restrict input with `inputFormatters`.",
+        "- Use `keyboardType` and `textInputAction` for keyboard behavior.",
+        "- Always dispose of resources in `dispose()`."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `TextField` and `TextFormField`?",
+      "answer": "`TextField` is a basic text input widget. `TextFormField` is a convenience widget that wraps `TextField` and adds integration with `Form` – it includes `validator` and `onSaved` callbacks, and can be automatically validated by the parent `Form`."
+    },
+    {
+      "question": "How do I clear a TextField programmatically?",
+      "answer": "Call `_controller.clear()` on the associated `TextEditingController`. This also works with `TextFormField`."
+    },
+    {
+      "question": "How do I set the initial value of a TextField?",
+      "answer": "Either set `_controller.text = 'initial'` before building, or use the `initialValue` property of `TextFormField` (but note that `initialValue` is overridden by the controller's text if both are set)."
+    },
+    {
+      "question": "How do I create a search field with a clear button?",
+      "answer": "Add a `suffixIcon` that calls `_controller.clear()` when tapped. Also listen to changes to show the clear button only when text is not empty."
+    },
+    {
+      "question": "Can I use custom fonts in TextField?",
+      "answer": "Yes, use the `style` property with a `TextStyle` that includes `fontFamily`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(const MyApp());\n\nclass MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'TextField Demo',\n      home: Scaffold(\n        appBar: AppBar(title: const Text('TextField Example')),\n        body: Padding(\n          padding: const EdgeInsets.all(20),\n          child: const TextFieldDemo(),\n        ),\n      ),\n    );\n  }\n}\n\nclass TextFieldDemo extends StatefulWidget {\n  const TextFieldDemo({super.key});\n\n  @override\n  _TextFieldDemoState createState() => _TextFieldDemoState();\n}\n\nclass _TextFieldDemoState extends State<TextFieldDemo> {\n  final _controller = TextEditingController();\n  final _focusNode = FocusNode();\n  String _lastSubmitted = '';\n\n  @override\n  void dispose() {\n    _controller.dispose();\n    _focusNode.dispose();\n    super.dispose();\n  }\n\n  void _submit() {\n    setState(() {\n      _lastSubmitted = _controller.text;\n    });\n    _controller.clear();\n    _focusNode.unfocus();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        TextField(\n          controller: _controller,\n          focusNode: _focusNode,\n          decoration: InputDecoration(\n            labelText: 'Enter something',\n            hintText: 'Type here...',\n            border: OutlineInputBorder(),\n            suffixIcon: _controller.text.isNotEmpty\n                ? IconButton(\n                    icon: const Icon(Icons.clear),\n                    onPressed: () => _controller.clear(),\n                  )\n                : null,\n          ),\n          onSubmitted: (_) => _submit(),\n        ),\n        const SizedBox(height: 20),\n        ElevatedButton(\n          onPressed: _submit,\n          child: const Text('Submit'),\n        ),\n        const SizedBox(height: 20),\n        Text('Last submitted: $_lastSubmitted'),\n      ],\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget is used to read and modify the text programmatically?",
+      "options": ["TextEditingController", "TextInputFormatter", "FocusNode", "InputDecoration"],
+      "answer": 0
+    },
+    {
+      "question": "How do you set a TextField to only accept numbers?",
+      "options": [
+        "Set `keyboardType: TextInputType.number`",
+        "Use `inputFormatters: [FilteringTextInputFormatter.digitsOnly]`",
+        "Both A and B",
+        "Use `obscureText: true`"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What method must be called to dispose of a TextEditingController?",
+      "options": ["dispose()", "clear()", "release()", "close()"],
+      "answer": 0
+    },
+    {
+      "question": "Which property is used to show a message below the TextField when validation fails?",
+      "options": ["errorText", "helperText", "labelText", "hintText"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-form",
+    "flutter-validation",
+    "flutter-input-decorations",
+    "flutter-focus"
+  ]
+}

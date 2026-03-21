@@ -1,0 +1,191 @@
+{
+  "slug": "flutter-streambuilder",
+  "course": "Flutter",
+  "title": "Flutter StreamBuilder Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter StreamBuilder Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter StreamBuilder to handle real‑time data streams. Understand AsyncSnapshot, connection states, error handling, and best practices with simple examples.",
+    "keywords": [
+      "Flutter StreamBuilder",
+      "StreamBuilder",
+      "async snapshot",
+      "connectionState",
+      "real-time data",
+      "stream builder",
+      "Flutter streams"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is StreamBuilder in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "StreamBuilder is a widget that listens to a `Stream` and rebuilds its UI whenever a new event is emitted. It's perfect for handling real‑time data like live chats, location updates, Firebase snapshots, or any continuous flow of data. StreamBuilder works similarly to `FutureBuilder`, but for multiple asynchronous events over time."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "To use StreamBuilder, you provide a `stream` and a `builder` function. The builder is called with an `AsyncSnapshot` each time the stream emits data, completes, or throws an error."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "StreamBuilder<int>(\n  stream: _counterStream(), // your stream\n  builder: (context, snapshot) {\n    if (snapshot.hasError) {\n      return Text('Error: ${snapshot.error}');\n    }\n    if (!snapshot.hasData) {\n      return CircularProgressIndicator();\n    }\n    return Text('Count: ${snapshot.data}');\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Understanding AsyncSnapshot with Streams"
+    },
+    {
+      "type": "text",
+      "value": "The `AsyncSnapshot` for a stream has the same properties as for a future, but the `connectionState` can be more nuanced:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**connectionState**: \n - `ConnectionState.none`: No stream provided yet. \n - `ConnectionState.waiting`: Stream is established but no data received yet. \n - `ConnectionState.active`: Stream is active and data is arriving. \n - `ConnectionState.done`: Stream has completed (closed).",
+        "**hasData**: Whether the snapshot contains non‑null data (the latest emitted value).",
+        "**data**: The latest value emitted by the stream.",
+        "**hasError**: Whether the stream has emitted an error.",
+        "**error**: The error object (if any)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Building UI for Different States"
+    },
+    {
+      "type": "text",
+      "value": "A typical pattern handles waiting, active, error, and done states. Here's a complete example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "StreamBuilder<int>(\n  stream: _timerStream,\n  builder: (context, snapshot) {\n    if (snapshot.connectionState == ConnectionState.waiting) {\n      return CircularProgressIndicator();\n    } else if (snapshot.hasError) {\n      return Text('Error: ${snapshot.error}');\n    } else if (!snapshot.hasData) {\n      return Text('No data');\n    } else {\n      return Text('Current number: ${snapshot.data}');\n    }\n  },\n)"
+    },
+    {
+      "type": "text",
+      "value": "Note: For streams that never complete (like a continuous timer), `connectionState` will remain `ConnectionState.active` forever. You should rely on `hasData` to check if a value is available."
+    },
+    {
+      "type": "heading",
+      "value": "Real‑time Example: A Counter Stream"
+    },
+    {
+      "type": "text",
+      "value": "Let's create a simple stream that emits an incrementing number every second and use StreamBuilder to display it."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterStreamExample extends StatefulWidget {\n  @override\n  _CounterStreamExampleState createState() => _CounterStreamExampleState();\n}\n\nclass _CounterStreamExampleState extends State<CounterStreamExample> {\n  late Stream<int> _counterStream;\n\n  @override\n  void initState() {\n    super.initState();\n    _counterStream = _createCounterStream();\n  }\n\n  Stream<int> _createCounterStream() async* {\n    int i = 0;\n    while (true) {\n      await Future.delayed(Duration(seconds: 1));\n      yield i++;\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return StreamBuilder<int>(\n      stream: _counterStream,\n      builder: (context, snapshot) {\n        if (snapshot.hasError) {\n          return Text('Error: ${snapshot.error}');\n        }\n        if (!snapshot.hasData) {\n          return CircularProgressIndicator();\n        }\n        return Text(\n          'Count: ${snapshot.data}',\n          style: TextStyle(fontSize: 48),\n        );\n      },\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Important: Where to Create the Stream"
+    },
+    {
+      "type": "text",
+      "value": "Just like with FutureBuilder, you should never create the stream directly inside the `build` method. That would cause a new stream to be created on every rebuild, breaking the connection and causing memory leaks. Instead, create the stream in `initState` (for a stateful widget) or keep it as a final variable in a provider / repository."
+    },
+    {
+      "type": "heading",
+      "value": "Handling Stream Errors and Completion"
+    },
+    {
+      "type": "text",
+      "value": "Streams can emit errors or complete. Use `snapshot.hasError` to show an error widget, and you can detect completion by checking `snapshot.connectionState == ConnectionState.done`. For example, you might show a message when a live stream ends."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "if (snapshot.connectionState == ConnectionState.done) {\n  return Text('Stream finished');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Creating the stream inside `build`**: Leads to stream re‑creation, losing previous events and causing memory leaks.",
+        "**Not handling `hasData` correctly**: For streams that may not emit data immediately, always check `snapshot.hasData` before accessing `snapshot.data`.",
+        "**Forgetting to cancel streams**: In a real app, you should cancel the stream subscription when the widget is disposed (e.g., using `StreamController` and disposing in `dispose`).",
+        "**Misunderstanding `connectionState`**: For infinite streams, `connectionState` is always `ConnectionState.active`. Don't wait for `done` to show data.",
+        "**Assuming the stream will provide data immediately**: Show a loading indicator until `hasData` becomes true.",
+        "**Not handling errors**: Always include an error case to avoid crashing the app."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "StreamBuilder listens to a stream and rebuilds on every new event.",
+        "Use `AsyncSnapshot` properties: `connectionState`, `hasData`, `data`, `hasError`, `error`.",
+        "For infinite streams, check `hasData` rather than waiting for `ConnectionState.done`.",
+        "Create the stream once (e.g., in `initState`) and reuse it.",
+        "Always handle errors and loading states for a robust UI.",
+        "Remember to cancel stream subscriptions in `dispose` if you manage streams manually (e.g., with `StreamController`)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. How does StreamBuilder differ from FutureBuilder?\n2. What are the possible values of `ConnectionState` and what do they mean for a stream?\n3. Why should you avoid creating a stream inside the `build` method?\n4. How would you handle a stream that might not emit data immediately?\n5. How do you cancel a stream subscription when using StreamBuilder?\n6. Can StreamBuilder be used with a broadcast stream? What's the difference?\n7. How do you show a loading indicator while waiting for the first data from a stream?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('StreamBuilder Example')),\n        body: Center(\n          child: StreamExample(),\n        ),\n      ),\n    );\n  }\n}\n\nclass StreamExample extends StatefulWidget {\n  @override\n  _StreamExampleState createState() => _StreamExampleState();\n}\n\nclass _StreamExampleState extends State<StreamExample> {\n  late Stream<int> _numberStream;\n\n  @override\n  void initState() {\n    super.initState();\n    _numberStream = _createNumberStream();\n  }\n\n  Stream<int> _createNumberStream() async* {\n    for (int i = 1; i <= 10; i++) {\n      await Future.delayed(Duration(seconds: 1));\n      yield i;\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        StreamBuilder<int>(\n          stream: _numberStream,\n          builder: (context, snapshot) {\n            if (snapshot.hasError) {\n              return Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.red));\n            }\n            if (snapshot.connectionState == ConnectionState.waiting) {\n              return CircularProgressIndicator();\n            }\n            if (!snapshot.hasData) {\n              return Text('No data');\n            }\n            return Text(\n              'Number: ${snapshot.data}',\n              style: TextStyle(fontSize: 32),\n            );\n          },\n        ),\n        SizedBox(height: 20),\n        ElevatedButton(\n          onPressed: () {\n            setState(() {\n              _numberStream = _createNumberStream();\n            });\n          },\n          child: Text('Restart Stream'),\n        ),\n      ],\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does `ConnectionState.active` mean for a StreamBuilder?",
+      "options": [
+        "The stream has not yet started",
+        "The stream is emitting events (or waiting for the next one)",
+        "The stream has completed",
+        "An error occurred"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you access the latest value emitted by a stream inside StreamBuilder's builder?",
+      "options": [
+        "snapshot.value",
+        "snapshot.data",
+        "snapshot.latest",
+        "snapshot.current"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Where should you create the stream that you pass to a StreamBuilder to avoid issues?",
+      "options": [
+        "Inside the build method",
+        "In initState (or once, outside build)",
+        "Inside the builder function",
+        "Anywhere, it doesn't matter"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-futurebuilder",
+    "flutter-async",
+    "flutter-statefulwidget",
+    "flutter-streams",
+    "flutter-provider"
+  ]
+}

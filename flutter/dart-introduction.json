@@ -1,0 +1,213 @@
+{
+  "slug": "dart-introduction",
+  "course": "Dart",
+  "title": "Dart Programming Language Introduction for Beginners",
+  "meta": {
+    "title": "Dart Introduction: Learn Dart Basics with Examples",
+    "description": "Complete introduction to Dart programming language. Understand syntax, variables, data types, and write your first Dart program. Perfect for Flutter beginners.",
+    "keywords": [
+      "Dart introduction",
+      "Dart programming language",
+      "Dart basics",
+      "Dart tutorial for beginners",
+      "Dart syntax",
+      "learn Dart",
+      "Dart for Flutter"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Dart?"
+    },
+    {
+      "type": "text",
+      "value": "Dart is a client-optimized programming language developed by Google. It is designed for building fast, scalable applications across multiple platforms, including mobile, web, desktop, and server. Dart is the primary language used for Flutter, Google's UI toolkit for building natively compiled applications."
+    },
+    {
+      "type": "heading",
+      "value": "Why Learn Dart?"
+    },
+    {
+      "type": "text",
+      "value": "Dart is easy to learn, especially if you have experience with languages like Java, JavaScript, or C#. It offers features like strong typing, null safety, async/await support, and a rich set of core libraries. With Dart, you can build high-performance apps using Flutter, write server-side code, and even create command-line tools."
+    },
+    {
+      "type": "heading",
+      "value": "Your First Dart Program"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  print('Hello, Dart!');\n}"
+    },
+    {
+      "type": "text",
+      "value": "Every Dart program starts with the `main()` function. The `print()` function outputs text to the console."
+    },
+    {
+      "type": "heading",
+      "value": "Variables and Data Types"
+    },
+    {
+      "type": "text",
+      "value": "Dart is a statically typed language but also supports type inference via `var`. Common data types include:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- int – integer numbers",
+        "- double – floating-point numbers",
+        "- String – text",
+        "- bool – boolean values (true/false)",
+        "- List – ordered collection of objects",
+        "- Map – key-value pairs"
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var name = 'Alice';          // type inferred as String\n  int age = 30;                 // explicit int\n  double height = 5.8;           // double\n  bool isStudent = false;        // boolean\n  List<int> scores = [90, 85, 88]; // list of integers\n  Map<String, dynamic> person = { // map with dynamic values\n    'name': 'Bob',\n    'age': 25\n  };\n  \n  print('Name: $name, Age: $age');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Control Flow"
+    },
+    {
+      "type": "text",
+      "value": "Dart supports standard control flow statements:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int number = 10;\n  \n  // if-else\n  if (number > 0) {\n    print('Positive');\n  } else {\n    print('Non-positive');\n  }\n  \n  // for loop\n  for (int i = 0; i < 5; i++) {\n    print('i = $i');\n  }\n  \n  // while loop\n  int count = 0;\n  while (count < 3) {\n    print('count $count');\n    count++;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Functions"
+    },
+    {
+      "type": "text",
+      "value": "Functions are first-class citizens in Dart. You can define functions with or without return types, and even pass functions as parameters."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "int add(int a, int b) {\n  return a + b;\n}\n\nvoid main() {\n  var result = add(5, 3);\n  print('Sum: $result'); // Sum: 8\n  \n  // anonymous function\n  var multiply = (int a, int b) => a * b;\n  print(multiply(4, 2)); // 8\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Null Safety"
+    },
+    {
+      "type": "text",
+      "value": "Dart supports sound null safety, meaning variables cannot contain null unless you explicitly allow it. This prevents null reference errors. Use `?` after a type to make it nullable, and use `!` to assert non-null."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String? name; // nullable\n  name = null;  // allowed\n  \n  String greeting = 'Hello';\n  // String? nullableGreeting = greeting; // OK\n  \n  // Using null-aware operators\n  print(name?.length); // prints null\n  \n  // If you're sure it's not null, use !\n  // print(name!.length); // would throw if name is null\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Classes and Objects"
+    },
+    {
+      "type": "text",
+      "value": "Dart is an object-oriented language. Classes define blueprints for objects."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Person {\n  String name;\n  int age;\n  \n  Person(this.name, this.age); // constructor\n  \n  void sayHello() {\n    print('Hello, my name is $name');\n  }\n}\n\nvoid main() {\n  var person = Person('Alice', 30);\n  person.sayHello();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Async Programming"
+    },
+    {
+      "type": "text",
+      "value": "Dart provides `Future` and `async/await` for asynchronous programming, making it easy to handle tasks like network requests or file I/O."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<String> fetchData() async {\n  await Future.delayed(Duration(seconds: 2));\n  return 'Data loaded';\n}\n\nvoid main() async {\n  print('Loading...');\n  var data = await fetchData();\n  print(data); // prints after 2 seconds\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Dart is a modern, client‑optimized language.",
+        "- It supports both JIT and AOT compilation.",
+        "- Strong typing with type inference and null safety.",
+        "- Object‑oriented with classes and mixins.",
+        "- Excellent for Flutter development."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is Dart used for?",
+      "answer": "Dart is a general‑purpose programming language used to build mobile, desktop, web, and server applications. It is best known as the language behind the Flutter UI framework for building natively compiled cross‑platform apps."
+    },
+    {
+      "question": "Is Dart easy to learn for beginners?",
+      "answer": "Yes, Dart has a clean syntax similar to languages like Java, JavaScript, and C#. Its strong typing and null safety help catch errors early, making it a great choice for beginners."
+    },
+    {
+      "question": "Do I need to learn Dart before Flutter?",
+      "answer": "Yes, Flutter uses Dart, so understanding Dart fundamentals (variables, functions, classes, async) will make learning Flutter much easier. However, you can learn Dart alongside Flutter."
+    },
+    {
+      "question": "What platforms does Dart support?",
+      "answer": "Dart can be compiled to native code for mobile (iOS, Android) and desktop (Windows, macOS, Linux), as well as to JavaScript for the web. This makes it a true multi‑platform language."
+    },
+    {
+      "question": "What is null safety in Dart?",
+      "answer": "Null safety is a feature that prevents variables from containing `null` unless explicitly allowed. It eliminates a whole class of null reference errors and makes code more robust. Introduced in Dart 2.12."
+    },
+    {
+      "question": "Is Dart only for Flutter?",
+      "answer": "No, Dart can be used for a variety of applications beyond Flutter: command‑line tools, server‑side applications (with frameworks like Aqueduct or Angel), and even full‑stack web development."
+    },
+    {
+      "question": "How does Dart compare to JavaScript?",
+      "answer": "Dart is statically typed and compiled, offering better performance and tooling for large‑scale apps. It has features like isolates for concurrency and optional sound null safety, whereas JavaScript is dynamically typed and runs in browsers."
+    },
+    {
+      "question": "What tools do I need to start coding in Dart?",
+      "answer": "You need the Dart SDK, which includes the compiler, VM, and package manager (`pub`). You can write code in any text editor, but using an IDE like VS Code or IntelliJ with Dart plugins is recommended."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  print('Welcome to Dart!');\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the entry point of every Dart program?",
+      "options": ["init()", "start()", "main()", "run()"],
+      "answer": 2
+    },
+    {
+      "question": "Which keyword is used to declare a variable with type inference?",
+      "options": ["let", "var", "auto", "dynamic"],
+      "answer": 1
+    },
+    {
+      "question": "How do you make a variable nullable in Dart?",
+      "options": ["Add ? after the type", "Use nullable keyword", "Use * after the type", "Variables are nullable by default"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "dart-variables",
+    "dart-functions",
+    "dart-classes",
+    "dart-null-safety"
+  ]
+}

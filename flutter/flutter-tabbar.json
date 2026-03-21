@@ -1,0 +1,203 @@
+{
+  "slug": "flutter-tabbar",
+  "course": "Flutter",
+  "title": "Flutter TabBar – Complete Guide with TabBar and TabBarView",
+  "meta": {
+    "title": "Flutter TabBar Tutorial: Create Tabs with TabBar and TabBarView",
+    "description": "Learn how to use TabBar and TabBarView in Flutter. Master DefaultTabController, custom TabController, customizing tabs, and building tabbed interfaces.",
+    "keywords": [
+      "Flutter TabBar",
+      "Flutter TabBarView",
+      "DefaultTabController",
+      "TabController",
+      "Flutter tabs",
+      "Flutter bottom navigation",
+      "Flutter tab layout"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is TabBar in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "`TabBar` and `TabBarView` are widgets that together create a tabbed interface. The `TabBar` displays a row of tabs (usually at the top of the screen), and the `TabBarView` displays the content for each tab. Users can switch between tabs by tapping the tab or swiping horizontally on the content. Flutter provides `DefaultTabController` for simple cases and `TabController` for more control."
+    },
+    {
+      "type": "heading",
+      "value": "Basic TabBar with DefaultTabController"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to add tabs is to wrap your `Scaffold` with `DefaultTabController`. You specify the number of tabs, and the controller manages the state automatically. Place the `TabBar` in the `AppBar`'s `bottom` property, and the `TabBarView` in the `body`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "DefaultTabController(\n  length: 3,\n  child: Scaffold(\n    appBar: AppBar(\n      title: Text('Tabs Demo'),\n      bottom: TabBar(\n        tabs: [\n          Tab(text: 'Tab 1'),\n          Tab(text: 'Tab 2'),\n          Tab(text: 'Tab 3'),\n        ],\n      ),\n    ),\n    body: TabBarView(\n      children: [\n        Center(child: Text('Content of Tab 1')),\n        Center(child: Text('Content of Tab 2')),\n        Center(child: Text('Content of Tab 3')),\n      ],\n    ),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Using TabBarView with Different Content"
+    },
+    {
+      "type": "text",
+      "value": "The `TabBarView`'s children correspond to the tabs in order. You can place any widget, such as `ListView`, `Column`, or custom widgets. For performance, consider using `ListView` or `SingleChildScrollView` if the content might be large."
+    },
+    {
+      "type": "heading",
+      "value": "Customizing Tab Appearance"
+    },
+    {
+      "type": "text",
+      "value": "`TabBar` and `Tab` widgets offer several customization options:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`labelColor`** and **`unselectedLabelColor`**: Text color of selected/unselected tabs.",
+        "- **`indicator`**: A `Decoration` for the tab indicator (underline). Common options: `BoxDecoration`, `UnderlineTabIndicator`.",
+        "- **`indicatorSize`**: `TabBarIndicatorSize.label` (fits text) or `TabBarIndicatorSize.tab` (fills the whole tab).",
+        "- **`indicatorColor`**: Color of the indicator.",
+        "- **`labelStyle`** and **`unselectedLabelStyle`**: Text styles.",
+        "- **`padding`**: Padding around the entire tab bar."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "TabBar(\n  labelColor: Colors.white,\n  unselectedLabelColor: Colors.white70,\n  indicator: BoxDecoration(\n    borderRadius: BorderRadius.circular(30),\n    color: Colors.blue,\n  ),\n  indicatorSize: TabBarIndicatorSize.label,\n  tabs: [\n    Tab(text: 'Home'),\n    Tab(text: 'Profile'),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Tab with Icons and Text"
+    },
+    {
+      "type": "text",
+      "value": "You can combine icons and text using the `Tab` widget's `icon` and `text` properties, or use a custom child."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "TabBar(\n  tabs: [\n    Tab(icon: Icon(Icons.home), text: 'Home'),\n    Tab(icon: Icon(Icons.person), text: 'Profile'),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Using TabController Manually"
+    },
+    {
+      "type": "text",
+      "value": "When you need more control (e.g., programmatically changing tabs, animating to a tab), you can create a `TabController` manually. You must dispose it in `dispose()`. Also, you need to provide a `TickerProvider` (usually `this` with `SingleTickerProviderStateMixin`)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TabDemo extends StatefulWidget {\n  @override\n  _TabDemoState createState() => _TabDemoState();\n}\n\nclass _TabDemoState extends State<TabDemo> with SingleTickerProviderStateMixin {\n  late TabController _tabController;\n\n  @override\n  void initState() {\n    super.initState();\n    _tabController = TabController(length: 3, vsync: this);\n  }\n\n  @override\n  void dispose() {\n    _tabController.dispose();\n    super.dispose();\n  }\n\n  void _goToSecondTab() {\n    _tabController.animateTo(1);\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(\n        title: Text('Manual Controller'),\n        bottom: TabBar(\n          controller: _tabController,\n          tabs: [\n            Tab(text: 'One'),\n            Tab(text: 'Two'),\n            Tab(text: 'Three'),\n          ],\n        ),\n      ),\n      body: TabBarView(\n        controller: _tabController,\n        children: [\n          Center(child: Text('One')),\n          Center(child: Text('Two')),\n          Center(child: Text('Three')),\n        ],\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: _goToSecondTab,\n        child: Icon(Icons.arrow_forward),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Nested Tabs"
+    },
+    {
+      "type": "text",
+      "value": "You can nest tabs by using another `DefaultTabController` or `TabController` inside a tab's content. Be careful to manage the state correctly; nested tab controllers need their own `TickerProvider`."
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting to set the number of tabs in `DefaultTabController`**: `length` must match the number of tabs.",
+        "- **Mixing `TabBar` and `TabBarView` with different controllers**: They must use the same controller.",
+        "- **Not disposing the `TabController`**: Causes memory leaks.",
+        "- **Using a `TabBar` without a `TabBarView`** or vice versa: The tabs won't work correctly.",
+        "- **Overriding the `TabBarView`'s size**: `TabBarView` automatically sizes to the largest child; if you constrain it, you might get clipping."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `DefaultTabController` for simple, static tabs.",
+        "- Use manual `TabController` when you need to change tabs programmatically.",
+        "- Always dispose of `TabController` in `dispose`.",
+        "- For performance, avoid rebuilding large content inside `TabBarView` unnecessarily; use `const` or `AutomaticKeepAliveClientMixin` to preserve state.",
+        "- Consider using `Scrollable` tabs if the number of tabs is large."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `TabBar` displays the tabs; `TabBarView` displays the content.",
+        "- `DefaultTabController` simplifies tab management for common cases.",
+        "- Use `TabController` for custom control (animation, programmatic switching).",
+        "- Customize tab appearance with `labelColor`, `indicator`, `indicatorSize`, etc.",
+        "- Always match the number of tabs with the number of children in `TabBarView`."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I make the TabBar appear below the AppBar?",
+      "answer": "Place the `TabBar` in the `AppBar`'s `bottom` property. The `AppBar` will automatically position it below the title."
+    },
+    {
+      "question": "How do I change the tab programmatically?",
+      "answer": "If you have a `TabController`, call `_tabController.animateTo(index)` or `_tabController.index = index` (without animation)."
+    },
+    {
+      "question": "How can I keep the state of each tab when switching?",
+      "answer": "Wrap the content of each tab with `AutomaticKeepAliveClientMixin` or use a `PageView` inside `TabBarView` with `keepPage: true`. The default `TabBarView` does not preserve state, so you need to implement it manually if needed."
+    },
+    {
+      "question": "How do I create tabs with rounded corners (like a pill)?",
+      "answer": "Use a custom `indicator` decoration: `indicator: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.blue)`."
+    },
+    {
+      "question": "Can I use TabBar without an AppBar?",
+      "answer": "Yes, you can place `TabBar` anywhere, but it still needs a `TabController` (either from `DefaultTabController` or a custom one)."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'TabBar Demo',\n      home: DefaultTabController(\n        length: 3,\n        child: Scaffold(\n          appBar: AppBar(\n            title: Text('Tabs Demo'),\n            bottom: TabBar(\n              tabs: [\n                Tab(icon: Icon(Icons.home), text: 'Home'),\n                Tab(icon: Icon(Icons.search), text: 'Search'),\n                Tab(icon: Icon(Icons.person), text: 'Profile'),\n              ],\n              labelColor: Colors.white,\n              unselectedLabelColor: Colors.white70,\n              indicator: BoxDecoration(\n                borderRadius: BorderRadius.circular(30),\n                color: Colors.blue,\n              ),\n              indicatorSize: TabBarIndicatorSize.label,\n            ),\n          ),\n          body: TabBarView(\n            children: [\n              Center(child: Text('Home Page', style: TextStyle(fontSize: 24))),\n              Center(child: Text('Search Page', style: TextStyle(fontSize: 24))),\n              Center(child: Text('Profile Page', style: TextStyle(fontSize: 24))),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget provides a simple way to manage tabs without writing a custom controller?",
+      "options": ["TabController", "DefaultTabController", "TabBarController", "TabBarView"],
+      "answer": 1
+    },
+    {
+      "question": "Where should you place the `TabBar` to have it inside the app bar?",
+      "options": ["title", "leading", "bottom", "actions"],
+      "answer": 2
+    },
+    {
+      "question": "What must you do with a custom `TabController` to avoid memory leaks?",
+      "options": ["Call `dispose()` in `dispose` method", "Set it to null", "Call `close()`", "Nothing, it's automatic"],
+      "answer": 0
+    },
+    {
+      "question": "How do you customize the tab indicator to be a rounded rectangle?",
+      "options": ["indicatorColor", "indicator: BoxDecoration(...)", "indicatorStyle", "indicatorShape"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-appbar",
+    "flutter-scaffold",
+    "flutter-navigation",
+    "flutter-bottom-navigation-bar"
+  ]
+}

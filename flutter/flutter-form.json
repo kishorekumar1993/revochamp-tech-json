@@ -1,0 +1,292 @@
+{
+  "slug": "flutter-form",
+  "course": "Flutter",
+  "title": "Flutter Form – Complete Guide with Validation and Submission",
+  "meta": {
+    "title": "Flutter Form Tutorial: Validation, Submission, and Best Practices",
+    "description": "Learn how to build forms in Flutter with TextFormField, validation, custom validators, async checks, focus management, dynamic forms, and state management integration.",
+    "keywords": [
+      "Flutter Form",
+      "TextFormField",
+      "Form validation",
+      "Flutter form validation",
+      "Flutter TextFormField example",
+      "Flutter form submission",
+      "GlobalKey<FormState>",
+      "Flutter form best practices"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Form in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "A `Form` widget in Flutter is a container for grouping and validating multiple form fields. It helps manage the state of text fields, performs validation, and handles submission. The `Form` widget works in conjunction with `TextFormField` (or custom form field widgets) and a `GlobalKey<FormState>` to access the form's state. Forms are essential for collecting user input, such as login credentials, registration details, or any data that requires validation."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Structure of a Form"
+    },
+    {
+      "type": "text",
+      "value": "A typical form consists of:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- A `GlobalKey<FormState>` to uniquely identify the form and access its methods.",
+        "- A `Form` widget that contains the form fields.",
+        "- `TextFormField` widgets (or other form fields) with `validator` functions.",
+        "- A button to submit or validate the form."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final _formKey = GlobalKey<FormState>();\n\nForm(\n  key: _formKey,\n  child: Column(\n    children: [\n      TextFormField(\n        validator: (value) {\n          if (value == null || value.isEmpty) {\n            return 'Please enter some text';\n          }\n          return null;\n        },\n      ),\n      ElevatedButton(\n        onPressed: () {\n          if (_formKey.currentState!.validate()) {\n            // Form is valid, proceed\n          }\n        },\n        child: Text('Submit'),\n      ),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "TextFormField Properties"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`controller`**: A `TextEditingController` to control and retrieve text content.",
+        "- **`validator`**: A function that returns a `String?`; if non‑null, it shows an error.",
+        "- **`onSaved`**: Called when `form.currentState!.save()` is called, allowing you to store the field's value.",
+        "- **`decoration`**: `InputDecoration` to customize appearance (labels, icons, error text).",
+        "- **`keyboardType`**: Sets the keyboard type (e.g., `TextInputType.emailAddress`).",
+        "- **`obscureText`**: For password fields.",
+        "- **`autofocus`**: Focuses the field when the form appears."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "InputDecoration and Styling"
+    },
+    {
+      "type": "text",
+      "value": "`InputDecoration` allows you to add labels, hint text, prefix icons, error messages, and borders. Here's an example of a well‑styled text field:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "TextFormField(\n  decoration: InputDecoration(\n    labelText: 'Email',\n    hintText: 'Enter your email',\n    prefixIcon: Icon(Icons.email),\n    border: OutlineInputBorder(\n      borderRadius: BorderRadius.circular(12),\n    ),\n    errorStyle: TextStyle(color: Colors.red),\n  ),\n  validator: (value) {\n    if (value == null || value.isEmpty) return 'Email is required';\n    if (!value.contains('@')) return 'Enter a valid email';\n    return null;\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Built‑in Validators"
+    },
+    {
+      "type": "text",
+      "value": "Here are some common validation patterns you can use in `validator` functions:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Required field**: `if (value == null || value.isEmpty) return 'Required';`",
+        "- **Email validation**: `if (!RegExp(r'^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$').hasMatch(value)) return 'Invalid email';`",
+        "- **Minimum length**: `if (value.length < 6) return 'At least 6 characters';`",
+        "- **Numeric only**: `if (double.tryParse(value) == null) return 'Must be a number';`",
+        "- **Password confirmation**: Compare two fields by storing values in the state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Custom Validators"
+    },
+    {
+      "type": "text",
+      "value": "You can create reusable validator functions to keep your code DRY. For example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "String? validateEmail(String? value) {\n  if (value == null || value.isEmpty) return 'Email is required';\n  if (!value.contains('@')) return 'Invalid email format';\n  return null;\n}\n\nString? validatePassword(String? value) {\n  if (value == null || value.isEmpty) return 'Password is required';\n  if (value.length < 6) return 'Password must be at least 6 characters';\n  return null;\n}\n\n// Usage\nTextFormField(validator: validateEmail);\nTextFormField(validator: validatePassword);"
+    },
+    {
+      "type": "heading",
+      "value": "Async Validation"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to check a field against a remote server (e.g., username availability). You can make the validator `async` and return a `Future<String?>`. To integrate with `Form`, you'll need to manage the loading state manually. Here's a pattern using `FutureBuilder` or a stateful approach:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AsyncValidatorExample extends StatefulWidget {\n  @override\n  _AsyncValidatorExampleState createState() => _AsyncValidatorExampleState();\n}\n\nclass _AsyncValidatorExampleState extends State<AsyncValidatorExample> {\n  final _formKey = GlobalKey<FormState>();\n  String? _usernameError;\n  bool _checking = false;\n\n  Future<void> _checkUsername(String username) async {\n    setState(() => _checking = true);\n    await Future.delayed(Duration(seconds: 1)); // simulate network call\n    final exists = username == 'admin'; // pretend check\n    setState(() {\n      _checking = false;\n      _usernameError = exists ? 'Username already taken' : null;\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Form(\n      key: _formKey,\n      child: Column(\n        children: [\n          TextFormField(\n            decoration: InputDecoration(\n              labelText: 'Username',\n              errorText: _usernameError,\n              suffixIcon: _checking\n                  ? SizedBox(\n                      width: 20,\n                      height: 20,\n                      child: CircularProgressIndicator(strokeWidth: 2),\n                    )\n                  : null,\n            ),\n            onChanged: (value) {\n              if (_usernameError != null) _checkUsername(value);\n            },\n            onFieldSubmitted: (value) => _checkUsername(value),\n            validator: (value) {\n              if (value == null || value.isEmpty) return 'Required';\n              return null; // will be overridden by async result\n            },\n          ),\n          ElevatedButton(\n            onPressed: () async {\n              if (_formKey.currentState!.validate()) {\n                // Also wait for async validation if pending\n                await _checkUsername(_formKey.currentState!.fields.first.controller!.text);\n                if (_usernameError == null) {\n                  // proceed\n                }\n              }\n            },\n            child: Text('Submit'),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Form Submission and Saving"
+    },
+    {
+      "type": "text",
+      "value": "After validation, you can retrieve the values using `onSaved` callbacks or directly from `TextEditingController`s. A common pattern is to use `onSaved` to populate a model class:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class User {\n  String? name;\n  String? email;\n}\n\nfinal _formKey = GlobalKey<FormState>();\nfinal _user = User();\n\nForm(\n  key: _formKey,\n  child: Column(\n    children: [\n      TextFormField(\n        onSaved: (value) => _user.name = value,\n        validator: (value) => value == null || value.isEmpty ? 'Required' : null,\n      ),\n      TextFormField(\n        onSaved: (value) => _user.email = value,\n        validator: validateEmail,\n      ),\n      ElevatedButton(\n        onPressed: () {\n          if (_formKey.currentState!.validate()) {\n            _formKey.currentState!.save();\n            // Now _user contains the values\n            print('User: ${_user.name}, ${_user.email}');\n          }\n        },\n        child: Text('Submit'),\n      ),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Focus Management"
+    },
+    {
+      "type": "text",
+      "value": "To move focus from one field to another automatically (e.g., pressing 'Next' on keyboard), use `FocusNode`s and `FocusScope`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final _focusName = FocusNode();\nfinal _focusEmail = FocusNode();\n\n@override\nvoid dispose() {\n  _focusName.dispose();\n  _focusEmail.dispose();\n  super.dispose();\n}\n\n// In the build method:\nTextFormField(\n  focusNode: _focusName,\n  textInputAction: TextInputAction.next,\n  onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_focusEmail),\n)\nTextFormField(\n  focusNode: _focusEmail,\n  textInputAction: TextInputAction.done,\n  onFieldSubmitted: (_) => _formKey.currentState!.validate(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Dynamic Forms (Adding/Removing Fields)"
+    },
+    {
+      "type": "text",
+      "value": "For forms with a dynamic number of fields (e.g., multiple email addresses), you can maintain a list of controllers and rebuild the form. Use a `List` of `TextEditingController`s and `FocusNode`s, and update the UI when the list changes. Remember to dispose of them when removed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DynamicForm extends StatefulWidget {\n  @override\n  _DynamicFormState createState() => _DynamicFormState();\n}\n\nclass _DynamicFormState extends State<DynamicForm> {\n  final _formKey = GlobalKey<FormState>();\n  final List<TextEditingController> _controllers = [TextEditingController()];\n  final List<FocusNode> _focusNodes = [FocusNode()];\n\n  void _addField() {\n    setState(() {\n      _controllers.add(TextEditingController());\n      _focusNodes.add(FocusNode());\n    });\n  }\n\n  void _removeField(int index) {\n    setState(() {\n      _controllers[index].dispose();\n      _focusNodes[index].dispose();\n      _controllers.removeAt(index);\n      _focusNodes.removeAt(index);\n    });\n  }\n\n  @override\n  void dispose() {\n    for (var c in _controllers) c.dispose();\n    for (var f in _focusNodes) f.dispose();\n    super.dispose();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Form(\n      key: _formKey,\n      child: Column(\n        children: [\n          for (int i = 0; i < _controllers.length; i++)\n            Row(\n              children: [\n                Expanded(\n                  child: TextFormField(\n                    controller: _controllers[i],\n                    focusNode: _focusNodes[i],\n                    validator: (value) => value!.isEmpty ? 'Required' : null,\n                  ),\n                ),\n                IconButton(\n                  icon: Icon(Icons.remove_circle),\n                  onPressed: () => _removeField(i),\n                ),\n              ],\n            ),\n          ElevatedButton(\n            onPressed: _addField,\n            child: Text('Add Field'),\n          ),\n          ElevatedButton(\n            onPressed: () {\n              if (_formKey.currentState!.validate()) {\n                final values = _controllers.map((c) => c.text).toList();\n                print(values);\n              }\n            },\n            child: Text('Submit'),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced: Form with BLoC or Provider"
+    },
+    {
+      "type": "text",
+      "value": "For complex forms, consider using a state management solution. For example, with BLoC, you can emit validation states, loading states, and submission results. Here's a simplified pattern using `ValueNotifier` or `ChangeNotifier` to separate form logic from UI."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FormModel extends ChangeNotifier {\n  String? name;\n  String? email;\n  String? nameError;\n  String? emailError;\n\n  void validateName(String value) {\n    nameError = value.isEmpty ? 'Name required' : null;\n    name = value;\n    notifyListeners();\n  }\n\n  void validateEmail(String value) {\n    final regex = RegExp(r'^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$');\n    emailError = !regex.hasMatch(value) ? 'Invalid email' : null;\n    email = value;\n    notifyListeners();\n  }\n\n  bool isValid() => nameError == null && emailError == null;\n\n  void submit() {\n    if (isValid()) {\n      // submit data\n    }\n  }\n}\n\n// In UI, use ChangeNotifierProvider and Consumer"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Always use a `GlobalKey<FormState>` to reference the form.",
+        "- Use `onSaved` instead of reading controllers after submission for cleaner separation.",
+        "- Provide clear, actionable error messages.",
+        "- Use `InputDecoration`'s `errorText` for asynchronous validation.",
+        "- Dispose of `TextEditingController`s and `FocusNode`s to avoid memory leaks.",
+        "- For large forms, consider splitting into smaller widgets to improve performance.",
+        "- Test validation logic with unit tests."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Not using a `GlobalKey` for the form** – you won't be able to call `validate()` or `save()`.",
+        "- **Forgetting to dispose controllers** – causes memory leaks.",
+        "- **Using `TextFormField` without a `Form` ancestor** – validation won't work.",
+        "- **Validating fields on every keystroke without debouncing** – can cause performance issues, especially with async validation.",
+        "- **Not handling `null` values in validators** – always check for null before accessing `value.length`, etc.",
+        "- **Hardcoding error messages** – consider using a localization package for multi‑language apps."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `Form` and `GlobalKey<FormState>` to manage form state.",
+        "- Each `TextFormField` can have a `validator` and `onSaved`.",
+        "- `InputDecoration` customizes appearance and error display.",
+        "- Use `FocusNode`s and `FocusScope` for smooth keyboard navigation.",
+        "- Dynamic forms require careful management of controllers and focus nodes.",
+        "- For complex state, integrate with BLoC or Provider.",
+        "- Always clean up resources to prevent memory leaks."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What's the difference between `Form` and `FormField`?",
+      "answer": "`Form` is a container widget that groups `FormField` widgets (like `TextFormField`). `FormField` is a base class for custom form fields. You'll rarely use `FormField` directly; use `TextFormField` or other built‑in fields."
+    },
+    {
+      "question": "How do I reset a form after submission?",
+      "answer": "Call `_formKey.currentState!.reset()` to clear all fields and reset their validation state. You can also manually clear controllers if you need custom behavior."
+    },
+    {
+      "question": "Can I use `Form` without a `GlobalKey`?",
+      "answer": "You can, but then you cannot call `validate()` or `save()` because you won't have a reference to the form's state. It's strongly recommended to use a key."
+    },
+    {
+      "question": "How do I show validation errors only after the user has interacted with a field?",
+      "answer": "By default, `TextFormField` shows errors only after the user has attempted to submit the form (if `autovalidateMode` is `AutovalidateMode.disabled`). To show errors on user interaction, set `autovalidateMode: AutovalidateMode.onUserInteraction` on the `Form` or on each `TextFormField`."
+    },
+    {
+      "question": "How do I handle a form with many fields efficiently?",
+      "answer": "Consider breaking the form into smaller widgets using `StatefulWidget` and using `Provider` or `Bloc` to manage state. Also use `const` widgets where possible to avoid unnecessary rebuilds."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(const MyApp());\n\nclass MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Form Demo',\n      home: Scaffold(\n        appBar: AppBar(title: const Text('Registration Form')),\n        body: Padding(\n          padding: const EdgeInsets.all(16.0),\n          child: const RegistrationForm(),\n        ),\n      ),\n    );\n  }\n}\n\nclass RegistrationForm extends StatefulWidget {\n  const RegistrationForm({super.key});\n\n  @override\n  _RegistrationFormState createState() => _RegistrationFormState();\n}\n\nclass _RegistrationFormState extends State<RegistrationForm> {\n  final _formKey = GlobalKey<FormState>();\n  final _nameController = TextEditingController();\n  final _emailController = TextEditingController();\n  final _passwordController = TextEditingController();\n\n  @override\n  void dispose() {\n    _nameController.dispose();\n    _emailController.dispose();\n    _passwordController.dispose();\n    super.dispose();\n  }\n\n  String? _validateEmail(String? value) {\n    if (value == null || value.isEmpty) return 'Email is required';\n    final regex = RegExp(r'^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$');\n    if (!regex.hasMatch(value)) return 'Enter a valid email';\n    return null;\n  }\n\n  String? _validatePassword(String? value) {\n    if (value == null || value.isEmpty) return 'Password is required';\n    if (value.length < 6) return 'Password must be at least 6 characters';\n    return null;\n  }\n\n  void _submitForm() {\n    if (_formKey.currentState!.validate()) {\n      ScaffoldMessenger.of(context).showSnackBar(\n        const SnackBar(content: Text('Form submitted successfully!')),\n      );\n      // Clear fields after submission\n      _formKey.currentState!.reset();\n      _nameController.clear();\n      _emailController.clear();\n      _passwordController.clear();\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Form(\n      key: _formKey,\n      child: Column(\n        crossAxisAlignment: CrossAxisAlignment.stretch,\n        children: [\n          TextFormField(\n            controller: _nameController,\n            decoration: InputDecoration(\n              labelText: 'Full Name',\n              prefixIcon: Icon(Icons.person),\n              border: OutlineInputBorder(),\n            ),\n            validator: (value) =>\n                value!.isEmpty ? 'Please enter your name' : null,\n          ),\n          const SizedBox(height: 16),\n          TextFormField(\n            controller: _emailController,\n            decoration: InputDecoration(\n              labelText: 'Email',\n              prefixIcon: Icon(Icons.email),\n              border: OutlineInputBorder(),\n            ),\n            keyboardType: TextInputType.emailAddress,\n            validator: _validateEmail,\n          ),\n          const SizedBox(height: 16),\n          TextFormField(\n            controller: _passwordController,\n            decoration: InputDecoration(\n              labelText: 'Password',\n              prefixIcon: Icon(Icons.lock),\n              border: OutlineInputBorder(),\n            ),\n            obscureText: true,\n            validator: _validatePassword,\n          ),\n          const SizedBox(height: 24),\n          ElevatedButton(\n            onPressed: _submitForm,\n            child: const Text('Register'),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the purpose of a GlobalKey<FormState>?",
+      "options": [
+        "To uniquely identify the form and access its state methods",
+        "To store the form's data",
+        "To handle keyboard focus",
+        "To apply a theme to the form"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Which method is called to trigger validation of all form fields?",
+      "options": ["_formKey.currentState.check()", "_formKey.currentState.validate()", "_formKey.currentState.valid()", "_formKey.validate()"],
+      "answer": 1
+    },
+    {
+      "question": "What does the `onSaved` callback do?",
+      "options": [
+        "Saves the field's value to a variable",
+        "Triggers when the form is submitted",
+        "Validates the field asynchronously",
+        "Focuses the next field"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "How do you move focus to the next field when the user presses 'Next' on the keyboard?",
+      "options": [
+        "Set `textInputAction: TextInputAction.next` and use `FocusScope.of(context).nextFocus()`",
+        "It happens automatically",
+        "Use `FocusNode` and `onFieldSubmitted`",
+        "Both A and C are correct"
+      ],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "flutter-textfield",
+    "flutter-validation",
+    "flutter-bloc",
+    "flutter-provider"
+  ]
+}

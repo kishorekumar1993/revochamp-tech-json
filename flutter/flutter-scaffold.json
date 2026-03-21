@@ -1,0 +1,198 @@
+{
+  "slug": "flutter-scaffold",
+  "course": "Flutter",
+  "title": "Flutter Scaffold Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Scaffold Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Scaffold to implement the basic material design layout structure. Understand appBar, body, floatingActionButton, drawer, bottomNavigationBar, and more with simple examples.",
+    "keywords": [
+      "Flutter Scaffold",
+      "Scaffold widget",
+      "Material Design layout",
+      "appBar",
+      "body",
+      "floatingActionButton",
+      "drawer",
+      "bottomNavigationBar"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Scaffold in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Scaffold is a widget that provides a consistent, high‑level structure for a screen that follows Material Design guidelines. It acts as a container for common visual components like an app bar, a body (main content), a floating action button, a drawer, a bottom navigation bar, and a persistent footer. Almost every screen in a Material App will use a Scaffold as its root widget."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "The simplest Scaffold contains just a `body`. But you'll usually add an `appBar` as well. Here's the most basic example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Scaffold(\n  appBar: AppBar(\n    title: Text('My App'),\n  ),\n  body: Center(\n    child: Text('Hello, Flutter!'),\n  ),\n)"
+    },
+    {
+      "type": "text",
+      "value": "This creates a screen with a standard app bar at the top and a centered text in the main area."
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties of Scaffold"
+    },
+    {
+      "type": "text",
+      "value": "Scaffold offers many properties to build rich interfaces. Here are the most important ones:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**appBar**: An `AppBar` displayed at the top of the screen. Typically contains a title, navigation icon, and actions.",
+        "**body**: The primary content of the screen. Usually a widget like `Center`, `Column`, `ListView`, or `Container`.",
+        "**floatingActionButton**: A circular button that hovers over the body, used for primary actions. Often paired with `floatingActionButtonLocation`.",
+        "**drawer**: A slide‑out panel from the left edge (or right, depending on locale) for navigation. Provide a `Drawer` widget.",
+        "**endDrawer**: Similar to `drawer` but slides from the right.",
+        "**bottomNavigationBar**: A bar at the bottom of the screen with icons and labels for top‑level navigation.",
+        "**bottomSheet**: A persistent sheet anchored to the bottom of the screen.",
+        "**backgroundColor**: The background color of the body area (defaults to `ThemeData.scaffoldBackgroundColor`).",
+        "**resizeToAvoidBottomInset**: Whether the body should resize when the keyboard appears (default `true`).",
+        "**drawerScrimColor**: The color of the scrim that shades the rest of the screen when the drawer is open.",
+        "**floatingActionButtonLocation**: Controls where the FAB is placed (e.g., `FloatingActionButtonLocation.centerFloat`)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Adding a Floating Action Button"
+    },
+    {
+      "type": "text",
+      "value": "A Floating Action Button (FAB) is a common way to trigger a primary action. Add it via `floatingActionButton` and optionally set its location."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Scaffold(\n  appBar: AppBar(title: Text('FAB Example')),\n  body: Center(child: Text('Press the + button')),\n  floatingActionButton: FloatingActionButton(\n    onPressed: () {\n      // Add your action\n    },\n    child: Icon(Icons.add),\n  ),\n  floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Using a Drawer"
+    },
+    {
+      "type": "text",
+      "value": "A drawer slides in from the left and typically contains navigation options. Provide a `Drawer` widget as the `drawer` property."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Scaffold(\n  appBar: AppBar(title: Text('Drawer Example')),\n  drawer: Drawer(\n    child: ListView(\n      padding: EdgeInsets.zero,\n      children: [\n        DrawerHeader(\n          decoration: BoxDecoration(color: Colors.blue),\n          child: Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),\n        ),\n        ListTile(\n          leading: Icon(Icons.home),\n          title: Text('Home'),\n          onTap: () {\n            Navigator.pop(context); // close drawer\n            // navigate to home\n          },\n        ),\n        ListTile(\n          leading: Icon(Icons.settings),\n          title: Text('Settings'),\n          onTap: () {\n            Navigator.pop(context);\n            // navigate to settings\n          },\n        ),\n      ],\n    ),\n  ),\n  body: Center(child: Text('Swipe from left to open drawer')),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Adding a Bottom Navigation Bar"
+    },
+    {
+      "type": "text",
+      "value": "For switching between different sections of your app, use a `BottomNavigationBar`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Scaffold(\n  appBar: AppBar(title: Text('Bottom Nav Example')),\n  body: Center(child: Text('Home Page')),\n  bottomNavigationBar: BottomNavigationBar(\n    items: const [\n      BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),\n      BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),\n      BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),\n    ],\n    currentIndex: 0,\n    onTap: (index) {\n      // handle navigation\n    },\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Keyboard with resizeToAvoidBottomInset"
+    },
+    {
+      "type": "text",
+      "value": "By default, when the keyboard appears, Scaffold resizes its body to avoid the keyboard. This is controlled by `resizeToAvoidBottomInset` (default `true`). If you set it to `false`, the body will be overlapped by the keyboard. Usually you want it `true`."
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Forgetting to return a Scaffold in a route**: Every screen (page) should have its own Scaffold as the top‑level widget, not nested inside another Scaffold.",
+        "**Using multiple Scaffolds on one screen**: Only one Scaffold per screen. If you need a different layout inside, use other widgets (like Column, Container) but not another Scaffold.",
+        "**Not closing the drawer after navigation**: When a user taps a drawer item, you should call `Navigator.pop(context)` to close the drawer before navigating, unless you want a custom behavior.",
+        "**Misplacing the FloatingActionButton**: FAB should be inside the Scaffold, not inside the body; otherwise it might not position correctly.",
+        "**Ignoring `resizeToAvoidBottomInset` when needed**: If you have a text field near the bottom and the keyboard covers it, set `resizeToAvoidBottomInset: true` (the default) to automatically adjust.",
+        "**Overlooking the `drawerScrimColor`**: The semi‑transparent overlay when the drawer is open can be customized for better UX."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Scaffold implements the basic Material Design layout structure.",
+        "It must be a child of a `MaterialApp` (directly or indirectly) to inherit theme and navigation.",
+        "Only one Scaffold per screen – it's the top‑level container for that route.",
+        "Use `appBar`, `body`, `floatingActionButton`, `drawer`, and `bottomNavigationBar` to build full‑featured screens.",
+        "The body takes all remaining space after the app bar and bottom bar.",
+        "`resizeToAvoidBottomInset` helps when the keyboard appears."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. What is the purpose of Scaffold in Flutter?\n2. Can you have two Scaffolds on the same screen? Why or why not?\n3. How do you add a drawer to a screen? How do you close it programmatically?\n4. Explain the difference between `drawer` and `endDrawer`.\n5. How does `resizeToAvoidBottomInset` work? When would you set it to false?\n6. What is `floatingActionButtonLocation` and what are some common options?\n7. How do you change the background color of the body area in a Scaffold?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() {\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: MyHomePage(),\n    );\n  }\n}\n\nclass MyHomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(\n        title: Text('Scaffold Demo'),\n        actions: [\n          IconButton(icon: Icon(Icons.search), onPressed: () {}),\n        ],\n      ),\n      body: Center(\n        child: Text('Hello, Scaffold!'),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: () {},\n        child: Icon(Icons.add),\n      ),\n      drawer: Drawer(\n        child: ListView(\n          padding: EdgeInsets.zero,\n          children: [\n            DrawerHeader(\n              decoration: BoxDecoration(color: Colors.blue),\n              child: Text('Menu', style: TextStyle(color: Colors.white, fontSize: 24)),\n            ),\n            ListTile(\n              leading: Icon(Icons.home),\n              title: Text('Home'),\n              onTap: () => Navigator.pop(context),\n            ),\n            ListTile(\n              leading: Icon(Icons.settings),\n              title: Text('Settings'),\n              onTap: () => Navigator.pop(context),\n            ),\n          ],\n        ),\n      ),\n      bottomNavigationBar: BottomNavigationBar(\n        items: const [\n          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),\n          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorites'),\n          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),\n        ],\n        currentIndex: 0,\n        onTap: (index) {},\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the primary purpose of the Scaffold widget?",
+      "options": [
+        "To handle network requests",
+        "To provide a basic Material Design layout structure",
+        "To manage state",
+        "To create animations"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which property of Scaffold is used to display a slide‑out navigation panel from the left?",
+      "options": [
+        "endDrawer",
+        "drawer",
+        "bottomNavigationBar",
+        "navigationDrawer"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What does `resizeToAvoidBottomInset` control?",
+      "options": [
+        "Whether the app bar resizes when the keyboard opens",
+        "Whether the body resizes to avoid the keyboard",
+        "Whether the floating action button moves up with the keyboard",
+        "Whether the drawer closes when the keyboard opens"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-appbar",
+    "flutter-drawer",
+    "flutter-bottomnavigationbar",
+    "flutter-container",
+    "flutter-floatingactionbutton"
+  ]
+}

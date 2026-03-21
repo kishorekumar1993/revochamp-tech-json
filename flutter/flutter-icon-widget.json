@@ -1,0 +1,216 @@
+
+{
+  "slug": "flutter-icon-widget",
+  "course": "Flutter",
+  "title": "Flutter Icon Widget – A Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter Icon Widget Tutorial: Icons, Colors, Sizes, and Custom Icons",
+    "description": "Learn how to use the Icon widget in Flutter to display material icons, custom icons, and adjust size, color, and semantic label for accessibility.",
+    "keywords": [
+      "Flutter Icon",
+      "Icon widget",
+      "Flutter Icons class",
+      "Flutter custom icon",
+      "IconButton",
+      "Flutter material icons",
+      "Flutter icon size"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the Icon Widget?"
+    },
+    {
+      "type": "text",
+      "value": "The `Icon` widget in Flutter displays a graphical icon from the Material Design icon set or a custom image. It is lightweight and can be used anywhere you need a visual symbol – in buttons, list tiles, app bars, or as standalone elements. The most common source of icons is the `Icons` class, which contains hundreds of pre‑defined Material icons. You can also use custom icons from assets, font icons, or SVG."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Icon(Icons.star)"
+    },
+    {
+      "type": "text",
+      "value": "This will display the star icon with the default size (24 logical pixels) and the default color (usually black or the current theme's color)."
+    },
+    {
+      "type": "heading",
+      "value": "Customizing Size and Color"
+    },
+    {
+      "type": "text",
+      "value": "You can adjust the icon's size and color using the `size` and `color` properties. These override the default theme values."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Icon(\n  Icons.favorite,\n  size: 40,\n  color: Colors.red,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "The Icons Class"
+    },
+    {
+      "type": "text",
+      "value": "The `Icons` class provides static constants for all Material Design icons. For a complete list, check the [Flutter Icons documentation](https://api.flutter.dev/flutter/material/Icons-class.html). Common icons include: `Icons.home`, `Icons.search`, `Icons.person`, `Icons.settings`, `Icons.arrow_back`, `Icons.more_vert`, etc."
+    },
+    {
+      "type": "heading",
+      "value": "Using Icon with Theme"
+    },
+    {
+      "type": "text",
+      "value": "If you don't specify a color, the `Icon` widget inherits its color from the nearest `IconTheme` or the default `ThemeData`'s icon color. For example, inside an `AppBar`, icons are typically white, while in the body they may be black or grey."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Icon(Icons.home) // inherits theme color\n\nIconTheme(\n  data: IconThemeData(color: Colors.green, size: 30),\n  child: Icon(Icons.check_circle),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Semantics and Accessibility"
+    },
+    {
+      "type": "text",
+      "value": "For accessibility, you should provide a semantic label (text alternative) for icons. Use the `semanticLabel` property. This is read by screen readers (e.g., TalkBack, VoiceOver)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Icon(\n  Icons.favorite,\n  semanticLabel: 'Like',\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Custom Icons from Assets"
+    },
+    {
+      "type": "text",
+      "value": "To use a custom icon from your assets (e.g., a PNG), you can use `ImageIcon`. It accepts an `ImageProvider` and behaves like an `Icon`, respecting size and color."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ImageIcon(\n  AssetImage('assets/icons/custom.png'),\n  size: 24,\n  color: Colors.blue,\n)"
+    },
+    {
+      "type": "text",
+      "value": "Remember to declare the asset in `pubspec.yaml`."
+    },
+    {
+      "type": "heading",
+      "value": "Using IconButton"
+    },
+    {
+      "type": "text",
+      "value": "The `IconButton` widget combines an icon with a touch target, providing a splash effect when tapped. It's ideal for actions like navigation, like, delete, etc."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "IconButton(\n  icon: Icon(Icons.delete),\n  onPressed: () => print('Delete'),\n  tooltip: 'Delete item',\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Icon Themes with IconThemeData"
+    },
+    {
+      "type": "text",
+      "value": "You can globally define the default icon size and color using `IconTheme` or set it in `ThemeData`. For instance:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ThemeData(\n  iconTheme: IconThemeData(\n    color: Colors.grey,\n    size: 20,\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting to provide a semantic label**: Icons without text may be confusing for users with visual impairments. Always set `semanticLabel`.",
+        "- **Using `Icon` inside `IconButton` but not passing `onPressed`**: `IconButton` will be disabled, and users may not know why it doesn't respond.",
+        "- **Hard‑coding icon sizes**: Use relative sizes (e.g., `Theme.of(context).iconTheme.size`) to adapt to different screen sizes.",
+        "- **Using PNG icons without proper resolution**: For crisp display on high‑DPI screens, provide multiple resolutions (2x, 3x) or use vector icons (font icons or SVG).",
+        "- **Not handling null `onPressed`**: If `onPressed` is null, the `IconButton` is disabled; ensure you either handle it or use a `GestureDetector` if you need a non‑material button."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- The `Icon` widget displays Material icons from the `Icons` class.",
+        "- Customize size and color with `size` and `color`.",
+        "- Use `semanticLabel` for accessibility.",
+        "- For custom images, use `ImageIcon`.",
+        "- Combine with `IconButton` for interactive icons.",
+        "- Leverage icon themes for consistency.",
+        "- Prefer vector‑based icons (font icons, SVG) for scalability."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I change the default icon color in my app?",
+      "answer": "Set the `iconTheme` in your `ThemeData`. For example: `ThemeData(iconTheme: IconThemeData(color: Colors.blue))`. This affects all icons that don't have an explicit color."
+    },
+    {
+      "question": "Can I use custom fonts (e.g., FontAwesome) as icons?",
+      "answer": "Yes, using `IconData` with a custom font family. First, add the font file to your project and declare it in `pubspec.yaml`. Then create an `IconData` with the Unicode code point and the font family. For convenience, many packages like `font_awesome_flutter` already provide the mapping."
+    },
+    {
+      "question": "What is the difference between `Icon` and `ImageIcon`?",
+      "answer": "`Icon` renders a vector‑based icon from the `Icons` class (or custom font). `ImageIcon` renders a raster image (PNG, JPEG, etc.) as an icon, allowing it to be colored and sized like an icon."
+    },
+    {
+      "question": "How do I make an icon circular?",
+      "answer": "Wrap the `Icon` in a `CircleAvatar` or a `Container` with `BoxDecoration(shape: BoxShape.circle)` and set the color/background accordingly."
+    },
+    {
+      "question": "Why is my custom icon blurry?",
+      "answer": "If you're using a PNG, ensure you have high‑resolution versions (2x, 3x) in your assets. Better, use an SVG (via the `flutter_svg` package) or a font icon for crisp scaling."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Icon Widget Demo')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Icon(Icons.star, size: 48, color: Colors.amber),\n              SizedBox(height: 20),\n              IconButton(\n                icon: Icon(Icons.favorite, color: Colors.red),\n                onPressed: () => print('Favorite tapped'),\n                tooltip: 'Add to favorites',\n              ),\n              SizedBox(height: 20),\n              ImageIcon(\n                AssetImage('assets/icon.png'), // replace with your asset\n                size: 32,\n                color: Colors.green,\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which property of Icon changes its color?",
+      "options": ["color", "fillColor", "iconColor", "tint"],
+      "answer": 0
+    },
+    {
+      "question": "What is the default size of an Icon (in logical pixels)?",
+      "options": ["16", "20", "24", "32"],
+      "answer": 2
+    },
+    {
+      "question": "How do you add a semantic label to an icon for accessibility?",
+      "options": ["label", "semanticsLabel", "semanticLabel", "tooltip"],
+      "answer": 2
+    },
+    {
+      "question": "Which widget should you use to make an icon interactive with a splash effect?",
+      "options": ["Icon", "GestureDetector", "IconButton", "InkWell"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "flutter-iconbutton",
+    "flutter-theme",
+    "flutter-assets",
+    "flutter-semantics"
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "slug": "flutter-spacer-widget",
+  "course": "Flutter",
+  "title": "Flutter Spacer – Flexible Empty Space in Rows and Columns",
+  "meta": {
+    "title": "Flutter Spacer Widget: Add Flexible Empty Space in Layouts",
+    "description": "Learn how to use Spacer to create flexible, expandable gaps inside Row, Column, and Flex. Control distribution, combine with Expanded, and build responsive layouts.",
+    "keywords": [
+      "Flutter Spacer",
+      "Spacer widget",
+      "Flutter layout",
+      "Flexible space",
+      "Flutter Row",
+      "Flutter Column",
+      "Flutter responsive design"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the Spacer Widget?"
+    },
+    {
+      "type": "text",
+      "value": "`Spacer` is a widget that creates an adjustable, empty space that expands to fill the available space in a `Row`, `Column`, or `Flex`. It is a convenient alternative to using `Expanded` with an empty `Container`. `Spacer` distributes the remaining space among multiple spacers based on their `flex` factor, similar to how `Expanded` works. It's ideal for pushing content to the edges of a row or column, or for creating balanced spacing between widgets."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Row(\n  children: [\n    Text('Left'),\n    Spacer(), // pushes the next widget to the right edge\n    Text('Right'),\n  ],\n)"
+    },
+    {
+      "type": "text",
+      "value": "In this example, the `Spacer` expands to take up all remaining horizontal space, pushing the right text to the end of the row."
+    },
+    {
+      "type": "heading",
+      "value": "Flex Factor"
+    },
+    {
+      "type": "text",
+      "value": "`Spacer` has a `flex` property (default 1) that determines how much of the remaining space it takes relative to other spacers and `Expanded` widgets in the same parent."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Row(\n  children: [\n    Text('A'),\n    Spacer(flex: 2),\n    Text('B'),\n    Spacer(flex: 1),\n    Text('C'),\n  ],\n)"
+    },
+    {
+      "type": "text",
+      "value": "Here, the first spacer gets twice the amount of free space compared to the second spacer, because it has `flex: 2` vs `flex: 1`."
+    },
+    {
+      "type": "heading",
+      "value": "Using Spacer in Column"
+    },
+    {
+      "type": "text",
+      "value": "Spacer works the same in a vertical `Column`. It can push content to the bottom or create evenly distributed spacing between items."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Column(\n  children: [\n    Text('Top'),\n    Spacer(), // pushes next content to the bottom\n    Text('Bottom'),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Spacer vs Expanded"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`Spacer`** is an empty widget that takes up space. It's ideal when you just need a gap.",
+        "- **`Expanded`** is used to make a child fill the remaining space. If you need a child to expand (like a button or container), use `Expanded`. If you just need an empty gap, use `Spacer`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Push a button to the right end of an AppBar**: Wrap the `AppBar`'s `actions` with a `Row` and use `Spacer()` between the title and actions.",
+        "- **Bottom‑aligned content in a Column**: Place a `Spacer()` above the last widget to push it to the bottom.",
+        "- **Evenly distributed items**: Combine multiple spacers between items to create equal gaps.",
+        "- **Responsive layout**: Use spacers to automatically adjust spacing on different screen sizes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Important Constraints"
+    },
+    {
+      "type": "text",
+      "value": "For `Spacer` to work, its parent must be a `Row`, `Column`, or `Flex`. The parent must also have a finite size; if the parent is unbounded (e.g., inside a `ListView` without a specified height), the spacer may not expand as expected. Always ensure the parent has a constrained size."
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Using `Spacer` in a row that has no size constraint**: If the row is inside a column that doesn't constrain its width, the spacer may not expand. Ensure the parent has a bounded width.",
+        "- **Forgetting to set `flex` correctly**: If you want proportional spacing, adjust the `flex` values.",
+        "- **Using `Spacer` when you need a fixed gap**: `Spacer` is flexible; for a fixed gap, use `SizedBox` instead.",
+        "- **Nesting `Spacer` inside `Expanded`**: `Spacer` already expands; wrapping it with `Expanded` is redundant."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `Spacer` creates flexible, expandable space in `Row`, `Column`, or `Flex`.",
+        "- Use the `flex` property to control how much space it takes relative to others.",
+        "- Perfect for pushing content to edges or distributing space evenly.",
+        "- It's a lighter alternative to `Expanded` with an empty child.",
+        "- Ensure the parent has a bounded size for the spacer to work."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between Spacer and SizedBox?",
+      "answer": "`Spacer` takes up available space (flexible) and expands to fill the remaining area. `SizedBox` takes a fixed amount of space (either explicit or 0 if not specified). Use `SizedBox` when you need a fixed gap; use `Spacer` when you need the gap to adjust based on the available space."
+    },
+    {
+      "question": "Can I use Spacer inside a ListView?",
+      "answer": "Yes, but be careful. If the `ListView` is the parent, the children may not be constrained in the scroll direction. Inside a `ListView`, a `Spacer` may not expand because the `ListView` provides unbounded space in the scroll direction. For flexible spacing inside lists, consider using `Column` with a `Spacer` and wrap the whole thing in a `SingleChildScrollView` or use `Expanded` with a `Column` inside a `SizedBox` with fixed height."
+    },
+    {
+      "question": "How do I create equal spacing between multiple items?",
+      "answer": "Place a `Spacer` between each pair of items. For example: `Row(children: [Text('A'), Spacer(), Text('B'), Spacer(), Text('C')])`. Each `Spacer` will take an equal share of the free space (since their `flex` is 1 by default)."
+    },
+    {
+      "question": "Can I use Spacer in a Row that has no width?",
+      "answer": "A `Row` will expand to fit its parent's width if it is constrained. If the parent does not provide a width (e.g., a `Row` inside an unconstrained `Column`), the `Row` may be as wide as its children, and `Spacer` will have no room to expand. To fix, wrap the `Row` with a `SizedBox` or ensure the parent gives it a width."
+    },
+    {
+      "question": "What is the default flex value of a Spacer?",
+      "answer": "The default `flex` is 1, meaning it takes one share of the remaining space. You can change it to any positive integer."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(\n          title: Text('Spacer Demo'),\n          actions: [\n            IconButton(icon: Icon(Icons.search), onPressed: () {}),\n          ],\n        ),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              // Row with spacer pushing text to ends\n              Container(\n                width: 300,\n                child: Row(\n                  children: [\n                    Text('Left'),\n                    Spacer(),\n                    Text('Right'),\n                  ],\n                ),\n              ),\n              SizedBox(height: 20),\n              // Column with spacer pushing button to bottom\n              Container(\n                height: 200,\n                width: 300,\n                color: Colors.grey.shade200,\n                child: Column(\n                  children: [\n                    Text('Top'),\n                    Spacer(),\n                    ElevatedButton(\n                      onPressed: () {},\n                      child: Text('Bottom Button'),\n                    ),\n                  ],\n                ),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the purpose of the Spacer widget?",
+      "options": [
+        "To create a fixed‑size gap",
+        "To create flexible, expandable space in a Row or Column",
+        "To add padding around a widget",
+        "To wrap text that overflows"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What property controls how much space a Spacer takes relative to others?",
+      "options": ["size", "factor", "flex", "weight"],
+      "answer": 2
+    },
+    {
+      "question": "Which parent widgets can Spacer be used inside?",
+      "options": ["Container", "Stack", "Row and Column", "ListView"],
+      "answer": 2
+    },
+    {
+      "question": "How do you push a widget to the right edge of a Row?",
+      "options": [
+        "Add an `Align` with alignment right",
+        "Place a `Spacer` before the widget",
+        "Place a `Spacer` after the widget",
+        "Set the widget's alignment"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-expanded",
+    "flutter-row",
+    "flutter-column",
+    "flutter-layout"
+  ]
+}

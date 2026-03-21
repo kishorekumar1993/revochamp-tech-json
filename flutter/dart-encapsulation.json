@@ -1,0 +1,234 @@
+{
+  "slug": "dart-encapsulation",
+  "course": "Dart",
+  "title": "Dart Encapsulation – Hiding Data with Private Fields",
+  "meta": {
+    "title": "Dart Encapsulation: Private Variables, Getters, Setters, and Data Hiding",
+    "description": "Learn encapsulation in Dart – using private fields (`_`), getters, setters, and controlling access to data. Includes practical examples and best practices.",
+    "keywords": [
+      "Dart encapsulation",
+      "Dart private variables",
+      "Dart getters setters",
+      "Dart data hiding",
+      "Dart underscore",
+      "Dart OOP",
+      "Dart information hiding"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Encapsulation?"
+    },
+    {
+      "type": "text",
+      "value": "Encapsulation is one of the four fundamental OOP concepts (along with inheritance, polymorphism, and abstraction). It refers to bundling data (variables) and methods that operate on that data into a single unit (a class) and restricting direct access to some of the object's internal details. This protects the integrity of the data and reduces complexity by hiding implementation details."
+    },
+    {
+      "type": "heading",
+      "value": "Encapsulation in Dart"
+    },
+    {
+      "type": "text",
+      "value": "In Dart, encapsulation is achieved through **library‑level privacy**. There are no `private`, `protected`, or `public` keywords. Instead, any identifier (variable, method, class) that starts with an underscore `_` is considered **library private** – it is visible only within the same library (usually the same file). This simple mechanism allows you to hide internal details."
+    },
+    {
+      "type": "heading",
+      "value": "Private Fields (Using `_`)"
+    },
+    {
+      "type": "text",
+      "value": "To make a field private, prefix its name with an underscore. This field can only be accessed within the same file. Attempting to access it from another file results in a compile‑time error."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class BankAccount {\n  String _accountNumber; // private field\n  double _balance;       // private field\n\n  BankAccount(this._accountNumber, this._balance);\n\n  void deposit(double amount) {\n    if (amount > 0) _balance += amount;\n  }\n\n  void withdraw(double amount) {\n    if (amount > 0 && _balance >= amount) _balance -= amount;\n  }\n\n  // Public method to get the balance (read‑only)\n  double getBalance() => _balance;\n}\n\nvoid main() {\n  var account = BankAccount('123456', 1000);\n  account.deposit(500);\n  print(account.getBalance()); // 1500\n  // account._balance = 10000; // Error: _balance is private\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Getters and Setters"
+    },
+    {
+      "type": "text",
+      "value": "Getters and setters provide controlled access to private fields. They look like methods but are accessed like properties. You can add validation or logic when getting or setting a value."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Person {\n  String _name;\n  int _age;\n\n  Person(this._name, this._age);\n\n  // Getter for name\n  String get name => _name;\n\n  // Setter for name (with validation)\n  set name(String value) {\n    if (value.isNotEmpty) {\n      _name = value;\n    } else {\n      throw ArgumentError('Name cannot be empty');\n    }\n  }\n\n  // Getter for age\n  int get age => _age;\n\n  // Setter for age (with validation)\n  set age(int value) {\n    if (value >= 0 && value <= 120) {\n      _age = value;\n    } else {\n      throw ArgumentError('Age must be between 0 and 120');\n    }\n  }\n}\n\nvoid main() {\n  var person = Person('Alice', 30);\n  print(person.name); // Alice (using getter)\n  person.age = 31;    // using setter\n  print(person.age);  // 31\n  // person.age = -5; // Throws ArgumentError\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Read‑Only and Write‑Only Properties"
+    },
+    {
+      "type": "text",
+      "value": "You can create read‑only properties by providing only a getter (no setter), and write‑only properties by providing only a setter (though less common)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Temperature {\n  double _celsius;\n\n  Temperature(this._celsius);\n\n  // Read‑only property in Fahrenheit (computed)\n  double get fahrenheit => _celsius * 9/5 + 32;\n\n  // Setter for Fahrenheit – updates the internal Celsius value\n  set fahrenheit(double value) {\n    _celsius = (value - 32) * 5/9;\n  }\n\n  // Read‑only Celsius (only getter)\n  double get celsius => _celsius;\n}\n\nvoid main() {\n  var temp = Temperature(25);\n  print(temp.celsius);    // 25\n  print(temp.fahrenheit); // 77\n\n  temp.fahrenheit = 68;   // set fahrenheit, which updates celsius\n  print(temp.celsius);    // 20.0\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Encapsulation in Different Files"
+    },
+    {
+      "type": "text",
+      "value": "Privacy in Dart is based on libraries. If you split your code across files, private members are only accessible within the same file. To share a private member within a package, you can use a **part** directive, but it's generally better to keep related classes together or provide public getters/setters."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// file: person.dart\nclass Person {\n  String _secret; // private\n\n  Person(this._secret);\n\n  String get secret => _secret; // public getter\n}\n\n// file: main.dart\nimport 'person.dart';\n\nvoid main() {\n  var p = Person('hidden');\n  // print(p._secret); // Error: _secret is private\n  print(p.secret);     // OK\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Encapsulation?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Data protection**: Prevent accidental or unauthorized modification of data.",
+        "- **Validation**: Ensure that data meets certain criteria before being set.",
+        "- **Flexibility**: You can change internal implementation without affecting external code.",
+        "- **Reduced complexity**: Users of your class only need to know the public interface, not the internal details.",
+        "- **Maintainability**: Encapsulated code is easier to debug and modify."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting that privacy is library‑based**: A private member is accessible anywhere in the same file, which might be surprising if you have multiple classes in one file.",
+        "- **Not providing getters/setters when needed**: Making fields private without any access method makes them completely unusable outside the class.",
+        "- **Using getters/setters for simple fields without validation**: If no logic is needed, a public field might be simpler (but then you lose the ability to add logic later without breaking API).",
+        "- **Creating unnecessary getters/setters**: Over‑encapsulation can make code verbose."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Make fields private by default and provide public getters/setters only when needed.",
+        "- Use getters for computed properties (like `area` of a rectangle).",
+        "- Validate data in setters to maintain object integrity.",
+        "-Keep classes focused – each class should have a clear responsibility.",
+        "- Use meaningful names for private fields (still follow camelCase, just with leading underscore)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Student {\n  String _id;\n  String _name;\n  List<double> _grades = [];\n\n  Student(this._id, this._name);\n\n  String get id => _id;\n  String get name => _name;\n\n  set name(String value) {\n    if (value.isNotEmpty) {\n      _name = value;\n    } else {\n      throw ArgumentError('Name cannot be empty');\n    }\n  }\n\n  void addGrade(double grade) {\n    if (grade >= 0 && grade <= 100) {\n      _grades.add(grade);\n    } else {\n      throw ArgumentError('Grade must be between 0 and 100');\n    }\n  }\n\n  double get averageGrade {\n    if (_grades.isEmpty) return 0;\n    return _grades.reduce((a, b) => a + b) / _grades.length;\n  }\n\n  void displayInfo() {\n    print('Student: $_name (ID: $_id)');\n    print('Grades: $_grades');\n    print('Average: ${averageGrade.toStringAsFixed(2)}');\n  }\n}\n\nvoid main() {\n  var student = Student('S001', 'Alice');\n  student.addGrade(85);\n  student.addGrade(92);\n  student.addGrade(78);\n  student.displayInfo();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Encapsulation hides internal data and exposes a controlled interface.",
+        "- In Dart, privacy is library‑based: use `_` to make members private to the file.",
+        "- Getters and setters provide controlled access to private fields and can include validation.",
+        "- Use read‑only properties (only getter) for data that should not be changed externally.",
+        "- Encapsulation improves code maintainability, flexibility, and security."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `private` in Dart and other languages like Java?",
+      "answer": "In Java, `private` members are accessible only within the same class. In Dart, privacy is at the library level – a member with `_` is accessible anywhere within the same file (including other classes in that file). This is because Dart uses library‑based privacy, not class‑based."
+    },
+    {
+      "question": "Can I access a private field from another file if I use `part`?",
+      "answer": "Yes, if you use the `part` directive to combine multiple files into one library, private members are accessible across those files. However, using `part` is discouraged in modern Dart; it's better to keep related code together or provide public getters/setters."
+    },
+    {
+      "question": "Should I always use private fields and expose getters/setters?",
+      "answer": "Not necessarily. If a field is simple and you don't anticipate adding logic later, a public field is acceptable. However, using private fields + getters/setters gives you the flexibility to add validation or change the internal representation later without breaking the public API."
+    },
+    {
+      "question": "How do I create a read‑only property?",
+      "answer": "Define a getter without a corresponding setter. For example: `String get name => _name;`. This allows external code to read the value but not change it directly."
+    },
+    {
+      "question": "Can a getter or setter be static?",
+      "answer": "Yes, you can define static getters and setters, but they operate on static fields and are called on the class itself, not on instances."
+    },
+    {
+      "question": "What happens if I try to access a private member from another file?",
+      "answer": "You'll get a compile‑time error indicating that the member is not defined. This is how Dart enforces encapsulation across files."
+    },
+    {
+      "question": "Are there performance implications of using getters/setters?",
+      "answer": "No, getters and setters are inlined by the Dart compiler (in release mode) and have no runtime overhead compared to direct field access. They are a safe abstraction."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class BankAccount {\n  String _accountNumber;\n  double _balance;\n\n  BankAccount(this._accountNumber, this._balance);\n\n  double get balance => _balance;\n\n  void deposit(double amount) {\n    if (amount > 0) _balance += amount;\n  }\n\n  void withdraw(double amount) {\n    if (amount > 0 && _balance >= amount) _balance -= amount;\n  }\n}\n\nvoid main() {\n  var account = BankAccount('12345', 1000);\n  account.deposit(500);\n  print('Balance: ${account.balance}');\n  // account._balance = 10000; // Error if uncommented\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you make a field private in Dart?",
+      "options": [
+        "Use the `private` keyword",
+        "Prefix the field name with an underscore `_`",
+        "Use the `protected` keyword",
+        "Declare it in a separate file"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the scope of a private member in Dart?",
+      "options": [
+        "Only within the same class",
+        "Only within the same file (library)",
+        "Only within the same package",
+        "Only within the same function"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of a getter?",
+      "options": [
+        "To modify a private field",
+        "To provide read access to a private field",
+        "To delete a field",
+        "To create a new object"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What does the following code do?\n\nclass Person {\n  String _name;\n  String get name => _name;\n}",
+      "options": [
+        "Creates a read‑only property `name`",
+        "Creates a write‑only property `name`",
+        "Creates a public field `name`",
+        "Causes a compile error"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "dart-classes",
+    "dart-constructors",
+    "dart-abstraction",
+    "dart-getters-setters"
+  ]
+}

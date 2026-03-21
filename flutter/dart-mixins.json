@@ -1,0 +1,221 @@
+{
+  "slug": "dart-mixins",
+  "course": "Dart",
+  "title": "Dart Mixins – Reusing Code Across Class Hierarchies",
+  "meta": {
+    "title": "Dart Mixins: A Complete Guide to Code Reuse with Mixins",
+    "description": "Learn how to use mixins in Dart to reuse code across multiple class hierarchies. Covers mixin declaration, 'with' keyword, restrictions, and practical examples.",
+    "keywords": [
+      "Dart mixins",
+      "Dart with keyword",
+      "Dart mixin example",
+      "Dart multiple inheritance",
+      "Dart code reuse",
+      "Dart mixin restrictions",
+      "Dart on keyword"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Mixins?"
+    },
+    {
+      "type": "text",
+      "value": "Mixins are a way to reuse code across multiple class hierarchies without using inheritance. A mixin defines a set of methods and properties that can be added to any class. This is particularly useful when you want to share behavior between classes that are not otherwise related. Dart supports mixins through the `mixin` keyword and the `with` clause."
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Mixin"
+    },
+    {
+      "type": "text",
+      "value": "You define a mixin using the `mixin` keyword, followed by a name and a body containing methods and fields you want to reuse. Mixins cannot have constructors (they are not meant to be instantiated alone)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "mixin CanFly {\n  void fly() {\n    print('Flying...');\n  }\n}\n\nmixin CanSwim {\n  void swim() {\n    print('Swimming...');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Mixins with `with`"
+    },
+    {
+      "type": "text",
+      "value": "To add one or more mixins to a class, use the `with` keyword followed by the mixin names. The class then inherits all the methods and fields from those mixins."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Bird with CanFly {}\n\nclass Fish with CanSwim {}\n\nclass Duck with CanFly, CanSwim {} // multiple mixins\n\nvoid main() {\n  var duck = Duck();\n  duck.fly();   // Flying...\n  duck.swim();  // Swimming...\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Mixin Syntax and Restrictions"
+    },
+    {
+      "type": "text",
+      "value": "Mixins have some important restrictions:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- A mixin cannot have a constructor (it is not a class).",
+        "- A mixin cannot extend any class, though it can use the `on` keyword to restrict the types that can use it (see below).",
+        "- Prior to Dart 2.12, mixins could only be created from classes with no constructors and no `super` calls. Now, with the `mixin` keyword, these restrictions are explicit."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Multiple Mixins and Method Conflicts"
+    },
+    {
+      "type": "text",
+      "value": "When you apply multiple mixins that define the same method, the last mixin in the `with` list overrides earlier ones. If a class itself defines the method, it overrides all mixin versions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "mixin A {\n  void foo() => print('A');\n}\n\nmixin B {\n  void foo() => print('B');\n}\n\nclass MyClass with A, B {}\n\nvoid main() {\n  MyClass().foo(); // prints 'B' (last mixin wins)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Mixins vs Inheritance vs Interfaces"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Inheritance (`extends`)**: Creates an 'is‑a' relationship, and you get implementation. A class can extend only one superclass.",
+        "- **Interfaces (`implements`)**: Enforces a contract but gives no implementation. A class can implement multiple interfaces.",
+        "- **Mixins (`with`)**: Gives you implementation without the 'is‑a' relationship. A class can use multiple mixins."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "The `on` Keyword (Constraining Mixin Usage)"
+    },
+    {
+      "type": "text",
+      "value": "You can restrict a mixin to be used only on classes that extend a certain type. This is done with the `on` keyword. This allows the mixin to call methods on `super` that are guaranteed to exist."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Animal {\n  void breathe() => print('Breathing...');\n}\n\nmixin Walker on Animal {\n  void walk() {\n    breathe(); // safe because mixin can only be used on Animal subtypes\n    print('Walking...');\n  }\n}\n\nclass Dog extends Animal with Walker {}\n\n// class Fish with Walker {} // Error: Fish does not extend Animal"
+    },
+    {
+      "type": "heading",
+      "value": "Mixins and Constructors"
+    },
+    {
+      "type": "text",
+      "value": "Mixins cannot have constructors. If a mixin needs initialization, it can define fields that must be initialized by the class using it. For example, you can define a getter that requires a value to be present."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "mixin HasName {\n  String get name;\n  void greet() => print('Hello, my name is $name');\n}\n\nclass Person with HasName {\n  @override\n  final String name;\n  Person(this.name);\n}\n\nvoid main() {\n  Person('Alice').greet(); // Hello, my name is Alice\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use mixins when you need to share behavior across unrelated classes.",
+        "- Keep mixins focused on a single responsibility (like a trait).",
+        "- Avoid defining fields in mixins unless they are abstract and require the using class to provide them.",
+        "- Use the `on` keyword to document and enforce the required superclass type.",
+        "- Be mindful of method name conflicts; order mixins deliberately."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "mixin Logger {\n  void log(String message) {\n    print('[LOG] $message');\n  }\n}\n\nmixin Timestamp {\n  DateTime get now => DateTime.now();\n}\n\nclass NetworkService with Logger, Timestamp {\n  void fetchData() {\n    log('${now}: Fetching data...');\n    // fetch logic\n  }\n}\n\nclass DatabaseService with Logger {\n  void query() {\n    log('Querying database...');\n  }\n}\n\nvoid main() {\n  var net = NetworkService();\n  net.fetchData();\n\n  var db = DatabaseService();\n  db.query();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Mixins (defined with `mixin`) allow you to reuse code across unrelated classes.",
+        "- Use the `with` keyword to apply one or more mixins to a class.",
+        "- Mixins cannot have constructors and can use `on` to restrict usage to subtypes of a given class.",
+        "- Method conflicts are resolved by the order of mixins (last wins).",
+        "- Mixins provide a flexible alternative to multiple inheritance."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between a mixin and an abstract class?",
+      "answer": "An abstract class can be extended and can have constructors; a mixin cannot be instantiated and is meant to be used with `with`. Mixins are a way to compose behavior, while abstract classes are more about defining a common base type."
+    },
+    {
+      "question": "Can a mixin have fields?",
+      "answer": "Yes, a mixin can have instance fields, but they will be added to every class that uses the mixin. However, fields are not inherited; they are physically copied into the class. This can lead to duplication if used heavily, so prefer methods or abstract getters."
+    },
+    {
+      "question": "Can I use a class as a mixin?",
+      "answer": "Yes, in older Dart versions, any class with a no‑argument constructor and no `super` calls could be used as a mixin. With the `mixin` keyword, it's clearer. However, you can still apply a class as a mixin (though it's discouraged – better to define a dedicated mixin)."
+    },
+    {
+      "question": "What does the `on` keyword do in a mixin?",
+      "answer": "It restricts which classes can use the mixin. The mixin can only be applied to classes that extend (or implement) the type specified after `on`. This allows the mixin to safely call methods on `super`."
+    },
+    {
+      "question": "How does Dart resolve conflicts when two mixins define the same method?",
+      "answer": "The order of mixins matters. The last mixin in the `with` list overrides earlier ones. If the class itself defines the method, it overrides all mixin versions."
+    },
+    {
+      "question": "Can I use a mixin without the `mixin` keyword?",
+      "answer": "Before Dart 2.12, you could use a class as a mixin if it met certain restrictions. The modern way is to use the `mixin` keyword, which makes the intent clear and enforces restrictions."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "mixin Flyable {\n  void fly() => print('Flying');\n}\n\nmixin Swimmable {\n  void swim() => print('Swimming');\n}\n\nclass Duck with Flyable, Swimmable {}\n\nvoid main() {\n  var duck = Duck();\n  duck.fly();\n  duck.swim();\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which keyword is used to apply a mixin to a class?",
+      "options": ["extends", "implements", "with", "mixin"],
+      "answer": 2
+    },
+    {
+      "question": "What keyword is used to define a mixin?",
+      "options": ["class", "mixin", "interface", "trait"],
+      "answer": 1
+    },
+    {
+      "question": "Can a mixin have a constructor?",
+      "options": ["Yes", "No", "Only if it's abstract", "Only with the `factory` keyword"],
+      "answer": 1
+    },
+    {
+      "question": "What does the `on` keyword in a mixin declaration do?",
+      "options": [
+        "Specifies that the mixin can only be used on classes that extend a given type",
+        "Adds logging to the mixin",
+        "Makes the mixin abstract",
+        "Allows the mixin to have constructors"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "dart-classes",
+    "dart-inheritance",
+    "dart-interfaces",
+    "dart-abstract-classes"
+  ]
+}

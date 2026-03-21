@@ -1,0 +1,226 @@
+{
+  "slug": "dart-extension-types",
+  "course": "Dart",
+  "title": "Dart Extension Types – Wrapping Types with Zero‑Cost Abstractions",
+  "meta": {
+    "title": "Dart Extension Types: Zero‑Cost Wrappers with Type Safety",
+    "description": "Learn about extension types in Dart – compile‑time wrappers that add type safety without runtime overhead. Use them for domain modeling, unit conversions, and API design.",
+    "keywords": [
+      "Dart extension types",
+      "Dart 3.3 extension types",
+      "Dart wrapper types",
+      "Dart type safety",
+      "Dart zero-cost abstraction",
+      "Dart newtype",
+      "Dart compile-time wrapper"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Extension Types?"
+    },
+    {
+      "type": "text",
+      "value": "Introduced in Dart 3.3, **extension types** allow you to create a compile‑time wrapper around an existing type. They are similar to extension methods but provide a **new type** that is distinct at compile time while having **zero runtime overhead**. Extension types are ideal for adding type safety to primitive types (like wrapping `String` with `EmailAddress`) or for creating domain‑specific types without the cost of creating a full class."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Extension Types?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Type safety** – prevent accidental mixing of conceptually different values of the same underlying type (e.g., `Email` vs `Name`).",
+        "- **Zero runtime cost** – no extra object allocation; the wrapper exists only at compile time.",
+        "- **Clearer API** – self‑documenting types make interfaces more expressive.",
+        "- **Opt‑in to existing methods** – you can expose or hide methods of the underlying type."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Syntax of Extension Types"
+    },
+    {
+      "type": "text",
+      "value": "An extension type is declared using `extension type` followed by a name and the underlying type in parentheses. It can define methods, getters, and even new constructors."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension type EmailAddress(String value) {\n  // Validation in constructor\n  EmailAddress(this.value) {\n    if (!value.contains('@')) {\n      throw ArgumentError('Invalid email');\n    }\n  }\n\n  // Add domain getter\n  String get domain => value.split('@')[1];\n\n  // Add method\n  bool isValid() => value.contains('@');\n}\n\nvoid main() {\n  var email = EmailAddress('user@example.com');\n  print(email.domain); // example.com\n  // email is of type EmailAddress, not String\n  // String s = email; // Error: can't assign EmailAddress to String\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Underlying Representation"
+    },
+    {
+      "type": "text",
+      "value": "The extension type wraps the underlying value but does not create a new object at runtime. The wrapper is just a compile‑time type; the underlying representation is the same as the original type. This means extension types are **zero‑cost** – they don't allocate extra memory and have no performance penalty."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension type Meters(double value) {}\nextension type Feet(double value) {}\n\nvoid main() {\n  Meters distance = Meters(10.0);\n  // At runtime, distance is just a double\n  // No extra object is created\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Exposing Underlying Members"
+    },
+    {
+      "type": "text",
+      "value": "By default, the wrapper does **not** expose any members of the underlying type. You must explicitly forward methods or properties you want to expose. This gives you full control over the public API."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension type PositiveInt(int value) {\n  // Explicitly forward the `toString` method\n  @override\n  String toString() => value.toString();\n\n  // Forward the `abs` method (but since it's positive, it's the same)\n  int abs() => value.abs();\n\n  // Do NOT expose `isEven` – we want to hide it\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Constructors and Factories"
+    },
+    {
+      "type": "text",
+      "value": "Extension types can have constructors, including redirecting constructors and factory constructors. They can also perform validation during construction."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension type Age(int value) {\n  Age(this.value) {\n    if (value < 0 || value > 120) {\n      throw ArgumentError('Age must be between 0 and 120');\n    }\n  }\n\n  // Redirecting constructor\n  Age.min() : this(0);\n\n  // Factory constructor\n  factory Age.fromString(String s) => Age(int.parse(s));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Implicit Exposure (Shortcut)"
+    },
+    {
+      "type": "text",
+      "value": "You can use the `on` keyword to automatically expose all members of the underlying type. This is a shortcut when you want the extension type to behave like the original type but with a different type name."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension type Kilometers(num value) on num {\n  // All `num` methods are automatically available\n}\n\nvoid main() {\n  Kilometers km = Kilometers(5);\n  double converted = km + 3; // works because `+` is forwarded\n  print(km.isFinite); // true\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Extension Types vs Regular Extensions"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Regular extension** adds methods to an existing type (like `String`). It does not create a new type.",
+        "- **Extension type** creates a new type that wraps an existing type. It's a distinct type at compile time, with zero runtime overhead."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Domain‑specific types** – `EmailAddress`, `UserId`, `ProductId`.",
+        "- **Unit conversion** – `Meters`, `Feet`, `Celsius`, `Fahrenheit`.",
+        "- **Validation wrappers** – ensure valid values at construction.",
+        "- **API boundaries** – enforce correct types without runtime cost."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "extension type Celsius(double value) {\n  Celsius(this.value);\n\n  Celsius.toFahrenheit(double fahrenheit) : value = (fahrenheit - 32) * 5 / 9;\n\n  double get fahrenheit => value * 9 / 5 + 32;\n\n  @override\n  String toString() => '${value.toStringAsFixed(1)}°C';\n}\n\nextension type Fahrenheit(double value) {\n  Fahrenheit(this.value);\n\n  double get celsius => (value - 32) * 5 / 9;\n\n  @override\n  String toString() => '${value.toStringAsFixed(1)}°F';\n}\n\nvoid main() {\n  var temp = Celsius(25);\n  print(temp);              // 25.0°C\n  print(temp.fahrenheit);   // 77.0\n\n  var f = Fahrenheit(77);\n  print(f.celsius);         // 25.0\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Extension types create new types with zero runtime overhead.",
+        "- They are defined with `extension type Name(UnderlyingType representation)`.",
+        "- Use them to add type safety to primitive types, perform validation, and hide implementation details.",
+        "- They have constructors, can expose or hide underlying members, and can be used in `on` clauses to automatically forward all members.",
+        "- Ideal for domain modelling, units, and ensuring correct usage at API boundaries."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Are extension types available in all Dart versions?",
+      "answer": "No, extension types were introduced in Dart 3.3. You need Dart 3.3 or later to use them."
+    },
+    {
+      "question": "What is the runtime cost of extension types?",
+      "answer": "Extension types have **zero runtime overhead**. They are a compile‑time abstraction; at runtime, the value is exactly the underlying type (e.g., a `String`). No extra objects are created."
+    },
+    {
+      "question": "How do extension types differ from ordinary classes?",
+      "answer": "A class creates a new runtime object; an extension type does not – it's purely a compile‑time wrapper. Classes can have multiple fields and methods; extension types only have the single underlying field (the representation)."
+    },
+    {
+      "question": "Can I use extension types with generics?",
+      "answer": "Yes, you can have generic extension types. For example: `extension type Pair<T>(T value)`."
+    },
+    {
+      "question": "Can I create extension types for nullable types?",
+      "answer": "Yes, you can have `extension type NullableString(String? value)`. The underlying type can be nullable."
+    },
+    {
+      "question": "How do I compare two extension type instances?",
+      "answer": "By default, they compare based on the underlying value. You can override `==` and `hashCode` if you need custom equality."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "extension type Email(String value) {\n  Email(this.value) {\n    if (!value.contains('@')) {\n      throw ArgumentError('Invalid email');\n    }\n  }\n  String get domain => value.split('@')[1];\n}\n\nvoid main() {\n  try {\n    var email = Email('user@example.com');\n    print('Domain: ${email.domain}');\n\n    // This will throw\n    var invalid = Email('not-an-email');\n  } catch (e) {\n    print('Error: $e');\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the main advantage of extension types over regular classes?",
+      "options": [
+        "They are easier to write",
+        "They have zero runtime overhead",
+        "They support multiple inheritance",
+        "They are automatically immutable"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you expose all members of the underlying type in an extension type?",
+      "options": [
+        "Use the `expose` keyword",
+        "Use the `on` clause",
+        "Write forwarding methods manually",
+        "It's impossible"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What happens at runtime when you create an extension type instance?",
+      "options": [
+        "A new object is allocated",
+        "No new object is allocated; only the underlying value exists",
+        "A new object is allocated but immediately garbage collected",
+        "The program crashes"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which Dart version introduced extension types?",
+      "options": ["Dart 2.19", "Dart 3.0", "Dart 3.3", "Dart 3.5"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "dart-extension-methods",
+    "dart-classes",
+    "dart-type-system",
+    "dart-3-features"
+  ]
+}

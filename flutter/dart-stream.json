@@ -1,0 +1,249 @@
+{
+  "slug": "dart-stream",
+  "course": "Dart",
+  "title": "Dart Stream – Asynchronous Data Sequences",
+  "meta": {
+    "title": "Dart Stream Tutorial: Complete Guide with Examples",
+    "description": "Learn about Dart Streams – what they are, how to create them, listen to events, transform streams, handle errors, and use broadcast streams. Includes practical examples and quiz.",
+    "keywords": [
+      "Dart Stream",
+      "Dart async",
+      "Dart StreamController",
+      "Dart listen",
+      "Dart map stream",
+      "Dart broadcast stream",
+      "Dart await for"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Stream?"
+    },
+    {
+      "type": "text",
+      "value": "A `Stream` is a sequence of asynchronous events. It delivers a series of data events (values) and can optionally complete with a done event or an error. Unlike a `Future`, which delivers a single value, a stream can deliver multiple values over time. Streams are essential for handling data that arrives over time, such as user input, file I/O, network responses, or timers."
+    },
+    {
+      "type": "heading",
+      "value": "Types of Streams"
+    },
+    {
+      "type": "text",
+      "value": "Dart has two kinds of streams:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Single‑subscription streams** – allow only one listener during the stream's lifetime. They are used for sequences that are consumed once (e.g., reading a file).",
+        "- **Broadcast streams** – allow any number of listeners. Listeners can subscribe at any time, and they receive events that are fired after they subscribe. Broadcast streams are used for events like button clicks."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Stream"
+    },
+    {
+      "type": "text",
+      "value": "There are several ways to create a stream in Dart:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Using an `async*` function** with `yield`.",
+        "- **Using a `StreamController`** for manual control.",
+        "- **From an iterable** with `Stream.fromIterable()`.",
+        "- **From a Future** with `Stream.fromFuture()` or `Stream.fromFutures()`.",
+        "- **Using periodic timers** with `Stream.periodic()`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Stream with `async*`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Stream<int> countStream(int max) async* {\n  for (int i = 1; i <= max; i++) {\n    await Future.delayed(Duration(seconds: 1));\n    yield i; // Emit a value\n  }\n}\n\nvoid main() async {\n  await for (int value in countStream(5)) {\n    print(value); // prints 1,2,3,4,5 each second\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Stream with `StreamController`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:async';\n\nvoid main() {\n  final controller = StreamController<int>();\n\n  // Add data to the stream\n  controller.sink.add(1);\n  controller.sink.add(2);\n  controller.sink.add(3);\n  controller.close();\n\n  // Listen to the stream\n  controller.stream.listen(\n    (data) => print('Data: $data'),\n    onError: (error) => print('Error: $error'),\n    onDone: () => print('Done'),\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Listening to a Stream"
+    },
+    {
+      "type": "text",
+      "value": "The primary way to consume a stream is by using the `listen()` method. It returns a `StreamSubscription` which you can use to control the subscription (pause, resume, cancel)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var stream = Stream.periodic(Duration(seconds: 1), (i) => i).take(5);\n\n  var subscription = stream.listen(\n    (data) => print('Data: $data'),\n    onError: (err) => print('Error: $err'),\n    onDone: () => print('Done'),\n    cancelOnError: false, // whether to cancel on first error\n  );\n\n  // Later, if needed\n  // subscription.pause();\n  // subscription.resume();\n  // subscription.cancel();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using `await for`"
+    },
+    {
+      "type": "text",
+      "value": "In an `async` function, you can use `await for` to iterate over stream events as they arrive. The loop ends when the stream closes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<void> printStream(Stream<int> stream) async {\n  await for (int value in stream) {\n    print(value);\n  }\n}\n\nvoid main() async {\n  var stream = Stream.periodic(Duration(seconds: 1), (i) => i).take(5);\n  await printStream(stream);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Transforming Streams"
+    },
+    {
+      "type": "text",
+      "value": "Streams provide a set of methods similar to those on iterables, allowing you to transform the data:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`map`** – applies a function to each event.",
+        "- **`where`** – filters events based on a predicate.",
+        "- **`expand`** – expands each event into multiple events.",
+        "- **`take`** / **`skip`** – limits the number of events.",
+        "- **`distinct`** – removes consecutive duplicates.",
+        "- **`timeout`** – raises an error if no event arrives within a duration."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  var stream = Stream.fromIterable([1, 2, 3, 4, 5]);\n\n  var doubled = stream.map((x) => x * 2);\n  var even = stream.where((x) => x % 2 == 0);\n\n  await for (int value in doubled) {\n    print('Doubled: $value');\n  }\n\n  await for (int value in even) {\n    print('Even: $value');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Errors"
+    },
+    {
+      "type": "text",
+      "value": "Errors in a stream can be handled using `onError` callback in `listen`, or using `handleError` transformer. If unhandled, errors will terminate the stream."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var controller = StreamController<int>();\n  controller.add(1);\n  controller.addError('Something went wrong');\n  controller.add(2);\n  controller.close();\n\n  controller.stream\n    .handleError((error) {\n      print('Caught error: $error');\n      // Return a fallback value, rethrow, etc.\n    })\n    .listen(print);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Broadcast Streams"
+    },
+    {
+      "type": "text",
+      "value": "By default, streams are single‑subscription. To create a broadcast stream, use `asBroadcastStream()` on a single‑subscription stream, or create a `StreamController.broadcast()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var controller = StreamController<int>.broadcast();\n\n  controller.stream.listen((data) => print('Listener 1: $data'));\n  controller.stream.listen((data) => print('Listener 2: $data'));\n\n  controller.add(1);\n  controller.add(2);\n  controller.close();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Patterns"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Merging streams** – use `StreamGroup.merge` or `StreamZip`.",
+        "- **Debouncing** – use `debounce` (from `package:rxdart` or custom).",
+        "- **Combining latest values** – use `Rx.combineLatest2` (from `rxdart`)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- A `Stream` is a sequence of asynchronous events.",
+        "- Use `listen()` or `await for` to consume stream events.",
+        "- Streams can be single‑subscription or broadcast.",
+        "- Use `StreamController` for manual control, or `async*` functions for generator‑style streams.",
+        "- Transform streams using methods like `map`, `where`, `take`, etc.",
+        "- Always handle errors to avoid uncaught exceptions."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between a Future and a Stream?",
+      "answer": "A `Future` represents a single value (or error) that will be available later. A `Stream` represents multiple values (or errors) delivered over time. Use Future for one‑shot async operations, and Stream for sequences of events."
+    },
+    {
+      "question": "What is a single‑subscription stream?",
+      "answer": "A single‑subscription stream allows only one listener during its lifetime. It's ideal for consuming a sequence once, like reading a file. If you try to listen again, you'll get an error."
+    },
+    {
+      "question": "What is a broadcast stream?",
+      "answer": "A broadcast stream allows any number of listeners at any time. Listeners added after events are emitted won't see those past events. Broadcast streams are suitable for events like UI interactions."
+    },
+    {
+      "question": "How do I create a stream that emits values periodically?",
+      "answer": "Use `Stream.periodic(Duration(seconds: 1), (i) => i)`."
+    },
+    {
+      "question": "How do I convert a Stream to a Future?",
+      "answer": "Use methods like `first`, `last`, `single`, `drain`, or `toList()` on the stream. For example: `var firstValue = await stream.first;`."
+    },
+    {
+      "question": "Can I reuse a stream after it's been listened to?",
+      "answer": "For single‑subscription streams, no – you must create a new stream. For broadcast streams, yes, you can add multiple listeners at any time."
+    },
+    {
+      "question": "What happens if I don't handle errors in a stream?",
+      "answer": "Unhandled errors may cause the stream to stop and the error to propagate to the zone, possibly crashing the app. Always provide an `onError` callback or use `handleError`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'dart:async';\n\nvoid main() {\n  // Create a stream that emits numbers every second\n  var stream = Stream.periodic(Duration(seconds: 1), (i) => i).take(5);\n\n  stream.listen(\n    (data) => print('Data: $data'),\n    onDone: () => print('Done'),\n  );\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does a Stream represent?",
+      "options": [
+        "A single value that will be available later",
+        "A sequence of asynchronous events",
+        "A synchronous collection",
+        "An error handler"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method is used to listen to a stream?",
+      "options": ["then()", "listen()", "await", "forEach()"],
+      "answer": 1
+    },
+    {
+      "question": "What type of stream allows multiple listeners?",
+      "options": ["Single‑subscription stream", "Broadcast stream", "Both", "Neither"],
+      "answer": 1
+    },
+    {
+      "question": "How do you create a stream that emits values using a generator function?",
+      "options": ["async function", "async* function", "Stream.periodic", "Stream.fromIterable"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-async-await",
+    "dart-future",
+    "dart-stream-controller",
+    "dart-rxdart"
+  ]
+}

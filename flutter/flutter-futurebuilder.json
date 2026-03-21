@@ -1,0 +1,192 @@
+{
+  "slug": "flutter-futurebuilder",
+  "course": "Flutter",
+  "title": "Flutter FutureBuilder Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter FutureBuilder Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter FutureBuilder to handle asynchronous operations and build UIs based on future states. Understand AsyncSnapshot, connectionState, error handling, and best practices with simple examples.",
+    "keywords": [
+      "Flutter FutureBuilder",
+      "FutureBuilder",
+      "async snapshot",
+      "connectionState",
+      "future builder",
+      "async UI",
+      "Flutter async"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is FutureBuilder in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "FutureBuilder is a widget that builds itself based on the latest snapshot of interaction with a `Future`. It lets you handle asynchronous operations (like network calls, database queries, or file I/O) and update the UI automatically when the future completes – whether it succeeds with data or fails with an error."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "To use FutureBuilder, you provide a `future` and a `builder` function. The builder is called whenever the future's state changes. It receives a `BuildContext` and an `AsyncSnapshot` which contains the current state (loading, data, error)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "FutureBuilder<String>(\n  future: _fetchData(), // your async function\n  builder: (context, snapshot) {\n    if (snapshot.connectionState == ConnectionState.waiting) {\n      return CircularProgressIndicator();\n    } else if (snapshot.hasError) {\n      return Text('Error: ${snapshot.error}');\n    } else {\n      return Text('Data: ${snapshot.data}');\n    }\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Understanding AsyncSnapshot"
+    },
+    {
+      "type": "text",
+      "value": "The `AsyncSnapshot` object passed to the builder contains all the information about the asynchronous operation:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**connectionState**: One of `ConnectionState.none` (no future started), `ConnectionState.waiting` (future is in progress), `ConnectionState.active` (for streams), or `ConnectionState.done` (future completed).",
+        "**hasData**: Whether the snapshot contains non‑null data (i.e., the future completed successfully).",
+        "**data**: The value returned by the future (only available when `hasData` is true).",
+        "**hasError**: Whether the future completed with an error.",
+        "**error**: The error object (only available when `hasError` is true)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Building UI for Different States"
+    },
+    {
+      "type": "text",
+      "value": "A typical pattern is to handle three states: waiting (loading), error, and data. Here's a more detailed example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "FutureBuilder<User>(\n  future: _fetchUser(),\n  builder: (context, snapshot) {\n    if (snapshot.connectionState == ConnectionState.waiting) {\n      return Center(child: CircularProgressIndicator());\n    }\n    if (snapshot.hasError) {\n      return Center(child: Text('Something went wrong: ${snapshot.error}'));\n    }\n    if (!snapshot.hasData) {\n      return Center(child: Text('No user data'));\n    }\n    // Data is available\n    final user = snapshot.data!;\n    return Column(\n      children: [\n        Text('Name: ${user.name}'),\n        Text('Email: ${user.email}'),\n      ],\n    );\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Errors Gracefully"
+    },
+    {
+      "type": "text",
+      "value": "Always check `snapshot.hasError` before accessing `snapshot.data`. You can also provide a custom error widget or a retry button."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "if (snapshot.hasError) {\n  return Center(\n    child: Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        Icon(Icons.error_outline, size: 48, color: Colors.red),\n        SizedBox(height: 16),\n        Text('Failed to load data'),\n        ElevatedButton(\n          onPressed: () => setState(() {}), // triggers rebuild with same future\n          child: Text('Retry'),\n        ),\n      ],\n    ),\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Important: Where to Create the Future"
+    },
+    {
+      "type": "text",
+      "value": "Never create the `Future` directly inside the `build` method, because that would create a new Future on every rebuild, causing the FutureBuilder to reset and re‑trigger the async operation continuously. Instead, store the Future in a state variable (or use a `Future` that doesn't change, like from a repository)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyWidget extends StatefulWidget {\n  @override\n  _MyWidgetState createState() => _MyWidgetState();\n}\n\nclass _MyWidgetState extends State<MyWidget> {\n  late Future<String> _future;\n\n  @override\n  void initState() {\n    super.initState();\n    _future = _fetchData(); // created once\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return FutureBuilder(\n      future: _future, // safe to use here\n      builder: (context, snapshot) { ... },\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "When the Future Changes"
+    },
+    {
+      "type": "text",
+      "value": "If you need to update the future (e.g., after a user action), assign a new Future to the variable and call `setState`. The FutureBuilder will automatically listen to the new Future."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void _refreshData() {\n  setState(() {\n    _future = _fetchData();\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Creating the future inside `build`**: Leads to infinite rebuilds and wasted resources.",
+        "**Not handling all connection states**: For example, showing a loading indicator only when `connectionState == ConnectionState.waiting` is correct, but forgetting that `ConnectionState.active` might also be relevant for streams.",
+        "**Accessing `snapshot.data` without checking `hasData`**: Causes a null safety error if the future hasn't completed yet.",
+        "**Ignoring errors**: Always show a user‑friendly message or a retry option.",
+        "**Assuming `snapshot.data` is non‑null when `connectionState == ConnectionState.done`**: It might still be null if the future returned null. Check `hasData` instead.",
+        "**Not using `FutureBuilder` for simple one‑time operations**: Sometimes a `Future` with `then` and `catchError` inside `initState` plus `setState` is simpler, but FutureBuilder is declarative and handles state automatically."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "FutureBuilder rebuilds automatically when the future's state changes.",
+        "Always check `snapshot.connectionState` and `snapshot.hasData` / `snapshot.hasError` before using the data.",
+        "Store the future outside the `build` method (e.g., in `initState`) to avoid recreating it.",
+        "Use `ConnectionState.waiting` to show a loading indicator.",
+        "Handle errors gracefully with user feedback and optional retry.",
+        "For streams, use `StreamBuilder` which works similarly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. How does FutureBuilder work internally?\n2. What is the difference between `ConnectionState.waiting` and `ConnectionState.done`?\n3. Why should you avoid creating the `Future` inside the `build` method?\n4. How would you implement a retry button with FutureBuilder?\n5. Can FutureBuilder be used with a `Future` that never completes? What happens?\n6. How do you handle both data and error states in a FutureBuilder?\n7. What is the purpose of `AsyncSnapshot`?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('FutureBuilder Example')),\n        body: Center(\n          child: FutureExample(),\n        ),\n      ),\n    );\n  }\n}\n\nclass FutureExample extends StatefulWidget {\n  @override\n  _FutureExampleState createState() => _FutureExampleState();\n}\n\nclass _FutureExampleState extends State<FutureExample> {\n  late Future<String> _future;\n\n  @override\n  void initState() {\n    super.initState();\n    _future = _fetchData();\n  }\n\n  Future<String> _fetchData() async {\n    await Future.delayed(Duration(seconds: 2));\n    // Simulate occasional error\n    if (DateTime.now().second % 3 == 0) {\n      throw Exception('Network error');\n    }\n    return 'Hello from the future!';\n  }\n\n  void _refresh() {\n    setState(() {\n      _future = _fetchData();\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        FutureBuilder<String>(\n          future: _future,\n          builder: (context, snapshot) {\n            if (snapshot.connectionState == ConnectionState.waiting) {\n              return CircularProgressIndicator();\n            } else if (snapshot.hasError) {\n              return Column(\n                children: [\n                  Icon(Icons.error, color: Colors.red),\n                  SizedBox(height: 8),\n                  Text('Error: ${snapshot.error}'),\n                ],\n              );\n            } else {\n              return Text(\n                snapshot.data ?? 'No data',\n                style: TextStyle(fontSize: 18),\n              );\n            }\n          },\n        ),\n        SizedBox(height: 20),\n        ElevatedButton(\n          onPressed: _refresh,\n          child: Text('Retry'),\n        ),\n      ],\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which `ConnectionState` indicates that the future is still running?",
+      "options": [
+        "ConnectionState.none",
+        "ConnectionState.waiting",
+        "ConnectionState.active",
+        "ConnectionState.done"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the correct way to check if a FutureBuilder has successfully received data?",
+      "options": [
+        "snapshot.data != null",
+        "snapshot.hasData",
+        "snapshot.connectionState == ConnectionState.done",
+        "snapshot.error == null"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Why should you avoid creating the Future inside the build method of a FutureBuilder?",
+      "options": [
+        "It causes a memory leak",
+        "It recreates the Future on every rebuild, leading to constant reloading",
+        "It makes the UI unresponsive",
+        "It prevents error handling"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-streambuilder",
+    "flutter-async",
+    "flutter-statefulwidget",
+    "flutter-http",
+    "flutter-loading-indicators"
+  ]
+}

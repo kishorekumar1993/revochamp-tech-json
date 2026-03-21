@@ -1,0 +1,218 @@
+{
+  "slug": "dart-event-loop",
+  "course": "Dart",
+  "title": "Dart Event Loop – How Asynchronous Code Works",
+  "meta": {
+    "title": "Dart Event Loop: Microtask Queue, Event Queue, and Async Execution",
+    "description": "Learn how Dart's event loop works, the difference between microtask and event queues, how Future and async/await schedule tasks, and how to write efficient asynchronous code.",
+    "keywords": [
+      "Dart event loop",
+      "Dart microtask queue",
+      "Dart event queue",
+      "Dart Future",
+      "Dart scheduleMicrotask",
+      "Dart async internals",
+      "Dart concurrency"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the Event Loop?"
+    },
+    {
+      "type": "text",
+      "value": "Dart is a single‑threaded language, but it can handle asynchronous operations efficiently using an **event loop**. The event loop continuously checks two queues: the **microtask queue** and the **event queue**. When the current synchronous code finishes, the event loop picks tasks from these queues and executes them. This mechanism allows Dart to perform I/O, timers, and other async work without blocking the main thread."
+    },
+    {
+      "type": "heading",
+      "value": "The Two Queues"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Microtask queue**: For short, high‑priority tasks that should run as soon as possible, before any event queue tasks. Tasks are added via `scheduleMicrotask()` or `Future.microtask()`.",
+        "- **Event queue**: For tasks that come from external events (I/O, timers, user interactions) and from `Future` constructors (like `Future(() {})` or `Future.delayed`)."
+      ]
+    },
+    {
+      "type": "text",
+      "value": "The event loop processes tasks in this order: it runs all microtasks until the microtask queue is empty, then takes one event from the event queue, runs it, and repeats."
+    },
+    {
+      "type": "heading",
+      "value": "Execution Order Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  print('1');\n  Future(() => print('2')); // event queue\n  Future.microtask(() => print('3')); // microtask queue\n  scheduleMicrotask(() => print('4')); // microtask queue\n  Future(() => print('5')); // event queue\n  print('6');\n}\n// Output: 1, 6, 3, 4, 2, 5"
+    },
+    {
+      "type": "text",
+      "value": "Synchronous code runs first. Then microtasks run before any event queue tasks. Both `Future.microtask` and `scheduleMicrotask` add to the microtask queue."
+    },
+    {
+      "type": "heading",
+      "value": "How Futures Are Scheduled"
+    },
+    {
+      "type": "text",
+      "value": "The `Future` constructor takes a callback that is placed on the **event queue**. However, there are other ways to create Futures that affect where the callback runs:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `Future(() {})` – schedules on the event queue.",
+        "- `Future.microtask(() {})` – schedules on the microtask queue.",
+        "- `Future.sync(() {})` – runs synchronously, not scheduled.",
+        "- `Future.value(x)` – creates a completed Future; its then callback is scheduled as a microtask.",
+        "- `Future.error(e)` – also schedules its then callbacks as microtasks."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  print('Start');\n  Future.value(42).then((v) => print('Value: $v')); // microtask\n  Future(() => print('Event')); // event\n  Future.microtask(() => print('Micro')); // microtask\n  print('End');\n}\n// Output: Start, End, Value: 42, Micro, Event"
+    },
+    {
+      "type": "heading",
+      "value": "Microtasks vs Events: When to Use Which"
+    },
+    {
+      "type": "text",
+      "value": "Use **microtasks** for very short, high‑priority work that must run before any pending I/O or timers. For example, you might use them to clean up state or flush a buffer after a synchronous operation. However, avoid using them heavily because they can delay event handling and make the UI unresponsive."
+    },
+    {
+      "type": "text",
+      "value": "Most async code should use the **event queue** (the default `Future` constructor) because it yields to other events and keeps the app responsive."
+    },
+    {
+      "type": "heading",
+      "value": "Why Not Use Microtasks for Everything?"
+    },
+    {
+      "type": "text",
+      "value": "If you schedule a large number of microtasks, the event loop will process them all before handling any events (like user input or rendering). This can freeze the UI. Therefore, only use microtasks for tasks that are guaranteed to be fast and few."
+    },
+    {
+      "type": "heading",
+      "value": "The `async`/`await` Sugar"
+    },
+    {
+      "type": "text",
+      "value": "When you mark a function `async` and use `await`, the code after the `await` is scheduled as a **microtask**. This ensures that after the awaited Future completes, the continuation runs before any new events."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  print('A');\n  await Future(() => print('B')); // B is scheduled on event queue\n  print('C'); // scheduled as microtask after B completes\n  print('D'); // still synchronous inside the continuation\n}\n// Output: A, B, C, D"
+    },
+    {
+      "type": "heading",
+      "value": "Common Pitfalls"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Assuming Futures run in parallel**: Futures are scheduled and executed in order (event queue). They do not run concurrently; they interleave with microtasks.",
+        "- **Heavy microtasks**: Can starve the event queue and cause delays.",
+        "- **Not understanding microtask vs event queue order**: Leads to subtle timing bugs.",
+        "- **Creating many microtasks in a loop**: Can cause the UI to freeze."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  print('1: Start');\n\n  scheduleMicrotask(() => print('2: Microtask'));\n\n  Future(() => print('3: Event 1'));\n\n  Future.microtask(() => print('4: Microtask via Future'));\n\n  Future(() => print('5: Event 2')).then((_) => print('6: Then of Event 2'));\n\n  await Future(() => print('7: Await event'));\n  print('8: After await');\n\n  print('9: End of main');\n}\n// Output:\n// 1: Start\n// 2: Microtask\n// 4: Microtask via Future\n// 3: Event 1\n// 5: Event 2\n// 6: Then of Event 2\n// 7: Await event\n// 8: After await\n// 9: End of main"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Dart uses an event loop with two queues: microtask and event.",
+        "- Microtasks run before any event queue tasks.",
+        "- Use `scheduleMicrotask` or `Future.microtask` for short, high‑priority work.",
+        "- Most async code should use the event queue (default `Future`).",
+        "- `async`/`await` schedules continuations as microtasks.",
+        "- Avoid flooding the microtask queue to keep the app responsive."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `scheduleMicrotask` and `Future.microtask`?",
+      "answer": "Both schedule a task on the microtask queue. `scheduleMicrotask` is a top‑level function. `Future.microtask` returns a Future that completes when the task finishes, allowing you to chain `.then` or use `await`. They have the same effect on the queue order."
+    },
+    {
+      "question": "Does `Future(() {})` always go to the event queue?",
+      "answer": "Yes, the unnamed `Future` constructor places its callback on the event queue. However, if the Future is already completed (e.g., `Future.value`), its `.then` callbacks are scheduled as microtasks."
+    },
+    {
+      "question": "Can I rely on the exact order of execution in complex async code?",
+      "answer": "The order is deterministic according to the rules: synchronous code first, then all microtasks, then one event, then all microtasks again, etc. But for complex chaining, it's safer to design code to be order‑independent or to use well‑understood patterns."
+    },
+    {
+      "question": "What happens if a microtask throws an exception?",
+      "answer": "The exception is handled by the current zone's error handler. Uncaught exceptions can terminate the program. Always handle errors in microtasks with try/catch."
+    },
+    {
+      "question": "Why does `Future.value` schedule its then callbacks as microtasks?",
+      "answer": "This ensures that callbacks are always called asynchronously, even if the Future is already completed. It provides consistency: `.then` is never called synchronously, preventing unexpected re‑entrancy bugs."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  print('Start');\n  Future(() => print('Event'));\n  scheduleMicrotask(() => print('Microtask'));\n  print('End');\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the correct execution order?",
+      "options": [
+        "Microtasks → Synchronous → Events",
+        "Synchronous → Microtasks → Events",
+        "Events → Microtasks → Synchronous",
+        "Synchronous → Events → Microtasks"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which of these adds a task to the microtask queue?",
+      "options": [
+        "Future(() => ...)",
+        "Future.delayed(() => ...)",
+        "Future.microtask(() => ...)",
+        "Timer.run(() => ...)"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What is the output of this code?\n\nvoid main() {\n  Future(() => print('1'));\n  scheduleMicrotask(() => print('2'));\n  print('3');\n}",
+      "options": ["3 2 1", "3 1 2", "2 3 1", "1 2 3"],
+      "answer": 0
+    },
+    {
+      "question": "Why is it generally recommended to use event queue for most asynchronous work?",
+      "options": [
+        "It's faster",
+        "It allows I/O and timers to be processed",
+        "Microtasks are not available in some environments",
+        "Events are guaranteed to run immediately"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-async-await",
+    "dart-future",
+    "dart-stream",
+    "dart-isolates"
+  ]
+}

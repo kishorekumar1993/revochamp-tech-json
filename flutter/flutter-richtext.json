@@ -1,0 +1,202 @@
+{
+  "slug": "flutter-richtext",
+  "course": "Flutter",
+  "title": "Flutter RichText – Styled Text with Multiple Styles",
+  "meta": {
+    "title": "Flutter RichText: TextSpan, WidgetSpan, and Styled Text",
+    "description": "Learn how to use RichText in Flutter to create text with multiple styles, inline widgets, and interactive spans. Master TextSpan, WidgetSpan, and text selection.",
+    "keywords": [
+      "Flutter RichText",
+      "TextSpan",
+      "WidgetSpan",
+      "RichText example",
+      "Flutter inline widget",
+      "Flutter styled text",
+      "Flutter text formatting"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is RichText?"
+    },
+    {
+      "type": "text",
+      "value": "`RichText` is a widget that displays text with multiple styles. It uses a tree of `TextSpan` objects, each with its own style, and optionally `WidgetSpan` to embed widgets inline. This is the foundation for creating styled text, links, and even interactive elements within a text flow. Unlike `Text`, which applies a single style to the whole string, `RichText` gives you fine‑grained control over every part."
+    },
+    {
+      "type": "heading",
+      "value": "Basic RichText with TextSpan"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "RichText(\n  text: TextSpan(\n    text: 'Hello ',\n    style: TextStyle(color: Colors.blue, fontSize: 20),\n    children: [\n      TextSpan(\n        text: 'world!',\n        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),\n      ),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "text",
+      "value": "The `TextSpan` tree builds the text. Each span can have its own `style`, and nested spans inherit the parent style unless overridden."
+    },
+    {
+      "type": "heading",
+      "value": "Inline Widgets with WidgetSpan"
+    },
+    {
+      "type": "text",
+      "value": "`WidgetSpan` allows you to embed any widget inside text. This is great for adding inline icons, buttons, or custom components."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "RichText(\n  text: TextSpan(\n    text: 'Click the ',\n    children: [\n      WidgetSpan(\n        child: GestureDetector(\n          onTap: () => print('Icon tapped'),\n          child: Icon(Icons.favorite, size: 20, color: Colors.red),\n        ),\n      ),\n      TextSpan(text: ' to like'),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Tap Events (Links)"
+    },
+    {
+      "type": "text",
+      "value": "You can make parts of the text tappable by adding a `TapGestureRecognizer` to a `TextSpan` using `recognizer`. This is how you create clickable links without using `GestureDetector`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/gestures.dart';\n\nRichText(\n  text: TextSpan(\n    text: 'Read our ',\n    children: [\n      TextSpan(\n        text: 'privacy policy',\n        style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),\n        recognizer: TapGestureRecognizer()\n          ..onTap = () => print('Privacy policy tapped'),\n      ),\n      TextSpan(text: '.'),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Nested Styles and Inheritance"
+    },
+    {
+      "type": "text",
+      "value": "Styles cascade from parent to child. A child span can override inherited properties (like `color` or `fontSize`) or add new ones."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "RichText(\n  text: TextSpan(\n    style: TextStyle(fontSize: 18, color: Colors.black),\n    children: [\n      TextSpan(text: 'Normal text '),\n      TextSpan(\n        text: 'bold red',\n        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),\n      ),\n      TextSpan(text: ' and '),\n      TextSpan(\n        text: 'italic green',\n        style: TextStyle(fontStyle: FontStyle.italic, color: Colors.green),\n      ),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Text Selection and SelectionControls"
+    },
+    {
+      "type": "text",
+      "value": "RichText supports text selection out of the box if you set `selectionColor` and use `SelectableText.rich` instead. For selectable rich text, use `SelectableText.rich` which takes a `TextSpan` tree. You can also customize selection controls with `SelectionControls`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "SelectableText.rich(\n  TextSpan(\n    text: 'You can select this text. ',\n    children: [\n      TextSpan(\n        text: 'Click and drag to select.',\n        style: TextStyle(fontWeight: FontWeight.bold),\n      ),\n    ],\n  ),\n  selectionColor: Colors.lightBlue,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Considerations"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `const` for static `TextStyle` objects to avoid unnecessary rebuilds.",
+        "- For many spans, consider building the text with a loop and storing the spans in a list.",
+        "- Avoid creating new recognizers on every build; create them once and reuse.",
+        "- When using `WidgetSpan`, ensure the embedded widgets are lightweight (e.g., small icons, not heavy animations)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting to add `recognizer` to `TextSpan`**: Without it, the text won't respond to taps. Also remember to import `flutter/gestures.dart`.",
+        "- **Using `TextSpan` without a root style**: If you don't set a default style on the root, text may be invisible (no color).",
+        "- **Creating recognizers inside the build method**: This creates new instances on each rebuild, which can cause memory leaks and performance issues. Create them in `initState` or as constants.",
+        "- **Not handling overflow**: RichText does not automatically wrap; use `softWrap: true` and a proper container width.",
+        "- **Mixing `RichText` with `SelectableText.rich` incorrectly**: `RichText` is not selectable; use `SelectableText.rich` for selectable text."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Define a base `TextStyle` for the root `TextSpan` and override only what changes in children.",
+        "- For interactive spans, create recognizers as member variables and dispose them if necessary (e.g., `TapGestureRecognizer`).",
+        "- Use `WidgetSpan` sparingly; if you need many inline widgets, consider using a `Wrap` or `Row` for better performance.",
+        "- Always set `softWrap: true` and `overflow: TextOverflow.ellipsis` to handle long text gracefully."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `RichText` displays text with multiple styles using `TextSpan` nodes.",
+        "- `TextSpan` can have `style`, `text`, `children`, and `recognizer` for taps.",
+        "- `WidgetSpan` allows embedding widgets inline (icons, buttons).",
+        "- Use `SelectableText.rich` for selectable rich text.",
+        "- Style inheritance reduces code duplication.",
+        "- Manage recognizers carefully to avoid memory leaks."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `RichText` and `Text.rich`?",
+      "answer": "`RichText` is the underlying widget that displays a tree of `InlineSpan`. `Text.rich` is a convenience constructor that returns a `RichText` widget. They are essentially the same; `Text.rich` is just shorter syntax."
+    },
+    {
+      "question": "How do I make part of the text clickable without using a `GestureDetector`?",
+      "answer": "Use a `TapGestureRecognizer` attached to the `TextSpan` via the `recognizer` property. This allows the span to handle taps independently of the rest of the text."
+    },
+    {
+      "question": "Can I use `RichText` with localization?",
+      "answer": "Yes. You can build the `TextSpan` tree dynamically using localized strings. For simple cases, you can combine multiple strings; for complex formatting, consider using a package like `intl` to generate formatted strings."
+    },
+    {
+      "question": "How do I apply a gradient to part of the text?",
+      "answer": "You cannot apply a gradient directly to a `TextSpan`. You can use a `ShaderMask` over the entire `RichText`, but that affects all text. For per‑span gradient, you would need to use a custom painter or multiple `RichText` widgets stacked, which is not recommended. Usually, a solid color or underline is sufficient for links."
+    },
+    {
+      "question": "How do I handle text overflow in RichText?",
+      "answer": "Set `overflow: TextOverflow.ellipsis` and `softWrap: true`. If you have `WidgetSpan`, be aware that they don't support overflow ellipsis; they will clip if the container is too narrow. Ensure your container has enough width or use `Flexible` in a `Row`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter/gestures.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('RichText Demo')),\n        body: Padding(\n          padding: const EdgeInsets.all(16.0),\n          child: Center(\n            child: Column(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                RichText(\n                  text: TextSpan(\n                    style: TextStyle(fontSize: 20, color: Colors.black),\n                    children: [\n                      TextSpan(text: 'Hello '),\n                      TextSpan(\n                        text: 'world!',\n                        style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),\n                      ),\n                    ],\n                  ),\n                ),\n                SizedBox(height: 20),\n                RichText(\n                  text: TextSpan(\n                    style: TextStyle(fontSize: 18),\n                    children: [\n                      TextSpan(text: 'Tap the '),\n                      WidgetSpan(\n                        child: GestureDetector(\n                          onTap: () => print('Star tapped'),\n                          child: Icon(Icons.star, size: 24, color: Colors.amber),\n                        ),\n                      ),\n                      TextSpan(text: ' to like'),\n                    ],\n                  ),\n                ),\n                SizedBox(height: 20),\n                RichText(\n                  text: TextSpan(\n                    style: TextStyle(fontSize: 16),\n                    children: [\n                      TextSpan(text: 'Read our '),\n                      TextSpan(\n                        text: 'privacy policy',\n                        style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),\n                        recognizer: TapGestureRecognizer()\n                          ..onTap = () => print('Privacy policy tapped'),\n                      ),\n                      TextSpan(text: '.'),\n                    ],\n                  ),\n                ),\n              ],\n            ),\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget is used to create text with multiple styles?",
+      "options": ["Text", "RichText", "StyledText", "MultiText"],
+      "answer": 1
+    },
+    {
+      "question": "How do you embed a widget inside text?",
+      "options": ["WidgetSpan", "WidgetTextSpan", "InlineWidget", "TextSpan.widget"],
+      "answer": 0
+    },
+    {
+      "question": "What must you import to use `TapGestureRecognizer`?",
+      "options": ["package:flutter/material.dart", "package:flutter/widgets.dart", "package:flutter/gestures.dart", "dart:ui"],
+      "answer": 2
+    },
+    {
+      "question": "Which widget should you use if you want the text to be selectable?",
+      "options": ["RichText", "SelectableText.rich", "SelectableRichText", "Text.rich"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-text",
+    "flutter-textfield",
+    "flutter-typography",
+    "flutter-gestures"
+  ]
+}

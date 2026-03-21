@@ -1,0 +1,209 @@
+{
+  "slug": "flutter-appbar",
+  "course": "Flutter",
+  "title": "Flutter AppBar Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter AppBar Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter AppBar to create top app bars. Understand leading, title, actions, flexibleSpace, elevation, and how to customize it with simple examples.",
+    "keywords": [
+      "Flutter AppBar",
+      "AppBar widget",
+      "leading",
+      "title",
+      "actions",
+      "flexibleSpace",
+      "elevation",
+      "bottom tab bar"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is AppBar in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "AppBar is a Material Design widget that represents the top app bar, typically placed at the top of a screen. It usually contains a leading icon (like a menu or back button), a title, and optional action buttons. AppBar is most commonly used as the `appBar` property of a `Scaffold`."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "The simplest AppBar just has a title. Place it inside a Scaffold:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Scaffold(\n  appBar: AppBar(\n    title: Text('My App'),\n  ),\n  body: Center(child: Text('Hello World')),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties"
+    },
+    {
+      "type": "text",
+      "value": "AppBar offers many properties to customize its appearance and behavior:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**leading**: A widget displayed before the title. Typically an `IconButton` (like menu or back). If not set, the AppBar automatically shows a back button when the previous route is known.",
+        "**title**: The primary widget (usually a `Text`). It's centered by default, but you can put any widget here.",
+        "**actions**: A list of widgets (usually `IconButton`s) displayed after the title.",
+        "**flexibleSpace**: A widget that sits behind the app bar content and can be animated (e.g., for collapsible effects).",
+        "**bottom**: A widget at the bottom of the app bar, often a `TabBar`.",
+        "**elevation**: The z-coordinate at which to place this app bar (shadow depth).",
+        "**backgroundColor**: The color of the app bar.",
+        "**iconTheme**: Color and opacity of icons in the leading and actions.",
+        "**textTheme**: Text style for the title.",
+        "**centerTitle**: Whether the title should be centered (default varies by platform).",
+        "**automaticallyImplyLeading**: If true (and `leading` is null), automatically add a back button when the route can be popped.",
+        "**shape**: Defines the app bar's shape (e.g., rounded rectangle).",
+        "**shadowColor**: Color of the shadow below the app bar."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Adding Actions"
+    },
+    {
+      "type": "text",
+      "value": "Use the `actions` property to add icons or buttons on the right side:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "AppBar(\n  title: Text('Actions Demo'),\n  actions: [\n    IconButton(onPressed: () {}, icon: Icon(Icons.search)),\n    IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart)),\n    PopupMenuButton(\n      itemBuilder: (context) => [\n        PopupMenuItem(child: Text('Settings')),\n        PopupMenuItem(child: Text('Help')),\n      ],\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Using leading"
+    },
+    {
+      "type": "text",
+      "value": "You can replace the default back button with a custom leading icon:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "AppBar(\n  leading: IconButton(\n    icon: Icon(Icons.menu),\n    onPressed: () => Scaffold.of(context).openDrawer(),\n  ),\n  title: Text('Custom Leading'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "AppBar with Tabs (bottom)"
+    },
+    {
+      "type": "text",
+      "value": "Combine AppBar with a `TabBar` to create a tabbed interface:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "DefaultTabController(\n  length: 3,\n  child: Scaffold(\n    appBar: AppBar(\n      title: Text('Tabs Demo'),\n      bottom: TabBar(\n        tabs: [\n          Tab(icon: Icon(Icons.directions_car)),\n          Tab(icon: Icon(Icons.directions_transit)),\n          Tab(icon: Icon(Icons.directions_bike)),\n        ],\n      ),\n    ),\n    body: TabBarView(\n      children: [\n        Icon(Icons.directions_car),\n        Icon(Icons.directions_transit),\n        Icon(Icons.directions_bike),\n      ],\n    ),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Customizing Appearance"
+    },
+    {
+      "type": "text",
+      "value": "You can change colors, elevation, and shape to match your design:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "AppBar(\n  title: Text('Styled AppBar'),\n  backgroundColor: Colors.teal,\n  elevation: 4.0,\n  shadowColor: Colors.black45,\n  shape: RoundedRectangleBorder(\n    borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),\n  ),\n  centerTitle: true,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "FlexibleSpace and SliverAppBar"
+    },
+    {
+      "type": "text",
+      "value": "For more advanced scrolling effects (like collapsible headers), use `SliverAppBar` inside a `CustomScrollView`. The `flexibleSpace` property allows you to place a background that animates as the user scrolls."
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using AppBar without Scaffold**: AppBar is designed to be placed inside a Scaffold's `appBar` property. Using it elsewhere can lead to layout issues.",
+        "**Forgetting to handle back navigation**: When you provide a custom `leading`, you lose the automatic back button; you must handle navigation yourself.",
+        "**Overcrowding actions**: Too many actions can overflow. Use a `PopupMenuButton` for overflow items.",
+        "**Not setting `centerTitle` properly**: On iOS, the title is centered by default; on Android, it's left-aligned. Use `centerTitle` to enforce your preference.",
+        "**Misunderstanding `automaticallyImplyLeading`**: This only adds a back button if the route can be popped. If you want a menu button, you must provide your own leading.",
+        "**Forgetting to wrap TabBar with a `DefaultTabController`**: Tabs need a controller to sync the TabBar with the TabBarView."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "AppBar is typically used inside Scaffold's `appBar` property.",
+        "It has three main areas: leading, title, and actions.",
+        "Use `bottom` to add a TabBar.",
+        "Customize colors with `backgroundColor`, `iconTheme`, `textTheme`.",
+        "Control the back button with `automaticallyImplyLeading` and custom `leading`.",
+        "For complex scroll effects, consider `SliverAppBar`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. What is the purpose of the AppBar widget?\n2. How do you add icons to the right side of an AppBar?\n3. Explain the difference between `leading` and `automaticallyImplyLeading`.\n4. How would you create an AppBar with a search field instead of a title?\n5. What is `flexibleSpace` and when would you use it?\n6. How do you add tabs below the AppBar? What controller is needed?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() {\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: MyHomePage(),\n    );\n  }\n}\n\nclass MyHomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(\n        title: Text('AppBar Demo'),\n        actions: [\n          IconButton(icon: Icon(Icons.search), onPressed: () {}),\n          IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),\n        ],\n      ),\n      body: Center(\n        child: Text('Hello, AppBar!'),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the default behavior of `automaticallyImplyLeading` when `leading` is not provided?",
+      "options": [
+        "It always shows a menu icon",
+        "It shows a back button if the route can be popped",
+        "It shows nothing",
+        "It shows a close button"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you add a TabBar to an AppBar?",
+      "options": [
+        "Using the `tabs` property",
+        "Using the `bottom` property and providing a TabBar",
+        "Using the `actions` property",
+        "Using a separate widget below the AppBar"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which property of AppBar is used to set the widget that appears before the title?",
+      "options": [
+        "leading",
+        "start",
+        "left",
+        "preTitle"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-scaffold",
+    "flutter-tabbar",
+    "flutter-iconbutton",
+    "flutter-sliverappbar",
+    "flutter-bottomnavigationbar"
+  ]
+}

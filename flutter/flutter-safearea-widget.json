@@ -1,0 +1,214 @@
+{
+  "slug": "flutter-safearea-widget",
+  "course": "Flutter",
+  "title": "Flutter SafeArea – Avoid Notches and System UI Overlaps",
+  "meta": {
+    "title": "Flutter SafeArea Widget: Handle Notches, Status Bars, and Screen Edges",
+    "description": "Learn how to use SafeArea in Flutter to avoid system UI intrusions like notches, status bars, and rounded corners. Ensure your content is always visible and tappable.",
+    "keywords": [
+      "Flutter SafeArea",
+      "SafeArea widget",
+      "Flutter notch handling",
+      "Flutter system UI",
+      "Flutter screen edges",
+      "Flutter padding",
+      "Flutter media query"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is SafeArea?"
+    },
+    {
+      "type": "text",
+      "value": "`SafeArea` is a widget that insets its child by enough padding to avoid intrusions from the operating system. These intrusions include the status bar, the notch on modern phones, the home indicator (on iOS), and rounded screen corners. By using `SafeArea`, you ensure that your content is visible and tappable, regardless of the device. Without it, parts of your UI might be hidden behind the system UI or cut off by screen curves."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use SafeArea?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Notches and cutouts**: Phones with notches (e.g., iPhone X, Pixel 3) have a physical cutout that can obscure content.",
+        "- **Status bar**: The status bar area (time, battery) should not be overlapped by app content.",
+        "- **Navigation bar**: On Android, the navigation bar (back, home, recents) can overlap the bottom of the screen.",
+        "- **Rounded corners**: Some devices have rounded corners; you might want to keep content away from the edges.",
+        "- **Gesture indicators**: On iOS, the home indicator at the bottom requires extra space for gestures."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "Simply wrap your top‑level widget (usually the `body` of a `Scaffold`) with `SafeArea`. It automatically adds padding on all sides where needed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Scaffold(\n  body: SafeArea(\n    child: Center(\n      child: Text('I am safe from notches!'),\n    ),\n  ),\n)"
+    },
+    {
+      "type": "text",
+      "value": "`SafeArea` can also be used inside a `Scaffold`'s `body` or anywhere you have a widget that might be overlapped by system UI. Note that `AppBar` already handles safe area for the top, so you usually don't need to wrap an `AppBar`."
+    },
+    {
+      "type": "heading",
+      "value": "Properties of SafeArea"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`minimum`**: The minimum padding to apply, of type `EdgeInsets`. Default is `EdgeInsets.zero`.",
+        "- **`left`, `top`, `right`, `bottom`**: Booleans to control which sides are inset. Default is `true` for all sides.",
+        "- **`child`**: The widget that gets padded.",
+        "- **`maintainBottomViewPadding`**: If `true`, the padding includes the view padding (keyboard) as well. Default `false`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Selective Safe Areas"
+    },
+    {
+      "type": "text",
+      "value": "You can opt out of safe areas on specific sides. For example, if you want the content to go under the status bar but avoid the notch on the top, you can set `top: false`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "SafeArea(\n  top: false, // allow content under status bar\n  left: true,\n  right: true,\n  bottom: true,\n  child: ...,\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Minimum Padding"
+    },
+    {
+      "type": "text",
+      "value": "The `minimum` property adds extra padding on top of the system insets. This is useful when you want to add a custom offset (e.g., to avoid a persistent header)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "SafeArea(\n  minimum: const EdgeInsets.all(16.0),\n  child: ...\n)"
+    },
+    {
+      "type": "heading",
+      "value": "SafeArea vs MediaQuery.padding"
+    },
+    {
+      "type": "text",
+      "value": "`MediaQuery.of(context).padding` gives you the system insets directly. `SafeArea` is a convenience widget that automatically applies those insets as padding. You can use the padding manually if you need more control. For example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final padding = MediaQuery.of(context).padding;\nContainer(\n  padding: padding,\n  child: ...\n)"
+    },
+    {
+      "type": "text",
+      "value": "However, `SafeArea` is simpler for most cases and works even if the widget tree doesn't have a `MediaQuery` ancestor (though it does need a `MediaQuery` from the context, which is provided by `MaterialApp`)."
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Wrapping the entire `Scaffold`**: The `Scaffold` itself already handles some safe areas (e.g., its `appBar` is safe by default). Wrapping the whole `Scaffold` may create double padding.",
+        "- **Using `SafeArea` inside a `ListView`**: If the `ListView` is already scrollable, safe area insets are applied only to the topmost visible part, but the list content may still be overlapped if the list is long and scrolls under the system UI. Usually, you wrap the `body` of the `Scaffold` with `SafeArea`, not the list itself.",
+        "- **Forgetting to set `maintainBottomViewPadding` when needed**: If you have a `TextField` at the bottom and the keyboard opens, you may want the bottom padding to remain even when the keyboard is dismissed. Setting `maintainBottomViewPadding: true` can help, but it's often better to use `Scaffold`'s `resizeToAvoidBottomInset`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Always wrap the `body` of a `Scaffold` with `SafeArea` (or use `Scaffold`'s `extendBodyBehindAppBar` if you want to go under the app bar).",
+        "- If you have a custom widget that should avoid the system UI, wrap it in `SafeArea`.",
+        "- Use `maintainBottomViewPadding: true` when you have persistent bottom elements (e.g., a bottom navigation bar) that should stay above the keyboard.",
+        "- Test on devices with notches and rounded corners (emulators work).",
+        "- Combine `SafeArea` with `MediaQuery` for advanced customisation."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `SafeArea` adds padding to avoid system UI intrusions (notches, status bar, home indicator).",
+        "- It is typically used to wrap the `body` of a `Scaffold`.",
+        "- You can enable/disable padding on specific sides with `left`, `top`, `right`, `bottom`.",
+        "- `minimum` adds extra padding on top of system insets.",
+        "- Avoid wrapping the entire `Scaffold` with `SafeArea`; use it only where needed."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I need SafeArea if my app uses an AppBar?",
+      "answer": "No, `AppBar` automatically respects safe area (it extends into the status bar region). If you use an `AppBar`, you usually don't need to wrap it with `SafeArea`. However, the `body` of the `Scaffold` may still need `SafeArea` to avoid the bottom home indicator or rounded corners."
+    },
+    {
+      "question": "How do I make a background image cover the whole screen including the status bar area?",
+      "answer": "You can set `extendBodyBehindAppBar: true` in the `Scaffold` and then place the `SafeArea` only for the content, not the background. Or use a `Stack` with the image as the first child (without `SafeArea`) and then overlay content with `SafeArea`."
+    },
+    {
+      "question": "What is the difference between `SafeArea` and `Padding` with `MediaQuery.of(context).padding`?",
+      "answer": "`SafeArea` is a widget that automatically applies `MediaQuery.of(context).padding` as insets. It also allows you to opt out of specific sides. Using `Padding` with `MediaQuery.padding` gives you the raw values, which you can use for custom calculations."
+    },
+    {
+      "question": "Why does my `SafeArea` not add padding on the bottom on iOS?",
+      "answer": "On iOS, the home indicator area is considered a safe area. If you have a `Scaffold` with a bottom navigation bar, the navigation bar already respects safe area. If you need content to be above the home indicator, wrap it in `SafeArea` with `bottom: true`. Ensure that your widget is not placed under a persistent bottom bar."
+    },
+    {
+      "question": "Can I use SafeArea inside a CustomScrollView?",
+      "answer": "Yes, but `CustomScrollView` already has its own sliver system. You can wrap a sliver with `SliverSafeArea` to achieve the same effect. `SliverSafeArea` is the sliver counterpart of `SafeArea` and should be used inside `CustomScrollView`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('SafeArea Demo')),\n        body: SafeArea(\n          child: Column(\n            children: [\n              Container(\n                color: Colors.blue,\n                height: 100,\n                child: Center(child: Text('Top content', style: TextStyle(color: Colors.white))),\n              ),\n              Expanded(\n                child: ListView.builder(\n                  itemCount: 20,\n                  itemBuilder: (context, index) => ListTile(title: Text('Item $index')),\n                ),\n              ),\n              Container(\n                color: Colors.green,\n                height: 50,\n                child: Center(child: Text('Bottom content', style: TextStyle(color: Colors.white))),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the primary purpose of the SafeArea widget?",
+      "options": [
+        "To add a shadow to the widget",
+        "To avoid system UI intrusions like notches and status bars",
+        "To make the widget scrollable",
+        "To center its child"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which property of SafeArea allows you to control whether padding is applied on the top side?",
+      "options": ["paddingTop", "top", "applyTop", "insetTop"],
+      "answer": 1
+    },
+    {
+      "question": "True or False: You should wrap the entire Scaffold with SafeArea. ",
+      "options": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "question": "How can you add extra padding on top of the system insets?",
+      "options": ["Set `extraPadding: true`", "Use the `minimum` property", "Add a `Padding` widget inside", "Set `topPadding: 20`"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-scaffold",
+    "flutter-mediaquery",
+    "flutter-padding",
+    "flutter-slivers"
+  ]
+}

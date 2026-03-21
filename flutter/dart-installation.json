@@ -1,0 +1,298 @@
+{
+  "slug": "dart-installation",
+  "course": "Dart",
+  "title": "Dart Installation Guide: Setup Dart SDK on Windows, macOS & Linux",
+  "meta": {
+    "title": "How to Install Dart SDK – Step-by-Step Guide for All Platforms",
+    "description": "Complete Dart installation tutorial for Windows, macOS, and Linux. Learn to install Dart SDK, set up VS Code, and run your first Dart program with examples.",
+    "keywords": [
+      "install Dart",
+      "Dart SDK installation",
+      "setup Dart on Windows",
+      "install Dart on macOS",
+      "Dart on Linux",
+      "Dart first program",
+      "Dart development environment"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Installing Dart SDK – Overview"
+    },
+    {
+      "type": "text",
+      "value": "Before you start coding in Dart, you need to install the Dart SDK (Software Development Kit). The Dart SDK includes the Dart VM, core libraries, development tools like `dart` and `dartfmt`, and the package manager `pub`. This guide will walk you through installing Dart on Windows, macOS, and Linux, and then verifying the installation with a simple 'Hello World' program."
+    },
+    {
+      "type": "heading",
+      "value": "Prerequisites"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- A computer running Windows (7 or later), macOS (10.15+), or a modern Linux distribution.",
+        "- Administrator/sudo access (for system‑wide installation).",
+        "- Internet connection to download the SDK.",
+        "- (Optional) A code editor like VS Code or IntelliJ IDEA for a better development experience."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Method 1: Installing Dart via Official Installer (Windows & macOS)"
+    },
+    {
+      "type": "text",
+      "value": "The easiest way to install Dart on Windows and macOS is by using the official installer from the Dart website."
+    },
+    {
+      "type": "heading",
+      "value": "Windows Installation"
+    },
+    {
+      "type": "list",
+      "value": [
+        "1. Visit the [Dart SDK archive](https://dart.dev/get-dart/archive) page.",
+        "2. Download the latest stable Windows installer (e.g., `dart-sdk-3.x.x-windows-x64.zip`).",
+        "3. Extract the ZIP file to a folder, for example `C:\\dart-sdk`.",
+        "4. Add the SDK `bin` directory to your system PATH:",
+        "   - Open System Properties → Environment Variables.",
+        "   - Under 'System variables', find `Path`, click Edit, then New.",
+        "   - Add `C:\\dart-sdk\\bin` and click OK.",
+        "5. Open a new Command Prompt and verify the installation by running `dart --version`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "macOS Installation"
+    },
+    {
+      "type": "list",
+      "value": [
+        "1. Download the macOS installer from the [Dart SDK archive](https://dart.dev/get-dart/archive) (choose the `.pkg` file).",
+        "2. Open the downloaded `.pkg` file and follow the on‑screen instructions.",
+        "3. The installer automatically adds Dart to your PATH.",
+        "4. Open Terminal and verify with `dart --version`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Method 2: Installing via Package Manager (Recommended for Linux & macOS)"
+    },
+    {
+      "type": "text",
+      "value": "Using a package manager simplifies updates and dependency management."
+    },
+    {
+      "type": "heading",
+      "value": "macOS with Homebrew"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Install Homebrew first (if not installed)\n/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"\n\n# Then install Dart\nbrew tap dart-lang/dart\nbrew install dart"
+    },
+    {
+      "type": "heading",
+      "value": "Linux (Debian/Ubuntu) with apt"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Enable the Dart repository\nsudo apt-get update\nsudo apt-get install apt-transport-https\nsudo sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'\nsudo sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'\n\n# Install Dart\nsudo apt-get update\nsudo apt-get install dart"
+    },
+    {
+      "type": "text",
+      "value": "After installation, you may need to add Dart to your PATH. For Debian/Ubuntu, the SDK is usually installed in `/usr/lib/dart/bin`. Add it to your shell profile:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "export PATH=\"$PATH:/usr/lib/dart/bin\""
+    },
+    {
+      "type": "heading",
+      "value": "Verifying Installation"
+    },
+    {
+      "type": "text",
+      "value": "Open a terminal (or command prompt) and run:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "dart --version"
+    },
+    {
+      "type": "text",
+      "value": "You should see output similar to `Dart SDK version: 3.x.x (stable)`. If the command is not found, double‑check that the SDK `bin` directory is in your PATH."
+    },
+    {
+      "type": "heading",
+      "value": "Your First Dart Program"
+    },
+    {
+      "type": "text",
+      "value": "Create a file named `hello.dart` with the following content:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  print('Hello, Dart!');\n}"
+    },
+    {
+      "type": "text",
+      "value": "Run it using the Dart VM:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "dart hello.dart"
+    },
+    {
+      "type": "text",
+      "value": "If everything is set up correctly, you'll see `Hello, Dart!` printed in the console."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up an Editor"
+    },
+    {
+      "type": "text",
+      "value": "While you can write Dart code in any text editor, using an IDE with Dart support greatly improves productivity. Here's how to set up two popular editors:"
+    },
+    {
+      "type": "heading",
+      "value": "Visual Studio Code"
+    },
+    {
+      "type": "list",
+      "value": [
+        "1. Download and install [VS Code](https://code.visualstudio.com/).",
+        "2. Open VS Code and go to the Extensions view (Ctrl+Shift+X).",
+        "3. Search for 'Dart' and install the official Dart extension by Dart Code.",
+        "4. Create a new folder for your project, then create a `hello.dart` file.",
+        "5. You can now run the program by opening the file and pressing F5 (or selecting Run → Start Debugging)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "IntelliJ IDEA / Android Studio"
+    },
+    {
+      "type": "list",
+      "value": [
+        "1. Install [IntelliJ IDEA Community Edition](https://www.jetbrains.com/idea/download/) (or Android Studio).",
+        "2. Launch the IDE and go to File → Settings → Plugins (or IntelliJ IDEA → Preferences on macOS).",
+        "3. Search for 'Dart' and install the Dart plugin.",
+        "4. Restart the IDE.",
+        "5. Create a new Dart project (File → New → Project → Dart).",
+        "6. Write your code and click the green Run button."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Troubleshooting Common Issues"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **'dart' is not recognized as an internal or external command** – The SDK `bin` folder is not in your PATH. Re‑check the PATH variable and restart your terminal.",
+        "- **Permission denied on Linux** – If you installed via the Debian package, you might need to run `sudo` for certain operations, but normal user commands should work after PATH is set correctly.",
+        "- **Firewall blocking downloads** – Ensure your network allows connections to Google's servers (for the apt repository) or the Dart website."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Next Steps"
+    },
+    {
+      "type": "text",
+      "value": "Now that Dart is installed, you can explore the language fundamentals:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Learn basic syntax in the [Dart Introduction](/flutter/dart-introduction)",
+        "- Practice with variables and data types",
+        "- Try writing simple programs using functions and control flow",
+        "- Explore the [official Dart documentation](https://dart.dev/guides)"
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What are the system requirements for Dart SDK?",
+      "answer": "Dart SDK requires a 64‑bit operating system: Windows 7 or later, macOS 10.15 or later, or a modern Linux distribution (like Ubuntu 18.04+, Debian 10+, Fedora, etc.). At least 1 GB of free disk space and 2 GB of RAM are recommended."
+    },
+    {
+      "question": "How do I check if Dart is already installed on my system?",
+      "answer": "Open a terminal (Command Prompt on Windows) and run `dart --version`. If Dart is installed, you'll see the version number. If not, you'll get an error like 'dart: command not found'."
+    },
+    {
+      "question": "How can I update Dart to the latest version?",
+      "answer": "If you used a package manager (Homebrew, apt), run the respective update commands: `brew upgrade dart` on macOS, `sudo apt update && sudo apt upgrade dart` on Debian/Ubuntu. If you installed manually, download the latest SDK and replace the old folder, then update your PATH if necessary."
+    },
+    {
+      "question": "Can I install multiple Dart versions side by side?",
+      "answer": "Yes, you can install different versions in separate directories and switch by changing your PATH environment variable. Tools like `fvm` (Flutter Version Management) can also help manage multiple Dart/Flutter SDK versions."
+    },
+    {
+      "question": "Which Dart version should I download – stable or dev?",
+      "answer": "For most users, the **stable** version is recommended. It has been thoroughly tested and is suitable for production use. The **dev** version includes upcoming features but may be less stable. Choose dev only if you need to test new functionality."
+    },
+    {
+      "question": "Do I need to install Flutter separately if I want to develop Flutter apps?",
+      "answer": "Yes, Flutter includes its own Dart SDK. If you install Flutter, you don't need to install Dart separately. However, for pure Dart projects (command‑line, server, web), installing the standalone Dart SDK is sufficient."
+    },
+    {
+      "question": "How do I uninstall Dart SDK?",
+      "answer": "On Windows, delete the SDK folder and remove its `bin` directory from your PATH. On macOS, if installed via Homebrew, run `brew uninstall dart`. If installed via the `.pkg` installer, there's no automatic uninstaller – you can delete the SDK folder (usually `/usr/local/opt/dart` or `/Library/dart`) and remove PATH entries from your shell profile. On Linux (Debian/Ubuntu), run `sudo apt remove dart`."
+    },
+    {
+      "question": "Why do I get 'dart: command not found' after installation?",
+      "answer": "This usually means the SDK's `bin` directory is not in your system's PATH. Check your installation folder and add the correct path to your PATH environment variable (Windows) or shell profile (macOS/Linux). After adding, restart your terminal."
+    },
+    {
+      "question": "How do I set up Dart on other Linux distributions (Fedora, Arch)?",
+      "answer": "For Fedora, you can use the COPR repository: `sudo dnf copr enable kalev/ghc` then `sudo dnf install dart`. For Arch Linux, Dart is available in the AUR: use an AUR helper like `yay -S dart`. Alternatively, you can always download the SDK archive from dart.dev and configure PATH manually."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  print('Welcome to Dart!');\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which command verifies that Dart SDK is correctly installed?",
+      "options": ["dart check", "dart --version", "dart verify", "dart install"],
+      "answer": 1
+    },
+    {
+      "question": "On Windows, after extracting the Dart SDK, what must you do to use 'dart' from any command prompt?",
+      "options": [
+        "Run dart.exe directly",
+        "Add the SDK's bin folder to the PATH environment variable",
+        "Install Visual Studio",
+        "Restart the computer"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which package manager can be used to install Dart on macOS?",
+      "options": ["apt", "yum", "Homebrew", "choco"],
+      "answer": 2
+    },
+    {
+      "question": "What is the file extension for Dart source files?",
+      "options": [".dart", ".d", ".dt", ".da"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "dart-introduction",
+    "dart-first-program",
+    "dart-variables",
+    "dart-editor-setup"
+  ]
+}

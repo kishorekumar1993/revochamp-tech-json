@@ -1,0 +1,262 @@
+{
+  "slug": "dart-variables",
+  "course": "Dart",
+  "title": "Dart Variables and Data Types – Complete Guide",
+  "meta": {
+    "title": "Dart Variables: Declaring and Using Variables with Examples",
+    "description": "Learn all about Dart variables – declaration, data types (int, double, String, bool), var, dynamic, final, const, and null safety. Includes code examples and quiz.",
+    "keywords": [
+      "Dart variables",
+      "Dart data types",
+      "Dart variable declaration",
+      "Dart var keyword",
+      "Dart final vs const",
+      "Dart null safety",
+      "Dart type inference"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Variables in Dart?"
+    },
+    {
+      "type": "text",
+      "value": "A variable is a named storage location in memory that holds a value. In Dart, variables can store different types of data such as numbers, text, booleans, and more. Dart is a statically typed language, but it also supports type inference, making variable declaration flexible and concise."
+    },
+    {
+      "type": "heading",
+      "value": "Declaring Variables"
+    },
+    {
+      "type": "text",
+      "value": "You can declare a variable using the `var` keyword, or by explicitly specifying the type. Once a variable is declared with a type, it can only hold values of that type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var name = 'Alice';        // type inferred as String\n  int age = 30;               // explicitly typed integer\n  double height = 5.8;        // double (floating‑point)\n  String city = 'New York';   // explicit String\n  bool isStudent = false;     // boolean\n  \n  print('$name is $age years old, lives in $city.');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Built‑in Data Types"
+    },
+    {
+      "type": "text",
+      "value": "Dart provides several core data types:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **int**: Integer numbers (e.g., `42`, `-10`)",
+        "- **double**: Floating‑point numbers (e.g., `3.14`, `-0.5`)",
+        "- **num**: Generic number type (can be int or double)",
+        "- **String**: Sequence of characters (`'Hello'`, `\"Dart\"`)",
+        "- **bool**: Boolean values (`true` or `false`)",
+        "- **List**: Ordered collection (similar to arrays)",
+        "- **Map**: Key‑value pairs",
+        "- **dynamic**: Can hold any type (disables type checking)"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Type Inference with `var`"
+    },
+    {
+      "type": "text",
+      "value": "When you declare a variable with `var`, Dart infers its type from the initial value. After inference, the variable's type is fixed and cannot be changed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var message = 'Hello';   // inferred as String\n  // message = 123;        // Error: can't assign int to String\n  \n  var count = 10;          // inferred as int\n  count = 15;              // OK – still int\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Explicit Type Declaration"
+    },
+    {
+      "type": "text",
+      "value": "You can also specify the type explicitly. This is useful when you want to be clear about the intended type or when you declare a variable without an initial value."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  String greeting;        // declared without initial value\n  greeting = 'Hi';        // assigned later\n  \n  int a, b;               // multiple declarations\n  a = 5;\n  b = 10;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "The `dynamic` Type"
+    },
+    {
+      "type": "text",
+      "value": "If you need a variable that can change type at runtime, use `dynamic`. However, overusing `dynamic` defeats the purpose of static type checking and should be avoided unless absolutely necessary."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  dynamic flexible = 'Hello';\n  print(flexible);          // Hello\n  flexible = 42;            // now it's an int\n  print(flexible);          // 42\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Final and Const – Immutable Variables"
+    },
+    {
+      "type": "text",
+      "value": "Use `final` or `const` for variables that should not change after being set. `final` is set once at runtime; `const` is a compile‑time constant."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  final name = 'Alice';        // set once\n  // name = 'Bob';              // Error: can't change final\n  \n  const pi = 3.14159;           // compile‑time constant\n  // pi = 3.14;                  // Error\n  \n  // `const` requires compile‑time values\n  const double gravity = 9.8;    // OK\n  // const now = DateTime.now(); // Error: not compile‑time constant\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Null Safety in Dart"
+    },
+    {
+      "type": "text",
+      "value": "Dart supports sound null safety. By default, variables cannot be `null`. To allow a variable to hold `null`, add a `?` after the type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int? nullableInt;          // can be null\n  nullableInt = null;         // allowed\n  \n  String? name;               // nullable\n  print(name?.length);         // safe access: prints null\n  \n  // String nonNullable = null; // Error – can't assign null\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Default Values"
+    },
+    {
+      "type": "text",
+      "value": "Uninitialized variables with a nullable type have the default value `null`. For non‑nullable types, you must provide an initial value before use."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int? a;        // default null\n  print(a);      // null\n  \n  // int b;       // Error: non‑nullable must be initialized\n  int b = 0;     // OK\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Type Conversion"
+    },
+    {
+      "type": "text",
+      "value": "You can convert between types using built‑in methods like `toString()`, `parse()`, etc."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int number = 42;\n  String numberStr = number.toString();   // '42'\n  \n  double pi = 3.14;\n  int piInt = pi.toInt();                  // 3 (truncates)\n  \n  String text = '123';\n  int parsed = int.parse(text);            // 123\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Naming Conventions"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Variable names should use **camelCase** (e.g., `firstName`, `totalAmount`).",
+        "- Class names use **PascalCase** (e.g., `Person`, `ShoppingCart`).",
+        "- Constants (with `const`) often use **lowerCamelCase** (no special prefix).",
+        "- Avoid using single‑letter names except for trivial loop counters (`i`, `j`).",
+        "- Names should be descriptive and meaningful."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Various variable declarations\n  String firstName = 'John';\n  String lastName = 'Doe';\n  int age = 25;\n  double height = 5.9;\n  bool isEmployed = true;\n  \n  // Using var\n  var city = 'New York';\n  var score = 95.5;\n  \n  // Nullable variable\n  String? middleName;\n  \n  // Final constant\n  final country = 'USA';\n  const double pi = 3.14159;\n  \n  // Printing values\n  print('$firstName $lastName is $age years old.');\n  print('Lives in $city, $country.');\n  print('Height: $height, Employed: $isEmployed');\n  print('Score: $score, Pi: $pi');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Variables store data and have a type.",
+        "- Use `var` for type inference, or explicitly specify the type.",
+        "- Dart has built‑in types: `int`, `double`, `String`, `bool`, `List`, `Map`.",
+        "- Use `final` for runtime constants and `const` for compile‑time constants.",
+        "- Null safety prevents null errors – use `?` for nullable types.",
+        "- Always follow naming conventions for clean code."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `var` and `dynamic`?",
+      "answer": "`var` declares a variable with a fixed type inferred from the initial value. Once inferred, the type cannot change. `dynamic` disables type checking, allowing the variable to hold any type and change at runtime. Prefer `var` over `dynamic` for type safety."
+    },
+    {
+      "question": "Can I change the type of a variable declared with `var`?",
+      "answer": "No. After type inference, the variable's type is fixed. For example, `var x = 10;` makes `x` an `int`; you cannot later assign a `String` to it."
+    },
+    {
+      "question": "When should I use `final` vs `const`?",
+      "answer": "Use `final` for variables that are set once at runtime (e.g., a value from a calculation or user input). Use `const` for compile‑time constants that never change (e.g., `pi = 3.14`). `const` variables are implicitly `final`."
+    },
+    {
+      "question": "How do I make a variable nullable?",
+      "answer": "Add a `?` after the type: `int? nullableInt;`. This allows the variable to hold either an integer or `null`. Without `?`, the variable is non‑nullable and cannot be `null`."
+    },
+    {
+      "question": "What is type inference?",
+      "answer": "Type inference is Dart's ability to deduce the type of a variable from its initial value when you use `var`. For example, `var name = 'Alice';` infers `String`. This keeps code concise while maintaining static typing."
+    },
+    {
+      "question": "What are the default values of uninitialized variables?",
+      "answer": "For nullable types, the default value is `null`. Non‑nullable types must be initialized before use; they have no default value and the compiler enforces initialization."
+    },
+    {
+      "question": "How do I convert a string to an integer?",
+      "answer": "Use `int.parse(string)` or `int.tryParse(string)` (which returns `null` if parsing fails). For example: `int.parse('123')` returns `123`."
+    },
+    {
+      "question": "Can I use `var` without an initial value?",
+      "answer": "No. `var` requires an initializer to infer the type. If you need a variable without an initial value, declare it with an explicit type (e.g., `int x;`)."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  // Try declaring variables of different types\n  var name = 'Dart Learner';\n  int year = 2025;\n  double version = 3.0;\n  bool isFun = true;\n  \n  print('Hello, $name!');\n  print('Year: $year, Version: $version');\n  print('Is Dart fun? $isFun');\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which keyword is used to declare a variable whose type is inferred from its initial value?",
+      "options": ["let", "dynamic", "var", "auto"],
+      "answer": 2
+    },
+    {
+      "question": "What is the output of this code?\n\nvoid main() {\n  var x = 10;\n  x = 'hello';\n  print(x);\n}",
+      "options": ["10", "hello", "Error", "null"],
+      "answer": 2
+    },
+    {
+      "question": "Which of the following correctly declares a nullable integer?",
+      "options": ["int? number;", "int number?;", "nullable int number;", "int? number = 0;"],
+      "answer": 0
+    },
+    {
+      "question": "What is the difference between `final` and `const`?",
+      "options": [
+        "There is no difference",
+        "`const` is set at runtime, `final` at compile time",
+        "`final` is set once at runtime, `const` is a compile‑time constant",
+        "`final` can be reassigned, `const` cannot"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "dart-introduction",
+    "dart-syntax",
+    "dart-functions",
+    "dart-null-safety"
+  ]
+}

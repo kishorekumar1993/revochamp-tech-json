@@ -1,0 +1,255 @@
+{
+  "slug": "flutter-provider",
+  "course": "Flutter",
+  "title": "Flutter Provider – A Complete Guide to State Management",
+  "meta": {
+    "title": "Flutter Provider Tutorial: State Management Made Easy",
+    "description": "Learn how to use Provider for state management in Flutter. Master ChangeNotifierProvider, Consumer, MultiProvider, and best practices with practical examples.",
+    "keywords": [
+      "Flutter Provider",
+      "Provider state management",
+      "ChangeNotifierProvider",
+      "Consumer",
+      "MultiProvider",
+      "Flutter state management",
+      "Provider tutorial"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Provider?"
+    },
+    {
+      "type": "text",
+      "value": "Provider is a wrapper around InheritedWidget that makes it easier to manage and share state across your Flutter app. It is the recommended state management solution for many applications because it's simple, scalable, and integrates well with the framework. Provider allows you to expose a model (e.g., a `ChangeNotifier`) to the widget tree, and listen to changes in a very efficient way – only widgets that depend on the data are rebuilt when it changes."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Provider?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Simple**: Minimal boilerplate compared to other state management solutions.",
+        "- **Scalable**: Works well for both small apps and large projects.",
+        "- **Efficient**: Only rebuilds widgets that consume the data.",
+        "- **Testable**: Easy to mock providers for unit tests.",
+        "- **Official recommendation**: Provider is the go‑to solution for many Flutter developers and is backed by the Flutter team."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Adding Provider to Your Project"
+    },
+    {
+      "type": "text",
+      "value": "Add the `provider` package to your `pubspec.yaml`:\n\n```yaml\ndependencies:\n  provider: ^6.1.0\n```\n\nThen run `flutter pub get`."
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Model with ChangeNotifier"
+    },
+    {
+      "type": "text",
+      "value": "Provider works best with classes that extend `ChangeNotifier`. The notifier holds the state and notifies listeners when it changes using `notifyListeners()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\n\nclass Counter extends ChangeNotifier {\n  int _count = 0;\n\n  int get count => _count;\n\n  void increment() {\n    _count++;\n    notifyListeners(); // Tell listeners to rebuild\n  }\n\n  void decrement() {\n    _count--;\n    notifyListeners();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Providing the Model"
+    },
+    {
+      "type": "text",
+      "value": "Wrap your app (or part of it) with a `ChangeNotifierProvider`. This makes the model available to all descendant widgets."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  runApp(\n    ChangeNotifierProvider(\n      create: (context) => Counter(),\n      child: MyApp(),\n    ),\n  );\n}"
+    },
+    {
+      "type": "text",
+      "value": "You can also use `Provider.value` if you already have an instance, but `create` is the recommended way because it ensures the provider is disposed when no longer needed."
+    },
+    {
+      "type": "heading",
+      "value": "Consuming the Model"
+    },
+    {
+      "type": "text",
+      "value": "There are several ways to access the provided value: `Consumer`, `Provider.of`, and `context.watch` / `context.read` (with `provider` >= 5.0.0)."
+    },
+    {
+      "type": "heading",
+      "value": "1. Consumer Widget"
+    },
+    {
+      "type": "text",
+      "value": "`Consumer` rebuilds only the part of the widget tree that depends on the data. It's the most efficient way to listen to changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Consumer<Counter>(\n  builder: (context, counter, child) {\n    return Text('Count: ${counter.count}');\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "2. Provider.of"
+    },
+    {
+      "type": "text",
+      "value": "`Provider.of<T>(context)` gives you access to the model. With `listen: false`, it doesn't rebuild when the model changes; with `listen: true` (default), it does rebuild. Use `listen: false` for actions like increment."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Reading (rebuilds when data changes)\nfinal counter = Provider.of<Counter>(context);\n\n// Reading without listening (e.g., for actions)\nfinal counter = Provider.of<Counter>(context, listen: false);\ncounter.increment();"
+    },
+    {
+      "type": "heading",
+      "value": "3. context.watch / context.read (Provider 5.0+)"
+    },
+    {
+      "type": "text",
+      "value": "These extension methods are even more concise: `context.watch<T>()` listens to changes, `context.read<T>()` does not."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// To rebuild when data changes\nfinal counter = context.watch<Counter>();\n\n// To call methods without rebuilding\ncontext.read<Counter>().increment();"
+    },
+    {
+      "type": "heading",
+      "value": "MultiProvider for Multiple Models"
+    },
+    {
+      "type": "text",
+      "value": "When you have several models, use `MultiProvider` to combine them."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MultiProvider(\n  providers: [\n    ChangeNotifierProvider(create: (context) => Counter()),\n    ChangeNotifierProvider(create: (context) => Settings()),\n  ],\n  child: MyApp(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "ProxyProvider for Dependent Models"
+    },
+    {
+      "type": "text",
+      "value": "If one model depends on another, use `ProxyProvider`. It rebuilds the dependent provider when the source changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class UserRepository {\n  final ApiService api;\n  UserRepository(this.api);\n}\n\nMultiProvider(\n  providers: [\n    Provider(create: (context) => ApiService()),\n    ProxyProvider<ApiService, UserRepository>(\n      update: (context, api, previous) => UserRepository(api),\n    ),\n  ],\n  child: MyApp(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Use `ChangeNotifier` for models**: It's simple and efficient.",
+        "- **Place providers high in the tree**: Usually just below `MaterialApp` to make them available everywhere.",
+        "- **Use `Consumer` or `context.watch` only where needed** to limit rebuilds.",
+        "- **For actions (like increment), use `context.read` to avoid unnecessary rebuilds.**",
+        "- **Use `MultiProvider` for multiple providers to keep the tree clean.**",
+        "- **Dispose providers when needed**: `ChangeNotifierProvider` automatically disposes the notifier; for custom providers, use `dispose`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Calling `notifyListeners` unnecessarily** – only call it when state actually changes.",
+        "- **Using `Provider.of` with `listen: true` in places where you don't need to rebuild** – this can cause performance issues.",
+        "- **Providing the same model multiple times** – ensures the same instance is used throughout the app.",
+        "- **Not disposing resources** – if your model has streams or controllers, dispose them in the model's own `dispose` method.",
+        "- **Over‑complicating with `ProxyProvider` when not needed** – use simple providers first, then add complexity as needed."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Provider is a simple, scalable state management solution.",
+        "- Use `ChangeNotifier` and `ChangeNotifierProvider` to expose state.",
+        "- Consume state with `Consumer`, `context.watch`, or `Provider.of`.",
+        "- Use `MultiProvider` for multiple models, `ProxyProvider` for dependencies.",
+        "- Always call `notifyListeners()` after changing state to update the UI."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `Provider` and `ChangeNotifierProvider`?",
+      "answer": "`Provider` is the base class; it can provide any value. `ChangeNotifierProvider` is a specialized subclass that automatically calls `dispose` on the notifier when the provider is removed. It's the preferred way to provide a `ChangeNotifier`."
+    },
+    {
+      "question": "When should I use `context.watch` vs `context.read`?",
+      "answer": "Use `context.watch` when you need to rebuild the widget when the model changes (e.g., to display a counter value). Use `context.read` when you only need to call a method on the model and do not need to rebuild (e.g., increment button)."
+    },
+    {
+      "question": "Can I use Provider with other state management solutions?",
+      "answer": "Yes, Provider can be used alongside other solutions like BLoC or Riverpod, but it's usually best to pick one for consistency. Provider is often used with `ChangeNotifier` for simple state, while BLoC is better for complex business logic."
+    },
+    {
+      "question": "How do I test a widget that uses Provider?",
+      "answer": "Wrap the widget with the appropriate provider in your test. For example, `ChangeNotifierProvider.value(value: myMock, child: MyWidget())`. Use a mock of your notifier to control its behavior."
+    },
+    {
+      "question": "What happens if I call `notifyListeners` too often?",
+      "answer": "It causes unnecessary rebuilds, which can affect performance. Only call `notifyListeners` when the state actually changes, and consider using `shouldRebuild` or `Selector` for fine‑grained control if needed."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:provider/provider.dart';\n\nvoid main() {\n  runApp(\n    ChangeNotifierProvider(\n      create: (context) => Counter(),\n      child: MyApp(),\n    ),\n  );\n}\n\nclass Counter extends ChangeNotifier {\n  int _count = 0;\n  int get count => _count;\n\n  void increment() {\n    _count++;\n    notifyListeners();\n  }\n\n  void decrement() {\n    _count--;\n    notifyListeners();\n  }\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Provider Demo')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Consumer<Counter>(\n                builder: (context, counter, child) {\n                  return Text('Count: ${counter.count}', style: TextStyle(fontSize: 24));\n                },\n              ),\n              Row(\n                mainAxisAlignment: MainAxisAlignment.center,\n                children: [\n                  ElevatedButton(\n                    onPressed: () => context.read<Counter>().decrement(),\n                    child: Text('-'),\n                  ),\n                  SizedBox(width: 20),\n                  ElevatedButton(\n                    onPressed: () => context.read<Counter>().increment(),\n                    child: Text('+'),\n                  ),\n                ],\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which class should you extend to create a model for Provider?",
+      "options": ["ChangeNotifier", "StatefulWidget", "InheritedWidget", "Bloc"],
+      "answer": 0
+    },
+    {
+      "question": "How do you expose a model to the widget tree?",
+      "options": ["Wrap with `Provider`", "Wrap with `ChangeNotifierProvider`", "Pass it as a constructor argument", "Use `InheritedWidget` directly"],
+      "answer": 1
+    },
+    {
+      "question": "Which method is used to trigger a rebuild of listeners?",
+      "options": ["update()", "rebuild()", "notifyListeners()", "setState()"],
+      "answer": 2
+    },
+    {
+      "question": "What is the purpose of `context.read`?",
+      "options": [
+        "To listen to changes and rebuild",
+        "To call methods without causing a rebuild",
+        "To read a provider and cache the value",
+        "To dispose the provider"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-state-management",
+    "flutter-riverpod",
+    "flutter-bloc",
+    "flutter-getx"
+  ]
+}

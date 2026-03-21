@@ -1,0 +1,268 @@
+{
+  "slug": "flutter-future",
+  "course": "Flutter",
+  "title": "Flutter Future – Asynchronous Operations Made Easy",
+  "meta": {
+    "title": "Flutter Future: Complete Guide with FutureBuilder",
+    "description": "Learn how to work with Futures in Flutter. Master FutureBuilder, async/await, error handling, and combine multiple async operations for a responsive UI.",
+    "keywords": [
+      "Flutter Future",
+      "FutureBuilder",
+      "async await",
+      "Flutter async",
+      "Future.wait",
+      "Flutter error handling",
+      "Flutter asynchronous programming"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Future?"
+    },
+    {
+      "type": "text",
+      "value": "A `Future` represents a potential value or error that will be available at some time in the future. It's the core of asynchronous programming in Flutter. When you perform a time‑consuming operation (like a network request, file I/O, or database query) you don't want to block the UI. Instead, you get a `Future` that will complete when the operation finishes, and you can continue executing other code in the meantime."
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Future"
+    },
+    {
+      "type": "text",
+      "value": "There are several ways to create a `Future`:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`Future.value`** – creates a future that completes immediately with a value.",
+        "- **`Future.error`** – creates a future that completes immediately with an error.",
+        "- **`Future.delayed`** – creates a future that completes after a delay.",
+        "- **`Future.sync`** – runs a function synchronously and completes with its result.",
+        "- **`async` functions** – any function marked `async` automatically returns a `Future`."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Immediate value\nFuture<int> immediate = Future.value(42);\n\n// Immediate error\nFuture<String> error = Future.error('Something went wrong');\n\n// Delayed completion\nFuture<String> delayed = Future.delayed(\n  Duration(seconds: 2),\n  () => 'Data loaded',\n);\n\n// Async function\nFuture<int> fetchNumber() async {\n  await Future.delayed(Duration(seconds: 1));\n  return 42;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using `then`, `catchError`, and `whenComplete`"
+    },
+    {
+      "type": "text",
+      "value": "The traditional way to handle a `Future` is with `.then()` for success, `.catchError()` for errors, and `.whenComplete()` for cleanup. However, `async`/`await` is now preferred for readability."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "fetchUserData().then((data) {\n  print(data);\n}).catchError((error) {\n  print('Error: $error');\n}).whenComplete(() {\n  print('Done');\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Async/Await – The Modern Way"
+    },
+    {
+      "type": "text",
+      "value": "`async` and `await` make asynchronous code look like synchronous code. Mark a function as `async`, then use `await` to wait for a `Future` to complete. The `await` expression returns the result of the `Future`. Errors are caught with `try`/`catch`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<void> loadData() async {\n  try {\n    String data = await fetchData();\n    print(data);\n  } catch (e) {\n    print('Error: $e');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "FutureBuilder – Reactive UI for Futures"
+    },
+    {
+      "type": "text",
+      "value": "`FutureBuilder` is a Flutter widget that builds itself based on the state of a `Future`. It handles the loading, error, and data states for you. You provide a `future` and a `builder` that receives a snapshot containing the current connection state, data, and error."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "FutureBuilder<String>(\n  future: fetchData(),\n  builder: (context, snapshot) {\n    if (snapshot.connectionState == ConnectionState.waiting) {\n      return CircularProgressIndicator();\n    } else if (snapshot.hasError) {\n      return Text('Error: ${snapshot.error}');\n    } else if (snapshot.hasData) {\n      return Text('Data: ${snapshot.data}');\n    } else {\n      return Text('No data');\n    }\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Different Connection States"
+    },
+    {
+      "type": "text",
+      "value": "The snapshot's `connectionState` tells you the status:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`ConnectionState.none`**: No future provided or the future has not started.",
+        "- **`ConnectionState.waiting`**: The future is still pending (loading).",
+        "- **`ConnectionState.active`**: For streams, but for futures it's rarely used.",
+        "- **`ConnectionState.done`**: The future has completed (success or error)."
+      ]
+    },
+    {
+      "type": "text",
+      "value": "You can check `snapshot.hasData`, `snapshot.hasError`, and `snapshot.data` to decide what to show."
+    },
+    {
+      "type": "heading",
+      "value": "Combining Multiple Futures"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to wait for several futures to complete. Use `Future.wait` to run them in parallel and wait for all to complete. It returns a future that completes with a list of results."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<String> fetchUser() async => 'User';\nFuture<String> fetchPosts() async => 'Posts';\n\nFuture<void> loadAll() async {\n  var results = await Future.wait([fetchUser(), fetchPosts()]);\n  print(results[0]); // User\n  print(results[1]); // Posts\n}"
+    },
+    {
+      "type": "text",
+      "value": "`Future.any` returns the first future that completes (success or error)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "var first = await Future.any([fetchFromServerA(), fetchFromServerB()]);"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling in Futures"
+    },
+    {
+      "type": "text",
+      "value": "Unhandled errors in a `Future` can cause crashes. Always handle errors:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- With `async`/`await`: use `try`/`catch`.",
+        "- With `.then`: use `.catchError`.",
+        "- With `FutureBuilder`: check `snapshot.hasError` and show a user‑friendly message."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "FutureBuilder(\n  future: riskyOperation(),\n  builder: (context, snapshot) {\n    if (snapshot.hasError) {\n      return Text('Something went wrong. Please try again.');\n    }\n    // ...\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Store the future in the state**: Avoid creating the future inside the `build` method because it will be recreated on every rebuild. Create it in `initState` or as a variable.",
+        "- **Use `FutureBuilder` for UI**: It manages the subscription and state for you.",
+        "- **Handle errors gracefully**: Show a user‑friendly message, not just a red screen.",
+        "- **Consider cancellation**: If a future is no longer needed (e.g., widget disposed), consider canceling it. The `future` parameter in `FutureBuilder` is not automatically canceled; if the future can't be canceled, use a `StatefulWidget` and manage the flag."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Recreating the future in `build`**: Causes the future to restart on every rebuild, leading to flickering and performance issues.",
+        "- **Not checking `connectionState`**: Showing a loading indicator only when `snapshot.hasData` is false can lead to showing stale data while loading.",
+        "- **Forgetting to handle errors**: Uncaught errors may crash the app.",
+        "- **Using `setState` with futures**: `FutureBuilder` is cleaner and avoids manual state management."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('FutureBuilder Demo')),\n        body: Center(child: UserProfile()),\n      ),\n    );\n  }\n}\n\nclass UserProfile extends StatefulWidget {\n  @override\n  _UserProfileState createState() => _UserProfileState();\n}\n\nclass _UserProfileState extends State<UserProfile> {\n  late Future<String> _userFuture;\n\n  @override\n  void initState() {\n    super.initState();\n    _userFuture = fetchUser();\n  }\n\n  Future<String> fetchUser() async {\n    await Future.delayed(Duration(seconds: 2));\n    return 'John Doe';\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return FutureBuilder<String>(\n      future: _userFuture,\n      builder: (context, snapshot) {\n        if (snapshot.connectionState == ConnectionState.waiting) {\n          return CircularProgressIndicator();\n        } else if (snapshot.hasError) {\n          return Text('Error: ${snapshot.error}');\n        } else if (snapshot.hasData) {\n          return Text('Welcome, ${snapshot.data}!');\n        } else {\n          return Text('No user data');\n        }\n      },\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `Future` represents an asynchronous operation that will complete later.",
+        "- Use `async`/`await` for clean asynchronous code.",
+        "- `FutureBuilder` builds UI based on future state (loading, error, data).",
+        "- Combine multiple futures with `Future.wait` or `Future.any`.",
+        "- Always handle errors to prevent crashes.",
+        "- Store the future outside `build` to avoid unnecessary recreation."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `FutureBuilder` and using `setState` with a future?",
+      "answer": "`FutureBuilder` automatically manages the subscription and rebuilds when the future completes. It also handles the loading and error states elegantly. Using `setState` manually requires you to track the state yourself and may cause unnecessary rebuilds. `FutureBuilder` is the preferred way for UI that depends on a future."
+    },
+    {
+      "question": "How do I cancel a future if the widget is disposed?",
+      "answer": "Futures themselves are not cancelable. However, you can use a `StatefulWidget` and a boolean flag to ignore the result if the widget is no longer mounted. For example: `if (mounted) setState(...)`. If you need true cancellation, use a `Stream` or a package like `cancelable_future`."
+    },
+    {
+      "question": "Can I use `FutureBuilder` with a `Future` that returns `null`?",
+      "answer": "Yes, but `snapshot.hasData` will be false when the data is null. You can check `snapshot.data != null` if you need to distinguish null from no data, but usually you'd treat null as a valid value. Better to use `FutureBuilder` with a non‑nullable type and handle loading/error states separately."
+    },
+    {
+      "question": "What is the difference between `Future.wait` and `Future.any`?",
+      "answer": "`Future.wait` waits for **all** futures to complete and returns a list of results. It fails if any future fails. `Future.any` returns the result of the **first** future that completes (whether success or error)."
+    },
+    {
+      "question": "Why does my `FutureBuilder` keep rebuilding?",
+      "answer": "If you create the `future` inside the `build` method, it will be recreated on every rebuild, causing the `FutureBuilder` to restart the future. Move the future creation to `initState` or keep it as a variable outside the build method."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Future Demo')),\n        body: Center(child: DataLoader()),\n      ),\n    );\n  }\n}\n\nclass DataLoader extends StatefulWidget {\n  @override\n  _DataLoaderState createState() => _DataLoaderState();\n}\n\nclass _DataLoaderState extends State<DataLoader> {\n  late Future<String> _future;\n\n  @override\n  void initState() {\n    super.initState();\n    _future = fetchData();\n  }\n\n  Future<String> fetchData() async {\n    await Future.delayed(Duration(seconds: 2));\n    return 'Data loaded successfully!';\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return FutureBuilder<String>(\n      future: _future,\n      builder: (context, snapshot) {\n        if (snapshot.connectionState == ConnectionState.waiting) {\n          return CircularProgressIndicator();\n        } else if (snapshot.hasError) {\n          return Text('Error: ${snapshot.error}');\n        } else if (snapshot.hasData) {\n          return Text(snapshot.data!);\n        } else {\n          return Text('No data');\n        }\n      },\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the purpose of `FutureBuilder` in Flutter?",
+      "options": [
+        "To create a future",
+        "To display a widget based on the state of a future",
+        "To handle errors in async code",
+        "To cancel a future"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you wait for multiple futures to complete simultaneously?",
+      "options": ["Future.any", "Future.wait", "Future.all", "Future.join"],
+      "answer": 1
+    },
+    {
+      "question": "What is the correct way to create a `Future` that completes after 2 seconds?",
+      "options": [
+        "Future(seconds: 2, () => 'done')",
+        "Future.delayed(Duration(seconds: 2), () => 'done')",
+        "Future.timeout(Duration(seconds: 2), () => 'done')",
+        "Future.wait(Duration(seconds: 2))"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "In a `FutureBuilder`, which `ConnectionState` indicates the future is still pending?",
+      "options": ["none", "waiting", "active", "done"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-async-await",
+    "flutter-stream",
+    "flutter-error-handling",
+    "flutter-networking"
+  ]
+}

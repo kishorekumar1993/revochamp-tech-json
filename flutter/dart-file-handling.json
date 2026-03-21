@@ -1,0 +1,214 @@
+{
+  "slug": "dart-file-handling",
+  "course": "Dart",
+  "title": "Dart File Handling – Read, Write, and Manage Files",
+  "meta": {
+    "title": "Dart File Handling: Read and Write Files with Examples",
+    "description": "Learn how to work with files in Dart – read files line by line, write data, append, handle errors, and use asynchronous operations with `dart:io`.",
+    "keywords": [
+      "Dart file handling",
+      "Dart read file",
+      "Dart write file",
+      "Dart file IO",
+      "Dart file system",
+      "Dart File class",
+      "Dart asynchronous file operations"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction to File Handling in Dart"
+    },
+    {
+      "type": "text",
+      "value": "Dart provides the `dart:io` library for file system operations. Using this library, you can read from and write to files, create directories, list files, and more. File operations are typically asynchronous, ensuring your application remains responsive. This guide covers the essential file handling techniques you'll need in Dart and Flutter applications."
+    },
+    {
+      "type": "heading",
+      "value": "Important Notes"
+    },
+    {
+      "type": "text",
+      "value": "The `dart:io` library is **not available on web platforms**. If you're building a Flutter web app, you'll need alternative approaches (like using the browser's file APIs or a server). For command‑line Dart or Flutter for mobile/desktop, `dart:io` works perfectly."
+    },
+    {
+      "type": "heading",
+      "value": "Reading a File"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to read a file is using `readAsString()` or `readAsLines()`. These methods are asynchronous and return a `Future`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:io';\n\nvoid main() async {\n  try {\n    // Read entire file as a single string\n    String content = await File('example.txt').readAsString();\n    print(content);\n\n    // Read as lines (list of strings)\n    List<String> lines = await File('example.txt').readAsLines();\n    for (var line in lines) {\n      print(line);\n    }\n  } catch (e) {\n    print('Error reading file: $e');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Reading a File Line by Line (Stream)"
+    },
+    {
+      "type": "text",
+      "value": "For large files, you should read and process them line by line using a `Stream`. This avoids loading the whole file into memory."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:io';\n\nvoid main() async {\n  var file = File('large_file.txt');\n  Stream<String> lines = file.openRead()\n      .transform(utf8.decoder)\n      .transform(LineSplitter());\n\n  await for (var line in lines) {\n    print('Line: $line');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Writing to a File"
+    },
+    {
+      "type": "text",
+      "value": "Use `writeAsString()` to write data to a file. By default, this overwrites the file if it exists. You can use the `mode` parameter to append instead."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  var file = File('output.txt');\n  await file.writeAsString('Hello, Dart!\\n');\n  print('File written.');\n\n  // Write with append mode\n  await file.writeAsString('Another line\\n', mode: FileMode.append);\n  print('Appended.');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Appending to a File"
+    },
+    {
+      "type": "text",
+      "value": "You can also open the file in append mode and write using a sink, which is more efficient for multiple writes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  var file = File('log.txt');\n  var sink = file.openWrite(mode: FileMode.append);\n  sink.writeln('First entry');\n  sink.writeln('Second entry');\n  await sink.flush();\n  await sink.close();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Checking if a File Exists"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  var file = File('data.txt');\n  bool exists = await file.exists();\n  if (exists) {\n    print('File exists');\n  } else {\n    print('File not found');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Deleting a File"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  var file = File('temp.txt');\n  if (await file.exists()) {\n    await file.delete();\n    print('File deleted');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Working with Paths"
+    },
+    {
+      "type": "text",
+      "value": "Dart's `File` class uses system paths. For cross‑platform path handling (like joining directories), you can use the `path` package (add `path: ^1.8.0` to your `pubspec.yaml`)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:path/path.dart' as path;\nimport 'dart:io';\n\nvoid main() {\n  var directory = Directory.current;\n  var filePath = path.join(directory.path, 'data', 'user.txt');\n  var file = File(filePath);\n  print(file.path);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling"
+    },
+    {
+      "type": "text",
+      "value": "Always handle exceptions when working with files. Common errors include file not found, permission denied, and disk full."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  try {\n    var content = await File('missing.txt').readAsString();\n    print(content);\n  } on FileSystemException catch (e) {\n    print('File error: ${e.message}');\n  } catch (e) {\n    print('Unexpected error: $e');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Working with Directories"
+    },
+    {
+      "type": "text",
+      "value": "You can create, list, and delete directories using the `Directory` class."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  var dir = Directory('my_folder');\n\n  // Create directory\n  if (!await dir.exists()) {\n    await dir.create(recursive: true);\n    print('Directory created');\n  }\n\n  // List contents\n  var contents = await dir.list().toList();\n  for (var entity in contents) {\n    print(entity.path);\n  }\n\n  // Delete directory (must be empty)\n  await dir.delete();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `dart:io` for file operations (not available on web).",
+        "- Asynchronous methods (`readAsString`, `writeAsString`) are recommended.",
+        "- For large files, process line by line with streams.",
+        "- Always handle exceptions with try/catch.",
+        "- Use the `path` package for cross‑platform path manipulation.",
+        "- Check file existence before reading to avoid errors."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use file handling in Flutter web?",
+      "answer": "No, the `dart:io` library is not available on the web. For web apps, you need to use browser APIs like `dart:html`'s `File` class or a package like `file_picker` to allow user‑selected files, and you cannot write arbitrary files to the user's file system due to security restrictions."
+    },
+    {
+      "question": "What is the difference between `writeAsString` and `openWrite`?",
+      "answer": "`writeAsString` is a one‑shot operation that writes the entire string at once. `openWrite` returns a `IOSink` that you can write multiple pieces to and then close; it's more efficient for writing many small pieces."
+    },
+    {
+      "question": "How do I get the current working directory?",
+      "answer": "Use `Directory.current` to get the current working directory as a `Directory` object. You can then use `.path` to get its path string."
+    },
+    {
+      "question": "How do I copy a file?",
+      "answer": "Use `File.copy()` method: `await source.copy(destinationPath)`. This asynchronously copies the file and returns a `File` object for the destination."
+    },
+    {
+      "question": "What encoding does Dart use for files?",
+      "answer": "By default, Dart uses UTF‑8 encoding for reading and writing strings. If you need a different encoding, you can use `readAsBytes()` and write raw bytes, or use a `Stream` with a custom codec."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "defaultCode": "// File operations require the dart:io library,\n// which is not available in the web environment.\n// This example is for local testing.\nimport 'dart:io';\n\nvoid main() async {\n  var file = File('sample.txt');\n  await file.writeAsString('Hello, Dart!\\n');\n  print(await file.readAsString());\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which library provides file handling in Dart?",
+      "options": ["dart:async", "dart:convert", "dart:io", "dart:core"],
+      "answer": 2
+    },
+    {
+      "question": "What method would you use to read a large file line by line without loading it entirely into memory?",
+      "options": ["readAsString()", "readAsLines()", "openRead() + stream transformation", "File.lineByLine()"],
+      "answer": 2
+    },
+    {
+      "question": "Which mode allows you to append data to an existing file?",
+      "options": ["FileMode.write", "FileMode.append", "FileMode.add", "FileMode.update"],
+      "answer": 1
+    },
+    {
+      "question": "How do you check if a file exists?",
+      "options": ["file.exists", "file.isThere()", "await file.exists()", "file.check()"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "dart-http",
+    "dart-json",
+    "dart-async-await",
+    "dart-stream"
+  ]
+}

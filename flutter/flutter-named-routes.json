@@ -1,0 +1,208 @@
+{
+  "slug": "flutter-named-routes",
+  "course": "Flutter",
+  "title": "Flutter Named Routes – Organize Navigation with Route Names",
+  "meta": {
+    "title": "Flutter Named Routes: Complete Guide with Examples",
+    "description": "Learn how to use named routes in Flutter. Define routes in MaterialApp, pass arguments, use onGenerateRoute, and organize navigation in large apps.",
+    "keywords": [
+      "Flutter named routes",
+      "Flutter navigation",
+      "Named routes",
+      "onGenerateRoute",
+      "Flutter routing",
+      "Flutter pushNamed",
+      "Flutter route arguments"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Named Routes?"
+    },
+    {
+      "type": "text",
+      "value": "In Flutter, navigation is typically done using `Navigator.push` with a `MaterialPageRoute`. For larger apps, this can lead to code that is hard to read and maintain. Named routes allow you to define a map of route names to widgets, then navigate using `Navigator.pushNamed`. This centralises your route definitions and makes it easier to pass arguments, handle deep linking, and manage app structure."
+    },
+    {
+      "type": "heading",
+      "value": "Defining Named Routes in MaterialApp"
+    },
+    {
+      "type": "text",
+      "value": "You define named routes in the `routes` property of `MaterialApp`. It's a `Map<String, WidgetBuilder>`, where the key is the route name (e.g., `'/detail'`) and the value is a function that returns a widget. The initial route is set with `initialRoute`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MaterialApp(\n  initialRoute: '/',\n  routes: {\n    '/': (context) => HomeScreen(),\n    '/detail': (context) => DetailScreen(),\n    '/settings': (context) => SettingsScreen(),\n  },\n)"
+    },
+    {
+      "type": "text",
+      "value": "Now you can navigate using `Navigator.pushNamed(context, '/detail')`."
+    },
+    {
+      "type": "heading",
+      "value": "Passing Arguments with Named Routes"
+    },
+    {
+      "type": "text",
+      "value": "Unlike direct `MaterialPageRoute`, `pushNamed` allows you to pass arguments using the `arguments` parameter. You retrieve them in the destination using `ModalRoute.of(context)!.settings.arguments`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Pushing\nNavigator.pushNamed(\n  context,\n  '/detail',\n  arguments: 'Hello from home',\n);\n\n// Retrieving in DetailScreen\nfinal args = ModalRoute.of(context)!.settings.arguments as String;"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Dynamic Routes with onGenerateRoute"
+    },
+    {
+      "type": "text",
+      "value": "For routes that need to accept parameters (e.g., `/product/123`), you can't use the static `routes` map. Instead, use `onGenerateRoute`. This function is called when a named route is pushed but not found in the static `routes` map. You can parse the route name and return a `MaterialPageRoute` with the appropriate widget and arguments."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MaterialApp(\n  initialRoute: '/',\n  onGenerateRoute: (settings) {\n    if (settings.name == '/') {\n      return MaterialPageRoute(builder: (_) => HomeScreen());\n    }\n    if (settings.name == '/detail') {\n      return MaterialPageRoute(\n        builder: (_) => DetailScreen(),\n        settings: settings, // passes arguments through\n      );\n    }\n    if (settings.name?.startsWith('/product/') == true) {\n      final id = int.parse(settings.name!.substring('/product/'.length));\n      return MaterialPageRoute(\n        builder: (_) => ProductDetailScreen(productId: id),\n      );\n    }\n    return null; // Let the system handle error\n  },\n)"
+    },
+    {
+      "type": "text",
+      "value": "You can also combine `routes` and `onGenerateRoute`: static routes go in `routes`, dynamic ones handled by `onGenerateRoute`."
+    },
+    {
+      "type": "heading",
+      "value": "Handling Unknown Routes (404)"
+    },
+    {
+      "type": "text",
+      "value": "If a route is not found, you can show a fallback screen using the `unknownRoute` property. This is useful for handling deep links or user‑typed URLs."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MaterialApp(\n  unknownRoute: MaterialPageRoute(\n    builder: (_) => NotFoundScreen(),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Using named routes with arguments in a typed way"
+    },
+    {
+      "type": "text",
+      "value": "To avoid casting everywhere, you can create a utility class that holds the route names and argument types, or use a package like `go_router`. For a simple app, you can define a class with constants and a helper method to push with arguments."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Routes {\n  static const String home = '/';\n  static const String detail = '/detail';\n\n  static void goToDetail(BuildContext context, String message) {\n    Navigator.pushNamed(context, detail, arguments: message);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting to include a leading slash**: Route names should start with `/` (e.g., `/detail`).",
+        "- **Using `pushNamed` without a corresponding entry**: If you don't define the route in `routes` or `onGenerateRoute`, it will throw an error.",
+        "- **Not handling arguments**: If you push with arguments but don't read them, you'll miss data.",
+        "- **Ignoring `onGenerateRoute` for dynamic routes**: If your app has many dynamic routes, they should be handled in `onGenerateRoute` to keep `routes` clean.",
+        "- **Not handling the `unknownRoute`**: A 404 screen improves UX and prevents crashes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use constants for route names to avoid typos.",
+        "- Keep the route definition map organised – maybe in a separate file.",
+        "- For dynamic routes, prefer `onGenerateRoute` over a large `routes` map.",
+        "- Use typed arguments to avoid casting errors – create a custom class or use a package like `go_router` for complex navigation.",
+        "- Always provide an `unknownRoute` to handle deep links gracefully."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Named routes are defined in `MaterialApp`'s `routes` map.",
+        "- Use `Navigator.pushNamed` with an optional `arguments` parameter.",
+        "- Retrieve arguments with `ModalRoute.of(context)!.settings.arguments`.",
+        "- For dynamic routes (e.g., `/product/123`), use `onGenerateRoute`.",
+        "- Handle unknown routes with `unknownRoute`.",
+        "- Centralising routes makes navigation easier to maintain."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I have nested named routes?",
+      "answer": "Yes, you can use `Navigator` inside a widget to create a nested navigation stack. The named routes defined at the top level are for the root navigator. For nested navigators, you need to define their own `onGenerateRoute` or use packages like `go_router`."
+    },
+    {
+      "question": "How do I pass arguments with `pushNamedAndRemoveUntil`?",
+      "answer": "The `arguments` parameter is available in `pushNamedAndRemoveUntil` as well. Example: `Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false, arguments: myData);`"
+    },
+    {
+      "question": "Can I use `pushReplacementNamed` with arguments?",
+      "answer": "Yes, `pushReplacementNamed` also accepts an `arguments` parameter. For example: `Navigator.pushReplacementNamed(context, '/login', arguments: userData);`"
+    },
+    {
+      "question": "What's the difference between `pushNamed` and `pushReplacementNamed`?",
+      "answer": "`pushNamed` adds a new route on top of the current one, allowing the user to go back. `pushReplacementNamed` replaces the current route with the new one, so the previous route is removed from the stack."
+    },
+    {
+      "question": "How do I define named routes for a bottom navigation bar?",
+      "answer": "You can have a root screen that contains a `BottomNavigationBar` and an `IndexedStack`, and then use named routes for pages that are not part of the main tabs (e.g., detail pages). Alternatively, use a `Navigator` inside each tab to have independent navigation stacks."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      initialRoute: '/',\n      routes: {\n        '/': (context) => HomeScreen(),\n        '/detail': (context) => DetailScreen(),\n      },\n      onGenerateRoute: (settings) {\n        // Handle dynamic routes\n        if (settings.name == '/profile') {\n          final args = settings.arguments as String?;\n          return MaterialPageRoute(\n            builder: (_) => ProfileScreen(userName: args ?? 'Guest'),\n          );\n        }\n        return null;\n      },\n      unknownRoute: MaterialPageRoute(\n        builder: (_) => NotFoundScreen(),\n      ),\n    );\n  }\n}\n\nclass HomeScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Home')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            ElevatedButton(\n              onPressed: () {\n                Navigator.pushNamed(\n                  context,\n                  '/detail',\n                  arguments: 'Hello from Home',\n                );\n              },\n              child: Text('Go to Detail (with arguments)'),\n            ),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () {\n                Navigator.pushNamed(\n                  context,\n                  '/profile',\n                  arguments: 'Alice',\n                );\n              },\n              child: Text('Go to Profile (dynamic route)'),\n            ),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () {\n                Navigator.pushNamed(context, '/unknown');\n              },\n              child: Text('Trigger 404'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass DetailScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final args = ModalRoute.of(context)!.settings.arguments as String?;\n    return Scaffold(\n      appBar: AppBar(title: Text('Detail')),\n      body: Center(\n        child: Text('Received: ${args ?? 'no arguments'}'),\n      ),\n    );\n  }\n}\n\nclass ProfileScreen extends StatelessWidget {\n  final String userName;\n  ProfileScreen({required this.userName});\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Profile')),\n      body: Center(\n        child: Text('Hello, $userName'),\n      ),\n    );\n  }\n}\n\nclass NotFoundScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Not Found')),\n      body: Center(\n        child: Text('The page you are looking for does not exist.'),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which property of MaterialApp is used to define a static mapping of route names to widgets?",
+      "options": ["routes", "onGenerateRoute", "initialRoute", "unknownRoute"],
+      "answer": 0
+    },
+    {
+      "question": "How do you pass arguments to a named route?",
+      "options": [
+        "In the `builder` of the route definition",
+        "Using the `arguments` parameter of `pushNamed`",
+        "Using a global variable",
+        "You cannot pass arguments to named routes"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you retrieve arguments in the destination screen?",
+      "options": [
+        "Route.of(context).arguments",
+        "ModalRoute.of(context)!.settings.arguments",
+        "context.arguments",
+        "Navigator.arguments"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What property is called when a named route is not found in the `routes` map?",
+      "options": ["unknownRoute", "onGenerateRoute", "errorBuilder", "notFoundRoute"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-navigation",
+    "flutter-navigation-arguments",
+    "flutter-routes",
+    "flutter-go-router"
+  ]
+}

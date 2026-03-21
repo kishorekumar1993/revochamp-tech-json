@@ -1,0 +1,243 @@
+{
+  "slug": "flutter-stream",
+  "course": "Flutter",
+  "title": "Flutter Stream – Real‑Time Data and Event Handling",
+  "meta": {
+    "title": "Flutter Stream: Complete Guide with StreamBuilder & StreamController",
+    "description": "Learn how to work with Streams in Flutter. Use StreamBuilder to react to data changes, manage real‑time events, and build responsive UIs.",
+    "keywords": [
+      "Flutter Stream",
+      "StreamBuilder",
+      "StreamController",
+      "Flutter real-time data",
+      "Broadcast stream",
+      "Flutter async",
+      "Flutter event handling"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Stream in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "A `Stream` is a sequence of asynchronous events. It’s like a pipe where data flows over time – you can listen to the stream and react whenever a new event arrives. Streams are essential for handling real‑time updates, user input, network responses, and any situation where data arrives continuously or at unpredictable times. In Flutter, the `StreamBuilder` widget makes it easy to build UI that automatically updates when the stream emits new data."
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Stream"
+    },
+    {
+      "type": "text",
+      "value": "There are several ways to create a stream:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`StreamController`**: Manually add events (useful for custom event sources).",
+        "- **`async*` functions**: Generate events using `yield` (like a generator).",
+        "- **`Stream.fromIterable`**: Create a stream from an existing collection.",
+        "- **`Stream.periodic`**: Emit events at regular intervals.",
+        "- **`Stream.fromFuture`**: Convert a single `Future` to a stream (only one event)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Using `StreamController`"
+    },
+    {
+      "type": "text",
+      "value": "The `StreamController` gives you a `sink` to add events and a `stream` to listen to. You can add data, errors, and close the stream when done."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final controller = StreamController<int>();\n\n// Add events\ncontroller.sink.add(1);\ncontroller.sink.add(2);\ncontroller.sink.addError('Oops');\ncontroller.close(); // no more events\n\n// Listen to the stream\ncontroller.stream.listen(\n  (data) => print('Data: $data'),\n  onError: (error) => print('Error: $error'),\n  onDone: () => print('Done'),\n);"
+    },
+    {
+      "type": "text",
+      "value": "Remember to dispose of the controller when you no longer need it to avoid memory leaks."
+    },
+    {
+      "type": "heading",
+      "value": "`async*` Generator Functions"
+    },
+    {
+      "type": "text",
+      "value": "An `async*` function automatically returns a `Stream`. Inside, you use `yield` to emit values. This is ideal for generating sequences on the fly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Stream<int> countStream(int max) async* {\n  for (int i = 1; i <= max; i++) {\n    await Future.delayed(Duration(seconds: 1));\n    yield i;\n  }\n}\n\nvoid main() async {\n  await for (int value in countStream(5)) {\n    print(value); // prints 1,2,3,4,5 each second\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Listening to a Stream with StreamBuilder"
+    },
+    {
+      "type": "text",
+      "value": "`StreamBuilder` is a Flutter widget that listens to a stream and rebuilds whenever new data arrives. It’s perfect for updating UI in response to asynchronous events. It provides a snapshot containing the current connection state, data, and error."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "StreamBuilder<int>(\n  stream: myStream,\n  builder: (context, snapshot) {\n    if (snapshot.hasError) {\n      return Text('Error: ${snapshot.error}');\n    }\n    if (!snapshot.hasData) {\n      return CircularProgressIndicator();\n    }\n    return Text('Value: ${snapshot.data}');\n  },\n)"
+    },
+    {
+      "type": "text",
+      "value": "The snapshot’s `connectionState` tells you if the stream is waiting, active, or done. You can use this to show loading states or a completion message."
+    },
+    {
+      "type": "heading",
+      "value": "Broadcast Streams"
+    },
+    {
+      "type": "text",
+      "value": "By default, streams are single‑subscription – only one listener can listen at a time, and listening again throws an error. Use a **broadcast stream** when you need multiple listeners. You can create one with `StreamController.broadcast()` or by calling `.asBroadcastStream()` on an existing stream."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final controller = StreamController<int>.broadcast();\n\ncontroller.stream.listen((data) => print('Listener 1: $data'));\ncontroller.stream.listen((data) => print('Listener 2: $data'));\n\ncontroller.sink.add(42); // both listeners receive 42"
+    },
+    {
+      "type": "heading",
+      "value": "Common Patterns"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Debouncing**: Use `debounce` from `rxdart` or manually implement using `Timer` to wait for a pause in events (e.g., search field).",
+        "- **Combining streams**: Use `StreamGroup.merge` or `rxdart` to combine multiple streams into one.",
+        "- **Stream transformations**: Use `map`, `where`, `expand`, `take`, `skip` to transform the data before it reaches the listener.",
+        "- **Error handling**: Use `handleError` or the `onError` callback to catch errors gracefully."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "StreamBuilder vs FutureBuilder"
+    },
+    {
+      "type": "text",
+      "value": "`FutureBuilder` handles a single asynchronous value (one Future). `StreamBuilder` handles a sequence of values over time. Use `FutureBuilder` for one‑time loads (like fetching a user profile), and `StreamBuilder` for continuous updates (like real‑time chat or live sensor data)."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Always close `StreamController`s in `dispose()` to avoid memory leaks.",
+        "- Use `StreamBuilder` inside the widget tree, not in a separate async method.",
+        "- Provide an `initialData` to `StreamBuilder` if you want to show something before the first event.",
+        "- For performance, use `const` widgets inside the builder where possible.",
+        "- Prefer `async*` generators for simple sequences; use `StreamController` for manual control."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Not disposing `StreamController`**: Causes memory leaks and potential crashes.",
+        "- **Using a single‑subscription stream with multiple listeners**: Throws an error; switch to broadcast.",
+        "- **Calling `setState` inside `StreamBuilder`**: Unnecessary; the builder already rebuilds when new data arrives.",
+        "- **Creating the stream inside the build method**: Causes the stream to be recreated on every rebuild, which can break subscriptions. Create the stream in `initState` or use a state management solution."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Stream Demo')),\n        body: Center(child: CounterWidget()),\n      ),\n    );\n  }\n}\n\nclass CounterWidget extends StatefulWidget {\n  @override\n  _CounterWidgetState createState() => _CounterWidgetState();\n}\n\nclass _CounterWidgetState extends State<CounterWidget> {\n  final StreamController<int> _controller = StreamController<int>();\n  int _count = 0;\n\n  @override\n  void dispose() {\n    _controller.close();\n    super.dispose();\n  }\n\n  void _increment() {\n    _count++;\n    _controller.sink.add(_count);\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        StreamBuilder<int>(\n          stream: _controller.stream,\n          initialData: 0,\n          builder: (context, snapshot) {\n            return Text(\n              'Count: ${snapshot.data}',\n              style: TextStyle(fontSize: 24),\n            );\n          },\n        ),\n        ElevatedButton(\n          onPressed: _increment,\n          child: Text('Increment'),\n        ),\n      ],\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Streams represent sequences of asynchronous events.",
+        "- Use `StreamController` to manually add events, and `async*` for generators.",
+        "- `StreamBuilder` rebuilds the UI when new data arrives.",
+        "- Broadcast streams allow multiple listeners; single‑subscription streams allow only one.",
+        "- Always dispose of `StreamController` to avoid leaks.",
+        "- Streams are ideal for real‑time updates, user input, and any continuous data flow."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between a `Future` and a `Stream`?",
+      "answer": "A `Future` represents a single asynchronous value that will be available at some point. A `Stream` represents a sequence of values delivered over time. Use `Future` for one‑time operations (e.g., an API call), and `Stream` for continuous data (e.g., user input, real‑time updates)."
+    },
+    {
+      "question": "When should I use `StreamBuilder` instead of manually listening?",
+      "answer": "`StreamBuilder` is the preferred way to display stream data in the UI because it automatically handles subscription and rebuilding when new data arrives. It also manages the subscription lifecycle, ensuring you don't have to manually cancel it. Only listen manually if you need to perform side effects (e.g., logging) without affecting the UI."
+    },
+    {
+      "question": "How do I handle errors in a stream?",
+      "answer": "When listening, provide an `onError` callback: `stream.listen(onData, onError: (e) => ...)`. With `StreamBuilder`, the snapshot has an `error` property: `if (snapshot.hasError) ...`. You can also use `handleError` on the stream before subscribing."
+    },
+    {
+      "question": "Can I reuse a stream after it's been closed?",
+      "answer": "No, once you close a stream (by calling `close` on the controller), no more events can be added. You need to create a new stream if you need more data."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Timer Stream')),\n        body: Center(child: TimerWidget()),\n      ),\n    );\n  }\n}\n\nclass TimerWidget extends StatefulWidget {\n  @override\n  _TimerWidgetState createState() => _TimerWidgetState();\n}\n\nclass _TimerWidgetState extends State<TimerWidget> {\n  Stream<int> _timerStream() async* {\n    for (int i = 0; i <= 10; i++) {\n      await Future.delayed(Duration(seconds: 1));\n      yield i;\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return StreamBuilder<int>(\n      stream: _timerStream(),\n      builder: (context, snapshot) {\n        if (snapshot.connectionState == ConnectionState.waiting) {\n          return CircularProgressIndicator();\n        }\n        if (snapshot.hasError) {\n          return Text('Error: ${snapshot.error}');\n        }\n        if (!snapshot.hasData) {\n          return Text('Timer started');\n        }\n        return Text(\n          'Seconds elapsed: ${snapshot.data}',\n          style: TextStyle(fontSize: 24),\n        );\n      },\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the primary difference between a Future and a Stream?",
+      "options": [
+        "A Future returns a value, a Stream does not",
+        "A Stream represents a sequence of values over time, a Future a single value",
+        "Futures are synchronous, Streams are asynchronous",
+        "There is no difference"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget is used to listen to a stream and rebuild the UI?",
+      "options": ["FutureBuilder", "StreamBuilder", "StreamListener", "AsyncBuilder"],
+      "answer": 1
+    },
+    {
+      "question": "How do you create a stream that can have multiple listeners?",
+      "options": [
+        "Use a regular StreamController",
+        "Use a broadcast StreamController",
+        "Use a single‑subscription controller and add more listeners",
+        "Use a Future"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What must you do with a StreamController to avoid memory leaks?",
+      "options": [
+        "Call `close()` in dispose()",
+        "Call `cancel()`",
+        "Set it to null",
+        "Nothing, it's automatic"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-async-await",
+    "flutter-future",
+    "flutter-rxdart",
+    "flutter-event-handling"
+  ]
+}

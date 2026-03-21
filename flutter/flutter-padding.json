@@ -1,0 +1,191 @@
+{
+  "slug": "flutter-padding",
+  "course": "Flutter",
+  "title": "Flutter Padding Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Padding Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Padding to add space around widgets. Understand EdgeInsets, symmetric, only, all, and common use cases with simple examples.",
+    "keywords": [
+      "Flutter Padding",
+      "EdgeInsets",
+      "padding vs margin",
+      "Flutter spacing",
+      "EdgeInsets.all",
+      "EdgeInsets.symmetric",
+      "EdgeInsets.only"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Padding in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Padding is a layout widget in Flutter that insets its child by the given padding. In simple terms, it adds empty space around a widget. Padding is one of the most commonly used widgets for creating whitespace, separating elements, and making UIs look clean and organized."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "To add padding around any widget, wrap it with a `Padding` widget and provide an `EdgeInsets` object. The simplest way is to use `EdgeInsets.all()` which applies the same padding on all four sides."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Padding(\n  padding: EdgeInsets.all(16.0),\n  child: Text('Hello, Flutter!'),\n)"
+    },
+    {
+      "type": "text",
+      "value": "This adds 16 logical pixels of space around the text on the left, top, right, and bottom."
+    },
+    {
+      "type": "heading",
+      "value": "EdgeInsets Constructors"
+    },
+    {
+      "type": "text",
+      "value": "EdgeInsets provides several constructors to define padding in different ways:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**EdgeInsets.all(double value)** – Same padding on all four sides.",
+        "**EdgeInsets.only({left, top, right, bottom})** – Specify padding for individual sides.",
+        "**EdgeInsets.symmetric({vertical, horizontal})** – Apply same padding vertically (top and bottom) and/or horizontally (left and right).",
+        "**EdgeInsets.fromLTRB(double left, double top, double right, double bottom)** – Define padding from left, top, right, bottom explicitly."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Example: different padding on each side\nPadding(\n  padding: EdgeInsets.only(left: 8.0, top: 16.0, right: 8.0, bottom: 4.0),\n  child: Text('Custom padding'),\n)\n\n// Example: symmetric padding\nPadding(\n  padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),\n  child: Text('Horizontal & vertical padding'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Padding vs Margin"
+    },
+    {
+      "type": "text",
+      "value": "A common point of confusion is the difference between padding and margin. In Flutter, padding is added by the `Padding` widget (or the `padding` property of `Container`), while margin is typically added by `Container`'s `margin` property. The key distinction:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Padding** is space **inside** a widget, between its border (if any) and its child.",
+        "**Margin** is space **outside** a widget, separating it from other widgets."
+      ]
+    },
+    {
+      "type": "text",
+      "value": "Here's an example that shows both using a Container:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  margin: EdgeInsets.all(10.0),   // space outside the container\n  padding: EdgeInsets.all(15.0),   // space inside, around the child\n  color: Colors.blue,\n  child: Text('Inside'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Using Padding with Other Widgets"
+    },
+    {
+      "type": "text",
+      "value": "You can wrap almost any widget with Padding to add spacing. This is especially useful for:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Adding space between items in a Column or Row.",
+        "Creating inset text or buttons.",
+        "Giving images some breathing room from screen edges.",
+        "Building card-like designs with inner spacing."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Column(\n  children: [\n    Padding(\n      padding: EdgeInsets.all(8.0),\n      child: Text('Item 1'),\n    ),\n    Padding(\n      padding: EdgeInsets.all(8.0),\n      child: Text('Item 2'),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Applying padding to the wrong widget**: Sometimes developers add padding to an outer container when they meant to add margin. Think about whether the space should be inside or outside the widget's background/decoration.",
+        "**Overusing Padding**: Too many nested Padding widgets can clutter the widget tree. Consider using `SizedBox` for simple fixed gaps, or leverage the `padding` property of `Container` if you're already using a Container.",
+        "**Forgetting that Padding adds to the widget's size**: Padding increases the total space the widget occupies. This can cause unexpected layout constraints.",
+        "**Using EdgeInsets incorrectly**: Mixing up `only` and `symmetric` parameters (e.g., using `vertical` in `only`). Always check the constructor names."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Padding adds empty space around its child, inside the widget's bounds.",
+        "Use `EdgeInsets.all()` for uniform padding, `EdgeInsets.only()` for specific sides, and `EdgeInsets.symmetric()` for vertical/horizontal groups.",
+        "Padding is different from margin – margin is outside the widget.",
+        "You can achieve padding without a dedicated Padding widget by using `Container`'s `padding` property.",
+        "Padding respects the parent constraints; it does not create extra space outside the parent's boundaries."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. What is the difference between `Padding` and `Container`'s `padding` property?\n2. How would you add 10 pixels of space only on the left and right of a widget?\n3. Explain the difference between padding and margin in Flutter.\n4. Can you use `EdgeInsets.symmetric` to set different top and bottom values? Why or why not?\n5. What happens if you apply padding to a widget that already has its own padding (e.g., a TextButton)? How are they combined?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() {\n  runApp(\n    MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Padding Example')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Container(\n                color: Colors.yellow,\n                child: Padding(\n                  padding: EdgeInsets.all(20.0),\n                  child: Text('All padding 20', style: TextStyle(fontSize: 20)),\n                ),\n              ),\n              SizedBox(height: 20),\n              Container(\n                color: Colors.lightBlue,\n                child: Padding(\n                  padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 10.0),\n                  child: Text('Horizontal 40, vertical 10', style: TextStyle(fontSize: 20)),\n                ),\n              ),\n            ],\n          ),\n        ),\n      ),\n    ),\n  );\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you add 8 pixels of padding to all sides of a widget?",
+      "options": [
+        "Padding(padding: EdgeInsets.only(8))",
+        "Padding(padding: EdgeInsets.all(8))",
+        "Padding(padding: EdgeInsets.symmetric(8))",
+        "Padding(padding: EdgeInsets.fromLTRB(8,8,8,8))"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the main difference between padding and margin?",
+      "options": [
+        "Padding is inside the widget, margin is outside",
+        "Padding is outside the widget, margin is inside",
+        "Padding only works with text, margin works with any widget",
+        "There is no difference"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Which EdgeInsets constructor would you use to add 10 pixels of padding only to the top and bottom?",
+      "options": [
+        "EdgeInsets.only(top: 10, bottom: 10)",
+        "EdgeInsets.symmetric(vertical: 10)",
+        "Both A and B are valid",
+        "EdgeInsets.fromLTRB(0,10,0,10)"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "flutter-container",
+    "flutter-sizedbox",
+    "flutter-row-column",
+    "flutter-margin",
+    "flutter-edgeinsets"
+  ]
+}

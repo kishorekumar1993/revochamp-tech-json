@@ -1,0 +1,140 @@
+{
+  "slug": "flutter-align-widget",
+  "course": "Flutter",
+  "title": "Flutter Align Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Align Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Align to position a child within its parent. Understand alignment, widthFactor, heightFactor, and common use cases with simple examples.",
+    "keywords": [
+      "Flutter Align",
+      "Align widget",
+      "alignment",
+      "AlignmentGeometry",
+      "positioning",
+      "Flutter layout"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Align in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Align is a widget that aligns its child within itself. It can optionally size itself based on the child's size. It's useful when you want to position a widget somewhere within a parent without using Stack and Positioned."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "Wrap any widget with Align and provide an `alignment` property. The default alignment is `Alignment.center`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  width: 200,\n  height: 200,\n  color: Colors.grey,\n  child: Align(\n    alignment: Alignment.topRight,\n    child: FlutterLogo(size: 50),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Alignment Options"
+    },
+    {
+      "type": "text",
+      "value": "You can use predefined constants from `Alignment` class:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "`Alignment.topLeft`",
+        "`Alignment.topCenter`",
+        "`Alignment.topRight`",
+        "`Alignment.centerLeft`",
+        "`Alignment.center`",
+        "`Alignment.centerRight`",
+        "`Alignment.bottomLeft`",
+        "`Alignment.bottomCenter`",
+        "`Alignment.bottomRight`"
+      ]
+    },
+    {
+      "type": "text",
+      "value": "You can also create custom alignments using `Alignment(x, y)` where x and y range from -1 to 1 (e.g., `Alignment(0.5, -0.5)`)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Align(\n  alignment: Alignment(0.7, -0.3),\n  child: Text('Custom'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "WidthFactor and HeightFactor"
+    },
+    {
+      "type": "text",
+      "value": "By default, Align sizes itself to match its parent. But you can use `widthFactor` and `heightFactor` to size Align to a multiple of the child's size. For example, setting `widthFactor: 2.0` makes Align twice as wide as its child."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Align(\n  widthFactor: 2.0,\n  heightFactor: 2.0,\n  child: FlutterLogo(size: 50),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Positioning an icon in a corner of a container.",
+        "Creating a badge overlay without using Stack.",
+        "Centering a widget within a specific area."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Align places its child according to `alignment`.",
+        "If no `widthFactor`/`heightFactor` are given, Align takes the size of its parent.",
+        "`Alignment` uses a coordinate system where (0,0) is center, (-1,-1) is top‑left, (1,1) is bottom‑right."
+      ]
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Align Example')),\n        body: Center(\n          child: Container(\n            width: 300,\n            height: 300,\n            color: Colors.yellow,\n            child: Align(\n              alignment: Alignment.bottomRight,\n              child: Container(\n                width: 100,\n                height: 100,\n                color: Colors.red,\n                child: Center(child: Text('BR')),\n              ),\n            ),\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the default alignment of Align?",
+      "options": [
+        "Alignment.topLeft",
+        "Alignment.center",
+        "Alignment.bottomCenter",
+        "No default, must be specified"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How would you create an Align that is exactly twice the width of its child?",
+      "options": [
+        "Align(widthFactor: 2.0)",
+        "Align(width: 2.0)",
+        "Align(expandWidth: 2.0)",
+        "Align(scale: 2.0)"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-container",
+    "flutter-center",
+    "flutter-positioned",
+    "flutter-stack"
+  ]
+}

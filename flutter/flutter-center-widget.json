@@ -1,0 +1,89 @@
+{
+  "slug": "flutter-center-widget",
+  "course": "Flutter",
+  "title": "Flutter Center Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Center Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Center to center a child within its parent. Understand how it works, when to use it, and its relationship with Align.",
+    "keywords": [
+      "Flutter Center",
+      "Center widget",
+      "centering",
+      "Align",
+      "Flutter layout"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Center in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Center is a widget that centers its child within itself. It's actually a specialized version of `Align` with `alignment: Alignment.center`. It's one of the simplest and most commonly used layout widgets."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Center(\n  child: Text('I am centered'),\n)"
+    },
+    {
+      "type": "text",
+      "value": "The Center widget will expand to fill its parent (if the parent allows it) and then place the child in the center."
+    },
+    {
+      "type": "heading",
+      "value": "Center vs Align"
+    },
+    {
+      "type": "text",
+      "value": "Center is equivalent to `Align(alignment: Alignment.center)`. Use Center for simplicity when you just need centering. Use Align when you need more precise positioning (e.g., top‑right)."
+    },
+    {
+      "type": "heading",
+      "value": "When Does Center Not Work?"
+    },
+    {
+      "type": "text",
+      "value": "Center will only work if its parent provides enough constraints. For example, if Center is placed inside a Container with no fixed size, and that Container is inside a Column, Center might not have a bounded size to center within. In such cases, wrap the Center with a SizedBox or Expanded."
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Center centers its child both horizontally and vertically.",
+        "It expands to fill its parent (if possible).",
+        "It's a convenient shorthand for `Align(alignment: Alignment.center)`."
+      ]
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Center Example')),\n        body: Center(\n          child: Container(\n            width: 150,\n            height: 150,\n            color: Colors.blue,\n            child: Center(child: Text('Inner')),\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does the Center widget do?",
+      "options": [
+        "Centers its child horizontally only",
+        "Centers its child both horizontally and vertically",
+        "Centers itself within its parent",
+        "Expands to fill its parent without centering"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-align",
+    "flutter-container",
+    "flutter-expanded",
+    "flutter-sizedbox"
+  ]
+}

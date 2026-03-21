@@ -1,0 +1,143 @@
+{
+  "slug": "flutter-statefulwidget",
+  "course": "Flutter",
+  "title": "Flutter StatefulWidget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter StatefulWidget Explained with Examples | Complete Guide",
+    "description": "Learn Flutter StatefulWidget with simple examples. Understand state management, lifecycle, and real-world use cases in this beginner-friendly guide.",
+    "keywords": [
+      "Flutter StatefulWidget",
+      "StatefulWidget example",
+      "Flutter state management basics",
+      "difference between Stateless and StatefulWidget",
+      "Flutter tutorial for beginners",
+      "Flutter UI state handling"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is StatefulWidget in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "In Flutter, a StatefulWidget is a widget that can change its state during runtime. This means the UI can update dynamically when data changes. It is commonly used when the app needs to respond to user interactions such as button clicks, form inputs, animations, or API responses. Unlike StatelessWidget, which is static and immutable, StatefulWidget allows rebuilding the UI whenever the internal state changes."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use StatefulWidget?"
+    },
+    {
+      "type": "text",
+      "value": "StatefulWidget is used when your UI depends on dynamic data. For example, counters, form validation, toggles, loading indicators, and real-time updates require state changes. It helps in creating interactive applications where the UI reacts to user input or backend data."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Structure of StatefulWidget"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyWidget extends StatefulWidget {\n  @override\n  _MyWidgetState createState() => _MyWidgetState();\n}\n\nclass _MyWidgetState extends State<MyWidget> {\n  @override\n  Widget build(BuildContext context) {\n    return Container();\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "A StatefulWidget consists of two classes: the widget class and the state class. The widget class is immutable, while the state class holds the mutable data and UI logic."
+    },
+    {
+      "type": "heading",
+      "value": "Example: Counter App using StatefulWidget"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\n\nclass CounterApp extends StatefulWidget {\n  @override\n  _CounterAppState createState() => _CounterAppState();\n}\n\nclass _CounterAppState extends State<CounterApp> {\n  int _counter = 0;\n\n  void _incrementCounter() {\n    setState(() {\n      _counter++;\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('StatefulWidget Example')),\n      body: Center(\n        child: Text(\n          'Counter: $_counter',\n          style: TextStyle(fontSize: 24),\n        ),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: _incrementCounter,\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "In this example, the counter value updates every time the button is pressed. The setState() method notifies Flutter to rebuild the UI with the updated value."
+    },
+    {
+      "type": "heading",
+      "value": "Understanding setState()"
+    },
+    {
+      "type": "text",
+      "value": "The setState() method is used to update the UI when the state changes. It tells Flutter that something has changed, and the framework should rebuild the widget. Without setState(), the UI will not reflect changes in data."
+    },
+    {
+      "type": "heading",
+      "value": "Lifecycle of StatefulWidget"
+    },
+    {
+      "type": "text",
+      "value": "StatefulWidget has a lifecycle that helps manage its behavior efficiently. Important lifecycle methods include: initState() for initialization, build() for rendering UI, setState() for updating UI, and dispose() for cleaning up resources. Understanding lifecycle is important for performance and proper resource handling."
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Use Cases"
+    },
+    {
+      "type": "text",
+      "value": "StatefulWidget is used in many real-world scenarios such as login forms with validation, API data loading screens, shopping cart updates, toggle switches, animations, and live data dashboards. Any situation where UI changes dynamically requires StatefulWidget."
+    },
+    {
+      "type": "heading",
+      "value": "Key Points"
+    },
+    {
+      "type": "text",
+      "value": "- StatefulWidget allows dynamic UI updates.\n- It consists of two classes: Widget and State.\n- setState() is used to trigger UI rebuild.\n- Useful for interactive applications.\n- Lifecycle methods help manage performance.\n- Always keep state logic clean and minimal."
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. What is the difference between StatelessWidget and StatefulWidget?\n2. What is setState() and why is it important?\n3. Explain the lifecycle of StatefulWidget.\n4. When should you use StatefulWidget?\n5. Can StatefulWidget rebuild partially or fully?\n6. How do you manage complex state in Flutter?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  runApp(MaterialApp(\n    home: CounterApp(),\n  ));\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the main purpose of StatefulWidget?",
+      "options": [
+        "To create static UI",
+        "To handle dynamic UI changes",
+        "To store constants",
+        "To improve app size"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method is used to update UI in StatefulWidget?",
+      "options": [
+        "updateUI()",
+        "refresh()",
+        "setState()",
+        "buildState()"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which class holds the mutable state?",
+      "options": [
+        "Widget class",
+        "State class",
+        "BuildContext",
+        "MaterialApp"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-statelesswidget",
+    "flutter-setstate",
+    "flutter-lifecycle",
+    "flutter-state-management-basics"
+  ]
+}

@@ -1,0 +1,205 @@
+{
+  "slug": "dart-custom-exceptions",
+  "course": "Dart",
+  "title": "Dart Custom Exceptions – Creating Your Own Exception Types",
+  "meta": {
+    "title": "Dart Custom Exceptions: Create and Use Your Own Exception Classes",
+    "description": "Learn how to define custom exception classes in Dart by extending Exception. Add fields, handle them with try-catch, and build expressive error handling.",
+    "keywords": [
+      "Dart custom exception",
+      "Dart extend Exception",
+      "Dart user-defined exception",
+      "Dart exception class",
+      "Dart error handling",
+      "Dart throw custom exception",
+      "Dart custom error"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Custom Exceptions?"
+    },
+    {
+      "type": "text",
+      "value": "Built‑in exception types like `Exception` and `FormatException` are useful, but often you need to represent errors specific to your application. Custom exceptions allow you to:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Give meaningful names to error conditions.",
+        "- Attach additional data (like error codes, context).",
+        "- Differentiate between different failure scenarios.",
+        "- Catch and handle them precisely."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Defining a Custom Exception"
+    },
+    {
+      "type": "text",
+      "value": "To create a custom exception, define a class that implements or extends `Exception`. It can contain fields, constructors, and override `toString()` for better error messages."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ValidationException implements Exception {\n  final String message;\n  final int errorCode;\n\n  ValidationException(this.message, {this.errorCode = 1001});\n\n  @override\n  String toString() => 'ValidationException: $message (code: $errorCode)';\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Throwing a Custom Exception"
+    },
+    {
+      "type": "text",
+      "value": "Use `throw` with an instance of your custom exception class."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void validateEmail(String email) {\n  if (!email.contains('@')) {\n    throw ValidationException('Invalid email format', errorCode: 1002);\n  }\n}\n\nvoid main() {\n  try {\n    validateEmail('user@example.com');\n    validateEmail('userexample.com');\n  } on ValidationException catch (e) {\n    print(e); // ValidationException: Invalid email format (code: 1002)\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Extending `Exception` vs Implementing"
+    },
+    {
+      "type": "text",
+      "value": "Both `extends Exception` and `implements Exception` work. Extending is simpler and gives you a default `toString()` implementation (though you'll likely override it). Implementing requires you to define `toString()` if you want a custom message, but it's also valid."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Extending Exception (recommended)\nclass DatabaseException extends Exception {\n  final String message;\n  DatabaseException(this.message);\n  @override\n  String toString() => 'DatabaseException: $message';\n}\n\n// Implementing Exception (also works)\nclass NetworkException implements Exception {\n  final int statusCode;\n  NetworkException(this.statusCode);\n  @override\n  String toString() => 'NetworkException: HTTP $statusCode';\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Adding Fields to Custom Exceptions"
+    },
+    {
+      "type": "text",
+      "value": "Custom exceptions can carry any data you need, such as error codes, original values, or contextual information. This allows handlers to respond intelligently."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AgeException implements Exception {\n  final int attemptedAge;\n  final int minAge;\n  final int maxAge;\n\n  AgeException(this.attemptedAge, this.minAge, this.maxAge);\n\n  @override\n  String toString() =>\n      'AgeException: $attemptedAge is outside allowed range [$minAge, $maxAge]';\n}\n\nvoid setAge(int age) {\n  if (age < 0 || age > 120) {\n    throw AgeException(age, 0, 120);\n  }\n}\n\nvoid main() {\n  try {\n    setAge(150);\n  } on AgeException catch (e) {\n    print(e);\n    print('Attempted age: ${e.attemptedAge}');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Enums for Error Categories"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes it's useful to combine a category (enum) with a message. This gives both a type and rich data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "enum ErrorType { validation, network, database, unknown }\n\nclass AppException implements Exception {\n  final ErrorType type;\n  final String message;\n  final StackTrace? stackTrace;\n\n  AppException(this.type, this.message, [this.stackTrace]);\n\n  @override\n  String toString() => '[$type] $message';\n}\n\nvoid main() {\n  try {\n    throw AppException(ErrorType.network, 'Connection timed out');\n  } on AppException catch (e) {\n    print(e); // [ErrorType.network] Connection timed out\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Name your exception classes with a clear suffix like `Exception` (e.g., `ValidationException`).",
+        "- Keep them immutable – use `final` fields.",
+        "- Override `toString()` to provide meaningful output.",
+        "- Include only necessary data; avoid adding too much context that might be irrelevant for handlers.",
+        "- Use `implements Exception` if you want to ensure the class is purely an interface (no implementation).",
+        "- For large applications, consider a hierarchy (e.g., `AppException` base with subclasses)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example: User Registration"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class InvalidUsernameException implements Exception {\n  final String username;\n  final String reason;\n  InvalidUsernameException(this.username, this.reason);\n  @override\n  String toString() => 'Invalid username \"$username\": $reason';\n}\n\nclass WeakPasswordException implements Exception {\n  final String message;\n  WeakPasswordException(this.message);\n  @override\n  String toString() => 'Weak password: $message';\n}\n\nvoid register(String username, String password) {\n  if (username.length < 3) {\n    throw InvalidUsernameException(username, 'Must be at least 3 characters');\n  }\n  if (password.length < 8) {\n    throw WeakPasswordException('Password must be at least 8 characters');\n  }\n  print('Registration successful for $username');\n}\n\nvoid main() {\n  try {\n    register('jo', 'short');\n  } on InvalidUsernameException catch (e) {\n    print(e);\n  } on WeakPasswordException catch (e) {\n    print(e);\n  } catch (e) {\n    print('Unexpected error: $e');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Custom exceptions improve code clarity and error handling.",
+        "- Define a class that extends or implements `Exception`.",
+        "- Add fields to carry relevant error data.",
+        "- Override `toString()` for meaningful error messages.",
+        "- Use custom exceptions to differentiate between error types.",
+        "- Follow naming conventions and keep exceptions focused."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I have to extend `Exception` to create a custom exception?",
+      "answer": "No, you can throw any object in Dart. However, extending or implementing `Exception` is a convention that makes your code more readable and allows for type‑based catching. It's highly recommended."
+    },
+    {
+      "question": "Can I create a hierarchy of custom exceptions?",
+      "answer": "Yes, you can create a base exception class (e.g., `AppException`) and then extend it for specific cases (e.g., `NetworkException extends AppException`). This allows catching all app‑specific exceptions with one `on AppException` clause."
+    },
+    {
+      "question": "How do I decide between using an enum or separate classes for different errors?",
+      "answer": "If the handling logic differs significantly, separate classes are better. If the only difference is a category, an enum field inside a single exception class might suffice. Choose based on how you plan to catch and handle them."
+    },
+    {
+      "question": "Should I attach a stack trace to custom exceptions?",
+      "answer": "Sometimes it's helpful for logging, but it's not required. You can capture the current stack trace with `StackTrace.current` when throwing. However, rethrowing with `rethrow` preserves the original stack trace without needing to store it."
+    },
+    {
+      "question": "Can I make my custom exception implement `Error` instead of `Exception`?",
+      "answer": "Technically yes, but `Error` is meant for serious, unrecoverable problems (like programming errors). Use `Exception` for recoverable conditions that your application can handle."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class NegativeNumberException implements Exception {\n  final double value;\n  NegativeNumberException(this.value);\n  @override\n  String toString() => 'NegativeNumberException: $value is negative';\n}\n\ndouble safeSqrt(double n) {\n  if (n < 0) throw NegativeNumberException(n);\n  return n.sqrt();\n}\n\nvoid main() {\n  try {\n    print(safeSqrt(25));\n    print(safeSqrt(-1));\n  } on NegativeNumberException catch (e) {\n    print(e);\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which keyword is used to define a custom exception class?",
+      "options": ["exception", "error", "class", "custom"],
+      "answer": 2
+    },
+    {
+      "question": "What should a custom exception typically extend?",
+      "options": ["Object", "Error", "Exception", "Throwable"],
+      "answer": 2
+    },
+    {
+      "question": "Why might you add fields to a custom exception?",
+      "options": [
+        "To store error details like error codes or original values",
+        "To make the class larger",
+        "To slow down the program",
+        "To avoid using constructors"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What is the purpose of overriding `toString()` in a custom exception?",
+      "options": [
+        "To provide a readable error message",
+        "To serialize the exception",
+        "To compare two exceptions",
+        "To catch the exception"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "dart-exception-handling",
+    "dart-classes",
+    "dart-constructors",
+    "dart-enums"
+  ]
+}

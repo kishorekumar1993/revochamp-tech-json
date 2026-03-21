@@ -1,0 +1,220 @@
+{
+  "slug": "flutter-http-api",
+  "course": "Flutter",
+  "title": "Flutter HTTP API – Fetching Data from REST APIs",
+  "meta": {
+    "title": "Flutter HTTP API: Complete Guide with Examples",
+    "description": "Learn how to make HTTP requests in Flutter using the http package. Perform GET, POST, PUT, DELETE, parse JSON, handle errors, and display data in widgets.",
+    "keywords": [
+      "Flutter HTTP",
+      "Flutter REST API",
+      "Flutter http package",
+      "Flutter API call",
+      "Flutter network request",
+      "Flutter JSON parsing",
+      "Flutter FutureBuilder"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is HTTP in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Most modern apps need to communicate with a backend server over the internet. HTTP (Hypertext Transfer Protocol) is the foundation of data communication on the web. In Flutter, you can make HTTP requests using the `http` package, which provides a simple, async API for GET, POST, PUT, DELETE, and more. This tutorial will guide you through making API calls, handling responses, and displaying data in your Flutter app."
+    },
+    {
+      "type": "heading",
+      "value": "Adding the http Package"
+    },
+    {
+      "type": "text",
+      "value": "First, add the `http` package to your `pubspec.yaml` dependencies:\n\n```yaml\ndependencies:\n  http: ^1.2.0\n```\n\nThen run `flutter pub get` to install it."
+    },
+    {
+      "type": "heading",
+      "value": "Making a GET Request"
+    },
+    {
+      "type": "text",
+      "value": "The simplest HTTP request is a GET. It retrieves data from a server. You use `http.get()` with a `Uri` and get a `Future<Response>` back."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:http/http.dart' as http;\n\nFuture<void> fetchData() async {\n  final url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');\n  final response = await http.get(url);\n\n  if (response.statusCode == 200) {\n    print(response.body);\n  } else {\n    print('Request failed with status: ${response.statusCode}');\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "The `response` object contains the status code (200 means success), headers, and body. The body is a raw string; you'll usually parse it as JSON."
+    },
+    {
+      "type": "heading",
+      "value": "Parsing JSON Responses"
+    },
+    {
+      "type": "text",
+      "value": "Most APIs return JSON. Use `dart:convert` to decode the string into a Dart object (Map or List)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:convert';\n\nFuture<void> fetchPost() async {\n  final url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');\n  final response = await http.get(url);\n\n  if (response.statusCode == 200) {\n    Map<String, dynamic> data = jsonDecode(response.body);\n    print('Title: ${data['title']}');\n  } else {\n    print('Error: ${response.statusCode}');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Making a POST Request"
+    },
+    {
+      "type": "text",
+      "value": "To send data to a server, use POST. You provide a `body` (usually a JSON string) and set the `Content-Type` header to `application/json`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<void> createPost() async {\n  final url = Uri.parse('https://jsonplaceholder.typicode.com/posts');\n  final response = await http.post(\n    url,\n    headers: {'Content-Type': 'application/json'},\n    body: jsonEncode({\n      'title': 'My Post',\n      'body': 'This is a new post.',\n      'userId': 1,\n    }),\n  );\n\n  if (response.statusCode == 201) {\n    print('Post created: ${response.body}');\n  } else {\n    print('Failed: ${response.statusCode}');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "PUT, PATCH, DELETE"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// PUT (update entire resource)\nawait http.put(\n  Uri.parse('https://jsonplaceholder.typicode.com/posts/1'),\n  headers: {'Content-Type': 'application/json'},\n  body: jsonEncode({'title': 'Updated Title'}),\n);\n\n// DELETE\nawait http.delete(Uri.parse('https://jsonplaceholder.typicode.com/posts/1'));"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Errors Gracefully"
+    },
+    {
+      "type": "text",
+      "value": "Always handle network errors and HTTP errors. Use try/catch for exceptions (like no internet) and check status codes for HTTP errors."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<List<Post>> fetchPosts() async {\n  try {\n    final response = await http.get(Uri.parse('https://api.example.com/posts'));\n    if (response.statusCode == 200) {\n      return parsePosts(response.body);\n    } else {\n      throw Exception('Failed to load posts (${response.statusCode})');\n    }\n  } catch (e) {\n    throw Exception('Network error: $e');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Displaying Data with FutureBuilder"
+    },
+    {
+      "type": "text",
+      "value": "In Flutter, you often combine HTTP requests with `FutureBuilder` to manage the asynchronous state and rebuild the UI when data arrives."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostsPage extends StatelessWidget {\n  Future<List<Post>> _fetchPosts() async {\n    final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));\n    if (response.statusCode == 200) {\n      List<dynamic> jsonList = jsonDecode(response.body);\n      return jsonList.map((json) => Post.fromJson(json)).toList();\n    } else {\n      throw Exception('Failed to load posts');\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Posts')),\n      body: FutureBuilder<List<Post>>(\n        future: _fetchPosts(),\n        builder: (context, snapshot) {\n          if (snapshot.connectionState == ConnectionState.waiting) {\n            return Center(child: CircularProgressIndicator());\n          } else if (snapshot.hasError) {\n            return Center(child: Text('Error: ${snapshot.error}'));\n          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {\n            return Center(child: Text('No posts'));\n          } else {\n            return ListView.builder(\n              itemCount: snapshot.data!.length,\n              itemBuilder: (context, index) {\n                final post = snapshot.data![index];\n                return ListTile(title: Text(post.title));\n              },\n            );\n          }\n        },\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Not checking `mounted`** when calling `setState` after an async operation: use `if (mounted)` to avoid memory leaks.",
+        "- **Creating the `Future` inside `build`**: This causes the future to restart on every rebuild. Store it in `initState` or as a variable.",
+        "- **Ignoring `statusCode`**: Always check the status code; a 200 does not guarantee success (e.g., 404 might return a page).",
+        "- **Forgetting to set `Content-Type` header for POST**: The server may not understand the body format.",
+        "- **Not handling exceptions**: Network calls can fail; always wrap in try/catch."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Use a separate service class** for API calls to keep your UI clean.",
+        "- **Define models** for your data (like `Post` class) to use type‑safe objects.",
+        "- **Use `FutureBuilder`** for one‑time loads, and consider `StreamBuilder` for real‑time updates.",
+        "- **Show loading indicators** while waiting for data.",
+        "- **Handle offline scenarios** gracefully (e.g., show a cached version or a friendly error)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\nimport 'package:http/http.dart' as http;\nimport 'dart:convert';\n\nclass Post {\n  final int id;\n  final String title;\n\n  Post({required this.id, required this.title});\n\n  factory Post.fromJson(Map<String, dynamic> json) {\n    return Post(\n      id: json['id'],\n      title: json['title'],\n    );\n  }\n}\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'HTTP Demo',\n      home: PostsPage(),\n    );\n  }\n}\n\nclass PostsPage extends StatefulWidget {\n  @override\n  _PostsPageState createState() => _PostsPageState();\n}\n\nclass _PostsPageState extends State<PostsPage> {\n  late Future<List<Post>> _futurePosts;\n\n  @override\n  void initState() {\n    super.initState();\n    _futurePosts = fetchPosts();\n  }\n\n  Future<List<Post>> fetchPosts() async {\n    final url = Uri.parse('https://jsonplaceholder.typicode.com/posts');\n    final response = await http.get(url);\n\n    if (response.statusCode == 200) {\n      List<dynamic> jsonList = jsonDecode(response.body);\n      return jsonList.map((json) => Post.fromJson(json)).toList();\n    } else {\n      throw Exception('Failed to load posts');\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Posts')),\n      body: FutureBuilder<List<Post>>(\n        future: _futurePosts,\n        builder: (context, snapshot) {\n          if (snapshot.connectionState == ConnectionState.waiting) {\n            return Center(child: CircularProgressIndicator());\n          } else if (snapshot.hasError) {\n            return Center(child: Text('Error: ${snapshot.error}'));\n          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {\n            return Center(child: Text('No posts'));\n          } else {\n            return ListView.builder(\n              itemCount: snapshot.data!.length,\n              itemBuilder: (context, index) {\n                final post = snapshot.data![index];\n                return ListTile(\n                  title: Text(post.title),\n                );\n              },\n            );\n          }\n        },\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use the `http` package to make network requests in Flutter.",
+        "- GET retrieves data; POST sends data; PUT/PATCH update; DELETE removes.",
+        "- Always check `response.statusCode` to handle HTTP errors.",
+        "- Parse JSON with `jsonDecode` from `dart:convert`.",
+        "- Display async data with `FutureBuilder` for a reactive UI.",
+        "- Store the future outside `build` to avoid repeated requests."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I handle authentication (e.g., Bearer token)?",
+      "answer": "Add an `Authorization` header to your requests. For example: `headers: {'Authorization': 'Bearer $token'}`. You can also use the `http.Client` and set a `Request` object."
+    },
+    {
+      "question": "What is the difference between `http.get` and `http.Client`?",
+      "answer": "`http.get` is a convenience function that creates a new client each time. For multiple requests to the same host, it's more efficient to create a `Client` and reuse it, then close it when done."
+    },
+    {
+      "question": "How do I cancel an HTTP request?",
+      "answer": "The `http` package doesn't provide built‑in cancellation. You can use `CancelableOperation` from the `async` package, or use `http.Client` and close it early (which cancels ongoing requests)."
+    },
+    {
+      "question": "How do I set a timeout for requests?",
+      "answer": "Use the `timeout` method on the Future: `http.get(url).timeout(Duration(seconds: 5))`. Catch `TimeoutException` to handle timeouts."
+    },
+    {
+      "question": "How do I handle cookies?",
+      "answer": "The `http` package doesn't manage cookies automatically. You can store cookies from the response and send them back in subsequent requests by setting the `Cookie` header. Alternatively, use a package like `cookie_jar` or `dio` with cookie support."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:http/http.dart' as http;\nimport 'dart:convert';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('HTTP Demo')),\n        body: Center(child: ApiDemo()),\n      ),\n    );\n  }\n}\n\nclass ApiDemo extends StatefulWidget {\n  @override\n  _ApiDemoState createState() => _ApiDemoState();\n}\n\nclass _ApiDemoState extends State<ApiDemo> {\n  String _data = 'Press button to fetch data';\n  bool _loading = false;\n\n  Future<void> _fetchData() async {\n    setState(() => _loading = true);\n    try {\n      final url = Uri.parse('https://jsonplaceholder.typicode.com/posts/1');\n      final response = await http.get(url);\n      if (response.statusCode == 200) {\n        Map<String, dynamic> json = jsonDecode(response.body);\n        setState(() => _data = 'Title: ${json['title']}');\n      } else {\n        setState(() => _data = 'Error: ${response.statusCode}');\n      }\n    } catch (e) {\n      setState(() => _data = 'Network error: $e');\n    } finally {\n      if (mounted) setState(() => _loading = false);\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        if (_loading)\n          CircularProgressIndicator()\n        else\n          Text(_data, style: TextStyle(fontSize: 18)),\n        SizedBox(height: 20),\n        ElevatedButton(\n          onPressed: _fetchData,\n          child: Text('Fetch Post'),\n        ),\n      ],\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which function is used to send a GET request with the http package?",
+      "options": ["http.get", "http.fetch", "http.request", "http.retrieve"],
+      "answer": 0
+    },
+    {
+      "question": "What does `response.statusCode` 200 indicate?",
+      "options": ["Success", "Not found", "Server error", "Unauthorized"],
+      "answer": 0
+    },
+    {
+      "question": "How do you parse a JSON string into a Dart object?",
+      "options": ["json.parse()", "jsonDecode()", "json.encode()", "JSON.parse()"],
+      "answer": 1
+    },
+    {
+      "question": "Which widget is best for displaying data from a Future?",
+      "options": ["FutureBuilder", "StreamBuilder", "AsyncBuilder", "FutureWidget"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-json",
+    "flutter-future",
+    "flutter-async-await",
+    "flutter-networking"
+  ]
+}

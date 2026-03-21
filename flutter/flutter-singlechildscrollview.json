@@ -1,0 +1,214 @@
+{
+  "slug": "flutter-singlechildscrollview",
+  "course": "Flutter",
+  "title": "Flutter SingleChildScrollView – Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter SingleChildScrollView: Make Any Widget Scrollable",
+    "description": "Learn how to use SingleChildScrollView in Flutter to make any widget scrollable. Handle unbounded constraints, physics, scroll direction, and best practices.",
+    "keywords": [
+      "Flutter SingleChildScrollView",
+      "Flutter scroll view",
+      "scrollable widget",
+      "SingleChildScrollView example",
+      "Flutter scrolling",
+      "Flutter layout",
+      "Flutter physics"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is SingleChildScrollView?"
+    },
+    {
+      "type": "text",
+      "value": "`SingleChildScrollView` is a widget that makes its child scrollable. It is used when you have a single widget (like a `Column`, `Row`, or `Container`) that might exceed the available screen space. It allows the user to scroll vertically, horizontally, or both, depending on the configuration. Unlike `ListView`, which lazily builds items, `SingleChildScrollView` builds its entire child at once, making it suitable for small or moderately sized content that doesn't change dynamically."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "The simplest use is to wrap a column that might be too tall for the screen. For example, a form with many fields."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "SingleChildScrollView(\n  child: Column(\n    children: [\n      for (int i = 0; i < 20; i++)\n        Text('Item $i'),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Scrolling Direction"
+    },
+    {
+      "type": "text",
+      "value": "By default, the scroll direction is vertical. You can change it to horizontal using the `scrollDirection` property. When horizontal, the child's width will determine the scrollable extent."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "SingleChildScrollView(\n  scrollDirection: Axis.horizontal,\n  child: Row(\n    children: [\n      for (int i = 0; i < 20; i++)\n        Container(width: 100, height: 100, color: Colors.blue),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Physics – Controlling Scroll Behavior"
+    },
+    {
+      "type": "text",
+      "value": "The `physics` property lets you control how the scroll view reacts to user input. Common values:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`AlwaysScrollableScrollPhysics`**: Always allows scrolling, even when the content fits.",
+        "- **`BouncingScrollPhysics`**: Provides a bouncing effect (common on iOS).",
+        "- **`ClampingScrollPhysics`**: Provides a clamping effect (common on Android).",
+        "- **`NeverScrollableScrollPhysics`**: Disables scrolling completely."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "SingleChildScrollView(\n  physics: const BouncingScrollPhysics(),\n  child: ...\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Controlling Scroll Position"
+    },
+    {
+      "type": "text",
+      "value": "You can programmatically control the scroll position using a `ScrollController`. For example, to scroll to the top or bottom."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final _controller = ScrollController();\n\nSingleChildScrollView(\n  controller: _controller,\n  child: ...\n)\n\n// Scroll to top\n_controller.animateTo(\n  0,\n  duration: Duration(milliseconds: 300),\n  curve: Curves.easeOut,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Unbounded Constraints"
+    },
+    {
+      "type": "text",
+      "value": "One common mistake is using `SingleChildScrollView` inside a `Column` or `ListView` without giving it a constrained height. `SingleChildScrollView` needs a bounded parent (like a `Container` with a height, or the `Scaffold` body, which is unbounded by default but becomes bounded because `Scaffold` provides constraints). However, if you nest it inside a `Column` without wrapping it with `Expanded` or `Flexible`, you may get an error because the `Column` gives its children unbounded vertical space. The solution: wrap the `SingleChildScrollView` with `Expanded` or `Flexible` (if inside a `Column`), or use `SizedBox` to give it a finite height."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Correct: Inside a Column, use Expanded\nColumn(\n  children: [\n    Text('Header'),\n    Expanded(\n      child: SingleChildScrollView(\n        child: Column(\n          children: [...],\n        ),\n      ),\n    ),\n    Text('Footer'),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Using `SingleChildScrollView` without a constrained parent**: Leads to infinite height and a layout error.",
+        "- **Placing `SingleChildScrollView` inside another scrollable widget**: Nested scrolling should be handled carefully; use `NestedScrollView` or ensure the child has a finite height.",
+        "- **Forgetting to set `scrollDirection` for horizontal scrolling**: By default, it's vertical.",
+        "- **Over‑using `SingleChildScrollView` for large lists**: For large or dynamic lists, use `ListView.builder` which lazily builds items and is more performant.",
+        "- **Not handling keyboard obscuring content**: When the keyboard opens, the scroll view may not automatically adjust. Use `resizeToAvoidBottomInset` on `Scaffold` or wrap with `SingleChildScrollView` inside a `Scaffold` that handles it."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `SingleChildScrollView` for small to medium‑sized content that fits in memory (e.g., a form, a settings screen).",
+        "- When used inside a `Column`, wrap it with `Expanded` or `Flexible` to give it a finite height.",
+        "- For horizontal scrolling, ensure the child's width is defined, or use a `Row` with children that have explicit widths.",
+        "- Use `ScrollController` with `animateTo` for programmatic scrolling.",
+        "- For performance, avoid building huge static lists inside `SingleChildScrollView`; prefer `ListView.builder`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `SingleChildScrollView` makes a single child widget scrollable.",
+        "- Use `scrollDirection` to set vertical or horizontal scrolling.",
+        "- `physics` controls the scrolling behaviour (bounce, clamp, etc.).",
+        "- Use `ScrollController` to control scroll position.",
+        "- Always ensure the scroll view has bounded constraints, especially when nested in `Column` or `Row`.",
+        "- It is suitable for static content; for large dynamic lists, use `ListView.builder`."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `SingleChildScrollView` and `ListView`?",
+      "answer": "`SingleChildScrollView` builds its entire child at once, which is fine for small content. `ListView` lazily builds its children as they scroll into view, making it more efficient for long or dynamic lists. `ListView` is also scrollable by default and can be used with `ListTile` and other widgets. Use `SingleChildScrollView` when you have a single complex child that is not a list, or when you need to scroll a column with a variable number of static widgets."
+    },
+    {
+      "question": "How do I make a `SingleChildScrollView` scroll only when needed?",
+      "answer": "You can set `physics: const AlwaysScrollableScrollPhysics()` to always allow scrolling, but by default, the scroll view will only be scrollable if its child exceeds the available space. If you want it to never scroll, set `physics: const NeverScrollableScrollPhysics()`."
+    },
+    {
+      "question": "Why does my `SingleChildScrollView` cause an overflow error?",
+      "answer": "This usually happens because the scroll view is placed inside a widget that gives it unlimited constraints (like a `Column`). Flutter cannot determine the height of the scroll view. Wrap it with `Expanded` or `Flexible` to give it a finite height. Alternatively, set a fixed height using `SizedBox`."
+    },
+    {
+      "question": "Can I use `SingleChildScrollView` with a `ListView` as child?",
+      "answer": "Yes, but that would create nested scroll views, which can cause conflicts. Usually, you want one scrollable parent. If you need a list inside a larger scrollable area, use `NestedScrollView` or ensure the inner list has a finite height (e.g., `SizedBox` with height) and disable its scrolling (`physics: NeverScrollableScrollPhysics()`)."
+    },
+    {
+      "question": "How do I scroll to a specific child?",
+      "answer": "You can use a `ScrollController` and compute the offset based on the child's position. A common technique is to use a `GlobalKey` for the child and then get its position: `final key = GlobalKey(); ... final offset = (key.currentContext!.findRenderObject() as RenderBox).localToGlobal(Offset.zero).dy;` then `_controller.animateTo(offset, ...)`. This is advanced; for simpler cases, consider using `Scrollable.ensureVisible`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('SingleChildScrollView Demo')),\n        body: SingleChildScrollView(\n          child: Column(\n            children: [\n              for (int i = 0; i < 30; i++)\n                Padding(\n                  padding: const EdgeInsets.all(8.0),\n                  child: Container(\n                    height: 100,\n                    color: Colors.blue.shade100,\n                    child: Center(child: Text('Item $i')),\n                  ),\n                ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the primary use case for SingleChildScrollView?",
+      "options": [
+        "Displaying a large list of items efficiently",
+        "Making a single widget (like a Column) scrollable when its content exceeds available space",
+        "Creating a horizontal carousel",
+        "Replacing ListView.builder"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you make a SingleChildScrollView scroll horizontally?",
+      "options": [
+        "Set `horizontal: true`",
+        "Set `scrollDirection: Axis.horizontal`",
+        "Set `orientation: Axis.horizontal`",
+        "Use `HorizontalScrollView`"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What happens if you place a SingleChildScrollView directly inside a Column without wrapping it in Expanded?",
+      "options": [
+        "It works fine",
+        "It causes a layout overflow error because the scroll view gets unbounded height",
+        "The scroll view becomes disabled",
+        "The app crashes"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which physics property gives a bounce effect (like on iOS)?",
+      "options": ["BouncingScrollPhysics", "ClampingScrollPhysics", "AlwaysScrollableScrollPhysics", "NeverScrollableScrollPhysics"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-listview",
+    "flutter-scrollcontroller",
+    "flutter-layout",
+    "flutter-nested-scroll-view"
+  ]
+}

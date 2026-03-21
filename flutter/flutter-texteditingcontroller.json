@@ -1,0 +1,210 @@
+{
+  "slug": "flutter-texteditingcontroller",
+  "course": "Flutter",
+  "title": "Flutter TextEditingController – Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter TextEditingController: Read, Modify, and Listen to Text",
+    "description": "Learn how to use TextEditingController in Flutter to control TextField and TextFormField. Master reading text, setting values, listening to changes, and avoiding memory leaks.",
+    "keywords": [
+      "Flutter TextEditingController",
+      "TextEditingController example",
+      "Flutter text input",
+      "Flutter controller dispose",
+      "Flutter text field controller",
+      "Flutter clear text field"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is TextEditingController?"
+    },
+    {
+      "type": "text",
+      "value": "`TextEditingController` is a controller that manages the text being edited in a `TextField` or `TextFormField`. It allows you to programmatically read, modify, and listen to changes in the text input. Using a controller gives you fine‑grained control over the text field, such as setting initial values, clearing the text, or reacting to each keystroke."
+    },
+    {
+      "type": "heading",
+      "value": "Creating and Disposing a Controller"
+    },
+    {
+      "type": "text",
+      "value": "Always create the controller in `initState` and dispose it in `dispose` to prevent memory leaks. Never create a controller directly inside the `build` method because it would be recreated on every rebuild, leading to performance issues and unexpected behavior."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyWidget extends StatefulWidget {\n  @override\n  _MyWidgetState createState() => _MyWidgetState();\n}\n\nclass _MyWidgetState extends State<MyWidget> {\n  final TextEditingController _controller = TextEditingController();\n\n  @override\n  void dispose() {\n    _controller.dispose();\n    super.dispose();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return TextField(controller: _controller);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Reading the Text"
+    },
+    {
+      "type": "text",
+      "value": "Use the `.text` property to get the current content of the text field. This is useful when you need to retrieve the user's input (e.g., on button press)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "String text = _controller.text;"
+    },
+    {
+      "type": "heading",
+      "value": "Setting the Text Programmatically"
+    },
+    {
+      "type": "text",
+      "value": "To set or change the text, assign a new string to the `.text` property. The text field will update automatically. This is useful for pre‑filling fields, resetting them, or reflecting external changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Set initial text after creation\n_controller.text = 'Initial value';\n\n// Clear the field\n_controller.clear();"
+    },
+    {
+      "type": "heading",
+      "value": "Listening to Text Changes"
+    },
+    {
+      "type": "text",
+      "value": "You can listen to changes in the text by adding a listener to the controller. The listener is called whenever the text changes (every keystroke). This is useful for implementing live validation, search‑as‑you‑type, or updating other parts of the UI."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@override\nvoid initState() {\n  super.initState();\n  _controller.addListener(() {\n    print('Current text: ${_controller.text}');\n    // You can call setState here to rebuild other widgets\n  });\n}"
+    },
+    {
+      "type": "text",
+      "value": "Remember to remove the listener in `dispose` if you added it manually, but if you simply use `addListener`, the controller will manage the listener list; however, it's still good practice to remove it if you stop needing it. In the example above, it's fine to leave it as the controller will be disposed anyway."
+    },
+    {
+      "type": "heading",
+      "value": "Using with FocusNode"
+    },
+    {
+      "type": "text",
+      "value": "Often you combine `TextEditingController` with a `FocusNode` to control focus and text together. For example, you might want to clear the text when the field loses focus, or request focus after setting a value."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final FocusNode _focusNode = FocusNode();\n\n@override\nvoid dispose() {\n  _focusNode.dispose();\n  _controller.dispose();\n  super.dispose();\n}\n\nvoid _clearAndFocus() {\n  _controller.clear();\n  _focusNode.requestFocus();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Selection and Cursor Control"
+    },
+    {
+      "type": "text",
+      "value": "`TextEditingController` also exposes the selection (cursor position and selected range). You can read and modify it using `_controller.selection`. For example, to move the cursor to the end after setting a new value:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void _setTextAndMoveCursor(String newText) {\n  _controller.text = newText;\n  _controller.selection = TextSelection.fromPosition(\n    TextPosition(offset: _controller.text.length),\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Not disposing the controller**: This leads to memory leaks, especially in stateful widgets that are frequently created/destroyed.",
+        "- **Creating the controller in `build`**: The controller will be recreated on every rebuild, causing loss of text, listeners, and performance issues.",
+        "- **Setting `.text` without using `setState`**: Changing `.text` does not automatically rebuild the widget; the text field updates internally, but if you need to reflect the change elsewhere, you may need to call `setState`.",
+        "- **Forgetting to add a listener in `initState` and remove it in `dispose`**: If you add a listener manually, make sure to remove it in `dispose` using `_controller.removeListener`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Always create the controller in `initState` and dispose in `dispose`.",
+        "- Use `_controller.clear()` to reset the field.",
+        "- For real‑time validation, add a listener and call `setState` to update error messages.",
+        "- When setting text programmatically, consider moving the cursor to the end for better UX.",
+        "- Combine with `FocusNode` to manage focus and text together."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `TextEditingController` gives you programmatic control over `TextField` and `TextFormField`.",
+        "- Create in `initState`, dispose in `dispose`.",
+        "- Use `.text` to read or write the content.",
+        "- Add a listener with `addListener` to react to changes.",
+        "- Combine with `FocusNode` for focus management.",
+        "- Always dispose to avoid memory leaks."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use the same TextEditingController for multiple TextFields?",
+      "answer": "Technically yes, but they would share the same text, which is rarely intended. Usually you want one controller per text field."
+    },
+    {
+      "question": "How do I set the cursor position?",
+      "answer": "Use `_controller.selection = TextSelection.fromPosition(TextPosition(offset: position));`. To set it at the end: `_controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));`"
+    },
+    {
+      "question": "Why does my text field not update when I change `_controller.text`?",
+      "answer": "The text field itself will update automatically. If you are displaying the text elsewhere (e.g., in a `Text` widget), you need to call `setState` or use a `ValueListenableBuilder` to rebuild that part of the UI."
+    },
+    {
+      "question": "How do I get notified when the user stops typing (debounce)?",
+      "answer": "You can use a `Timer` inside the listener. For example: `Timer? _debounce; _controller.addListener(() { if (_debounce?.isActive ?? false) _debounce!.cancel(); _debounce = Timer(Duration(milliseconds: 500), () { // action }); });`"
+    },
+    {
+      "question": "What's the difference between `TextEditingController` and `TextFormField`'s `onChanged`?",
+      "answer": "`TextEditingController` gives you more control (programmatic access, selection, listeners). `onChanged` is simpler for just reacting to changes, but you cannot read the text outside the callback or set it programmatically without a controller."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Controller Demo',\n      home: Scaffold(\n        appBar: AppBar(title: Text('TextEditingController')),\n        body: Center(child: ControllerDemo()),\n      ),\n    );\n  }\n}\n\nclass ControllerDemo extends StatefulWidget {\n  @override\n  _ControllerDemoState createState() => _ControllerDemoState();\n}\n\nclass _ControllerDemoState extends State<ControllerDemo> {\n  final TextEditingController _controller = TextEditingController();\n  String _displayText = '';\n\n  @override\n  void initState() {\n    super.initState();\n    _controller.addListener(() {\n      setState(() {\n        _displayText = _controller.text;\n      });\n    });\n  }\n\n  @override\n  void dispose() {\n    _controller.dispose();\n    super.dispose();\n  }\n\n  void _clear() {\n    _controller.clear();\n  }\n\n  void _setDefault() {\n    _controller.text = 'Default text';\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Padding(\n      padding: const EdgeInsets.all(16.0),\n      child: Column(\n        mainAxisAlignment: MainAxisAlignment.center,\n        children: [\n          TextField(\n            controller: _controller,\n            decoration: InputDecoration(\n              labelText: 'Enter text',\n              border: OutlineInputBorder(),\n            ),\n          ),\n          SizedBox(height: 20),\n          Text('You typed: $_displayText'),\n          SizedBox(height: 20),\n          Row(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              ElevatedButton(\n                onPressed: _clear,\n                child: Text('Clear'),\n              ),\n              SizedBox(width: 16),\n              ElevatedButton(\n                onPressed: _setDefault,\n                child: Text('Set Default'),\n              ),\n            ],\n          ),\n        ],\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Where should you create a TextEditingController?",
+      "options": ["In the build method", "In initState", "In the constructor", "Anywhere, it doesn't matter"],
+      "answer": 1
+    },
+    {
+      "question": "How do you read the current text from a TextEditingController?",
+      "options": ["_controller.getValue()", "_controller.text", "_controller.value", "_controller.string"],
+      "answer": 1
+    },
+    {
+      "question": "Why must you call `dispose` on a TextEditingController?",
+      "options": [
+        "To clear the text",
+        "To remove listeners and prevent memory leaks",
+        "To focus another field",
+        "It's optional"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method clears the text in the controller?",
+      "options": ["_controller.empty()", "_controller.clear()", "_controller.reset()", "_controller.text = ''"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-textfield",
+    "flutter-form",
+    "flutter-focus",
+    "flutter-textformfield"
+  ]
+}

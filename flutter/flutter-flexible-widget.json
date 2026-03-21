@@ -1,0 +1,138 @@
+{
+  "slug": "flutter-flexible-widget",
+  "course": "Flutter",
+  "title": "Flutter Flexible Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Flexible Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Flexible to control how child widgets take space in Rows, Columns, and Flex. Understand flex factor, fit (loose vs tight), and how it differs from Expanded.",
+    "keywords": [
+      "Flutter Flexible",
+      "Flexible widget",
+      "flex factor",
+      "FlexFit.loose",
+      "FlexFit.tight",
+      "Row Flexible",
+      "Column Flexible"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Flexible in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Flexible is a widget that controls how a child of a Row, Column, or Flex flexes. It allows the child to share the available space along the main axis, but unlike Expanded, it does **not** force the child to fill the space. Instead, the child can be smaller than the available space (if `fit` is `FlexFit.loose`). Flexible is the base class for Expanded."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "Wrap any child with Flexible inside a Row or Column. Provide a `flex` factor to control the proportion of space, and optionally set `fit` to `FlexFit.tight` (forces fill) or `FlexFit.loose` (allows the child to be smaller)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Row(\n  children: [\n    Flexible(\n      flex: 1,\n      fit: FlexFit.loose,\n      child: Container(color: Colors.red, height: 50),\n    ),\n    Flexible(\n      flex: 2,\n      fit: FlexFit.tight,\n      child: Container(color: Colors.green, height: 50),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Flexible vs Expanded"
+    },
+    {
+      "type": "text",
+      "value": "Expanded is simply `Flexible(fit: FlexFit.tight)`. The key difference:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Expanded** forces its child to fill the remaining space.",
+        "**Flexible** (with `FlexFit.loose`) allows the child to be its natural size, but still gives it a share of the space."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Row(\n  children: [\n    Flexible(\n      fit: FlexFit.loose,\n      child: Container(color: Colors.yellow, child: Text('Small')),\n    ),\n    Expanded(\n      child: Container(color: Colors.blue),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**flex** (default 1): The flex factor to use when distributing space.",
+        "**fit**: Either `FlexFit.tight` (force fill) or `FlexFit.loose` (allow smaller).",
+        "**child**: The widget being flexed."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Allowing a widget to take available space but not stretch if its content is small.",
+        "Creating responsive layouts where some items have natural widths.",
+        "Combining with Expanded to mix fixed and flexible sizing."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Flexible must be a direct child of a flex widget (Row, Column, Flex).",
+        "Use `FlexFit.loose` when you want the child to have a say in its size.",
+        "Use `FlexFit.tight` (or Expanded) when you want the child to fill the space.",
+        "The `flex` property distributes space proportionally among all flex children."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. What is the difference between Flexible and Expanded?\n2. How does `FlexFit.loose` behave? Give an example.\n3. Can you use Flexible with a `flex` of 0? What happens?\n4. What happens if you put two Flexible widgets with different `fit` values in the same Row?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Flexible Example')),\n        body: Center(\n          child: Container(\n            height: 100,\n            color: Colors.grey[300],\n            child: Row(\n              children: [\n                Flexible(\n                  flex: 1,\n                  fit: FlexFit.loose,\n                  child: Container(color: Colors.red, child: Center(child: Text('A'))),\n                ),\n                Flexible(\n                  flex: 2,\n                  fit: FlexFit.tight,\n                  child: Container(color: Colors.green, child: Center(child: Text('B'))),\n                ),\n                Flexible(\n                  flex: 1,\n                  fit: FlexFit.loose,\n                  child: Container(color: Colors.blue, child: Center(child: Text('C'))),\n                ),\n              ],\n            ),\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does `FlexFit.loose` do?",
+      "options": [
+        "Forces the child to fill all available space",
+        "Allows the child to be smaller than the available space",
+        "Makes the child take exactly its intrinsic size",
+        "Ignores the flex factor"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget is equivalent to `Flexible(fit: FlexFit.tight)`?",
+      "options": [
+        "Container",
+        "Expanded",
+        "SizedBox",
+        "Spacer"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-expanded",
+    "flutter-row-column",
+    "flutter-spacer",
+    "flutter-layout-builder"
+  ]
+} 

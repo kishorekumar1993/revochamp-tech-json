@@ -1,0 +1,284 @@
+{
+  "slug": "dart-functions",
+  "course": "Dart",
+  "title": "Dart Functions – Complete Guide with Examples",
+  "meta": {
+    "title": "Dart Functions: Defining, Parameters, Return Types, and More",
+    "description": "Master functions in Dart – function declaration, parameters (required, optional, named), return types, arrow syntax, anonymous functions, closures, and scope.",
+    "keywords": [
+      "Dart functions",
+      "Dart function parameters",
+      "Dart return type",
+      "Dart arrow function",
+      "Dart anonymous function",
+      "Dart closure",
+      "Dart function scope"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Functions?"
+    },
+    {
+      "type": "text",
+      "value": "Functions are reusable blocks of code that perform a specific task. They help you organize your code, avoid repetition, and make it more readable and maintainable. In Dart, functions are first‑class objects, meaning they can be assigned to variables, passed as arguments, and returned from other functions."
+    },
+    {
+      "type": "heading",
+      "value": "Defining a Function"
+    },
+    {
+      "type": "text",
+      "value": "A function definition typically includes a return type, a name, a parameter list (optional), and a body. If no return type is specified, `void` is assumed (but it's good practice to be explicit)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Function that returns void (no value)\nvoid sayHello() {\n  print('Hello!');\n}\n\n// Function that returns an int\nint add(int a, int b) {\n  return a + b;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Calling a Function"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  sayHello();\n  int result = add(5, 3);\n  print('Result: $result');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Function Parameters"
+    },
+    {
+      "type": "text",
+      "value": "Dart supports several kinds of function parameters: required positional parameters, optional positional parameters, and named parameters."
+    },
+    {
+      "type": "heading",
+      "value": "Required Positional Parameters"
+    },
+    {
+      "type": "text",
+      "value": "These are the most common. You must provide values for them in the order they are declared."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void greet(String name, int age) {\n  print('Hello $name, you are $age years old.');\n}\n\nvoid main() {\n  greet('Alice', 30); // OK\n  // greet(30, 'Alice'); // Error – wrong order\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Optional Positional Parameters"
+    },
+    {
+      "type": "text",
+      "value": "Enclose a group of parameters in square brackets `[]` to make them optional. You can provide default values using `=`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void log(String message, [String? level]) {\n  var lvl = level ?? 'INFO';\n  print('[$lvl] $message');\n}\n\nvoid main() {\n  log('App started');           // [INFO] App started\n  log('Error', 'ERROR');        // [ERROR] Error\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Named Parameters"
+    },
+    {
+      "type": "text",
+      "value": "Named parameters allow you to pass arguments by name, making the call more readable. They are enclosed in curly braces `{}`. By default, named parameters are optional and can be `null` unless marked `required` or given a default value."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void createUser({required String name, int age = 18, String? city}) {\n  print('Name: $name, Age: $age, City: $city');\n}\n\nvoid main() {\n  createUser(name: 'Bob', age: 25);\n  createUser(name: 'Alice'); // age uses default 18\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Return Types"
+    },
+    {
+      "type": "text",
+      "value": "Functions can return a value. Specify the type before the function name. If nothing is returned, use `void`. You can also omit the return type, but it's not recommended."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "int multiply(int a, int b) => a * b; // arrow syntax\nString fullName(String first, String last) => '$first $last';\n\nvoid main() {\n  print(multiply(4, 3)); // 12\n  print(fullName('John', 'Doe')); // John Doe\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Arrow Syntax (Fat Arrow)"
+    },
+    {
+      "type": "text",
+      "value": "For functions that consist of a single expression, you can use the arrow syntax `=>` followed by the expression. The result of the expression is automatically returned."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "int square(int x) => x * x;\n\nvoid main() => print('Square of 5: ${square(5)}');"
+    },
+    {
+      "type": "heading",
+      "value": "Anonymous Functions (Lambdas)"
+    },
+    {
+      "type": "text",
+      "value": "You can create functions without a name. They are often used as arguments to other functions (like `forEach`, `map`, `where`)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var list = [1, 2, 3];\n  \n  // Anonymous function\n  list.forEach((item) {\n    print('Item: $item');\n  });\n  \n  // Even shorter with arrow\n  list.forEach((item) => print('Item: $item'));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Closures"
+    },
+    {
+      "type": "text",
+      "value": "A closure is a function that can access variables from its outer scope even after the outer function has finished executing. This is a powerful feature in Dart."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Function makeAdder(int addBy) {\n  return (int i) => i + addBy; // closure captures addBy\n}\n\nvoid main() {\n  var add2 = makeAdder(2);\n  var add5 = makeAdder(5);\n  \n  print(add2(3)); // 5\n  print(add5(3)); // 8\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Lexical Scope"
+    },
+    {
+      "type": "text",
+      "value": "Dart uses lexical scoping, meaning the scope of variables is determined by the code structure. Inner functions can access variables from outer functions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void outer() {\n  int x = 10;\n  \n  void inner() {\n    print(x); // can access x\n  }\n  inner();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Recursion"
+    },
+    {
+      "type": "text",
+      "value": "A function can call itself. This is useful for tasks that can be broken down into similar subtasks, like calculating factorials or traversing trees."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "int factorial(int n) {\n  if (n <= 1) return 1;\n  return n * factorial(n - 1);\n}\n\nvoid main() {\n  print(factorial(5)); // 120\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Function as First‑Class Objects"
+    },
+    {
+      "type": "text",
+      "value": "You can assign a function to a variable, pass it as an argument, or return it from another function. This enables functional programming patterns."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Assign function to variable\n  var shout = (String s) => s.toUpperCase();\n  print(shout('hello')); // HELLO\n  \n  // Pass function as argument\n  List<int> numbers = [1, 2, 3];\n  var doubled = numbers.map((n) => n * 2);\n  print(doubled); // (2, 4, 6)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  // Simple function\n  print('Sum: ${add(10, 5)}');\n  \n  // Function with named parameters\n  printArea(width: 5, height: 10);\n  \n  // Anonymous function with list\n  var scores = [85, 92, 78];\n  scores.forEach((score) {\n    print('Score: $score');\n  });\n  \n  // Closure\n  var counter = makeCounter();\n  print(counter()); // 1\n  print(counter()); // 2\n}\n\nint add(int a, int b) => a + b;\n\nvoid printArea({required int width, required int height}) {\n  print('Area: ${width * height}');\n}\n\nFunction makeCounter() {\n  int count = 0;\n  return () => ++count;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Functions are reusable blocks of code that may return a value.",
+        "- Parameters can be required positional, optional positional, or named (with `required` or defaults).",
+        "- Use arrow syntax `=>` for single‑expression functions.",
+        "- Anonymous functions (lambdas) are useful for callbacks and functional operations.",
+        "- Closures capture variables from their enclosing scope.",
+        "- Dart functions are first‑class objects – you can assign them, pass them, and return them.",
+        "- Recursion is supported and can be elegant for certain problems."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between positional and named parameters?",
+      "answer": "Positional parameters are identified by their order in the function call; you must provide them in the correct sequence. Named parameters are identified by their name and can be provided in any order. Named parameters are enclosed in `{}` and are optional by default unless marked `required`."
+    },
+    {
+      "question": "Can a function have both optional positional and named parameters?",
+      "answer": "No, a function cannot mix optional positional parameters and named parameters. You can have either optional positional parameters (using `[]`) or named parameters (using `{}`), but not both. Required positional parameters can coexist with named parameters."
+    },
+    {
+      "question": "What is the difference between arrow syntax (`=>`) and a regular function body?",
+      "answer": "Arrow syntax is a shorthand for functions that contain a single expression. The expression is automatically returned. Regular function bodies (with `{}`) can contain multiple statements and require an explicit `return` statement (unless the return type is `void`)."
+    },
+    {
+      "question": "How do closures work in Dart?",
+      "answer": "A closure is a function that captures variables from the scope in which it was defined. Even after that scope exits (e.g., the outer function returns), the closure retains access to those variables. This enables powerful patterns like function factories and data hiding."
+    },
+    {
+      "question": "Can a function be assigned to a variable?",
+      "answer": "Yes, because functions are first‑class objects in Dart. You can assign a function to a variable, pass it as an argument, or return it from another function. For example: `var myFunc = (int x) => x * 2;`"
+    },
+    {
+      "question": "What is an anonymous function (lambda) and when should I use it?",
+      "answer": "An anonymous function is a function without a name. It's commonly used as a short‑lived callback, especially with collection methods like `forEach`, `map`, `where`, or event handlers. They are defined inline at the point of use."
+    },
+    {
+      "question": "What is recursion and when is it useful?",
+      "answer": "Recursion is when a function calls itself. It's useful for problems that can be broken down into smaller, similar sub‑problems, such as tree traversal, combinatorial algorithms, and mathematical functions like factorial or Fibonacci. However, deep recursion can lead to stack overflow; consider iterative solutions for very deep recursion."
+    },
+    {
+      "question": "What is the `void` keyword?",
+      "answer": "`void` indicates that a function does not return a value. If you omit the return type, Dart assumes `dynamic` (which is not recommended). Always specify `void` for functions that only perform side effects."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  // Define a simple function\n  int add(int a, int b) {\n    return a + b;\n  }\n  \n  // Call the function\n  print('3 + 5 = ${add(3, 5)}');\n  \n  // Try an arrow function\n  int multiply(int a, int b) => a * b;\n  print('4 * 7 = ${multiply(4, 7)}');\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the output of this code?\n\nvoid main() {\n  var x = 5;\n  void inner() {\n    x = 10;\n  }\n  inner();\n  print(x);\n}",
+      "options": ["5", "10", "null", "Error"],
+      "answer": 1
+    },
+    {
+      "question": "Which parameter type must be explicitly marked `required`?",
+      "options": ["Positional parameters", "Optional positional parameters", "Named parameters", "All parameters"],
+      "answer": 2
+    },
+    {
+      "question": "What does the following code print?\n\nvoid main() => print('Hello');",
+      "options": ["Hello", "void", "Error", "Nothing"],
+      "answer": 0
+    },
+    {
+      "question": "What is a closure?",
+      "options": [
+        "A function that has no name",
+        "A function that can access variables from its outer scope even after the outer function has finished",
+        "A function that returns another function",
+        "A function that is defined inside a class"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-variables",
+    "dart-syntax",
+    "dart-operators",
+    "dart-conditions"
+  ]
+}

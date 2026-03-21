@@ -1,0 +1,186 @@
+{
+  "slug": "dart-higher-order-functions",
+  "course": "Dart",
+  "title": "Dart Higher-Order Functions – Functions as First-Class Citizens",
+  "meta": {
+    "title": "Dart Higher-Order Functions: Pass Functions as Arguments and Return Them",
+    "description": "Learn about higher-order functions in Dart – passing functions as parameters, returning functions, and using built-in higher-order methods like map, where, reduce, fold.",
+    "keywords": [
+      "Dart higher-order functions",
+      "Dart functions as arguments",
+      "Dart function as parameter",
+      "Dart returning functions",
+      "Dart functional programming",
+      "Dart callback",
+      "Dart map where reduce"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Higher-Order Functions?"
+    },
+    {
+      "type": "text",
+      "value": "A higher‑order function is a function that takes one or more functions as arguments, returns a function, or both. In Dart, functions are first‑class objects, meaning they can be assigned to variables, passed as arguments, and returned from other functions. Higher‑order functions are a cornerstone of functional programming and enable powerful, expressive code patterns."
+    },
+    {
+      "type": "heading",
+      "value": "Built‑in Higher‑Order Functions in Dart"
+    },
+    {
+      "type": "text",
+      "value": "Dart's collection classes come with many higher‑order functions. The most common ones are:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`forEach`** – performs an action on each element.",
+        "- **`map`** – transforms each element into a new value (returns a lazy iterable).",
+        "- **`where`** – filters elements based on a condition.",
+        "- **`reduce`** – combines all elements into a single value.",
+        "- **`fold`** – similar to reduce but with an initial value.",
+        "- **`any` / `every`** – test a condition on elements.",
+        "- **`firstWhere` / `lastWhere`** – find elements."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var numbers = [1, 2, 3, 4, 5];\n\n  // forEach\n  numbers.forEach((n) => print(n));\n\n  // map\n  var squares = numbers.map((n) => n * n).toList();\n  print(squares); // [1, 4, 9, 16, 25]\n\n  // where\n  var even = numbers.where((n) => n % 2 == 0).toList();\n  print(even); // [2, 4]\n\n  // reduce\n  var sum = numbers.reduce((a, b) => a + b);\n  print(sum); // 15\n\n  // fold (with initial value)\n  var product = numbers.fold(1, (a, b) => a * b);\n  print(product); // 120\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Writing Your Own Higher‑Order Function"
+    },
+    {
+      "type": "text",
+      "value": "You can define your own functions that accept other functions. This is useful for creating reusable algorithms where the specific behavior can be supplied by the caller."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void repeat(int times, void Function(int) action) {\n  for (int i = 0; i < times; i++) {\n    action(i);\n  }\n}\n\nvoid main() {\n  repeat(3, (index) {\n    print('Hello, iteration $index');\n  });\n}\n// Output:\n// Hello, iteration 0\n// Hello, iteration 1\n// Hello, iteration 2"
+    },
+    {
+      "type": "text",
+      "value": "The parameter `action` is a function that takes an `int` and returns `void`. You can pass any matching function, including lambdas."
+    },
+    {
+      "type": "heading",
+      "value": "Returning Functions (Function Factories)"
+    },
+    {
+      "type": "text",
+      "value": "A higher‑order function can also return a function. This is useful for creating function factories or closures with pre‑configured behavior."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Function makeMultiplier(double factor) {\n  return (double value) => value * factor;\n}\n\nvoid main() {\n  var doubleIt = makeMultiplier(2);\n  var tripleIt = makeMultiplier(3);\n\n  print(doubleIt(5)); // 10.0\n  print(tripleIt(5)); // 15.0\n}"
+    },
+    {
+      "type": "text",
+      "value": "Here, `makeMultiplier` returns a lambda that captures `factor` – a classic example of a closure."
+    },
+    {
+      "type": "heading",
+      "value": "Type Aliases for Function Types"
+    },
+    {
+      "type": "text",
+      "value": "To improve readability, you can define a `typedef` for a function type. This makes your code more self‑documenting."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "typedef IntTransformer = int Function(int);\n\nint applyTransformer(int value, IntTransformer transformer) {\n  return transformer(value);\n}\n\nvoid main() {\n  int square(int x) => x * x;\n  print(applyTransformer(5, square)); // 25\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Practical Example: Custom Filter Function"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "List<T> myFilter<T>(List<T> list, bool Function(T) predicate) {\n  List<T> result = [];\n  for (var item in list) {\n    if (predicate(item)) {\n      result.add(item);\n    }\n  }\n  return result;\n}\n\nvoid main() {\n  var numbers = [1, 2, 3, 4, 5];\n  var even = myFilter(numbers, (n) => n % 2 == 0);\n  print(even); // [2, 4]\n\n  var names = ['Alice', 'Bob', 'Charlie'];\n  var shortNames = myFilter(names, (name) => name.length <= 3);\n  print(shortNames); // [Bob]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Higher‑order functions accept or return other functions, enabling flexible and reusable code.",
+        "- Dart provides many built‑in higher‑order functions for collections (`map`, `where`, `reduce`, etc.).",
+        "- You can create your own higher‑order functions to encapsulate algorithms.",
+        "- Returning functions (function factories) allows you to generate customized behavior.",
+        "- Use `typedef` to give meaningful names to function types."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between a callback and a higher‑order function?",
+      "answer": "A callback is a function passed as an argument to another function, to be executed later. A higher‑order function is the function that receives or returns a function. So callbacks are often used with higher‑order functions."
+    },
+    {
+      "question": "Can a higher‑order function return multiple functions?",
+      "answer": "It returns one function, but that function can itself be a higher‑order function, enabling currying or multi‑level factories."
+    },
+    {
+      "question": "Are lambdas the only way to pass a function to a higher‑order function?",
+      "answer": "No, you can also pass named functions, static methods, or even constructors, as long as the signature matches."
+    },
+    {
+      "question": "How do I specify the return type of a function parameter?",
+      "answer": "Use the full function type syntax: `void Function(int) callback` for a function taking an `int` and returning `void`. You can also use `typedef` for clarity."
+    },
+    {
+      "question": "What is a practical use case for returning a function?",
+      "answer": "Examples: creating configuration functions (like `makeMultiplier`), building middleware chains, implementing partial application, or generating event handlers with pre‑set parameters."
+    },
+    {
+      "question": "Do higher‑order functions impact performance?",
+      "answer": "In most cases, no. Dart's optimizing compiler can inline simple functions. However, excessive creation of closures in tight loops may have overhead, but it's rarely a concern."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  // Define a higher-order function that applies a transformation to each element\n  List<int> applyToList(List<int> list, int Function(int) transform) {\n    return list.map(transform).toList();\n  }\n\n  var numbers = [1, 2, 3];\n  var doubled = applyToList(numbers, (n) => n * 2);\n  print(doubled); // [2, 4, 6]\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is a higher‑order function?",
+      "options": [
+        "A function that is defined inside another function",
+        "A function that takes another function as an argument or returns a function",
+        "A function that has multiple parameters",
+        "A function that uses the `async` keyword"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which of the following is a built‑in higher‑order function in Dart?",
+      "options": ["print()", "map()", "sqrt()", "main()"],
+      "answer": 1
+    },
+    {
+      "question": "What does the following code return?\n\nFunction makeAdder(int addBy) {\n  return (int i) => i + addBy;\n}\nvoid main() {\n  var add5 = makeAdder(5);\n  print(add5(10));\n}",
+      "options": ["5", "10", "15", "Error"],
+      "answer": 2
+    },
+    {
+      "question": "Which keyword is used to define a type alias for a function type?",
+      "options": ["alias", "typedef", "using", "function"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-functions",
+    "dart-lambdas",
+    "dart-closures",
+    "dart-collection-methods"
+  ]
+}

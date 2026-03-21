@@ -1,0 +1,248 @@
+{
+  "slug": "flutter-decoration",
+  "course": "Flutter",
+  "title": "Flutter BoxDecoration – Complete Guide with Examples",
+  "meta": {
+    "title": "Flutter BoxDecoration: Borders, Shadows, Gradients, and More",
+    "description": "Learn how to use BoxDecoration in Flutter to style containers. Master color, border, borderRadius, boxShadow, gradient, image, and shape for beautiful UI.",
+    "keywords": [
+      "Flutter BoxDecoration",
+      "Flutter decoration",
+      "Flutter container styling",
+      "Flutter border",
+      "Flutter boxShadow",
+      "Flutter gradient",
+      "Flutter decoration image"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BoxDecoration?"
+    },
+    {
+      "type": "text",
+      "value": "`BoxDecoration` is a class that describes how to paint a box. It is used as the `decoration` property of `Container` and `DecoratedBox`, and it can define background color, border, border radius, shadow, gradient, and background image. Mastering `BoxDecoration` is essential for creating custom, visually rich UI components in Flutter."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  width: 200,\n  height: 200,\n  decoration: BoxDecoration(\n    color: Colors.blue,\n    borderRadius: BorderRadius.circular(16),\n  ),\n)"
+    },
+    {
+      "type": "text",
+      "value": "This creates a blue square with rounded corners. You can combine multiple properties to achieve complex styles."
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties of BoxDecoration"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`color`**: Background color (cannot be used together with `gradient`).",
+        "- **`gradient`**: A `Gradient` (linear, radial, sweep) – overrides `color`.",
+        "- **`borderRadius`**: Rounds the corners (use `BorderRadius.circular`, `.only`, etc.).",
+        "- **`border`**: A `BoxBorder` (usually `Border.all` or custom `Border`).",
+        "- **`boxShadow`**: A list of `BoxShadow` objects for drop shadows.",
+        "- **`shape`**: `BoxShape.circle` or `BoxShape.rectangle` (default).",
+        "- **`image`**: A `DecorationImage` to display a background image.",
+        "- **`backgroundBlendMode`**: Blend mode for the background (if both color/image/gradient)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Color and Gradient"
+    },
+    {
+      "type": "text",
+      "value": "You can set a solid background color, or a gradient. Note that `color` and `gradient` cannot both be set; use one or the other. For gradient, you can use `LinearGradient`, `RadialGradient`, or `SweepGradient`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Solid color\nBoxDecoration(color: Colors.red)\n\n// Linear gradient\nBoxDecoration(\n  gradient: LinearGradient(\n    colors: [Colors.red, Colors.blue],\n    begin: Alignment.topLeft,\n    end: Alignment.bottomRight,\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Border and BorderRadius"
+    },
+    {
+      "type": "text",
+      "value": "Add a border using `border`. For rounded borders, combine with `borderRadius`. You can create custom borders using `Border` with individual sides."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// All sides, 2px red border\nBoxDecoration(\n  border: Border.all(color: Colors.red, width: 2),\n  borderRadius: BorderRadius.circular(12),\n)\n\n// Custom border: top and bottom only\nBoxDecoration(\n  border: Border(\n    top: BorderSide(color: Colors.grey, width: 1),\n    bottom: BorderSide(color: Colors.grey, width: 1),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "BoxShadow – Drop Shadows"
+    },
+    {
+      "type": "text",
+      "value": "`boxShadow` takes a list of `BoxShadow` objects. Each shadow can have its own color, blur radius, spread, and offset. Multiple shadows can be stacked."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BoxDecoration(\n  boxShadow: [\n    BoxShadow(\n      color: Colors.grey.withOpacity(0.5),\n      spreadRadius: 2,\n      blurRadius: 5,\n      offset: Offset(0, 3),\n    ),\n    BoxShadow(\n      color: Colors.blue.withOpacity(0.2),\n      spreadRadius: 1,\n      blurRadius: 10,\n      offset: Offset(0, 0),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Shape – Circle vs Rectangle"
+    },
+    {
+      "type": "text",
+      "value": "By default, the shape is `BoxShape.rectangle`. Set it to `BoxShape.circle` to make the decoration a perfect circle. When using `circle`, `borderRadius` is ignored and the box is clipped to a circle based on the size of the widget."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Container(\n  width: 100,\n  height: 100,\n  decoration: BoxDecoration(\n    shape: BoxShape.circle,\n    color: Colors.blue,\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "DecorationImage – Background Image"
+    },
+    {
+      "type": "text",
+      "value": "Use `image` to set a background image. It takes a `DecorationImage` which wraps an `ImageProvider`. You can also set `fit`, `alignment`, `repeat`, and `colorFilter`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BoxDecoration(\n  image: DecorationImage(\n    image: NetworkImage('https://example.com/image.jpg'),\n    fit: BoxFit.cover,\n    colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.4), BlendMode.darken),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Combining Multiple Effects"
+    },
+    {
+      "type": "text",
+      "value": "You can combine many of these properties. For example, a card with a gradient background, a shadow, rounded corners, and a border."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BoxDecoration(\n  gradient: LinearGradient(\n    colors: [Colors.purple, Colors.pink],\n  ),\n  borderRadius: BorderRadius.circular(20),\n  border: Border.all(color: Colors.white, width: 2),\n  boxShadow: [\n    BoxShadow(\n      color: Colors.black26,\n      blurRadius: 10,\n      offset: Offset(0, 5),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Using both `color` and `gradient`**: They are mutually exclusive; if you set both, only the gradient will be used (and a warning may appear). Use only one.",
+        "- **Forgetting `width` and `height`**: When using `shape: BoxShape.circle`, ensure the widget has explicit dimensions (width/height) or is constrained; otherwise, the circle may not appear.",
+        "- **Misusing `borderRadius` with `BoxShape.circle`**: `borderRadius` is ignored when shape is circle. Use `shape: BoxShape.circle` directly.",
+        "- **Not using `const`**: If the decoration is static, mark it as `const` to improve performance.",
+        "- **Applying `decoration` without a `Container` or `DecoratedBox`**: The `decoration` property is not available on all widgets; use `Container` or `DecoratedBox`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `const` for decorations that don't change to reduce rebuilds.",
+        "- Define reusable decorations as constants or static variables.",
+        "- When using images, pre‑cache them for smoother loading.",
+        "- Combine `boxShadow` and `borderRadius` for modern card designs.",
+        "- Test with different background colors to ensure contrast."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `BoxDecoration` is used to style the background, border, shadow, and shape of a box.",
+        "- It can be applied via `Container` or `DecoratedBox`.",
+       " -Properties include `color`, `gradient`, `borderRadius`, `border`, `boxShadow`, `shape`, `image`, and `backgroundBlendMode`.",
+        "- Use `BoxShape.circle` for circular containers.",
+        "- Combine multiple shadows for rich depth.",
+        "- Always respect the constraints of the parent widget when using shapes and images."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I animate a BoxDecoration?",
+      "answer": "Yes, you can animate `BoxDecoration` properties using `AnimatedContainer` or `ImplicitlyAnimatedWidget`. For more complex animations, use `Tween<BoxDecoration>` with an `AnimationController`."
+    },
+    {
+      "question": "How do I create a dashed border?",
+      "answer": "Flutter does not have a built‑in dashed border in `BoxDecoration`. You can achieve it by using a custom `CustomPainter` or using a `Container` with a `Border` and a `Paint` with a dash pattern. For simple needs, you can also use a `Container` with a `ColoredBox` background and a `Stack` with a `CustomPaint` for the border."
+    },
+    {
+      "question": "What is the difference between `BoxDecoration` and `ShapeDecoration`?",
+      "answer": "`BoxDecoration` is for rectangular/circular boxes and can contain a background image. `ShapeDecoration` is a more generic class that can draw any shape defined by a `ShapeBorder`. It is often used with `Material` or `Container` to create custom shapes (like a star or arrow). For most styling needs, `BoxDecoration` is sufficient."
+    },
+    {
+      "question": "Can I set a gradient on a circular shape?",
+      "answer": "Yes, you can. Use `shape: BoxShape.circle` together with `gradient`. The gradient will fill the entire circle."
+    },
+    {
+      "question": "How do I make the background image repeat?",
+      "answer": "Set `repeat` in `DecorationImage`: `repeat: ImageRepeat.repeat` or `ImageRepeat.repeatX` / `ImageRepeat.repeatY`. The image will tile to fill the area."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('BoxDecoration Demo')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Container(\n                width: 150,\n                height: 150,\n                decoration: BoxDecoration(\n                  gradient: LinearGradient(\n                    colors: [Colors.orange, Colors.pink],\n                    begin: Alignment.topLeft,\n                    end: Alignment.bottomRight,\n                  ),\n                  borderRadius: BorderRadius.circular(20),\n                  boxShadow: [\n                    BoxShadow(\n                      color: Colors.black26,\n                      blurRadius: 10,\n                      offset: Offset(0, 5),\n                    ),\n                  ],\n                ),\n                child: Center(\n                  child: Text(\n                    'Card',\n                    style: TextStyle(color: Colors.white, fontSize: 20),\n                  ),\n                ),\n              ),\n              SizedBox(height: 20),\n              Container(\n                width: 100,\n                height: 100,\n                decoration: BoxDecoration(\n                  shape: BoxShape.circle,\n                  color: Colors.blue,\n                  boxShadow: [\n                    BoxShadow(\n                      color: Colors.blue.withOpacity(0.5),\n                      blurRadius: 8,\n                      spreadRadius: 2,\n                    ),\n                  ],\n                ),\n                child: Center(\n                  child: Text(\n                    'Circle',\n                    style: TextStyle(color: Colors.white),\n                  ),\n                ),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which property of BoxDecoration cannot be used together with `gradient`?",
+      "options": ["borderRadius", "color", "boxShadow", "shape"],
+      "answer": 1
+    },
+    {
+      "question": "How do you create a circular container with a background image?",
+      "options": [
+        "Set `borderRadius: BorderRadius.circular(1000)`",
+        "Set `shape: BoxShape.circle` and `image` in BoxDecoration",
+        "Use `ClipOval` with a Container",
+        "Both B and C are valid"
+      ],
+      "answer": 3
+    },
+    {
+      "question": "What is the purpose of `boxShadow`?",
+      "options": [
+        "To add a shadow to the text",
+        "To add a shadow to the box",
+        "To add a glow effect",
+        "To create a gradient"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you apply a background image that covers the entire box?",
+      "options": [
+        "`image: DecorationImage(image: ..., fit: BoxFit.cover)`",
+        "`backgroundImage: ...`",
+        "`decorationImage: ...`",
+        "`child: Image.asset(...)`"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-container",
+    "flutter-gradient",
+    "flutter-border-radius",
+    "flutter-shadow"
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "slug": "flutter-form",
+  "course": "Flutter",
+  "title": "Flutter Form Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter Form Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter Form to create and validate user input. Understand TextFormField, form validation, GlobalKey, onSaved, and best practices with simple examples.",
+    "keywords": [
+      "Flutter Form",
+      "TextFormField",
+      "form validation",
+      "GlobalKey",
+      "form state",
+      "input decoration",
+      "Flutter forms"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Form in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "Form is a widget that acts as a container for grouping and validating multiple form fields (like TextFormField, DropdownButtonFormField, etc.). It provides a way to save, reset, or validate all the fields at once using a `GlobalKey<FormState>`. Forms are essential for handling user input in a structured and maintainable way."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "To create a form, wrap your input fields in a `Form` widget and give it a `GlobalKey<FormState>`. Each input field should be a `TextFormField` (or similar) with `validator` and optionally `onSaved` functions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final _formKey = GlobalKey<FormState>();\n\nForm(\n  key: _formKey,\n  child: Column(\n    children: [\n      TextFormField(\n        decoration: InputDecoration(labelText: 'Email'),\n        validator: (value) {\n          if (value == null || value.isEmpty) {\n            return 'Please enter your email';\n          }\n          return null;\n        },\n      ),\n      TextFormField(\n        decoration: InputDecoration(labelText: 'Password'),\n        obscureText: true,\n        validator: (value) {\n          if (value == null || value.length < 6) {\n            return 'Password must be at least 6 characters';\n          }\n          return null;\n        },\n      ),\n      ElevatedButton(\n        onPressed: () {\n          if (_formKey.currentState!.validate()) {\n            _formKey.currentState!.save();\n            // process data\n          }\n        },\n        child: Text('Submit'),\n      ),\n    ],\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Components"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Form** – The container widget that holds the form fields and manages their state.",
+        "**GlobalKey<FormState>** – A unique identifier that allows you to access the form's state (validate, save, reset).",
+        "**TextFormField** – A Material Design text input field that integrates with Form. It provides `validator` and `onSaved` callbacks.",
+        "**validator** – A function that returns an error string if the input is invalid, or `null` if valid.",
+        "**onSaved** – A function that is called when `_formKey.currentState!.save()` is invoked, typically to store the field value.",
+        "**autovalidateMode** – Determines when validation runs (e.g., `AutovalidateMode.onUserInteraction`)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Validating Form Fields"
+    },
+    {
+      "type": "text",
+      "value": "The `validator` function is called when `_formKey.currentState!.validate()` is executed. It should return an error string if the input is invalid, or `null` if it's valid. The error string is displayed below the field."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "TextFormField(\n  validator: (value) {\n    if (value == null || value.isEmpty) {\n      return 'This field is required';\n    }\n    // Email regex example\n    if (!RegExp(r'^[^@]+@[^@]+\\.[^@]+').hasMatch(value)) {\n      return 'Enter a valid email';\n    }\n    return null;\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Saving Form Data"
+    },
+    {
+      "type": "text",
+      "value": "Use the `onSaved` callback to store the field value when `_formKey.currentState!.save()` is called. You typically do this after validation passes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "String _email = '';\nString _password = '';\n\nTextFormField(\n  onSaved: (value) => _email = value!,\n)\nTextFormField(\n  onSaved: (value) => _password = value!,\n)\n\n// After validation\n_formKey.currentState!.save();\n// Now _email and _password contain the entered values"
+    },
+    {
+      "type": "heading",
+      "value": "Resetting the Form"
+    },
+    {
+      "type": "text",
+      "value": "To clear all fields and reset validation errors, call `_formKey.currentState!.reset()`."
+    },
+    {
+      "type": "heading",
+      "value": "Using Controllers for Fine Control"
+    },
+    {
+      "type": "text",
+      "value": "If you need to programmatically change the text or listen to changes, use a `TextEditingController` for each field. Remember to dispose them in `State.dispose()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final _emailController = TextEditingController();\n\n@override\nvoid dispose() {\n  _emailController.dispose();\n  super.dispose();\n}\n\nTextFormField(\n  controller: _emailController,\n  validator: ...\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Not using a GlobalKey**: Without a key, you cannot access the form state to validate or save.",
+        "**Forgetting to wrap fields with Form**: `TextFormField` only works properly inside a `Form` widget.",
+        "**Not handling null in validator**: Always check for null because the value can be null, especially if the field is empty.",
+        "**Calling `save()` before `validate()`**: Always validate first; otherwise you might save invalid data.",
+        "**Using `onChanged` for validation instead of `validator`**: The `validator` is integrated with the form's validation system and automatically shows errors.",
+        "**Not disposing controllers**: If you use `TextEditingController`, dispose them to avoid memory leaks.",
+        "**Setting `autovalidateMode` to always**: Can be annoying for users; use `onUserInteraction` for a better experience."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Wrap your input fields with a `Form` and provide a `GlobalKey<FormState>`.",
+        "Use `TextFormField` for text input; it has built‑in form integration.",
+        "Define `validator` to check input and return an error string when invalid.",
+        "Call `_formKey.currentState!.validate()` to trigger validation.",
+        "After successful validation, call `_formKey.currentState!.save()` to populate your variables via `onSaved`.",
+        "Use `TextEditingController` if you need to control or listen to the text.",
+        "Always dispose controllers in `State.dispose()`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. How does Form widget manage its children's state?\n2. What is the role of `GlobalKey<FormState>` in a form?\n3. Explain the difference between `validator` and `onSaved`.\n4. How would you implement password confirmation validation?\n5. What is `autovalidateMode` and when would you use it?\n6. How do you programmatically set the focus to a specific form field?\n7. How can you handle asynchronous validation (e.g., checking if a username is already taken)?\n8. What happens if you don't provide a `validator` for a field? Can it still be validated?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('Form Example')),\n        body: Padding(\n          padding: const EdgeInsets.all(16.0),\n          child: MyForm(),\n        ),\n      ),\n    );\n  }\n}\n\nclass MyForm extends StatefulWidget {\n  @override\n  _MyFormState createState() => _MyFormState();\n}\n\nclass _MyFormState extends State<MyForm> {\n  final _formKey = GlobalKey<FormState>();\n  final _emailController = TextEditingController();\n  final _passwordController = TextEditingController();\n\n  @override\n  void dispose() {\n    _emailController.dispose();\n    _passwordController.dispose();\n    super.dispose();\n  }\n\n  void _submitForm() {\n    if (_formKey.currentState!.validate()) {\n      _formKey.currentState!.save();\n      // Show success message\n      ScaffoldMessenger.of(context).showSnackBar(\n        SnackBar(content: Text('Form submitted successfully!')),\n      );\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Form(\n      key: _formKey,\n      child: Column(\n        crossAxisAlignment: CrossAxisAlignment.start,\n        children: [\n          TextFormField(\n            controller: _emailController,\n            decoration: InputDecoration(\n              labelText: 'Email',\n              border: OutlineInputBorder(),\n            ),\n            validator: (value) {\n              if (value == null || value.isEmpty) {\n                return 'Please enter your email';\n              }\n              if (!RegExp(r'^[^@]+@[^@]+\\.[^@]+').hasMatch(value)) {\n                return 'Please enter a valid email';\n              }\n              return null;\n            },\n            onSaved: (value) {\n              // You could save to a variable here\n              print('Email saved: $value');\n            },\n          ),\n          SizedBox(height: 16),\n          TextFormField(\n            controller: _passwordController,\n            obscureText: true,\n            decoration: InputDecoration(\n              labelText: 'Password',\n              border: OutlineInputBorder(),\n            ),\n            validator: (value) {\n              if (value == null || value.isEmpty) {\n                return 'Please enter your password';\n              }\n              if (value.length < 6) {\n                return 'Password must be at least 6 characters';\n              }\n              return null;\n            },\n            onSaved: (value) {\n              print('Password saved: $value');\n            },\n          ),\n          SizedBox(height: 24),\n          Center(\n            child: ElevatedButton(\n              onPressed: _submitForm,\n              child: Text('Submit'),\n            ),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the purpose of a `GlobalKey<FormState>` in a Flutter form?",
+      "options": [
+        "To uniquely identify the form for theming",
+        "To access the form's state (validate, save, reset)",
+        "To store form field values",
+        "To provide a key for the form's animation"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which callback is used to validate a TextFormField?",
+      "options": [
+        "onChanged",
+        "onSaved",
+        "validator",
+        "onFieldSubmitted"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "When should you call `_formKey.currentState!.save()`?",
+      "options": [
+        "Before validation",
+        "After validation succeeds",
+        "On every keystroke",
+        "Only when resetting the form"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-textfield",
+    "flutter-validation",
+    "flutter-textformfield",
+    "flutter-statefulwidget",
+    "flutter-controllers"
+  ]
+}

@@ -1,0 +1,207 @@
+{
+  "slug": "flutter-checkbox",
+  "course": "Flutter",
+  "title": "Flutter Checkbox – Complete Guide with CheckboxListTile",
+  "meta": {
+    "title": "Flutter Checkbox: Checkbox and CheckboxListTile Tutorial",
+    "description": "Learn how to use Checkbox and CheckboxListTile in Flutter. Create toggle selections, handle state, integrate with forms, and customize appearance with best practices.",
+    "keywords": [
+      "Flutter Checkbox",
+      "CheckboxListTile",
+      "Flutter toggle",
+      "Flutter form checkbox",
+      "Flutter selection",
+      "Flutter UI"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Checkbox in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "A checkbox is a UI element that allows the user to toggle a binary state (checked/unchecked). In Flutter, the `Checkbox` widget provides a simple square box, while `CheckboxListTile` combines it with a label, making it easier to use in forms and lists. Checkboxes are ideal for accepting terms, selecting multiple options, or any yes/no choice."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Checkbox Widget"
+    },
+    {
+      "type": "text",
+      "value": "The `Checkbox` widget requires two main parameters: `value` (bool) and `onChanged` (callback). When the user taps, `onChanged` is called with the new value (the opposite of the current value)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "bool _isChecked = false;\n\nCheckbox(\n  value: _isChecked,\n  onChanged: (bool? newValue) {\n    setState(() {\n      _isChecked = newValue ?? false;\n    });\n  },\n)"
+    },
+    {
+      "type": "text",
+      "value": "Note that `onChanged` receives a nullable `bool`. Always provide a fallback (e.g., `?? false`)."
+    },
+    {
+      "type": "heading",
+      "value": "Using CheckboxListTile for Better UI"
+    },
+    {
+      "type": "text",
+      "value": "`CheckboxListTile` wraps a checkbox with a title, subtitle, and optional leading/trailing widgets. It handles the layout and provides a larger tap target. It's perfect for lists and forms."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "CheckboxListTile(\n  value: _isChecked,\n  title: Text('Accept terms and conditions'),\n  subtitle: Text('You must agree to continue'),\n  onChanged: (bool? newValue) {\n    setState(() => _isChecked = newValue ?? false);\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Customizing Checkbox Appearance"
+    },
+    {
+      "type": "text",
+      "value": "You can customize the checkbox's colors, size, and shape:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`activeColor`**: Color when checked.",
+        "- **`checkColor`**: Color of the check mark.",
+        "- **`fillColor`**: Overrides the fill color (MaterialStateProperty).",
+        "- **`visualDensity`**: Adjusts compactness.",
+        "- **`shape`**: Defines the shape of the checkbox (e.g., RoundedRectangleBorder)."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Checkbox(\n  value: _isChecked,\n  activeColor: Colors.green,\n  checkColor: Colors.white,\n  visualDensity: VisualDensity.compact,\n  shape: RoundedRectangleBorder(\n    borderRadius: BorderRadius.circular(4),\n  ),\n  onChanged: (value) => setState(() => _isChecked = value ?? false),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Working with Multiple Checkboxes"
+    },
+    {
+      "type": "text",
+      "value": "When you have multiple checkboxes (e.g., a list of options), you typically store each checkbox's state in a list or map. Use `CheckboxListTile` inside a `ListView` or `Column`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "List<String> _options = ['Apple', 'Banana', 'Orange'];\nList<bool> _checked = [false, false, false];\n\n...\n\nListView.builder(\n  itemCount: _options.length,\n  itemBuilder: (context, index) {\n    return CheckboxListTile(\n      value: _checked[index],\n      title: Text(_options[index]),\n      onChanged: (bool? newValue) {\n        setState(() {\n          _checked[index] = newValue ?? false;\n        });\n      },\n    );\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Checkbox in Forms"
+    },
+    {
+      "type": "text",
+      "value": "To use a checkbox in a `Form`, you can create a custom `FormField` or simply manage the checkbox state in the widget and read its value during form submission. For validation, you can check the checkbox's value and show an error message manually."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class _FormState extends State<MyForm> {\n  final _formKey = GlobalKey<FormState>();\n  bool _accepted = false;\n  String? _acceptError;\n\n  void _submit() {\n    setState(() {\n      if (!_accepted) {\n        _acceptError = 'You must accept the terms';\n      } else {\n        _acceptError = null;\n        // proceed\n      }\n    });\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Form(\n      key: _formKey,\n      child: Column(\n        children: [\n          CheckboxListTile(\n            value: _accepted,\n            title: Text('I accept the terms'),\n            onChanged: (value) {\n              setState(() => _accepted = value ?? false);\n              if (value == true) _acceptError = null;\n            },\n          ),\n          if (_acceptError != null)\n            Text(_acceptError!, style: TextStyle(color: Colors.red)),\n          ElevatedButton(\n            onPressed: _submit,\n            child: Text('Submit'),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Forgetting to call `setState`** – The checkbox won't visually update.",
+        "- **Not handling `null` in `onChanged`** – If you don't handle nullable, you might get a type error.",
+        "- **Using `Checkbox` without a label** – Users may not understand its purpose; always include a label or tooltip.",
+        "- **Not providing a default value** – If `value` is null, the checkbox appears indeterminate (dash).",
+        "- **Over‑customizing** – Changing the shape too drastically may confuse users."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use `CheckboxListTile` when you need a label; it provides better UX.",
+        "- For multiple checkboxes, store state in a list of booleans or a map.",
+        "- In forms, validate checkboxes and show clear error messages.",
+        "- Consider using `ToggleButtons` for a set of mutually exclusive options if appropriate."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `Checkbox` is the basic toggle widget; `CheckboxListTile` adds a label and larger tap area.",
+        "- Use `value` and `onChanged` to control the state.",
+        "- Customize colors, shapes, and density for styling.",
+        "- For multiple checkboxes, store states in a list.",
+        "- For forms, validate manually or create a custom `FormField`."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I set a checkbox to be checked by default?",
+      "answer": "Initialize the `value` variable to `true`. For example: `bool _isChecked = true;`"
+    },
+    {
+      "question": "Can I make a checkbox read‑only?",
+      "answer": "Yes, set `onChanged: null`. The checkbox will be disabled (greyed out) and cannot be toggled."
+    },
+    {
+      "question": "How do I create a tri‑state checkbox?",
+      "answer": "Flutter's checkbox can be in three states: true (checked), false (unchecked), and null (indeterminate). To use the indeterminate state, set `value: null` and provide a custom visual if needed. However, most apps use only true/false."
+    },
+    {
+      "question": "What is the difference between `Checkbox` and `CheckboxListTile`?",
+      "answer": "`Checkbox` is just the square box. `CheckboxListTile` combines the checkbox with a title, subtitle, and optional leading/trailing widgets, making it easier to align and providing a larger touch area."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Checkbox Demo',\n      home: Scaffold(\n        appBar: AppBar(title: Text('Checkbox Example')),\n        body: Padding(\n          padding: const EdgeInsets.all(16.0),\n          child: Center(child: CheckboxDemo()),\n        ),\n      ),\n    );\n  }\n}\n\nclass CheckboxDemo extends StatefulWidget {\n  @override\n  _CheckboxDemoState createState() => _CheckboxDemoState();\n}\n\nclass _CheckboxDemoState extends State<CheckboxDemo> {\n  bool _isChecked = false;\n  List<bool> _optionsChecked = [false, false, false];\n  final List<String> _options = ['Option A', 'Option B', 'Option C'];\n\n  @override\n  Widget build(BuildContext context) {\n    return Column(\n      mainAxisAlignment: MainAxisAlignment.center,\n      children: [\n        CheckboxListTile(\n          value: _isChecked,\n          title: Text('Accept terms'),\n          onChanged: (value) => setState(() => _isChecked = value ?? false),\n        ),\n        SizedBox(height: 20),\n        Text('Select options:'),\n        ...List.generate(_options.length, (index) {\n          return CheckboxListTile(\n            value: _optionsChecked[index],\n            title: Text(_options[index]),\n            onChanged: (value) {\n              setState(() => _optionsChecked[index] = value ?? false);\n            },\n          );\n        }),\n        SizedBox(height: 20),\n        Text('Accepted: ${_isChecked ? 'Yes' : 'No'}'),\n        Text('Selected options: ${_options.where((_, i) => _optionsChecked[i]).join(', ')}'),\n      ],\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What type does the `value` property of a Checkbox accept?",
+      "options": ["bool", "bool?", "int", "String"],
+      "answer": 1
+    },
+    {
+      "question": "Which widget combines a checkbox with a title and larger tap area?",
+      "options": ["Checkbox", "CheckboxTile", "CheckboxListTile", "ListTileCheckbox"],
+      "answer": 2
+    },
+    {
+      "question": "How do you disable a checkbox?",
+      "options": [
+        "Set `enabled: false`",
+        "Set `onChanged: null`",
+        "Set `disabled: true`",
+        "Set `active: false`"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What happens if you set `value` to `null` on a Checkbox?",
+      "options": [
+        "The checkbox is unchecked",
+        "The checkbox shows a dash (indeterminate)",
+        "An error occurs",
+        "The checkbox is hidden"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-form",
+    "flutter-radio-button",
+    "flutter-switch",
+    "flutter-listtile"
+  ]
+}

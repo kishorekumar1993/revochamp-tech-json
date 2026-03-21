@@ -1,0 +1,216 @@
+{
+  "slug": "dart-typedef",
+  "course": "Dart",
+  "title": "Dart Typedef – Type Aliases for Functions and Types",
+  "meta": {
+    "title": "Dart Typedef: Type Aliases for Functions and Generic Types",
+    "description": "Learn how to use typedef in Dart to create readable type aliases for functions and generic types. Improve code clarity and maintainability with practical examples.",
+    "keywords": [
+      "Dart typedef",
+      "Dart type alias",
+      "Dart function type",
+      "Dart generic typedef",
+      "Dart typedef example",
+      "Dart callback type",
+      "Dart function signature"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Typedef?"
+    },
+    {
+      "type": "text",
+      "value": "A `typedef` (type definition) creates an alias for a type, especially useful for function types. It allows you to give a meaningful name to a function signature, making your code more readable and easier to maintain. Since Dart 2.13, typedefs can also be generic, enabling you to create reusable type aliases with type parameters."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Typedefs?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **Readability** – a well‑named alias makes code self‑documenting.",
+        "- **Reusability** – define a function signature once and use it in many places.",
+        "- **Maintainability** – change the signature in one place and all uses update.",
+        "- **Generic support** – create generic callbacks that work with any type."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Typedef for a Function"
+    },
+    {
+      "type": "text",
+      "value": "Define a typedef using the `typedef` keyword followed by a name and the function type signature. Then use the alias as a type annotation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "typedef IntOperation = int Function(int a, int b);\n\nint add(int a, int b) => a + b;\nint multiply(int a, int b) => a * b;\n\nvoid main() {\n  IntOperation operation = add;\n  print(operation(5, 3)); // 8\n\n  operation = multiply;\n  print(operation(5, 3)); // 15\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Old Syntax (Pre‑Dart 2.13)"
+    },
+    {
+      "type": "text",
+      "value": "Before Dart 2.13, typedefs were defined using the old syntax, which is still valid but less flexible. The new syntax (using `=`) is preferred for clarity and generic support."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Old syntax (still works)\ntypedef IntOperationOld = int Function(int a, int b);\n\n// Using the old alias is identical"
+    },
+    {
+      "type": "heading",
+      "value": "Generic Typedefs"
+    },
+    {
+      "type": "text",
+      "value": "With Dart 2.13 and later, you can create generic typedefs. This is extremely powerful for creating reusable callbacks and transformers."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "typedef Transformer<T> = T Function(T value);\n\nint square(int x) => x * x;\nString toUpper(String s) => s.toUpperCase();\n\nvoid main() {\n  Transformer<int> intTransform = square;\n  print(intTransform(5)); // 25\n\n  Transformer<String> stringTransform = toUpper;\n  print(stringTransform('hello')); // HELLO\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Typedefs as Callback Types"
+    },
+    {
+      "type": "text",
+      "value": "Typedefs shine when you have functions that accept callbacks. The alias documents what kind of callback is expected."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "typedef OnSuccess<T> = void Function(T data);\ntypedef OnError = void Function(String message);\n\nvoid fetchData(OnSuccess<String> onSuccess, OnError onError) {\n  // Simulate network call\n  bool success = true;\n  if (success) {\n    onSuccess('Data loaded');\n  } else {\n    onError('Network error');\n  }\n}\n\nvoid main() {\n  fetchData(\n    (data) => print('Success: $data'),\n    (error) => print('Error: $error'),\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Typedef for Generic Collections"
+    },
+    {
+      "type": "text",
+      "value": "While less common, you can also alias regular types. This can simplify complex type names."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "typedef IntMap = Map<String, int>;\n\nvoid main() {\n  IntMap scores = {'Alice': 95, 'Bob': 87};\n  print(scores); // {Alice: 95, Bob: 87}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Typedefs with Named Parameters"
+    },
+    {
+      "type": "text",
+      "value": "You can define typedefs that include named parameters. This makes the callback more self‑documenting."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "typedef DataHandler = void Function({required String name, int? age});\n\nvoid process(DataHandler handler) {\n  handler(name: 'Alice', age: 30);\n}\n\nvoid main() {\n  process(({required String name, int? age}) {\n    print('Name: $name, Age: $age');\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Use meaningful names that describe the purpose (e.g., `StringTransformer`, `ErrorCallback`).",
+        "- Prefer generic typedefs over duplicating similar signatures.",
+        "- Use the new syntax (`=`) for clarity and future‑proofing.",
+        "- Keep typedefs in a dedicated file if they are shared across many modules.",
+        "- Document the expected behavior of the function alias."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- `typedef` creates an alias for a type, especially function types.",
+        "- Since Dart 2.13, typedefs can be generic, allowing reusable type aliases.",
+        "- Typedefs improve readability and maintainability of callbacks.",
+        "- They can include named parameters and be used for regular types too.",
+        "- Use the modern syntax: `typedef Name = Type;`."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between the old and new typedef syntax?",
+      "answer": "Old syntax: `typedef IntOperation = int Function(int a, int b);` (pre‑Dart 2.13). New syntax (Dart 2.13+) is essentially the same but allows generics and is clearer. The old syntax is still supported but the new one is recommended."
+    },
+    {
+      "question": "Can I create a typedef for a generic function that returns a Future?",
+      "answer": "Yes. For example: `typedef AsyncCallback<T> = Future<T> Function(T value);`. This allows you to define asynchronous callbacks."
+    },
+    {
+      "question": "Are typedefs just for functions?",
+      "answer": "No, they can alias any type, but they are most useful for function types. You can alias complex generic types like `Map<String, List<int>>` to a shorter name."
+    },
+    {
+      "question": "Can I use a typedef inside a class?",
+      "answer": "Yes, typedefs can be defined at the top level or inside a class (though it's less common). When defined inside a class, they are scoped to that class."
+    },
+    {
+      "question": "How do I use a typedef with a void function?",
+      "answer": "Define it as `typedef VoidCallback = void Function();` or with parameters: `typedef IntVoid = void Function(int value);`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "typedef StringTransformer = String Function(String input);\n\nString toUpper(String s) => s.toUpperCase();\nString reverse(String s) => s.split('').reversed.join();\n\nvoid main() {\n  StringTransformer transformer = toUpper;\n  print(transformer('hello')); // HELLO\n\n  transformer = reverse;\n  print(transformer('hello')); // olleh\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the purpose of a typedef in Dart?",
+      "options": [
+        "To define a new type that extends an existing class",
+        "To create an alias for a type, especially function types",
+        "To import a library",
+        "To declare a constant"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you define a generic typedef for a function that takes a T and returns a T?",
+      "options": [
+        "typedef Identity<T> = T Function(T);",
+        "typedef Identity = T Function<T>(T);",
+        "typedef Identity(T) = T Function(T);",
+        "typedef Identity = T Function(T) where T;"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Which syntax is recommended for typedefs in Dart 2.13+?",
+      "options": [
+        "typedef Name = FunctionType;",
+        "typedef Name FunctionType;",
+        "alias Name = FunctionType;",
+        "type Name = FunctionType;"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Can a typedef include named parameters?",
+      "options": ["Yes", "No", "Only positional parameters", "Only required parameters"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "dart-functions",
+    "dart-generics",
+    "dart-callbacks",
+    "dart-functional-programming"
+  ]
+}

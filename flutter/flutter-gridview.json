@@ -1,0 +1,196 @@
+{
+  "slug": "flutter-gridview",
+  "course": "Flutter",
+  "title": "Flutter GridView Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter GridView Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter GridView to create scrollable grids. Understand GridView.count, GridView.extent, GridView.builder, properties like crossAxisCount, childAspectRatio, and more with simple examples.",
+    "keywords": [
+      "Flutter GridView",
+      "GridView.count",
+      "GridView.builder",
+      "GridView.extent",
+      "grid layout",
+      "crossAxisCount",
+      "childAspectRatio",
+      "Flutter grid"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is GridView in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "GridView is a scrollable, 2D array of widgets. It arranges its children in a grid format – rows and columns – and automatically scrolls when the content exceeds the viewport. GridView is perfect for displaying collections of images, product catalogs, photo galleries, and any other content that benefits from a grid layout."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "The easiest way to create a grid is with `GridView.count()`, which lets you specify a fixed number of tiles in the cross axis (e.g., columns). Here's a simple example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GridView.count(\n  crossAxisCount: 2,\n  children: List.generate(10, (index) {\n    return Card(\n      color: Colors.primaries[index % Colors.primaries.length],\n      child: Center(child: Text('Item $index')),\n    );\n  }),\n)"
+    },
+    {
+      "type": "text",
+      "value": "This creates a grid with 2 columns and 10 items. The grid scrolls vertically to show all items."
+    },
+    {
+      "type": "heading",
+      "value": "GridView Constructors"
+    },
+    {
+      "type": "text",
+      "value": "Flutter provides several constructors for different use cases:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**GridView.count** – Creates a grid with a fixed number of tiles in the cross axis. Most commonly used for simple grids with a known column count.",
+        "**GridView.extent** – Creates a grid where tiles have a maximum cross-axis extent (e.g., max tile width). The number of columns is calculated automatically based on available space.",
+        "**GridView.builder** – Creates a scrollable, reactive grid that builds children on demand. Perfect for large or infinite grids (like a photo gallery loaded from the web).",
+        "**GridView.custom** – Offers maximum flexibility by letting you provide your own `SliverGridDelegate` and `ChildDelegate`."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Using GridView.extent – tiles have a maximum width of 150\nGridView.extent(\n  maxCrossAxisExtent: 150,\n  children: [/* ... */],\n)\n\n// Using GridView.builder – efficient for large lists\nGridView.builder(\n  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(\n    crossAxisCount: 3,\n    childAspectRatio: 2.0,\n  ),\n  itemCount: 100,\n  itemBuilder: (context, index) {\n    return Container(color: Colors.blue, child: Center(child: Text('$index')));\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties"
+    },
+    {
+      "type": "text",
+      "value": "Both `GridView.count` and `GridView.extent` are convenience wrappers around a `SliverGridDelegate`. The core properties you'll work with are:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**crossAxisCount** (for count constructor): The number of columns (vertical grid) or rows (horizontal grid).",
+        "**maxCrossAxisExtent** (for extent constructor): The maximum size each tile can take in the cross axis. The grid will fit as many tiles as possible respecting this limit.",
+        "**childAspectRatio**: The ratio of the cross-axis to the main-axis extent of each child. For example, a ratio of 2.0 means the child is twice as wide as it is tall (for vertical grids). Defaults to 1.0.",
+        "**mainAxisSpacing**: Space between children along the main axis (vertical for vertical grids).",
+        "**crossAxisSpacing**: Space between children along the cross axis (horizontal for vertical grids).",
+        "**scrollDirection**: Axis.vertical (default) or Axis.horizontal.",
+        "**reverse**: Whether the grid scrolls in the reverse direction.",
+        "**shrinkWrap**: If true, the grid sizes itself to fit its content (useful inside a Column). Defaults to false.",
+        "**physics**: Determines scrolling behavior."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Controlling Child Sizes with Aspect Ratio"
+    },
+    {
+      "type": "text",
+      "value": "The `childAspectRatio` property is crucial for making your grid look consistent. It defines the ratio of width to height of each grid tile. For example, if you have a vertical grid with `crossAxisCount: 3` and you want each tile to be square, set `childAspectRatio: 1.0`. If you want them to be twice as wide as tall (landscape rectangles), use `2.0`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GridView.count(\n  crossAxisCount: 3,\n  childAspectRatio: 1.5, // width / height = 1.5\n  children: [/* ... */],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Responsive Grids"
+    },
+    {
+      "type": "text",
+      "value": "To create a grid that adapts to screen size, you can use `LayoutBuilder` or `MediaQuery` to dynamically adjust `crossAxisCount` or `maxCrossAxisExtent`. For example, you might want 2 columns on a phone and 4 on a tablet."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "LayoutBuilder(\n  builder: (context, constraints) {\n    double width = constraints.maxWidth;\n    int columns = (width / 150).floor(); // approximate number of 150px-wide tiles\n    return GridView.builder(\n      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(\n        crossAxisCount: columns,\n        childAspectRatio: 1.0,\n      ),\n      itemCount: 50,\n      itemBuilder: (context, index) => Container(color: Colors.amber),\n    );\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Forgetting to constrain the height**: When placing a GridView inside a Column without `shrinkWrap: true` or wrapping it with `Expanded`, you'll get an unbounded height error. Always either use `Expanded` or set `shrinkWrap: true` (and consider `physics: NeverScrollableScrollPhysics()` if needed).",
+        "**Using the wrong constructor for large data sets**: Using the default `GridView` constructor with a long list of children can hurt performance. Use `GridView.builder` for dynamic or large lists.",
+        "**Ignoring `childAspectRatio`**: Without setting this, tiles may look squashed or stretched. Always adjust it to match your content's intended shape.",
+        "**Overlooking spacing**: `mainAxisSpacing` and `crossAxisSpacing` default to zero, which can make the grid feel cramped. Add a little spacing for visual comfort.",
+        "**Not handling scroll direction**: When using a horizontal grid, remember that `crossAxisCount` then refers to rows, and you need to give the grid a fixed height (e.g., using `SizedBox`)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Use `GridView.count` when you know the number of columns/rows.",
+        "Use `GridView.extent` when you know the desired tile size and want the grid to auto‑fit.",
+        "Always use `GridView.builder` for large or infinite lists.",
+        "Set `childAspectRatio` to match your tile's width/height proportions.",
+        "In vertical grids, `crossAxisCount` = number of columns; in horizontal grids, it = number of rows.",
+        "For grids inside unbounded containers (like Column), set `shrinkWrap: true` or wrap with `Expanded`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. What's the difference between `GridView.count` and `GridView.extent`? When would you use each?\n2. How does `childAspectRatio` affect the layout? Give an example.\n3. How would you create a responsive grid that shows 2 columns on mobile and 4 on tablet?\n4. Explain why you might need `shrinkWrap` when using GridView inside a Column.\n5. What performance considerations should you keep in mind when building a grid with thousands of items?\n6. How can you create a horizontal grid with a fixed height?"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() {\n  runApp(\n    MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('GridView Example')),\n        body: GridView.count(\n          crossAxisCount: 3,\n          crossAxisSpacing: 8,\n          mainAxisSpacing: 8,\n          childAspectRatio: 1.2,\n          children: List.generate(20, (index) {\n            return Container(\n              color: Colors.primaries[index % Colors.primaries.length],\n              child: Center(\n                child: Text(\n                  'Item $index',\n                  style: TextStyle(color: Colors.white, fontSize: 18),\n                ),\n              ),\n            );\n          }),\n        ),\n      ),\n    ),\n  );\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which GridView constructor would you use to create a grid where each tile has a maximum width of 200 pixels?",
+      "options": [
+        "GridView.count(crossAxisCount: 2)",
+        "GridView.extent(maxCrossAxisExtent: 200)",
+        "GridView.builder()",
+        "GridView.custom()"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What does the `childAspectRatio` property control?",
+      "options": [
+        "The number of columns in the grid",
+        "The spacing between children",
+        "The ratio of cross-axis to main-axis size of each child",
+        "Whether the grid scrolls horizontally or vertically"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "If you put a GridView inside a Column without wrapping it with Expanded or setting shrinkWrap: true, what error might you encounter?",
+      "options": [
+        "RenderFlex overflow error",
+        "GridView has unbounded height error",
+        "Missing constraints error",
+        "No error, it works fine"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-listview",
+    "flutter-row-column",
+    "flutter-container",
+    "flutter-stack",
+    "flutter-expanded"
+  ]
+}

@@ -1,0 +1,237 @@
+{
+  "slug": "dart-exception-handling",
+  "course": "Dart",
+  "title": "Dart Exception Handling – Try, Catch, Finally, and Custom Exceptions",
+  "meta": {
+    "title": "Dart Exception Handling: Try-Catch-Finally and Custom Errors",
+    "description": "Learn how to handle exceptions in Dart – using try-catch-finally, catching specific exceptions, creating custom exceptions, and managing errors in asynchronous code.",
+    "keywords": [
+      "Dart exception handling",
+      "Dart try catch finally",
+      "Dart custom exception",
+      "Dart error handling",
+      "Dart throw",
+      "Dart on catch",
+      "Dart async error handling"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Exceptions?"
+    },
+    {
+      "type": "text",
+      "value": "An exception is an error that occurs during program execution, disrupting the normal flow. Dart provides a robust exception‑handling mechanism to catch and respond to these errors gracefully, preventing crashes. Exceptions can be thrown by the Dart runtime (e.g., division by zero) or explicitly by your code using the `throw` keyword."
+    },
+    {
+      "type": "heading",
+      "value": "Types of Exceptions: Error vs Exception"
+    },
+    {
+      "type": "text",
+      "value": "Dart distinguishes two kinds of throwable objects:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- **`Error`** – indicates a serious problem that should not be caught and handled; usually bugs in your code (e.g., `AssertionError`, `RangeError`).",
+        "- **`Exception`** – indicates a recoverable error that you can catch and handle (e.g., `IOException`, `FormatException`)."
+      ]
+    },
+    {
+      "type": "text",
+      "value": "In practice, you can throw any object, but it's best practice to throw `Exception` or a subclass of it for expected errors."
+    },
+    {
+      "type": "heading",
+      "value": "Throwing an Exception"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  throw Exception('Something went wrong');\n  // or\n  throw FormatException('Invalid number format');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Try / Catch / Finally"
+    },
+    {
+      "type": "text",
+      "value": "Use `try` to enclose code that might throw an exception, `catch` to handle it, and `finally` to run code regardless of whether an exception occurred (e.g., cleanup)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  try {\n    int result = 10 ~/ 0; // throws IntegerDivisionByZeroException\n    print(result);\n  } catch (e) {\n    print('Caught an exception: $e');\n  } finally {\n    print('This always runs');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Catching Specific Exceptions"
+    },
+    {
+      "type": "text",
+      "value": "You can catch specific exception types using `on` before the `catch` clause. This allows you to handle different exceptions differently."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  try {\n    int result = 10 ~/ 0;\n  } on IntegerDivisionByZeroException {\n    print('Cannot divide by zero.');\n  } on FormatException catch (e) {\n    print('Format error: $e');\n  } catch (e, s) {\n    print('Unexpected error: $e');\n    print('Stack trace: $s');\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "The `catch` clause can provide two arguments: the exception object and the stack trace. Use `on` without `catch` if you only need the type, or use `on` with `catch` to get the object."
+    },
+    {
+      "type": "heading",
+      "value": "Rethrowing Exceptions"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want to handle an exception partially and then let it propagate further. Use `rethrow` to throw the same exception again."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  try {\n    riskyOperation();\n  } catch (e) {\n    print('Caught: $e');\n  }\n}\n\nvoid riskyOperation() {\n  try {\n    throw Exception('Something failed');\n  } catch (e) {\n    print('Logging error');\n    rethrow; // let the caller handle it\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Custom Exceptions"
+    },
+    {
+      "type": "text",
+      "value": "You can define your own exception classes by extending `Exception`. This makes error handling more expressive."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ValidationException implements Exception {\n  final String message;\n  ValidationException(this.message);\n\n  @override\n  String toString() => 'ValidationException: $message';\n}\n\nvoid validateAge(int age) {\n  if (age < 0) throw ValidationException('Age cannot be negative');\n  if (age > 120) throw ValidationException('Age too high');\n}\n\nvoid main() {\n  try {\n    validateAge(-5);\n  } on ValidationException catch (e) {\n    print(e);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Asynchronous Error Handling"
+    },
+    {
+      "type": "text",
+      "value": "Errors in asynchronous code can be handled using `try`/`catch` inside an `async` function, or using `.catchError` on a `Future`. For streams, use the `onError` callback in `listen()` or the `handleError` transformer."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<String> fetchData() async {\n  await Future.delayed(Duration(seconds: 1));\n  throw Exception('Network error');\n}\n\nvoid main() async {\n  // With try/catch\n  try {\n    var data = await fetchData();\n    print(data);\n  } catch (e) {\n    print('Caught: $e');\n  }\n\n  // With .catchError\n  fetchData().then((data) {\n    print(data);\n  }).catchError((e) {\n    print('Caught with catchError: $e');\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Catch only exceptions you can handle. Let others propagate.",
+        "- Use specific exception types for better control.",
+        "- Always clean up resources in `finally` blocks.",
+        "- In asynchronous code, always handle errors either with `try`/`catch` or `.catchError`.",
+        "- For custom exceptions, extend `Exception` (or `Error` if truly unrecoverable).",
+        "- Use `rethrow` to log or transform an exception before passing it up."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class NegativeNumberException implements Exception {\n  final String message;\n  NegativeNumberException(this.message);\n  @override\n  String toString() => 'NegativeNumberException: $message';\n}\n\ndouble squareRoot(double n) {\n  if (n < 0) throw NegativeNumberException('Cannot take sqrt of negative number');\n  return n.sqrt(); // hypothetical\n}\n\nvoid main() {\n  try {\n    print(squareRoot(25));\n    print(squareRoot(-1));\n  } on NegativeNumberException catch (e) {\n    print(e);\n  } finally {\n    print('Done');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Exceptions are used to handle errors gracefully.",
+        "- Use `try`, `catch`, `finally` to handle exceptions.",
+        "- Catch specific exceptions with `on`.",
+        "- Define custom exceptions by extending `Exception`.",
+        "- Asynchronous errors are handled with `try`/`catch` in `async` functions or `.catchError`.",
+        "- Always consider whether to let an exception propagate or handle it."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `Error` and `Exception` in Dart?",
+      "answer": "`Error` indicates a serious, unrecoverable problem that should not be caught (e.g., stack overflow). `Exception` is used for recoverable errors that you can handle (e.g., invalid input). In practice, you should throw `Exception` or a subclass of it for your own error handling."
+    },
+    {
+      "question": "Can I throw any object in Dart?",
+      "answer": "Yes, you can throw any object, not just `Exception` or `Error`. For example, `throw 'Oops'` is allowed. However, it's better practice to throw an `Exception` subclass to maintain clarity and allow proper catching by type."
+    },
+    {
+      "question": "What happens if I don't catch an exception?",
+      "answer": "An uncaught exception will propagate up the call stack. If it reaches the top level, the program will terminate (or the isolate will stop). In Flutter, uncaught exceptions are caught by the framework and displayed in the console."
+    },
+    {
+      "question": "How do I get the stack trace of an exception?",
+      "answer": "In the `catch` clause, add a second parameter: `catch (e, s) { ... }`. The `s` is the stack trace. You can also use `StackTrace.current` inside a catch block."
+    },
+    {
+      "question": "Should I use `rethrow` or simply `throw` the same exception?",
+      "answer": "Always use `rethrow` to preserve the original stack trace. If you use `throw e`, you'll lose the original stack trace information."
+    },
+    {
+      "question": "How do I handle errors in a stream?",
+      "answer": "When listening to a stream, provide an `onError` callback: `stream.listen(..., onError: (e) { ... })`. You can also use `handleError` transformer: `stream.handleError((e) => ...).listen(...)`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  try {\n    int result = 10 ~/ 0;\n    print(result);\n  } catch (e) {\n    print('Error: $e');\n  } finally {\n    print('Cleanup');\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which keyword is used to throw an exception in Dart?",
+      "options": ["raise", "throw", "exception", "error"],
+      "answer": 1
+    },
+    {
+      "question": "What does the `finally` block do?",
+      "options": [
+        "Catches exceptions",
+        "Runs only if an exception occurred",
+        "Runs always, regardless of exception",
+        "Defines a custom exception"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "How do you catch a specific exception type and also get the exception object?",
+      "options": [
+        "on SpecificException {}",
+        "catch (SpecificException e) {}",
+        "on SpecificException catch (e) {}",
+        "catch (e, s) {}"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What does `rethrow` do?",
+      "options": [
+        "Throws a new exception",
+        "Throws the same exception while preserving the stack trace",
+        "Returns from the function",
+        "Catches the exception"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "dart-async-await",
+    "dart-future",
+    "dart-stream",
+    "dart-custom-exceptions"
+  ]
+}

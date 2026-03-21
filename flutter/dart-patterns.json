@@ -1,0 +1,295 @@
+{
+  "slug": "dart-patterns",
+  "course": "Dart",
+  "title": "Dart Patterns – Complete Guide with Examples",
+  "meta": {
+    "title": "Dart Patterns: Pattern Matching in Dart 3.0",
+    "description": "Learn pattern matching in Dart – wildcard, variable, constant, list, map, record, object patterns, guards, and pattern usage in switch, if-case, and destructuring.",
+    "keywords": [
+      "Dart patterns",
+      "Dart pattern matching",
+      "Dart switch patterns",
+      "Dart destructuring",
+      "Dart record patterns",
+      "Dart list patterns",
+      "Dart pattern guards"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Patterns in Dart?"
+    },
+    {
+      "type": "text",
+      "value": "Introduced in Dart 3.0, patterns are a powerful feature that let you destructure data, test values, and bind variables in a concise and expressive way. Patterns can be used in several contexts: variable declarations (`var (x, y) = point`), `switch` statements and expressions, `if-case` statements, and `for` loops. Patterns bring many functional programming conveniences to Dart."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Pattern Types"
+    },
+    {
+      "type": "text",
+      "value": "Dart supports a variety of pattern types. Here are the most common:"
+    },
+    {
+      "type": "heading",
+      "value": "Wildcard Pattern (`_`)"
+    },
+    {
+      "type": "text",
+      "value": "The underscore `_` matches any value but does not bind it to a variable. It's useful when you want to ignore a part of a structure."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var (_, y) = (10, 20); // ignore first field\n  print(y); // 20\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Variable Pattern"
+    },
+    {
+      "type": "text",
+      "value": "A variable pattern binds a value to a new variable. The variable can be `var`, `final`, or a specific type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var (x, y) = (10, 20); // x and y are new variables\n  print('$x, $y'); // 10, 20\n\n  final (a, b) = (5, 6);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Constant Pattern"
+    },
+    {
+      "type": "text",
+      "value": "Matches a value exactly against a constant. Useful in `switch` cases and `if-case`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  const pi = 3.14;\n  var value = 3.14;\n  if (value == pi) { ... } // traditional\n  // pattern equivalent in if-case:\n  if (value case pi) {\n    print('Matches pi');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Logical Patterns (`||`, `&&`)"
+    },
+    {
+      "type": "text",
+      "value": "Combine subpatterns using `||` (or) and `&&` (and). This allows you to match multiple possibilities."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int? maybeNull = null;\n  if (maybeNull case 0 || 1) {\n    print('0 or 1');\n  } else if (maybeNull case null) {\n    print('null');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Relational Patterns (`<`, `>`, `<=`, `>=`, `==`)"
+    },
+    {
+      "type": "text",
+      "value": "Compare values using relational operators. Useful for ranges in patterns."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  int score = 85;\n  switch (score) {\n    case < 60: print('Fail'); break;\n    case < 75: print('Pass'); break;\n    case < 90: print('Merit'); break;\n    default: print('Distinction');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Cast Pattern (`as`)"
+    },
+    {
+      "type": "text",
+      "value": "Attempts to cast the value to a type. If the cast fails, the pattern does not match."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  Object obj = 'Hello';\n  if (obj case String s) {\n    print('String length: ${s.length}');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "List Pattern"
+    },
+    {
+      "type": "text",
+      "value": "Destructures a list by matching elements. You can use `_` to ignore elements and `...` to match the rest."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var list = [1, 2, 3];\n  var [a, b, c] = list;\n  print('$a, $b, $c'); // 1, 2, 3\n\n  // With rest\n  var [first, ...rest] = [10, 20, 30];\n  print('first=$first, rest=$rest'); // first=10, rest=[20, 30]\n\n  // Match in switch\n  switch (list) {\n    case [1, 2, 3]: print('Exact match'); break;\n    case [_, _, _]: print('Three elements'); break;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Map Pattern"
+    },
+    {
+      "type": "text",
+      "value": "Destructures a map by matching key‑value pairs. Only the listed keys are extracted; extra keys are ignored."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var map = {'name': 'Alice', 'age': 30};\n  var {'name': name, 'age': age} = map;\n  print('$name is $age'); // Alice is 30\n\n  // Using rest\n  var {'name': n, ...} = map;\n  print(n);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Record Pattern"
+    },
+    {
+      "type": "text",
+      "value": "Destructures a record by matching its fields. Both positional and named fields can be matched."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var point = (10, 20);\n  var (x, y) = point;\n  print('x=$x, y=$y');\n\n  var person = (name: 'Bob', age: 25);\n  var (name: n, age: a) = person;\n  print('$n is $a');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Object Pattern"
+    },
+    {
+      "type": "text",
+      "value": "Matches against an object's type and extracts its fields using named getters (or properties). For example, you can extract the `x` and `y` fields from a `Point` instance."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Point {\n  final int x, y;\n  Point(this.x, this.y);\n}\n\nvoid main() {\n  Point p = Point(5, 7);\n  if (p case Point(x: var x, y: var y)) {\n    print('x=$x, y=$y');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Guard Pattern (`when`)"
+    },
+    {
+      "type": "text",
+      "value": "A guard is an extra condition that must be true for a pattern to match. It can be added to any pattern in a `switch` or `if-case`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var pair = (3, 4);\n  switch (pair) {\n    case (int x, int y) when x > y:\n      print('x > y');\n    case (int x, int y) when x < y:\n      print('x < y');\n    default:\n      print('x == y');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Pattern Usage in Switch"
+    },
+    {
+      "type": "text",
+      "value": "`switch` statements and `switch` expressions can now use patterns. Each case can be a pattern, and you can use guards."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void describe(dynamic value) {\n  switch (value) {\n    case int x when x > 0: print('Positive int $x');\n    case int x: print('Non-positive int $x');\n    case [_, _, ...]: print('List with at least two elements');\n    case {'name': String n, 'age': int a}:\n      print('Name: $n, Age: $a');\n    default: print('Something else');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Pattern Usage in if-case"
+    },
+    {
+      "type": "text",
+      "value": "`if (value case pattern)` allows you to conditionally match and bind variables in a single line."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var obj = (x: 5, y: 10);\n  if (obj case (x: int x, y: int y) when x < y) {\n    print('$x is less than $y');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Patterns in For Loops"
+    },
+    {
+      "type": "text",
+      "value": "You can destructure elements in `for` loops using patterns."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  var points = [(1, 2), (3, 4), (5, 6)];\n  for (var (x, y) in points) {\n    print('x=$x, y=$y');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "- Patterns enable destructuring, conditional matching, and variable binding in Dart 3+.",
+        "- Wildcard (`_`), variable, constant, logical, relational, cast, list, map, record, object, and guard patterns.",
+        "- Patterns are used in `switch`, `if-case`, variable declarations, and `for` loops.",
+        "- Pattern matching makes code more readable and reduces boilerplate."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Are patterns available in all Dart versions?",
+      "answer": "No, patterns were introduced in Dart 3.0. You need Dart 3.0 or later to use them."
+    },
+    {
+      "question": "What is the difference between `if-case` and a regular `if` with a cast?",
+      "answer": "`if-case` combines a type check, extraction, and variable binding in a single step. It is more concise and safe than separate `is` check and cast."
+    },
+    {
+      "question": "Can I use patterns in `switch` expressions?",
+      "answer": "Yes, `switch` expressions (introduced in Dart 3.0) also support patterns, allowing you to return a value based on a pattern match."
+    },
+    {
+      "question": "What happens if a pattern fails to match in a variable declaration?",
+      "answer": "If you use `var (x, y) = something` and the pattern doesn't match (e.g., the value is not a record of two elements), it throws a runtime error. Use `if-case` or a `switch` to handle mismatches gracefully."
+    },
+    {
+      "question": "Can I use custom equality with constant patterns?",
+      "answer": "Constant patterns use `==` for comparison. If you have a custom class, ensure it overrides `==` and `hashCode` appropriately."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "void main() {\n  var point = (10, 20);\n  var (x, y) = point;\n  print('x=$x, y=$y');\n\n  var list = [1, 2, 3, 4];\n  var [first, ...rest] = list;\n  print('first=$first, rest=$rest');\n\n  switch (point) {\n    case (int a, int b) when a < b:\n      print('$a < $b');\n    default: print('not matched');\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which pattern is used to ignore a value?",
+      "options": ["ignore", "skip", "_", "null"],
+      "answer": 2
+    },
+    {
+      "question": "What does `case [_, _, ...]` match?",
+      "options": [
+        "A list with exactly two elements",
+        "A list with at least two elements",
+        "A list with exactly three elements",
+        "A list with at most two elements"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What keyword is used to add an extra condition to a pattern?",
+      "options": ["if", "when", "where", "guard"],
+      "answer": 1
+    },
+    {
+      "question": "In which contexts can patterns be used?",
+      "options": [
+        "Only in switch statements",
+        "Only in variable declarations",
+        "In variable declarations, switch statements/expressions, if-case, and for loops",
+        "Only in function parameters"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "dart-records",
+    "dart-switch-expressions",
+    "dart-3-features",
+    "dart-destructuring"
+  ]
+}

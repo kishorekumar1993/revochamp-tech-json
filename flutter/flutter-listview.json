@@ -1,0 +1,207 @@
+{
+  "slug": "flutter-listview",
+  "course": "Flutter",
+  "title": "Flutter ListView Widget Tutorial for Beginners",
+  "meta": {
+    "title": "Flutter ListView Widget: Complete Guide with Examples",
+    "description": "Learn how to use Flutter ListView to create scrollable lists. Understand ListView, ListView.builder, ListView.separated, properties like shrinkWrap, physics, and more with simple examples.",
+    "keywords": [
+      "Flutter ListView",
+      "ListView.builder",
+      "ListView.separated",
+      "scrollable list",
+      "Flutter list",
+      "shrinkWrap",
+      "physics",
+      "itemExtent"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is ListView in Flutter?"
+    },
+    {
+      "type": "text",
+      "value": "ListView is one of the most commonly used scrolling widgets in Flutter. It displays its children one after another in a scrolling direction (vertical by default). ListView is highly customizable and provides several constructors to suit different needs: the default constructor for a fixed list of children, `ListView.builder` for dynamic or infinite lists, `ListView.separated` to insert separators, and `ListView.custom` for fine‑grained control."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to create a ListView is to provide a fixed list of children. This is perfect when you have a small, known set of items."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ListView(\n  children: [\n    ListTile(title: Text('Item 1')),\n    ListTile(title: Text('Item 2')),\n    ListTile(title: Text('Item 3')),\n    // ... more items\n  ],\n)"
+    },
+    {
+      "type": "text",
+      "value": "When you run this, you'll get a vertically scrolling list of list tiles. By default, ListView scrolls vertically, but you can change that with the `scrollDirection` property."
+    },
+    {
+      "type": "heading",
+      "value": "ListView.builder: Dynamic Lists"
+    },
+    {
+      "type": "text",
+      "value": "For long or infinite lists, use `ListView.builder`. It creates children on demand, which improves performance. You provide an `itemBuilder` function that returns a widget for a given index."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ListView.builder(\n  itemCount: 100,\n  itemBuilder: (context, index) {\n    return ListTile(\n      leading: Icon(Icons.numbers),\n      title: Text('Item $index'),\n    );\n  },\n)"
+    },
+    {
+      "type": "text",
+      "value": "The `itemCount` tells the builder how many items there are. If you omit it, the list will be infinite (useful for data that loads continuously)."
+    },
+    {
+      "type": "heading",
+      "value": "ListView.separated: Lists with Separators"
+    },
+    {
+      "type": "text",
+      "value": "When you need dividers between items, `ListView.separated` is the perfect choice. It takes an `itemBuilder` and a `separatorBuilder`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ListView.separated(\n  itemCount: 20,\n  itemBuilder: (context, index) => ListTile(title: Text('Item $index')),\n  separatorBuilder: (context, index) => Divider(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Properties"
+    },
+    {
+      "type": "text",
+      "value": "ListView offers many properties to control its behavior. Here are the most important ones:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**children**: The list of widgets (for the default constructor).",
+        "**scrollDirection**: Axis.horizontal (horizontal scrolling) or Axis.vertical (default).",
+        "**reverse**: If true, the list scrolls in the opposite direction (e.g., bottom to top).",
+        "**padding**: Adds empty space around the list.",
+        "**physics**: Determines how the list responds to scrolling. Common values: `AlwaysScrollableScrollPhysics()`, `BouncingScrollPhysics()`, `ClampingScrollPhysics()`, `NeverScrollableScrollPhysics()`.",
+        "**shrinkWrap**: If true, the list will size itself to fit its content (useful inside a Column). Default is false, meaning the list expands to fill its parent.",
+        "**itemExtent**: Forces each child to have a fixed extent (height for vertical lists, width for horizontal). This improves performance because the system doesn't need to measure each child.",
+        "**cacheExtent**: The area (in pixels) before and after the visible area where items are built ahead of time."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Horizontal ListView"
+    },
+    {
+      "type": "text",
+      "value": "To create a horizontal scrolling list, set `scrollDirection` to `Axis.horizontal`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ListView(\n  scrollDirection: Axis.horizontal,\n  children: [\n    Container(width: 100, height: 100, color: Colors.red),\n    Container(width: 100, height: 100, color: Colors.green),\n    Container(width: 100, height: 100, color: Colors.blue),\n  ],\n)"
+    },
+    {
+      "type": "text",
+      "value": "Don't forget to give the children a width, otherwise they might try to expand horizontally and cause an error."
+    },
+    {
+      "type": "heading",
+      "value": "Using shrinkWrap Inside a Column"
+    },
+    {
+      "type": "text",
+      "value": "A common mistake is placing a ListView inside a Column without setting `shrinkWrap: true`. Because a ListView normally expands to fill its parent, and a Column doesn't limit its height, you'll get an infinite height error. To fix this, either wrap the ListView with `Expanded` (so it takes the remaining space) or set `shrinkWrap: true` (so it takes only as much space as its content)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Column(\n  children: [\n    Text('Header'),\n    Expanded(                    // ✅ Use Expanded\n      child: ListView.builder(\n        itemCount: 10,\n        itemBuilder: (_, i) => ListTile(title: Text('Item $i')),\n      ),\n    ),\n    Text('Footer'),\n  ],\n)\n\n// Alternative using shrinkWrap (if you need the list to size itself)\nColumn(\n  children: [\n    Text('Header'),\n    ListView.builder(\n      shrinkWrap: true,          // ✅ shrinkWrap instead of Expanded\n      physics: NeverScrollableScrollPhysics(), // often used together\n      itemCount: 5,\n      itemBuilder: (_, i) => ListTile(title: Text('Item $i')),\n    ),\n    Text('Footer'),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes Beginners Make"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Not handling large lists**: Using the default ListView constructor with hundreds of items can hurt performance. Always use `ListView.builder` for long or dynamic lists.",
+        "**Forgetting `shrinkWrap` inside Column/ListView**: Leads to unbounded height errors.",
+        "**Misunderstanding `physics`**: Setting `NeverScrollableScrollPhysics()` when you want scrolling, or not disabling scrolling when you need a non‑scrollable list.",
+        "**Incorrect itemExtent usage**: If children have different sizes, providing a fixed `itemExtent` can cause clipping or gaps.",
+        "**Nesting ListViews without constraints**: Putting a horizontal ListView inside a vertical ListView is fine, but ensure each has a fixed height/width."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Use `ListView` for fixed, small lists; `ListView.builder` for dynamic or large lists.",
+        "Set `shrinkWrap: true` when placing a ListView inside another unbounded container (like Column or another ListView).",
+        "Adjust `scrollDirection` for horizontal lists.",
+        "`physics` controls the scroll behavior; use `NeverScrollableScrollPhysics()` to disable scrolling.",
+        "`itemExtent` can improve performance if all children have the same size.",
+        "Use `ListView.separated` to easily add dividers."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Interview Questions"
+    },
+    {
+      "type": "text",
+      "value": "1. What's the difference between `ListView` and `ListView.builder`?\n2. How does `shrinkWrap` work, and when should you use it?\n3. Explain `itemExtent` and its performance benefits.\n4. How would you create a horizontally scrolling list of images?\n5. What happens if you put a ListView inside a Column without `shrinkWrap` or `Expanded`? How do you fix it?\n6. Describe the use of `cacheExtent` and how it affects scrolling smoothness."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\n\nvoid main() {\n  runApp(\n    MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('ListView Example')),\n        body: ListView.builder(\n          itemCount: 20,\n          itemBuilder: (context, index) {\n            return ListTile(\n              leading: CircleAvatar(\n                child: Text('$index'),\n              ),\n              title: Text('Item $index'),\n              subtitle: Text('Description for item $index'),\n            );\n          },\n        ),\n      ),\n    ),\n  );\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which ListView constructor is most efficient for a list with 10,000 items?",
+      "options": [
+        "ListView()",
+        "ListView.builder()",
+        "ListView.separated()",
+        "ListView.custom()"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What does setting `shrinkWrap: true` do in a ListView?",
+      "options": [
+        "Makes the list scroll faster",
+        "Causes the list to take only the space needed by its children",
+        "Shrinks each child to a smaller size",
+        "Prevents the list from scrolling"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you create a horizontal scrolling ListView?",
+      "options": [
+        "Set `scrollDirection: Axis.horizontal`",
+        "Set `orientation: Horizontal`",
+        "Use `HorizontalListView()` widget",
+        "Wrap it with `RotatedBox`"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-row-column",
+    "flutter-container",
+    "flutter-stack",
+    "flutter-gridview",
+    "flutter-expanded"
+  ]
+}
