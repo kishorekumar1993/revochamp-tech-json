@@ -1,0 +1,253 @@
+{
+  "slug": "bloc-emit",
+  "course": "Flutter",
+  "title": "Bloc Emit: Mastering State Emission in Flutter",
+  "meta": {
+    "title": "Bloc Emit in Flutter – Complete Guide (2026)",
+    "description": "Learn how to use the Emitter to emit states in Flutter Bloc. Multiple emissions, conditional emitting, error handling, best practices, and common patterns.",
+    "keywords": [
+      "flutter bloc emit",
+      "bloc emitter",
+      "bloc emit multiple states",
+      "bloc state emission",
+      "flutter bloc best practices"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "10 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "emit", "state-management"],
+  "content": [
+    {
+      "type": "text",
+      "value": "In the BLoC pattern, **emitting** is how you publish new states from your bloc. The `Emitter<State>` object, passed to every event handler, is your gateway to updating the UI. This guide explains everything about emitting states correctly and efficiently."
+    },
+    {
+      "type": "heading",
+      "value": "What is Emitter?"
+    },
+    {
+      "type": "text",
+      "value": "`Emitter<State>` is a callback that allows you to emit one or more states from within an event handler. It is the only way to change the bloc's state. When you call `emit(state)`, the new state flows through the bloc's state stream, and the UI is notified."
+    },
+    {
+      "type": "highlight",
+      "value": "Event Handler → Emitter → New State → UI Update"
+    },
+    {
+      "type": "heading",
+      "value": "Basic Emission"
+    },
+    {
+      "type": "text",
+      "value": "The simplest use is to emit a single state in response to an event."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<IncrementPressed>((event, emit) {\n  emit(CounterState(state.value + 1));\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Multiple Emissions"
+    },
+    {
+      "type": "text",
+      "value": "You can call `emit` multiple times within the same handler. This is useful for sequences like loading → success or for progressive updates."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<LoginSubmitted>((event, emit) async {\n  emit(LoginLoading());\n  try {\n    final user = await repository.login(event.email, event.password);\n    emit(LoginSuccess(user));\n  } catch (e) {\n    emit(LoginFailure(e.toString()));\n  }\n});"
+    },
+    {
+      "type": "note",
+      "value": "If you emit the same state instance (or an instance equal to the current state), Bloc will ignore the emission. This is why you should always use `Equatable` for states."
+    },
+    {
+      "type": "heading",
+      "value": "Conditional Emitting"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want to emit only if certain conditions are met. You can guard emissions with `if` statements."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<UpdateUser>((event, emit) {\n  if (event.user.id != state.user.id) {\n    emit(UserUpdated(event.user));\n  }\n});"
+    },
+    {
+      "type": "text",
+      "value": "You can also check if the bloc is still open using the `isClosed` property. Avoid emitting after the bloc is closed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<LongRunningTask>((event, emit) async {\n  emit(TaskLoading());\n  await doWork();\n  if (!isClosed) {\n    emit(TaskSuccess());\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Asynchronous Emissions"
+    },
+    {
+      "type": "text",
+      "value": "Emitting inside asynchronous code works as expected, but you must be careful about timing and bloc disposal. Always check `isClosed` before emitting after an async gap."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<FetchData>((event, emit) async {\n  emit(DataLoading());\n  \n  final data = await repository.fetch();\n  \n  // The bloc might have been closed while waiting\n  if (!isClosed) {\n    emit(DataLoaded(data));\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Avoiding Redundant Emissions"
+    },
+    {
+      "type": "text",
+      "value": "Bloc automatically prevents emission of the same state (based on `==`). To take advantage of this, ensure your state classes implement proper equality. The easiest way is to use `Equatable`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterState extends Equatable {\n  final int value;\n  const CounterState(this.value);\n\n  @override\n  List<Object> get props => [value];\n}\n\n// Later in the bloc:\non<IncrementPressed>((event, emit) {\n  // Emits only if the new value is different\n  emit(CounterState(state.value + 1));\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling in Emissions"
+    },
+    {
+      "type": "text",
+      "value": "Always wrap code that might throw exceptions. Uncaught exceptions in handlers will propagate to the bloc's `onError` and may stop further processing. Emit error states instead of letting exceptions bubble."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<ProcessData>((event, emit) async {\n  try {\n    emit(Processing());\n    final result = await riskyOperation();\n    emit(ProcessSuccess(result));\n  } catch (e, s) {\n    emit(ProcessFailure(e.toString()));\n    addError(e, s); // Optional: also report to onError\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Common Emission Patterns"
+    },
+    {
+      "type": "subheading",
+      "value": "Loading → Success / Error"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "emit(Loading());\ntry {\n  final data = await fetch();\n  emit(Success(data));\n} catch (e) {\n  emit(Error(e.toString()));\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Progressive Updates"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "emit(UploadProgress(0));\nfor (int i = 1; i <= 10; i++) {\n  await Future.delayed(Duration(milliseconds: 100));\n  emit(UploadProgress(i * 10));\n}\nemit(UploadComplete());"
+    },
+    {
+      "type": "subheading",
+      "value": "State with Caching"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<LoadCachedData>((event, emit) {\n  if (state is DataLoaded && (state as DataLoaded).isFresh) {\n    // No need to emit, state already fresh\n    return;\n  }\n  // else load from source\n  emit(DataLoading());\n  // ... load and emit loaded\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `Equatable` for all states** – prevents unnecessary emissions and rebuilds.",
+        "**Always check `isClosed` after async operations** – avoids emitting to a closed bloc.",
+        "**Emit loading states for async operations** – gives users feedback.",
+        "**Prefer atomic states** – each state should represent a complete snapshot.",
+        "**Never mutate a state object and emit the same instance** – always create a new instance.",
+        "**Use `addError` to propagate exceptions to `onError`** – helps with logging and debugging."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Emitting the same instance** – UI won't update; always create new instances.",
+        "❌ **Emitting after bloc is closed** – causes an exception; check `isClosed`.",
+        "❌ **Not handling exceptions** – uncaught exceptions stop the bloc; always catch and emit error states.",
+        "❌ **Emitting too frequently** – can cause performance issues; use transformers if needed.",
+        "❌ **Mutating state after emission** – the UI might already be using the previous state; avoid side effects after emit."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you know how to emit states correctly, learn how to structure your events and handle more complex scenarios with event transformers."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Bloc events](/bloc-events) and [Bloc class lifecycle](/bloc-bloc-class)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I emit a state that is the same as the current state?",
+      "answer": "Yes, but Bloc will ignore it because it checks equality. This is why you should use Equatable for states to avoid accidental duplicate emissions."
+    },
+    {
+      "question": "What happens if I emit after the bloc is closed?",
+      "answer": "It will throw a `StateError` because the event sink is closed. Always check `isClosed` before emitting after any asynchronous operation."
+    },
+    {
+      "question": "How many times can I call emit in a single handler?",
+      "answer": "As many times as needed. However, be aware that each emit will trigger UI rebuilds if the state changed. For very frequent emissions, consider using throttling or debouncing via event transformers."
+    },
+    {
+      "question": "Do I need to use Equatable for emitting to work?",
+      "answer": "No, emit works regardless. But without proper equality, Bloc may still think the new state is different and cause unnecessary rebuilds. Equatable is strongly recommended."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What does the Emitter do in a Bloc event handler?",
+      "options": [
+        "Adds new events",
+        "Emits new states",
+        "Closes the bloc",
+        "Handles errors"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which property should you check before emitting after an async operation?",
+      "options": ["isDisposed", "isActive", "isClosed", "isOpen"],
+      "answer": 2
+    },
+    {
+      "question": "What is the recommended way to prevent duplicate states from causing rebuilds?",
+      "options": [
+        "Use Equatable on states",
+        "Use a global flag",
+        "Emit only once per handler",
+        "Use Stream.distinct"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "bloc-introduction",
+    "bloc-events",
+    "bloc-bloc-class",
+    "bloc-testing",
+    "bloc-architecture"
+  ]
+}

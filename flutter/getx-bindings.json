@@ -3,8 +3,8 @@
   "course": "Flutter",
   "title": "GetX Bindings: Complete Guide to Dependency Injection for Routes",
   "meta": {
-    "title": "GetX Bindings – Route-Level Dependency Injection Explained",
-    "description": "Learn how to use GetX bindings to manage dependencies at the route level. Discover how bindings improve code organization, performance, and automatic disposal of controllers in Flutter apps.",
+    "title": "GetX Bindings – Route-Level Dependency Injection Explained (2026)",
+    "description": "Master GetX bindings in Flutter: learn how to manage dependencies at the route level, improve performance with lazy loading, and automatically dispose controllers. Includes best practices, nested bindings, and real examples.",
     "keywords": [
       "GetX bindings",
       "GetX dependency injection",
@@ -12,7 +12,8 @@
       "GetX route management",
       "Bindings in GetX",
       "Flutter GetX",
-      "Get.lazyPut"
+      "Get.lazyPut",
+      "GetX lifecycle"
     ]
   },
   "content": [
@@ -113,16 +114,37 @@
     },
     {
       "type": "heading",
-      "value": "Nested Bindings"
+      "value": "Nested Bindings & Dependency Injection"
     },
     {
       "type": "text",
-      "value": "For complex apps, you can nest bindings or use multiple bindings per route (though not common). GetX allows you to use `Get.create` and `Get.lazyPut` inside bindings, and you can also inject dependencies that themselves depend on others."
+      "value": "For complex apps, you can nest bindings or inject dependencies that themselves depend on others."
     },
     {
       "type": "code",
       "language": "dart",
       "value": "class NestedBinding extends Bindings {\n  @override\n  void dependencies() {\n    // This service may be used by multiple controllers\n    Get.lazyPut<ApiService>(() => ApiService());\n    // Controller depends on ApiService\n    Get.lazyPut<HomeController>(() => HomeController(Get.find()));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Bindings vs Direct Get.put"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Aspect", "Bindings", "Direct Get.put"],
+        "rows": [
+          ["Place of registration", "Separate class, defined per route", "Inside widgets or main"],
+          ["Lazy loading", "Yes (default with lazyPut)", "Controlled by developer"],
+          ["Lifecycle", "Auto-dispose on route pop", "Manual or permanent"],
+          ["Testability", "Easy to mock via binding", "Requires resetting dependencies"],
+          ["Code organization", "Centralized per feature", "Scattered across files"]
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "value": "Bindings are recommended for large apps with many routes, as they provide a clear separation and automatic cleanup. For small apps, `Get.put` directly in `main` may suffice."
     },
     {
       "type": "heading",
@@ -154,26 +176,41 @@
     },
     {
       "type": "heading",
-      "value": "FAQ"
-    },
-    {
-      "type": "list",
-      "value": [
-        "**Q: Do I have to use bindings with GetX?**  \nA: No, they are optional. You can still use `Get.put` directly in your widgets. Bindings just provide a cleaner organization, especially for large apps.",
-        "**Q: Can I use both `Get.put` inside a binding and in a view?**  \nA: Yes, but be careful not to create duplicate controllers. The binding will create it once; additional `Get.put` might try to create again unless you check `isRegistered` first.",
-        "**Q: How do I test a controller that is injected via binding?**  \nA: You can use `Get.reset()` to clear registrations and then manually register mock dependencies before testing.",
-        "**Q: What happens if I navigate to the same route twice?**  \nA: Each navigation will trigger its own binding, but if the same controller class is used, and it's not marked `permanent`, a new instance is created for the new route (if using `lazyPut` without `fenix`).",
-        "**Q: Can I have a binding without a route?**  \nA: Yes, you can manually call `InitialBinding().dependencies()` at startup, but it's better to use `initialBinding` in `GetMaterialApp`.",
-        "**Q: How do I pass data to a controller via binding?**  \nA: Use the binding's constructor to accept arguments, then pass them to the controller registration as shown in the example."
-      ]
-    },
-    {
-      "type": "heading",
       "value": "Conclusion"
     },
     {
       "type": "text",
       "value": "GetX bindings provide a powerful, route-centric way to manage dependencies. They improve code structure, performance, and lifecycle management. By adopting bindings, you ensure that your controllers are created and disposed at the right time, leading to cleaner, more maintainable Flutter apps."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I have to use bindings with GetX?",
+      "answer": "No, they are optional. You can still use `Get.put` directly in your widgets. Bindings just provide a cleaner organization, especially for large apps."
+    },
+    {
+      "question": "Can I use both `Get.put` inside a binding and in a view?",
+      "answer": "Yes, but be careful not to create duplicate controllers. The binding will create it once; additional `Get.put` might try to create again unless you check `isRegistered` first."
+    },
+    {
+      "question": "How do I test a controller that is injected via binding?",
+      "answer": "You can use `Get.reset()` to clear registrations and then manually register mock dependencies before testing."
+    },
+    {
+      "question": "What happens if I navigate to the same route twice?",
+      "answer": "Each navigation will trigger its own binding, but if the same controller class is used, and it's not marked `permanent`, a new instance is created for the new route (if using `lazyPut` without `fenix`)."
+    },
+    {
+      "question": "Can I have a binding without a route?",
+      "answer": "Yes, you can manually call `InitialBinding().dependencies()` at startup, but it's better to use `initialBinding` in `GetMaterialApp`."
+    },
+    {
+      "question": "How do I pass data to a controller via binding?",
+      "answer": "Use the binding's constructor to accept arguments, then pass them to the controller registration as shown in the parameterized binding example."
+    },
+    {
+      "question": "What is the difference between `Get.lazyPut` and `Get.put` in bindings?",
+      "answer": "`Get.lazyPut` creates the instance only when it's first accessed (lazy loading), improving startup time. `Get.put` creates it immediately. For most cases, `lazyPut` is preferred inside bindings."
     }
   ],
   "tryEditor": {
@@ -205,6 +242,11 @@
         "deps: MyBinding()"
       ],
       "answer": 0
+    },
+    {
+      "question": "Which GetX method is preferred inside bindings for better performance?",
+      "options": ["Get.put", "Get.lazyPut", "Get.create", "Get.find"],
+      "answer": 1
     }
   ],
   "related": [

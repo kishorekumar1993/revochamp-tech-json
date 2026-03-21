@@ -3,7 +3,7 @@
   "course": "Flutter",
   "title": "GetX Named Routes: Complete Guide to Organized Navigation",
   "meta": {
-    "title": "GetX Named Routes – Route Management with GetPage and Bindings",
+    "title": "GetX Named Routes – Route Management with GetPage and Bindings (2026)",
     "description": "Master GetX named routes: define GetPages, pass parameters and arguments, use middlewares, transitions, and bindings. Learn to build scalable navigation in Flutter.",
     "keywords": [
       "GetX named routes",
@@ -13,7 +13,9 @@
       "Get.offAllNamed",
       "GetX route management",
       "GetX routing",
-      "Flutter GetX navigation"
+      "Flutter GetX navigation",
+      "getx parameters",
+      "getx arguments"
     ]
   },
   "content": [
@@ -24,6 +26,28 @@
     {
       "type": "text",
       "value": "Named routes are a way to define routes with string identifiers, making navigation more organized and maintainable. Instead of directly pushing widget instances, you navigate using route names. GetX provides a powerful named routing system built on top of `GetPage` and `GetMaterialApp`, supporting parameters, arguments, transitions, middlewares, and automatic dependency injection via bindings."
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**E‑commerce apps** – Navigate to product details with dynamic IDs (`/product/123`), cart, checkout, etc.",
+        "**Social media** – User profiles (`/user/alice`), posts, notifications, and deep linking.",
+        "**Authentication flows** – Login, signup, forgot password, with redirects based on auth state.",
+        "**Settings & onboarding** – Multi‑step wizards with named routes for each step.",
+        "**Dynamic content** – Route to articles, blog posts, or any content identified by a slug."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "How Named Routes Work"
+    },
+    {
+      "type": "text",
+      "value": "When you call `Get.toNamed('/product/123')`, GetX looks up the `GetPage` with that name (or pattern) in the `getPages` list. It then creates the page widget (and any associated binding/middleware) and pushes it onto the navigation stack. Dynamic segments (`:id`) are extracted into `Get.parameters`, and any additional data passed via `arguments` is available in `Get.arguments`. This allows for a clean separation between UI and navigation logic."
     },
     {
       "type": "heading",
@@ -84,6 +108,27 @@
       "type": "code",
       "language": "dart",
       "value": "// Navigation with arguments\nGet.toNamed('/details', arguments: {'title': 'Hello', 'id': 42});\n\n// In the destination\nfinal args = Get.arguments;\nString title = args['title'];\nint id = args['id'];"
+    },
+    {
+      "type": "heading",
+      "value": "Comparison: Named Routes vs Widget Navigation"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Aspect", "Named Routes (Get.toNamed)", "Widget Navigation (Get.to)"],
+        "rows": [
+          ["Maintainability", "High – centralised route definitions", "Medium – scattered widget creation"],
+          ["Deep linking", "Built‑in support", "Manual handling"],
+          ["Parameters", "Clear (path segments or arguments)", "Can pass via constructor"],
+          ["Lazy loading", "Automatic with bindings", "Manual"],
+          ["Learning curve", "Slightly steeper", "Gentle"]
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "value": "Named routes are recommended for large apps where you need centralised control over navigation, deep linking, and lazy loading. For very small apps, widget navigation can be simpler."
     },
     {
       "type": "heading",
@@ -181,17 +226,15 @@
     },
     {
       "type": "heading",
-      "value": "FAQ"
+      "value": "Next Steps"
     },
     {
       "type": "list",
       "value": [
-        "**Q: Can I use both widget navigation and named routes together?**  \nA: Yes, `Get.to` and `Get.toNamed` can be mixed. However, named routes are generally recommended for large apps for better organization.",
-        "**Q: How do I pass data back from a named route?**  \nA: Use `await Get.toNamed(...)` and then `Get.back(result: value)` in the destination. The result will be returned as the future value.",
-        "**Q: Can I add transitions to named routes?**  \nA: Yes, define `transition` in `GetPage`. You can also override transitions per navigation using `Get.toNamed(..., arguments: ..., id: ..., preventDuplicates: ...)`. Transitions can be customized further with `transitionDuration` and `curve`.",
-        "**Q: How do I navigate with parameters that are not part of the path?**  \nA: Use `arguments`. It's perfect for passing objects, maps, or lists.",
-        "**Q: What is the difference between `Get.parameters` and `Get.arguments`?**  \nA: `Get.parameters` gives you the dynamic path segments (e.g., `:id`), while `Get.arguments` gives the data passed via the `arguments` parameter.",
-        "**Q: Can I define routes dynamically?**  \nA: Yes, you can build `getPages` list dynamically. For example, you can load routes from a JSON or a database."
+        "👉 Learn **GetX Bindings** to manage dependencies per route",
+        "👉 Master **GetX Middleware** for route guards",
+        "👉 Explore **GetX Transitions** for custom animations",
+        "👉 Build **GetX Modular Architecture** with feature‑based routes"
       ]
     },
     {
@@ -201,6 +244,32 @@
     {
       "type": "text",
       "value": "GetX named routes offer a structured, scalable way to manage navigation in Flutter apps. With features like dynamic parameters, arguments, transitions, middlewares, and bindings, you can build complex routing systems with minimal code. Combine named routes with GetX state management and dependency injection for a complete, maintainable architecture."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use both widget navigation and named routes together?",
+      "answer": "Yes, `Get.to` and `Get.toNamed` can be mixed. However, named routes are generally recommended for large apps for better organization."
+    },
+    {
+      "question": "How do I pass data back from a named route?",
+      "answer": "Use `await Get.toNamed(...)` and then `Get.back(result: value)` in the destination. The result will be returned as the future value."
+    },
+    {
+      "question": "Can I add transitions to named routes?",
+      "answer": "Yes, define `transition` in `GetPage`. You can also override transitions per navigation using `Get.toNamed(..., arguments: ..., id: ..., preventDuplicates: ...)`. Transitions can be customized further with `transitionDuration` and `curve`."
+    },
+    {
+      "question": "How do I navigate with parameters that are not part of the path?",
+      "answer": "Use `arguments`. It's perfect for passing objects, maps, or lists."
+    },
+    {
+      "question": "What is the difference between `Get.parameters` and `Get.arguments`?",
+      "answer": "`Get.parameters` gives you the dynamic path segments (e.g., `:id`), while `Get.arguments` gives the data passed via the `arguments` parameter."
+    },
+    {
+      "question": "Can I define routes dynamically?",
+      "answer": "Yes, you can build `getPages` list dynamically. For example, you can load routes from a JSON or a database."
     }
   ],
   "tryEditor": {

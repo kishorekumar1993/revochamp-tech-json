@@ -3,8 +3,8 @@
   "course": "Flutter",
   "title": "GetX API Integration: Fetch Data with Reactive State",
   "meta": {
-    "title": "GetX API Integration – Reactive Data Fetching in Flutter",
-    "description": "Learn how to integrate REST APIs with GetX. Use GetxService, reactive state, workers, and error handling to build robust data-fetching logic in Flutter.",
+    "title": "GetX API Integration (2026): HTTP, Dio, StateMixin, Pagination & Error Handling Guide",
+    "description": "Learn how to integrate REST APIs with GetX using HTTP or Dio. Includes reactive state, StateMixin, pagination, debounce, authentication, interceptors, and best practices.",
     "keywords": [
       "GetX API integration",
       "GetX http",
@@ -12,7 +12,10 @@
       "reactive API calls",
       "GetX loading state",
       "GetX error handling",
-      "Flutter GetX"
+      "Flutter GetX",
+      "GetX authentication",
+      "GetX pagination",
+      "GetX interceptors"
     ]
   },
   "content": [
@@ -22,15 +25,23 @@
     },
     {
       "type": "text",
-      "value": "Integrating APIs is a core part of most Flutter apps. GetX simplifies this by providing reactive state, dependency injection, and a clean separation of concerns. This guide shows how to fetch data from an API, handle loading and error states, and display the results reactively using GetX."
+      "value": "Integrating APIs is a core part of most Flutter apps. GetX simplifies this by providing reactive state, dependency injection, and a clean separation of concerns. This guide shows how to fetch data from an API, handle loading and error states, and display the results reactively using GetX. We'll cover both the built-in `http` package and the more powerful `dio` package, along with advanced patterns like pagination, debounce, and interceptors."
     },
     {
       "type": "heading",
-      "value": "Setting Up the Service"
+      "value": "How GetX API Flow Works"
     },
     {
       "type": "text",
-      "value": "Create a service class that extends `GetxService` (or `GetxController`) to manage API calls. Use `http` or `dio` for networking. The service will be injected via GetX dependency injection."
+      "value": "The recommended architecture for API integration with GetX follows a unidirectional data flow:\n\n**UI → Controller → Service → API → Controller → UI**\n\n- **UI** (View) uses `Obx` or `GetView` to observe reactive variables.\n- **Controller** holds reactive state (data, loading, error) and business logic.\n- **Service** handles HTTP requests, usually injected via GetX dependency injection.\n- **API** returns data which is then updated in the controller, automatically refreshing the UI."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up the Service with HTTP"
+    },
+    {
+      "type": "text",
+      "value": "Create a service class that extends `GetxService` to manage API calls. This service will be injected into controllers. Here’s a basic example using the `http` package:"
     },
     {
       "type": "code",
@@ -39,11 +50,37 @@
     },
     {
       "type": "heading",
+      "value": "Adding Authentication Headers"
+    },
+    {
+      "type": "text",
+      "value": "For authenticated endpoints, you need to include headers. You can pass them directly or store a token in a service:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthApiService extends GetxService {\n  final String baseUrl = 'https://yourapi.com';\n  String? _token;\n\n  void setToken(String token) => _token = token;\n\n  Future<Map<String, String>> _getHeaders() async {\n    return {\n      'Authorization': 'Bearer $_token',\n      'Content-Type': 'application/json',\n    };\n  }\n\n  Future<Map<String, dynamic>> getProfile() async {\n    final response = await http.get(\n      Uri.parse('$baseUrl/profile'),\n      headers: await _getHeaders(),\n    );\n    if (response.statusCode == 200) {\n      return json.decode(response.body);\n    } else {\n      throw Exception('Failed to load profile');\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Dio (Advanced API Handling)"
+    },
+    {
+      "type": "text",
+      "value": "Dio is a powerful HTTP client that supports interceptors, cancel tokens, form data, and more. First add `dio: ^5.0.0` to your `pubspec.yaml`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:dio/dio.dart';\nimport 'package:get/get.dart';\n\nclass DioService extends GetxService {\n  late Dio _dio;\n\n  @override\n  void onInit() {\n    super.onInit();\n    _dio = Dio(BaseOptions(\n      baseUrl: 'https://jsonplaceholder.typicode.com',\n      connectTimeout: const Duration(seconds: 30),\n      receiveTimeout: const Duration(seconds: 30),\n    ));\n    _setupInterceptors();\n  }\n\n  void _setupInterceptors() {\n    _dio.interceptors.add(InterceptorsWrapper(\n      onRequest: (options, handler) {\n        // Add auth token to every request\n        options.headers['Authorization'] = 'Bearer YOUR_TOKEN';\n        return handler.next(options);\n      },\n      onResponse: (response, handler) => handler.next(response),\n      onError: (error, handler) {\n        // Global error handling\n        return handler.next(error);\n      },\n    ));\n  }\n\n  Future<List<dynamic>> fetchPosts() async {\n    try {\n      final response = await _dio.get('/posts');\n      return response.data;\n    } on DioException catch (e) {\n      throw Exception('Dio error: ${e.message}');\n    }\n  }\n\n  // Cancel token example\n  CancelToken cancelToken = CancelToken();\n  Future<void> cancelRequest() => cancelToken.cancel('Request cancelled');\n}"
+    },
+    {
+      "type": "heading",
       "value": "Controller with Reactive State"
     },
     {
       "type": "text",
-      "value": "Create a controller that holds the reactive state (data, loading, error). It will call the service and update the state accordingly."
+      "value": "Create a controller that holds reactive state. It will call the service and update the state accordingly."
     },
     {
       "type": "code",
@@ -104,6 +141,19 @@
     },
     {
       "type": "heading",
+      "value": "Debounce for Search Inputs"
+    },
+    {
+      "type": "text",
+      "value": "When implementing search, debounce prevents excessive API calls. Use GetX's `debounce` worker:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchController extends GetxController {\n  var searchQuery = ''.obs;\n  var results = <dynamic>[].obs;\n  var isLoading = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    debounce(searchQuery, (_) => performSearch(), time: Duration(milliseconds: 500));\n  }\n\n  Future<void> performSearch() async {\n    if (searchQuery.value.isEmpty) {\n      results.clear();\n      return;\n    }\n    isLoading.value = true;\n    try {\n      final data = await apiService.search(searchQuery.value);\n      results.assignAll(data);\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}\n\n// In UI\nTextField(\n  onChanged: (value) => controller.searchQuery.value = value,\n)\nObx(() => controller.isLoading.value ? CircularProgressIndicator() : ListView(...))"
+    },
+    {
+      "type": "heading",
       "value": "Error Handling with Workers"
     },
     {
@@ -117,6 +167,62 @@
     },
     {
       "type": "heading",
+      "value": "Advanced: Dio Interceptors and CancelToken"
+    },
+    {
+      "type": "text",
+      "value": "Dio interceptors let you handle authentication, logging, and errors globally. CancelToken allows cancelling pending requests."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Global interceptor example\n_dio.interceptors.add(InterceptorsWrapper(\n  onRequest: (options, handler) {\n    // Add auth token\n    options.headers['Authorization'] = 'Bearer $token';\n    return handler.next(options);\n  },\n  onError: (error, handler) {\n    if (error.response?.statusCode == 401) {\n      // Handle unauthorized\n      Get.offAllNamed('/login');\n    }\n    return handler.next(error);\n  },\n));\n\n// CancelToken usage\nCancelToken cancelToken = CancelToken();\nFuture<void> fetchData() async {\n  try {\n    final response = await _dio.get('/data', cancelToken: cancelToken);\n  } on DioException catch (e) {\n    if (CancelToken.isCancel(e)) {\n      print('Request cancelled');\n    }\n  }\n}\nvoid dispose() => cancelToken.cancel();"
+    },
+    {
+      "type": "heading",
+      "value": "Performance and Caching Strategies"
+    },
+    {
+      "type": "text",
+      "value": "To optimize API calls and provide offline support, implement caching. Use `GetStorage` or `Hive` to store responses locally. Here’s a simple caching approach:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CachedApiService extends GetxService {\n  final GetStorage box = GetStorage();\n  final String cacheKey = 'posts_cache';\n  final Duration cacheDuration = Duration(minutes: 5);\n\n  Future<List<dynamic>> fetchPosts() async {\n    // Check cache\n    final cached = box.read(cacheKey);\n    if (cached != null) {\n      final timestamp = box.read('${cacheKey}_time');\n      if (DateTime.now().difference(DateTime.parse(timestamp)) < cacheDuration) {\n        return cached;\n      }\n    }\n    // Fetch fresh data\n    final fresh = await _fetchFromApi();\n    box.write(cacheKey, fresh);\n    box.write('${cacheKey}_time', DateTime.now().toIso8601String());\n    return fresh;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Examples"
+    },
+    {
+      "type": "text",
+      "value": "**Authentication Flow:** After login, store the token in `GetStorage` and inject it into the Dio interceptor.\n\n**Filter API:** Use reactive variables for filter criteria and combine with debounce to trigger new requests.\n\n**Upload File:** Use Dio's `FormData` to send multipart requests with progress tracking."
+    },
+    {
+      "type": "heading",
+      "value": "GetX vs Provider vs Riverpod for API Handling"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "GetX", "Provider", "Riverpod"],
+        "rows": [
+          ["Boilerplate", "Minimal", "Moderate", "Moderate"],
+          ["Reactivity", "Built-in (.obs)", "ChangeNotifier", "ref.watch"],
+          ["Dependency Injection", "Built-in", "External", "Built-in"],
+          ["Routing", "Built-in", "External", "External"],
+          ["Performance", "High (reactive)", "Good", "Good"],
+          ["Learning Curve", "Easy", "Medium", "Medium"]
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "value": "GetX excels in reducing boilerplate and providing an all-in-one solution, making it ideal for rapid development and smaller teams."
+    },
+    {
+      "type": "heading",
       "value": "Best Practices"
     },
     {
@@ -127,7 +233,8 @@
         "**Use `StateMixin`** – It reduces boilerplate for loading/error/success states.",
         "**Handle errors gracefully** – Show user-friendly messages and provide a retry option.",
         "**Use `debounce` for search inputs** – Avoid making API calls on every keystroke.",
-        "**Cancel previous requests when appropriate** – Use `CancelToken` with dio to avoid race conditions."
+        "**Cancel previous requests when appropriate** – Use `CancelToken` with dio to avoid race conditions.",
+        "**Implement caching** – Reduce network calls and improve offline experience."
       ]
     },
     {
@@ -140,7 +247,8 @@
         "❌ **Calling API in the view** – Mixing logic with UI.\n✅ Call APIs in controllers or services.",
         "❌ **Not handling loading/error states** – User experience suffers.\n✅ Always show loading indicators and handle errors.",
         "❌ **Forgetting to dispose controllers** – Services are permanent, but controllers should be disposed.\n✅ Use bindings to manage lifecycle.",
-        "❌ **Not using `assignAll` for lists** – Using `list.value = newList` doesn't trigger UI updates correctly.\n✅ Use `assignAll` to replace list contents."
+        "❌ **Not using `assignAll` for lists** – Using `list.value = newList` doesn't trigger UI updates correctly.\n✅ Use `assignAll` to replace list contents.",
+        "❌ **Ignoring timeouts** – Unresponsive UI when network is slow.\n✅ Set timeouts in Dio or http."
       ]
     },
     {
@@ -154,7 +262,8 @@
         "**Q: How do I add headers (e.g., authentication) to API calls?**  \nA: In your service, pass headers to the HTTP client. For `dio`, you can use interceptors to add them globally.",
         "**Q: How do I cache API responses?**  \nA: You can use `GetStorage` or a more advanced caching package like `hive`. Store data after fetching and load from cache when offline.",
         "**Q: How do I handle multiple simultaneous requests?**  \nA: Use `Future.wait` or `Stream.fromFutures`. With GetX, you can use `Obx` with multiple reactive variables.",
-        "**Q: How to test API integration with GetX?**  \nA: Mock the service using a fake implementation and inject it via `Get.put` in tests."
+        "**Q: How to test API integration with GetX?**  \nA: Mock the service using a fake implementation and inject it via `Get.put` in tests.",
+        "**Q: How to handle token refresh automatically?**  \nA: Use a Dio interceptor to detect 401 errors and attempt token refresh before retrying the request."
       ]
     },
     {
@@ -163,7 +272,33 @@
     },
     {
       "type": "text",
-      "value": "GetX provides a clean, reactive approach to API integration. By combining services, controllers with reactive state, and proper error handling, you can build robust data-driven Flutter apps with minimal boilerplate. The pattern is scalable and testable, making it ideal for both small projects and large applications."
+      "value": "GetX provides a clean, reactive approach to API integration. By combining services, controllers with reactive state, and proper error handling, you can build robust data-driven Flutter apps with minimal boilerplate. The pattern is scalable and testable, making it ideal for both small projects and large applications. For advanced use cases, Dio's interceptors and cancel tokens give you fine-grained control over networking."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should I use `http` or `dio`?",
+      "answer": "`dio` offers more features like interceptors, cancel tokens, and form data. `http` is simpler for basic needs."
+    },
+    {
+      "question": "How do I add headers (e.g., authentication) to API calls?",
+      "answer": "In your service, pass headers to the HTTP client. For `dio`, you can use interceptors to add them globally."
+    },
+    {
+      "question": "How do I cache API responses?",
+      "answer": "You can use `GetStorage` or a more advanced caching package like `hive`. Store data after fetching and load from cache when offline."
+    },
+    {
+      "question": "How do I handle multiple simultaneous requests?",
+      "answer": "Use `Future.wait` or `Stream.fromFutures`. With GetX, you can use `Obx` with multiple reactive variables."
+    },
+    {
+      "question": "How to test API integration with GetX?",
+      "answer": "Mock the service using a fake implementation and inject it via `Get.put` in tests."
+    },
+    {
+      "question": "How to handle token refresh automatically?",
+      "answer": "Use a Dio interceptor to detect 401 errors and attempt token refresh before retrying the request."
     }
   ],
   "tryEditor": {

@@ -3,15 +3,16 @@
   "course": "Flutter",
   "title": "GetX Get.find: Retrieving Dependencies Anywhere",
   "meta": {
-    "title": "GetX Get.find – Access Dependencies Without Context",
-    "description": "Master Get.find in GetX: retrieve controllers and services anywhere in your Flutter app, use tags, check registration, and avoid common mistakes.",
+    "title": "GetX Get.find – Access Dependencies Without Context (2026)",
+    "description": "Master Get.find in GetX: retrieve controllers and services anywhere in your Flutter app, use tags, check registration, and avoid common mistakes. Includes best practices and comparison with GetView.",
     "keywords": [
       "GetX Get.find",
       "Get.find",
       "GetX dependency injection",
       "retrieve controller GetX",
       "Get.isRegistered",
-      "Flutter GetX"
+      "Flutter GetX",
+      "GetX find vs getview"
     ]
   },
   "content": [
@@ -22,6 +23,18 @@
     {
       "type": "text",
       "value": "`Get.find` is the method used to **retrieve** an already registered dependency in GetX. It looks up the instance by its type (and optionally a tag) and returns it. This allows you to access controllers, services, or any registered class from anywhere in your app without needing a `BuildContext`."
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Accessing a controller from another controller** – e.g., a `CartController` needs to know the current user from `AuthController`.",
+        "**Calling controller methods from global helpers** – e.g., from a custom `NotificationService` to update UI.",
+        "**Retrieving services in a `GetxService`** – e.g., a `LoggerService` needs the `AnalyticsService`."
+      ]
     },
     {
       "type": "heading",
@@ -86,16 +99,22 @@
     },
     {
       "type": "heading",
-      "value": "Find vs GetX Widgets"
+      "value": "Find vs GetView vs GetX Widget"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Method", "Where to Use", "Pros", "Cons"],
+        "rows": [
+          ["`Get.find<T>()`", "Anywhere (controller, service, widget)", "Universal access, no boilerplate", "Needs manual registration check"],
+          ["`GetView<T>`", "In a StatelessWidget", "Auto-provided `controller`, typed", "Only works in widgets"],
+          ["`GetX<T>`", "In widget build", "Fine-grained rebuild control", "More code than GetView"]
+        ]
+      }
     },
     {
       "type": "text",
-      "value": "`Get.find` is used to retrieve dependencies in logic code. In widgets, you can also use `GetView<T>` to get a typed controller without calling `Get.find` manually."
-    },
-    {
-      "type": "code",
-      "language": "dart",
-      "value": "class HomePage extends GetView<HomeController> {\n  @override\n  Widget build(BuildContext context) {\n    // controller is already available via GetView\n    return Obx(() => Text('${controller.count}'));\n  }\n}"
+      "value": "In widgets, `GetView` is often preferred over `Get.find` because it gives you a typed `controller` without extra code. Use `Get.find` inside controllers, services, or when you need to access a dependency from a non‑widget context."
     },
     {
       "type": "heading",
@@ -112,6 +131,14 @@
     },
     {
       "type": "heading",
+      "value": "Performance Note"
+    },
+    {
+      "type": "text",
+      "value": "`Get.find` is extremely fast (it uses a hash map lookup). However, if you call it many times inside a build method, consider storing the result in a local variable to avoid repeated lookups – though this is rarely a performance bottleneck."
+    },
+    {
+      "type": "heading",
       "value": "Best Practices"
     },
     {
@@ -121,7 +148,8 @@
         "**Check `isRegistered` before find** – Especially in scenarios where the dependency may not be guaranteed to exist.",
         "**Store the result in a local variable if used multiple times** – Avoid repeated `Get.find` calls for performance (though it's already fast).",
         "**Use tags for multiple instances** – This keeps your DI organized and prevents accidental overwrites.",
-        "**Avoid using `Get.find` in `onClose` of the same controller** – May cause infinite loops; instead pass references via constructor."
+        "**Avoid using `Get.find` in `onClose` of the same controller** – May cause infinite loops; instead pass references via constructor.",
+        "**In services, prefer constructor injection** – Let GetX inject dependencies via `Get.find` when you `Get.put` them, but keep constructors clear."
       ]
     },
     {

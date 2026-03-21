@@ -3,7 +3,7 @@
   "course": "Flutter",
   "title": "GetX Dependency Injection: The Complete Guide",
   "meta": {
-    "title": "GetX Dependency Injection – Get.put, Get.lazyPut, Get.create & More",
+    "title": "GetX Dependency Injection – Get.put, Get.lazyPut, Get.create & More (2026)",
     "description": "Master dependency injection in GetX: Get.put, Get.lazyPut, Get.putAsync, Get.create, fenix, permanent, and bindings. Learn how to manage dependencies efficiently in Flutter.",
     "keywords": [
       "GetX dependency injection",
@@ -40,6 +40,22 @@
         "**Easy testing** – Mock dependencies without modifying production code.",
         "**Clean code** – Separate dependency registration from UI logic."
       ]
+    },
+    {
+      "type": "heading",
+      "value": "Comparison of DI Methods"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Method", "Creation Time", "Instance Sharing", "Use Case"],
+        "rows": [
+          ["`Get.put`", "Immediately", "Single instance (shared)", "When you need the instance right away, e.g., main controllers"],
+          ["`Get.lazyPut`", "On first access", "Single instance (shared)", "Most common – improves startup performance"],
+          ["`Get.putAsync`", "Asynchronously immediately", "Single instance (shared)", "When initialization is async (DB, network)"],
+          ["`Get.create`", "Each `Get.find`", "New instance each time", "Transient dependencies, not shared"]
+        ]
+      }
     },
     {
       "type": "heading",
@@ -183,7 +199,8 @@
         "**Inject dependencies via constructor** – Makes testing easier and clarifies dependencies.",
         "**Use `GetxService` for singletons** – For API clients, database connections, etc.",
         "**Avoid using `Get.put` inside widgets** – Use bindings or `Get.lazyPut` to avoid duplicate instances on rebuilds.",
-        "**Set `permanent: true` sparingly** – Only for truly global dependencies that should never be disposed."
+        "**Set `permanent: true` sparingly** – Only for truly global dependencies that should never be disposed.",
+        "**Use `Get.isRegistered` before creating** – Prevents duplicate registrations."
       ]
     },
     {
@@ -196,22 +213,8 @@
         "❌ **Calling `Get.put` inside build method** – Causes multiple instances.\n✅ Use bindings or `Get.lazyPut`.",
         "❌ **Forgetting to dispose streams in `onClose`** – Memory leaks.\n✅ Always clean up resources in `onClose`.",
         "❌ **Not using `Get.find` after async injection** – `Get.putAsync` must be awaited before using `Get.find`.\n✅ Use `FutureBuilder` or await before accessing.",
-        "❌ **Overusing permanent controllers** – Keeps resources alive unnecessarily.\n✅ Let GetX dispose controllers automatically when possible."
-      ]
-    },
-    {
-      "type": "heading",
-      "value": "FAQ"
-    },
-    {
-      "type": "list",
-      "value": [
-        "**Q: What's the difference between `Get.put` and `Get.lazyPut`?**  \nA: `Get.put` creates the instance immediately; `Get.lazyPut` creates it only when first accessed. Use `Get.lazyPut` for better startup performance.",
-        "**Q: When should I use `Get.create`?**  \nA: When you need a fresh instance every time, for example, a controller that should not be shared across different parts of the app.",
-        "**Q: Can I use both `Get.put` and `Get.lazyPut` for the same class?**  \nA: You can, but it will create multiple instances. Usually you want one registration per class. Use `Get.isRegistered` to check before registering.",
-        "**Q: How do I pass parameters to a controller when injecting?**  \nA: Use a factory method in `Get.lazyPut` that takes parameters, or pass them via the binding's constructor and then to the controller registration.",
-        "**Q: What's the difference between `GetxController` and `GetxService`?**  \nA: `GetxService` is a controller marked `permanent` by default. Use it for app-wide services. `GetxController` is disposed when its associated route is removed unless marked permanent.",
-        "**Q: How do I test a controller that uses GetX DI?**  \nA: You can use `Get.reset()` to clear registrations, then manually register mock dependencies with `Get.put` before testing."
+        "❌ **Overusing permanent controllers** – Keeps resources alive unnecessarily.\n✅ Let GetX dispose controllers automatically when possible.",
+        "❌ **Hardcoding `Get.find` in many places** – Makes refactoring harder.\n✅ Use `GetView` or pass dependencies via constructor."
       ]
     },
     {
@@ -221,6 +224,36 @@
     {
       "type": "text",
       "value": "GetX dependency injection is powerful yet simple. It reduces boilerplate, automatically manages lifecycle, and makes your code more modular and testable. By understanding the different injection methods and combining them with bindings, you can build scalable Flutter applications with ease."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What's the difference between `Get.put` and `Get.lazyPut`?",
+      "answer": "`Get.put` creates the instance immediately; `Get.lazyPut` creates it only when first accessed. Use `Get.lazyPut` for better startup performance."
+    },
+    {
+      "question": "When should I use `Get.create`?",
+      "answer": "When you need a fresh instance every time, for example, a controller that should not be shared across different parts of the app."
+    },
+    {
+      "question": "Can I use both `Get.put` and `Get.lazyPut` for the same class?",
+      "answer": "You can, but it will create multiple instances. Usually you want one registration per class. Use `Get.isRegistered` to check before registering."
+    },
+    {
+      "question": "How do I pass parameters to a controller when injecting?",
+      "answer": "Use a factory method in `Get.lazyPut` that takes parameters, or pass them via the binding's constructor and then to the controller registration."
+    },
+    {
+      "question": "What's the difference between `GetxController` and `GetxService`?",
+      "answer": "`GetxService` is a controller marked `permanent` by default. Use it for app-wide services. `GetxController` is disposed when its associated route is removed unless marked permanent."
+    },
+    {
+      "question": "How do I test a controller that uses GetX DI?",
+      "answer": "You can use `Get.reset()` to clear registrations, then manually register mock dependencies with `Get.put` before testing."
+    },
+    {
+      "question": "What is `fenix` in `Get.lazyPut`?",
+      "answer": "`fenix: true` allows the instance to be recreated after it has been disposed. Without it, once disposed, `Get.find` will throw an error. With `fenix: true`, a new instance is created on next access."
     }
   ],
   "tryEditor": {

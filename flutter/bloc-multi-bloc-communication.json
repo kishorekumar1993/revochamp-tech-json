@@ -1,0 +1,248 @@
+{
+  "slug": "bloc-multi-bloc-communication",
+  "course": "Flutter",
+  "title": "Multi-Bloc Communication: Coordinating Multiple BLoCs in Flutter",
+  "meta": {
+    "title": "Multi-Bloc Communication – How to Coordinate Multiple BLoCs in Flutter (2026)",
+    "description": "Learn how to communicate between multiple BLoCs and Cubits in Flutter. Explore global blocs, BlocListener, stream subscriptions, and shared services to build complex, reactive apps.",
+    "keywords": [
+      "multi-bloc communication",
+      "flutter bloc communication",
+      "bloc to bloc communication",
+      "global bloc",
+      "bloc listener",
+      "bloc stream subscription",
+      "flutter_bloc"
+    ]
+  },
+  "level": "Advanced",
+  "readingTime": "12 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Advanced",
+  "tags": ["bloc", "communication", "state management"],
+  "content": [
+    {
+      "type": "text",
+      "value": "In complex Flutter apps, you often have multiple BLoCs or Cubits that need to react to each other's state changes. For example, when a user logs out (handled by `AuthBloc`), all other blocs should clear their data. Or when a product is added to the cart (`CartBloc`), the UI might need to update a badge in the `HomeBloc`. This guide explores various strategies for coordinating multiple blocs, with their pros, cons, and best practices."
+    },
+    {
+      "type": "heading",
+      "value": "Why Multi-Bloc Communication Matters"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Cross‑feature reactions** – e.g., logout triggers reset of all feature states.",
+        "**Shared dependencies** – e.g., a `SettingsBloc` changes theme, affecting all screens.",
+        "**UI consistency** – e.g., a cart counter updated from `CartBloc` is reflected in the `HomeBloc`.",
+        "**Decoupling** – Keeping blocs independent but still able to react to changes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Approach 1: Global Bloc (Shared State)"
+    },
+    {
+      "type": "text",
+      "value": "One of the simplest ways is to have a global bloc that holds state shared across the app (e.g., `AuthBloc`). Other blocs can access this global bloc via `context.read` and react to its state changes. However, to automatically react, they need to either:\n- Use `BlocListener` in the UI to dispatch events to other blocs.\n- Or have the bloc itself subscribe to the global bloc's stream."
+    },
+    {
+      "type": "subheading",
+      "value": "Using BlocListener in UI"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MultiBlocListener(\n      listeners: [\n        BlocListener<AuthBloc, AuthState>(\n          listener: (context, state) {\n            if (state is AuthLoggedOut) {\n              // Clear data in other blocs\n              context.read<CartBloc>().add(ClearCart());\n              context.read<ProductBloc>().add(ClearProducts());\n            }\n          },\n        ),\n      ],\n      child: Scaffold(...),\n    );\n  }\n}"
+    },
+    {
+      "type": "note",
+      "value": "This approach keeps business logic inside the blocs but centralizes cross‑bloc reactions in the UI. It works well for actions that happen on user interactions (like logout)."
+    },
+    {
+      "type": "subheading",
+      "value": "Subscribing in the Bloc Constructor"
+    },
+    {
+      "type": "text",
+      "value": "You can have a bloc listen to another bloc's stream directly and react to changes. This keeps the logic inside the bloc but requires the bloc to have access to the other bloc instance."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CartBloc extends Bloc<CartEvent, CartState> {\n  late final StreamSubscription<AuthState> _authSubscription;\n\n  CartBloc({required AuthBloc authBloc}) : super(CartInitial()) {\n    _authSubscription = authBloc.stream.listen((authState) {\n      if (authState is AuthLoggedOut) {\n        add(ClearCart()); // self-event to clear cart\n      }\n    });\n  }\n\n  @override\n  Future<void> close() {\n    _authSubscription.cancel();\n    return super.close();\n  }\n}"
+    },
+    {
+      "type": "warning",
+      "value": "Always dispose subscriptions in `close()` to prevent memory leaks."
+    },
+    {
+      "type": "heading",
+      "value": "Approach 2: Using a Shared Repository/Service"
+    },
+    {
+      "type": "text",
+      "value": "A cleaner separation is to move shared state out of blocs and into a repository or service that both blocs depend on. For example, an `AuthRepository` can hold a `Stream` of user state, and both `AuthBloc` and `CartBloc` can listen to that stream."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthRepository {\n  final _userController = BehaviorSubject<User?>();\n  Stream<User?> get user => _userController.stream;\n\n  Future<void> login(String email, String password) async {\n    final user = await api.login(email, password);\n    _userController.add(user);\n  }\n\n  void logout() => _userController.add(null);\n}\n\n// CartBloc listens to AuthRepository\nclass CartBloc extends Bloc<CartEvent, CartState> {\n  late final StreamSubscription<User?> _userSubscription;\n\n  CartBloc({required AuthRepository authRepository}) : super(CartInitial()) {\n    _userSubscription = authRepository.user.listen((user) {\n      if (user == null) add(ClearCart());\n    });\n  }\n\n  @override\n  Future<void> close() {\n    _userSubscription.cancel();\n    return super.close();\n  }\n}"
+    },
+    {
+      "type": "note",
+      "value": "This approach moves communication out of blocs and into shared services, making blocs more focused and testable. It also avoids circular dependencies."
+    },
+    {
+      "type": "heading",
+      "value": "Approach 3: Bloc-to-Bloc Communication via Events"
+    },
+    {
+      "type": "text",
+      "value": "Another pattern is to have one bloc dispatch an event to another bloc. This can be done in the UI using `BlocListener` (as shown above) or by injecting a `Bloc` instance into another bloc and calling its `add` method. However, injecting a bloc into another bloc can create tight coupling and is generally discouraged."
+    },
+    {
+      "type": "warning",
+      "value": "Avoid injecting one bloc into another bloc's constructor unless you're absolutely sure it won't create a circular dependency. Prefer using shared services or UI coordination."
+    },
+    {
+      "type": "heading",
+      "value": "Approach 4: Using BlocObserver for Global Reactions"
+    },
+    {
+      "type": "text",
+      "value": "For logging, analytics, or global side effects (like showing a snackbar on any error), you can extend `BlocObserver`. This observer can see all state changes across all blocs and perform actions without injecting dependencies."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppBlocObserver extends BlocObserver {\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    super.onChange(bloc, change);\n    if (change.nextState is AuthFailure) {\n      // Show snackbar globally\n      // You need a reference to a root navigator key\n      rootScaffoldMessengerKey.currentState?.showSnackBar(\n        SnackBar(content: Text('Authentication failed')),\n      );\n    }\n  }\n}\n\nvoid main() {\n  Bloc.observer = AppBlocObserver();\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Comparison of Approaches"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Approach", "Pros", "Cons", "Best For"],
+        "rows": [
+          ["UI with BlocListener", "Simple, keeps blocs decoupled", "Logic lives in UI, harder to test", "One‑time reactions (logout, navigation)"],
+          ["Bloc subscribes to other bloc", "Logic stays in bloc", "Tight coupling, need to manage subscriptions", "When one bloc is clearly a dependency of another"],
+          ["Shared repository/service", "Clean separation, testable", "More boilerplate", "Complex cross‑bloc logic"],
+          ["BlocObserver", "Global side effects", "Not suitable for business logic", "Logging, error reporting"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Prefer shared services** for long‑term dependencies (e.g., auth state).",
+        "**Use UI coordination** for one‑time actions like resetting on logout.",
+        "**Avoid injecting one bloc into another** unless the dependency is very stable and you manage disposal carefully.",
+        "**Always dispose subscriptions** in bloc `close()` to avoid memory leaks.",
+        "**Keep blocs focused** – if two blocs are tightly coupled, consider merging them into one.",
+        "**Use `BlocListener` at appropriate levels** – place it near the UI that needs to react, not at the top of the tree unless necessary."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Creating circular dependencies** – Bloc A depends on Bloc B, and Bloc B depends on Bloc A.\n✅ Use shared services to break the cycle.",
+        "❌ **Forgetting to dispose stream subscriptions** – Leads to memory leaks.\n✅ Always cancel subscriptions in `close()`.",
+        "❌ **Overusing `BlocObserver` for business logic** – It's meant for debugging, not for application logic.\n✅ Keep it for logging and analytics.",
+        "❌ **Injecting blocs into each other's constructors without thinking** – Creates tight coupling and hard‑to‑test code.\n✅ Prefer event‑based UI coordination or shared services."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Example: Shopping App"
+    },
+    {
+      "type": "text",
+      "value": "Imagine an e‑commerce app with `AuthBloc`, `CartBloc`, and `OrderBloc`. When the user logs out:\n- `AuthBloc` emits `LoggedOut`.\n- `CartBloc` should clear the cart.\n- `OrderBloc` should clear order history.\n- UI should show a login screen.\n\n**Solution:** Use a shared `AuthRepository` that exposes a stream. Both `CartBloc` and `OrderBloc` subscribe to it and clear data when the user becomes null. The UI uses `BlocListener` on `AuthBloc` to navigate to login. This keeps blocs independent and testable."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In CartBloc\nCartBloc({required AuthRepository authRepository}) {\n  _userSub = authRepository.user.listen((user) {\n    if (user == null) add(ClearCart());\n  });\n}\n\n// In UI\nBlocListener<AuthBloc, AuthState>(\n  listener: (context, state) {\n    if (state is LoggedOut) {\n      Navigator.pushReplacementNamed(context, '/login');\n    }\n  },\n  child: ...,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Communicating between multiple blocs is a common requirement in larger Flutter apps. Choose the right approach based on your needs: use shared services for long‑term dependencies, UI coordination for one‑time reactions, and avoid tight coupling between blocs. By following these patterns, you can keep your blocs focused, testable, and maintainable."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I have one bloc listen to another bloc's state changes?",
+      "answer": "Yes, you can subscribe to another bloc's stream in the `Bloc` constructor (or `onInit` for Cubit) and react to changes. Just remember to cancel the subscription in `close()`."
+    },
+    {
+      "question": "Is it okay to inject a bloc into another bloc?",
+      "answer": "It's generally discouraged because it creates tight coupling and can lead to circular dependencies. If you must, consider using a shared service or repository instead."
+    },
+    {
+      "question": "How do I handle multi-bloc communication in widget tests?",
+      "answer": "Provide both blocs via `MultiBlocProvider` in your test widget tree. You can then verify that actions in one bloc cause the expected state changes in the other."
+    },
+    {
+      "question": "What's the best way to reset multiple blocs on logout?",
+      "answer": "Either use a shared `AuthRepository` and have each bloc listen to its stream, or use a `BlocListener` in the UI to dispatch reset events to all affected blocs."
+    },
+    {
+      "question": "Can I use `BlocObserver` to coordinate blocs?",
+      "answer": "`BlocObserver` is intended for debugging and logging, not for production business logic. It's global and can cause hard‑to‑track side effects. Use it only for analytics or error reporting."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "comment": "Multi-bloc communication is best demonstrated in a full project with multiple files."
+  },
+  "quiz": [
+    {
+      "question": "What is a potential risk when injecting one bloc into another?",
+      "options": [
+        "Memory leaks",
+        "Circular dependencies and tight coupling",
+        "Slower performance",
+        "Increased code size"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which approach is best for resetting multiple blocs on user logout?",
+      "options": [
+        "Injecting all blocs into AuthBloc and calling reset methods",
+        "Using a shared AuthRepository that exposes a stream for blocs to listen to",
+        "Hardcoding reset calls in every bloc's constructor",
+        "Using a global variable"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Where should you cancel stream subscriptions created inside a bloc?",
+      "options": ["In the bloc's constructor", "In the `close()` method", "In a separate cleanup method", "Automatically by Dart"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-architecture",
+    "bloc-clean-architecture",
+    "bloc-state-management",
+    "bloc-testing",
+    "flutter-dependency-injection"
+  ]
+}
+

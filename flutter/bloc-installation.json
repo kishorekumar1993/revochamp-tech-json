@@ -1,0 +1,253 @@
+{
+  "slug": "bloc-installation",
+  "course": "Flutter",
+  "title": "Setting Up Bloc in Flutter: Installation and Basic Configuration",
+  "meta": {
+    "title": "Flutter Bloc Installation – Setup Guide (2026)",
+    "description": "Step‑by‑step guide to installing and configuring the flutter_bloc package. Learn how to add dependencies, set up a basic bloc, and integrate it into your Flutter app.",
+    "keywords": [
+      "flutter bloc install",
+      "flutter_bloc setup",
+      "bloc provider",
+      "flutter bloc dependencies",
+      "bloc installation guide"
+    ]
+  },
+  "level": "Beginner",
+  "readingTime": "8 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "state-management", "beginner"],
+  "content": [
+    {
+      "type": "text",
+      "value": "If you're new to Flutter state management, Bloc is one of the most powerful and scalable approaches. In this guide, you'll learn how to install and set up Bloc step by step with a simple working example."
+    },
+    {
+      "type": "heading",
+      "value": "How Bloc Works (Quick Overview)"
+    },
+    {
+      "type": "highlight",
+      "value": "User Action → Event → Bloc → State → UI Update"
+    },
+    {
+      "type": "text",
+      "value": "Bloc separates your UI from business logic. The UI sends **events**, the Bloc processes them and produces **states**, and the UI reacts to those states. This makes your code predictable and testable."
+    },
+    {
+      "type": "heading",
+      "value": "What You'll Need"
+    },
+    {
+      "type": "text",
+      "value": "Before installing the BLoC package, make sure you have a Flutter project created. You can create one using `flutter create my_app`. Then open the project in your favourite editor."
+    },
+    {
+      "type": "heading",
+      "value": "Step 1: Add Dependencies"
+    },
+    {
+      "type": "text",
+      "value": "Open your `pubspec.yaml` file and add the following dependencies:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter:\n    sdk: flutter\n  flutter_bloc: ^9.0.0\n  equatable: ^2.0.0    # Optional but highly recommended"
+    },
+    {
+      "type": "text",
+      "value": "Then run `flutter pub get` in your terminal to fetch the packages."
+    },
+    {
+      "type": "note",
+      "value": "The `equatable` package is used to simplify state and event comparison, reducing unnecessary rebuilds. It’s not required but considered a best practice."
+    },
+    {
+      "type": "heading",
+      "value": "Step 2: Create Your First Bloc"
+    },
+    {
+      "type": "text",
+      "value": "Create a folder structure like this to keep your code organised:"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "lib/\n├── bloc/\n│   └── counter/\n│       ├── counter_bloc.dart\n│       ├── counter_event.dart\n│       └── counter_state.dart"
+    },
+    {
+      "type": "subheading",
+      "value": "counter_event.dart"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nabstract class CounterEvent extends Equatable {\n  const CounterEvent();\n\n  @override\n  List<Object> get props => [];\n}\n\nclass CounterIncrementPressed extends CounterEvent {}\n\nclass CounterDecrementPressed extends CounterEvent {}"
+    },
+    {
+      "type": "subheading",
+      "value": "counter_state.dart"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nclass CounterState extends Equatable {\n  final int value;\n\n  const CounterState(this.value);\n\n  @override\n  List<Object> get props => [value];\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "counter_bloc.dart"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\nimport 'counter_event.dart';\nimport 'counter_state.dart';\n\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(const CounterState(0)) {\n    on<CounterIncrementPressed>((event, emit) {\n      emit(CounterState(state.value + 1));\n    });\n\n    on<CounterDecrementPressed>((event, emit) {\n      emit(CounterState(state.value - 1));\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Step 3: Provide the Bloc"
+    },
+    {
+      "type": "text",
+      "value": "Wrap your widget tree with `BlocProvider` to make the bloc available. Usually this is done in `main.dart` or in a dedicated `App` widget."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'bloc/counter/counter_bloc.dart';\nimport 'home_page.dart';\n\nvoid main() {\n  runApp(const MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Bloc Demo',\n      home: BlocProvider(\n        create: (_) => CounterBloc(),\n        child: const HomePage(),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Step 4: Use the Bloc in the UI"
+    },
+    {
+      "type": "text",
+      "value": "In your `HomePage`, use `BlocBuilder` to rebuild when the state changes, and `context.read<CounterBloc>()` to add events."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'bloc/counter/counter_bloc.dart';\nimport 'bloc/counter/counter_event.dart';\n\nclass HomePage extends StatelessWidget {\n  const HomePage({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: const Text('Bloc Counter')),\n      body: Center(\n        child: BlocBuilder<CounterBloc, CounterState>(\n          builder: (context, state) {\n            return Text('Value: ${state.value}', style: const TextStyle(fontSize: 24));\n          },\n        ),\n      ),\n      floatingActionButton: Row(\n        mainAxisAlignment: MainAxisAlignment.end,\n        children: [\n          FloatingActionButton(\n            onPressed: () => context.read<CounterBloc>().add(CounterIncrementPressed()),\n            child: const Icon(Icons.add),\n          ),\n          const SizedBox(width: 10),\n          FloatingActionButton(\n            onPressed: () => context.read<CounterBloc>().add(CounterDecrementPressed()),\n            child: const Icon(Icons.remove),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Optional: Add Bloc Observer for Logging"
+    },
+    {
+      "type": "text",
+      "value": "You can enable logging of all bloc events and states by creating a simple observer and setting it in `main.dart`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\n\nclass SimpleBlocObserver extends BlocObserver {\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    super.onChange(bloc, change);\n    print('${bloc.runtimeType} $change');\n  }\n}\n\n// In main() before runApp:\n// Bloc.observer = SimpleBlocObserver();"
+    },
+    {
+      "type": "heading",
+      "value": "Bloc vs Cubit"
+    },
+    {
+      "type": "text",
+      "value": "Cubit is a simpler version of Bloc that doesn't use events. You call methods directly on the Cubit to emit states. Use Cubit for simple state management and Bloc for complex flows with many event types."
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Usage"
+    },
+    {
+      "type": "text",
+      "value": "The counter example is a starting point. Here’s how Bloc is used in real apps:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Login form** – validation, loading state, error messages",
+        "**API calls** – fetch data with loading and error handling",
+        "**Shopping cart** – add/remove items, calculate total",
+        "**Multi‑step forms** – preserve state across screens"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting Equatable** – states and events won't be compared correctly, causing unnecessary rebuilds.",
+        "❌ **Emitting the same state instance** – UI won’t update if the state object is identical.",
+        "❌ **Creating Bloc inside `build`** – use `BlocProvider` or `BlocProvider.value` to avoid recreation.",
+        "❌ **Using the wrong `BuildContext`** – ensure you have access to the correct provider.",
+        "❌ **Not handling loading/error states** – users need feedback during async operations."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you have a working Bloc setup, explore more advanced topics:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`BlocConsumer`** – combine builder and listener in one widget.",
+        "**`BlocProvider.value`** – share an existing bloc with a new subtree.",
+        "**Testing** – use `bloc_test` to write unit tests for your blocs.",
+        "**Architecture** – see how to structure larger apps with Bloc."
+      ]
+    },
+    {
+      "type": "text",
+      "value": "Next, learn how [Bloc architecture helps structure large applications](/bloc-architecture)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I need Equatable for Bloc in Flutter?",
+      "answer": "No, but it’s highly recommended. Without Equatable, you must override `==` and `hashCode` manually to avoid unnecessary rebuilds. Equatable simplifies that and is the standard practice in the Bloc community."
+    },
+    {
+      "question": "Can I use Bloc with Cubit in the same Flutter app?",
+      "answer": "Yes, `flutter_bloc` includes both Bloc and Cubit. Cubit is a simpler state management approach without events. You can mix them in the same app, using Bloc for complex flows and Cubit for simpler ones."
+    },
+    {
+      "question": "How do I handle dependencies (like a repository) inside a bloc?",
+      "answer": "Pass them via the constructor. For example, `MyBloc(this.repository)`. Then use dependency injection (like `get_it`) to provide the repository when creating the bloc inside `BlocProvider`."
+    },
+    {
+      "question": "Why is my BlocBuilder not rebuilding in Flutter?",
+      "answer": "Check that your state class extends `Equatable` (or overrides `==` and `hashCode`) and that you emit new state objects. Also ensure you are using the correct `BlocProvider` context and that the bloc instance is not being recreated."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "Which package is used to simplify state equality in Bloc?",
+      "options": ["provider", "equatable", "flutter_hooks", "get_it"],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of BlocProvider?",
+      "options": [
+        "To create a new bloc instance",
+        "To make a bloc available to the widget tree",
+        "To listen to state changes",
+        "To emit states"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget should you use to rebuild the UI when the state changes?",
+      "options": ["BlocProvider", "BlocListener", "BlocBuilder", "BlocConsumer"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "bloc-introduction",
+    "bloc-cubit",
+    "bloc-architecture",
+    "bloc-testing",
+    "flutter-dependency-injection"
+  ]
+}

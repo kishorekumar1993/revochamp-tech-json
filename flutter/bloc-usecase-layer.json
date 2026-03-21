@@ -1,0 +1,324 @@
+{
+  "slug": "bloc-usecase-layer",
+  "course": "Flutter",
+  "title": "Use Case Layer: Domain-Driven Business Logic in Flutter Bloc",
+  "meta": {
+    "title": "Flutter Bloc Use Case Layer – Domain-Driven Guide (2026)",
+    "description": "Learn how to implement the use case (interactor) layer with Flutter Bloc. Separate complex business logic, improve testability, and follow Clean Architecture principles.",
+    "keywords": [
+      "flutter bloc use case",
+      "use case layer flutter",
+      "clean architecture bloc",
+      "domain layer flutter",
+      "bloc interactor pattern"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "12 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "use-case", "clean-architecture", "domain-layer"],
+  "content": [
+    {
+      "type": "text",
+      "value": "In large Flutter applications, business logic can become complex and spread across multiple blocs. The **use case layer** (also called the interactor or domain layer) provides a dedicated place for business rules, orchestrating repositories and other dependencies. This guide explains how to implement use cases with Bloc to create scalable, testable applications."
+    },
+    {
+      "type": "heading",
+      "value": "What is a Use Case?"
+    },
+    {
+      "type": "text",
+      "value": "A use case represents a single, specific action that your application can perform – for example, \"login with email and password\" or \"fetch user profile\". It contains the business logic for that action, orchestrating one or more repositories. Use cases are typically stateless and receive input parameters, then return a result (or throw an error)."
+    },
+    {
+      "type": "highlight",
+      "value": "Bloc → Use Case → Repository → Data Source"
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Cases with Bloc?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Separation of concerns** – Blocs focus on state management and event handling; use cases contain domain logic.",
+        "**Reusability** – The same use case can be called from different blocs (e.g., `FetchUser` from both `ProfileBloc` and `SettingsBloc`).",
+        "**Testability** – Use cases are pure Dart classes that can be unit‑tested without any Flutter dependencies.",
+        "**Single responsibility** – Each use case does one thing and does it well.",
+        "**Clarity** – Business logic is explicit and easy to understand, even for non‑technical stakeholders."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Core Components"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Component", "Responsibility"],
+        "rows": [
+          ["Use Case Interface", "Defines the contract for a specific action (optional)"],
+          ["Use Case Implementation", "Contains the business logic, uses repositories"],
+          ["Bloc", "Calls use cases, handles results, emits states"],
+          ["Repository", "Provides data, used by use cases"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Step-by-Step Implementation"
+    },
+    {
+      "type": "subheading",
+      "value": "1. Define the Use Case"
+    },
+    {
+      "type": "text",
+      "value": "Create a class that represents the use case. It should depend on repositories and expose an `execute` (or `call`) method. Use `Either` or a custom result type for error handling, or throw exceptions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/domain/usecases/login_usecase.dart\nimport 'package:dartz/dartz.dart';\nimport 'package:myapp/core/error/failures.dart';\nimport 'package:myapp/features/auth/domain/entities/user.dart';\nimport 'package:myapp/features/auth/domain/repositories/auth_repository.dart';\n\nclass LoginUseCase {\n  final AuthRepository repository;\n\n  LoginUseCase(this.repository);\n\n  Future<Either<Failure, User>> execute(String email, String password) async {\n    try {\n      final user = await repository.login(email, password);\n      return Right(user);\n    } catch (e) {\n      return Left(ServerFailure(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "note",
+      "value": "You can use a package like `dartz` for `Either`, or create your own `Result` class. Alternatively, you can throw exceptions and let the bloc catch them – but using a result type makes the outcome explicit."
+    },
+    {
+      "type": "subheading",
+      "value": "2. Use the Use Case in a Bloc"
+    },
+    {
+      "type": "text",
+      "value": "Inject the use case into the bloc and call it in the event handler. The bloc then emits states based on the result."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/bloc/auth_bloc.dart\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  final LoginUseCase loginUseCase;\n\n  AuthBloc(this.loginUseCase) : super(AuthInitial()) {\n    on<LoginRequested>(_onLoginRequested);\n  }\n\n  Future<void> _onLoginRequested(\n    LoginRequested event,\n    Emitter<AuthState> emit,\n  ) async {\n    emit(AuthLoading());\n    final result = await loginUseCase.execute(event.email, event.password);\n    result.fold(\n      (failure) => emit(AuthFailure(failure.message)),\n      (user) => emit(AuthSuccess(user)),\n    );\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Define Failure Classes"
+    },
+    {
+      "type": "text",
+      "value": "To have consistent error handling, define a hierarchy of failures (or exceptions)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/core/error/failures.dart\nabstract class Failure {\n  final String message;\n  Failure(this.message);\n}\n\nclass ServerFailure extends Failure {\n  ServerFailure(String message) : super(message);\n}\n\nclass CacheFailure extends Failure {\n  CacheFailure(String message) : super(message);\n}\n\nclass NetworkFailure extends Failure {\n  NetworkFailure(String message) : super(message);\n}\n\nclass ValidationFailure extends Failure {\n  ValidationFailure(String message) : super(message);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Use Cases with Parameters"
+    },
+    {
+      "type": "text",
+      "value": "For use cases that require multiple parameters, define a simple parameter object to keep the API clean and allow easier extension."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class GetUserProfileUseCase {\n  final UserRepository repository;\n\n  GetUserProfileUseCase(this.repository);\n\n  Future<Either<Failure, User>> execute(Params params) async {\n    return repository.getUser(params.userId);\n  }\n}\n\nclass Params {\n  final String userId;\n  Params(this.userId);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Use Cases that Combine Multiple Repositories"
+    },
+    {
+      "type": "text",
+      "value": "One of the main benefits of use cases is orchestrating multiple repositories. For example, a `RegisterUserUseCase` might call both `AuthRepository` and `AnalyticsRepository`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class RegisterUserUseCase {\n  final AuthRepository authRepository;\n  final AnalyticsRepository analyticsRepository;\n\n  RegisterUserUseCase(this.authRepository, this.analyticsRepository);\n\n  Future<Either<Failure, User>> execute(RegisterParams params) async {\n    try {\n      final user = await authRepository.register(params.email, params.password);\n      await analyticsRepository.trackEvent('user_registered', {'email': params.email});\n      return Right(user);\n    } catch (e) {\n      return Left(ServerFailure(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Dependency Injection for Use Cases"
+    },
+    {
+      "type": "text",
+      "value": "Use a service locator like `get_it` to register use cases and inject repositories. This makes them available to your blocs."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/di/injection.dart\nimport 'package:get_it/get_it.dart';\n\nfinal getIt = GetIt.instance;\n\nvoid setup() {\n  // Repositories\n  getIt.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(...));\n\n  // Use cases\n  getIt.registerLazySingleton(() => LoginUseCase(getIt<AuthRepository>()));\n  getIt.registerLazySingleton(() => RegisterUserUseCase(\n    getIt<AuthRepository>(),\n    getIt<AnalyticsRepository>(),\n  ));\n\n  // Blocs\n  getIt.registerFactory(() => AuthBloc(getIt<LoginUseCase>(), getIt<RegisterUserUseCase>()));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Use Cases"
+    },
+    {
+      "type": "text",
+      "value": "Use cases are easy to test because they have no Flutter dependencies. You can mock repositories and verify the business logic."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:mocktail/mocktail.dart';\nimport 'package:test/test.dart';\n\nclass MockAuthRepository extends Mock implements AuthRepository {}\n\nvoid main() {\n  late MockAuthRepository mockRepository;\n  late LoginUseCase useCase;\n\n  setUp(() {\n    mockRepository = MockAuthRepository();\n    useCase = LoginUseCase(mockRepository);\n  });\n\n  test('returns User when login succeeds', () async {\n    final user = User(id: '1', name: 'Test', email: 'test@example.com');\n    when(() => mockRepository.login('test@example.com', 'password'))\n        .thenAnswer((_) async => user);\n\n    final result = await useCase.execute('test@example.com', 'password');\n\n    expect(result.isRight(), true);\n    result.fold(\n      (failure) => fail('Should not be failure'),\n      (userResult) => expect(userResult, user),\n    );\n  });\n\n  test('returns Failure when login fails', () async {\n    when(() => mockRepository.login('wrong', 'wrong'))\n        .thenThrow(Exception('Invalid credentials'));\n\n    final result = await useCase.execute('wrong', 'wrong');\n\n    expect(result.isLeft(), true);\n    result.fold(\n      (failure) => expect(failure.message, 'Exception: Invalid credentials'),\n      (user) => fail('Should not be user'),\n    );\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Use Case Variations"
+    },
+    {
+      "type": "subheading",
+      "value": "Streaming Use Cases"
+    },
+    {
+      "type": "text",
+      "value": "Some use cases return a stream of data (e.g., real-time updates). The use case can expose a stream, and the bloc can subscribe to it."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class GetMessagesUseCase {\n  final MessageRepository repository;\n\n  GetMessagesUseCase(this.repository);\n\n  Stream<List<Message>> execute() {\n    return repository.getMessages();\n  }\n}\n\n// In bloc:\non<SubscribeToMessages>((event, emit) async {\n  await emit.forEach(\n    getMessagesUseCase.execute(),\n    onData: (messages) => MessagesLoaded(messages),\n  );\n});"
+    },
+    {
+      "type": "subheading",
+      "value": "Use Cases with Input Validation"
+    },
+    {
+      "type": "text",
+      "value": "You can add validation inside the use case before calling repositories, returning a `ValidationFailure` if input is invalid."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class RegisterUseCase {\n  final AuthRepository repository;\n\n  RegisterUseCase(this.repository);\n\n  Future<Either<Failure, User>> execute(String email, String password) async {\n    if (!isValidEmail(email)) {\n      return Left(ValidationFailure('Invalid email format'));\n    }\n    if (password.length < 6) {\n      return Left(ValidationFailure('Password too short'));\n    }\n    return repository.register(email, password);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Complex business logic** – When a bloc would become large and contain many conditional branches.",
+        "**Shared logic** – When the same business rule is needed in multiple blocs.",
+        "**Testing** – When you want to test business logic without UI dependencies.",
+        "**Clean Architecture** – When you want to strictly separate domain, data, and presentation layers."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "When to Skip Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Simple CRUD apps** – If a bloc only calls a single repository method, the use case adds boilerplate.",
+        "**Prototypes** – For speed, you can put logic directly in the bloc and refactor later.",
+        "**Very small teams/projects** – Sometimes simplicity is better than perfect architecture."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep use cases stateless** – No mutable state inside a use case (it can be reused across calls).",
+        "**Use meaningful names** – `LoginUseCase`, `FetchUserProfileUseCase` – the name should describe the action.",
+        "**Return a result type** – Use `Either` or a custom `Result` to make error handling explicit.",
+        "**Inject dependencies** – Never instantiate repositories inside a use case.",
+        "**Test use cases thoroughly** – Write unit tests for both success and error paths.",
+        "**Avoid UI-specific code** – Use cases should never know about `BuildContext`, `Navigator`, etc."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Putting too much logic in a single use case** – Violates single responsibility; split into smaller use cases.",
+        "❌ **Returning data source exceptions directly** – Wrap them in meaningful failures.",
+        "❌ **Using use cases for trivial operations** – Adds unnecessary indirection for simple calls.",
+        "❌ **Storing state in use cases** – Use cases should be stateless; keep state in blocs or repositories.",
+        "❌ **Calling use cases from the UI directly** – Use cases should be called by blocs, not directly from widgets."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you have a solid domain layer, explore how to integrate it with the repository pattern and dependency injection to build a complete Clean Architecture app."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Repository pattern with Bloc](/bloc-repository-pattern) and [Clean Architecture with Bloc](/bloc-architecture)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What's the difference between a use case and a repository?",
+      "answer": "A repository is responsible for data operations (CRUD) and abstracts data sources. A use case contains business logic and orchestrates one or more repositories. For example, a `TransferMoneyUseCase` might call `AccountRepository` to check balance, then call `TransactionRepository` to perform the transfer."
+    },
+    {
+      "question": "Should every bloc have its own use cases?",
+      "answer": "Not necessarily. You can share use cases across blocs. If two blocs need the same business rule (e.g., `FetchUserProfile`), you can inject the same use case into both blocs."
+    },
+    {
+      "question": "Can I use use cases with Cubit?",
+      "answer": "Yes, absolutely. Cubits can also depend on use cases. The pattern is the same – the cubit calls the use case and emits states based on the result."
+    },
+    {
+      "question": "How do I handle errors in use cases?",
+      "answer": "There are two common approaches: (1) throw exceptions and catch them in the bloc, or (2) return a result type (like `Either<Failure, Success>`). The result type approach is more explicit and makes the possible outcomes clear in the method signature."
+    },
+    {
+      "question": "Do I need a use case interface?",
+      "answer": "Not always. If you're not planning to have multiple implementations or mock for testing, you can skip the interface. However, having an abstract class (e.g., `abstract class LoginUseCase`) can make testing easier if you want to mock the use case itself."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What is the main responsibility of a use case in a Bloc application?",
+      "options": [
+        "Managing UI state",
+        "Orchestrating business logic and repositories",
+        "Handling HTTP requests",
+        "Providing dependency injection"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which of the following is a benefit of using a use case layer?",
+      "options": [
+        "Faster app startup",
+        "Improved testability of business logic",
+        "Automatic navigation handling",
+        "Built-in state persistence"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What should a use case typically return?",
+      "options": [
+        "A Flutter Widget",
+        "A Stream of events",
+        "A result type (success/failure) or throw exceptions",
+        "A BuildContext"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "bloc-repository-pattern",
+    "bloc-architecture",
+    "bloc-testing",
+    "flutter-dependency-injection",
+    "bloc-bloc-class"
+  ]
+}

@@ -1,9 +1,10 @@
+
 {
   "slug": "getx-custom-rx-model",
   "course": "Flutter",
   "title": "GetX Custom Rx Models: Reactive Objects & Nested Properties",
   "meta": {
-    "title": "GetX Custom Rx Models – Reactive Custom Objects & Nested State",
+    "title": "GetX Custom Rx Models – Reactive Custom Objects & Nested State (2026)",
     "description": "Learn how to make custom classes reactive in GetX. Master Rx<T>, .obs, updating nested properties, and working with reactive lists of custom objects.",
     "keywords": [
       "GetX custom model",
@@ -78,6 +79,21 @@
     },
     {
       "type": "heading",
+      "value": "Comparison: update() vs refresh() vs replace"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Method", "Syntax", "When to Use", "UI Update"],
+        "rows": [
+          ["`update()`", "`rx.update((obj) => obj?.prop = val)`", "Modifying nested properties", "Automatic after callback"],
+          ["`refresh()`", "`rx.refresh()`", "After manual modifications or when object reference unchanged", "Manual trigger"],
+          ["Replace object", "`rx.value = newObject`", "When you have a new instance (immutable models)", "Automatic on assignment"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
       "value": "5. Reactive Lists of Custom Objects"
     },
     {
@@ -144,25 +160,33 @@
     },
     {
       "type": "heading",
-      "value": "FAQ"
-    },
-    {
-      "type": "list",
-      "value": [
-        "**Q: When should I use `update` vs `refresh`?**  \nA: Use `update` when you want to modify the object and automatically notify listeners. Use `refresh` after manual modifications to the object’s properties.",
-        "**Q: Can I use `Rx` with freezed classes?**  \nA: Yes, freezed classes work perfectly with Rx because they are immutable. Simply assign a new instance to `.value`.",
-        "**Q: How do I make a reactive list of custom objects that each have their own reactive properties?**  \nA: You can make each item itself reactive (e.g., `Rx<User>` inside a `RxList<Rx<User>>`). But that’s complex; usually it’s easier to refresh the whole list when an item changes.",
-        "**Q: What’s the difference between `RxList` and `List` with `.obs`?**  \nA: They are the same: `var list = <User>[].obs` creates an `RxList<User>`.",
-        "**Q: How to listen to changes in a specific property of a custom model?**  \nA: You can use workers on the whole object, or split the property into its own `Rx` variable inside the controller. If you need fine-grained reactivity, consider using computed values."
-      ]
-    },
-    {
-      "type": "heading",
       "value": "Conclusion"
     },
     {
       "type": "text",
       "value": "Making custom models reactive in GetX is straightforward. By understanding how to update nested properties, when to use `update`, and how to work with reactive lists, you can build reactive UIs that react to changes in complex data structures. Adopting immutable models can simplify the pattern further and reduce the risk of missing updates."
+    }
+  ],
+  "faq": [
+    {
+      "question": "When should I use `update` vs `refresh`?",
+      "answer": "Use `update` when you want to modify the object and automatically notify listeners. Use `refresh` after manual modifications to the object’s properties."
+    },
+    {
+      "question": "Can I use `Rx` with freezed classes?",
+      "answer": "Yes, freezed classes work perfectly with Rx because they are immutable. Simply assign a new instance to `.value`."
+    },
+    {
+      "question": "How do I make a reactive list of custom objects that each have their own reactive properties?",
+      "answer": "You can make each item itself reactive (e.g., `Rx<User>` inside a `RxList<Rx<User>>`). But that’s complex; usually it’s easier to refresh the whole list when an item changes."
+    },
+    {
+      "question": "What’s the difference between `RxList` and `List` with `.obs`?",
+      "answer": "They are the same: `var list = <User>[].obs` creates an `RxList<User>`."
+    },
+    {
+      "question": "How to listen to changes in a specific property of a custom model?",
+      "answer": "You can use workers on the whole object, or split the property into its own `Rx` variable inside the controller. If you need fine-grained reactivity, consider using computed values."
     }
   ],
   "tryEditor": {

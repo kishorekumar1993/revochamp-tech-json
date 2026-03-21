@@ -1,0 +1,210 @@
+{
+  "slug": "bloc-multiblocprovider",
+  "course": "Flutter",
+  "title": "MultiBlocProvider: Managing Multiple Blocs in Flutter",
+  "meta": {
+    "title": "MultiBlocProvider – Flutter Bloc Multiple Providers Guide (2026)",
+    "description": "Learn how to use MultiBlocProvider to provide multiple blocs efficiently. Nesting, scoping, performance, and best practices for large Flutter applications.",
+    "keywords": [
+      "flutter multiblocprovider",
+      "multiple bloc providers",
+      "bloc provider nesting",
+      "flutter bloc multiple blocs",
+      "bloc scope"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "7 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "multiblocprovider", "dependency-injection"],
+  "content": [
+    {
+      "type": "text",
+      "value": "As your Flutter app grows, you'll often need to provide multiple blocs to different parts of the widget tree. Nesting `BlocProvider` widgets works, but can lead to deeply indented code. `MultiBlocProvider` solves this by combining multiple providers into a single widget, improving readability and maintainability."
+    },
+    {
+      "type": "heading",
+      "value": "What is MultiBlocProvider?"
+    },
+    {
+      "type": "text",
+      "value": "`MultiBlocProvider` is a convenience widget that merges multiple `BlocProvider` widgets into one. It takes a list of providers and a single child, effectively flattening the widget tree. Internally, it nests the providers in the order they are given, but without the visual indentation."
+    },
+    {
+      "type": "highlight",
+      "value": "MultiBlocProvider(providers: [BlocProvider(...), BlocProvider(...)], child: ...)"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use MultiBlocProvider"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Top-level app setup** – Provide global blocs (e.g., `AuthBloc`, `ThemeBloc`) near the root.",
+        "**Feature modules** – Group all blocs needed for a feature in one place.",
+        "**Any time you have 2+ BlocProviders** – Improves readability and reduces nesting."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "Replace nested `BlocProvider` widgets with `MultiBlocProvider`. The order of providers matters: they are applied from top to bottom, so later providers can depend on earlier ones."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Instead of this:\nBlocProvider<AuthBloc>(\n  create: (context) => AuthBloc(),\n  child: BlocProvider<ProfileBloc>(\n    create: (context) => ProfileBloc(context.read<AuthBloc>()),\n    child: MyApp(),\n  ),\n)\n\n// Use MultiBlocProvider:\nMultiBlocProvider(\n  providers: [\n    BlocProvider<AuthBloc>(create: (context) => AuthBloc()),\n    BlocProvider<ProfileBloc>(\n      create: (context) => ProfileBloc(context.read<AuthBloc>()),\n    ),\n  ],\n  child: MyApp(),\n)"
+    },
+    {
+      "type": "note",
+      "value": "The `create` functions are called in the order of the `providers` list. This allows later blocs to depend on earlier ones using `context.read<PreviousBloc>()`."
+    },
+    {
+      "type": "heading",
+      "value": "Nesting vs MultiBlocProvider"
+    },
+    {
+      "type": "text",
+      "value": "While `MultiBlocProvider` is cleaner, sometimes you still need explicit nesting for scoping reasons. For example, if you want a bloc to be available only inside a specific subtree, you might nest a `BlocProvider` inside a child of a `MultiBlocProvider`. The two approaches can be combined."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MultiBlocProvider(\n  providers: [\n    BlocProvider<AuthBloc>(create: (_) => AuthBloc()),\n  ],\n  child: SomeWidget(\n    child: BlocProvider<FeatureBloc>(\n      create: (_) => FeatureBloc(),\n      child: FeatureScreen(),\n    ),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Scoping with MultiBlocProvider"
+    },
+    {
+      "type": "text",
+      "value": "Each `BlocProvider` in the list creates its own scope. Blocs are available to all descendants of the `MultiBlocProvider`. If you need a bloc only in a part of the tree, place the `MultiBlocProvider` at the appropriate level."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FeaturePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MultiBlocProvider(\n      providers: [\n        BlocProvider<FormBloc>(create: (_) => FormBloc()),\n        BlocProvider<ValidationBloc>(create: (_) => ValidationBloc()),\n      ],\n      child: FormScreen(), // only these blocs are available here\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Combining with Other Bloc Widgets"
+    },
+    {
+      "type": "text",
+      "value": "`MultiBlocProvider` works seamlessly with other bloc widgets like `BlocBuilder`, `BlocListener`, and `BlocConsumer`. You can also combine it with `MultiRepositoryProvider` if you need to provide repositories."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MultiBlocProvider(\n  providers: [\n    BlocProvider<AuthBloc>(create: (_) => AuthBloc()),\n    BlocProvider<SettingsBloc>(create: (_) => SettingsBloc()),\n  ],\n  child: MultiRepositoryProvider(\n    providers: [\n      RepositoryProvider<AuthRepository>(create: (_) => AuthRepositoryImpl()),\n      RepositoryProvider<SettingsRepository>(create: (_) => SettingsRepositoryImpl()),\n    ],\n    child: MyApp(),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Considerations"
+    },
+    {
+      "type": "text",
+      "value": "`MultiBlocProvider` does not add any runtime overhead compared to nested providers – it simply reorganises the code. The `create` functions are called only once when the widget is inserted, so there's no performance penalty. However, be mindful of creating blocs that are never used; provide them only where needed."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Group related blocs** – Keep providers together in a `MultiBlocProvider` at the feature or app level.",
+        "**Maintain order** – Ensure dependent blocs come after the blocs they depend on in the `providers` list.",
+        "**Use for root providers** – Place global blocs (auth, theme) in a `MultiBlocProvider` above `MaterialApp`.",
+        "**Combine with `MultiRepositoryProvider`** – Keep DI clean by grouping both blocs and repositories.",
+        "**Avoid over-providing** – Don't provide a bloc at the top if it's only needed in one branch; scope it lower."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Incorrect order** – Placing a bloc that depends on another before it in the list will cause a `ProviderNotFoundException`.",
+        "❌ **Providing too many blocs globally** – Increases memory usage and can lead to unintended state sharing.",
+        "❌ **Forgetting to use `MultiBlocProvider` for multiple providers** – Leads to deeply nested code that is hard to read.",
+        "❌ **Creating a bloc inside `build` inside the provider** – Ensure `create` is a function that returns a new instance, not an existing one."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you can manage multiple blocs efficiently, learn how to test them and handle more advanced scenarios like dependency injection with `get_it`."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Bloc testing](/bloc-testing) and [Dependency injection with get_it](/flutter-dependency-injection)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Is MultiBlocProvider the same as nesting BlocProvider widgets?",
+      "answer": "Yes, functionally it is identical. MultiBlocProvider is just a convenience that reduces nesting and improves readability. The order of providers is preserved, and each provider's lifecycle is independent."
+    },
+    {
+      "question": "Can I use MultiBlocProvider with BlocProvider.value?",
+      "answer": "Yes, you can include `BlocProvider.value` in the providers list. However, remember that `BlocProvider.value` does not automatically close the bloc, so ensure the bloc is properly managed elsewhere."
+    },
+    {
+      "question": "How many providers can I put in MultiBlocProvider?",
+      "answer": "There's no practical limit, but it's a good practice to keep the list manageable. If you have many providers, consider splitting them into multiple MultiBlocProvider widgets at different levels of the tree to better scope them."
+    },
+    {
+      "question": "Does the order of providers in MultiBlocProvider matter?",
+      "answer": "Yes. The `create` functions are called in the order they appear. If a later bloc depends on an earlier one (via `context.read`), it will work. If you reverse the order, it may fail because the dependency isn't yet available."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What is the primary benefit of using MultiBlocProvider over nested BlocProvider widgets?",
+      "options": [
+        "Performance improvement",
+        "Reduced nesting and improved readability",
+        "Automatic bloc disposal",
+        "Ability to provide multiple bloc types"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "In a MultiBlocProvider, which statement about the order of providers is true?",
+      "options": [
+        "Order doesn't matter",
+        "Providers are applied in reverse order",
+        "Later providers can depend on earlier providers",
+        "All providers are created simultaneously"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What happens if you try to access a bloc that is provided later in the MultiBlocProvider list from an earlier provider's create function?",
+      "options": [
+        "It works because all providers are created together",
+        "It throws a ProviderNotFoundException",
+        "It returns null",
+        "It creates the bloc automatically"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-provider",
+    "bloc-introduction",
+    "bloc-architecture",
+    "bloc-testing",
+    "flutter-dependency-injection"
+  ]
+}

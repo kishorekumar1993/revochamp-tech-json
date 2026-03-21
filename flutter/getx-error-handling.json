@@ -3,7 +3,7 @@
   "course": "Flutter",
   "title": "GetX Error Handling: Best Practices for Robust Apps",
   "meta": {
-    "title": "GetX Error Handling – Catching & Displaying Errors in Flutter",
+    "title": "GetX Error Handling – Catching & Displaying Errors in Flutter (2026)",
     "description": "Learn how to handle errors effectively in GetX. Use try-catch, workers, Rx variables, and UI feedback to build resilient Flutter applications.",
     "keywords": [
       "GetX error handling",
@@ -11,7 +11,10 @@
       "GetX snackbar error",
       "GetX workers error",
       "Rx error state",
-      "GetX try catch"
+      "GetX try catch",
+      "global error handler",
+      "StateMixin error",
+      "flutter api error handling"
     ]
   },
   "content": [
@@ -116,6 +119,21 @@
     },
     {
       "type": "heading",
+      "value": "Comparison: Try-Catch vs StateMixin vs Workers"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Approach", "Best For", "Pros", "Cons"],
+        "rows": [
+          ["Try-Catch + Rx", "Simple, per‑operation error handling", "Fine control, explicit", "Requires manual UI binding"],
+          ["StateMixin", "Loading/error/success patterns", "Boilerplate reduction, built‑in states", "Less flexible for complex states"],
+          ["Workers", "Global reactions to errors (e.g., snackbar)", "Centralised, automatic", "May obscure source of error"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
       "value": "Best Practices"
     },
     {
@@ -126,7 +144,8 @@
         "**Provide a retry option** – Especially for network errors.",
         "**Use `StateMixin`** – Reduces boilerplate for loading/error/success.",
         "**Log errors** – Helps with debugging and monitoring.",
-        "**Set a global error handler** – Catches unexpected errors outside GetX."
+        "**Set a global error handler** – Catches unexpected errors outside GetX.",
+        "**Reset error state before retry** – Prevents stale errors from being shown."
       ]
     },
     {
@@ -144,25 +163,33 @@
     },
     {
       "type": "heading",
-      "value": "FAQ"
-    },
-    {
-      "type": "list",
-      "value": [
-        "**Q: How do I handle errors in workers?**  \nA: Wrap the worker callback in a try-catch, or use `ever` on an error variable to show notifications.",
-        "**Q: Can I use `Get.dialog` to show error alerts?**  \nA: Yes, inside the error handler you can call `Get.dialog` with an error message.",
-        "**Q: How to handle errors from `Get.to`?**  \nA: You can await `Get.to` and wrap it in a try-catch if the pushed screen might throw.",
-        "**Q: What about `onInit` errors?**  \nA: Since `onInit` is not `async`, you cannot use `await`. Use `Future.microtask` or move async calls to a separate method called from `onInit`.",
-        "**Q: How to test error handling?**  \nA: Mock the failing dependency and verify that the error variable is updated or that `Get.snackbar` is called."
-      ]
-    },
-    {
-      "type": "heading",
       "value": "Conclusion"
     },
     {
       "type": "text",
       "value": "Error handling in GetX is straightforward when you combine reactive state, workers, and the same patterns you use for data. By following these practices, you can build Flutter apps that gracefully recover from errors and provide a smooth user experience."
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I handle errors in workers?",
+      "answer": "Wrap the worker callback in a try-catch, or use `ever` on an error variable to show notifications."
+    },
+    {
+      "question": "Can I use `Get.dialog` to show error alerts?",
+      "answer": "Yes, inside the error handler you can call `Get.dialog` with an error message."
+    },
+    {
+      "question": "How to handle errors from `Get.to`?",
+      "answer": "You can await `Get.to` and wrap it in a try-catch if the pushed screen might throw."
+    },
+    {
+      "question": "What about `onInit` errors?",
+      "answer": "Since `onInit` is not `async`, you cannot use `await`. Use `Future.microtask` or move async calls to a separate method called from `onInit`."
+    },
+    {
+      "question": "How to test error handling?",
+      "answer": "Mock the failing dependency and verify that the error variable is updated or that `Get.snackbar` is called."
     }
   ],
   "tryEditor": {

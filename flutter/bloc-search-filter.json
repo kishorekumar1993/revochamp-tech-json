@@ -1,0 +1,248 @@
+{
+  "slug": "bloc-search-filter",
+  "course": "Flutter",
+  "title": "Search and Filter with Bloc: Debounced, Reactive List Filtering",
+  "meta": {
+    "title": "Flutter Bloc Search and Filter – Complete Guide (2026)",
+    "description": "Learn how to implement real‑time search and filter in Flutter using Bloc. Debouncing, combining filters, handling loading states, and optimizing performance.",
+    "keywords": [
+      "flutter bloc search",
+      "bloc filter",
+      "debounce flutter",
+      "search with bloc",
+      "reactive list filtering"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "11 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "search", "filter", "debounce"],
+  "content": [
+    {
+      "type": "text",
+      "value": "Search and filter are essential features in many apps. Using Bloc, you can build reactive, performant search experiences that debounce user input, handle loading states, and combine multiple filters elegantly. This guide covers everything from simple local filtering to remote API search with real‑time feedback."
+    },
+    {
+      "type": "heading",
+      "value": "Why Bloc for Search & Filter?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Reactive UI** – The list updates automatically as the user types or changes filters.",
+        "**Debouncing built‑in** – Event transformers let you delay search requests until the user stops typing.",
+        "**Centralized state** – Search query, filters, results, and loading state live in one place.",
+        "**Testable** – You can unit‑test the search logic and filtering rules without UI.",
+        "**Performance** – Optimize rebuilds by listening only to relevant parts of the state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Local vs Remote Search"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Scenario", "Use Case", "Implementation"],
+        "rows": [
+          ["Local Search", "Small, static datasets", "Bloc filters an in‑memory list; no network calls."],
+          ["Remote Search", "Large datasets or API‑backed", "Bloc sends debounced requests to an API; emits loading/error states."]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Example 1: Local Search & Filter"
+    },
+    {
+      "type": "text",
+      "value": "We'll build a product list with a search field and category filter. All data is stored locally, and the bloc filters the list reactively."
+    },
+    {
+      "type": "subheading",
+      "value": "1. Define Events"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class ProductEvent {}\n\nclass SearchQueryChanged extends ProductEvent {\n  final String query;\n  SearchQueryChanged(this.query);\n}\n\nclass CategoryFilterChanged extends ProductEvent {\n  final String? category;\n  CategoryFilterChanged(this.category);\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Define State"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProductState extends Equatable {\n  final List<Product> allProducts;\n  final List<Product> filteredProducts;\n  final String searchQuery;\n  final String? selectedCategory;\n  final Set<String> categories;\n\n  const ProductState({\n    required this.allProducts,\n    required this.filteredProducts,\n    this.searchQuery = '',\n    this.selectedCategory,\n    required this.categories,\n  });\n\n  ProductState copyWith({...}) { ... }\n\n  @override\n  List<Object?> get props => [allProducts, filteredProducts, searchQuery, selectedCategory, categories];\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Implement Bloc"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProductBloc extends Bloc<ProductEvent, ProductState> {\n  ProductBloc({required List<Product> initialProducts})\n      : super(ProductState(\n          allProducts: initialProducts,\n          filteredProducts: initialProducts,\n          categories: initialProducts.map((p) => p.category).toSet(),\n        )) {\n    on<SearchQueryChanged>(_onSearchQueryChanged);\n    on<CategoryFilterChanged>(_onCategoryFilterChanged);\n  }\n\n  void _onSearchQueryChanged(SearchQueryChanged event, Emitter<ProductState> emit) {\n    final newState = state.copyWith(searchQuery: event.query);\n    final filtered = _applyFilters(newState);\n    emit(newState.copyWith(filteredProducts: filtered));\n  }\n\n  void _onCategoryFilterChanged(CategoryFilterChanged event, Emitter<ProductState> emit) {\n    final newState = state.copyWith(selectedCategory: event.category);\n    final filtered = _applyFilters(newState);\n    emit(newState.copyWith(filteredProducts: filtered));\n  }\n\n  List<Product> _applyFilters(ProductState state) {\n    return state.allProducts.where((product) {\n      final matchesSearch = state.searchQuery.isEmpty ||\n          product.name.toLowerCase().contains(state.searchQuery.toLowerCase()) ||\n          product.description.toLowerCase().contains(state.searchQuery.toLowerCase());\n      final matchesCategory = state.selectedCategory == null ||\n          product.category == state.selectedCategory;\n      return matchesSearch && matchesCategory;\n    }).toList();\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "4. Build UI"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProductListPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Products')),\n      body: Column(\n        children: [\n          Padding(\n            padding: const EdgeInsets.all(8.0),\n            child: TextField(\n              onChanged: (value) => context.read<ProductBloc>().add(SearchQueryChanged(value)),\n              decoration: InputDecoration(\n                hintText: 'Search...',\n                prefixIcon: Icon(Icons.search),\n              ),\n            ),\n          ),\n          BlocBuilder<ProductBloc, ProductState>(\n            builder: (context, state) {\n              return Wrap(\n                children: state.categories.map((cat) {\n                  return FilterChip(\n                    label: Text(cat),\n                    selected: state.selectedCategory == cat,\n                    onSelected: (_) => context.read<ProductBloc>().add(CategoryFilterChanged(\n                      state.selectedCategory == cat ? null : cat,\n                    )),\n                  );\n                }).toList(),\n              );\n            },\n          ),\n          Expanded(\n            child: BlocBuilder<ProductBloc, ProductState>(\n              builder: (context, state) {\n                if (state.filteredProducts.isEmpty) {\n                  return Center(child: Text('No products found'));\n                }\n                return ListView.builder(\n                  itemCount: state.filteredProducts.length,\n                  itemBuilder: (_, index) => ListTile(\n                    title: Text(state.filteredProducts[index].name),\n                    subtitle: Text(state.filteredProducts[index].category),\n                  ),\n                );\n              },\n            ),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Example 2: Remote Search with Debouncing"
+    },
+    {
+      "type": "text",
+      "value": "When searching against an API, you want to avoid sending a request on every keystroke. Use an event transformer with debounce."
+    },
+    {
+      "type": "subheading",
+      "value": "Add Dependencies"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  bloc_concurrency: ^0.2.0\n  stream_transform: ^2.1.0"
+    },
+    {
+      "type": "subheading",
+      "value": "Define Events, States, and Bloc"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class SearchEvent {}\nclass SearchQueryChanged extends SearchEvent {\n  final String query;\n  SearchQueryChanged(this.query);\n}\n\nabstract class SearchState {}\nclass SearchInitial extends SearchState {}\nclass SearchLoading extends SearchState {}\nclass SearchSuccess extends SearchState {\n  final List<Item> items;\n  SearchSuccess(this.items);\n}\nclass SearchFailure extends SearchState {\n  final String message;\n  SearchFailure(this.message);\n}\n\nimport 'package:bloc_concurrency/bloc_concurrency.dart';\nimport 'package:stream_transform/stream_transform.dart';\n\nEventTransformer<SearchQueryChanged> debounce(Duration duration) {\n  return (events, mapper) => events.debounce(duration).switchMap(mapper);\n}\n\nclass SearchBloc extends Bloc<SearchEvent, SearchState> {\n  final SearchRepository repository;\n\n  SearchBloc(this.repository) : super(SearchInitial()) {\n    on<SearchQueryChanged>(\n      _onSearchQueryChanged,\n      transformer: debounce(const Duration(milliseconds: 500)),\n    );\n  }\n\n  Future<void> _onSearchQueryChanged(\n    SearchQueryChanged event,\n    Emitter<SearchState> emit,\n  ) async {\n    if (event.query.isEmpty) {\n      emit(SearchInitial());\n      return;\n    }\n    emit(SearchLoading());\n    try {\n      final items = await repository.search(event.query);\n      emit(SearchSuccess(items));\n    } catch (e) {\n      emit(SearchFailure(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "UI Integration"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocConsumer<SearchBloc, SearchState>(\n  listener: (context, state) {\n    if (state is SearchFailure) {\n      ScaffoldMessenger.of(context).showSnackBar(\n        SnackBar(content: Text(state.message)),\n      );\n    }\n  },\n  builder: (context, state) {\n    if (state is SearchLoading) {\n      return Center(child: CircularProgressIndicator());\n    }\n    if (state is SearchSuccess) {\n      return ListView.builder(\n        itemCount: state.items.length,\n        itemBuilder: (_, index) => ListTile(title: Text(state.items[index].name)),\n      );\n    }\n    return Center(child: Text('Start typing to search...'));\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Combining Search, Filters, and Pagination"
+    },
+    {
+      "type": "text",
+      "value": "For complex lists, you may need to combine search, multiple filters, and pagination. Keep the state clean and use `copyWith` to update only changed fields."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchFilterState extends Equatable {\n  final String query;\n  final Set<String> categories;\n  final double minPrice;\n  final double maxPrice;\n  final List<Item> items;\n  final bool hasReachedMax;\n  final int currentPage;\n  final bool isLoading;\n\n  // ... copyWith, props\n}\n\n// In bloc:\non<LoadMore>((event, emit) async {\n  if (state.hasReachedMax) return;\n  emit(state.copyWith(isLoading: true));\n  final newItems = await repository.search(\n    query: state.query,\n    page: state.currentPage + 1,\n    filters: ...\n  );\n  emit(state.copyWith(\n    items: [...state.items, ...newItems],\n    currentPage: state.currentPage + 1,\n    hasReachedMax: newItems.isEmpty,\n    isLoading: false,\n  ));\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Optimizations"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `context.select` or `BlocSelector`** – Rebuild only the parts of the UI that depend on specific state fields (e.g., only the list when results change, not the search field).",
+        "**Debounce input** – Avoids flooding the API or filtering on every character.",
+        "**Cancel previous requests** – With `switchMap` (as in debounce example), if a new event arrives while a previous request is in flight, the old one is cancelled.",
+        "**Use `Equatable` for states** – Prevents unnecessary rebuilds when state objects are equal.",
+        "**Lazy load lists** – Implement pagination to load only what the user sees."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep search/filter logic in the bloc** – Not scattered in UI widgets.",
+        "**Use separate events for each filter change** – Makes it easy to track and test.",
+        "**Reset pagination when search query or filters change** – Emit a fresh state with cleared items.",
+        "**Provide visual feedback** – Show loading indicators and empty states.",
+        "**Throttle or debounce API calls** – Use event transformers with `debounce` or `throttle`.",
+        "**Cancel ongoing requests** – When a new search starts, cancel the previous one to avoid race conditions."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling repository directly in UI** – Bypasses bloc, makes testing difficult.",
+        "❌ **No debouncing** – Causes too many API calls and poor user experience.",
+        "❌ **Not handling empty state** – The list may disappear completely; show a message.",
+        "❌ **Mutating the list instead of emitting a new state** – The UI won't update.",
+        "❌ **Rebuilding the entire screen on every keystroke** – Use `BlocSelector` to isolate the list from the search input."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you can build reactive search and filter, explore more advanced patterns like infinite scroll pagination and combining with form validation."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Form validation with Bloc](/bloc-form-validation) and [Bloc testing](/bloc-testing)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I implement debounce without bloc_concurrency?",
+      "answer": "You can manually use `Timer` in your event handler, but it's more error‑prone. The recommended approach is to use the `debounce` transformer provided by `bloc_concurrency` and `stream_transform` as shown in the remote search example."
+    },
+    {
+      "question": "Should I use Bloc or Cubit for search?",
+      "answer": "Both work. If you only need simple local filtering, Cubit is enough. If you need complex async operations, debouncing, or multiple filters, Bloc with events gives you better traceability and control."
+    },
+    {
+      "question": "How do I combine search with pagination?",
+      "answer": "Maintain a state that holds the current query, filters, page number, and items. When the search query changes, reset to page 1. When the user scrolls to the bottom, emit a `LoadMore` event that appends new items."
+    },
+    {
+      "question": "What if my search results come from both local and remote sources?",
+      "answer": "You can implement a repository that decides which source to use. The bloc only sees the repository interface, so the source is abstracted away."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What is the primary reason to debounce search input?",
+      "options": [
+        "To improve UI responsiveness",
+        "To reduce the number of API calls",
+        "To simplify the code",
+        "To increase performance on the client"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which event transformer is used to cancel previous requests when a new event arrives?",
+      "options": ["sequential", "concurrent", "switchMap", "droppable"],
+      "answer": 2
+    },
+    {
+      "question": "In a local search/filter scenario, where should the filtering logic be placed?",
+      "options": ["Inside the UI widget", "In the bloc using pure functions", "In the repository", "In a separate service class"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-form-validation",
+    "bloc-testing",
+    "bloc-architecture",
+    "bloc-events",
+    "bloc-selector"
+  ]
+}

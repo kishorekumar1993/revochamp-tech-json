@@ -3,8 +3,8 @@
   "course": "Flutter",
   "title": "GetX Dialog: Context‑Free Dialogs in Flutter",
   "meta": {
-    "title": "GetX Dialog – Simple & Custom Dialogs Without Context",
-    "description": "Learn how to show beautiful dialogs with GetX. Use Get.dialog for custom dialogs and Get.defaultDialog for quick alerts. No BuildContext needed.",
+    "title": "GetX Dialog – Simple & Custom Dialogs Without Context (2026)",
+    "description": "Learn how to show beautiful dialogs with GetX. Use Get.dialog for custom dialogs and Get.defaultDialog for quick alerts. No BuildContext needed. Includes returning values, barrier control, and best practices.",
     "keywords": [
       "GetX dialog",
       "Get.dialog",
@@ -12,7 +12,9 @@
       "Flutter dialog",
       "GetX alert dialog",
       "GetX popup",
-      "context-free dialog"
+      "context-free dialog",
+      "flutter custom dialog",
+      "getx dialog example"
     ]
   },
   "content": [
@@ -101,6 +103,36 @@
     },
     {
       "type": "heading",
+      "value": "Comparison: GetX Dialog vs Native showDialog"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Aspect", "GetX Dialog", "Native showDialog"],
+        "rows": [
+          ["Requires BuildContext", "No", "Yes"],
+          ["Can be called from controller/service", "Yes", "No (needs context)"],
+          ["Return value support", "Yes (Future)", "Yes (Future)"],
+          ["Barrier control", "Yes (barrierDismissible)", "Yes (barrierDismissible)"],
+          ["Default alert wrapper", "Get.defaultDialog", "AlertDialog (manual)"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Using with Controllers"
+    },
+    {
+      "type": "text",
+      "value": "Because `Get.dialog` doesn't need a context, you can call it directly from a controller. This keeps your UI code clean and moves dialog logic to the business layer."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeController extends GetxController {\n  void showDeleteConfirmation(int id) {\n    Get.defaultDialog(\n      title: 'Delete Item',\n      middleText: 'Are you sure you want to delete this item?',\n      textConfirm: 'Delete',\n      textCancel: 'Cancel',\n      confirmTextColor: Colors.white,\n      onConfirm: () {\n        deleteItem(id);\n        Get.back(); // close dialog\n        Get.snackbar('Deleted', 'Item removed');\n      },\n    );\n  }\n\n  void deleteItem(int id) { /* API call */ }\n}"
+    },
+    {
+      "type": "heading",
       "value": "Barrier Dismissible"
     },
     {
@@ -136,7 +168,8 @@
         "**Use `Get.dialog` for custom layouts** – Provides full control over appearance.",
         "**Always provide a way to close the dialog** – Ensure at least one button or gesture to dismiss.",
         "**Use `barrierDismissible: false` for critical confirmations** – Prevents accidental dismissal.",
-        "**Return values when needed** – Use `await` to handle user choices."
+        "**Return values when needed** – Use `await` to handle user choices.",
+        "**Call from controllers when possible** – Keep UI widgets free of dialog logic."
       ]
     },
     {
@@ -154,26 +187,37 @@
     },
     {
       "type": "heading",
-      "value": "FAQ"
-    },
-    {
-      "type": "list",
-      "value": [
-        "**Q: Can I show a dialog without a `BuildContext`?**  \nA: Yes! That's the main advantage of GetX dialogs. You can show them from controllers, services, or any Dart class.",
-        "**Q: How do I prevent the user from tapping outside to dismiss?**  \nA: Set `barrierDismissible: false` in `Get.dialog` (or `Get.defaultDialog`).",
-        "**Q: Can I show multiple dialogs at once?**  \nA: Technically yes, but it's not recommended. Each new dialog will overlay the previous one. Dismiss them in LIFO order.",
-        "**Q: How do I show a loading dialog?**  \nA: You can create a custom dialog with a `CircularProgressIndicator`. Remember to dismiss it when loading is complete.",
-        "**Q: Does GetX dialog work with Cupertino?**  \nA: Yes, you can use `GetCupertinoApp` and show `CupertinoAlertDialog` inside `Get.dialog`. The API is the same.",
-        "**Q: How do I return a value from a dialog?**  \nA: Use `Get.back(result: yourValue)` and await the `Get.dialog` call."
-      ]
-    },
-    {
-      "type": "heading",
       "value": "Conclusion"
     },
     {
       "type": "text",
       "value": "GetX dialogs make it incredibly easy to show popups and alerts without worrying about `BuildContext`. Whether you need a simple alert or a fully custom modal, `Get.dialog` and `Get.defaultDialog` provide a clean, context‑free solution. Combine them with GetX state management for a seamless user experience."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I show a dialog without a `BuildContext`?",
+      "answer": "Yes! That's the main advantage of GetX dialogs. You can show them from controllers, services, or any Dart class."
+    },
+    {
+      "question": "How do I prevent the user from tapping outside to dismiss?",
+      "answer": "Set `barrierDismissible: false` in `Get.dialog` (or `Get.defaultDialog`)."
+    },
+    {
+      "question": "Can I show multiple dialogs at once?",
+      "answer": "Technically yes, but it's not recommended. Each new dialog will overlay the previous one. Dismiss them in LIFO order."
+    },
+    {
+      "question": "How do I show a loading dialog?",
+      "answer": "You can create a custom dialog with a `CircularProgressIndicator`. Remember to dismiss it when loading is complete."
+    },
+    {
+      "question": "Does GetX dialog work with Cupertino?",
+      "answer": "Yes, you can use `GetCupertinoApp` and show `CupertinoAlertDialog` inside `Get.dialog`. The API is the same."
+    },
+    {
+      "question": "How do I return a value from a dialog?",
+      "answer": "Use `Get.back(result: yourValue)` and await the `Get.dialog` call."
     }
   ],
   "tryEditor": {

@@ -1,0 +1,282 @@
+{
+  "slug": "bloc-repository-pattern",
+  "course": "Flutter",
+  "title": "Repository Pattern with Bloc: Clean Data Layer Architecture",
+  "meta": {
+    "title": "Flutter Bloc Repository Pattern – Complete Guide (2026)",
+    "description": "Learn how to implement the repository pattern with Flutter Bloc. Separate data sources from business logic, improve testability, and build scalable Flutter apps.",
+    "keywords": [
+      "flutter bloc repository pattern",
+      "repository pattern flutter",
+      "bloc data layer",
+      "flutter clean architecture",
+      "bloc repository example"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "12 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "repository-pattern", "clean-architecture", "data-layer"],
+  "content": [
+    {
+      "type": "text",
+      "value": "The **repository pattern** is a crucial architectural concept that separates data sources from business logic. When combined with Bloc, it creates a clean, testable, and maintainable data layer. This guide explains how to implement the repository pattern in your Flutter Bloc applications."
+    },
+    {
+      "type": "heading",
+      "value": "What is the Repository Pattern?"
+    },
+    {
+      "type": "text",
+      "value": "A repository is an abstraction over data sources. It acts as a single source of truth for a specific domain (e.g., `UserRepository`). The repository hides the details of where data comes from – whether it's a remote API, a local database, or a cache – and provides a clean interface for the rest of the application."
+    },
+    {
+      "type": "highlight",
+      "value": "Bloc → Repository → Data Sources (API, Database, Cache)"
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Repositories with Bloc?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Separation of concerns** – Blocs focus on business logic; repositories handle data fetching and persistence.",
+        "**Testability** – You can mock repositories to test blocs in isolation, without needing real network or database calls.",
+        "**Flexibility** – Swap data sources (e.g., from REST API to GraphQL) without changing blocs.",
+        "**Caching** – Implement caching strategies inside the repository without affecting the rest of the app.",
+        "**Reusability** – Share repositories across multiple blocs or features."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Core Components"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Component", "Responsibility"],
+        "rows": [
+          ["Data Sources", "Low-level API calls, database queries, etc. (e.g., `RemoteDataSource`, `LocalDataSource`)"],
+          ["Repository Interface", "Defines the contract for data operations (abstract class)"],
+          ["Repository Implementation", "Implements the interface, uses one or more data sources"],
+          ["Bloc", "Calls repository methods, processes results, emits states"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Step-by-Step Implementation"
+    },
+    {
+      "type": "subheading",
+      "value": "1. Define Data Sources"
+    },
+    {
+      "type": "text",
+      "value": "Start by creating abstract interfaces for your data sources, then implement them. This allows you to swap implementations later (e.g., for testing)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/data/datasources/auth_remote_datasource.dart\nabstract class AuthRemoteDataSource {\n  Future<String> login(String email, String password);\n  Future<void> logout();\n}\n\nclass AuthRemoteDataSourceImpl implements AuthRemoteDataSource {\n  final http.Client client;\n  AuthRemoteDataSourceImpl(this.client);\n\n  @override\n  Future<String> login(String email, String password) async {\n    final response = await client.post(\n      Uri.parse('https://api.example.com/login'),\n      body: {'email': email, 'password': password},\n    );\n    if (response.statusCode == 200) {\n      return jsonDecode(response.body)['token'];\n    } else {\n      throw Exception('Login failed');\n    }\n  }\n\n  @override\n  Future<void> logout() async {\n    // Implementation\n  }\n}\n\n// Optional local data source for caching\nabstract class AuthLocalDataSource {\n  Future<void> cacheToken(String token);\n  Future<String?> getToken();\n}\n\nclass AuthLocalDataSourceImpl implements AuthLocalDataSource {\n  final SharedPreferences prefs;\n  AuthLocalDataSourceImpl(this.prefs);\n\n  @override\n  Future<void> cacheToken(String token) async {\n    await prefs.setString('auth_token', token);\n  }\n\n  @override\n  Future<String?> getToken() async {\n    return prefs.getString('auth_token');\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Create Repository Interface"
+    },
+    {
+      "type": "text",
+      "value": "Define the abstract repository that your blocs will depend on. This interface hides the data source details."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/domain/repositories/auth_repository.dart\nabstract class AuthRepository {\n  Future<String> login(String email, String password);\n  Future<void> logout();\n  Future<bool> isLoggedIn();\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Implement Repository"
+    },
+    {
+      "type": "text",
+      "value": "The implementation uses data sources and may combine them (e.g., fetch from remote and cache locally)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/data/repositories/auth_repository_impl.dart\nclass AuthRepositoryImpl implements AuthRepository {\n  final AuthRemoteDataSource remoteDataSource;\n  final AuthLocalDataSource localDataSource;\n\n  AuthRepositoryImpl(this.remoteDataSource, this.localDataSource);\n\n  @override\n  Future<String> login(String email, String password) async {\n    try {\n      final token = await remoteDataSource.login(email, password);\n      await localDataSource.cacheToken(token);\n      return token;\n    } catch (e) {\n      throw Exception('Authentication failed: $e');\n    }\n  }\n\n  @override\n  Future<void> logout() async {\n    await remoteDataSource.logout();\n    await localDataSource.cacheToken('');\n  }\n\n  @override\n  Future<bool> isLoggedIn() async {\n    final token = await localDataSource.getToken();\n    return token != null && token.isNotEmpty;\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "4. Use Repository in Bloc"
+    },
+    {
+      "type": "text",
+      "value": "Inject the repository into your bloc via the constructor. The bloc never knows whether the data comes from an API or a database."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/bloc/auth_bloc.dart\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  final AuthRepository repository;\n\n  AuthBloc(this.repository) : super(AuthInitial()) {\n    on<LoginRequested>(_onLoginRequested);\n    on<LogoutRequested>(_onLogoutRequested);\n    on<CheckAuthStatus>(_onCheckAuthStatus);\n  }\n\n  Future<void> _onLoginRequested(\n    LoginRequested event,\n    Emitter<AuthState> emit,\n  ) async {\n    emit(AuthLoading());\n    try {\n      final token = await repository.login(event.email, event.password);\n      emit(AuthSuccess(token));\n    } catch (e) {\n      emit(AuthFailure(e.toString()));\n    }\n  }\n\n  Future<void> _onLogoutRequested(\n    LogoutRequested event,\n    Emitter<AuthState> emit,\n  ) async {\n    await repository.logout();\n    emit(AuthUnauthenticated());\n  }\n\n  Future<void> _onCheckAuthStatus(\n    CheckAuthStatus event,\n    Emitter<AuthState> emit,\n  ) async {\n    final isLoggedIn = await repository.isLoggedIn();\n    if (isLoggedIn) {\n      emit(AuthAuthenticated());\n    } else {\n      emit(AuthUnauthenticated());\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Dependency Injection with get_it"
+    },
+    {
+      "type": "text",
+      "value": "Use a service locator like `get_it` to wire up your dependencies. This keeps your code clean and makes testing easier."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/di/injection.dart\nimport 'package:get_it/get_it.dart';\nimport 'package:shared_preferences/shared_preferences.dart';\nimport 'package:http/http.dart' as http;\n\nfinal getIt = GetIt.instance;\n\nFuture<void> setup() async {\n  // External\n  final prefs = await SharedPreferences.getInstance();\n  getIt.registerLazySingleton(() => prefs);\n  getIt.registerLazySingleton(() => http.Client());\n\n  // Data sources\n  getIt.registerLazySingleton<AuthRemoteDataSource>(\n    () => AuthRemoteDataSourceImpl(getIt()),\n  );\n  getIt.registerLazySingleton<AuthLocalDataSource>(\n    () => AuthLocalDataSourceImpl(getIt()),\n  );\n\n  // Repositories\n  getIt.registerLazySingleton<AuthRepository>(\n    () => AuthRepositoryImpl(\n      getIt<AuthRemoteDataSource>(),\n      getIt<AuthLocalDataSource>(),\n    ),\n  );\n\n  // Blocs\n  getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt()));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing with Mock Repositories"
+    },
+    {
+      "type": "text",
+      "value": "The repository pattern makes testing blocs straightforward. You can create mock implementations of your repositories and inject them into the bloc."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:bloc_test/bloc_test.dart';\nimport 'package:mocktail/mocktail.dart';\n\nclass MockAuthRepository extends Mock implements AuthRepository {}\n\nvoid main() {\n  late MockAuthRepository repository;\n  late AuthBloc bloc;\n\n  setUp(() {\n    repository = MockAuthRepository();\n    bloc = AuthBloc(repository);\n  });\n\n  blocTest<AuthBloc, AuthState>(\n    'emits [AuthLoading, AuthSuccess] when login succeeds',\n    build: () => bloc,\n    act: (bloc) {\n      when(() => repository.login('test@example.com', 'password'))\n          .thenAnswer((_) async => 'token');\n      bloc.add(LoginRequested('test@example.com', 'password'));\n    },\n    expect: () => [\n      AuthLoading(),\n      AuthSuccess('token'),\n    ],\n  );\n\n  blocTest<AuthBloc, AuthState>(\n    'emits [AuthLoading, AuthFailure] when login fails',\n    build: () => bloc,\n    act: (bloc) {\n      when(() => repository.login('wrong@example.com', 'wrong'))\n          .thenThrow(Exception('Invalid credentials'));\n      bloc.add(LoginRequested('wrong@example.com', 'wrong'));\n    },\n    expect: () => [\n      AuthLoading(),\n      AuthFailure('Exception: Invalid credentials'),\n    ],\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced Patterns"
+    },
+    {
+      "type": "subheading",
+      "value": "Multiple Data Sources (Remote + Local Cache)"
+    },
+    {
+      "type": "text",
+      "value": "Repositories can orchestrate multiple data sources. For example, check local cache first, then fallback to remote."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class UserRepositoryImpl implements UserRepository {\n  final UserRemoteDataSource remote;\n  final UserLocalDataSource local;\n\n  @override\n  Future<User> getUser(String id) async {\n    // Try local first\n    final cached = await local.getUser(id);\n    if (cached != null) {\n      return cached;\n    }\n    // Fallback to remote\n    final user = await remote.fetchUser(id);\n    await local.cacheUser(user);\n    return user;\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Repository with Streams (for real-time data)"
+    },
+    {
+      "type": "text",
+      "value": "If your data source provides streams (like Firebase or a local database), your repository can expose a stream that blocs can listen to."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class MessageRepository {\n  Stream<List<Message>> getMessages();\n  Future<void> sendMessage(Message message);\n}\n\nclass MessageRepositoryImpl implements MessageRepository {\n  final FirebaseFirestore firestore;\n\n  @override\n  Stream<List<Message>> getMessages() {\n    return firestore.collection('messages').snapshots().map(\n      (snapshot) => snapshot.docs.map((doc) => Message.fromFirestore(doc)).toList(),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Define repository interfaces in the domain layer** – Keep them abstract and platform-agnostic.",
+        "**Inject repositories into blocs** – Never instantiate repositories inside blocs directly.",
+        "**Handle errors in repositories** – Catch and wrap exceptions with meaningful messages, or throw custom exceptions.",
+        "**Use immutable data classes** – Return plain Dart objects (entities) from repositories.",
+        "**Keep repositories focused** – One repository per domain (e.g., `AuthRepository`, `UserRepository`).",
+        "**Write tests for repositories** – Test both happy and error paths using mock data sources."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Putting data source logic directly in blocs** – Makes blocs hard to test and violates separation of concerns.",
+        "❌ **Not using interfaces** – Without abstraction, swapping implementations becomes difficult.",
+        "❌ **Returning data source objects (like http.Response) from repositories** – Return domain objects instead.",
+        "❌ **Ignoring error handling** – Always catch and transform errors to something meaningful for the UI.",
+        "❌ **Mixing repositories** – A repository should not depend on another repository unless absolutely necessary."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you have a clean data layer, learn how to structure your entire application with Clean Architecture and Bloc."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Bloc architecture](/bloc-architecture) and [Dependency injection with get_it](/flutter-dependency-injection)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I always need a repository? Can't I just call API directly from the bloc?",
+      "answer": "For very small apps, you can skip the repository. But as soon as you need caching, multiple data sources, or testing, the repository pattern becomes essential. It's a best practice for any app beyond a simple prototype."
+    },
+    {
+      "question": "Should repositories be singletons or created per bloc?",
+      "answer": "Repositories are typically stateless and can be shared across multiple blocs. Use a singleton (e.g., with `get_it`). If a repository holds state (like a cache), it should still be a singleton to maintain consistency."
+    },
+    {
+      "question": "How do I handle authentication tokens in repositories?",
+      "answer": "You can inject an `AuthRepository` into other repositories to get the token, or use an interceptor that adds the token automatically. A common pattern is to have an `ApiClient` that depends on `AuthRepository` and attaches the token to outgoing requests."
+    },
+    {
+      "question": "What's the difference between repository and service?",
+      "answer": "A repository typically deals with data operations (CRUD) for a specific domain. A service often contains business logic that spans multiple repositories. In practice, the terms are sometimes used interchangeably, but the repository pattern is specifically about data access abstraction."
+    },
+    {
+      "question": "Can I use repositories with Cubit?",
+      "answer": "Yes, absolutely. The repository pattern is independent of whether you use Bloc or Cubit. Cubit can also depend on repositories for data operations."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What is the main purpose of the repository pattern?",
+      "options": [
+        "To improve UI performance",
+        "To separate data access from business logic",
+        "To manage app navigation",
+        "To handle dependency injection"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which of the following is a benefit of using repositories with Bloc?",
+      "options": [
+        "Automatic UI rebuilds",
+        "Easier testing by mocking data sources",
+        "Faster API calls",
+        "Built-in state persistence"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Where should you define the repository interface?",
+      "options": [
+        "In the presentation layer",
+        "In the data layer",
+        "In the domain layer",
+        "In the bloc layer"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "bloc-architecture",
+    "bloc-testing",
+    "flutter-dependency-injection",
+    "bloc-events",
+    "bloc-bloc-class"
+  ]
+}

@@ -1,0 +1,290 @@
+{
+  "slug": "bloc-bloc-class",
+  "course": "Flutter",
+  "title": "Bloc Class: Lifecycle, Methods, and Advanced Usage",
+  "meta": {
+    "title": "Flutter Bloc Class – Complete Guide (2026)",
+    "description": "Deep dive into the Bloc class: constructor, event handlers, state emission, lifecycle methods, error handling, and advanced patterns for scalable state management.",
+    "keywords": [
+      "flutter bloc class",
+      "bloc lifecycle",
+      "bloc emit",
+      "bloc close",
+      "bloc event handler",
+      "flutter bloc advanced"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "12 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "bloc-class", "state-management"],
+  "content": [
+    {
+      "type": "text",
+      "value": "The `Bloc` class is the core of the BLoC pattern. It manages a stream of states, reacts to events, and ensures predictable state transitions. This guide covers everything from basic usage to advanced patterns, helping you master the Bloc class in Flutter."
+    },
+    {
+      "type": "heading",
+      "value": "What is the Bloc Class?"
+    },
+    {
+      "type": "text",
+      "value": "`Bloc<Event, State>` is an abstract class that transforms a stream of incoming events into a stream of outgoing states. It provides a structured way to handle business logic, separate from the UI. Each bloc extends this class and defines how events are processed."
+    },
+    {
+      "type": "highlight",
+      "value": "Event Stream → Bloc → State Stream"
+    },
+    {
+      "type": "heading",
+      "value": "Bloc Constructor and Initial State"
+    },
+    {
+      "type": "text",
+      "value": "When extending `Bloc`, you must call `super(initialState)` to set the starting state. The constructor is also where you inject dependencies and register event handlers."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(const CounterState(0)) {\n    on<IncrementPressed>(_onIncrement);\n    on<DecrementPressed>(_onDecrement);\n  }\n\n  void _onIncrement(IncrementPressed event, Emitter<CounterState> emit) {\n    emit(CounterState(state.value + 1));\n  }\n\n  void _onDecrement(DecrementPressed event, Emitter<CounterState> emit) {\n    emit(CounterState(state.value - 1));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "The `on<Event>` Method"
+    },
+    {
+      "type": "text",
+      "value": "Use `on<Event>` to register a handler for a specific event type. The handler receives the event and an `Emitter` that can be used to emit one or more states. You can also pass an optional `transformer` to control how events are processed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<Event>(\n  handler,\n  {EventTransformer<Event>? transformer},\n);"
+    },
+    {
+      "type": "text",
+      "value": "Handlers can be synchronous or asynchronous. Use `emit` inside the handler to output states."
+    },
+    {
+      "type": "heading",
+      "value": "Emitting States"
+    },
+    {
+      "type": "text",
+      "value": "The `Emitter<State>` passed to handlers is used to emit states. You can call `emit` multiple times within a handler to produce a sequence of states (e.g., loading → success)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<LoginSubmitted>((event, emit) async {\n  emit(LoginLoading());\n  try {\n    final user = await repository.login(event.email, event.password);\n    emit(LoginSuccess(user));\n  } catch (e) {\n    emit(LoginFailure(e.toString()));\n  }\n});"
+    },
+    {
+      "type": "note",
+      "value": "If you emit a state that is `==` to the current state, Bloc will ignore it. This prevents unnecessary rebuilds. Make sure your state classes override `==` (using Equatable) for proper comparison."
+    },
+    {
+      "type": "heading",
+      "value": "Bloc Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "The Bloc class provides lifecycle methods that you can override to perform setup and cleanup."
+    },
+    {
+      "type": "subheading",
+      "value": "onChange"
+    },
+    {
+      "type": "text",
+      "value": "Called whenever a new state is emitted. Receives the `Change<State>` containing the previous and next states. Useful for logging or analytics."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@override\nvoid onChange(Change<State> change) {\n  super.onChange(change);\n  print('State changed: $change');\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "onError"
+    },
+    {
+      "type": "text",
+      "value": "Called when an uncaught exception occurs inside an event handler. Allows you to handle errors globally."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@override\nvoid onError(Object error, StackTrace stackTrace) {\n  super.onError(error, stackTrace);\n  print('Bloc error: $error');\n  // Optionally emit an error state\n  add(ErrorOccurred(error.toString()));\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "close"
+    },
+    {
+      "type": "text",
+      "value": "Called when the bloc is closed. Override to dispose of any resources (e.g., streams, controllers)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@override\nFuture<void> close() {\n  // Dispose resources\n  return super.close();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Adding Events"
+    },
+    {
+      "type": "text",
+      "value": "Events are added to the bloc using the `add` method. This can be done from anywhere that has access to the bloc instance."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Inside a widget\ncontext.read<CounterBloc>().add(IncrementPressed());"
+    },
+    {
+      "type": "text",
+      "value": "You can also add events from within the bloc itself (e.g., after a successful operation, trigger another event)."
+    },
+    {
+      "type": "heading",
+      "value": "Event Transformers"
+    },
+    {
+      "type": "text",
+      "value": "Transformers control the flow of events. You can use the `bloc_concurrency` package for common strategies: `sequential` (default), `concurrent`, `droppable`, and `restartable`. Custom transformers can be built using `StreamTransformer`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:bloc_concurrency/bloc_concurrency.dart';\n\non<SearchQueryChanged>(\n  _onSearch,\n  transformer: debounce(const Duration(milliseconds: 300)),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Bloc vs Cubit"
+    },
+    {
+      "type": "text",
+      "value": "`Cubit` is a simplified version of Bloc that doesn't use events. Instead, it exposes methods that directly emit states. Use Cubit for simple state management; use Bloc when you need to leverage event streams, transformers, or complex event handling."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Bloc", "Cubit"],
+        "rows": [
+          ["Event-based", "Yes", "No"],
+          ["Event transformers", "Yes", "No"],
+          ["Emit methods", "Via handlers", "Directly on cubit"],
+          ["Traceability", "High (events logged)", "Lower"],
+          ["Complexity", "Higher", "Lower"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Testing the Bloc Class"
+    },
+    {
+      "type": "text",
+      "value": "Use `bloc_test` to test your bloc's behavior. You can verify that specific events produce expected states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "blocTest<CounterBloc, CounterState>(\n  'emits [1] when increment is added',\n  build: () => CounterBloc(),\n  act: (bloc) => bloc.add(IncrementPressed()),\n  expect: () => [const CounterState(1)],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep blocs focused** – Each bloc should handle one feature or domain.",
+        "**Use dependency injection** – Pass repositories and services via constructor for testability.",
+        "**Handle errors gracefully** – Catch exceptions in handlers and emit error states.",
+        "**Avoid emitting unrelated states** – Don't emit states that don't belong to the bloc's responsibility.",
+        "**Use `Equatable` for states and events** – Prevents unnecessary rebuilds and simplifies equality.",
+        "**Override `onError` for global error handling** – Log errors or trigger fallback states.",
+        "**Dispose blocs properly** – Use `BlocProvider` which automatically calls `close`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `emit` after `close`** – This will throw an error. Ensure you don't emit after bloc is closed.",
+        "❌ **Not handling exceptions** – Uncaught exceptions stop the bloc; always catch and emit an error state.",
+        "❌ **Creating blocs inside `build`** – Use `BlocProvider` to ensure proper lifecycle.",
+        "❌ **Mutating state objects** – Always emit a new state object instead of modifying the existing one.",
+        "❌ **Overusing global blocs** – Provide blocs only where needed to avoid memory leaks."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you understand the Bloc class, explore how to structure events effectively, or dive into testing and architecture patterns."
+    },
+    {
+      "type": "text",
+      "value": "Next, learn about [Bloc events](/bloc-events) and [Bloc architecture](/bloc-architecture)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use both Bloc and Cubit in the same app?",
+      "answer": "Yes, `flutter_bloc` supports both. You can mix them according to complexity: use Cubit for simple features and Bloc for those that need event transformers or more structured event handling."
+    },
+    {
+      "question": "How do I know when to use `Bloc` vs `Cubit`?",
+      "answer": "Use Cubit for simple state (e.g., counter, form fields). Use Bloc when you need to log events, use transformers (debounce, throttle), or when your business logic benefits from an event-driven architecture."
+    },
+    {
+      "question": "What happens if I emit a state that is equal to the current state?",
+      "answer": "Bloc will ignore the emission. This is why you should use Equatable for states – it ensures proper equality checks and prevents unnecessary rebuilds."
+    },
+    {
+      "question": "How do I handle long‑running operations inside a bloc?",
+      "answer": "Use asynchronous handlers. You can emit intermediate states (like loading) before and after the operation. Also consider using event transformers like `restartable` to cancel previous pending operations if needed."
+    },
+    {
+      "question": "Do I always need to override `onError`?",
+      "answer": "Not always, but it's good practice for logging and handling unexpected errors gracefully. You can also use a global `BlocObserver` to catch errors across all blocs."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "Which method is used to register an event handler in a Bloc?",
+      "options": ["register", "on<Event>", "addHandler", "listenEvent"],
+      "answer": 1
+    },
+    {
+      "question": "What happens when you emit a state that is equal to the current state?",
+      "options": [
+        "The state is emitted and UI rebuilds",
+        "The emission is ignored",
+        "An exception is thrown",
+        "The bloc is closed"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which lifecycle method is called when a bloc is about to be disposed?",
+      "options": ["dispose", "onDispose", "close", "destroy"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "bloc-introduction",
+    "bloc-events",
+    "bloc-cubit",
+    "bloc-testing",
+    "bloc-architecture"
+  ]
+}

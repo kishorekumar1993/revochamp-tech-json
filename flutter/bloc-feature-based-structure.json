@@ -1,0 +1,255 @@
+{
+  "slug": "bloc-feature-based-structure",
+  "course": "Flutter",
+  "title": "BLoC Feature-Based Structure: Organizing Large Flutter Apps",
+  "meta": {
+    "title": "BLoC Feature-Based Structure – Organize Large Flutter Apps (2026)",
+    "description": "Learn how to structure Flutter apps using BLoC with a feature-based architecture. Separate features, manage dependencies, and build scalable, maintainable codebases.",
+    "keywords": [
+      "bloc feature-based structure",
+      "flutter bloc folder structure",
+      "feature-based architecture",
+      "bloc modular",
+      "scalable flutter app",
+      "bloc dependency injection"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "12 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Intermediate",
+  "tags": ["bloc", "architecture", "scalability", "modular"],
+  "content": [
+    {
+      "type": "text",
+      "value": "As your Flutter app grows, organizing code by type (e.g., all blocs in one folder, all pages in another) quickly becomes unmanageable. **Feature-based structure** – grouping all code related to a specific feature together – is a proven approach for scalability. Combined with BLoC, it keeps your codebase maintainable, testable, and easy to navigate. This guide shows you how to structure your BLoC apps by feature."
+    },
+    {
+      "type": "heading",
+      "value": "What is Feature-Based Structure?"
+    },
+    {
+      "type": "text",
+      "value": "In a feature-based structure, you organize code by **features** (e.g., authentication, products, cart) rather than by technical layers (e.g., blocs, models, views). Each feature contains everything it needs: UI, business logic, data models, and repositories. This approach has several advantages:\n\n- **Cohesion** – Related code is kept together.\n- **Scalability** – Adding a new feature doesn't clutter existing ones.\n- **Team collaboration** – Different teams can work on separate features without merge conflicts.\n- **Lazy loading** – Features can be loaded on demand.\n- **Testability** – Features can be tested in isolation."
+    },
+    {
+      "type": "heading",
+      "value": "Recommended Folder Structure"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "lib/\n├── main.dart\n├── app.dart                     # App entry with MultiBlocProvider\n├── core/                        # Shared code across features\n│   ├── constants/\n│   ├── utils/\n│   ├── widgets/\n│   ├── errors/\n│   └── di/                      # Dependency injection (get_it)\n├── features/\n│   ├── auth/\n│   │   ├── presentation/\n│   │   │   ├── pages/\n│   │   │   ├── widgets/\n│   │   │   └── bloc/            # AuthBloc (events, states, bloc)\n│   │   ├── domain/\n│   │   │   ├── entities/\n│   │   │   ├── repositories/\n│   │   │   └── usecases/\n│   │   └── data/\n│   │       ├── repositories/\n│   │       ├── datasources/\n│   │       └── models/\n│   ├── product/\n│   │   ├── presentation/\n│   │   ├── domain/\n│   │   └── data/\n│   └── cart/\n│       ├── presentation/\n│       ├── domain/\n│       └── data/\n└── routes/                      # Optional: if using go_router\n    └── app_router.dart"
+    },
+    {
+      "type": "note",
+      "value": "This structure combines **Clean Architecture** layering (presentation, domain, data) with **feature-based** organization. For simpler apps, you can omit the domain layer and place use cases directly in the bloc."
+    },
+    {
+      "type": "heading",
+      "value": "Feature Example: Authentication"
+    },
+    {
+      "type": "text",
+      "value": "Let’s look at the `auth` feature in detail. Each subfolder has a specific responsibility:"
+    },
+    {
+      "type": "subheading",
+      "value": "presentation/"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**pages/** – Screens (LoginPage, RegisterPage).",
+        "**widgets/** – Reusable UI components (LoginForm, SocialButtons).",
+        "**bloc/** – AuthBloc (events, states, bloc)."
+      ]
+    },
+    {
+      "type": "code",
+      "title": "features/auth/presentation/bloc/auth_bloc.dart",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\nimport '../../domain/usecases/login.dart';\nimport '../../domain/usecases/register.dart';\n\n// Events\nabstract class AuthEvent {}\nclass LoginEvent extends AuthEvent {\n  final String email;\n  final String password;\n  LoginEvent(this.email, this.password);\n}\nclass RegisterEvent extends AuthEvent { ... }\n\n// States\nabstract class AuthState {}\nclass AuthInitial extends AuthState {}\nclass AuthLoading extends AuthState {}\nclass AuthSuccess extends AuthState {\n  final User user;\n  AuthSuccess(this.user);\n}\nclass AuthFailure extends AuthState {\n  final String message;\n  AuthFailure(this.message);\n}\n\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  final Login loginUseCase;\n  final Register registerUseCase;\n\n  AuthBloc(this.loginUseCase, this.registerUseCase) : super(AuthInitial()) {\n    on<LoginEvent>(_onLogin);\n    on<RegisterEvent>(_onRegister);\n  }\n\n  Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {\n    emit(AuthLoading());\n    final result = await loginUseCase(LoginParams(event.email, event.password));\n    result.fold(\n      (failure) => emit(AuthFailure(failure.message)),\n      (user) => emit(AuthSuccess(user)),\n    );\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "domain/"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/domain/entities/user.dart",
+      "language": "dart",
+      "value": "class User {\n  final String id;\n  final String name;\n  final String email;\n  const User({required this.id, required this.name, required this.email});\n}"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/domain/repositories/auth_repository.dart",
+      "language": "dart",
+      "value": "import 'package:dartz/dartz.dart';\nimport '../../../../core/errors/failures.dart';\nimport '../entities/user.dart';\n\nabstract class AuthRepository {\n  Future<Either<Failure, User>> login(String email, String password);\n  Future<Either<Failure, User>> register(String email, String password, String name);\n}"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/domain/usecases/login.dart",
+      "language": "dart",
+      "value": "import 'package:dartz/dartz.dart';\nimport '../../../../core/errors/failures.dart';\nimport '../entities/user.dart';\nimport '../repositories/auth_repository.dart';\n\nclass Login {\n  final AuthRepository repository;\n  Login(this.repository);\n\n  Future<Either<Failure, User>> call(LoginParams params) async {\n    return await repository.login(params.email, params.password);\n  }\n}\n\nclass LoginParams {\n  final String email;\n  final String password;\n  LoginParams(this.email, this.password);\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "data/"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/data/datasources/auth_remote_datasource.dart",
+      "language": "dart",
+      "value": "abstract class AuthRemoteDataSource {\n  Future<UserModel> login(String email, String password);\n}\n\nclass AuthRemoteDataSourceImpl implements AuthRemoteDataSource {\n  final Dio dio;\n  AuthRemoteDataSourceImpl(this.dio);\n\n  @override\n  Future<UserModel> login(String email, String password) async {\n    final response = await dio.post('/login', data: {'email': email, 'password': password});\n    return UserModel.fromJson(response.data);\n  }\n}"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/data/models/user_model.dart",
+      "language": "dart",
+      "value": "import '../../domain/entities/user.dart';\n\nclass UserModel extends User {\n  UserModel({required super.id, required super.name, required super.email});\n\n  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(\n    id: json['id'],\n    name: json['name'],\n    email: json['email'],\n  );\n}"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/data/repositories/auth_repository_impl.dart",
+      "language": "dart",
+      "value": "import 'package:dartz/dartz.dart';\nimport '../../../../core/errors/failures.dart';\nimport '../../domain/entities/user.dart';\nimport '../../domain/repositories/auth_repository.dart';\nimport '../datasources/auth_remote_datasource.dart';\n\nclass AuthRepositoryImpl implements AuthRepository {\n  final AuthRemoteDataSource remoteDataSource;\n  AuthRepositoryImpl(this.remoteDataSource);\n\n  @override\n  Future<Either<Failure, User>> login(String email, String password) async {\n    try {\n      final userModel = await remoteDataSource.login(email, password);\n      return Right(userModel);\n    } on DioException catch (e) {\n      return Left(ServerFailure(e.message ?? 'Server error'));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Dependency Injection Across Features"
+    },
+    {
+      "type": "text",
+      "value": "Use `get_it` to register dependencies at the app level. This allows you to wire up features and share instances (like `Dio`) across features. You can register each feature's dependencies in its own `init` function and call them in `main`."
+    },
+    {
+      "type": "code",
+      "title": "core/di/injection.dart",
+      "language": "dart",
+      "value": "import 'package:get_it/get_it.dart';\nimport '../features/auth/data/datasources/auth_remote_datasource.dart';\nimport '../features/auth/data/repositories/auth_repository_impl.dart';\nimport '../features/auth/domain/repositories/auth_repository.dart';\nimport '../features/auth/domain/usecases/login.dart';\nimport '../features/auth/presentation/bloc/auth_bloc.dart';\n\nfinal sl = GetIt.instance;\n\nFuture<void> initAuth() async {\n  // Data sources\n  sl.registerLazySingleton<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(sl()));\n\n  // Repositories\n  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));\n\n  // Use cases\n  sl.registerLazySingleton(() => Login(sl()));\n\n  // Blocs\n  sl.registerFactory(() => AuthBloc(sl(), sl()));\n}\n\nvoid initCore() {\n  sl.registerLazySingleton(() => Dio(BaseOptions(baseUrl: 'https://api.example.com')));\n  // ... other shared dependencies\n}\n\n// In main.dart\nvoid main() async {\n  initCore();\n  await initAuth();\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Routing with Features"
+    },
+    {
+      "type": "text",
+      "value": "For navigation, you can use `go_router` with feature-based routes. Each feature can export its own `GoRoute` definition, and you compose them in a central router. This keeps routing modular."
+    },
+    {
+      "type": "code",
+      "title": "features/auth/presentation/routes/auth_routes.dart",
+      "language": "dart",
+      "value": "import 'package:go_router/go_router.dart';\nimport 'pages/login_page.dart';\nimport 'pages/register_page.dart';\n\nList<GoRoute> authRoutes = [\n  GoRoute(\n    path: '/login',\n    builder: (context, state) => const LoginPage(),\n  ),\n  GoRoute(\n    path: '/register',\n    builder: (context, state) => const RegisterPage(),\n  ),\n];"
+    },
+    {
+      "type": "code",
+      "title": "app_router.dart",
+      "language": "dart",
+      "value": "import 'package:go_router/go_router.dart';\nimport '../features/auth/presentation/routes/auth_routes.dart';\nimport '../features/product/presentation/routes/product_routes.dart';\n\nfinal router = GoRouter(\n  initialLocation: '/',\n  routes: [\n    ...authRoutes,\n    ...productRoutes,\n    // other feature routes\n  ],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep features independent** – Avoid importing one feature into another. Use shared core services for communication.",
+        "**Use a `core` folder for truly shared code** – Utils, constants, widgets, and error handling that multiple features need.",
+        "**Define clear boundaries** – Each feature should have a single responsibility (e.g., authentication, product management).",
+        "**Use dependency injection** – Don't instantiate dependencies inside features; inject them to keep code testable.",
+        "**Export feature's public API** – If you plan to split features into packages later, create a public API for each feature (e.g., `auth_api.dart`).",
+        "**Keep folders shallow** – Avoid nesting more than 3‑4 levels deep."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Creating circular dependencies between features** – Feature A imports Feature B and vice versa.\n✅ Use shared services or events to communicate.",
+        "❌ **Putting all code in one giant feature** – Defeats the purpose.\n✅ Split into smaller, focused features.",
+        "❌ **Mixing UI and business logic across features** – Makes testing hard.\n✅ Keep each feature self‑contained.",
+        "❌ **Hardcoding imports with deep relative paths** – Hard to refactor.\n✅ Use `package:` imports (after structuring your project).",
+        "❌ **Forgetting to register dependencies per feature** – May cause missing dependencies at runtime.\n✅ Call each feature's `init` function in `main`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "A feature-based structure combined with BLoC gives you a scalable, maintainable architecture for large Flutter apps. By keeping each feature self‑contained and using dependency injection, you enable parallel development, easier testing, and a clear separation of concerns. Start with a simple folder layout and evolve it as your app grows."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should I use Clean Architecture layers inside each feature?",
+      "answer": "It depends on the complexity. For medium to large apps, using presentation/domain/data layers inside each feature is recommended. For simple features, you can keep it simpler (e.g., just presentation and data)."
+    },
+    {
+      "question": "How do I share a bloc across multiple features?",
+      "answer": "If a bloc is truly global (e.g., `AuthBloc`), you can register it in the `core` and provide it at the app level using `MultiBlocProvider`. Then any feature can access it via `context.read<AuthBloc>()`."
+    },
+    {
+      "question": "Can I use this structure with Cubit instead of Bloc?",
+      "answer": "Yes, the folder structure is independent of whether you use Bloc or Cubit. You would place Cubits in the `presentation/cubit` folder."
+    },
+    {
+      "question": "How do I handle feature communication (e.g., when a user logs out, all features should clear data)?",
+      "answer": "Use a global `AuthBloc` that emits `LoggedOut` state. Other blocs can listen to that state via `BlocListener` or by subscribing to the `AuthBloc` stream in their `onInit`."
+    },
+    {
+      "question": "Is there a recommended tool for generating feature modules?",
+      "answer": "You can use `very_good_cli` (which creates a feature-based structure) or create your own templates. The `get_cli` also supports modular generation, though it's GetX-specific."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "comment": "Architecture structure is best explored in a full project; tryEditor disabled."
+  },
+  "quiz": [
+    {
+      "question": "What is the main benefit of organizing code by feature instead of by layer?",
+      "options": [
+        "It reduces code duplication",
+        "It keeps related code together, improving scalability and team collaboration",
+        "It makes the app run faster",
+        "It automatically handles dependency injection"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Where should shared widgets like a custom button be placed in a feature-based structure?",
+      "options": [
+        "Inside each feature that uses it",
+        "In the `core/widgets` folder",
+        "Inside the `presentation` folder of a random feature",
+        "In a separate package"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which of the following is a common mistake when using feature-based structure?",
+      "options": [
+        "Using dependency injection",
+        "Creating circular dependencies between features",
+        "Using GoRouter for navigation",
+        "Separating UI and business logic"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-clean-architecture",
+    "bloc-architecture",
+    "bloc-dependency-injection",
+    "go-router-introduction",
+    "flutter-modular"
+  ]
+}

@@ -1,0 +1,237 @@
+{
+  "slug": "bloc-authentication",
+  "course": "Flutter",
+  "title": "Authentication with Bloc: Login, Logout, and Protected Routes",
+  "meta": {
+    "title": "Flutter Bloc Authentication – Complete Guide (2026)",
+    "description": "Learn how to implement authentication in Flutter using Bloc. Login, logout, token storage, persistent sessions, route protection, and best practices for secure auth flows.",
+    "keywords": [
+      "flutter bloc authentication",
+      "bloc login",
+      "flutter authentication",
+      "bloc route protection",
+      "secure storage bloc"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "12 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "authentication", "secure-storage", "navigation"],
+  "content": [
+    {
+      "type": "text",
+      "value": "Authentication is a core feature in most mobile apps. Using Bloc, you can build a clean, testable authentication flow that handles login, logout, token persistence, and route protection. This guide walks you through building a complete authentication system with Bloc."
+    },
+    {
+      "type": "heading",
+      "value": "Authentication State Flow"
+    },
+    {
+      "type": "highlight",
+      "value": "Unauthenticated → Authenticating → Authenticated (or Failure)"
+    },
+    {
+      "type": "text",
+      "value": "The authentication state typically goes through these phases: initial check (maybe from persisted token), loading during login, success or failure, and logout. You also need to handle token refresh and session expiry in real‑world apps."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up the Auth Repository"
+    },
+    {
+      "type": "text",
+      "value": "Start by creating an authentication repository that abstracts the login, logout, and token storage logic. Use secure storage (e.g., `flutter_secure_storage`) to store tokens."
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter_secure_storage: ^9.0.0"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/domain/repositories/auth_repository.dart\nabstract class AuthRepository {\n  Future<String> login(String email, String password);\n  Future<void> logout();\n  Future<String?> getToken();\n  Future<void> saveToken(String token);\n  Future<void> deleteToken();\n  Future<bool> isAuthenticated();\n}\n\n// lib/features/auth/data/repositories/auth_repository_impl.dart\nimport 'package:flutter_secure_storage/flutter_secure_storage.dart';\nimport '../datasources/auth_remote_datasource.dart';\n\nclass AuthRepositoryImpl implements AuthRepository {\n  final AuthRemoteDataSource remoteDataSource;\n  final FlutterSecureStorage secureStorage;\n  static const _tokenKey = 'auth_token';\n\n  AuthRepositoryImpl(this.remoteDataSource, this.secureStorage);\n\n  @override\n  Future<String> login(String email, String password) async {\n    final token = await remoteDataSource.login(email, password);\n    await saveToken(token);\n    return token;\n  }\n\n  @override\n  Future<void> logout() async {\n    await remoteDataSource.logout(); // optional: call logout API\n    await deleteToken();\n  }\n\n  @override\n  Future<void> saveToken(String token) async {\n    await secureStorage.write(key: _tokenKey, value: token);\n  }\n\n  @override\n  Future<String?> getToken() async {\n    return await secureStorage.read(key: _tokenKey);\n  }\n\n  @override\n  Future<void> deleteToken() async {\n    await secureStorage.delete(key: _tokenKey);\n  }\n\n  @override\n  Future<bool> isAuthenticated() async {\n    final token = await getToken();\n    return token != null && token.isNotEmpty;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Defining Auth Bloc"
+    },
+    {
+      "type": "subheading",
+      "value": "Auth Events"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/bloc/auth_event.dart\nabstract class AuthEvent {}\n\nclass AuthLoginRequested extends AuthEvent {\n  final String email;\n  final String password;\n  AuthLoginRequested(this.email, this.password);\n}\n\nclass AuthLogoutRequested extends AuthEvent {}\n\nclass AuthStatusChecked extends AuthEvent {}"
+    },
+    {
+      "type": "subheading",
+      "value": "Auth States"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/bloc/auth_state.dart\nabstract class AuthState {}\n\nclass AuthInitial extends AuthState {}\nclass AuthLoading extends AuthState {}\nclass AuthAuthenticated extends AuthState {\n  final String token;\n  AuthAuthenticated(this.token);\n}\nclass AuthUnauthenticated extends AuthState {}\nclass AuthFailure extends AuthState {\n  final String message;\n  AuthFailure(this.message);\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Auth Bloc Implementation"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/bloc/auth_bloc.dart\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport '../domain/repositories/auth_repository.dart';\n\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  final AuthRepository repository;\n\n  AuthBloc(this.repository) : super(AuthInitial()) {\n    on<AuthLoginRequested>(_onLoginRequested);\n    on<AuthLogoutRequested>(_onLogoutRequested);\n    on<AuthStatusChecked>(_onAuthStatusChecked);\n\n    // Check initial auth status when bloc is created\n    add(AuthStatusChecked());\n  }\n\n  Future<void> _onLoginRequested(\n    AuthLoginRequested event,\n    Emitter<AuthState> emit,\n  ) async {\n    emit(AuthLoading());\n    try {\n      final token = await repository.login(event.email, event.password);\n      emit(AuthAuthenticated(token));\n    } catch (e) {\n      emit(AuthFailure(e.toString()));\n    }\n  }\n\n  Future<void> _onLogoutRequested(\n    AuthLogoutRequested event,\n    Emitter<AuthState> emit,\n  ) async {\n    await repository.logout();\n    emit(AuthUnauthenticated());\n  }\n\n  Future<void> _onAuthStatusChecked(\n    AuthStatusChecked event,\n    Emitter<AuthState> emit,\n  ) async {\n    final isAuthenticated = await repository.isAuthenticated();\n    if (isAuthenticated) {\n      final token = await repository.getToken();\n      emit(AuthAuthenticated(token!));\n    } else {\n      emit(AuthUnauthenticated());\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Integrating with the UI"
+    },
+    {
+      "type": "subheading",
+      "value": "Providing the Bloc"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/main.dart\nvoid main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  // Setup DI (e.g., with get_it)\n  await setup();\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocProvider(\n      create: (_) => getIt<AuthBloc>(), // or AuthBloc(AuthRepositoryImpl(...))\n      child: MaterialApp(\n        title: 'Auth Demo',\n        home: const SplashPage(), // or use router\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Login Page UI"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginPage extends StatelessWidget {\n  final TextEditingController emailController = TextEditingController();\n  final TextEditingController passwordController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: BlocConsumer<AuthBloc, AuthState>(\n        listener: (context, state) {\n          if (state is AuthAuthenticated) {\n            Navigator.pushReplacementNamed(context, '/home');\n          }\n          if (state is AuthFailure) {\n            ScaffoldMessenger.of(context).showSnackBar(\n              SnackBar(content: Text(state.message)),\n            );\n          }\n        },\n        builder: (context, state) {\n          if (state is AuthLoading) {\n            return Center(child: CircularProgressIndicator());\n          }\n          return Padding(\n            padding: const EdgeInsets.all(16.0),\n            child: Column(\n              children: [\n                TextField(controller: emailController, decoration: InputDecoration(labelText: 'Email')),\n                TextField(controller: passwordController, obscureText: true, decoration: InputDecoration(labelText: 'Password')),\n                SizedBox(height: 20),\n                ElevatedButton(\n                  onPressed: () {\n                    context.read<AuthBloc>().add(\n                      AuthLoginRequested(emailController.text, passwordController.text),\n                    );\n                  },\n                  child: Text('Login'),\n                ),\n              ],\n            ),\n          );\n        },\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Protecting Routes with GoRouter"
+    },
+    {
+      "type": "text",
+      "value": "A common pattern is to use `go_router` with a redirect function that checks the authentication state. The bloc provides the state, and the router redirects accordingly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/app/router.dart\nimport 'package:go_router/go_router.dart';\n\nfinal router = GoRouter(\n  initialLocation: '/',\n  redirect: (context, state) {\n    final authState = context.read<AuthBloc>().state;\n    final isAuthenticated = authState is AuthAuthenticated;\n    final isGoingToLogin = state.matchedLocation == '/login';\n\n    if (!isAuthenticated && !isGoingToLogin) {\n      return '/login';\n    }\n    if (isAuthenticated && isGoingToLogin) {\n      return '/home';\n    }\n    return null;\n  },\n  routes: [\n    GoRoute(path: '/', redirect: (_, __) => '/home'),\n    GoRoute(path: '/login', builder: (context, state) => LoginPage()),\n    GoRoute(path: '/home', builder: (context, state) => HomePage()),\n    GoRoute(path: '/profile', builder: (context, state) => ProfilePage()),\n  ],\n);\n\n// In MyApp:\nMaterialApp.router(\n  routerConfig: router,\n  builder: (context, child) => BlocProvider<AuthBloc>(\n    create: (_) => getIt<AuthBloc>(),\n    child: child!,\n  ),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Token Expiry and Refresh"
+    },
+    {
+      "type": "text",
+      "value": "In real apps, tokens expire. You can implement a token refresh mechanism in the repository or in an HTTP interceptor. When a 401 response is received, you can trigger a refresh event in the auth bloc."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// AuthEvent extension\nclass AuthTokenExpired extends AuthEvent {}\nclass AuthTokenRefreshed extends AuthEvent {}\n\n// In AuthBloc\non<AuthTokenExpired>((event, emit) async {\n  try {\n    final newToken = await repository.refreshToken();\n    emit(AuthAuthenticated(newToken));\n  } catch (e) {\n    emit(AuthUnauthenticated());\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Authentication"
+    },
+    {
+      "type": "text",
+      "value": "Use `bloc_test` to test the auth bloc with a mocked repository. Verify that the correct states are emitted."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  late MockAuthRepository repository;\n  late AuthBloc bloc;\n\n  setUp(() {\n    repository = MockAuthRepository();\n    bloc = AuthBloc(repository);\n  });\n\n  blocTest<AuthBloc, AuthState>(\n    'emits [AuthLoading, AuthAuthenticated] on successful login',\n    build: () => bloc,\n    act: (bloc) {\n      when(() => repository.login('test@example.com', 'password'))\n          .thenAnswer((_) async => 'token');\n      bloc.add(AuthLoginRequested('test@example.com', 'password'));\n    },\n    expect: () => [\n      AuthLoading(),\n      AuthAuthenticated('token'),\n    ],\n  );\n\n  blocTest<AuthBloc, AuthState>(\n    'emits [AuthUnauthenticated] on logout',\n    build: () => bloc,\n    seed: () => AuthAuthenticated('token'),\n    act: (bloc) => bloc.add(AuthLogoutRequested()),\n    expect: () => [AuthUnauthenticated()],\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Store tokens securely** – Use `flutter_secure_storage` or `encrypted_shared_preferences` to store sensitive data.",
+        "**Check auth status on app start** – Read stored token and verify it (maybe with a ping endpoint) before showing the home screen.",
+        "**Use `BlocListener` for navigation** – Navigate based on state changes, not directly from bloc.",
+        "**Handle logout everywhere** – Clear all app state on logout. You might emit a global reset event.",
+        "**Avoid storing passwords** – Only store tokens; never store plain passwords.",
+        "**Implement token refresh** – Handle expired tokens gracefully without forcing the user to log in again.",
+        "**Show loading indicators** – Provide feedback during login requests."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Storing tokens in plain SharedPreferences** – They are not secure; use secure storage.",
+        "❌ **Not handling initial authentication state** – The app may briefly show an unauthenticated UI before reading the token.",
+        "❌ **Calling `Navigator` inside bloc** – Breaks testability; use `BlocListener` instead.",
+        "❌ **Not resetting state on logout** – The old authenticated state may linger in other blocs.",
+        "❌ **Not handling network errors** – Provide meaningful error messages to the user."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that authentication is in place, you can integrate it with other features like protected API calls, and learn how to structure your app with modular architecture."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Modular architecture with Bloc](/bloc-modular-architecture) and [Bloc testing](/bloc-testing)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I protect routes without go_router?",
+      "answer": "You can create a widget that listens to the auth state and conditionally shows either the desired screen or redirects to login. Use `BlocBuilder` in a root widget that decides which page to show."
+    },
+    {
+      "question": "Should I store the user object along with the token?",
+      "answer": "Yes, you can extend the `AuthAuthenticated` state to include a user object. Store the user data after login and retrieve it from the repository. But avoid storing too much sensitive data in secure storage; prefer the token and fetch user on demand."
+    },
+    {
+      "question": "How do I handle biometric authentication?",
+      "answer": "You can use packages like `local_auth` to verify the user's identity. After successful biometric authentication, you can either log in with stored credentials or simply mark the app as authenticated if a valid token already exists."
+    },
+    {
+      "question": "What about logging out from all tabs/screens?",
+      "answer": "When logout occurs, all blocs that depend on authentication should reset. You can use a global event bus or have a root `AuthBloc` that emits a reset event, and other blocs listen to it."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What is the best way to store authentication tokens securely in Flutter?",
+      "options": ["SharedPreferences", "flutter_secure_storage", "SQLite", "File storage"],
+      "answer": 1
+    },
+    {
+      "question": "Which widget should you use to navigate based on authentication state changes?",
+      "options": ["BlocBuilder", "BlocListener", "BlocProvider", "BlocConsumer"],
+      "answer": 1
+    },
+    {
+      "question": "What should you do on app start to restore the user's session?",
+      "options": [
+        "Immediately navigate to home",
+        "Show login screen and check token later",
+        "Read stored token and emit appropriate state",
+        "Always require login"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "bloc-architecture",
+    "bloc-repository-pattern",
+    "bloc-navigation",
+    "bloc-testing",
+    "flutter-dependency-injection"
+  ]
+}

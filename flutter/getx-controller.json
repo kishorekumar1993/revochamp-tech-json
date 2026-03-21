@@ -3,7 +3,7 @@
   "course": "Flutter",
   "title": "GetX Controller: Lifecycle, Methods & Best Practices",
   "meta": {
-    "title": "GetX Controller – Complete Guide with Lifecycle and Best Practices",
+    "title": "GetX Controller – Complete Guide with Lifecycle and Best Practices (2026)",
     "description": "Master GetX controllers: lifecycle methods (onInit, onReady, onClose), dependency injection, state management, and best practices for building scalable Flutter apps.",
     "keywords": [
       "GetX controller",
@@ -49,6 +49,17 @@
         "**`onReady()`** – Called after the widget tree is fully rendered. Ideal for tasks that require the UI to be ready (e.g., showing dialogs, starting animations).",
         "**`onClose()`** – Called when the controller is about to be destroyed. Clean up resources like streams, timers, or dispose subscriptions."
       ]
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Method", "Timing", "Use Cases"],
+        "rows": [
+          ["`onInit()`", "Immediately after creation", "Initialize data, setup workers, call APIs"],
+          ["`onReady()`", "After UI is fully rendered", "Show dialogs, start animations, focus fields"],
+          ["`onClose()`", "Before disposal", "Close streams, cancel timers, dispose subscriptions"]
+        ]
+      }
     },
     {
       "type": "code",
@@ -135,6 +146,26 @@
     },
     {
       "type": "heading",
+      "value": "Comparison: GetxController vs GetxService"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "GetxController", "GetxService"],
+        "rows": [
+          ["Disposal", "Auto-disposed when route is removed (unless permanent)", "Never disposed automatically"],
+          ["Best for", "Screen/feature-specific logic", "App-wide services (API client, storage, auth)"],
+          ["Usage", "One per screen or feature", "Singleton across app"],
+          ["Lifecycle methods", "onInit, onReady, onClose", "Same, but never called onClose unless manually deleted"]
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "value": "Use `GetxService` for services that should live the entire app lifetime. Use `GetxController` for disposable logic tied to a screen or module."
+    },
+    {
+      "type": "heading",
       "value": "Best Practices"
     },
     {
@@ -165,26 +196,41 @@
     },
     {
       "type": "heading",
-      "value": "FAQ"
-    },
-    {
-      "type": "list",
-      "value": [
-        "**Q: What's the difference between `GetxController` and `GetxService`?**  \nA: `GetxService` is a controller that is never disposed automatically. Use it for app-wide services like API clients, theme managers, etc. `GetxController` is disposed when the route is removed (unless marked `permanent`).",
-        "**Q: Can I have multiple controllers per screen?**  \nA: Yes, it's common to have one controller per logical feature. For complex screens, split into multiple smaller controllers.",
-        "**Q: How do I test a controller?**  \nA: You can instantiate it normally and call its methods. Use `Get.reset()` to clear registrations between tests. Mock dependencies if needed.",
-        "**Q: Can controllers listen to each other's state?**  \nA: Yes, one controller can `Get.find` another and observe its Rx variables using workers or `Obx` in the UI.",
-        "**Q: Do I need to dispose controllers manually?**  \nA: No, GetX automatically disposes them when the associated route is removed. Only use `Get.delete` if you need to remove it earlier.",
-        "**Q: What is the order of lifecycle methods?**  \nA: Constructor -> `onInit` -> the view is built -> `onReady` -> (when route is popped) -> `onClose`."
-      ]
-    },
-    {
-      "type": "heading",
       "value": "Conclusion"
     },
     {
       "type": "text",
       "value": "GetX controllers provide a robust foundation for managing state, logic, and lifecycle in Flutter apps. By understanding their lifecycle, injection options, and best practices, you can build maintainable, scalable applications with minimal boilerplate."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What's the difference between `GetxController` and `GetxService`?",
+      "answer": "`GetxService` is a controller that is never disposed automatically. Use it for app-wide services like API clients, theme managers, etc. `GetxController` is disposed when the route is removed (unless marked `permanent`)."
+    },
+    {
+      "question": "Can I have multiple controllers per screen?",
+      "answer": "Yes, it's common to have one controller per logical feature. For complex screens, split into multiple smaller controllers."
+    },
+    {
+      "question": "How do I test a controller?",
+      "answer": "You can instantiate it normally and call its methods. Use `Get.reset()` to clear registrations between tests. Mock dependencies if needed."
+    },
+    {
+      "question": "Can controllers listen to each other's state?",
+      "answer": "Yes, one controller can `Get.find` another and observe its Rx variables using workers or `Obx` in the UI."
+    },
+    {
+      "question": "Do I need to dispose controllers manually?",
+      "answer": "No, GetX automatically disposes them when the associated route is removed. Only use `Get.delete` if you need to remove it earlier."
+    },
+    {
+      "question": "What is the order of lifecycle methods?",
+      "answer": "Constructor -> `onInit` -> the view is built -> `onReady` -> (when route is popped) -> `onClose`."
+    },
+    {
+      "question": "How do I make a controller permanent?",
+      "answer": "Use `Get.put(MyController(), permanent: true)` or in bindings set `permanent: true`. Alternatively, use `GetxService`."
     }
   ],
   "tryEditor": {

@@ -1,0 +1,223 @@
+{
+  "slug": "bloc-cubit-vs-bloc",
+  "course": "Flutter",
+  "title": "Cubit vs Bloc: Which One to Choose in Flutter?",
+  "meta": {
+    "title": "Cubit vs Bloc – Comparison Guide for Flutter State Management (2026)",
+    "description": "Compare Cubit and Bloc from flutter_bloc. Learn the differences, when to use each, and how to migrate from Cubit to Bloc with code examples.",
+    "keywords": [
+      "Cubit vs Bloc",
+      "flutter cubit",
+      "bloc vs cubit",
+      "flutter_bloc",
+      "state management",
+      "bloc pattern"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "10 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Intermediate",
+  "tags": ["bloc", "cubit", "comparison", "state management"],
+  "content": [
+    {
+      "type": "text",
+      "value": "When using `flutter_bloc`, you have two main ways to manage state: **Cubit** and **Bloc**. Both are based on the BLoC pattern, but they differ in complexity, boilerplate, and use cases. This guide will help you understand the differences, strengths, and when to choose one over the other."
+    },
+    {
+      "type": "heading",
+      "value": "What is Cubit?"
+    },
+    {
+      "type": "text",
+      "value": "Cubit is a simplified version of Bloc that uses **methods** to emit states. You define a state class and a cubit class that extends `Cubit<State>`. Inside the cubit, you write methods that emit new states by calling `emit()`. It’s perfect for simple state flows where you don’t need the power of event transforms."
+    },
+    {
+      "type": "code",
+      "title": "counter_cubit.dart",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\n\nclass CounterState {\n  final int value;\n  CounterState(this.value);\n}\n\nclass CounterCubit extends Cubit<CounterState> {\n  CounterCubit() : super(CounterState(0));\n\n  void increment() => emit(CounterState(state.value + 1));\n  void decrement() => emit(CounterState(state.value - 1));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "What is Bloc?"
+    },
+    {
+      "type": "text",
+      "value": "Bloc uses **events** and an `on<Event>` handler. You define events (as classes) and states, and the bloc listens for incoming events, processes them, and emits new states. Bloc gives you more control: you can transform events, handle debouncing, use `emit.forEach`, and manage complex asynchronous flows."
+    },
+    {
+      "type": "code",
+      "title": "counter_bloc.dart",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\n\n// Events\nabstract class CounterEvent {}\nclass Increment extends CounterEvent {}\nclass Decrement extends CounterEvent {}\n\n// State\nclass CounterState {\n  final int value;\n  CounterState(this.value);\n}\n\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(CounterState(0)) {\n    on<Increment>((event, emit) => emit(CounterState(state.value + 1)));\n    on<Decrement>((event, emit) => emit(CounterState(state.value - 1)));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Differences"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Cubit", "Bloc"],
+        "rows": [
+          ["Event representation", "Methods", "Event classes"],
+          ["Boilerplate", "Minimal", "More (events, handlers)"],
+          ["Complexity", "Low", "Moderate to high"],
+          ["Event transformers", "Not built-in", "Built-in (`on<Event>(..., transformer: ...)`)"],
+          ["Debouncing / throttling", "Manual (use `Future.delayed` or external)", "Built-in with `debounceTime`, `throttleTime`"],
+          ["Error handling", "Inside method try‑catch", "Via `onError` or event handler try‑catch"],
+          ["Reactivity", "Immediate", "Can be immediate or transformed"],
+          ["Testing", "Simple", "Slightly more setup but still straightforward"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Cubit"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Simple UI state (e.g., toggles, counters, forms)",
+        "No need for event transformation or advanced debouncing",
+        "You prefer minimal boilerplate",
+        "Small to medium apps where complexity is low"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Bloc"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Complex state with many different actions",
+        "Need event transformation (e.g., debounce search input, throttle button clicks)",
+        "Want to use `emit.forEach` for reactive streams",
+        "You want to leverage event‑based debugging tools",
+        "Large applications with many developers (events provide clear contract)"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Advanced Example: Debouncing with Bloc"
+    },
+    {
+      "type": "text",
+      "value": "One of Bloc’s strengths is built‑in event transformation. Here’s how to debounce a search query using Bloc."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Event\nclass SearchQueryChanged extends SearchEvent {\n  final String query;\n  SearchQueryChanged(this.query);\n}\n\n// In bloc\non<SearchQueryChanged>(\n  _onSearchQueryChanged,\n  transformer: debounceTime(const Duration(milliseconds: 500)),\n);\n\nFuture<void> _onSearchQueryChanged(SearchQueryChanged event, Emitter<SearchState> emit) async {\n  // Perform search\n  final results = await repository.search(event.query);\n  emit(SearchLoaded(results));\n}\n\n// With Cubit, you would need to manage a timer yourself."
+    },
+    {
+      "type": "heading",
+      "value": "Migrating from Cubit to Bloc"
+    },
+    {
+      "type": "text",
+      "value": "If you start with Cubit and later need Bloc’s features, migration is straightforward:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Create event classes for each public method of your Cubit.",
+        "Replace the cubit class with a bloc that extends `Bloc<Event, State>`.",
+        "Move each method’s logic into an `on<Event>` handler.",
+        "Update UI to dispatch events instead of calling methods.",
+        "Update tests to use `blocTest`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Start with Cubit** – For most features, Cubit is sufficient and simpler.",
+        "**Use Bloc when you need event transformation** – If you find yourself implementing timers or manual debouncing, switch to Bloc.",
+        "**Keep states immutable** – Always create new state instances, don’t mutate.",
+        "**Use Equatable for states and events** – Reduces boilerplate and prevents unnecessary rebuilds.",
+        "**Separate business logic** – Even in Cubit, keep logic in the cubit, not in UI."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using Bloc for everything** – Over‑engineering adds unnecessary complexity.\n✅ Use Cubit for simple cases.",
+        "❌ **Mutating state directly** – Causes subtle bugs.\n✅ Always emit a new state.",
+        "❌ **Calling `emit` after bloc is closed** – Throws an error.\n✅ Check `isClosed` before emitting if needed.",
+        "❌ **Not handling errors** – Async exceptions can crash the app.\n✅ Catch and emit error states."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Cubit and Bloc are both powerful, but they serve different levels of complexity. Cubit is the recommended starting point for most apps, offering simplicity and clear code. When you need advanced features like debouncing or event transforms, Bloc is there to support you. Choose the tool that matches your needs and keep your state management clean and testable."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use Cubit and Bloc together in the same app?",
+      "answer": "Yes, absolutely. You can use Cubit for simple features and Bloc for complex ones. `flutter_bloc` supports both seamlessly."
+    },
+    {
+      "question": "Is Bloc faster than Cubit?",
+      "answer": "No, performance is comparable. Bloc adds a thin layer of event processing, but the overhead is negligible. The choice is about developer experience, not speed."
+    },
+    {
+      "question": "How do I test a Cubit vs a Bloc?",
+      "answer": "Cubit can be tested by calling its methods and asserting the state after each call. Bloc can be tested with `blocTest` which allows you to seed events and expect states."
+    },
+    {
+      "question": "Should I use Bloc for API calls?",
+      "answer": "Yes, both work. With Cubit you call a method that calls the API and emits states. With Bloc you dispatch an event and handle it in the bloc. Bloc is particularly useful if you need to debounce or cancel requests."
+    },
+    {
+      "question": "What is the learning curve for Cubit vs Bloc?",
+      "answer": "Cubit has a very low learning curve – it’s like a simple class with methods. Bloc requires understanding events, handlers, and potentially transformers, so it’s a bit steeper."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\nvoid main() => runApp(MyApp());\n\n// ---- Cubit Example ----\nclass CounterState {\n  final int value;\n  CounterState(this.value);\n}\n\nclass CounterCubit extends Cubit<CounterState> {\n  CounterCubit() : super(CounterState(0));\n\n  void increment() => emit(CounterState(state.value + 1));\n  void decrement() => emit(CounterState(state.value - 1));\n}\n\n// ---- Bloc Example ----\nabstract class CounterEvent {}\nclass IncrementEvent extends CounterEvent {}\nclass DecrementEvent extends CounterEvent {}\n\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(CounterState(0)) {\n    on<IncrementEvent>((event, emit) => emit(CounterState(state.value + 1)));\n    on<DecrementEvent>((event, emit) => emit(CounterState(state.value - 1)));\n  }\n}\n\n// ---- App ----\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'Cubit vs Bloc Demo',\n      home: MultiBlocProvider(\n        providers: [\n          BlocProvider(create: (_) => CounterCubit()),\n          BlocProvider(create: (_) => CounterBloc()),\n        ],\n        child: DemoPage(),\n      ),\n    );\n  }\n}\n\nclass DemoPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Cubit vs Bloc')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Cubit:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),\n            BlocBuilder<CounterCubit, CounterState>(\n              builder: (context, state) => Text('Count: ${state.value}', style: TextStyle(fontSize: 24)),\n            ),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                IconButton(\n                  icon: Icon(Icons.remove),\n                  onPressed: () => context.read<CounterCubit>().decrement(),\n                ),\n                IconButton(\n                  icon: Icon(Icons.add),\n                  onPressed: () => context.read<CounterCubit>().increment(),\n                ),\n              ],\n            ),\n            SizedBox(height: 30),\n            Text('Bloc:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),\n            BlocBuilder<CounterBloc, CounterState>(\n              builder: (context, state) => Text('Count: ${state.value}', style: TextStyle(fontSize: 24)),\n            ),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                IconButton(\n                  icon: Icon(Icons.remove),\n                  onPressed: () => context.read<CounterBloc>().add(DecrementEvent()),\n                ),\n                IconButton(\n                  icon: Icon(Icons.add),\n                  onPressed: () => context.read<CounterBloc>().add(IncrementEvent()),\n                ),\n              ],\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you emit a new state in a Cubit?",
+      "options": ["By calling `state = newState`", "By calling `emit(newState)`", "By returning newState from a method", "By using `setState`"],
+      "answer": 1
+    },
+    {
+      "question": "Which feature is available in Bloc but not in Cubit?",
+      "options": ["State management", "Event transformers (debounce, throttle)", "UI rebuilding", "Error handling"],
+      "answer": 1
+    },
+    {
+      "question": "When should you prefer Bloc over Cubit?",
+      "options": [
+        "For simple counters",
+        "When you need event debouncing or advanced transformation",
+        "Always, because it's more powerful",
+        "Never"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-introduction",
+    "bloc-architecture",
+    "bloc-events",
+    "bloc-testing"
+  ]
+}

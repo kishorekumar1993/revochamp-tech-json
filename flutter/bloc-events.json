@@ -1,0 +1,252 @@
+{
+  "slug": "bloc-events",
+  "course": "Flutter",
+  "title": "Bloc Events: Definition, Handling, and Best Practices",
+  "meta": {
+    "title": "Bloc Events in Flutter – Complete Guide (2026)",
+    "description": "Learn how to define, structure, and handle events in Flutter Bloc. Event classes, Equatable, event transformers, and advanced patterns for scalable state management.",
+    "keywords": [
+      "flutter bloc events",
+      "bloc event handler",
+      "bloc event transformer",
+      "equatable events",
+      "bloc event best practices"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "10 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "events", "state-management"],
+  "content": [
+    {
+      "type": "text",
+      "value": "In the Bloc pattern, **events** are the input that trigger state changes. They represent user actions, lifecycle events, or any external input that should cause the application state to evolve. This guide covers everything you need to know about defining, handling, and optimising events in Flutter Bloc."
+    },
+    {
+      "type": "heading",
+      "value": "What Are Bloc Events?"
+    },
+    {
+      "type": "text",
+      "value": "Events are plain Dart classes that describe **what happened**. They are dispatched to the Bloc, which then processes them and emits new states. Events are the only way to interact with a Bloc – the UI never modifies state directly."
+    },
+    {
+      "type": "highlight",
+      "value": "UI → Dispatches Event → Bloc → Processes Event → Emits New State"
+    },
+    {
+      "type": "heading",
+      "value": "Defining Events"
+    },
+    {
+      "type": "subheading",
+      "value": "Basic Event Class"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class CounterEvent {}\n\nclass IncrementPressed extends CounterEvent {}\n\nclass DecrementPressed extends CounterEvent {}"
+    },
+    {
+      "type": "text",
+      "value": "While this works, it’s better to use **Equatable** for proper equality checks. Without it, Bloc may not know when two events are identical, leading to unnecessary handlers being called."
+    },
+    {
+      "type": "subheading",
+      "value": "Using Equatable"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nabstract class CounterEvent extends Equatable {\n  const CounterEvent();\n\n  @override\n  List<Object> get props => [];\n}\n\nclass IncrementPressed extends CounterEvent {}\n\nclass DecrementPressed extends CounterEvent {}"
+    },
+    {
+      "type": "subheading",
+      "value": "Events with Data"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginSubmitted extends AuthEvent {\n  final String email;\n  final String password;\n\n  const LoginSubmitted(this.email, this.password);\n\n  @override\n  List<Object> get props => [email, password];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Events"
+    },
+    {
+      "type": "text",
+      "value": "Inside your Bloc, you define event handlers using the `on<Event>` method. Each handler receives the event and an `Emitter` to emit new states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginBloc extends Bloc<LoginEvent, LoginState> {\n  final AuthRepository repository;\n\n  LoginBloc(this.repository) : super(LoginInitial()) {\n    on<LoginSubmitted>(_onLoginSubmitted);\n  }\n\n  Future<void> _onLoginSubmitted(\n    LoginSubmitted event,\n    Emitter<LoginState> emit,\n  ) async {\n    emit(LoginLoading());\n    try {\n      final user = await repository.login(event.email, event.password);\n      emit(LoginSuccess(user));\n    } catch (e) {\n      emit(LoginFailure(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Event Transformers"
+    },
+    {
+      "type": "text",
+      "value": "Event transformers allow you to control how events are processed. They are especially useful for handling **concurrent events**, **debouncing**, or **throttling**. The most common transformers come from the `bloc_concurrency` package."
+    },
+    {
+      "type": "subheading",
+      "value": "Adding Dependencies"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  bloc_concurrency: ^0.2.0"
+    },
+    {
+      "type": "subheading",
+      "value": "Using EventTransformer"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:bloc_concurrency/bloc_concurrency.dart';\nimport 'package:stream_transform/stream_transform.dart';\n\nclass SearchBloc extends Bloc<SearchEvent, SearchState> {\n  SearchBloc() : super(SearchInitial()) {\n    on<SearchQueryChanged>(\n      _onSearchQueryChanged,\n      transformer: debounce(const Duration(milliseconds: 300)),\n    );\n  }\n\n  void _onSearchQueryChanged(\n    SearchQueryChanged event,\n    Emitter<SearchState> emit,\n  ) async {\n    // perform search\n  }\n}\n\nEventTransformer<Event> debounce<Event>(Duration duration) {\n  return (events, mapper) => events.debounce(duration).switchMap(mapper);\n}"
+    },
+    {
+      "type": "text",
+      "value": "Common transformers:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "`sequential()` – processes events one after another (default)",
+        "`concurrent()` – allows multiple events to be processed simultaneously",
+        "`droppable()` – drops new events if a previous handler is still running",
+        "`restartable()` – cancels the current handler and starts a new one"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Advanced Event Patterns"
+    },
+    {
+      "type": "subheading",
+      "value": "Event Composition"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want to dispatch multiple events in response to a single action. You can do this inside the handler using `add()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<FormSubmitted>((event, emit) {\n  // Validate fields\n  add(ValidateName(event.name));\n  add(ValidateEmail(event.email));\n});"
+    },
+    {
+      "type": "subheading",
+      "value": "Conditional Event Handling"
+    },
+    {
+      "type": "text",
+      "value": "Use the `where` method on the event stream to filter events based on conditions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<CounterEvent>(\n  (event, emit) {\n    // handle only if event is relevant\n  },\n  where: (event) => event is IncrementPressed,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Events"
+    },
+    {
+      "type": "text",
+      "value": "Use the `bloc_test` package to test that your Bloc reacts correctly to events."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:bloc_test/bloc_test.dart';\nimport 'package:flutter_test/flutter_test.dart';\n\nvoid main() {\n  group('CounterBloc', () {\n    blocTest<CounterBloc, CounterState>(\n      'emits [1] when increment is added',\n      build: () => CounterBloc(),\n      act: (bloc) => bloc.add(IncrementPressed()),\n      expect: () => [const CounterState(1)],\n    );\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices for Events"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use descriptive names** – `LoginSubmitted` is better than `LoginEvent`.",
+        "**Make events immutable** – Use `final` fields and Equatable.",
+        "**Keep events small** – Each event should represent one logical action.",
+        "**Avoid bloated events** – Don't put UI logic or heavy data in events.",
+        "**Use transformers for async flows** – Prevent race conditions and unnecessary calls.",
+        "**Document events** – Explain what each event does, especially in larger projects."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using the same event for different actions** – Leads to complex conditional logic inside handlers.",
+        "❌ **Not using Equatable** – Causes event equality issues and potential bugs.",
+        "❌ **Handling side effects inside events** – Side effects belong in the handler, not the event.",
+        "❌ **Creating events that are too specific** – e.g., `IncrementByOne` and `IncrementByTwo` – use a single `Increment` with a parameter.",
+        "❌ **Forgetting to handle errors** – Always catch exceptions and emit appropriate error states."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you understand events, explore how to structure your app using [Bloc architecture](/bloc-architecture) and how to test your blocs effectively."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should I always use Equatable for events?",
+      "answer": "Yes, it's highly recommended. Without Equatable, Bloc can't determine if two events are the same, which can lead to unnecessary handler calls and performance issues. It also helps in debugging and testing."
+    },
+    {
+      "question": "How do I debounce events like search input?",
+      "answer": "Use an event transformer with `debounce` from the `stream_transform` package. Combine it with `bloc_concurrency` to manage event flow. See the 'Event Transformers' section for a working example."
+    },
+    {
+      "question": "Can I dispatch an event from inside another event handler?",
+      "answer": "Yes, you can call `add()` inside a handler to trigger additional events. However, be cautious of infinite loops. Use `add` only when it makes logical sense (e.g., validating fields after a submit)."
+    },
+    {
+      "question": "What's the difference between `Bloc` and `Cubit` regarding events?",
+      "answer": "Bloc uses events to trigger state changes, while Cubit exposes methods that directly emit states. Cubit is simpler but less traceable. Use Bloc when you need to log or transform event streams."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What package is used to provide common event transformers?",
+      "options": ["bloc_test", "bloc_concurrency", "flutter_bloc", "equatable"],
+      "answer": 1
+    },
+    {
+      "question": "Which method is used to register an event handler in a Bloc?",
+      "options": ["registerHandler", "on<Event>", "addHandler", "listen"],
+      "answer": 1
+    },
+    {
+      "question": "Why should you use Equatable for events?",
+      "options": [
+        "To make events serializable",
+        "To enable proper equality comparisons",
+        "To improve performance by 50%",
+        "To generate JSON automatically"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-introduction",
+    "bloc-architecture",
+    "bloc-cubit",
+    "bloc-testing",
+    "bloc-installation"
+  ]
+}

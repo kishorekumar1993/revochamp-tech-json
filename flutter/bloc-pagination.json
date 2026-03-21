@@ -1,0 +1,252 @@
+{
+  "slug": "bloc-pagination",
+  "course": "Flutter",
+  "title": "BLoC Pagination: Infinite Scrolling & Load More Pattern",
+  "meta": {
+    "title": "BLoC Pagination – Infinite Scrolling & Load More in Flutter (2026)",
+    "description": "Learn how to implement pagination and infinite scrolling in Flutter using BLoC. Handle load more, refresh, and paginated API calls with clean, testable code.",
+    "keywords": [
+      "bloc pagination",
+      "flutter bloc infinite scrolling",
+      "load more bloc",
+      "pagination flutter bloc",
+      "infinite list bloc",
+      "flutter pagination example"
+    ]
+  },
+  "level": "Advanced",
+  "readingTime": "14 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Advanced",
+  "tags": ["bloc", "pagination", "infinite scrolling", "api"],
+  "content": [
+    {
+      "type": "text",
+      "value": "Pagination is essential for apps that display large datasets. Implementing it correctly with BLoC ensures a smooth user experience, efficient network usage, and maintainable code. This guide covers how to build an infinite scrolling list with load‑more functionality using BLoC, including handling page states, preventing duplicate requests, and refreshing data."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use BLoC for Pagination?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Reactive state** – UI automatically updates when new data arrives.",
+        "**Separation of concerns** – Pagination logic stays in the bloc, not in the UI.",
+        "**Testability** – Pagination flow can be unit‑tested with `bloc_test`.",
+        "**Prevent duplicate requests** – Bloc can track loading state to avoid multiple calls.",
+        "**Error recovery** – Retry and refresh logic encapsulated."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setup: Dependencies"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter:\n    sdk: flutter\n  flutter_bloc: ^8.1.5\n  equatable: ^2.0.5\n  http: ^1.2.0   # or dio\n  get_it: ^7.6.7 # optional"
+    },
+    {
+      "type": "heading",
+      "value": "Data Model & Repository"
+    },
+    {
+      "type": "text",
+      "value": "We'll use JSONPlaceholder as an example. The repository will return a list of posts and accept a page number and page size."
+    },
+    {
+      "type": "code",
+      "title": "models/post.dart",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nclass Post extends Equatable {\n  final int id;\n  final int userId;\n  final String title;\n  final String body;\n\n  const Post({required this.id, required this.userId, required this.title, required this.body});\n\n  factory Post.fromJson(Map<String, dynamic> json) => Post(\n    id: json['id'],\n    userId: json['userId'],\n    title: json['title'],\n    body: json['body'],\n  );\n\n  @override\n  List<Object?> get props => [id, userId, title, body];\n}"
+    },
+    {
+      "type": "code",
+      "title": "repositories/post_repository.dart",
+      "language": "dart",
+      "value": "import 'dart:convert';\nimport 'package:http/http.dart' as http;\nimport '../models/post.dart';\n\nabstract class PostRepository {\n  Future<List<Post>> getPosts({int page = 1, int limit = 10});\n}\n\nclass PostRepositoryImpl implements PostRepository {\n  final http.Client client;\n\n  PostRepositoryImpl(this.client);\n\n  @override\n  Future<List<Post>> getPosts({int page = 1, int limit = 10}) async {\n    final response = await client.get(\n      Uri.parse('https://jsonplaceholder.typicode.com/posts?_page=$page&_limit=$limit'),\n    );\n\n    if (response.statusCode == 200) {\n      final List<dynamic> jsonList = json.decode(response.body);\n      return jsonList.map((json) => Post.fromJson(json)).toList();\n    } else {\n      throw Exception('Failed to load posts');\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "States"
+    },
+    {
+      "type": "text",
+      "value": "Define states that represent the different phases of pagination: initial, loading, loaded (with metadata), error, and optionally a state when we've reached the end."
+    },
+    {
+      "type": "code",
+      "title": "bloc/post_state.dart",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\nimport '../../models/post.dart';\n\nabstract class PostState extends Equatable {\n  const PostState();\n\n  @override\n  List<Object?> get props => [];\n}\n\nclass PostInitial extends PostState {}\n\nclass PostLoading extends PostState {}\n\nclass PostLoaded extends PostState {\n  final List<Post> posts;\n  final bool hasReachedMax;\n  final int currentPage;\n\n  const PostLoaded({\n    required this.posts,\n    this.hasReachedMax = false,\n    this.currentPage = 1,\n  });\n\n  PostLoaded copyWith({\n    List<Post>? posts,\n    bool? hasReachedMax,\n    int? currentPage,\n  }) {\n    return PostLoaded(\n      posts: posts ?? this.posts,\n      hasReachedMax: hasReachedMax ?? this.hasReachedMax,\n      currentPage: currentPage ?? this.currentPage,\n    );\n  }\n\n  @override\n  List<Object?> get props => [posts, hasReachedMax, currentPage];\n}\n\nclass PostError extends PostState {\n  final String message;\n  const PostError(this.message);\n\n  @override\n  List<Object?> get props => [message];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Events"
+    },
+    {
+      "type": "text",
+      "value": "We need events to trigger the initial load and subsequent loads (load more). Also a refresh event to reload from page 1."
+    },
+    {
+      "type": "code",
+      "title": "bloc/post_event.dart",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nabstract class PostEvent extends Equatable {\n  const PostEvent();\n\n  @override\n  List<Object?> get props => [];\n}\n\nclass FetchPosts extends PostEvent {\n  final bool isRefresh;\n  const FetchPosts({this.isRefresh = false});\n}\n\nclass LoadMorePosts extends PostEvent {}\n\nclass RefreshPosts extends PostEvent {}"
+    },
+    {
+      "type": "heading",
+      "value": "Bloc Implementation"
+    },
+    {
+      "type": "text",
+      "value": "The bloc handles the logic: initial load, load more (increment page), and refresh (reset state and reload). We also need to prevent duplicate requests while loading."
+    },
+    {
+      "type": "code",
+      "title": "bloc/post_bloc.dart",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\nimport '../../repositories/post_repository.dart';\nimport 'post_event.dart';\nimport 'post_state.dart';\n\nclass PostBloc extends Bloc<PostEvent, PostState> {\n  final PostRepository repository;\n\n  PostBloc(this.repository) : super(PostInitial()) {\n    on<FetchPosts>(_onFetchPosts);\n    on<LoadMorePosts>(_onLoadMorePosts);\n    on<RefreshPosts>(_onRefreshPosts);\n  }\n\n  Future<void> _onFetchPosts(FetchPosts event, Emitter<PostState> emit) async {\n    emit(PostLoading());\n    try {\n      final posts = await repository.getPosts(page: 1, limit: 10);\n      emit(PostLoaded(posts: posts, currentPage: 1, hasReachedMax: posts.length < 10));\n    } catch (e) {\n      emit(PostError(e.toString()));\n    }\n  }\n\n  Future<void> _onLoadMorePosts(LoadMorePosts event, Emitter<PostState> emit) async {\n    final currentState = state;\n    if (currentState is PostLoaded && !currentState.hasReachedMax) {\n      final nextPage = currentState.currentPage + 1;\n      try {\n        final newPosts = await repository.getPosts(page: nextPage, limit: 10);\n        if (newPosts.isEmpty) {\n          emit(currentState.copyWith(hasReachedMax: true));\n        } else {\n          emit(currentState.copyWith(\n            posts: List.of(currentState.posts)..addAll(newPosts),\n            currentPage: nextPage,\n            hasReachedMax: newPosts.length < 10,\n          ));\n        }\n      } catch (e) {\n        emit(PostError(e.toString()));\n      }\n    }\n  }\n\n  Future<void> _onRefreshPosts(RefreshPosts event, Emitter<PostState> emit) async {\n    emit(PostLoading());\n    try {\n      final posts = await repository.getPosts(page: 1, limit: 10);\n      emit(PostLoaded(posts: posts, currentPage: 1, hasReachedMax: posts.length < 10));\n    } catch (e) {\n      emit(PostError(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "UI: Infinite Scrolling"
+    },
+    {
+      "type": "text",
+      "value": "In the UI, we listen to the state and use a `ScrollController` to detect when the user reaches the bottom. When that happens, we dispatch a `LoadMorePosts` event. We also need to handle the loading indicator and error retry."
+    },
+    {
+      "type": "code",
+      "title": "pages/post_page.dart",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport '../bloc/post_bloc.dart';\nimport '../bloc/post_event.dart';\nimport '../bloc/post_state.dart';\n\nclass PostPage extends StatefulWidget {\n  @override\n  _PostPageState createState() => _PostPageState();\n}\n\nclass _PostPageState extends State<PostPage> {\n  final ScrollController _scrollController = ScrollController();\n\n  @override\n  void initState() {\n    super.initState();\n    _scrollController.addListener(_onScroll);\n  }\n\n  @override\n  void dispose() {\n    _scrollController.dispose();\n    super.dispose();\n  }\n\n  void _onScroll() {\n    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {\n      context.read<PostBloc>().add(LoadMorePosts());\n    }\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(\n        title: Text('Posts'),\n        actions: [\n          IconButton(\n            icon: Icon(Icons.refresh),\n            onPressed: () => context.read<PostBloc>().add(RefreshPosts()),\n          ),\n        ],\n      ),\n      body: BlocConsumer<PostBloc, PostState>(\n        listener: (context, state) {\n          if (state is PostError) {\n            ScaffoldMessenger.of(context).showSnackBar(\n              SnackBar(content: Text(state.message)),\n            );\n          }\n        },\n        builder: (context, state) {\n          if (state is PostLoading) {\n            return Center(child: CircularProgressIndicator());\n          }\n          if (state is PostLoaded) {\n            return ListView.builder(\n              controller: _scrollController,\n              itemCount: state.hasReachedMax ? state.posts.length : state.posts.length + 1,\n              itemBuilder: (context, index) {\n                if (index >= state.posts.length) {\n                  return Center(child: Padding(\n                    padding: const EdgeInsets.all(8.0),\n                    child: CircularProgressIndicator(),\n                  ));\n                }\n                final post = state.posts[index];\n                return ListTile(\n                  title: Text(post.title),\n                  subtitle: Text(post.body),\n                );\n              },\n            );\n          }\n          return Center(child: Text('Press refresh to load'));\n        },\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Preventing Duplicate Requests"
+    },
+    {
+      "type": "text",
+      "value": "The bloc already checks `hasReachedMax` and only triggers a load if not at max. However, you should also consider adding a flag to prevent multiple simultaneous load‑more requests while one is already in progress. You can achieve this by checking the current state: only load more if the state is `PostLoaded` and not loading."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In UI, you might also check if already loading\nvoid _onScroll() {\n  final state = context.read<PostBloc>().state;\n  if (state is PostLoaded && !state.hasReachedMax && !_isLoadingMore) {\n    context.read<PostBloc>().add(LoadMorePosts());\n  }\n}\n\n// In bloc, you can also add a guard\nif (currentState is PostLoaded && !currentState.hasReachedMax && !_isLoading) {\n  // perform load\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Alternative: Using a Pagination State with Loading Flag"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want to show a loading indicator only for the next page, not the whole list. You can add a `isLoadingMore` flag in the state and handle the UI accordingly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// State\nclass PostLoaded extends PostState {\n  final List<Post> posts;\n  final bool hasReachedMax;\n  final bool isLoadingMore;\n  // ...\n}\n\n// In bloc, when loading more, emit a copy with isLoadingMore = true, then after fetch emit with isLoadingMore = false.\n\n// In UI, you can show a small progress at the bottom when isLoadingMore is true."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `Equatable`** – Prevents unnecessary rebuilds.",
+        "**Track `hasReachedMax`** – Prevents unnecessary requests.",
+        "**Provide a refresh action** – Allow users to reload data manually.",
+        "**Handle errors gracefully** – Show an error message and allow retry.",
+        "**Avoid loading more while already loading** – Use state flags to prevent duplicate requests.",
+        "**Dispose of scroll controllers** – To avoid memory leaks.",
+        "**Use `BlocListener` for side effects** – Keep UI building logic separate.",
+        "**Consider using `debounce` for scroll events** – For performance, but usually not needed."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not checking `hasReachedMax`** – Endless requests.\n✅ Always check before loading more.",
+        "❌ **Calling `loadMore` on every scroll event** – Can cause multiple requests.\n✅ Add a condition to avoid duplicate calls while loading.",
+        "❌ **Mutating the state list directly** – UI may not update.\n✅ Create a new list with `...` or `List.of()`.",
+        "❌ **Not handling empty pages** – If API returns empty, mark `hasReachedMax`.",
+        "❌ **Forgetting to reset page when refreshing** – Use `refresh` event that resets to page 1."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Pagination with BLoC gives you a clean, testable way to handle infinite scrolling. By separating state and events, you can easily manage page numbers, loading indicators, and error states. The patterns shown here can be adapted to any API with pagination, whether using `http` or `dio`. Remember to always guard against duplicate requests and handle the end of the list gracefully."
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I know when to trigger load more?",
+      "answer": "Typically, you listen to scroll position and trigger when the user reaches near the bottom (e.g., `scrollController.position.pixels >= scrollController.position.maxScrollExtent - 200`)."
+    },
+    {
+      "question": "How do I reset pagination when the user refreshes?",
+      "answer": "Dispatch a `RefreshPosts` event that resets the state and fetches the first page again."
+    },
+    {
+      "question": "What if the API uses cursor‑based pagination (e.g., `nextToken`)?",
+      "answer": "Your state can include the next token instead of a page number. The flow remains similar – store the token, use it in the next request, and clear it when refreshing."
+    },
+    {
+      "question": "How can I show a loading indicator only for the next page, not the whole list?",
+      "answer": "Add an `isLoadingMore` boolean in the state. When you emit a loading more state, you keep the existing posts and show a small progress indicator at the bottom of the list."
+    },
+    {
+      "question": "How to handle pagination with `dio` and interceptors?",
+      "answer": "The same pattern works. You can inject `Dio` into the repository and make the requests. For large apps, you may use a base repository with common pagination logic."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "comment": "Pagination is difficult to demo in a single code block; best shown in a full project."
+  },
+  "quiz": [
+    {
+      "question": "What is the purpose of the `hasReachedMax` flag in the state?",
+      "options": [
+        "To indicate that the list is empty",
+        "To prevent further load more requests when no more data is available",
+        "To track the current page number",
+        "To show an error message"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget is typically used to detect when the user scrolls to the bottom?",
+      "options": ["ListView", "ScrollController", "NotificationListener", "Both B and C"],
+      "answer": 3
+    },
+    {
+      "question": "When refreshing the list, what should you do with the current page state?",
+      "options": [
+        "Keep the current page and load more",
+        "Reset to page 1 and clear existing data",
+        "Append new data to existing list",
+        "Nothing, just keep scrolling"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-api-integration",
+    "bloc-state-management",
+    "bloc-error-handling",
+    "flutter-infinite-scroll",
+    "dio-pagination"
+  ]
+}

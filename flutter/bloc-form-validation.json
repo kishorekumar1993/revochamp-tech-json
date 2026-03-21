@@ -1,0 +1,225 @@
+{
+  "slug": "bloc-form-validation",
+  "course": "Flutter",
+  "title": "Form Validation with Bloc: Building Robust, Reactive Forms",
+  "meta": {
+    "title": "Flutter Bloc Form Validation – Complete Guide (2026)",
+    "description": "Learn how to implement form validation in Flutter using Bloc and Cubit. Real‑time validation, submission handling, error messages, and best practices for reactive forms.",
+    "keywords": [
+      "flutter bloc form validation",
+      "bloc form validation",
+      "flutter form validation",
+      "bloc text field validation",
+      "reactive forms flutter"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "12 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "form-validation", "cubit", "reactive-forms"],
+  "content": [
+    {
+      "type": "text",
+      "value": "Form validation is a common requirement in almost every app. Using Bloc (or Cubit) for form validation gives you a reactive, testable, and maintainable approach. This guide covers everything from basic field validation to complex multi‑step forms with asynchronous validation and submission handling."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Bloc for Form Validation?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Reactive UI** – The UI automatically updates when validation state changes.",
+        "**Separation of concerns** – Validation logic lives in the bloc/cubit, not scattered in widgets.",
+        "**Testability** – You can unit‑test validation rules without building widgets.",
+        "**Centralised state** – Form state (validity, submission status) is managed in one place.",
+        "**Consistency** – Same validation rules apply everywhere, preventing duplication."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Form Validation with Cubit"
+    },
+    {
+      "type": "text",
+      "value": "For simple forms, Cubit is often enough. Let's build a login form with email and password validation, and a submit button that is enabled only when the form is valid."
+    },
+    {
+      "type": "subheading",
+      "value": "1. Define the State"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nclass LoginState extends Equatable {\n  final String email;\n  final String password;\n  final bool isValid;\n  final bool isSubmitting;\n  final String? emailError;\n  final String? passwordError;\n\n  const LoginState({\n    this.email = '',\n    this.password = '',\n    this.isValid = false,\n    this.isSubmitting = false,\n    this.emailError,\n    this.passwordError,\n  });\n\n  LoginState copyWith({\n    String? email,\n    String? password,\n    bool? isValid,\n    bool? isSubmitting,\n    String? emailError,\n    String? passwordError,\n  }) {\n    return LoginState(\n      email: email ?? this.email,\n      password: password ?? this.password,\n      isValid: isValid ?? this.isValid,\n      isSubmitting: isSubmitting ?? this.isSubmitting,\n      emailError: emailError ?? this.emailError,\n      passwordError: passwordError ?? this.passwordError,\n    );\n  }\n\n  @override\n  List<Object?> get props => [email, password, isValid, isSubmitting, emailError, passwordError];\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Create the Cubit with Validation Logic"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\n\nclass LoginCubit extends Cubit<LoginState> {\n  LoginCubit() : super(const LoginState());\n\n  void emailChanged(String value) {\n    final emailError = _validateEmail(value);\n    final passwordError = state.passwordError;\n    final isValid = emailError == null && passwordError == null;\n\n    emit(state.copyWith(\n      email: value,\n      emailError: emailError,\n      isValid: isValid,\n    ));\n  }\n\n  void passwordChanged(String value) {\n    final passwordError = _validatePassword(value);\n    final emailError = state.emailError;\n    final isValid = emailError == null && passwordError == null;\n\n    emit(state.copyWith(\n      password: value,\n      passwordError: passwordError,\n      isValid: isValid,\n    ));\n  }\n\n  String? _validateEmail(String email) {\n    if (email.isEmpty) return 'Email is required';\n    final emailRegex = RegExp(r'^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$');\n    if (!emailRegex.hasMatch(email)) return 'Enter a valid email';\n    return null;\n  }\n\n  String? _validatePassword(String password) {\n    if (password.isEmpty) return 'Password is required';\n    if (password.length < 6) return 'Password must be at least 6 characters';\n    return null;\n  }\n\n  Future<void> submit() async {\n    if (!state.isValid) return;\n\n    emit(state.copyWith(isSubmitting: true));\n\n    try {\n      // Simulate API call\n      await Future.delayed(const Duration(seconds: 2));\n      // If success, emit success state (e.g., navigate)\n      // In a real app you'd emit a LoginSuccess state\n      emit(state.copyWith(isSubmitting: false));\n    } catch (e) {\n      emit(state.copyWith(isSubmitting: false));\n      // Emit error state if needed\n    }\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Build the UI with BlocBuilder"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: BlocProvider(\n        create: (_) => LoginCubit(),\n        child: const LoginForm(),\n      ),\n    );\n  }\n}\n\nclass LoginForm extends StatelessWidget {\n  const LoginForm({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return BlocBuilder<LoginCubit, LoginState>(\n      builder: (context, state) {\n        return Padding(\n          padding: const EdgeInsets.all(16.0),\n          child: Column(\n            children: [\n              TextField(\n                onChanged: (value) => context.read<LoginCubit>().emailChanged(value),\n                decoration: InputDecoration(\n                  labelText: 'Email',\n                  errorText: state.emailError,\n                ),\n              ),\n              const SizedBox(height: 16),\n              TextField(\n                onChanged: (value) => context.read<LoginCubit>().passwordChanged(value),\n                obscureText: true,\n                decoration: InputDecoration(\n                  labelText: 'Password',\n                  errorText: state.passwordError,\n                ),\n              ),\n              const SizedBox(height: 24),\n              ElevatedButton(\n                onPressed: state.isSubmitting || !state.isValid\n                    ? null\n                    : () => context.read<LoginCubit>().submit(),\n                child: state.isSubmitting\n                    ? const SizedBox(\n                        width: 20,\n                        height: 20,\n                        child: CircularProgressIndicator(strokeWidth: 2),\n                      )\n                    : const Text('Login'),\n              ),\n            ],\n          ),\n        );\n      },\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Bloc for Complex Forms"
+    },
+    {
+      "type": "text",
+      "value": "For larger forms with many fields or complex validation (e.g., cross‑field validation), using Bloc with events gives you more structure and traceability. Let's build a registration form with username, email, password, and password confirmation."
+    },
+    {
+      "type": "subheading",
+      "value": "1. Define Events"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class RegisterEvent {}\n\nclass UsernameChanged extends RegisterEvent {\n  final String username;\n  UsernameChanged(this.username);\n}\n\nclass EmailChanged extends RegisterEvent {\n  final String email;\n  EmailChanged(this.email);\n}\n\nclass PasswordChanged extends RegisterEvent {\n  final String password;\n  PasswordChanged(this.password);\n}\n\nclass ConfirmPasswordChanged extends RegisterEvent {\n  final String confirmPassword;\n  ConfirmPasswordChanged(this.confirmPassword);\n}\n\nclass RegisterSubmitted extends RegisterEvent {}"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Define State"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class RegisterState extends Equatable {\n  final String username;\n  final String email;\n  final String password;\n  final String confirmPassword;\n  final bool isValid;\n  final bool isSubmitting;\n  final FormSubmissionStatus submissionStatus;\n  final String? usernameError;\n  final String? emailError;\n  final String? passwordError;\n  final String? confirmPasswordError;\n\n  const RegisterState({\n    this.username = '',\n    this.email = '',\n    this.password = '',\n    this.confirmPassword = '',\n    this.isValid = false,\n    this.isSubmitting = false,\n    this.submissionStatus = FormSubmissionStatus.idle,\n    this.usernameError,\n    this.emailError,\n    this.passwordError,\n    this.confirmPasswordError,\n  });\n\n  RegisterState copyWith({...}) { ... }\n\n  @override\n  List<Object?> get props => [...];\n}\n\nenum FormSubmissionStatus { idle, inProgress, success, failure }"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Implement Bloc"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {\n  final AuthRepository repository;\n\n  RegisterBloc(this.repository) : super(const RegisterState()) {\n    on<UsernameChanged>(_onUsernameChanged);\n    on<EmailChanged>(_onEmailChanged);\n    on<PasswordChanged>(_onPasswordChanged);\n    on<ConfirmPasswordChanged>(_onConfirmPasswordChanged);\n    on<RegisterSubmitted>(_onRegisterSubmitted);\n  }\n\n  void _onUsernameChanged(UsernameChanged event, Emitter<RegisterState> emit) {\n    final error = _validateUsername(event.username);\n    emit(state.copyWith(\n      username: event.username,\n      usernameError: error,\n      isValid: _isFormValid(event.username, state.email, state.password, state.confirmPassword),\n    ));\n  }\n\n  void _onEmailChanged(EmailChanged event, Emitter<RegisterState> emit) {\n    final error = _validateEmail(event.email);\n    emit(state.copyWith(\n      email: event.email,\n      emailError: error,\n      isValid: _isFormValid(state.username, event.email, state.password, state.confirmPassword),\n    ));\n  }\n\n  void _onPasswordChanged(PasswordChanged event, Emitter<RegisterState> emit) {\n    final passwordError = _validatePassword(event.password);\n    final confirmPasswordError = _validateConfirmPassword(event.password, state.confirmPassword);\n    emit(state.copyWith(\n      password: event.password,\n      passwordError: passwordError,\n      confirmPasswordError: confirmPasswordError,\n      isValid: _isFormValid(state.username, state.email, event.password, state.confirmPassword),\n    ));\n  }\n\n  void _onConfirmPasswordChanged(ConfirmPasswordChanged event, Emitter<RegisterState> emit) {\n    final error = _validateConfirmPassword(state.password, event.confirmPassword);\n    emit(state.copyWith(\n      confirmPassword: event.confirmPassword,\n      confirmPasswordError: error,\n      isValid: _isFormValid(state.username, state.email, state.password, event.confirmPassword),\n    ));\n  }\n\n  Future<void> _onRegisterSubmitted(RegisterSubmitted event, Emitter<RegisterState> emit) async {\n    if (!state.isValid) return;\n\n    emit(state.copyWith(isSubmitting: true, submissionStatus: FormSubmissionStatus.inProgress));\n\n    try {\n      await repository.register(\n        username: state.username,\n        email: state.email,\n        password: state.password,\n      );\n      emit(state.copyWith(\n        isSubmitting: false,\n        submissionStatus: FormSubmissionStatus.success,\n      ));\n    } catch (e) {\n      emit(state.copyWith(\n        isSubmitting: false,\n        submissionStatus: FormSubmissionStatus.failure,\n      ));\n    }\n  }\n\n  bool _isFormValid(String username, String email, String password, String confirmPassword) {\n    return _validateUsername(username) == null &&\n        _validateEmail(email) == null &&\n        _validatePassword(password) == null &&\n        _validateConfirmPassword(password, confirmPassword) == null;\n  }\n\n  String? _validateUsername(String value) { ... }\n  String? _validateEmail(String value) { ... }\n  String? _validatePassword(String value) { ... }\n  String? _validateConfirmPassword(String password, String confirm) { ... }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "4. UI with BlocConsumer"
+    },
+    {
+      "type": "text",
+      "value": "Use `BlocConsumer` to handle both UI rebuilds and side effects (navigation, snackbars)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocConsumer<RegisterBloc, RegisterState>(\n  listener: (context, state) {\n    if (state.submissionStatus == FormSubmissionStatus.success) {\n      Navigator.pushReplacementNamed(context, '/home');\n    }\n    if (state.submissionStatus == FormSubmissionStatus.failure) {\n      ScaffoldMessenger.of(context).showSnackBar(\n        SnackBar(content: Text('Registration failed')),\n      );\n    }\n  },\n  builder: (context, state) {\n    // Build form UI with TextFields and submit button\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Asynchronous Validation"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to validate against a server (e.g., check if username is already taken). This requires async validation, which you can handle inside the bloc with debouncing."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<UsernameChanged>((event, emit) async {\n  emit(state.copyWith(isValidatingUsername: true));\n  final error = await repository.checkUsernameAvailability(event.username);\n  emit(state.copyWith(\n    username: event.username,\n    usernameError: error != null ? 'Username taken' : null,\n    isValidatingUsername: false,\n  ));\n}, transformer: debounce(const Duration(milliseconds: 500)));"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Separate validation functions** – Keep validation logic in pure functions for easy testing.",
+        "**Use `copyWith` to update state immutably** – Ensures predictable state changes.",
+        "**Leverage `Equatable`** – Prevents unnecessary rebuilds when state doesn't change.",
+        "**Debounce async validation** – Use event transformers to avoid excessive API calls.",
+        "**Show loading indicators** – Provide visual feedback during submission and async validation.",
+        "**Disable submit button while submitting** – Prevents multiple submissions.",
+        "**Handle submission errors gracefully** – Show user-friendly error messages."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Putting validation logic directly in the UI** – Leads to code duplication and makes testing hard.",
+        "❌ **Not resetting error messages** – Errors can persist after the user fixes the field if not cleared.",
+        "❌ **Re‑evaluating validation on every keystroke without debouncing async validations** – Causes unnecessary network calls.",
+        "❌ **Not handling focus and cursor position** – When rebuilding the entire form, focus may be lost. Use `AutovalidateMode` carefully.",
+        "❌ **Ignoring form submission state** – Users need to know if the form is processing."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you can handle forms, explore how to structure larger apps with modular architecture and how to test your blocs."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Bloc testing](/bloc-testing) and [Bloc architecture](/bloc-architecture)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should I use Cubit or Bloc for form validation?",
+      "answer": "For simple forms, Cubit is sufficient and less verbose. For complex forms with many fields, cross‑field validation, or async validation, Bloc provides better organisation and traceability."
+    },
+    {
+      "question": "How do I handle multiple forms on one screen?",
+      "answer": "Use separate blocs/cubits for each form. You can use `MultiBlocProvider` to provide them, and each form widget will rebuild independently."
+    },
+    {
+      "question": "What about using Flutter's Form widget with GlobalKey?",
+      "answer": "You can combine them. Use the Form widget for built‑in validation and focus management, but still keep the validation logic and form data in your bloc/cubit for testability and centralised state."
+    },
+    {
+      "question": "How do I reset the form after successful submission?",
+      "answer": "Emit a fresh state (e.g., `const RegisterState()`) after successful submission, or keep the state and use a listener to reset fields if needed."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What is the main advantage of putting form validation logic in a bloc/cubit?",
+      "options": [
+        "It makes the UI code shorter",
+        "It centralises validation logic and makes it testable",
+        "It automatically debounces input",
+        "It reduces network calls"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget should you use to handle both UI rebuilds and side effects like navigation after form submission?",
+      "options": ["BlocBuilder", "BlocListener", "BlocConsumer", "BlocProvider"],
+      "answer": 2
+    },
+    {
+      "question": "How can you avoid excessive async validation calls while the user types?",
+      "options": ["Use `Equatable`", "Use an event transformer with debounce", "Use `copyWith`", "Use `MultiBlocProvider`"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-cubit",
+    "bloc-events",
+    "bloc-testing",
+    "bloc-architecture",
+    "bloc-consumer"
+  ]
+}

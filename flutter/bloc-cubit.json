@@ -1,0 +1,285 @@
+{
+  "slug": "bloc-cubit",
+  "course": "Flutter",
+  "title": "Flutter Cubit: Simplified State Management with BLoC Pattern",
+  "meta": {
+    "title": "Flutter Cubit – Simplified State Management with BLoC (2026)",
+    "description": "Learn how to use Cubit, the simplified version of Bloc, for state management in Flutter. Step-by-step guide with examples, best practices, and when to choose Cubit over Bloc.",
+    "keywords": [
+      "Flutter Cubit",
+      "Cubit",
+      "flutter_bloc cubit",
+      "state management",
+      "cubit example",
+      "cubit vs bloc",
+      "flutter cubit tutorial"
+    ]
+  },
+  "level": "Beginner",
+  "readingTime": "10 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Beginner",
+  "tags": ["bloc", "cubit", "state management"],
+  "content": [
+    {
+      "type": "text",
+      "value": "If you're looking for a simple yet powerful state management solution in Flutter, **Cubit** is an excellent choice. It's a lightweight alternative to full Bloc, using methods instead of events to emit states. This guide will teach you everything you need to know to start using Cubit in your Flutter apps."
+    },
+    {
+      "type": "heading",
+      "value": "What is Cubit?"
+    },
+    {
+      "type": "text",
+      "value": "Cubit is a simplified version of the BLoC pattern. It extends `BlocBase` and uses **methods** to emit states. You define a state class, a Cubit class, and then call methods that `emit` new states. There are no events to define, making it perfect for simple to moderate complexity flows."
+    },
+    {
+      "type": "note",
+      "value": "Cubit is part of the `flutter_bloc` package, so you don't need any extra dependencies beyond that."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up flutter_bloc"
+    },
+    {
+      "type": "text",
+      "value": "Add the dependency to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter:\n    sdk: flutter\n  flutter_bloc: ^8.1.5\n  equatable: ^2.0.5  # Recommended"
+    },
+    {
+      "type": "text",
+      "value": "Run `flutter pub get` to install."
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Cubit"
+    },
+    {
+      "type": "text",
+      "value": "Let's build a simple counter Cubit. First, define the state class (immutable) and then the Cubit."
+    },
+    {
+      "type": "code",
+      "title": "counter_state.dart",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nclass CounterState extends Equatable {\n  final int value;\n  const CounterState(this.value);\n\n  @override\n  List<Object?> get props => [value];\n}"
+    },
+    {
+      "type": "code",
+      "title": "counter_cubit.dart",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\nimport 'counter_state.dart';\n\nclass CounterCubit extends Cubit<CounterState> {\n  CounterCubit() : super(const CounterState(0));\n\n  void increment() => emit(CounterState(state.value + 1));\n  void decrement() => emit(CounterState(state.value - 1));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Cubit in the UI"
+    },
+    {
+      "type": "subheading",
+      "value": "1. Provide the Cubit"
+    },
+    {
+      "type": "text",
+      "value": "Use `BlocProvider` to give the Cubit to the widget tree. It also automatically disposes the Cubit when the widget is removed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocProvider(\n  create: (context) => CounterCubit(),\n  child: MyHomePage(),\n);"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Rebuild UI with BlocBuilder"
+    },
+    {
+      "type": "text",
+      "value": "Use `BlocBuilder` to rebuild when the state changes. It listens to the Cubit and calls the builder with the latest state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocBuilder<CounterCubit, CounterState>(\n  builder: (context, state) {\n    return Text('Count: ${state.value}', style: TextStyle(fontSize: 24));\n  },\n);"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Dispatch Actions"
+    },
+    {
+      "type": "text",
+      "value": "Access the Cubit via `context.read<CounterCubit>()` to call its methods. This does not cause a rebuild."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ElevatedButton(\n  onPressed: () => context.read<CounterCubit>().increment(),\n  child: Text('Increment'),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Complete Counter Example"
+    },
+    {
+      "type": "code",
+      "title": "main.dart",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() => runApp(MyApp());\n\n// State\nclass CounterState extends Equatable {\n  final int value;\n  const CounterState(this.value);\n\n  @override\n  List<Object?> get props => [value];\n}\n\n// Cubit\nclass CounterCubit extends Cubit<CounterState> {\n  CounterCubit() : super(const CounterState(0));\n\n  void increment() => emit(CounterState(state.value + 1));\n  void decrement() => emit(CounterState(state.value - 1));\n}\n\n// App\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Cubit Counter')),\n      body: Center(\n        child: BlocBuilder<CounterCubit, CounterState>(\n          builder: (context, state) {\n            return Text('Count: ${state.value}', style: TextStyle(fontSize: 24));\n          },\n        ),\n      ),\n      floatingActionButton: Column(\n        mainAxisAlignment: MainAxisAlignment.end,\n        children: [\n          FloatingActionButton(\n            onPressed: () => context.read<CounterCubit>().increment(),\n            child: Icon(Icons.add),\n          ),\n          const SizedBox(height: 10),\n          FloatingActionButton(\n            onPressed: () => context.read<CounterCubit>().decrement(),\n            child: Icon(Icons.remove),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Async Operations"
+    },
+    {
+      "type": "text",
+      "value": "Cubit can also handle asynchronous work. Use `try-catch` and emit loading, success, and error states."
+    },
+    {
+      "type": "code",
+      "title": "data_cubit.dart",
+      "language": "dart",
+      "value": "abstract class DataState extends Equatable {}\nclass DataInitial extends DataState {}\nclass DataLoading extends DataState {}\nclass DataLoaded extends DataState {\n  final String data;\n  const DataLoaded(this.data);\n  @override List<Object?> get props => [data];\n}\nclass DataError extends DataState {\n  final String message;\n  const DataError(this.message);\n  @override List<Object?> get props => [message];\n}\n\nclass DataCubit extends Cubit<DataState> {\n  DataCubit() : super(DataInitial());\n\n  Future<void> fetchData() async {\n    emit(DataLoading());\n    try {\n      final result = await api.getData();\n      emit(DataLoaded(result));\n    } catch (e) {\n      emit(DataError(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Side Effects with BlocListener"
+    },
+    {
+      "type": "text",
+      "value": "Use `BlocListener` to perform side effects (navigation, snackbars) without rebuilding the UI."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocListener<DataCubit, DataState>(\n  listener: (context, state) {\n    if (state is DataError) {\n      ScaffoldMessenger.of(context).showSnackBar(\n        SnackBar(content: Text(state.message)),\n      );\n    }\n  },\n  child: ...\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Cubit vs Bloc: When to Use Cubit"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Simple UI state** – counters, toggles, forms, etc.",
+        "**No need for event transformation** – debouncing, throttling, or complex stream operations.",
+        "**Prefer minimal boilerplate** – just methods, no event classes.",
+        "**Small to medium apps** where complexity is low."
+      ]
+    },
+    {
+      "type": "note",
+      "value": "If you later need event transformation, you can easily migrate from Cubit to Bloc – the state classes remain the same."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `Equatable` for states** – Prevents unnecessary rebuilds.",
+        "**Keep states immutable** – Always create new state instances.",
+        "**Place `BlocProvider` at the appropriate level** – Higher for shared cubits, lower for scoped ones.",
+        "**Use `BlocBuilder` only where needed** – Granular rebuilds improve performance.",
+        "**Handle loading/error states** – Always provide feedback to the user.",
+        "**Keep business logic in the cubit** – UI should only call methods and react to states."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Mutating state properties** – Leads to bugs and no UI updates.\n✅ Always create a new state with `emit`.",
+        "❌ **Calling `emit` after cubit is closed** – Throws an error.\n✅ Check `isClosed` before emitting if needed.",
+        "❌ **Creating `BlocProvider` inside `build`** – Recreates the cubit on every rebuild, losing state.\n✅ Use `BlocProvider` outside build.",
+        "❌ **Not using `Equatable`** – Causes unnecessary rebuilds because states are never considered equal.\n✅ Extend `Equatable` and list props.",
+        "❌ **Using `BlocBuilder` for side effects** – Can cause infinite loops.\n✅ Use `BlocListener`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Testing Cubit"
+    },
+    {
+      "type": "text",
+      "value": "Cubits are easy to test. Just create an instance, call methods, and assert states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "test('increment increases count', () {\n  final cubit = CounterCubit();\n  cubit.increment();\n  expect(cubit.state, CounterState(1));\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Cubit offers a simple, intuitive way to manage state in Flutter apps. With its method-based approach and integration with `flutter_bloc`, you can build reactive UIs with minimal boilerplate. Start with Cubit, and when your app grows, you can always introduce Bloc for advanced flows."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Is Cubit a replacement for Bloc?",
+      "answer": "No, Cubit is a simplified version. Bloc offers more features like event transformation, debouncing, and advanced stream handling. Choose Cubit for simpler cases, Bloc for complex ones."
+    },
+    {
+      "question": "Do I need to use Equatable with Cubit?",
+      "answer": "It's highly recommended. Without it, BlocBuilder may rebuild even when the state hasn't logically changed, because the default `==` compares references."
+    },
+    {
+      "question": "Can I use Cubit with multiple screens?",
+      "answer": "Yes, provide the Cubit at a higher level in the widget tree (e.g., using `BlocProvider` in a parent widget) so that all child screens can access it."
+    },
+    {
+      "question": "How do I handle async operations in Cubit?",
+      "answer": "Define a method that is `async`, use `try-catch`, and emit loading, success, and error states at appropriate times."
+    },
+    {
+      "question": "How do I test a Cubit that uses async methods?",
+      "answer": "Use `expectLater` or await the method call and then check the final state. You can also use `blocTest` from the `bloc_test` package, which works for both Cubit and Bloc."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() => runApp(MyApp());\n\nclass CounterState extends Equatable {\n  final int value;\n  const CounterState(this.value);\n\n  @override\n  List<Object?> get props => [value];\n}\n\nclass CounterCubit extends Cubit<CounterState> {\n  CounterCubit() : super(const CounterState(0));\n\n  void increment() => emit(CounterState(state.value + 1));\n  void decrement() => emit(CounterState(state.value - 1));\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Cubit Counter')),\n      body: Center(\n        child: BlocBuilder<CounterCubit, CounterState>(\n          builder: (context, state) {\n            return Text('Count: ${state.value}', style: TextStyle(fontSize: 24));\n          },\n        ),\n      ),\n      floatingActionButton: Column(\n        mainAxisAlignment: MainAxisAlignment.end,\n        children: [\n          FloatingActionButton(\n            onPressed: () => context.read<CounterCubit>().increment(),\n            child: Icon(Icons.add),\n          ),\n          const SizedBox(height: 10),\n          FloatingActionButton(\n            onPressed: () => context.read<CounterCubit>().decrement(),\n            child: Icon(Icons.remove),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you emit a new state in a Cubit?",
+      "options": [
+        "By calling `state = newState`",
+        "By calling `emit(newState)`",
+        "By returning the new state",
+        "By calling `setState`"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget is used to provide a Cubit to the widget tree?",
+      "options": ["BlocBuilder", "BlocProvider", "BlocListener", "CubitProvider"],
+      "answer": 1
+    },
+    {
+      "question": "Why is Equatable recommended for Cubit states?",
+      "options": [
+        "It makes states serializable",
+        "It prevents unnecessary UI rebuilds by enabling value-based equality",
+        "It allows copyWith methods",
+        "It automatically emits states"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-introduction",
+    "bloc-core-concepts",
+    "bloc-cubit-vs-bloc",
+    "bloc-states",
+    "bloc-testing"
+  ]
+}

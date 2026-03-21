@@ -1,0 +1,273 @@
+{
+  "slug": "bloc-clean-architecture",
+  "course": "Flutter",
+  "title": "BLoC Clean Architecture: Building Scalable Flutter Apps",
+  "meta": {
+    "title": "BLoC Clean Architecture – Scalable Flutter App Structure (2026)",
+    "description": "Learn how to combine BLoC with Clean Architecture in Flutter. Organize your app with presentation, domain, and data layers, use use cases, and maintain separation of concerns for scalable, testable code.",
+    "keywords": [
+      "bloc clean architecture",
+      "flutter clean architecture bloc",
+      "bloc use cases",
+      "repository pattern bloc",
+      "scalable flutter architecture",
+      "bloc layered architecture"
+    ]
+  },
+  "level": "Advanced",
+  "readingTime": "15 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Advanced",
+  "tags": ["bloc", "clean architecture", "architecture", "scalability"],
+  "content": [
+    {
+      "type": "text",
+      "value": "Building large-scale Flutter applications requires a solid architecture that separates concerns, is testable, and can evolve over time. **Clean Architecture** combined with **BLoC** gives you a powerful, maintainable structure. This guide will walk you through integrating BLoC with Clean Architecture, including layers, use cases, repositories, and dependency injection."
+    },
+    {
+      "type": "heading",
+      "value": "What is Clean Architecture?"
+    },
+    {
+      "type": "text",
+      "value": "Clean Architecture, popularised by Robert C. Martin, is a software design philosophy that separates the concerns of an application into layers, with the innermost layer being the business rules. Dependencies point inward – the UI depends on the business logic, which depends on the data layer, but not the other way around. This makes the core logic independent of external frameworks (like Flutter) and easily testable."
+    },
+    {
+      "type": "heading",
+      "value": "Layers in Clean Architecture"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Layer", "Purpose", "Contains"],
+        "rows": [
+          ["Presentation", "UI and state management", "Pages, widgets, Blocs/Cubits"],
+          ["Domain", "Business logic & rules", "Use cases, entities, repository interfaces"],
+          ["Data", "Data manipulation & sources", "Repository implementations, data sources (API, local DB), models"]
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "value": "**Dependency Rule:** The presentation layer depends on the domain layer, which depends on the data layer **through interfaces**. The data layer implements the interfaces defined in the domain. This inversion of control allows you to swap data sources (e.g., a mock API for testing) without affecting the domain or presentation."
+    },
+    {
+      "type": "heading",
+      "value": "Folder Structure"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "lib/\n├── main.dart\n├── app.dart\n├── core/\n│   ├── constants/\n│   ├── utils/\n│   ├── errors/\n│   └── network/\n├── features/\n│   ├── auth/\n│   │   ├── presentation/\n│   │   │   ├── pages/\n│   │   │   ├── widgets/\n│   │   │   └── bloc/           # Bloc for this feature\n│   │   ├── domain/\n│   │   │   ├── entities/\n│   │   │   ├── repositories/\n│   │   │   └── usecases/\n│   │   └── data/\n│   │       ├── repositories/\n│   │       ├── datasources/\n│   │       └── models/\n│   └── product/\n│       ├── presentation/\n│       ├── domain/\n│       └── data/\n└── di/                          # Dependency injection (get_it)"
+    },
+    {
+      "type": "note",
+      "value": "This structure is feature‑based. Each feature has its own presentation, domain, and data layers, keeping related code together and making it easier to scale."
+    },
+    {
+      "type": "heading",
+      "value": "Implementing the Domain Layer"
+    },
+    {
+      "type": "text",
+      "value": "The domain layer is pure Dart – no Flutter, no external dependencies. It contains **entities** (plain Dart classes), **repository interfaces** (abstract classes), and **use cases** (each encapsulating a single business action)."
+    },
+    {
+      "type": "code",
+      "title": "domain/entities/user.dart",
+      "language": "dart",
+      "value": "class User {\n  final String id;\n  final String name;\n  final String email;\n\n  const User({required this.id, required this.name, required this.email});\n}"
+    },
+    {
+      "type": "code",
+      "title": "domain/repositories/auth_repository.dart",
+      "language": "dart",
+      "value": "import 'package:dartz/dartz.dart';\nimport 'package:myapp/core/errors/failures.dart';\nimport '../entities/user.dart';\n\nabstract class AuthRepository {\n  Future<Either<Failure, User>> login(String email, String password);\n  Future<Either<Failure, void>> logout();\n}"
+    },
+    {
+      "type": "code",
+      "title": "domain/usecases/login.dart",
+      "language": "dart",
+      "value": "import 'package:dartz/dartz.dart';\nimport 'package:myapp/core/errors/failures.dart';\nimport '../entities/user.dart';\nimport '../repositories/auth_repository.dart';\n\nclass Login {\n  final AuthRepository repository;\n\n  Login(this.repository);\n\n  Future<Either<Failure, User>> call(LoginParams params) async {\n    return await repository.login(params.email, params.password);\n  }\n}\n\nclass LoginParams {\n  final String email;\n  final String password;\n  LoginParams({required this.email, required this.password});\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Implementing the Data Layer"
+    },
+    {
+      "type": "text",
+      "value": "The data layer implements the repository interfaces defined in the domain. It uses **data sources** (remote and local) to fetch/store data, and **models** that may map to/from entities."
+    },
+    {
+      "type": "code",
+      "title": "data/models/user_model.dart",
+      "language": "dart",
+      "value": "import '../../domain/entities/user.dart';\n\nclass UserModel extends User {\n  UserModel({required super.id, required super.name, required super.email});\n\n  factory UserModel.fromJson(Map<String, dynamic> json) {\n    return UserModel(\n      id: json['id'],\n      name: json['name'],\n      email: json['email'],\n    );\n  }\n\n  Map<String, dynamic> toJson() => {\n    'id': id,\n    'name': name,\n    'email': email,\n  };\n}"
+    },
+    {
+      "type": "code",
+      "title": "data/datasources/auth_remote_datasource.dart",
+      "language": "dart",
+      "value": "abstract class AuthRemoteDataSource {\n  Future<UserModel> login(String email, String password);\n}\n\nclass AuthRemoteDataSourceImpl implements AuthRemoteDataSource {\n  final Dio dio;\n\n  AuthRemoteDataSourceImpl(this.dio);\n\n  @override\n  Future<UserModel> login(String email, String password) async {\n    final response = await dio.post('/login', data: {'email': email, 'password': password});\n    if (response.statusCode == 200) {\n      return UserModel.fromJson(response.data);\n    } else {\n      throw ServerException();\n    }\n  }\n}"
+    },
+    {
+      "type": "code",
+      "title": "data/repositories/auth_repository_impl.dart",
+      "language": "dart",
+      "value": "import 'package:dartz/dartz.dart';\nimport 'package:myapp/core/errors/failures.dart';\nimport '../../domain/entities/user.dart';\nimport '../../domain/repositories/auth_repository.dart';\nimport '../datasources/auth_remote_datasource.dart';\n\nclass AuthRepositoryImpl implements AuthRepository {\n  final AuthRemoteDataSource remoteDataSource;\n\n  AuthRepositoryImpl(this.remoteDataSource);\n\n  @override\n  Future<Either<Failure, User>> login(String email, String password) async {\n    try {\n      final userModel = await remoteDataSource.login(email, password);\n      return Right(userModel);\n    } on ServerException {\n      return Left(ServerFailure());\n    } catch (e) {\n      return Left(UnknownFailure());\n    }\n  }\n\n  // ...\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Implementing the Presentation Layer with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "The presentation layer uses BLoC to interact with the domain layer. The bloc receives use cases via constructor injection and emits states based on the results. The UI listens to states using `BlocBuilder`/`BlocConsumer`."
+    },
+    {
+      "type": "code",
+      "title": "presentation/bloc/auth_bloc.dart",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:myapp/features/auth/domain/usecases/login.dart';\n\n// Events\nabstract class AuthEvent {}\nclass LoginEvent extends AuthEvent {\n  final String email;\n  final String password;\n  LoginEvent(this.email, this.password);\n}\n\n// States\nabstract class AuthState {}\nclass AuthInitial extends AuthState {}\nclass AuthLoading extends AuthState {}\nclass AuthSuccess extends AuthState {\n  final User user;\n  AuthSuccess(this.user);\n}\nclass AuthFailure extends AuthState {\n  final String message;\n  AuthFailure(this.message);\n}\n\n// Bloc\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  final Login loginUseCase;\n\n  AuthBloc(this.loginUseCase) : super(AuthInitial()) {\n    on<LoginEvent>(_onLogin);\n  }\n\n  Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {\n    emit(AuthLoading());\n    final result = await loginUseCase(LoginParams(\n      email: event.email,\n      password: event.password,\n    ));\n    result.fold(\n      (failure) => emit(AuthFailure(failure.message)),\n      (user) => emit(AuthSuccess(user)),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Dependency Injection with get_it"
+    },
+    {
+      "type": "text",
+      "value": "Use `get_it` to register all dependencies (data sources, repositories, use cases, blocs). This keeps the code decoupled and testable."
+    },
+    {
+      "type": "code",
+      "title": "di/injection.dart",
+      "language": "dart",
+      "value": "import 'package:get_it/get_it.dart';\nimport 'package:dio/dio.dart';\nimport '../features/auth/data/datasources/auth_remote_datasource.dart';\nimport '../features/auth/data/repositories/auth_repository_impl.dart';\nimport '../features/auth/domain/repositories/auth_repository.dart';\nimport '../features/auth/domain/usecases/login.dart';\nimport '../features/auth/presentation/bloc/auth_bloc.dart';\n\nfinal sl = GetIt.instance;\n\nFuture<void> init() async {\n  // External\n  sl.registerLazySingleton(() => Dio());\n\n  // Data sources\n  sl.registerLazySingleton<AuthRemoteDataSource>(\n    () => AuthRemoteDataSourceImpl(sl()),\n  );\n\n  // Repositories\n  sl.registerLazySingleton<AuthRepository>(\n    () => AuthRepositoryImpl(sl()),\n  );\n\n  // Use cases\n  sl.registerLazySingleton(() => Login(sl()));\n\n  // Blocs\n  sl.registerFactory(() => AuthBloc(sl()));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Errors (Failures)"
+    },
+    {
+      "type": "text",
+      "value": "Define a hierarchy of failures (e.g., `ServerFailure`, `NetworkFailure`, `CacheFailure`) in the domain layer. Use `Either<Failure, T>` from `dartz` to represent success/failure and avoid exceptions in domain."
+    },
+    {
+      "type": "code",
+      "title": "core/errors/failures.dart",
+      "language": "dart",
+      "value": "abstract class Failure {\n  final String message;\n  Failure(this.message);\n}\n\nclass ServerFailure extends Failure {\n  ServerFailure() : super('Server error');\n}\n\nclass NetworkFailure extends Failure {\n  NetworkFailure() : super('No internet connection');\n}\n\nclass UnknownFailure extends Failure {\n  UnknownFailure() : super('Something went wrong');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing"
+    },
+    {
+      "type": "text",
+      "value": "Clean Architecture makes testing easy: you can test each layer in isolation. Use mock repository for use case tests, mock use cases for bloc tests, etc."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "test('login use case returns user on success', () async {\n  final mockRepo = MockAuthRepository();\n  when(mockRepo.login(any, any)).thenAnswer((_) async => Right(testUser));\n\n  final login = Login(mockRepo);\n  final result = await login(LoginParams(email: 'test@test.com', password: 'pass'));\n\n  expect(result, Right(testUser));\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep domain pure** – No Flutter, no Dio, no database. Only Dart.",
+        "**Use `Either<Failure, T>`** – Avoid exceptions in domain; make failures explicit.",
+        "**One use case per business action** – Keeps them small and testable.",
+        "**Inject dependencies through constructors** – Makes testing and swapping implementations easy.",
+        "**Use `get_it` for DI** – Centralizes dependency registration.",
+        "**Feature‑based folder structure** – Each feature contains its own layers.",
+        "**Write tests for each layer** – Unit tests for domain, integration tests for data, widget tests for presentation."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Putting business logic in BLoC** – Makes it hard to test and reuse.\n✅ Move business logic to use cases.",
+        "❌ **Letting domain depend on data layer** – Violates dependency rule.\n✅ Data layer implements domain interfaces.",
+        "❌ **Using exceptions for error handling in domain** – Makes flow unpredictable.\n✅ Use `Either<Failure, T>` or `Result` types.",
+        "❌ **Creating huge use cases** – Violates single responsibility.\n✅ Split into smaller use cases.",
+        "❌ **Directly using data sources in BLoC** – Bypasses use cases.\n✅ Always go through use cases."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Combining BLoC with Clean Architecture gives you a robust, testable, and scalable foundation for Flutter apps. The separation of concerns ensures that your core business logic is independent of UI and external frameworks, making your app easier to maintain and evolve. Start by structuring your features with presentation, domain, and data layers, and gradually introduce use cases and `Either` error handling as your app grows."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I need to use use cases for every simple operation?",
+      "answer": "For very simple operations (like incrementing a counter), a use case may be overkill. You can put such logic directly in the BLoC. But as soon as the logic involves multiple steps, data validation, or external dependencies, a use case becomes valuable for testability and reusability."
+    },
+    {
+      "question": "How do I handle dependencies between use cases?",
+      "answer": "Use cases can depend on each other, but it's better to keep them independent. If you need to combine multiple use cases, consider creating a higher‑level use case that uses the lower‑level ones via constructor injection."
+    },
+    {
+      "question": "Should I use freezed with equatable for entities?",
+      "answer": "It's optional but recommended. Freezed generates immutable classes with `copyWith`, `toString`, and equality, which is very helpful for entities and states. However, entities in the domain layer can remain simple classes; freezed adds extra boilerplate but improves safety."
+    },
+    {
+      "question": "How do I handle validation in the domain layer?",
+      "answer": "You can put validation logic inside use cases or create separate value objects that encapsulate validation. For example, a `Email` class that validates format and returns an `Either` on creation."
+    },
+    {
+      "question": "Can I use this architecture with Cubit instead of Bloc?",
+      "answer": "Yes, the architecture is independent of whether you use Bloc or Cubit. You would still have use cases and repositories, and the Cubit would call them directly (like a method) rather than dispatching events."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "comment": "Architecture examples are best understood in a full project; tryEditor disabled."
+  },
+  "quiz": [
+    {
+      "question": "What is the role of a use case in Clean Architecture?",
+      "options": [
+        "To handle UI events",
+        "To encapsulate a single business action",
+        "To fetch data from the network",
+        "To manage dependency injection"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which layer defines repository interfaces?",
+      "options": ["Presentation", "Domain", "Data", "Core"],
+      "answer": 1
+    },
+    {
+      "question": "What is the main benefit of using `Either<Failure, T>` in the domain layer?",
+      "options": [
+        "It makes the code run faster",
+        "It makes error handling explicit and testable",
+        "It replaces all exceptions",
+        "It is required by BLoC"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-introduction",
+    "bloc-architecture",
+    "bloc-navigation",
+    "flutter-clean-architecture",
+    "dependency-injection"
+  ]
+}

@@ -1,0 +1,227 @@
+{
+  "slug": "bloc-route-management",
+  "course": "Flutter",
+  "title": "BLoC Route Management: Advanced Navigation & Deep Linking",
+  "meta": {
+    "title": "BLoC Route Management – Advanced Navigation & Deep Linking (2026)",
+    "description": "Learn advanced route management with BLoC: route guards, nested navigation, deep linking, and integrating with go_router. Build scalable, secure Flutter navigation.",
+    "keywords": [
+      "bloc route management",
+      "flutter bloc navigation",
+      "route guards bloc",
+      "go_router bloc",
+      "deep linking bloc",
+      "nested navigation bloc",
+      "bloc routing"
+    ]
+  },
+  "level": "Advanced",
+  "readingTime": "14 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Advanced",
+  "tags": ["bloc", "navigation", "routing", "go_router"],
+  "content": [
+    {
+      "type": "text",
+      "value": "In complex Flutter apps, navigation is more than just pushing screens – it involves route guards, nested navigation, deep linking, and state synchronization. By combining BLoC with a routing solution like `go_router`, you can build a declarative, testable navigation system that responds to your app’s state. This guide explores advanced route management techniques using BLoC."
+    },
+    {
+      "type": "heading",
+      "value": "Why Combine BLoC with Advanced Routing?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Declarative navigation** – Routes are defined based on the current state (e.g., show login if not authenticated).",
+        "**Route guards** – Protect routes based on authentication or user roles without sprinkling checks everywhere.",
+        "**Deep linking** – Handle URLs seamlessly, converting them to the correct app state.",
+        "**Testability** – Navigation logic becomes part of the state machine, easy to test in isolation.",
+        "**Scalability** – Manage complex nested navigation (tabs, drawers) with clean separation."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "1. Route Guards with go_router and BLoC"
+    },
+    {
+      "type": "text",
+      "value": "`go_router` is the recommended routing package for Flutter. It supports redirects based on conditions – perfect for route guards. You can integrate a BLoC to check authentication state and redirect accordingly."
+    },
+    {
+      "type": "code",
+      "title": "router.dart",
+      "language": "dart",
+      "value": "final router = GoRouter(\n  initialLocation: '/',\n  redirect: (context, state) {\n    final authState = context.read<AuthBloc>().state;\n    final isLoggedIn = authState is AuthSuccess;\n    final isLoginRoute = state.subloc == '/login';\n\n    if (!isLoggedIn && !isLoginRoute) {\n      return '/login';\n    }\n    if (isLoggedIn && isLoginRoute) {\n      return '/';\n    }\n    return null;\n  },\n  routes: [\n    GoRoute(\n      path: '/',\n      builder: (context, state) => HomePage(),\n    ),\n    GoRoute(\n      path: '/login',\n      builder: (context, state) => LoginPage(),\n    ),\n    GoRoute(\n      path: '/profile',\n      builder: (context, state) => ProfilePage(),\n    ),\n  ],\n);"
+    },
+    {
+      "type": "text",
+      "value": "In this example, the `redirect` function reads the current `AuthBloc` state and decides where to go. This centralises all route protection logic."
+    },
+    {
+      "type": "heading",
+      "value": "2. Nested Navigation with BLoC and ShellRoute"
+    },
+    {
+      "type": "text",
+      "value": "For tab‑based navigation (e.g., bottom navigation bar), you can use `ShellRoute` to define a common shell that stays persistent. The selected tab can be controlled by a BLoC that emits the current tab index."
+    },
+    {
+      "type": "code",
+      "title": "main_tab_bloc.dart",
+      "language": "dart",
+      "value": "class TabState extends Equatable {\n  final int index;\n  const TabState(this.index);\n  @override List<Object?> get props => [index];\n}\n\nclass TabBloc extends Cubit<TabState> {\n  TabBloc() : super(const TabState(0));\n  void setTab(int index) => emit(TabState(index));\n}"
+    },
+    {
+      "type": "code",
+      "title": "router.dart (with ShellRoute)",
+      "language": "dart",
+      "value": "final router = GoRouter(\n  initialLocation: '/',\n  routes: [\n    ShellRoute(\n      builder: (context, state, child) {\n        return ScaffoldWithNavBar(\n          child: child,\n        );\n      },\n      routes: [\n        GoRoute(\n          path: '/',\n          builder: (context, state) => HomePage(),\n        ),\n        GoRoute(\n          path: '/search',\n          builder: (context, state) => SearchPage(),\n        ),\n        GoRoute(\n          path: '/profile',\n          builder: (context, state) => ProfilePage(),\n        ),\n      ],\n    ),\n  ],\n);"
+    },
+    {
+      "type": "code",
+      "title": "ScaffoldWithNavBar.dart",
+      "language": "dart",
+      "value": "class ScaffoldWithNavBar extends StatelessWidget {\n  final Widget child;\n  const ScaffoldWithNavBar({required this.child});\n\n  @override\n  Widget build(BuildContext context) {\n    return BlocBuilder<TabBloc, TabState>(\n      builder: (context, state) {\n        return Scaffold(\n          body: child,\n          bottomNavigationBar: BottomNavigationBar(\n            currentIndex: state.index,\n            onTap: (index) {\n              context.read<TabBloc>().setTab(index);\n              // Update route based on index\n              switch (index) {\n                case 0: context.go('/'); break;\n                case 1: context.go('/search'); break;\n                case 2: context.go('/profile'); break;\n              }\n            },\n            items: const [\n              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),\n              BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),\n              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),\n            ],\n          ),\n        );\n      },\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Deep Linking with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "Deep links (URLs) can be handled by `go_router` which parses the URL and builds the corresponding route. You still need to ensure the app is in the correct state (e.g., user logged in) before navigating. The `redirect` function already handles this. For dynamic parameters, use path parameters."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GoRoute(\n  path: '/product/:id',\n  builder: (context, state) {\n    final id = state.pathParameters['id']!;\n    return ProductPage(id: id);\n  },\n);"
+    },
+    {
+      "type": "text",
+      "value": "To test deep linking on Android/iOS, you need to configure the app's manifest/Info.plist. With `go_router`, the deep link URL will be automatically matched and the router will handle it."
+    },
+    {
+      "type": "heading",
+      "value": "4. Using BLoC with go_router for Authentication Flow"
+    },
+    {
+      "type": "text",
+      "value": "Here’s a complete example of an authentication flow using BLoC and go_router, including a splash screen that checks the auth state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// auth_bloc.dart\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  AuthBloc() : super(AuthInitial()) {\n    on<AuthCheckRequested>(_onAuthCheckRequested);\n    on<AuthLogin>(_onAuthLogin);\n    on<AuthLogout>(_onAuthLogout);\n  }\n\n  Future<void> _onAuthCheckRequested(AuthCheckRequested event, Emitter<AuthState> emit) async {\n    final token = await storage.readToken();\n    if (token != null) {\n      emit(AuthSuccess());\n    } else {\n      emit(AuthFailure());\n    }\n  }\n\n  // ... other handlers\n}\n\n// router.dart\nfinal router = GoRouter(\n  initialLocation: '/',\n  redirect: (context, state) {\n    final authState = context.read<AuthBloc>().state;\n    final isLoggedIn = authState is AuthSuccess;\n    final isLoginRoute = state.subloc == '/login';\n\n    if (authState is AuthInitial) return '/splash';\n    if (!isLoggedIn && !isLoginRoute) return '/login';\n    if (isLoggedIn && isLoginRoute) return '/';\n    return null;\n  },\n  routes: [\n    GoRoute(path: '/splash', builder: (context, state) => SplashPage()),\n    GoRoute(path: '/login', builder: (context, state) => LoginPage()),\n    GoRoute(path: '/', builder: (context, state) => HomePage()),\n    GoRoute(path: '/profile', builder: (context, state) => ProfilePage()),\n  ],\n);\n\n// splash_page.dart\nclass SplashPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    context.read<AuthBloc>().add(AuthCheckRequested());\n    return const Scaffold(body: Center(child: CircularProgressIndicator()));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Testing Route Guards and Navigation"
+    },
+    {
+      "type": "text",
+      "value": "Test your route logic by setting up a test environment with a mock `AuthBloc` and checking the router’s behavior. You can use `go_router`’s `MaterialApp.router` and test navigation using `tester.pumpAndSettle` and verifying the current route."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "testWidgets('redirects to login when not authenticated', (tester) async {\n  final authBloc = MockAuthBloc();\n  when(authBloc.state).thenReturn(AuthFailure());\n\n  await tester.pumpWidget(\n    BlocProvider.value(\n      value: authBloc,\n      child: MaterialApp.router(\n        routerConfig: router,\n      ),\n    ),\n  );\n\n  await tester.pumpAndSettle();\n  expect(find.text('Login'), findsOneWidget);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use go_router with BLoC** – It’s the most robust solution for complex navigation, supporting redirects, nested routes, and deep linking.",
+        "**Centralise route guards** – Put all protection logic in the `redirect` function, not scattered across screens.",
+        "**Keep navigation state in BLoC** – For tab selection, drawer state, etc., use a BLoC to manage them.",
+        "**Test navigation separately** – Use widget tests to verify that the correct screens appear given the BLoC state.",
+        "**Handle deep links gracefully** – Ensure your app can navigate to the correct content even if the user isn’t logged in (by queuing the intended route after login).",
+        "**Use path parameters for IDs** – Makes deep linking easier and URLs cleaner."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `Navigator.push` inside BLoC** – Bypasses the routing system and makes guards ineffective.\n✅ Let the router handle navigation; use `context.go()` or `router.push()`.",
+        "❌ **Not handling `AuthInitial`** – The app may show a blank screen or incorrect route while checking auth.\n✅ Redirect to a splash screen or show a loader.",
+        "❌ **Hardcoding routes in multiple places** – Leads to maintenance issues.\n✅ Use route constants and a single source of truth.",
+        "❌ **Forgetting to provide BLoC to the router** – The router’s `redirect` can’t access the bloc.\n✅ Wrap the app with `BlocProvider` or use `Provider` above the router.",
+        "❌ **Mixing navigation with business logic** – Navigation decisions should be based on state, not internal logic of blocs.\n✅ Let the router decide based on the current state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Combining BLoC with a declarative routing solution like go_router unlocks powerful, maintainable navigation for Flutter apps. Route guards become a simple `redirect` function, nested navigation is easily handled with `ShellRoute`, and deep linking works out of the box. By keeping navigation logic separate from business logic and relying on state, you build apps that are both robust and testable."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should I use go_router or the default Navigator with BLoC?",
+      "answer": "For complex apps with route guards, nested navigation, and deep linking, go_router is highly recommended. It integrates seamlessly with BLoC via the `redirect` function and reduces boilerplate. For very simple apps, the default Navigator with BlocListener may suffice."
+    },
+    {
+      "question": "How do I handle deep links that require authentication?",
+      "answer": "In the `redirect` function, you can store the intended route (e.g., from the deep link) in a variable and after successful login, navigate to that route. Alternatively, you can use the `go_router` `onRedirect` to handle it."
+    },
+    {
+      "question": "Can I use BLoC with other routing packages like auto_route?",
+      "answer": "Yes, auto_route also supports guards and can be integrated with BLoC. The principles are similar: use a guard that reads the BLoC state and decides whether to allow navigation."
+    },
+    {
+      "question": "How do I test the router with BLoC?",
+      "answer": "Use widget tests: set up a test widget tree with `BlocProvider` providing a mocked bloc, and then use `tester.pumpWidget` and `tester.expect` to verify that the correct screen is shown after navigation or redirect."
+    },
+    {
+      "question": "What about handling Web URL routes?",
+      "answer": "go_router works seamlessly on the web. The `redirect` function is also executed for initial URL loading, so you can protect routes and handle deep links uniformly across platforms."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "comment": "Complex routing requires a full app environment; tryEditor disabled."
+  },
+  "quiz": [
+    {
+      "question": "What is the main advantage of using go_router with BLoC for route guards?",
+      "options": [
+        "It allows calling Navigator directly from the bloc",
+        "It centralises route protection in a single redirect function",
+        "It removes the need for BLoC",
+        "It automatically handles all state management"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget would you use to create a persistent shell with tabs in go_router?",
+      "options": ["GoRoute", "ShellRoute", "StatefulShellRoute", "NestedRoute"],
+      "answer": 1
+    },
+    {
+      "question": "Why should navigation decisions not be made inside a bloc?",
+      "options": [
+        "Because it's not possible",
+        "It couples the bloc to the UI framework and makes testing harder",
+        "It causes runtime errors",
+        "It increases code size"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-navigation",
+    "bloc-core-concepts",
+    "bloc-testing",
+    "go-router-introduction",
+    "flutter-deep-linking"
+  ]
+}

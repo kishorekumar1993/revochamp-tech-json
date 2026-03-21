@@ -3,15 +3,17 @@
   "course": "Flutter",
   "title": "GetX Authentication Flow: Login, Token Storage & Route Guards",
   "meta": {
-    "title": "GetX Authentication Flow – Complete Login & Route Protection Guide",
-    "description": "Learn how to implement authentication in Flutter using GetX. Manage user state, store tokens, protect routes with middleware, and handle login/logout flows.",
+    "title": "GetX Authentication Flow – Complete Login, Token Storage & Route Guards Guide (2026)",
+    "description": "Complete guide to implementing authentication in Flutter using GetX. Learn to manage user state, store tokens securely, protect routes with middleware, and handle login/logout flows with practical examples.",
     "keywords": [
       "GetX authentication",
       "Flutter login GetX",
       "GetX route guards",
       "GetX token storage",
       "GetX middleware auth",
-      "GetX user session"
+      "GetX user session",
+      "Flutter secure storage",
+      "GetX interceptor"
     ]
   },
   "content": [
@@ -143,25 +145,33 @@
     },
     {
       "type": "heading",
-      "value": "FAQ"
-    },
-    {
-      "type": "list",
-      "value": [
-        "**Q: How do I persist user session after app restart?**  \nA: Store the token in GetStorage and read it in `onInit` of AuthController. If token exists, set `isLoggedIn = true` and optionally fetch user data.",
-        "**Q: Can I use GetX middleware to redirect to login on 401?**  \nA: Yes, you can listen to API responses and call `Get.offAllNamed('/login')` when a 401 is received.",
-        "**Q: How to protect routes that depend on roles?**  \nA: In your middleware, after checking `isLoggedIn`, you can also check the user's role and redirect if insufficient.",
-        "**Q: Should I store the user object in GetStorage as well?**  \nA: If the user data is small, you can. Otherwise, fetch it after login and store only the token.",
-        "**Q: How to show a loading indicator during login?**  \nA: Use an `isLoading` reactive boolean and disable the button while true."
-      ]
-    },
-    {
-      "type": "heading",
       "value": "Conclusion"
     },
     {
       "type": "text",
       "value": "GetX makes authentication flows straightforward. By combining reactive state, persistent storage with GetStorage, and route guards with middleware, you can build a secure and user‑friendly login system. The patterns shown here scale from simple apps to complex enterprise solutions."
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I persist user session after app restart?",
+      "answer": "Store the token in GetStorage and read it in `onInit` of AuthController. If token exists, set `isLoggedIn = true` and optionally fetch user data."
+    },
+    {
+      "question": "Can I use GetX middleware to redirect to login on 401?",
+      "answer": "Yes, you can listen to API responses and call `Get.offAllNamed('/login')` when a 401 is received."
+    },
+    {
+      "question": "How to protect routes that depend on roles?",
+      "answer": "In your middleware, after checking `isLoggedIn`, you can also check the user's role and redirect if insufficient."
+    },
+    {
+      "question": "Should I store the user object in GetStorage as well?",
+      "answer": "If the user data is small, you can. Otherwise, fetch it after login and store only the token."
+    },
+    {
+      "question": "How to show a loading indicator during login?",
+      "answer": "Use an `isLoading` reactive boolean and disable the button while true."
     }
   ],
   "tryEditor": {

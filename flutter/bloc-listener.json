@@ -1,0 +1,221 @@
+{
+  "slug": "bloc-listener",
+  "course": "Flutter",
+  "title": "BlocListener: Handling Side Effects in Flutter Bloc",
+  "meta": {
+    "title": "BlocListener in Flutter – Complete Guide (2026)",
+    "description": "Learn how to use BlocListener to handle side effects like navigation, snackbars, and dialogs in Flutter Bloc. Differences from BlocBuilder, best practices, and real-world examples.",
+    "keywords": [
+      "flutter bloclistener",
+      "bloc listener",
+      "bloc side effects",
+      "flutter bloc navigation",
+      "bloc snackbar"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "8 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "bloclistener", "side-effects"],
+  "content": [
+    {
+      "type": "text",
+      "value": "In the BLoC pattern, not all state changes should directly modify the UI. Some changes require **side effects** – one‑time actions like showing a snackbar, navigating to another screen, or playing a sound. `BlocListener` is the dedicated widget for handling these side effects without causing unnecessary rebuilds."
+    },
+    {
+      "type": "heading",
+      "value": "What is BlocListener?"
+    },
+    {
+      "type": "text",
+      "value": "`BlocListener` is a Flutter widget that listens to state changes in a bloc and executes a callback in response. Unlike `BlocBuilder`, it does **not** rebuild its child. It is designed exclusively for side effects: actions that should happen once when a particular state is reached."
+    },
+    {
+      "type": "highlight",
+      "value": "BlocListener → Listens to states → Executes side effects (once) → No rebuild"
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "Wrap a widget with `BlocListener` and provide a `listener` function. The listener is called whenever the state changes. You can optionally filter which states trigger the listener using the `listenWhen` parameter."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocListener<AuthBloc, AuthState>(\n  listener: (context, state) {\n    if (state is AuthSuccess) {\n      Navigator.pushReplacementNamed(context, '/home');\n    }\n    if (state is AuthFailure) {\n      ScaffoldMessenger.of(context).showSnackBar(\n        SnackBar(content: Text(state.message)),\n      );\n    }\n  },\n  child: LoginForm(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "BlocListener vs BlocBuilder"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "BlocListener", "BlocBuilder"],
+        "rows": [
+          ["Primary purpose", "Side effects (navigation, dialogs)", "UI rebuild on state change"],
+          ["Rebuilds child", "No", "Yes"],
+          ["Called on every state", "Yes (unless filtered)", "Yes (unless filtered)"],
+          ["Common use case", "Snackbars, navigation, logging", "Displaying data, toggling UI"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "When to Use BlocListener"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Navigation** – Push a new screen when authentication succeeds.",
+        "**Snackbars / Toasts** – Show feedback messages on error or success.",
+        "**Dialogs** – Present a dialog when a specific state is reached.",
+        "**Analytics / Logging** – Send analytics events when certain states occur.",
+        "**Focus management** – Move focus to a text field after validation."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Filtering with listenWhen"
+    },
+    {
+      "type": "text",
+      "value": "By default, `BlocListener` calls the listener on every state change. To avoid unnecessary calls, use the `listenWhen` predicate. It receives the previous and current states and returns `true` only when you want the listener to run."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocListener<LoginBloc, LoginState>(\n  listenWhen: (previous, current) {\n    // Only trigger on success or failure, not loading\n    return current is LoginSuccess || current is LoginFailure;\n  },\n  listener: (context, state) {\n    if (state is LoginSuccess) {\n      Navigator.pushReplacementNamed(context, '/dashboard');\n    }\n    if (state is LoginFailure) {\n      ScaffoldMessenger.of(context).showSnackBar(\n        SnackBar(content: Text(state.error)),\n      );\n    }\n  },\n  child: LoginForm(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Multiple Listeners"
+    },
+    {
+      "type": "text",
+      "value": "You can use multiple `BlocListener` widgets for the same bloc to separate concerns. For example, one listener for navigation and another for snackbars. This keeps your code clean and focused."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocListener<AuthBloc, AuthState>(\n  listenWhen: (_, current) => current is AuthSuccess,\n  listener: (context, state) => Navigator.pushReplacementNamed(context, '/home'),\n  child: BlocListener<AuthBloc, AuthState>(\n    listenWhen: (_, current) => current is AuthFailure,\n    listener: (context, state) => ScaffoldMessenger.of(context).showSnackBar(\n      SnackBar(content: Text((state as AuthFailure).message)),\n    ),\n    child: LoginForm(),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "BlocListener with MultiBlocProvider"
+    },
+    {
+      "type": "text",
+      "value": "When you have multiple blocs, you can nest `BlocListener` widgets or combine them with `MultiBlocProvider`. A common pattern is to wrap your UI with a `MultiBlocProvider` and then a `BlocListener` for each relevant bloc."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MultiBlocProvider(\n  providers: [\n    BlocProvider<AuthBloc>(create: (_) => AuthBloc()),\n    BlocProvider<SettingsBloc>(create: (_) => SettingsBloc()),\n  ],\n  child: BlocListener<AuthBloc, AuthState>(\n    listener: (context, state) {\n      if (state is AuthSuccess) {\n        Navigator.pushReplacementNamed(context, '/home');\n      }\n    },\n    child: MyApp(),\n  ),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Testing with BlocListener"
+    },
+    {
+      "type": "text",
+      "value": "In widget tests, you can verify that the listener callback is triggered. Use `tester.pumpWidget` and then assert that navigation or other side effects occurred."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "testWidgets('navigates on login success', (tester) async {\n  final bloc = MockAuthBloc();\n  whenListen(bloc, Stream.value(AuthSuccess()));\n\n  await tester.pumpWidget(\n    MaterialApp(\n      home: BlocProvider.value(\n        value: bloc,\n        child: BlocListener<AuthBloc, AuthState>(\n          listener: (context, state) {\n            if (state is AuthSuccess) {\n              Navigator.pushReplacementNamed(context, '/home');\n            }\n          },\n          child: Container(),\n        ),\n      ),\n    ),\n  );\n\n  expect(find.byType(Container), findsOneWidget);\n  // In a real test, you would verify navigation occurred\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `listenWhen` to avoid unnecessary calls** – Prevents side effects from running on every state change.",
+        "**Keep listener callbacks simple** – Avoid heavy computation; delegate complex logic to the bloc if needed.",
+        "**Separate concerns** – Use multiple `BlocListener` widgets for different side effects.",
+        "**Prefer `BlocListener` over manual checks in `BlocBuilder`** – Avoid mixing UI rebuild logic with side effects.",
+        "**Use `BlocConsumer` if you need both** – `BlocConsumer` combines `BlocListener` and `BlocBuilder` in one widget.",
+        "**Don't trigger side effects from inside `BlocBuilder`** – That would run on every rebuild, leading to unexpected behaviour."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `BlocBuilder` for side effects** – Leads to multiple executions if the widget rebuilds for other reasons.",
+        "❌ **Not filtering with `listenWhen`** – The listener runs on every state change, including loading states, causing unintended actions.",
+        "❌ **Calling `setState` inside listener** – The listener is called outside the build phase; use `context` to trigger navigation or show dialogs instead.",
+        "❌ **Misplacing `BlocListener`** – If placed too deep, the context may not have access to the required bloc or navigator.",
+        "❌ **Assuming listener runs only once per state** – If you navigate and the widget is rebuilt, the listener may run again; use `listenWhen` to guard against that."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you understand side effects, explore how to combine builder and listener with `BlocConsumer`, and learn about advanced state management patterns."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [BlocConsumer](/bloc-consumer) and [Bloc architecture](/bloc-architecture)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use BlocListener without a child?",
+      "answer": "No, `BlocListener` always requires a child. If you need a listener that doesn't wrap existing UI, you can use a `SizedBox.shrink()` as the child. However, it's often better to place the listener at an appropriate location that wraps your UI."
+    },
+    {
+      "question": "What is the difference between BlocListener and BlocConsumer?",
+      "answer": "`BlocConsumer` combines `BlocListener` and `BlocBuilder` into one widget. It accepts both a `listener` (for side effects) and a `builder` (for UI). Use it when you need both side effects and UI rebuilds from the same bloc."
+    },
+    {
+      "question": "Does BlocListener rebuild the child when the state changes?",
+      "answer": "No. `BlocListener` does not rebuild its child. It only executes the listener callback. If you need to rebuild the UI, use `BlocBuilder` or `BlocConsumer`."
+    },
+    {
+      "question": "Can I use multiple BlocListeners for the same bloc?",
+      "answer": "Yes, it's a good practice to separate concerns. For example, one listener for navigation and another for showing dialogs. This keeps each callback focused and easier to test."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What is the primary purpose of BlocListener?",
+      "options": [
+        "Rebuild the UI when state changes",
+        "Handle side effects like navigation and snackbars",
+        "Combine multiple blocs into one",
+        "Provide a bloc to the widget tree"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which parameter allows you to conditionally trigger the listener based on previous and current states?",
+      "options": ["condition", "filter", "listenWhen", "buildWhen"],
+      "answer": 2
+    },
+    {
+      "question": "Does BlocListener rebuild its child widget?",
+      "options": ["Yes, on every state change", "No, never", "Only when listenWhen returns true", "Yes, but only for initial state"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-builder",
+    "bloc-consumer",
+    "bloc-provider",
+    "bloc-architecture",
+    "bloc-testing"
+  ]
+}

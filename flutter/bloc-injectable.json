@@ -1,0 +1,274 @@
+{
+  "slug": "bloc-injectable",
+  "course": "Flutter",
+  "title": "Injectable with Bloc: Code‑Generated Dependency Injection",
+  "meta": {
+    "title": "Flutter Bloc Injectable – Code‑Generated DI Guide (2026)",
+    "description": "Learn how to use injectable with Flutter Bloc for automatic dependency injection. Setup, annotations, scopes, and best practices for scalable Flutter apps.",
+    "keywords": [
+      "flutter bloc injectable",
+      "injectable flutter",
+      "get_it injectable",
+      "code generation dependency injection",
+      "bloc di"
+    ]
+  },
+  "level": "Advanced",
+  "readingTime": "12 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "injectable", "dependency-injection", "code-generation"],
+  "content": [
+    {
+      "type": "text",
+      "value": "Managing dependencies manually with `get_it` is straightforward, but as your app grows, registration code can become repetitive and error‑prone. **Injectable** is a code‑generator that automates dependency injection setup, working seamlessly with `get_it` and `Bloc`. This guide shows how to use injectable to write clean, maintainable DI code in your Bloc applications."
+    },
+    {
+      "type": "heading",
+      "value": "What is Injectable?"
+    },
+    {
+      "type": "text",
+      "value": "Injectable is a set of annotations and a code generator that creates the registration code for `get_it`. It allows you to mark classes with annotations like `@injectable`, `@singleton`, `@lazySingleton`, and the generator produces the registration file. This reduces boilerplate, ensures consistent registration, and makes refactoring safer."
+    },
+    {
+      "type": "highlight",
+      "value": "Annotate classes → Run build_runner → Generated registration code → Use get_it"
+    },
+    {
+      "type": "heading",
+      "value": "Setup and Installation"
+    },
+    {
+      "type": "subheading",
+      "value": "1. Add Dependencies"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter:\n    sdk: flutter\n  get_it: ^7.6.0\n  injectable: ^2.3.0\n\ndev_dependencies:\n  build_runner: ^2.4.0\n  injectable_generator: ^2.4.0"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Create a DI Container"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/di/injection.dart\nimport 'package:get_it/get_it.dart';\nimport 'package:injectable/injectable.dart';\n\nfinal getIt = GetIt.instance;\n\n@InjectableInit()\nFuture<void> configureDependencies() => getIt.init();"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Run Code Generation"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "flutter pub run build_runner build\n# or watch during development:\nflutter pub run build_runner watch"
+    },
+    {
+      "type": "text",
+      "value": "This creates `injection.config.dart` in the same folder. Never edit this file manually."
+    },
+    {
+      "type": "heading",
+      "value": "Core Annotations"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Annotation", "Description", "get_it Equivalent"],
+        "rows": [
+          ["`@injectable`", "Registers as a factory (new instance each time)", "`registerFactory`"],
+          ["`@singleton`", "Registers as a singleton, created eagerly", "`registerSingleton`"],
+          ["`@lazySingleton`", "Registers as a singleton, created on first use", "`registerLazySingleton`"],
+          ["`@factoryParam`", "Marks a parameter that will be passed at creation time", "`registerFactoryParam`"],
+          ["`@preResolve`", "For async singletons, ensures initialisation completes before registration", "`registerSingletonAsync`"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage with Bloc"
+    },
+    {
+      "type": "subheading",
+      "value": "1. Annotate Dependencies"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/data/datasources/auth_remote_datasource.dart\nimport 'package:injectable/injectable.dart';\n\n@lazySingleton\nclass AuthRemoteDataSourceImpl implements AuthRemoteDataSource {\n  final HttpClient client;\n  AuthRemoteDataSourceImpl(this.client);\n}\n\n// lib/features/auth/data/repositories/auth_repository_impl.dart\n@injectable\nclass AuthRepositoryImpl implements AuthRepository {\n  final AuthRemoteDataSource remoteDataSource;\n  AuthRepositoryImpl(this.remoteDataSource);\n}\n\n// lib/features/auth/domain/usecases/login_usecase.dart\n@injectable\nclass LoginUseCase {\n  final AuthRepository repository;\n  LoginUseCase(this.repository);\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Annotate Blocs with Dependencies"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/bloc/auth_bloc.dart\nimport 'package:injectable/injectable.dart';\n\n@injectable\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  final LoginUseCase loginUseCase;\n  final LogoutUseCase logoutUseCase;\n\n  AuthBloc(this.loginUseCase, this.logoutUseCase) : super(AuthInitial()) {\n    on<LoginRequested>(_onLoginRequested);\n    on<LogoutRequested>(_onLogoutRequested);\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Configure and Run"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/main.dart\nimport 'di/injection.dart';\n\nFuture<void> main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  await configureDependencies(); // sets up getIt\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MultiBlocProvider(\n      providers: [\n        BlocProvider(create: (_) => getIt<AuthBloc>()),\n      ],\n      child: MaterialApp(...),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced Patterns"
+    },
+    {
+      "type": "subheading",
+      "value": "Factory Parameters"
+    },
+    {
+      "type": "text",
+      "value": "When a dependency needs parameters that are only known at runtime, use `@factoryParam`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@injectable\nclass UserBloc extends Bloc<UserEvent, UserState> {\n  final UserRepository repository;\n  final String userId;\n\n  UserBloc(this.repository, @factoryParam this.userId) : super(...);\n}\n\n// Usage:\nfinal userBloc = getIt<UserBloc>(param1: 'user-123');"
+    },
+    {
+      "type": "subheading",
+      "value": "Named Bindings"
+    },
+    {
+      "type": "text",
+      "value": "If you have multiple implementations of the same interface, use `@Named`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@singleton\n@Named('api')\nclass ApiHttpClient implements HttpClient { ... }\n\n@singleton\n@Named('mock')\nclass MockHttpClient implements HttpClient { ... }\n\n// Inject by name\n@injectable\nclass AuthRemoteDataSourceImpl implements AuthRemoteDataSource {\n  AuthRemoteDataSourceImpl(@Named('api') this.client);\n  final HttpClient client;\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Environment‑Specific Configurations"
+    },
+    {
+      "type": "text",
+      "value": "Use `@Environment` to register different implementations based on the build environment (e.g., dev, prod)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/di/environments.dart\nconst dev = Environment('dev');\nconst prod = Environment('prod');\n\n// Register only in dev environment\n@singleton(env: [dev])\nclass DevHttpClient implements HttpClient { ... }\n\n@singleton(env: [prod])\nclass ProdHttpClient implements HttpClient { ... }\n\n// In configureDependencies, pass the environment:\nawait configureDependencies(environment: dev);"
+    },
+    {
+      "type": "subheading",
+      "value": "Asynchronous Dependencies"
+    },
+    {
+      "type": "text",
+      "value": "For dependencies that require async initialisation (like SharedPreferences), use `@preResolve` with `@singleton`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@singleton\n@preResolve\nFuture<SharedPreferences> get prefs async => await SharedPreferences.getInstance();\n\n// Or with a custom class:\n@singleton\nclass DatabaseHelper {\n  DatabaseHelper._();\n  static Future<DatabaseHelper> create() async { ... }\n\n  @factoryMethod\n  static Future<DatabaseHelper> _create() => DatabaseHelper.create();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing with Injectable"
+    },
+    {
+      "type": "text",
+      "value": "Testing becomes simpler because you can easily replace dependencies with mocks. In your test file, reset `getIt` and register mocks before each test."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:mocktail/mocktail.dart';\nimport 'package:get_it/get_it.dart';\n\nclass MockAuthRepository extends Mock implements AuthRepository {}\n\nvoid main() {\n  late MockAuthRepository mockRepo;\n\n  setUp(() {\n    mockRepo = MockAuthRepository();\n    getIt.reset();\n    getIt.registerSingleton<AuthRepository>(mockRepo);\n    // Also register other dependencies (or use injectable's test environment)\n  });\n\n  test('LoginUseCase calls repository', () async {\n    when(() => mockRepo.login(any(), any()))\n        .thenAnswer((_) async => User(...));\n\n    final useCase = LoginUseCase(mockRepo);\n    final result = await useCase.execute('test@example.com', 'pass');\n    expect(result.isRight(), true);\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `@lazySingleton` for most services** – They are created only when needed and reused throughout the app.",
+        "**Use `@injectable` for blocs** – Blocs are often created per screen; factories ensure a new instance each time.",
+        "**Group related registrations** – Keep your DI code near the classes they register; injectable works across the whole project.",
+        "**Use named bindings for multiple implementations** – Makes the intention clear and avoids conflicts.",
+        "**Leverage environments** – Use `@Environment` to separate dev and prod configurations, especially for API clients and mock data.",
+        "**Avoid circular dependencies** – The generator will complain, but you can resolve by using `@injectable(as: ...)` or redesigning.",
+        "**Commit generated files** – It's safe to commit `injection.config.dart` to version control; it ensures consistent setup for all developers."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to run build_runner** – Changes to annotations won't be reflected until regeneration.",
+        "❌ **Using `@singleton` for stateful objects** – State can persist across screens unexpectedly.",
+        "❌ **Not resetting getIt in tests** – Causes test pollution; always call `getIt.reset()` in `setUp` or `tearDown`.",
+        "❌ **Over‑using `@factoryParam`** – It's powerful but can make dependencies hard to trace. Prefer passing parameters via bloc events when possible.",
+        "❌ **Ignoring circular dependencies** – Injectable will fail to generate; restructure your code to avoid circular references."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you have a robust DI setup, you can build a modular, testable application. Next, explore how to structure your app with modular architecture and clean layers."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Modular architecture with Bloc](/bloc-modular-architecture) and [Repository pattern](/bloc-repository-pattern)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I need to manually write get_it registration code when using injectable?",
+      "answer": "No. The generator writes it for you. You only need to annotate your classes and run the generator. The generated `injection.config.dart` contains all the registration code."
+    },
+    {
+      "question": "Can I use injectable with BlocProvider?",
+      "answer": "Yes. You can register blocs as injectable (usually as `@injectable` for factories) and then use `BlocProvider(create: (_) => getIt<MyBloc>())` to provide them."
+    },
+    {
+      "question": "How do I handle async initialisation like SharedPreferences?",
+      "answer": "Use `@singleton` with `@preResolve` on a method that returns `Future<T>`. Injectable will await it before completing the registration, ensuring the dependency is ready."
+    },
+    {
+      "question": "Can I combine injectable with manual registrations?",
+      "answer": "Yes. The generated code runs after the manual registrations if you call `getIt.init()` after your manual setup. You can also exclude certain classes from generation using `@injectable(as: ...)`."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "Which annotation should you use to register a class as a singleton that is created on first use?",
+      "options": ["@singleton", "@lazySingleton", "@injectable", "@factoryParam"],
+      "answer": 1
+    },
+    {
+      "question": "What command generates the DI code for injectable?",
+      "options": ["flutter pub get", "flutter pub run build_runner build", "flutter gen", "dart run injectable"],
+      "answer": 1
+    },
+    {
+      "question": "How do you handle different implementations for dev and prod environments?",
+      "options": ["@Named", "@Environment", "@Profile", "@Conditional"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-dependency-injection",
+    "bloc-modular-architecture",
+    "bloc-testing",
+    "bloc-architecture",
+    "flutter-dependency-injection"
+  ]
+}

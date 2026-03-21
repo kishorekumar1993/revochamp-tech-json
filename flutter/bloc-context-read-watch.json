@@ -1,0 +1,254 @@
+{
+  "slug": "bloc-context-read-watch",
+  "course": "Flutter",
+  "title": "context.read, context.watch, and context.select: Accessing Blocs in Flutter",
+  "meta": {
+    "title": "Flutter Bloc: context.read, watch, select – Complete Guide (2026)",
+    "description": "Learn how to access blocs using context.read, context.watch, and context.select. Understand when to use each method, performance implications, and best practices for Flutter Bloc state management.",
+    "keywords": [
+      "flutter bloc context.read",
+      "context.watch",
+      "context.select",
+      "flutter bloc access bloc",
+      "bloc provider context"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "9 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "context", "state-management"],
+  "content": [
+    {
+      "type": "text",
+      "value": "When using `flutter_bloc`, you'll often need to access a bloc from within your widgets. The library provides three extension methods on `BuildContext`: `read`, `watch`, and `select`. Each serves a different purpose, and using them correctly is crucial for performance and maintainability. This guide explains the differences and when to use each."
+    },
+    {
+      "type": "heading",
+      "value": "The Three Methods at a Glance"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Method", "Purpose", "Rebuilds Widget", "Use Case"],
+        "rows": [
+          ["`context.read<T>()`", "Get bloc without listening", "No", "Adding events, calling methods"],
+          ["`context.watch<T>()`", "Get bloc and listen to state", "Yes, on every state change", "Displaying state data"],
+          ["`context.select<T, R>()`", "Listen to a specific part of state", "Yes, only when selected value changes", "Optimized state display"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "context.read<T>()"
+    },
+    {
+      "type": "text",
+      "value": "`context.read<T>()` retrieves the nearest bloc of type `T` without establishing a subscription. The widget will **not** rebuild when the bloc's state changes. Use this for one‑time actions like adding events or calling methods that don't require the UI to update based on state."
+    },
+    {
+      "type": "subheading",
+      "value": "When to Use"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Adding events in response to user actions (e.g., button presses)",
+        "Calling methods on the bloc that don't affect the UI directly",
+        "Accessing the bloc in `initState` or other lifecycle methods",
+        "Inside `BlocListener` or `BlocConsumer` callbacks where the state is already handled"
+      ]
+    },
+    {
+      "type": "subheading",
+      "value": "Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "ElevatedButton(\n  onPressed: () {\n    context.read<CounterBloc>().add(IncrementPressed());\n  },\n  child: Text('Increment'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "context.watch<T>()"
+    },
+    {
+      "type": "text",
+      "value": "`context.watch<T>()` retrieves the nearest bloc and subscribes to its state changes. The widget will rebuild whenever the bloc's state changes. Use this to display state data in your UI."
+    },
+    {
+      "type": "subheading",
+      "value": "When to Use"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Displaying state values directly in the `build` method",
+        "When you need the entire state object",
+        "For small, simple states where performance is not a concern"
+      ]
+    },
+    {
+      "type": "subheading",
+      "value": "Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterDisplay extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final state = context.watch<CounterBloc>().state;\n    return Text('Count: ${state.value}');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "context.select<T, R>()"
+    },
+    {
+      "type": "text",
+      "value": "`context.select<T, R>()` listens to the bloc but rebuilds only when the selected part of the state changes. It takes a selector function that extracts a value from the state. The widget rebuilds when the selected value changes (based on `==` equality)."
+    },
+    {
+      "type": "subheading",
+      "value": "When to Use"
+    },
+    {
+      "type": "list",
+      "value": [
+        "When state objects are large and you only need a small part",
+        "To improve performance by avoiding unnecessary rebuilds",
+        "When different widgets depend on different parts of the same state"
+      ]
+    },
+    {
+      "type": "subheading",
+      "value": "Example"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class UserName extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final name = context.select((UserBloc bloc) => bloc.state.user.name);\n    return Text('Hello, $name');\n  }\n}"
+    },
+    {
+      "type": "note",
+      "value": "For `context.select` to work correctly, your state must implement proper equality (use `Equatable`). The selected value is compared with the previous value using `==`."
+    },
+    {
+      "type": "heading",
+      "value": "Comparison with BlocBuilder / BlocSelector"
+    },
+    {
+      "type": "text",
+      "value": "You might wonder: why use these methods instead of `BlocBuilder` or `BlocSelector`? Both approaches are valid. The `context` methods are convenient for simple cases, while the dedicated widgets are more explicit and can be used when you need more control (e.g., multiple children)."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Approach", "Advantages", "Disadvantages"],
+        "rows": [
+          ["`context.watch`", "Less boilerplate, direct access", "Less explicit, can be overused"],
+          ["`BlocBuilder`", "Explicit, easy to see rebuild scope", "More nesting"],
+          ["`context.select`", "Optimised rebuilds, minimal code", "Requires state equality"],
+          ["`BlocSelector`", "Explicit selection, separate builder", "Slightly more verbose"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `context.read` in `build` to access state** – The widget won't rebuild when state changes. Use `watch` or `select` instead.",
+        "❌ **Using `context.watch` for adding events** – Causes unnecessary rebuilds. Use `read` for events.",
+        "❌ **Calling `context.read` inside a `BlocBuilder` that already provides the bloc** – The bloc is already available via the builder parameter; no need to read again.",
+        "❌ **Not using `Equatable` with `context.select`** – Leads to unnecessary rebuilds because the selected value may be considered changed even when it isn't.",
+        "❌ **Accessing bloc from a context that doesn't have it** – Always ensure the bloc is provided above the widget."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `context.read` only for events and one‑time actions** – Never for displaying state.",
+        "**Prefer `context.select` over `context.watch` for large states** – Improves performance.",
+        "**Use `Equatable` for all state classes** – Enables correct equality checks for `select` and prevents unnecessary rebuilds.",
+        "**Keep widgets that use `watch` or `select` small** – Rebuilds are scoped to that widget, reducing the impact.",
+        "**Avoid mixing `watch` and `read` for the same bloc in a widget** – If you need both, consider using `BlocConsumer` or separate widgets.",
+        "**Test your widgets with mocked blocs** – Ensure that rebuilds happen only when expected."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Example"
+    },
+    {
+      "type": "text",
+      "value": "Consider a profile screen that shows user name and email, with a button to update the email. The state object contains many fields, but only some are displayed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfileScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Profile')),\n      body: Column(\n        children: [\n          // Rebuilds only when name changes\n          Text(\n            context.select((ProfileBloc bloc) => bloc.state.user.name),\n            style: TextStyle(fontSize: 24),\n          ),\n          // Rebuilds only when email changes\n          Text(\n            context.select((ProfileBloc bloc) => bloc.state.user.email),\n          ),\n          ElevatedButton(\n            onPressed: () {\n              // No rebuild needed, just add event\n              context.read<ProfileBloc>().add(UpdateEmail('new@example.com'));\n            },\n            child: Text('Update Email'),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you understand how to access blocs, explore how to provide them with `BlocProvider` and `MultiBlocProvider`, and learn about optimising rebuilds with `BlocSelector`."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [BlocProvider](/bloc-provider) and [BlocSelector](/bloc-selector)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use context.read inside a build method?",
+      "answer": "Yes, you can use it to add events or call methods that don't require listening to state. However, if you need to display state, use `watch` or `select` instead, otherwise the widget won't update when state changes."
+    },
+    {
+      "question": "Does context.select cause rebuilds if the selected value is the same?",
+      "answer": "No. It compares the selected value with the previous value using `==`. If they are equal, the widget does not rebuild. That's why it's important to implement proper equality (e.g., with Equatable) for complex selected values."
+    },
+    {
+      "question": "What is the difference between context.watch and BlocBuilder?",
+      "answer": "Both subscribe to state changes and cause rebuilds. `context.watch` is a method that returns the bloc's state and can be called anywhere in `build`. `BlocBuilder` is a widget that provides a builder callback with the state. Use whichever you find more readable; performance is similar."
+    },
+    {
+      "question": "Can I access multiple blocs in one widget?",
+      "answer": "Yes, you can call `context.read`, `context.watch`, or `context.select` multiple times for different bloc types. However, if the widget becomes too large, consider splitting it into smaller widgets for better separation."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "Which method should you use to add an event from a button press?",
+      "options": ["context.watch", "context.read", "context.select", "BlocBuilder"],
+      "answer": 1
+    },
+    {
+      "question": "What happens if you use context.watch to display state and then call context.read for the same bloc in the same widget?",
+      "options": [
+        "It works fine",
+        "It causes a rebuild loop",
+        "It throws an exception",
+        "It requires a MultiBlocProvider"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Which method is best for optimising rebuilds when you only need one field from a large state?",
+      "options": ["context.read", "context.watch", "context.select", "BlocBuilder"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "bloc-provider",
+    "bloc-builder",
+    "bloc-selector",
+    "bloc-listener",
+    "bloc-architecture"
+  ]
+}

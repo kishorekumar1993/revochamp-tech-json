@@ -1,0 +1,213 @@
+{
+  "slug": "bloc-navigation-events",
+  "course": "Flutter",
+  "title": "Bloc Navigation Events: Event-Driven Routing in Flutter",
+  "meta": {
+    "title": "Bloc Navigation Events – Event-Driven Routing Guide (2026)",
+    "description": "Learn how to use events to trigger navigation in Flutter Bloc. Define navigation events, handle them in blocs, and listen for navigation states. Best practices for decoupled routing.",
+    "keywords": [
+      "flutter bloc navigation events",
+      "bloc navigation pattern",
+      "event-driven routing",
+      "bloc navigation state",
+      "flutter bloc routing"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "8 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "navigation", "events", "routing"],
+  "content": [
+    {
+      "type": "text",
+      "value": "In Bloc-based applications, navigation is a side effect that should be triggered by state changes. But what if you want to explicitly tie navigation to a specific event? Using **navigation events** – events that represent the intention to navigate – can make your navigation flow more explicit and traceable. This guide covers how to implement event-driven navigation with Flutter Bloc."
+    },
+    {
+      "type": "heading",
+      "value": "The Navigation Event Pattern"
+    },
+    {
+      "type": "text",
+      "value": "Instead of having a bloc emit a generic state (like `LoggedIn`) and then listening for it to navigate, you can define dedicated events that represent navigation intents. The bloc processes these events and may or may not emit additional states. The UI listens for these navigation events (or dedicated navigation states) and performs the actual navigation."
+    },
+    {
+      "type": "highlight",
+      "value": "User Action → Navigation Event → Bloc → (optional state change) → Listener → Navigator"
+    },
+    {
+      "type": "heading",
+      "value": "Approach 1: Dedicated Navigation States"
+    },
+    {
+      "type": "text",
+      "value": "Define states that represent navigation actions, and emit them from your bloc. This keeps the navigation intent in the state stream."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Navigation states\nabstract class AuthState {}\nclass AuthInitial extends AuthState {}\nclass AuthLoading extends AuthState {}\nclass AuthSuccess extends AuthState {\n  final User user;\n  AuthSuccess(this.user);\n}\nclass NavigateToHome extends AuthState {}\nclass NavigateToLogin extends AuthState {}\n\n// In bloc:\non<LogoutRequested>((event, emit) async {\n  await repository.logout();\n  emit(NavigateToLogin());\n});\n\n// In UI:\nBlocListener<AuthBloc, AuthState>(\n  listener: (context, state) {\n    if (state is NavigateToHome) {\n      Navigator.pushReplacementNamed(context, '/home');\n    } else if (state is NavigateToLogin) {\n      Navigator.pushReplacementNamed(context, '/login');\n    }\n  },\n  child: ...\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Approach 2: Events as Navigation Triggers (without dedicated states)"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you don't need to change the application state; you just want to navigate. In that case, you can add events that are handled directly in the UI via `BlocListener` without emitting a state. This keeps the bloc's state focused on business data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Events\nabstract class NavigationEvent {}\nclass NavigateToProfile extends NavigationEvent {}\nclass NavigateToSettings extends NavigationEvent {}\n\n// Bloc – may not emit any state for navigation events\nclass AppBloc extends Bloc<AppEvent, AppState> {\n  AppBloc() : super(AppInitial()) {\n    on<NavigateToProfile>((event, emit) {\n      // No state emission, just handle the event\n      // Optionally, you could emit a state if needed\n    });\n  }\n}\n\n// In UI: use BlocListener to react to events?\n// But BlocListener listens to states, not events. So this approach requires\n// either emitting a navigation state or using a custom observer.\n// Better to stick with state-based navigation."
+    },
+    {
+      "type": "note",
+      "value": "`BlocListener` listens to state changes, not events. If you want to navigate directly in response to an event without changing state, you can use `BlocListener` with a state that is emitted specifically for navigation, or you can use a `BlocObserver` to intercept events, but that's not recommended. The cleaner approach is to emit a navigation state."
+    },
+    {
+      "type": "heading",
+      "value": "Approach 3: Navigation Events as Part of Composite Events"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes a single user action should trigger both business logic and navigation. You can use a composite event that includes navigation intent as part of the state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CheckoutRequested extends CartEvent {\n  final bool navigateToSuccess;\n  CheckoutRequested({this.navigateToSuccess = true});\n}\n\n// In bloc:\non<CheckoutRequested>((event, emit) async {\n  emit(CheckoutLoading());\n  try {\n    await repository.checkout();\n    if (event.navigateToSuccess) {\n      emit(CheckoutSuccess(navigateTo: '/order-success'));\n    } else {\n      emit(CheckoutSuccess());\n    }\n  } catch (e) {\n    emit(CheckoutFailure(e.toString()));\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Multiple Navigation Events"
+    },
+    {
+      "type": "text",
+      "value": "When a bloc can emit different navigation states, you can centralise navigation handling in a single `BlocListener` or use multiple listeners for clarity."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocListener<AppBloc, AppState>(\n  listener: (context, state) {\n    switch (state.runtimeType) {\n      case NavigateToLogin:\n        Navigator.pushReplacementNamed(context, '/login');\n        break;\n      case NavigateToHome:\n        Navigator.pushReplacementNamed(context, '/home');\n        break;\n      case NavigateToProfile:\n        Navigator.pushNamed(context, '/profile', arguments: (state as NavigateToProfile).userId);\n        break;\n    }\n  },\n  child: ...\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Resetting Navigation State After Use"
+    },
+    {
+      "type": "text",
+      "value": "To prevent repeated navigation (e.g., if the widget rebuilds), it's important to reset the navigation state after it has been handled. You can emit a neutral state or clear the navigation flag."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppState extends Equatable {\n  final String? navigateTo;\n  final dynamic arguments;\n  // ... other state fields\n\n  const AppState({this.navigateTo, this.arguments});\n\n  AppState copyWith({String? navigateTo, dynamic arguments}) {\n    return AppState(\n      navigateTo: navigateTo ?? this.navigateTo,\n      arguments: arguments,\n    );\n  }\n\n  @override\n  List<Object?> get props => [navigateTo, arguments];\n}\n\n// In bloc:\non<SomeAction>((event, emit) {\n  emit(state.copyWith(navigateTo: '/target'));\n});\n\n// In UI listener:\nBlocListener<AppBloc, AppState>(\n  listener: (context, state) {\n    if (state.navigateTo != null) {\n      Navigator.pushNamed(context, state.navigateTo, arguments: state.arguments);\n      // Reset after navigation\n      context.read<AppBloc>().add(NavigationHandled());\n    }\n  },\n  child: ...\n);\n\n// In bloc:\non<NavigationHandled>((event, emit) {\n  emit(state.copyWith(navigateTo: null, arguments: null));\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Navigation Events"
+    },
+    {
+      "type": "text",
+      "value": "When testing navigation events, you can verify that the correct navigation state is emitted, or use a mock navigator to verify that navigation actually occurs."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "test('logout emits NavigateToLogin', () async {\n  final bloc = AuthBloc(mockRepository);\n  expectLater(\n    bloc.stream,\n    emitsInOrder([\n      isA<NavigateToLogin>(),\n    ]),\n  );\n  bloc.add(LogoutRequested());\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use navigation states, not events** – Emit a dedicated state to trigger navigation; it's easier to test and trace.",
+        "**Reset navigation flags** – Always clear navigation intents after they've been handled to avoid duplicate navigation.",
+        "**Keep navigation states minimal** – Include only what's needed to perform the navigation (route name, arguments).",
+        "**Separate business states from navigation states** – Don't mix them unless necessary; use composition or dedicated state classes.",
+        "**Use a single `BlocListener` for navigation** – Centralise all navigation logic in one place for a given bloc, or use multiple listeners if you prefer separation.",
+        "**Prefer `pushReplacement` when appropriate** – Avoid piling up the navigation stack unnecessarily."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not resetting navigation state** – Causes navigation to occur repeatedly on every rebuild.",
+        "❌ **Using events directly for navigation** – Without emitting a state, you lose traceability and testing capabilities.",
+        "❌ **Mixing navigation logic with business logic in the bloc** – Keep navigation intent separate from core state.",
+        "❌ **Using `Navigator` inside the bloc** – Makes bloc hard to test and couples it to Flutter.",
+        "❌ **Forgetting to handle back navigation** – When using `pushReplacement`, consider if the user should be able to go back."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you understand event-driven navigation, explore more advanced patterns like deep linking with Bloc and integrating with GoRouter."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Bloc navigation with GoRouter](/bloc-navigation-gorouter) and [Bloc testing](/bloc-testing)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should I create a separate bloc just for navigation?",
+      "answer": "For simple apps, it's okay to include navigation states in your existing blocs. For larger apps, consider a dedicated navigation bloc that manages the navigation stack and coordinates between features."
+    },
+    {
+      "question": "How do I handle navigation with arguments?",
+      "answer": "Include the arguments in your navigation state. For example, `class NavigateToProfile extends AppState { final String userId; }`. Then in the listener, pass `state.userId` as arguments to the route."
+    },
+    {
+      "question": "Can I use BlocListener with multiple blocs for navigation?",
+      "answer": "Yes, you can nest BlocListener widgets or use a single BlocListener that listens to multiple blocs by calling `context.watch` inside the listener? Actually, BlocListener only listens to one bloc. To listen to multiple, nest them or use a combination of BlocListener and BlocBuilder."
+    },
+    {
+      "question": "Is it okay to use context.go from GoRouter inside BlocListener?",
+      "answer": "Yes, that's the recommended pattern. Use `context.go` (or `push`) inside the listener to perform navigation. This keeps navigation logic out of your blocs."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What is the recommended way to trigger navigation from a bloc?",
+      "options": [
+        "Call Navigator directly inside the bloc",
+        "Emit a dedicated navigation state and listen for it in UI",
+        "Add a navigation event and use BlocObserver",
+        "Use a global navigator key and access it from bloc"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Why should you reset navigation state after handling it?",
+      "options": [
+        "To save memory",
+        "To prevent repeated navigation on widget rebuilds",
+        "To improve performance",
+        "To satisfy lint rules"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget is best suited for listening to navigation states?",
+      "options": ["BlocBuilder", "BlocListener", "BlocProvider", "MultiBlocProvider"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-navigation",
+    "bloc-listener",
+    "bloc-consumer",
+    "bloc-testing",
+    "bloc-architecture"
+  ]
+}

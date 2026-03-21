@@ -1,0 +1,235 @@
+{
+  "slug": "bloc-equatable",
+  "course": "Flutter",
+  "title": "Equatable with Bloc: Simplify State Equality in Flutter",
+  "meta": {
+    "title": "Equatable with Bloc – Simplify State Equality in Flutter (2026)",
+    "description": "Learn how to use Equatable to prevent unnecessary rebuilds in Bloc and Cubit. Understand value equality vs reference equality, and implement Equatable in states and events.",
+    "keywords": [
+      "Equatable",
+      "flutter bloc equatable",
+      "state equality",
+      "value equality",
+      "bloc performance",
+      "flutter equatable"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "8 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Intermediate",
+  "tags": ["bloc", "equatable", "performance"],
+  "content": [
+    {
+      "type": "text",
+      "value": "When using Bloc or Cubit, one of the most common performance pitfalls is unnecessary UI rebuilds. This happens because Bloc compares states using `==`, and without proper equality implementation, two states that are logically identical may be considered different. **Equatable** solves this by providing a simple way to implement value‑based equality, ensuring your UI only rebuilds when the state actually changes."
+    },
+    {
+      "type": "heading",
+      "value": "The Problem: Reference Equality"
+    },
+    {
+      "type": "text",
+      "value": "By default, Dart uses **reference equality** for objects. Two separate instances with the same values are not considered equal:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class UserState {\n  final String name;\n  UserState(this.name);\n}\n\nfinal state1 = UserState('Alice');\nfinal state2 = UserState('Alice');\nprint(state1 == state2); // false – different instances"
+    },
+    {
+      "type": "text",
+      "value": "When Bloc emits a new state, it compares the new state with the previous one using `==`. If they are not equal, BlocBuilder and BlocListener trigger rebuilds. If you always create a new state instance (even when the data is the same), you'll cause unnecessary rebuilds, hurting performance."
+    },
+    {
+      "type": "heading",
+      "value": "What is Equatable?"
+    },
+    {
+      "type": "text",
+      "value": "Equatable is a Dart package that overrides `==` and `hashCode` for you. You simply extend `Equatable` and list the properties you want to be compared in a `props` getter. Then, two objects with the same values for those properties will be considered equal, regardless of whether they are the same instance."
+    },
+    {
+      "type": "heading",
+      "value": "Installation"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  equatable: ^2.0.5"
+    },
+    {
+      "type": "heading",
+      "value": "Using Equatable in Bloc States"
+    },
+    {
+      "type": "code",
+      "title": "auth_state.dart",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nabstract class AuthState extends Equatable {\n  const AuthState();\n\n  @override\n  List<Object?> get props => [];\n}\n\nclass AuthInitial extends AuthState {}\n\nclass AuthLoading extends AuthState {}\n\nclass AuthSuccess extends AuthState {\n  final String userId;\n  const AuthSuccess(this.userId);\n\n  @override\n  List<Object?> get props => [userId];\n}\n\nclass AuthFailure extends AuthState {\n  final String message;\n  const AuthFailure(this.message);\n\n  @override\n  List<Object?> get props => [message];\n}"
+    },
+    {
+      "type": "note",
+      "value": "Always include the base class in the props list for any state that has fields. The abstract base class can have an empty `props` list, but each concrete class must include its own fields."
+    },
+    {
+      "type": "heading",
+      "value": "Using Equatable in Events"
+    },
+    {
+      "type": "text",
+      "value": "Events can also benefit from Equatable, especially when using event transformers or when you want to avoid duplicate event handling. It's not strictly required, but highly recommended."
+    },
+    {
+      "type": "code",
+      "title": "auth_event.dart",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nabstract class AuthEvent extends Equatable {\n  const AuthEvent();\n\n  @override\n  List<Object?> get props => [];\n}\n\nclass LoginRequested extends AuthEvent {\n  final String email;\n  final String password;\n  const LoginRequested(this.email, this.password);\n\n  @override\n  List<Object?> get props => [email, password];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "How Equatable Prevents Unnecessary Rebuilds"
+    },
+    {
+      "type": "text",
+      "value": "Consider a scenario where you fetch data and then refresh it with the same data. Without Equatable, you'd create a new `DataLoaded` instance with the same list, but since it's a new object, Bloc thinks the state changed and rebuilds the UI. With Equatable, if the list contents are identical (and you've implemented equality correctly, e.g., using `DeepEquality` or `Equatable` for the list items), the states will be considered equal and no rebuild will occur."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DataLoaded extends Equatable {\n  final List<int> numbers;\n  const DataLoaded(this.numbers);\n\n  @override\n  List<Object?> get props => [numbers];\n}\n\n// If numbers are [1,2,3] in both instances, states are considered equal.\nfinal state1 = DataLoaded([1,2,3]);\nfinal state2 = DataLoaded([1,2,3]);\nprint(state1 == state2); // true"
+    },
+    {
+      "type": "heading",
+      "value": "Deep Equality with Collections"
+    },
+    {
+      "type": "text",
+      "value": "Equatable only compares the list references by default, not the contents. To compare the contents of collections, you need to either use immutable collections (like `List.unmodifiable`) or a deep equality helper. For most cases, if you're using immutable models with Equatable, the list contents will be compared if each item is also Equatable. Alternatively, you can use the `ListEquality` from the `collection` package."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:collection/collection.dart';\n\nclass DataLoaded extends Equatable {\n  final List<int> numbers;\n  const DataLoaded(this.numbers);\n\n  @override\n  List<Object?> get props => [const ListEquality().hash(numbers)];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Equatable with Freezed"
+    },
+    {
+      "type": "text",
+      "value": "`freezed` is a code generator that automatically creates immutable classes with `copyWith`, `toString`, and equality. It is often used as an alternative to manual Equatable implementations. Both work, but Freezed offers more features and less boilerplate for complex states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:freezed_annotation/freezed_annotation.dart';\n\npart 'auth_state.freezed.dart';\n\n@freezed\nclass AuthState with _$AuthState {\n  const factory AuthState.initial() = _AuthInitial;\n  const factory AuthState.loading() = _AuthLoading;\n  const factory AuthState.success(String userId) = _AuthSuccess;\n  const factory AuthState.failure(String message) = _AuthFailure;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Considerations"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `Equatable` for all states and events** – Prevents unnecessary rebuilds and makes debugging easier.",
+        "**Keep the `props` list small** – Only include fields that determine equality. Avoid including large objects that rarely change if they are not part of the logical state.",
+        "**Be careful with collections** – If you use mutable lists, the content may change without triggering a state change. Prefer immutable collections or ensure you emit a new state with a new list when content changes.",
+        "**Use `const` constructors when possible** – This can help with performance and prevents accidental instance duplication."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to include `props` in subclasses** – Causes equality to only compare the base class (which may have no fields), leading to incorrect equality.\n✅ Always override `props` in each concrete state class.",
+        "❌ **Including non‑final fields** – If fields are mutable, equality can become inconsistent.\n✅ Make all fields `final`.",
+        "❌ **Omitting Equatable in events** – If you use event transformers, you may miss events that are the same but different instances.\n✅ Use Equatable for events as well.",
+        "❌ **Assuming deep equality for lists** – Equatable compares references for lists. If you modify the list contents without creating a new list, the state won't be considered changed.\n✅ Use immutable collections or a custom deep equality."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Next Steps"
+    },
+    {
+      "type": "text",
+      "value": "Now that you understand how to implement proper equality, explore more about Bloc state management:\n\n- [Bloc States](/flutter/bloc-states) – Designing effective state classes.\n- [Cubit vs Bloc](/flutter/bloc-cubit-vs-bloc) – Choosing the right approach.\n- [Bloc Testing](/flutter/bloc-testing) – Writing tests for your blocs."
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Equatable is a small but essential tool when working with Bloc or Cubit. By enabling value‑based equality, it prevents unnecessary UI rebuilds, reduces bugs, and makes your code more predictable. Always include it in your state and event classes for a smooth, performant Bloc experience."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Is Equatable required for Bloc/Cubit to work?",
+      "answer": "No, it's not required, but it's highly recommended. Without it, Bloc may rebuild the UI unnecessarily because every new state instance is considered different, even if the data is the same."
+    },
+    {
+      "question": "Can I use Equatable with Freezed?",
+      "answer": "Yes, Freezed generates equality code automatically, so you don't need to manually extend Equatable. Freezed is a popular alternative for immutable classes."
+    },
+    {
+      "question": "How do I handle equality for complex nested objects?",
+      "answer": "Ensure all nested classes also extend Equatable (or use Freezed). Then, Equatable will compare them properly when they are included in the props list of the parent state."
+    },
+    {
+      "question": "Does Equatable work with sealed classes?",
+      "answer": "Yes, you can extend Equatable on a sealed class and its subclasses. Just add props for each subclass accordingly. Dart 3's sealed classes work well with Equatable."
+    },
+    {
+      "question": "What's the performance impact of Equatable?",
+      "answer": "Equatable adds a small overhead for computing hash codes and equality. This is negligible compared to the benefit of avoiding unnecessary UI rebuilds."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() => runApp(MyApp());\n\n// State with Equatable\nclass CounterState extends Equatable {\n  final int value;\n  const CounterState(this.value);\n\n  @override\n  List<Object?> get props => [value];\n}\n\nclass CounterCubit extends Cubit<CounterState> {\n  CounterCubit() : super(const CounterState(0));\n\n  void increment() => emit(CounterState(state.value + 1));\n  void decrement() => emit(CounterState(state.value - 1));\n\n  // This will emit the same value multiple times\n  void emitSame() => emit(CounterState(state.value));\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  int rebuildCount = 0;\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Equatable Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            BlocBuilder<CounterCubit, CounterState>(\n              builder: (context, state) {\n                rebuildCount++;\n                return Column(\n                  children: [\n                    Text('Count: ${state.value}', style: TextStyle(fontSize: 24)),\n                    Text('Builder rebuild count: $rebuildCount'),\n                  ],\n                );\n              },\n            ),\n            const SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () => context.read<CounterCubit>().increment(),\n              child: const Text('Increment'),\n            ),\n            ElevatedButton(\n              onPressed: () => context.read<CounterCubit>().decrement(),\n              child: const Text('Decrement'),\n            ),\n            ElevatedButton(\n              onPressed: () => context.read<CounterCubit>().emitSame(),\n              child: const Text('Emit Same Value'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the main benefit of using Equatable with Bloc?",
+      "options": [
+        "It makes states serializable",
+        "It prevents unnecessary UI rebuilds by enabling value-based equality",
+        "It automatically generates copyWith methods",
+        "It makes code run faster"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you implement Equatable in a state class?",
+      "options": [
+        "Extend `Equatable` and override `hashCode`",
+        "Extend `Equatable` and override `props` getter",
+        "Mix in `EquatableMixin`",
+        "Use `@equatable` annotation"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Why is it important to include all relevant fields in the `props` list?",
+      "options": [
+        "To make the class immutable",
+        "To ensure two instances with the same field values are considered equal",
+        "To generate toString()",
+        "To improve performance"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-states",
+    "bloc-core-concepts",
+    "bloc-performance",
+    "freezed-introduction"
+  ]
+}

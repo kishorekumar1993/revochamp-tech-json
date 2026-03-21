@@ -1,0 +1,228 @@
+{
+  "slug": "bloc-navigation",
+  "course": "Flutter",
+  "title": "Bloc Navigation: Handling Navigation with BLoC Pattern",
+  "meta": {
+    "title": "Bloc Navigation – Navigating with BLoC Pattern in Flutter (2026)",
+    "description": "Learn how to handle navigation in Flutter using BLoC. Use BlocListener for side effects, navigate with arguments, and keep navigation logic separate from UI. Best practices and examples.",
+    "keywords": [
+      "Bloc navigation",
+      "flutter bloc navigation",
+      "bloc listener navigation",
+      "bloc routing",
+      "navigate from bloc",
+      "flutter_bloc navigation"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "10 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Intermediate",
+  "tags": ["bloc", "navigation", "routing"],
+  "content": [
+    {
+      "type": "text",
+      "value": "Navigation is a core part of any mobile app. In a clean BLoC architecture, navigation should be treated as a **side effect** of state changes. You never call `Navigator` directly inside a bloc; instead, you emit a state that the UI listens to, and the UI (or a dedicated navigation observer) handles the actual navigation. This keeps your business logic pure and testable."
+    },
+    {
+      "type": "heading",
+      "value": "Why Navigation in Bloc Should Be a Side Effect"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Separation of concerns** – Bloc should only emit states; navigation is a UI concern.",
+        "**Testability** – A bloc that emits a `NavigateToHome` state is easy to test; you don’t need to mock `Navigator`.",
+        "**Reusability** – The same bloc can be used with different navigation systems (e.g., different routers).",
+        "**Predictability** – All state changes are explicit; navigation becomes a response to a state change."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Approach 1: Using BlocListener for Navigation"
+    },
+    {
+      "type": "text",
+      "value": "The most common and recommended way is to have your bloc emit a navigation state (e.g., `LoginSuccess`, `NavigateToProfile`), and use a `BlocListener` (or `BlocConsumer`) to perform the actual navigation when that state is emitted."
+    },
+    {
+      "type": "code",
+      "title": "auth_bloc.dart",
+      "language": "dart",
+      "value": "// States\nabstract class AuthState {}\nclass AuthInitial extends AuthState {}\nclass AuthLoading extends AuthState {}\nclass AuthSuccess extends AuthState {\n  final String userId;\n  AuthSuccess(this.userId);\n}\nclass AuthFailure extends AuthState {\n  final String message;\n  AuthFailure(this.message);\n}\n\n// Bloc\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  AuthBloc() : super(AuthInitial()) {\n    on<LoginSubmitted>(_onLoginSubmitted);\n  }\n\n  Future<void> _onLoginSubmitted(LoginSubmitted event, Emitter<AuthState> emit) async {\n    emit(AuthLoading());\n    try {\n      final userId = await repository.login(event.email, event.password);\n      emit(AuthSuccess(userId)); // <- navigation state\n    } catch (e) {\n      emit(AuthFailure(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "code",
+      "title": "login_page.dart",
+      "language": "dart",
+      "value": "class LoginPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocListener<AuthBloc, AuthState>(\n      listener: (context, state) {\n        if (state is AuthSuccess) {\n          Navigator.pushReplacementNamed(\n            context,\n            '/home',\n            arguments: state.userId,\n          );\n        }\n        if (state is AuthFailure) {\n          ScaffoldMessenger.of(context).showSnackBar(\n            SnackBar(content: Text(state.message)),\n          );\n        }\n      },\n      child: LoginForm(),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Approach 2: Using a Custom Navigation Service"
+    },
+    {
+      "type": "text",
+      "value": "For larger apps, you may want to centralize navigation logic. Create a navigation service that the UI can call. The bloc still emits states, but the listener calls the service."
+    },
+    {
+      "type": "code",
+      "title": "navigation_service.dart",
+      "language": "dart",
+      "value": "class NavigationService {\n  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();\n\n  Future<T?> pushNamed<T>(String routeName, {Object? arguments}) {\n    return navigatorKey.currentState!.pushNamed<T>(\n      routeName,\n      arguments: arguments,\n    );\n  }\n\n  void pop<T>([T? result]) {\n    return navigatorKey.currentState!.pop<T>(result);\n  }\n\n  void pushReplacementNamed(String routeName, {Object? arguments}) {\n    navigatorKey.currentState!.pushReplacementNamed(routeName, arguments: arguments);\n  }\n}\n\n// In main.dart\nfinal navigationService = NavigationService();\n\nMaterialApp(\n  navigatorKey: navigationService.navigatorKey,\n  // ...\n);"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In listener\nif (state is AuthSuccess) {\n  navigationService.pushReplacementNamed('/home', arguments: state.userId);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Approach 3: Passing a Callback to the Bloc (Not Recommended)"
+    },
+    {
+      "type": "text",
+      "value": "Some developers inject a navigation callback into the bloc. This is generally discouraged because it mixes UI concerns into the business logic and makes testing harder. However, it can be used in very simple scenarios."
+    },
+    {
+      "type": "warning",
+      "value": "Avoid injecting navigation functions into your bloc. It couples your bloc to the UI framework and makes it difficult to test. Prefer emitting navigation states."
+    },
+    {
+      "type": "heading",
+      "value": "Passing Arguments to Navigation"
+    },
+    {
+      "type": "text",
+      "value": "When navigating, you often need to pass data to the next screen. With BLoC, you can include the data in the state (e.g., `AuthSuccess` contains the `userId`). The listener then passes that data as arguments when pushing the route."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In listener\nif (state is AuthSuccess) {\n  Navigator.pushNamed(\n    context,\n    '/profile',\n    arguments: state.userId,\n  );\n}\n\n// In the profile screen\nfinal userId = ModalRoute.of(context)!.settings.arguments as String;"
+    },
+    {
+      "type": "heading",
+      "value": "Deep Linking and Initial Routes"
+    },
+    {
+      "type": "text",
+      "value": "For deep linking, you may need to decide the initial route based on authentication state. This can be handled by using a `SplashScreen` that checks the auth state and then conditionally navigates. Or you can set the initial route in `MaterialApp` based on a synchronous check of persisted auth data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SplashPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocListener<AuthBloc, AuthState>(\n      listener: (context, state) {\n        if (state is AuthSuccess) {\n          Navigator.pushReplacementNamed(context, '/home');\n        } else if (state is AuthInitial || state is AuthFailure) {\n          Navigator.pushReplacementNamed(context, '/login');\n        }\n      },\n      child: Scaffold(body: Center(child: CircularProgressIndicator())),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Navigation in Bloc"
+    },
+    {
+      "type": "text",
+      "value": "Since navigation is a side effect, you don't test the actual `Navigator` calls in unit tests. Instead, you test that the bloc emits the expected states. The UI tests (widget tests) can verify that the `BlocListener` correctly triggers navigation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "test('emits AuthSuccess on successful login', () {\n  when(repository.login(any, any)).thenAnswer((_) async => 'user123');\n\n  final bloc = AuthBloc(repository);\n  bloc.add(LoginSubmitted('test@test.com', 'pass'));\n\n  expectLater(\n    bloc.stream,\n    emitsInOrder([\n      isA<AuthLoading>(),\n      isA<AuthSuccess>().having((s) => s.userId, 'userId', 'user123'),\n    ]),\n  );\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `BlocListener` for navigation** – It keeps navigation code separate from UI rebuilding.",
+        "**Emit navigation states** – Instead of calling `Navigator` directly from the bloc, emit a state like `NavigateToHome`.",
+        "**Keep navigation logic in the UI layer** – The bloc should not know about `Navigator`.",
+        "**Use a navigation service for complex routing** – Centralizes navigation and makes it easier to manage.",
+        "**Pass arguments via state or route arguments** – Include data in the state, then pass as arguments when navigating.",
+        "**Test only state emissions** – Unit tests for blocs should not depend on `Navigator`; verify the emitted states."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `Navigator` inside the bloc** – Breaks separation of concerns and makes testing difficult.\n✅ Emit a navigation state and let the UI handle it.",
+        "❌ **Using `BlocBuilder` for navigation** – Can cause multiple navigations if the state is emitted multiple times.\n✅ Use `BlocListener` (only runs once per state).",
+        "❌ **Not handling state transitions correctly** – For example, navigating on every `AuthSuccess` emission even if already on the target screen.\n✅ Use conditional navigation or a `listenWhen` to avoid duplicate pushes.",
+        "❌ **Forgetting to dispose `BlocListener`** – Not an issue; `BlocListener` automatically manages its subscription.",
+        "❌ **Passing navigation callbacks to the bloc** – Creates tight coupling.\n✅ Use the state‑driven approach."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Navigation in BLoC should be treated as a side effect of state changes. By using `BlocListener` and emitting navigation‑related states, you keep your business logic pure, your UI reactive, and your code testable. Whether you use a simple `BlocListener` or a full navigation service, the key is to separate the decision to navigate (in the bloc) from the actual navigation (in the UI)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I navigate from a bloc using a callback?",
+      "answer": "Technically yes, but it's not recommended. Injecting a navigation callback couples the bloc to the UI framework and makes testing harder. Prefer emitting navigation states and using `BlocListener`."
+    },
+    {
+      "question": "How do I navigate with arguments using Bloc?",
+      "answer": "Include the data in your navigation state (e.g., `NavigateToProfile` with a `userId`). Then in the `BlocListener`, pass that data as arguments when calling `Navigator.pushNamed`."
+    },
+    {
+      "question": "What is the difference between `BlocListener` and `BlocBuilder` for navigation?",
+      "answer": "`BlocListener` is designed for side effects like navigation and runs only once per state emission. `BlocBuilder` rebuilds the UI and would cause multiple navigations if used incorrectly. Always use `BlocListener` for navigation."
+    },
+    {
+      "question": "How do I handle deep linking with Bloc?",
+      "answer": "You can use a `SplashScreen` that checks authentication state via a bloc and then conditionally navigates to the appropriate initial route. Alternatively, use a routing package like `go_router` with a bloc that provides the auth state."
+    },
+    {
+      "question": "Should I use a navigation service or a BlocListener?",
+      "answer": "Both work. For simple apps, `BlocListener` is enough. For large apps with complex routing, a navigation service (e.g., using a `GlobalKey<NavigatorState>`) helps centralize navigation logic and makes it easier to test."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "comment": "Navigation examples are easier to run in a full app; tryEditor disabled."
+  },
+  "quiz": [
+    {
+      "question": "What is the recommended way to trigger navigation from a bloc?",
+      "options": [
+        "Call Navigator directly in the bloc",
+        "Emit a navigation state and use BlocListener",
+        "Pass a navigation callback to the bloc",
+        "Use setState in the UI"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which Bloc widget should you use for navigation side effects?",
+      "options": ["BlocBuilder", "BlocProvider", "BlocListener", "BlocConsumer"],
+      "answer": 2
+    },
+    {
+      "question": "Why should navigation logic not be inside the bloc?",
+      "options": [
+        "It makes the bloc larger",
+        "It couples the bloc to the UI framework and makes testing difficult",
+        "It's not supported by flutter_bloc",
+        "It causes runtime errors"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-consumer",
+    "bloc-listener",
+    "bloc-core-concepts",
+    "bloc-testing",
+    "flutter-navigation"
+  ]
+}

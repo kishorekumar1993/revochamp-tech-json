@@ -3,15 +3,17 @@
   "course": "Flutter",
   "title": "GetX Feature Modular Architecture: Scalable Project Structure",
   "meta": {
-    "title": "GetX Feature Modular Architecture – Scalable Flutter Apps",
-    "description": "Learn how to organize your GetX app into feature modules. Improve scalability, maintainability, and team collaboration with a modular architecture.",
+    "title": "GetX Feature Modular Architecture – Scalable Flutter Apps (2026)",
+    "description": "Learn how to organize your GetX app into feature modules. Improve scalability, maintainability, and team collaboration with a modular architecture. Includes folder structure, routing, and best practices.",
     "keywords": [
       "GetX modular architecture",
       "GetX feature modules",
       "Flutter modular",
       "GetX scalable architecture",
       "GetX folder structure",
-      "GetX modules"
+      "GetX modules",
+      "Flutter clean architecture modules",
+      "lazy loading GetX"
     ]
   },
   "content": [
@@ -22,6 +24,26 @@
     {
       "type": "text",
       "value": "As your Flutter app grows, keeping all your code in a single flat folder becomes unsustainable. A **feature‑modular architecture** organizes your app by features (e.g., authentication, products, cart) rather than by technical layer (controllers, views). GetX’s dependency injection and routing system are perfectly suited for this approach. This guide shows how to structure your app into independent, lazy‑loaded modules that are easy to maintain, test, and scale."
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**E‑commerce App** – Separate modules for auth, products, cart, checkout, orders – each can be developed in parallel.",
+        "**Social Media App** – Modules for feed, profile, messaging, notifications – lazy loading reduces startup time.",
+        "**Enterprise Apps** – Feature teams own their modules, reducing merge conflicts and enabling independent testing."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "How It Works: Module Flow"
+    },
+    {
+      "type": "text",
+      "value": "When the app starts, only the initial binding and shared services are loaded. When a user navigates to a feature (e.g., `/products`), GetX looks up the `GetPage` definition, calls the binding’s `dependencies()` method, and registers the module’s controllers and services lazily. The page is then built. This ensures that modules are only loaded when needed, keeping the app fast."
     },
     {
       "type": "heading",
@@ -95,6 +117,24 @@
     },
     {
       "type": "heading",
+      "value": "Comparison: Modular vs Flat Architecture"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Aspect", "Modular Architecture", "Flat Architecture"],
+        "rows": [
+          ["Scalability", "High – easy to add new features", "Low – becomes messy quickly"],
+          ["Team Collaboration", "Teams can own separate modules", "High risk of merge conflicts"],
+          ["Startup Performance", "Excellent – lazy load modules", "All code loaded upfront"],
+          ["Testability", "High – modules testable in isolation", "Medium – dependencies scattered"],
+          ["Code Reuse", "Easy to extract modules", "Difficult"],
+          ["Learning Curve", "Steeper initially", "Gentle"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
       "value": "Lazy Loading & Performance"
     },
     {
@@ -114,7 +154,8 @@
         "**Use constants for route names** – Prevents typos and makes refactoring easier.",
         "**Place each module in its own folder** – Makes it easy to move or reuse modules later.",
         "**Keep shared code in `app/shared`** – Reusable widgets, utilities, and services.",
-        "**Test modules in isolation** – Because modules are independent, you can test them separately."
+        "**Test modules in isolation** – Because modules are independent, you can test them separately.",
+        "**Use `GetPage` with bindings** – Never register controllers outside of bindings for modules."
       ]
     },
     {
@@ -127,21 +168,8 @@
         "❌ **Creating circular dependencies between modules** – Module A imports Module B, Module B imports Module A.\n✅ Use shared services to break cycles.",
         "❌ **Putting all routes in one giant `GetPage` list without module separation** – Still works, but not modular.\n✅ Define routes with their respective bindings.",
         "❌ **Using `Get.put` inside views instead of bindings** – This scatters the dependency registration.\n✅ Keep registration inside bindings.",
-        "❌ **Not providing a binding for a route** – The controllers may not be registered.\n✅ Always define a binding for each route."
-      ]
-    },
-    {
-      "type": "heading",
-      "value": "FAQ"
-    },
-    {
-      "type": "list",
-      "value": [
-        "**Q: Can I share a module between multiple projects?**  \nA: Yes, you can extract a module into its own package or copy it; it should be self‑contained if it uses only shared services.",
-        "**Q: How to handle deep linking with modules?**  \nA: Define dynamic routes in `GetPage` (e.g., `/product/:id`). The binding will be called when that route is opened.",
-        "**Q: Can a module have multiple pages?**  \nA: Absolutely. The product module can have both a list page and a detail page; both can share the same binding.",
-        "**Q: What about global dependencies like API clients?**  \nA: Place them in `app/shared/services` and register them in `initialBinding` with `permanent: true`.",
-        "**Q: Does this structure work with GetX CLI?**  \nA: Yes, the CLI’s `get create page:name` follows a similar modular structure."
+        "❌ **Not providing a binding for a route** – The controllers may not be registered.\n✅ Always define a binding for each route.",
+        "❌ **Placing module code outside the `modules/` folder** – Makes it hard to locate features.\n✅ Keep modules under `lib/app/modules/`."
       ]
     },
     {
@@ -151,6 +179,28 @@
     {
       "type": "text",
       "value": "A feature‑modular architecture using GetX gives you a scalable, maintainable app structure. By separating concerns into independent modules, you enable better team collaboration, easier testing, and the ability to load only what’s needed. Combined with GetX’s lazy loading and dependency injection, it’s a powerful pattern for any Flutter project."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I share a module between multiple projects?",
+      "answer": "Yes, you can extract a module into its own package or copy it; it should be self‑contained if it uses only shared services."
+    },
+    {
+      "question": "How to handle deep linking with modules?",
+      "answer": "Define dynamic routes in `GetPage` (e.g., `/product/:id`). The binding will be called when that route is opened."
+    },
+    {
+      "question": "Can a module have multiple pages?",
+      "answer": "Absolutely. The product module can have both a list page and a detail page; both can share the same binding."
+    },
+    {
+      "question": "What about global dependencies like API clients?",
+      "answer": "Place them in `app/shared/services` and register them in `initialBinding` with `permanent: true`."
+    },
+    {
+      "question": "Does this structure work with GetX CLI?",
+      "answer": "Yes, the CLI’s `get create page:name` follows a similar modular structure."
     }
   ],
   "tryEditor": {

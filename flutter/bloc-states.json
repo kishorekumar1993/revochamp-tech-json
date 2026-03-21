@@ -1,0 +1,267 @@
+{
+  "slug": "bloc-states",
+  "course": "Flutter",
+  "title": "Bloc States: Designing Immutable State Classes",
+  "meta": {
+    "title": "Bloc States – Designing Immutable State Classes in Flutter (2026)",
+    "description": "Learn how to design effective state classes in Bloc. Understand immutability, Equatable, common state patterns (loading, success, error), and best practices for clean state management.",
+    "keywords": [
+      "Bloc states",
+      "flutter bloc state",
+      "immutable state",
+      "Equatable",
+      "bloc state patterns",
+      "loading state",
+      "error state"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "10 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Intermediate",
+  "tags": ["bloc", "state", "immutability"],
+  "content": [
+    {
+      "type": "text",
+      "value": "In Bloc, **states** are the source of truth for your UI. They represent what the user sees at any given moment. Designing clean, immutable state classes is crucial for predictable behavior, testability, and performance. This guide covers everything you need to know about states in Bloc."
+    },
+    {
+      "type": "heading",
+      "value": "What is a State in Bloc?"
+    },
+    {
+      "type": "text",
+      "value": "A state is an object that holds data and reflects the current condition of a feature. For example, a `LoginState` could be `initial`, `loading`, `success`, or `failure`. The Bloc emits states in response to events, and the UI rebuilds when a new state is received."
+    },
+    {
+      "type": "heading",
+      "value": "Immutability: Why It Matters"
+    },
+    {
+      "type": "text",
+      "value": "States must be **immutable**. Once created, their properties cannot change. Instead, you create a new instance when you want to update the state. This approach has several benefits:\n\n- **Predictability** – No unexpected side effects.\n- **Performance** – Bloc can efficiently compare old and new states using `==` to decide whether to rebuild.\n- **Debugging** – You can track state changes over time (time travel)."
+    },
+    {
+      "type": "note",
+      "value": "Always create new state objects instead of mutating existing ones. Use `Equatable` to simplify equality checks."
+    },
+    {
+      "type": "heading",
+      "value": "Using Equatable"
+    },
+    {
+      "type": "text",
+      "value": "`Equatable` overrides `==` and `hashCode` for you, so you don’t have to write boilerplate. Extend `Equatable` in your state classes and list the properties in the `props` getter."
+    },
+    {
+      "type": "code",
+      "title": "login_state.dart",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nabstract class LoginState extends Equatable {\n  const LoginState();\n\n  @override\n  List<Object?> get props => [];\n}\n\nclass LoginInitial extends LoginState {}\n\nclass LoginLoading extends LoginState {}\n\nclass LoginSuccess extends LoginState {\n  final String userId;\n  const LoginSuccess(this.userId);\n\n  @override\n  List<Object?> get props => [userId];\n}\n\nclass LoginFailure extends LoginState {\n  final String message;\n  const LoginFailure(this.message);\n\n  @override\n  List<Object?> get props => [message];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common State Patterns"
+    },
+    {
+      "type": "subheading",
+      "value": "1. Loading / Success / Error Pattern"
+    },
+    {
+      "type": "text",
+      "value": "The most common pattern for asynchronous operations (API calls). Define states for each phase."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class DataState extends Equatable {}\n\nclass DataInitial extends DataState {}\n\nclass DataLoading extends DataState {}\n\nclass DataLoaded extends DataState {\n  final List<Item> items;\n  DataLoaded(this.items);\n\n  @override\n  List<Object?> get props => [items];\n}\n\nclass DataError extends DataState {\n  final String error;\n  DataError(this.error);\n\n  @override\n  List<Object?> get props => [error];\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Empty State Pattern"
+    },
+    {
+      "type": "text",
+      "value": "When data can be empty, use an explicit empty state to show a friendly message."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DataEmpty extends DataState {}\n\n// In bloc:\nemit(DataEmpty()); // when API returns empty list"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Multi-State Composition (Union Types)"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to combine multiple pieces of state. Instead of one huge state class with many nullable fields, use sealed classes (or union types) to represent mutually exclusive states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "sealed class UserProfileState {}\n\nfinal class UserProfileLoading extends UserProfileState {}\n\nfinal class UserProfileLoaded extends UserProfileState {\n  final User user;\n  final List<Post> posts;\n  UserProfileLoaded(this.user, this.posts);\n}\n\nfinal class UserProfileError extends UserProfileState {\n  final String message;\n  UserProfileError(this.message);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "State with Multiple Properties"
+    },
+    {
+      "type": "text",
+      "value": "When a state holds multiple pieces of data, you might be tempted to use a single class with nullable fields. But that can lead to invalid combinations (e.g., both `loading` and `data` at the same time). Prefer separate state classes or use sealed classes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ❌ Avoid: nullable fields that can be in invalid states\nclass CombinedState {\n  final bool isLoading;\n  final List<Item>? items;\n  final String? error;\n  // Possible invalid states: isLoading = true and items != null\n}\n\n// ✅ Prefer: distinct state classes\nabstract class ItemsState {}\nclass ItemsLoading extends ItemsState {}\nclass ItemsLoaded extends ItemsState {\n  final List<Item> items;\n  ItemsLoaded(this.items);\n}\nclass ItemsError extends ItemsState {\n  final String error;\n  ItemsError(this.error);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "State Inheritance and Reusability"
+    },
+    {
+      "type": "text",
+      "value": "If several states share common properties, use an abstract base class that extends `Equatable` and include those properties in `props`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "abstract class FormState extends Equatable {\n  final bool isValid;\n  final String? errorMessage;\n  const FormState(this.isValid, this.errorMessage);\n\n  @override\n  List<Object?> get props => [isValid, errorMessage];\n}\n\nclass FormInitial extends FormState {\n  const FormInitial() : super(false, null);\n}\n\nclass FormValid extends FormState {\n  const FormValid() : super(true, null);\n}\n\nclass FormError extends FormState {\n  const FormError(String errorMessage) : super(false, errorMessage);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Considerations"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `Equatable`** – Prevents unnecessary rebuilds by properly comparing states.",
+        "**Keep states small** – Large state objects can slow down equality checks. Split them if possible.",
+        "**Avoid storing large lists in multiple states** – If a list is only needed in one state, don't include it in others.",
+        "**Use `copyWith` for immutable updates** – Helpful when states have many properties, but prefer separate state classes when possible."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Implementing copyWith (for states with many fields)"
+    },
+    {
+      "type": "text",
+      "value": "If you have a state with many fields and you need to update only one, you can implement a `copyWith` method."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class UserSettingsState extends Equatable {\n  final bool darkMode;\n  final bool notifications;\n  final String language;\n\n  const UserSettingsState({\n    required this.darkMode,\n    required this.notifications,\n    required this.language,\n  });\n\n  UserSettingsState copyWith({\n    bool? darkMode,\n    bool? notifications,\n    String? language,\n  }) {\n    return UserSettingsState(\n      darkMode: darkMode ?? this.darkMode,\n      notifications: notifications ?? this.notifications,\n      language: language ?? this.language,\n    );\n  }\n\n  @override\n  List<Object?> get props => [darkMode, notifications, language];\n}\n\n// Usage:\nemit(state.copyWith(darkMode: true));"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use sealed classes or abstract base + implementations** – Clearly represent distinct states.",
+        "**Always use `Equatable`** – Avoid manual `==` and `hashCode`.",
+        "**Make states immutable** – Use `final` fields and create new instances for changes.",
+        "**Name states clearly** – `LoginLoading`, `LoginSuccess`, `LoginFailure` are self‑documenting.",
+        "**Keep states flat** – Avoid deep nesting; use distinct classes for different phases.",
+        "**Test state equality** – Write tests to ensure `Equatable` works as expected."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Mutating state properties** – Leads to bugs and no UI updates.\n✅ Always create new instances.",
+        "❌ **Forgetting to add `Equatable`** – Causes unnecessary rebuilds because states are never considered equal.\n✅ Extend `Equatable` and list props.",
+        "❌ **Using nullable fields to represent multiple states** – Creates invalid combinations.\n✅ Use separate state classes.",
+        "❌ **Storing large lists in all states** – Wastes memory.\n✅ Keep data only in the states that need it.",
+        "❌ **Not handling empty states** – UI shows nothing when data is empty.\n✅ Add explicit empty state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Next Steps"
+    },
+    {
+      "type": "text",
+      "value": "Now that you understand state design, learn how to combine them with events and blocs:\n\n- [Bloc Core Concepts](/flutter/bloc-core-concepts)\n- [Cubit vs Bloc](/flutter/bloc-cubit-vs-bloc)\n- [Bloc Architecture](/flutter/bloc-architecture)"
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "States are the foundation of Bloc’s reactivity. By designing immutable, well‑structured state classes, you ensure your app behaves predictably and remains maintainable. Use `Equatable`, separate state classes for different scenarios, and follow the best practices to build robust Flutter applications."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I always need to use Equatable with states?",
+      "answer": "Not strictly, but it's highly recommended. Without it, Bloc may rebuild the UI even when the state hasn't logically changed, because the default `==` compares references, not values. Equatable makes equality checks based on the state's data, preventing unnecessary rebuilds."
+    },
+    {
+      "question": "Should I use sealed classes or an abstract class with multiple implementations?",
+      "answer": "Sealed classes (introduced in Dart 3.0) are the best choice because they ensure exhaustive checking in `switch` statements. If you're on an older Dart version, use an abstract class with `@immutable` and multiple concrete classes."
+    },
+    {
+      "question": "How do I handle states that combine multiple independent data sets?",
+      "answer": "You can have a single state class that contains multiple fields, but ensure they are all required and the class is immutable. Use `copyWith` for updates. For complex scenarios, consider splitting into separate blocs."
+    },
+    {
+      "question": "What's the difference between `Equatable` and `freezed`?",
+      "answer": "`freezed` is a code generator that creates immutable classes, copyWith, toString, and more. It automatically handles equality. `Equatable` is simpler – it only overrides `==` and `hashCode`. For complex states, `freezed` is powerful; for simple ones, `Equatable` suffices."
+    },
+    {
+      "question": "How do I test state equality in Bloc tests?",
+      "answer": "Use `expect` with `blocTest` and compare states. If you use `Equatable`, you can compare states directly. For example: `expect(state, LoginSuccess(userId: '123'))`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() => runApp(MyApp());\n\n// States\nabstract class CounterState extends Equatable {\n  const CounterState();\n\n  @override\n  List<Object?> get props => [];\n}\n\nclass CounterInitial extends CounterState {}\n\nclass CounterLoading extends CounterState {}\n\nclass CounterValue extends CounterState {\n  final int value;\n  const CounterValue(this.value);\n\n  @override\n  List<Object?> get props => [value];\n}\n\nclass CounterError extends CounterState {\n  final String message;\n  const CounterError(this.message);\n\n  @override\n  List<Object?> get props => [message];\n}\n\n// Cubit\nclass CounterCubit extends Cubit<CounterState> {\n  CounterCubit() : super(CounterInitial());\n\n  void fetchData() async {\n    emit(CounterLoading());\n    await Future.delayed(const Duration(seconds: 1));\n    emit(CounterValue(42));\n  }\n\n  void simulateError() {\n    emit(CounterError('Something went wrong!'));\n  }\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Bloc States Demo')),\n      body: Center(\n        child: BlocBuilder<CounterCubit, CounterState>(\n          builder: (context, state) {\n            if (state is CounterLoading) {\n              return const CircularProgressIndicator();\n            }\n            if (state is CounterValue) {\n              return Text('Value: ${state.value}', style: const TextStyle(fontSize: 24));\n            }\n            if (state is CounterError) {\n              return Column(\n                mainAxisAlignment: MainAxisAlignment.center,\n                children: [\n                  Text('Error: ${state.message}', style: const TextStyle(color: Colors.red)),\n                  const SizedBox(height: 10),\n                  ElevatedButton(\n                    onPressed: () => context.read<CounterCubit>().fetchData(),\n                    child: const Text('Retry'),\n                  ),\n                ],\n              );\n            }\n            return Column(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                const Text('No data yet'),\n                const SizedBox(height: 10),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterCubit>().fetchData(),\n                  child: const Text('Fetch Data'),\n                ),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterCubit>().simulateError(),\n                  child: const Text('Simulate Error'),\n                ),\n              ],\n            );\n          },\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Why should states be immutable in Bloc?",
+      "options": [
+        "To prevent memory leaks",
+        "To enable predictable state changes and efficient UI rebuilding",
+        "To make code compile faster",
+        "To use Equatable"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of Equatable in state classes?",
+      "options": [
+        "To make states serializable",
+        "To automatically implement `==` and `hashCode` for value-based equality",
+        "To generate copyWith methods",
+        "To emit states asynchronously"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which pattern is best for representing loading, success, and error states?",
+      "options": [
+        "A single class with isLoading, data, and error nullable fields",
+        "Three separate state classes (Loading, Loaded, Error)",
+        "A map of status codes",
+        "Using a global variable"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-core-concepts",
+    "bloc-cubit-vs-bloc",
+    "bloc-events",
+    "bloc-testing"
+  ]
+}

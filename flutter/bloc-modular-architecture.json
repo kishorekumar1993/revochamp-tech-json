@@ -1,0 +1,283 @@
+{
+  "slug": "bloc-modular-architecture",
+  "course": "Flutter",
+  "title": "Modular Architecture with Bloc: Scaling Flutter Apps",
+  "meta": {
+    "title": "Flutter Bloc Modular Architecture – Complete Guide (2026)",
+    "description": "Learn how to structure large Flutter applications using modular architecture with Bloc. Feature modules, shared code, dependency injection, and inter-module communication.",
+    "keywords": [
+      "flutter bloc modular architecture",
+      "modular flutter architecture",
+      "bloc feature modules",
+      "flutter scalable architecture",
+      "bloc module communication"
+    ]
+  },
+  "level": "Advanced",
+  "readingTime": "14 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "modular-architecture", "scalability", "clean-architecture"],
+  "content": [
+    {
+      "type": "text",
+      "value": "As Flutter applications grow, maintaining a monolithic codebase becomes challenging. **Modular architecture** organises your app into independent, reusable modules (features), each with its own responsibilities. When combined with Bloc, this approach enables parallel development, better testability, and long‑term maintainability. This guide covers how to design and implement a modular architecture with Bloc."
+    },
+    {
+      "type": "heading",
+      "value": "What is Modular Architecture?"
+    },
+    {
+      "type": "text",
+      "value": "Modular architecture splits your application into self‑contained modules, each representing a feature or a cross‑cutting concern. Modules have clear boundaries and communicate through well‑defined interfaces. This allows teams to work independently, simplifies testing, and makes it easier to add, remove, or replace features."
+    },
+    {
+      "type": "highlight",
+      "value": "App → Modules → Shared/Core → Each module has its own Bloc(s), UI, and data layer"
+    },
+    {
+      "type": "heading",
+      "value": "Key Principles"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Separation of concerns** – Each module handles a single business domain.",
+        "**Low coupling** – Modules depend on abstractions, not concrete implementations.",
+        "**High cohesion** – Related code lives together inside the module.",
+        "**Explicit dependencies** – Modules declare what they need (e.g., repositories, services).",
+        "**Encapsulation** – Internal details of a module are not exposed outside."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Module Types"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Type", "Purpose", "Examples"],
+        "rows": [
+          ["Feature Module", "Implements a complete feature (UI, logic, data)", "Auth, Home, Checkout, Profile"],
+          ["Shared Module", "Reusable code across features", "UI components, utilities, constants"],
+          ["Core Module", "Foundation of the app (dependency injection, networking, database)", "DI container, HTTP client, local storage"],
+          ["Service Module", "Provides specific functionality used by features", "Analytics, push notifications, logging"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Folder Structure for Modular Apps"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "lib/\n├── main.dart                         # Entry point\n├── app.dart                           # App composition\n├── core/                              # Core infrastructure\n│   ├── di/                            # Dependency injection setup\n│   ├── network/                       # HTTP client, interceptors\n│   ├── database/                      # Local storage, database clients\n│   ├── navigation/                    # Router configuration\n│   └── utils/                         # Shared utilities\n├── shared/                            # Shared modules\n│   ├── ui/                            # Reusable widgets\n│   │   ├── buttons/\n│   │   ├── inputs/\n│   │   └── themes/\n│   ├── extensions/                    # Dart extensions\n│   ├── constants/                     # App-wide constants\n│   └── mixins/                        # Reusable mixins\n└── features/                          # Feature modules\n    ├── auth/                          # Auth feature module\n    │   ├── presentation/              # UI (pages, widgets)\n    │   ├── bloc/                      # Feature-specific blocs\n    │   ├── domain/                    # Use cases, repository interfaces\n    │   └── data/                      # Repository implementations, data sources\n    ├── home/                          # Home feature module\n    │   ├── presentation/\n    │   ├── bloc/\n    │   ├── domain/\n    │   └── data/\n    └── checkout/                      # Checkout feature module\n        ├── presentation/\n        ├── bloc/\n        ├── domain/\n        └── data/"
+    },
+    {
+      "type": "heading",
+      "value": "Implementing a Feature Module"
+    },
+    {
+      "type": "text",
+      "value": "Each feature module is self‑contained and follows the same pattern. Here’s how to structure the `auth` module with Bloc."
+    },
+    {
+      "type": "subheading",
+      "value": "1. Define Module Exports"
+    },
+    {
+      "type": "text",
+      "value": "Create a public API for the module, hiding internal implementations. Use a barrel file to export only what other modules need."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/auth.dart\n// Barrel file – public API for the auth module\nexport 'presentation/pages/login_page.dart';\nexport 'presentation/pages/register_page.dart';\nexport 'domain/repositories/auth_repository.dart'; // Interface only\nexport 'domain/usecases/login_usecase.dart';\nexport 'bloc/auth_bloc.dart';"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Implement Internal Layers"
+    },
+    {
+      "type": "text",
+      "value": "Inside the module, follow the layered architecture with presentation, bloc, domain, and data. The data layer implementations are private to the module."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/data/repositories/auth_repository_impl.dart\n// This class is not exported – only the interface is public\nclass AuthRepositoryImpl implements AuthRepository {\n  final AuthRemoteDataSource remoteDataSource;\n  // ...\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Provide Module Dependencies"
+    },
+    {
+      "type": "text",
+      "value": "Register the module’s dependencies in the DI container. Use a factory function that takes core dependencies and returns the module’s public instances."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/di/auth_module.dart\nimport 'package:get_it/get_it.dart';\nimport '../data/datasources/auth_remote_datasource.dart';\nimport '../data/repositories/auth_repository_impl.dart';\nimport '../domain/repositories/auth_repository.dart';\nimport '../domain/usecases/login_usecase.dart';\nimport '../bloc/auth_bloc.dart';\n\nclass AuthModule {\n  static void register() {\n    final getIt = GetIt.instance;\n\n    // Data sources\n    getIt.registerLazySingleton<AuthRemoteDataSource>(\n      () => AuthRemoteDataSourceImpl(getIt<HttpClient>()),\n    );\n\n    // Repository\n    getIt.registerLazySingleton<AuthRepository>(\n      () => AuthRepositoryImpl(getIt<AuthRemoteDataSource>()),\n    );\n\n    // Use cases\n    getIt.registerLazySingleton(() => LoginUseCase(getIt<AuthRepository>()));\n    getIt.registerLazySingleton(() => LogoutUseCase(getIt<AuthRepository>()));\n\n    // Blocs\n    getIt.registerFactory(() => AuthBloc(\n          loginUseCase: getIt(),\n          logoutUseCase: getIt(),\n        ));\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "4. Compose Modules in App"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/app.dart\nimport 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'core/di/injection.dart';\nimport 'features/auth/auth.dart';\nimport 'features/home/home.dart';\n\nclass MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MultiBlocProvider(\n      providers: [\n        BlocProvider(create: (_) => getIt<AuthBloc>()),\n        // Other blocs\n      ],\n      child: MaterialApp(\n        title: 'Modular App',\n        initialRoute: '/',\n        routes: {\n          '/': (context) => const LoginPage(),\n          '/home': (context) => const HomePage(),\n        },\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Inter-Module Communication"
+    },
+    {
+      "type": "text",
+      "value": "Modules should not directly depend on each other. Instead, they communicate through shared abstractions (interfaces) defined in the core or shared layers, or via events emitted to a global event bus."
+    },
+    {
+      "type": "subheading",
+      "value": "1. Using Shared Abstractions"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// core/auth/auth_observer.dart – interface\nexport 'package:myapp/features/auth/domain/entities/user.dart';\n\nabstract class AuthObserver {\n  void onUserLoggedIn(User user);\n  void onUserLoggedOut();\n}\n\n// In auth module:\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  final AuthObserver? observer;\n\n  AuthBloc({required this.observer, ...}) : super(...);\n\n  void _onLoginSuccess(LoginSuccess event, Emitter<AuthState> emit) {\n    observer?.onUserLoggedIn(event.user);\n    // ...\n  }\n}\n\n// In home module:\nclass HomeBloc extends Bloc<HomeEvent, HomeState> implements AuthObserver {\n  // ...\n  @override\n  void onUserLoggedIn(User user) {\n    add(UserLoggedIn(user));\n  }\n}\n\n// In app composition:\nfinal authBloc = AuthBloc(observer: homeBloc, ...);"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Using Event Bus"
+    },
+    {
+      "type": "text",
+      "value": "A global event bus (e.g., `EventBus` package) allows loosely coupled communication between modules."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// core/events/auth_events.dart\nclass UserLoggedInEvent {\n  final User user;\n  UserLoggedInEvent(this.user);\n}\n\n// In auth bloc:\nvoid _onLoginSuccess(LoginSuccess event, Emitter<AuthState> emit) {\n  getIt<EventBus>().fire(UserLoggedInEvent(event.user));\n}\n\n// In home bloc:\nHomeBloc() {\n  getIt<EventBus>().on<UserLoggedInEvent>().listen((event) {\n    add(UserLoggedIn(event.user));\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Navigation Between Modules"
+    },
+    {
+      "type": "text",
+      "value": "Modular apps often use a centralised router (like `go_router`) that knows how to build pages for each module. Each module can provide its own routes without exposing its widgets directly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/features/auth/auth_routes.dart\nimport 'package:go_router/go_router.dart';\nimport 'presentation/pages/login_page.dart';\n\nclass AuthRoutes {\n  static const String login = '/login';\n  static const String register = '/register';\n\n  static GoRoute get loginRoute => GoRoute(\n        path: login,\n        builder: (context, state) => const LoginPage(),\n      );\n\n  static GoRoute get registerRoute => GoRoute(\n        path: register,\n        builder: (context, state) => const RegisterPage(),\n      );\n}\n\n// lib/core/navigation/app_router.dart\nimport 'package:go_router/go_router.dart';\nimport '../../features/auth/auth_routes.dart';\nimport '../../features/home/home_routes.dart';\n\nfinal appRouter = GoRouter(\n  initialLocation: AuthRoutes.login,\n  routes: [\n    AuthRoutes.loginRoute,\n    AuthRoutes.registerRoute,\n    HomeRoutes.homeRoute,\n    // ...\n  ],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Modular Architecture"
+    },
+    {
+      "type": "text",
+      "value": "Modularisation greatly simplifies testing. You can test each module in isolation by mocking its dependencies (including other modules' interfaces)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// test/features/auth/bloc/auth_bloc_test.dart\nimport 'package:bloc_test/bloc_test.dart';\nimport 'package:mocktail/mocktail.dart';\n\nclass MockLoginUseCase extends Mock implements LoginUseCase {}\n\nvoid main() {\n  late MockLoginUseCase mockLoginUseCase;\n  late AuthBloc bloc;\n\n  setUp(() {\n    mockLoginUseCase = MockLoginUseCase();\n    bloc = AuthBloc(\n      loginUseCase: mockLoginUseCase,\n      logoutUseCase: MockLogoutUseCase(),\n    );\n  });\n\n  blocTest<AuthBloc, AuthState>(\n    'emits loading and success when login succeeds',\n    build: () => bloc,\n    act: (bloc) {\n      when(() => mockLoginUseCase.execute(any(), any()))\n          .thenAnswer((_) async => Right(mockUser));\n      bloc.add(LoginRequested('test@example.com', 'password'));\n    },\n    expect: () => [AuthLoading(), AuthSuccess(mockUser)],\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Define clear boundaries** – Each module should have a single responsibility and a well‑defined public API.",
+        "**Use dependency injection** – Register module dependencies in a DI container to avoid hard‑coding references.",
+        "**Keep modules independent** – A module should be testable without needing other modules to be present.",
+        "**Share only through interfaces** – Other modules should depend on abstractions, not concrete implementations.",
+        "**Automate module registration** – Use code generation (e.g., `injectable`) or manual registration scripts to avoid boilerplate.",
+        "**Use a consistent structure** – Every feature module should follow the same folder and naming conventions.",
+        "**Lazy‑load modules** – Use `deferred` imports or package features to reduce initial bundle size."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Cyclic dependencies** – Module A depends on Module B, and Module B depends on Module A. Solve by extracting shared code to a lower layer.",
+        "❌ **Tight coupling** – One module directly imports another module's internal classes. Use public APIs only.",
+        "❌ **Over‑modularisation** – Creating modules for everything (e.g., a single button) adds unnecessary complexity.",
+        "❌ **Not versioning modules** – In large teams, module versioning (e.g., via pubspec) helps manage breaking changes.",
+        "❌ **Ignoring build times** – Many modules can increase build times; consider using `flutter pub` workspaces or modularisation tools."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Modular architecture sets the foundation for scalable apps. Next, learn how to implement each module with Clean Architecture and use cases, and how to handle module communication with advanced patterns."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Clean Architecture with Bloc](/bloc-architecture) and [Use case layer](/bloc-usecase-layer)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "When should I start modularising my Flutter app?",
+      "answer": "Modular architecture is most beneficial for medium to large apps (10+ screens, multiple developers). For small apps, a simpler structure is fine. You can start with a feature-based folder structure and refactor to proper modules as the app grows."
+    },
+    {
+      "question": "How do I share a bloc between modules?",
+      "answer": "Blocs are usually scoped to a feature. If a bloc needs to be shared (e.g., `AuthBloc`), provide it at the top level (above the router) so all modules can access it via `context.read`."
+    },
+    {
+      "question": "Can I use feature modules as separate Flutter packages?",
+      "answer": "Yes, you can create each feature as a separate Dart package in a monorepo (using `melos` or `pub workspaces`). This enforces strict boundaries and allows independent versioning. However, it adds build complexity and is best for very large projects."
+    },
+    {
+      "question": "How do I handle feature flags in a modular app?",
+      "answer": "Use a core configuration module that exposes feature flags. Each module can check these flags to enable/disable features. Alternatively, use a dependency injection container that registers different implementations based on flags."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What is the main benefit of modular architecture with Bloc?",
+      "options": [
+        "Faster compilation time",
+        "Separation of concerns and scalability",
+        "Automatic state persistence",
+        "Built-in network handling"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How should modules communicate with each other?",
+      "options": [
+        "By directly importing each other's code",
+        "Through shared abstractions or event buses",
+        "Only via global variables",
+        "Modules should never communicate"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which of the following is NOT a recommended module type?",
+      "options": ["Feature module", "Core module", "Shared module", "Singleton module"],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "bloc-architecture",
+    "bloc-usecase-layer",
+    "bloc-repository-pattern",
+    "bloc-testing",
+    "flutter-dependency-injection"
+  ]
+}

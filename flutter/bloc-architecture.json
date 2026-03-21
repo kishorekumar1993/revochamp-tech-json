@@ -1,0 +1,342 @@
+{
+  "slug": "bloc-architecture",
+  "course": "Flutter",
+  "title": "Bloc Architecture: Scalable Project Structure for Flutter Apps",
+  "meta": {
+    "title": "Bloc Architecture – Scalable Flutter Project Structure (2026)",
+    "description": "Learn how to organize Flutter apps using Bloc architecture. Folder structure, clean architecture layers, repository pattern, dependency injection, and best practices for maintainable code.",
+    "keywords": [
+      "Bloc architecture",
+      "Flutter bloc folder structure",
+      "clean architecture bloc",
+      "bloc repository pattern",
+      "flutter bloc best practices",
+      "scalable flutter app"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "12 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Intermediate",
+  "tags": ["architecture", "bloc", "clean code"],
+  "content": [
+    {
+      "type": "text",
+      "value": "If your Flutter app is growing and becoming hard to manage, a proper architecture is essential. Bloc architecture helps you organize your project into scalable layers, making your code clean, testable, and easy to maintain."
+    },
+    {
+      "type": "heading",
+      "value": "What is Bloc Architecture?"
+    },
+    {
+      "type": "text",
+      "value": "Bloc architecture refers to a structured way of organizing Flutter applications using the BLoC pattern (Business Logic Component). It goes beyond just using `flutter_bloc` – it defines how to separate concerns into distinct layers: **presentation**, **business logic**, and **data**. This leads to code that is testable, maintainable, and scalable, especially for large apps with multiple features."
+    },
+    {
+      "type": "heading",
+      "value": "Data Flow in Bloc Architecture"
+    },
+    {
+      "type": "highlight",
+      "value": "UI → Event → Bloc → Repository → Data Source → Response → State → UI"
+    },
+    {
+      "type": "text",
+      "value": "This unidirectional flow ensures that each component has a single responsibility and that data changes are predictable."
+    },
+    {
+      "type": "heading",
+      "value": "Why a Layered Architecture?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Separation of concerns** – UI is decoupled from business logic, which is decoupled from data sources.",
+        "**Testability** – Each layer can be unit‑tested independently.",
+        "**Maintainability** – Changes in one layer (e.g., swapping an API client) don’t affect others.",
+        "**Scalability** – New features follow the same pattern, reducing cognitive load."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Example"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Insurance form submission with validation** – Handle complex multi‑step forms, validate fields, and submit to backend.",
+        "**Login & authentication flow** – Manage loading, success, error states, and token storage.",
+        "**Fetching dropdown data from APIs** – Load options from remote services with caching.",
+        "**Handling loading, success, and error UI states** – Centralised state management for consistent UX."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "The Three Layers"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Layer", "Purpose", "Contains"],
+        "rows": [
+          ["Presentation", "UI and state consumption", "Pages, widgets, `BlocBuilder`, `BlocListener`"],
+          ["Business Logic", "Process events, transform data, emit states", "Bloc/Cubit, use cases (optional)"],
+          ["Data", "Fetch and persist data", "Repositories, data sources (API, local DB), models"]
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "value": "Dependencies flow inward: **Presentation → Business Logic → Data**. The UI knows about the bloc, the bloc knows about repositories, repositories know about data sources."
+    },
+    {
+      "type": "heading",
+      "value": "Recommended Folder Structure"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "lib/\n├── main.dart\n├── app.dart                      # App entry point with MultiBlocProvider\n├── core/                         # Shared code across features\n│   ├── constants/\n│   ├── themes/\n│   ├── utils/\n│   └── widgets/\n├── features/                     # Feature-based modules\n│   ├── auth/\n│   │   ├── presentation/\n│   │   │   ├── pages/\n│   │   │   └── widgets/\n│   │   ├── bloc/                 # Cubit/Bloc for this feature\n│   │   │   ├── auth_bloc.dart\n│   │   │   ├── auth_event.dart\n│   │   │   └── auth_state.dart\n│   │   ├── domain/               # Optional: use cases, repository interfaces\n│   │   │   ├── entities/\n│   │   │   ├── repositories/\n│   │   │   └── usecases/\n│   │   └── data/                 # Repository implementations, data sources\n│   │       ├── repositories/\n│   │       └── datasources/\n│   └── home/\n│       ├── presentation/\n│       ├── bloc/\n│       └── ...\n└── di/                           # Dependency injection setup (if using get_it)"
+    },
+    {
+      "type": "note",
+      "value": "This structure is inspired by **Clean Architecture** but simplified for Flutter. For smaller apps, you can omit the domain layer and put repository interfaces directly in the data layer."
+    },
+    {
+      "type": "heading",
+      "value": "Implementation Example: Authentication Feature"
+    },
+    {
+      "type": "text",
+      "value": "Let’s build an authentication feature following the layered architecture. We'll create a bloc, a repository, and a data source, and wire them together."
+    },
+    {
+      "type": "subheading",
+      "value": "1. Data Layer"
+    },
+    {
+      "type": "text",
+      "value": "Start with an abstract repository interface (optional) and an implementation that uses a remote data source."
+    },
+    {
+      "type": "code",
+      "title": "features/auth/data/datasources/auth_remote_datasource.dart",
+      "language": "dart",
+      "value": "abstract class AuthRemoteDataSource {\n  Future<String> login(String email, String password);\n}\n\nclass AuthRemoteDataSourceImpl implements AuthRemoteDataSource {\n  @override\n  Future<String> login(String email, String password) async {\n    // Simulate API call\n    await Future.delayed(Duration(seconds: 1));\n    if (email == 'test@example.com' && password == '123') {\n      return 'fake-jwt-token';\n    }\n    throw Exception('Invalid credentials');\n  }\n}"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/data/repositories/auth_repository_impl.dart",
+      "language": "dart",
+      "value": "import 'package:myapp/features/auth/domain/repositories/auth_repository.dart';\nimport '../datasources/auth_remote_datasource.dart';\n\nclass AuthRepositoryImpl implements AuthRepository {\n  final AuthRemoteDataSource remoteDataSource;\n\n  AuthRepositoryImpl(this.remoteDataSource);\n\n  @override\n  Future<String> login(String email, String password) async {\n    return await remoteDataSource.login(email, password);\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Domain Layer (Optional)"
+    },
+    {
+      "type": "text",
+      "value": "Define the repository interface and entities (plain Dart classes)."
+    },
+    {
+      "type": "code",
+      "title": "features/auth/domain/entities/user.dart",
+      "language": "dart",
+      "value": "class User {\n  final String id;\n  final String name;\n  final String email;\n\n  User({required this.id, required this.name, required this.email});\n}"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/domain/repositories/auth_repository.dart",
+      "language": "dart",
+      "value": "abstract class AuthRepository {\n  Future<String> login(String email, String password);\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Business Logic Layer (Bloc)"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/bloc/auth_event.dart",
+      "language": "dart",
+      "value": "abstract class AuthEvent {}\n\nclass LoginRequested extends AuthEvent {\n  final String email;\n  final String password;\n  LoginRequested(this.email, this.password);\n}"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/bloc/auth_state.dart",
+      "language": "dart",
+      "value": "abstract class AuthState {}\n\nclass AuthInitial extends AuthState {}\nclass AuthLoading extends AuthState {}\nclass AuthSuccess extends AuthState {\n  final String token;\n  AuthSuccess(this.token);\n}\nclass AuthFailure extends AuthState {\n  final String message;\n  AuthFailure(this.message);\n}"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/bloc/auth_bloc.dart",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:myapp/features/auth/domain/repositories/auth_repository.dart';\n\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  final AuthRepository repository;\n\n  AuthBloc(this.repository) : super(AuthInitial()) {\n    on<LoginRequested>(_onLoginRequested);\n  }\n\n  Future<void> _onLoginRequested(LoginRequested event, Emitter<AuthState> emit) async {\n    emit(AuthLoading());\n    try {\n      final token = await repository.login(event.email, event.password);\n      emit(AuthSuccess(token));\n    } catch (e) {\n      emit(AuthFailure(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "4. Presentation Layer"
+    },
+    {
+      "type": "code",
+      "title": "features/auth/presentation/pages/login_page.dart",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport '../../bloc/auth_bloc.dart';\n\nclass LoginPage extends StatelessWidget {\n  final TextEditingController emailController = TextEditingController();\n  final TextEditingController passwordController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: BlocConsumer<AuthBloc, AuthState>(\n          listener: (context, state) {\n            if (state is AuthSuccess) {\n              ScaffoldMessenger.of(context).showSnackBar(\n                SnackBar(content: Text('Logged in!')),\n              );\n              Navigator.pushReplacementNamed(context, '/home');\n            }\n            if (state is AuthFailure) {\n              ScaffoldMessenger.of(context).showSnackBar(\n                SnackBar(content: Text(state.message)),\n              );\n            }\n          },\n          builder: (context, state) {\n            if (state is AuthLoading) {\n              return Center(child: CircularProgressIndicator());\n            }\n            return Column(\n              children: [\n                TextField(\n                  controller: emailController,\n                  decoration: InputDecoration(labelText: 'Email'),\n                ),\n                TextField(\n                  controller: passwordController,\n                  decoration: InputDecoration(labelText: 'Password'),\n                  obscureText: true,\n                ),\n                SizedBox(height: 20),\n                ElevatedButton(\n                  onPressed: () {\n                    context.read<AuthBloc>().add(\n                      LoginRequested(\n                        emailController.text,\n                        passwordController.text,\n                      ),\n                    );\n                  },\n                  child: Text('Login'),\n                ),\n              ],\n            );\n          },\n        ),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Dependency Injection"
+    },
+    {
+      "type": "text",
+      "value": "You can inject dependencies using `BlocProvider` and a service locator like `get_it`. Here’s how to set up the dependencies for the authentication feature."
+    },
+    {
+      "type": "code",
+      "title": "di/injection.dart",
+      "language": "dart",
+      "value": "import 'package:get_it/get_it.dart';\nimport 'package:myapp/features/auth/data/datasources/auth_remote_datasource.dart';\nimport 'package:myapp/features/auth/data/repositories/auth_repository_impl.dart';\nimport 'package:myapp/features/auth/domain/repositories/auth_repository.dart';\n\nfinal getIt = GetIt.instance;\n\nvoid setup() {\n  // Data sources\n  getIt.registerLazySingleton<AuthRemoteDataSource>(\n    () => AuthRemoteDataSourceImpl(),\n  );\n\n  // Repositories\n  getIt.registerLazySingleton<AuthRepository>(\n    () => AuthRepositoryImpl(getIt()),\n  );\n\n  // Blocs (factories because they depend on context)\n  getIt.registerFactory<AuthBloc>(\n    () => AuthBloc(getIt()),\n  );\n}"
+    },
+    {
+      "type": "text",
+      "value": "Then, in your `main.dart`, call `setup()` before `runApp`, and use `BlocProvider` to provide the bloc to the widget tree."
+    },
+    {
+      "type": "heading",
+      "value": "Bloc Architecture vs Clean Architecture"
+    },
+    {
+      "type": "text",
+      "value": "Both share similar ideas: separation of concerns, dependency inversion, and testability. Bloc architecture is a **simplified adaptation** for Flutter, focusing on the UI–Bloc–Repository flow. Clean Architecture adds an explicit domain layer with use cases and entities, and enforces strict dependency rules. For most Flutter apps, the structure presented here strikes the right balance between scalability and simplicity."
+    },
+    {
+      "type": "heading",
+      "value": "Performance Tips"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `Equatable`** – Avoids unnecessary rebuilds by ensuring states are only considered different when values change.",
+        "**Split large blocs into smaller feature blocs** – Keeps each bloc focused and reduces rebuild scope.",
+        "**Use `BlocSelector` for granular rebuilds** – Rebuild only the part of the UI that depends on a specific piece of state.",
+        "**Avoid heavy logic inside UI layer** – Keep business logic and data transformations in the bloc or use cases."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "When Not to Use Bloc Architecture"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Small apps with simple state** – Over‑engineering can slow down development.",
+        "**Prototypes or quick demos** – A simpler state management (like `setState` or `Provider`) is sufficient.",
+        "**When Cubit alone is sufficient** – For many features, a plain Cubit without full layered architecture is enough."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `BlocProvider` at the highest level needed** – Provide blocs where they are required, not necessarily globally.",
+        "**Keep blocs focused** – Each bloc should handle one specific feature (e.g., `LoginBloc`, not `UserBloc` that does everything).",
+        "**Use `Equatable` for states and events** – Avoids unnecessary rebuilds and makes state comparison easy.",
+        "**Avoid business logic in UI** – Let blocs handle it; UI only dispatches events.",
+        "**Use `BlocListener` for side effects** – Navigation, snackbars, etc., not in `BlocBuilder`.",
+        "**Consider use cases for complex business logic** – They keep blocs thin and testable."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Putting API calls directly in bloc** – Hard to test and swap data sources.\n✅ Use repositories.",
+        "❌ **Creating `BlocProvider` inside `build`** – Recreates the bloc on every rebuild.\n✅ Use `BlocProvider.value` or define outside build.",
+        "❌ **Mixing presentation and business logic in one file** – Violates separation.\n✅ Keep layers in separate folders.",
+        "❌ **Not handling loading/error states** – Users see no feedback.\n✅ Always define and emit loading/error states.",
+        "❌ **Over‑engineering with unnecessary layers** – For tiny apps, a simpler structure is fine."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Next Steps"
+    },
+    {
+      "type": "text",
+      "value": "Before diving into architecture, make sure you understand [Bloc basics](/flutter/bloc-introduction). Then explore [testing blocs](/flutter/bloc-testing) and [advanced patterns](/flutter/bloc-events)."
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "A well‑structured Bloc architecture makes your Flutter apps scalable, testable, and maintainable. By separating concerns into presentation, business logic, and data layers, you ensure that each part can evolve independently. Start with a simple folder structure and gradually adopt more advanced patterns like use cases as your app grows."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I need to use the domain layer in Flutter Bloc architecture?",
+      "answer": "No. For small projects, you can skip the domain layer and have the bloc directly depend on repository implementations. For larger projects with complex business logic, the domain layer adds clarity and testability."
+    },
+    {
+      "question": "How do I share a bloc between multiple screens in Flutter?",
+      "answer": "Provide the bloc at a higher level in the widget tree using `BlocProvider` (e.g., in the parent widget). Then all child widgets can access it via `context.read<MyBloc>()`."
+    },
+    {
+      "question": "Should I use `get_it` or `BlocProvider` for dependency injection with Bloc?",
+      "answer": "Both can work together. Use `get_it` for non‑bloc dependencies (repositories, services) and `BlocProvider` for blocs. This keeps the dependency graph clean and testable."
+    },
+    {
+      "question": "How do I handle navigation based on state changes in Bloc?",
+      "answer": "Use `BlocListener` to listen for specific states (e.g., `AuthSuccess`) and perform navigation. Avoid using `Navigator` directly inside the bloc."
+    },
+    {
+      "question": "What's the difference between Bloc architecture and Clean Architecture?",
+      "answer": "Bloc architecture is a simplified version of Clean Architecture for Flutter. Clean Architecture adds an explicit domain layer with use cases and entities, and enforces stricter dependency inversion. The structure in this guide is a practical adaptation."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "comment": "Architecture is not suitable for an interactive editor; keep example code in the content."
+  },
+  "quiz": [
+    {
+      "question": "What is the main purpose of the data layer in Bloc architecture?",
+      "options": [
+        "Display UI",
+        "Handle business logic",
+        "Fetch and persist data from sources",
+        "Emit states"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which widget is used to listen for state changes without rebuilding the UI?",
+      "options": ["BlocBuilder", "BlocProvider", "BlocListener", "BlocConsumer"],
+      "answer": 2
+    },
+    {
+      "question": "Why would you use a repository pattern with Bloc?",
+      "options": [
+        "To make UI look better",
+        "To separate data fetching logic from business logic",
+        "To reduce code size",
+        "To create widgets"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-introduction",
+    "bloc-cubit",
+    "bloc-testing",
+    "clean-architecture",
+    "flutter-dependency-injection"
+  ]
+}

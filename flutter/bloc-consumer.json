@@ -1,0 +1,228 @@
+{
+  "slug": "bloc-consumer",
+  "course": "Flutter",
+  "title": "BlocConsumer: Combining UI Rebuilds and Side Effects",
+  "meta": {
+    "title": "BlocConsumer – Combine UI Rebuilds & Side Effects in Flutter (2026)",
+    "description": "Learn how to use BlocConsumer to handle both UI rebuilds and side effects like navigation and snackbars in a single widget. Includes listenWhen, buildWhen, and best practices.",
+    "keywords": [
+      "BlocConsumer",
+      "flutter bloc consumer",
+      "bloc listener and builder",
+      "flutter_bloc",
+      "bloc side effects",
+      "bloc ui rebuilds"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "10 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Intermediate",
+  "tags": ["bloc", "ui", "widgets"],
+  "content": [
+    {
+      "type": "text",
+      "value": "When building reactive UIs with Bloc, you often need to both rebuild the UI in response to state changes **and** perform side effects like navigation or showing snackbars. While you can use separate `BlocBuilder` and `BlocListener` widgets, `BlocConsumer` combines both in one convenient widget. This guide covers everything you need to know about `BlocConsumer` – when to use it, how to configure it, and best practices."
+    },
+    {
+      "type": "heading",
+      "value": "What is BlocConsumer?"
+    },
+    {
+      "type": "text",
+      "value": "`BlocConsumer` is a widget that combines `BlocBuilder` and `BlocListener`. It accepts both a `builder` (to rebuild the UI) and a `listener` (to handle side effects). It's particularly useful when you need both capabilities for the same bloc and want to keep the code concise."
+    },
+    {
+      "type": "note",
+      "value": "You can still use separate `BlocBuilder` and `BlocListener` widgets – `BlocConsumer` is just a convenience that groups them together."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "To use `BlocConsumer`, provide a `listener` function for side effects and a `builder` function for UI. The `listener` runs when the state changes (after the builder), and the `builder` rebuilds the UI."
+    },
+    {
+      "type": "code",
+      "title": "Basic BlocConsumer",
+      "language": "dart",
+      "value": "BlocConsumer<AuthBloc, AuthState>(\n  listener: (context, state) {\n    if (state is AuthSuccess) {\n      Navigator.pushReplacementNamed(context, '/home');\n    }\n    if (state is AuthFailure) {\n      ScaffoldMessenger.of(context).showSnackBar(\n        SnackBar(content: Text(state.message)),\n      );\n    }\n  },\n  builder: (context, state) {\n    if (state is AuthLoading) {\n      return const Center(child: CircularProgressIndicator());\n    }\n    if (state is AuthFailure) {\n      return Text(state.message);\n    }\n    return LoginForm();\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Fine‑tuning with listenWhen and buildWhen"
+    },
+    {
+      "type": "text",
+      "value": "Like `BlocBuilder` and `BlocListener`, `BlocConsumer` supports `listenWhen` and `buildWhen` to control exactly when each part runs."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocConsumer<AuthBloc, AuthState>(\n  listenWhen: (previous, current) => current is AuthSuccess || current is AuthFailure,\n  listener: (context, state) {\n    // only handle success/failure, ignore other states\n  },\n  buildWhen: (previous, current) => current is! AuthSuccess && current is! AuthFailure,\n  builder: (context, state) {\n    // rebuild only for non-terminal states\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use BlocConsumer vs Separate Builder and Listener"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Scenario", "Recommendation"],
+        "rows": [
+          ["Both builder and listener are needed for the same bloc", "Use BlocConsumer"],
+          ["Only builder is needed", "Use BlocBuilder"],
+          ["Only listener is needed", "Use BlocListener"],
+          ["Builder and listener logic is complex and you want to separate concerns", "Use separate widgets for clarity"],
+          ["You need to place builder and listener at different positions in the widget tree", "Use separate widgets"]
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "value": "In general, `BlocConsumer` is ideal when you need both functionalities and they are closely related. For complex UIs where the builder and listener are large or located far apart, separate widgets may be more readable."
+    },
+    {
+      "type": "heading",
+      "value": "Performance Considerations"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `listenWhen` and `buildWhen`** – Prevent unnecessary listener calls and rebuilds.",
+        "**Place `BlocConsumer` as low as possible** – Only wrap the part of the UI that actually needs the bloc to keep rebuilds localized.",
+        "**Avoid heavy computations inside `builder`** – If you need to compute derived data, use `Selector` or `buildWhen`.",
+        "**For very granular rebuilds, consider using `BlocSelector` inside the builder** – This can further reduce rebuilds."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "BlocConsumer vs BlocConsumer.value"
+    },
+    {
+      "type": "text",
+      "value": "`BlocConsumer` also comes with a `.value` named constructor, similar to `BlocProvider.value`. It allows you to pass an existing bloc instance instead of creating a new one. This is useful when the bloc is already created elsewhere (e.g., from a parent widget) and you want to reuse it."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocConsumer<AuthBloc, AuthState>.value(\n  value: existingBloc, // an existing instance\n  listener: (context, state) { ... },\n  builder: (context, state) { ... },\n);"
+    },
+    {
+      "type": "warning",
+      "value": "Be careful with `BlocConsumer.value`: the bloc instance is not disposed automatically – you must manage its lifecycle."
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "title": "Login Screen with BlocConsumer",
+      "language": "dart",
+      "value": "class LoginPage extends StatelessWidget {\n  final TextEditingController emailController = TextEditingController();\n  final TextEditingController passwordController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: const Text('Login')),\n      body: BlocConsumer<AuthBloc, AuthState>(\n        listenWhen: (previous, current) => current is AuthSuccess || current is AuthFailure,\n        listener: (context, state) {\n          if (state is AuthSuccess) {\n            Navigator.pushReplacementNamed(context, '/home');\n          } else if (state is AuthFailure) {\n            ScaffoldMessenger.of(context).showSnackBar(\n              SnackBar(content: Text(state.message)),\n            );\n          }\n        },\n        builder: (context, state) {\n          if (state is AuthLoading) {\n            return const Center(child: CircularProgressIndicator());\n          }\n          return Padding(\n            padding: const EdgeInsets.all(16.0),\n            child: Column(\n              children: [\n                TextField(\n                  controller: emailController,\n                  decoration: const InputDecoration(labelText: 'Email'),\n                ),\n                TextField(\n                  controller: passwordController,\n                  decoration: const InputDecoration(labelText: 'Password'),\n                  obscureText: true,\n                ),\n                const SizedBox(height: 20),\n                ElevatedButton(\n                  onPressed: () {\n                    context.read<AuthBloc>().add(\n                      LoginRequested(\n                        emailController.text,\n                        passwordController.text,\n                      ),\n                    );\n                  },\n                  child: const Text('Login'),\n                ),\n              ],\n            ),\n          );\n        },\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `BlocConsumer` when you need both builder and listener** – Avoid unnecessary nesting of separate widgets.",
+        "**Always provide a `child` when using `BlocConsumer`** – The `builder` returns a widget; the `listener` does not require a child, but the widget itself must return a widget tree.",
+        "**Use `listenWhen` to filter side effects** – Prevents unnecessary navigation or snackbar calls.",
+        "**Use `buildWhen` to filter UI rebuilds** – Improves performance.",
+        "**Place `BlocConsumer` as close to the UI that depends on the state as possible** – Keeps rebuilds local.",
+        "**Separate concerns** – If the builder and listener are very large, consider splitting into smaller widgets for readability."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `BlocConsumer` when only builder or only listener is needed** – Adds unnecessary complexity.\n✅ Use `BlocBuilder` or `BlocListener` individually.",
+        "❌ **Forgetting to handle all states in builder** – UI may break.\n✅ Always define a fallback or handle all possible states.",
+        "❌ **Calling `emit` inside `listener`** – This would cause an infinite loop.\n✅ Use `listener` for side effects, not for state changes.",
+        "❌ **Placing `BlocConsumer` too high in the tree** – Rebuilds more than necessary.\n✅ Place it as low as possible.",
+        "❌ **Not using `listenWhen` or `buildWhen` when state changes frequently** – Performance degradation.\n✅ Use filters to limit rebuilds and listener calls."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Next Steps"
+    },
+    {
+      "type": "text",
+      "value": "Now that you've mastered `BlocConsumer`, explore other Bloc topics:\n\n- [BlocProvider](/flutter/bloc-provider) – Providing blocs to the widget tree.\n- [BlocBuilder & BlocListener](/flutter/bloc-builder) – In‑depth look at each.\n- [Bloc Performance Optimization](/flutter/bloc-performance) – Advanced tips."
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "`BlocConsumer` is a versatile widget that combines the power of `BlocBuilder` and `BlocListener`. It simplifies your code when you need both UI rebuilds and side effects for the same bloc. By using `listenWhen` and `buildWhen`, you can keep your app performant and your UI responsive. Use it wisely to build clean, maintainable Flutter applications."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use BlocConsumer without providing a bloc?",
+      "answer": "No, BlocConsumer expects a bloc to be available in the context (via BlocProvider) or you must pass it via the `.value` constructor."
+    },
+    {
+      "question": "What is the execution order of builder and listener?",
+      "answer": "The listener runs **after** the builder. This ensures that the UI is updated first, then side effects occur."
+    },
+    {
+      "question": "Can I have multiple BlocConsumers for the same bloc?",
+      "answer": "Yes, you can. Each will have its own builder and listener. This is useful for splitting UI into independent parts."
+    },
+    {
+      "question": "How do I handle initial state with BlocConsumer?",
+      "answer": "The builder is called immediately with the initial state. The listener will not be called on the initial state unless it matches the `listenWhen` condition."
+    },
+    {
+      "question": "Should I use BlocConsumer or separate BlocBuilder + BlocListener?",
+      "answer": "It depends. If the builder and listener are closely related and placed together, `BlocConsumer` is convenient. If you need to place them at different positions in the tree or one of them is optional, use separate widgets."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() => runApp(MyApp());\n\n// States\nabstract class CounterState extends Equatable {}\nclass CounterInitial extends CounterState { @override List<Object?> get props => []; }\nclass CounterLoading extends CounterState { @override List<Object?> get props => []; }\nclass CounterValue extends CounterState {\n  final int value;\n  CounterValue(this.value);\n  @override List<Object?> get props => [value];\n}\nclass CounterError extends CounterState {\n  final String message;\n  CounterError(this.message);\n  @override List<Object?> get props => [message];\n}\n\n// Events\nabstract class CounterEvent {}\nclass FetchCounter extends CounterEvent {}\n\n// Bloc\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(CounterInitial()) {\n    on<FetchCounter>((event, emit) async {\n      emit(CounterLoading());\n      await Future.delayed(const Duration(seconds: 1));\n      emit(CounterValue(42));\n      // simulate error\n      // emit(CounterError('Something went wrong!'));\n    });\n  }\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterBloc(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('BlocConsumer Demo')),\n      body: BlocConsumer<CounterBloc, CounterState>(\n        listenWhen: (previous, current) => current is CounterError,\n        listener: (context, state) {\n          if (state is CounterError) {\n            ScaffoldMessenger.of(context).showSnackBar(\n              SnackBar(content: Text(state.message)),\n            );\n          }\n        },\n        builder: (context, state) {\n          if (state is CounterLoading) {\n            return const Center(child: CircularProgressIndicator());\n          }\n          if (state is CounterValue) {\n            return Center(\n              child: Column(\n                mainAxisAlignment: MainAxisAlignment.center,\n                children: [\n                  Text('Value: ${state.value}', style: const TextStyle(fontSize: 32)),\n                  const SizedBox(height: 20),\n                  ElevatedButton(\n                    onPressed: () => context.read<CounterBloc>().add(FetchCounter()),\n                    child: const Text('Refresh'),\n                  ),\n                ],\n              ),\n            );\n          }\n          return Center(\n            child: ElevatedButton(\n              onPressed: () => context.read<CounterBloc>().add(FetchCounter()),\n              child: const Text('Fetch Data'),\n            ),\n          );\n        },\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What are the two required parameters of BlocConsumer?",
+      "options": ["builder and listener", "builder and child", "listener and child", "builder and bloc"],
+      "answer": 0
+    },
+    {
+      "question": "When should you use BlocConsumer instead of separate BlocBuilder and BlocListener?",
+      "options": [
+        "When you need both UI rebuilds and side effects from the same bloc",
+        "When you only need UI rebuilds",
+        "When you only need side effects",
+        "Always"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What parameter allows you to control when the listener runs?",
+      "options": ["buildWhen", "listenWhen", "selector", "condition"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-builder",
+    "bloc-provider",
+    "bloc-core-concepts",
+    "bloc-performance",
+    "flutter-bloc-tutorial"
+  ]
+}

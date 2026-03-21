@@ -1,0 +1,273 @@
+{
+  "slug": "bloc-dependency-injection",
+  "course": "Flutter",
+  "title": "Dependency Injection with Bloc: Managing Dependencies at Scale",
+  "meta": {
+    "title": "Flutter Bloc Dependency Injection – Complete Guide (2026)",
+    "description": "Learn how to implement dependency injection in Flutter Bloc applications using BlocProvider, get_it, and injectable. Manage dependencies, improve testability, and scale your app.",
+    "keywords": [
+      "flutter bloc dependency injection",
+      "bloc get_it",
+      "injectable flutter",
+      "bloc provider di",
+      "flutter dependency injection"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "11 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "dependency-injection", "get_it", "injectable"],
+  "content": [
+    {
+      "type": "text",
+      "value": "Dependency injection (DI) is a fundamental technique for writing testable, maintainable code. In Bloc applications, you need to inject repositories, use cases, and other dependencies into your blocs. This guide covers the most effective DI approaches for Flutter Bloc, from simple `BlocProvider` to advanced setups with `get_it` and `injectable`."
+    },
+    {
+      "type": "heading",
+      "value": "Why Dependency Injection Matters"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Testability** – Dependencies can be mocked or replaced in tests.",
+        "**Flexibility** – Swap implementations (e.g., fake API vs real API) without changing blocs.",
+        "**Separation of concerns** – Blocs don't know how dependencies are created.",
+        "**Reusability** – Same service instance can be shared across multiple blocs.",
+        "**Lazy initialisation** – Create dependencies only when needed."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "DI Options in Flutter Bloc"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Approach", "Use Case", "Pros", "Cons"],
+        "rows": [
+          ["`BlocProvider` / `RepositoryProvider`", "Simple apps, widget‑scoped dependencies", "Built‑in, automatic disposal", "Limited to widget tree, no global access"],
+          ["`get_it` (service locator)", "Medium to large apps, global services", "Easy to use, fast access, testable", "Service locator is a pattern, not true DI"],
+          ["`injectable` + `get_it`", "Large apps, code‑generated registration", "Type‑safe, minimal boilerplate, great for teams", "Requires code generation setup"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Approach 1: BlocProvider and RepositoryProvider"
+    },
+    {
+      "type": "text",
+      "value": "`BlocProvider` is not only for providing blocs – you can also use `RepositoryProvider` to inject repositories or services into the widget tree. This approach ties dependencies to the widget lifecycle and is ideal for simple apps."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MultiRepositoryProvider(\n  providers: [\n    RepositoryProvider<AuthRepository>(\n      create: (context) => AuthRepositoryImpl(\n        remoteDataSource: AuthRemoteDataSourceImpl(),\n      ),\n    ),\n    RepositoryProvider<SettingsRepository>(\n      create: (context) => SettingsRepositoryImpl(),\n    ),\n  ],\n  child: MultiBlocProvider(\n    providers: [\n      BlocProvider<AuthBloc>(\n        create: (context) => AuthBloc(\n          authRepository: context.read<AuthRepository>(),\n        ),\n      ),\n    ],\n    child: MyApp(),\n  ),\n)"
+    },
+    {
+      "type": "note",
+      "value": "`RepositoryProvider` does not automatically close the repository – it's your responsibility to close any resources (like database connections) if needed. Use `dispose` on a stateful widget or register a cleanup function."
+    },
+    {
+      "type": "heading",
+      "value": "Approach 2: get_it – The Simple Service Locator"
+    },
+    {
+      "type": "text",
+      "value": "`get_it` is the most popular service locator in the Flutter ecosystem. It allows you to register dependencies globally and access them anywhere, without being tied to the widget tree."
+    },
+    {
+      "type": "subheading",
+      "value": "Installation"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  get_it: ^7.6.0"
+    },
+    {
+      "type": "subheading",
+      "value": "Setup"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/di/injection.dart\nimport 'package:get_it/get_it.dart';\n\nfinal getIt = GetIt.instance;\n\nFuture<void> setup() async {\n  // Register singletons\n  getIt.registerSingleton<HttpClient>(HttpClientImpl());\n  \n  // Register lazy singletons (created when first accessed)\n  getIt.registerLazySingleton<AuthRemoteDataSource>(\n    () => AuthRemoteDataSourceImpl(getIt<HttpClient>()),\n  );\n  getIt.registerLazySingleton<AuthRepository>(\n    () => AuthRepositoryImpl(getIt<AuthRemoteDataSource>()),\n  );\n  \n  // Register factories (new instance each time)\n  getIt.registerFactory<AuthBloc>(\n    () => AuthBloc(getIt<AuthRepository>()),\n  );\n  \n  // Register with parameters\n  getIt.registerFactoryParam<UserBloc, String, void>(\n    (userId, _) => UserBloc(userId, getIt<UserRepository>()),\n  );\n}\n\n// Use in code:\nfinal authBloc = getIt<AuthBloc>();"
+    },
+    {
+      "type": "subheading",
+      "value": "Using get_it with BlocProvider"
+    },
+    {
+      "type": "text",
+      "value": "You can combine `get_it` with `BlocProvider` – use `get_it` to create the bloc, then provide it via `BlocProvider` to ensure proper disposal."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return MultiBlocProvider(\n      providers: [\n        BlocProvider<AuthBloc>(\n          create: (_) => getIt<AuthBloc>(),\n        ),\n        BlocProvider<HomeBloc>(\n          create: (_) => getIt<HomeBloc>(),\n        ),\n      ],\n      child: MaterialApp(...),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Approach 3: injectable – Code‑Generated DI"
+    },
+    {
+      "type": "text",
+      "value": "`injectable` is a code‑generator that works on top of `get_it`. It automatically creates the registration code based on annotations, reducing boilerplate and preventing registration errors."
+    },
+    {
+      "type": "subheading",
+      "value": "Installation"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  get_it: ^7.6.0\n  injectable: ^2.3.0\n\ndev_dependencies:\n  build_runner: ^2.4.0\n  injectable_generator: ^2.4.0"
+    },
+    {
+      "type": "subheading",
+      "value": "Setup"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// lib/di/injection.dart\nimport 'package:get_it/get_it.dart';\nimport 'package:injectable/injectable.dart';\n\nfinal getIt = GetIt.instance;\n\n@InjectableInit()\nFuture<void> configureDependencies() => getIt.init();\n\n// lib/di/injection.config.dart – generated automatically"
+    },
+    {
+      "type": "subheading",
+      "value": "Registering Dependencies with Annotations"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@singleton\nclass HttpClientImpl implements HttpClient { ... }\n\n@lazySingleton\nclass AuthRemoteDataSourceImpl implements AuthRemoteDataSource { ... }\n\n@injectable\nclass AuthRepositoryImpl implements AuthRepository { ... }\n\n@injectable\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  AuthBloc(@factoryParam String? initialEmail) : super(...);\n}\n\n// With parameters\n@injectable\nclass UserBloc extends Bloc<UserEvent, UserState> {\n  UserBloc(@factoryParam String userId, UserRepository repo) : super(...);\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Running Generator"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "flutter pub run build_runner build"
+    },
+    {
+      "type": "heading",
+      "value": "Scoping and Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "Different dependencies have different lifetimes. Here’s how to manage scoping:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**App‑wide singletons** – Use `registerSingleton` (get_it) or `@singleton` (injectable). Examples: HTTP client, database, shared preferences.",
+        "**Feature‑scoped** – Use `BlocProvider` to create a new bloc when entering a feature and dispose it when leaving. Combine with `get_it` for other dependencies.",
+        "**Screen‑scoped** – Create a new instance of a bloc for a specific screen using `BlocProvider` without registering it globally.",
+        "**Transient** – Use `registerFactory` (get_it) or `@injectable` without singleton annotation to get a new instance each time."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Testing with Dependency Injection"
+    },
+    {
+      "type": "text",
+      "value": "DI makes testing straightforward. In your test setup, you can replace real dependencies with mocks."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:mocktail/mocktail.dart';\nimport 'package:get_it/get_it.dart';\n\nclass MockAuthRepository extends Mock implements AuthRepository {}\n\nvoid main() {\n  late MockAuthRepository mockRepo;\n\n  setUp(() {\n    mockRepo = MockAuthRepository();\n    // Override the real repository with a mock\n    getIt.registerSingleton<AuthRepository>(mockRepo);\n  });\n\n  tearDown(() {\n    getIt.reset(); // Resets all registrations\n  });\n\n  test('AuthBloc calls login on repository', () async {\n    when(() => mockRepo.login(any(), any()))\n        .thenAnswer((_) async => User(...));\n\n    final bloc = getIt<AuthBloc>();\n    // ...\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Prefer `get_it` for infrastructure dependencies** – Repositories, services, data sources – register them as singletons.",
+        "**Use `BlocProvider` for blocs** – Let the widget tree manage bloc lifecycle. Use `get_it` to create the bloc instance if needed.",
+        "**Avoid using `get_it` directly inside widgets** – Instead, use `context.read`/`context.watch` on `BlocProvider` where possible. Use `get_it` for services not tied to the UI.",
+        "**Register with proper scope** – Singletons for stateless services; factories for blocs or stateful objects.",
+        "**Use `injectable` for larger projects** – It enforces a consistent DI setup and reduces manual registration errors.",
+        "**Reset DI container between tests** – Use `getIt.reset()` in `tearDown` to avoid test pollution."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Registering everything as a singleton** – Blocs registered as singletons retain state across screens, leading to bugs. Use factories for blocs.",
+        "❌ **Using `get_it` inside the build method for state** – Won't cause rebuilds; use `context.watch` or `BlocBuilder` instead.",
+        "❌ **Not resetting `get_it` in tests** – Causes tests to interfere with each other.",
+        "❌ **Creating circular dependencies** – For example, a repository depending on a bloc, and the bloc depending on the repository. Break the cycle.",
+        "❌ **Over‑using DI for simple values** – For simple parameters, constructor injection is fine; DI is overkill for every tiny object."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that your dependencies are well‑managed, explore how to structure your app with modular architecture and Clean Architecture."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Modular architecture with Bloc](/bloc-modular-architecture) and [Repository pattern](/bloc-repository-pattern)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should I use get_it or BlocProvider for dependency injection?",
+      "answer": "Both have their place. Use `BlocProvider` for blocs that should be scoped to the widget tree and automatically disposed. Use `get_it` for services and repositories that are app‑wide. It’s common to use both together."
+    },
+    {
+      "question": "How do I handle asynchronous dependencies (like SharedPreferences) with get_it?",
+      "answer": "Use `registerSingletonAsync` for async initialisation. Await the registration in your main function before running the app. Example: `await getIt.registerSingletonAsync(() => SharedPreferences.getInstance());`"
+    },
+    {
+      "question": "Can I use get_it with BlocProvider to create a bloc that depends on a repository?",
+      "answer": "Yes. You can register the repository as a singleton in get_it, then create a factory for the bloc that depends on it. In `BlocProvider`, call `getIt<MyBloc>()` to get the instance."
+    },
+    {
+      "question": "What is the difference between get_it and Provider/InheritedWidget?",
+      "answer": "`get_it` is a service locator – you ask for dependencies by type, independent of the widget tree. `Provider`/`BlocProvider` use InheritedWidget to provide dependencies to a subtree. They serve different purposes and can be combined."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "Which package is commonly used for code‑generated dependency injection in Flutter Bloc?",
+      "options": ["get_it", "injectable", "provider", "bloc_provider"],
+      "answer": 1
+    },
+    {
+      "question": "When should you use BlocProvider instead of get_it for a bloc?",
+      "options": [
+        "When the bloc should be globally accessible",
+        "When the bloc should be scoped to a widget subtree and automatically disposed",
+        "When the bloc has no dependencies",
+        "When using injectable"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you reset the get_it container between tests?",
+      "options": ["getIt.clear()", "getIt.reset()", "getIt.dispose()", "GetIt.instance = GetIt()"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-provider",
+    "bloc-architecture",
+    "bloc-testing",
+    "flutter-dependency-injection",
+    "bloc-modular-architecture"
+  ]
+}

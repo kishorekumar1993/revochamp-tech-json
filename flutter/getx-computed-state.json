@@ -3,7 +3,7 @@
   "course": "Flutter",
   "title": "GetX Computed State: Derived Values & Reactive Calculations",
   "meta": {
-    "title": "GetX Computed State – Derived Values & Reactive Calculations",
+    "title": "GetX Computed State – Derived Values & Reactive Calculations (2026)",
     "description": "Learn how to compute derived values from reactive state in GetX. Use getters, Rx with workers, GetX widget, and performance tips for efficient reactive calculations.",
     "keywords": [
       "GetX computed state",
@@ -11,7 +11,8 @@
       "reactive calculations",
       "GetX getter",
       "GetX computed property",
-      "Flutter GetX"
+      "Flutter GetX",
+      "GetX workers"
     ]
   },
   "content": [
@@ -22,6 +23,21 @@
     {
       "type": "text",
       "value": "Computed state refers to values that are derived from other reactive state. Instead of storing the computed value separately and manually updating it whenever its dependencies change, you can compute it on the fly. In GetX, you can use simple getters, `Rx` variables updated with workers, or the `GetX` widget to efficiently manage computed state."
+    },
+    {
+      "type": "heading",
+      "value": "Comparison of Approaches"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Approach", "Best For", "Performance", "Complexity"],
+        "rows": [
+          ["Getter in Controller", "Simple synchronous computations", "Recomputed on every access", "Low"],
+          ["Worker + Rx Variable", "Side effects or memoization", "Recomputed only when dependencies change", "Medium"],
+          ["GetX Widget", "Expensive computations / scoped rebuilds", "Recomputed only when dependencies change", "Low-Medium"]
+        ]
+      }
     },
     {
       "type": "heading",
@@ -131,25 +147,33 @@
     },
     {
       "type": "heading",
-      "value": "FAQ"
-    },
-    {
-      "type": "list",
-      "value": [
-        "**Q: When should I use a getter vs a worker + `Rx` variable?**  \nA: Use a getter for simple synchronous computations. Use a worker + `Rx` when you need to perform side effects or when the computed value is expensive and you want to memoize it.",
-        "**Q: Does `Obx` work with getters?**  \nA: Yes, as long as the getter accesses reactive variables, `Obx` will listen to them and rebuild when they change.",
-        "**Q: Can I combine multiple reactive sources in a computed value?**  \nA: Yes, the getter can access any number of `Rx` variables; `Obx` will track all of them.",
-        "**Q: How to compute a value that depends on an async operation?**  \nA: Use a worker to listen to the async result (e.g., after a future completes) and update a reactive variable. Or use `StateMixin` and compute based on the state.",
-        "**Q: What's the difference between `GetX` widget and `Obx` with a getter?**  \nA: `GetX` widget rebuilds only the widget returned by the builder, and it can access the controller via a callback, which can be more efficient if the computation is inside the builder. `Obx` with a getter also works, but the getter is called on every frame where the widget is built (though still efficient if the computation is cheap)."
-      ]
-    },
-    {
-      "type": "heading",
       "value": "Conclusion"
     },
     {
       "type": "text",
       "value": "Computed state is a powerful pattern in reactive programming. GetX offers multiple ways to implement it, from simple getters to reactive workers and the `GetX` widget. By choosing the right approach based on complexity and performance needs, you can keep your controllers clean and your UI responsive."
+    }
+  ],
+  "faq": [
+    {
+      "question": "When should I use a getter vs a worker + Rx variable?",
+      "answer": "Use a getter for simple synchronous computations. Use a worker + Rx when you need to perform side effects or when the computed value is expensive and you want to memoize it."
+    },
+    {
+      "question": "Does Obx work with getters?",
+      "answer": "Yes, as long as the getter accesses reactive variables, Obx will listen to them and rebuild when they change."
+    },
+    {
+      "question": "Can I combine multiple reactive sources in a computed value?",
+      "answer": "Yes, the getter can access any number of Rx variables; Obx will track all of them."
+    },
+    {
+      "question": "How to compute a value that depends on an async operation?",
+      "answer": "Use a worker to listen to the async result (e.g., after a future completes) and update a reactive variable. Or use StateMixin and compute based on the state."
+    },
+    {
+      "question": "What's the difference between GetX widget and Obx with a getter?",
+      "answer": "GetX widget rebuilds only the widget returned by the builder, and it can access the controller via a callback, which can be more efficient if the computation is inside the builder. Obx with a getter also works, but the getter is called on every frame where the widget is built (though still efficient if the computation is cheap)."
     }
   ],
   "tryEditor": {

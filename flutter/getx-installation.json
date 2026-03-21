@@ -3,7 +3,7 @@
   "course": "Flutter",
   "title": "GetX Installation & Setup: Complete Guide for Flutter",
   "meta": {
-    "title": "GetX Installation and Setup in Flutter – Step by Step Guide",
+    "title": "GetX Installation and Setup in Flutter – Step by Step Guide (2026)",
     "description": "Learn how to install GetX in Flutter, set up GetMaterialApp, and create your first reactive app with GetX. Includes pubspec.yaml configuration, import statements, and basic usage examples.",
     "keywords": [
       "GetX installation",
@@ -12,7 +12,9 @@
       "GetMaterialApp",
       "GetX pubspec.yaml",
       "GetX tutorial",
-      "GetX first app"
+      "GetX first app",
+      "flutter getx counter",
+      "getx latest version"
     ]
   },
   "content": [
@@ -35,11 +37,11 @@
     {
       "type": "code",
       "language": "yaml",
-      "value": "dependencies:\n  flutter:\n    sdk: flutter\n  get: ^4.6.6  # Use the latest version"
+      "value": "dependencies:\n  flutter:\n    sdk: flutter\n  get: ^4.6.6  # Use the latest stable version"
     },
     {
       "type": "text",
-      "value": "After adding, run `flutter pub get` in your terminal to install the package."
+      "value": "After adding, run `flutter pub get` in your terminal to install the package. You can also add GetX via command line: `flutter pub add get`."
     },
     {
       "type": "heading",
@@ -69,7 +71,7 @@
     },
     {
       "type": "text",
-      "value": "`GetMaterialApp` is a drop-in replacement for `MaterialApp` and adds GetX’s routing, internationalization, and other capabilities."
+      "value": "`GetMaterialApp` is a drop-in replacement for `MaterialApp` and adds GetX’s routing, internationalization, and other capabilities. It is required for features like `Get.to()`, `Get.snackbar()`, and `Get.dialog()`."
     },
     {
       "type": "heading",
@@ -107,13 +109,31 @@
     },
     {
       "type": "heading",
+      "value": "Verifying the Installation"
+    },
+    {
+      "type": "text",
+      "value": "To ensure GetX is correctly installed, you can use `Get.snackbar` anywhere in your app. Add this line to a button’s `onPressed`:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.snackbar('Success', 'GetX is working!');"
+    },
+    {
+      "type": "text",
+      "value": "If the snackbar appears, GetX is properly set up."
+    },
+    {
+      "type": "heading",
       "value": "Alternative Installation Methods"
     },
     {
       "type": "list",
       "value": [
-        "**Using Flutter CLI**: You can also add GetX by running `flutter pub add get` in the terminal.",
-        "**Using Git dependency**: For the latest development version, you can reference the Git repository directly."
+        "**Using Flutter CLI**: Run `flutter pub add get` in your project terminal.",
+        "**Using Git dependency**: For the latest development version, reference the Git repository directly in `pubspec.yaml`:\n```yaml\ndependencies:\n  get:\n    git:\n      url: https://github.com/jonataslaw/getx.git\n```",
+        "**Specifying a specific version**: Replace `^4.6.6` with any version you need (e.g., `4.6.5`)."
       ]
     },
     {
@@ -124,8 +144,23 @@
       "type": "list",
       "value": [
         "**Error: 'GetMaterialApp' not found** – Make sure you imported `package:get/get.dart` and ran `flutter pub get`.",
-        "**Build fails with version conflicts** – Check your `pubspec.lock` and ensure compatibility with other packages.",
-        "**Hot reload not working properly** – Sometimes a full restart (hot restart) is needed after adding GetX."
+        "**Build fails with version conflicts** – Check your `pubspec.lock` for conflicting dependencies; sometimes upgrading all packages helps.",
+        "**Hot reload not working properly** – A full restart (hot restart) may be needed after adding GetX or making changes to the controller.",
+        "**Null safety issues** – GetX 4.x fully supports null safety. Ensure your Flutter SDK is >= 2.10.0.",
+        "**GetX not recognized in IDE** – Try restarting your IDE (VS Code / Android Studio) after `flutter pub get`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices After Installation"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use bindings for dependency management** – Instead of `Get.put` inside widgets, use `Get.lazyPut` inside bindings.",
+        "**Organize controllers into modules** – Group related controllers and views in feature folders.",
+        "**Use `GetView` for cleaner widgets** – Reduces repetitive `Get.find` calls.",
+        "**Enable `permanent: true` only for global services** – Avoid keeping controllers alive unnecessarily."
       ]
     },
     {
@@ -134,7 +169,7 @@
     },
     {
       "type": "text",
-      "value": "Now that GetX is installed and set up, you can explore more advanced features:\n\n- [State Management with GetX](/flutter/getx-state-management)\n- [Navigation with GetX](/flutter/getx-navigation)\n- [Dependency Injection in GetX](/flutter/getx-dependency-injection)\n- [Bindings and App Organization](/flutter/getx-bindings)"
+      "value": "Now that GetX is installed and set up, you can explore more advanced features:\n\n- [State Management with GetX](/flutter/getx-state-management)\n- [Navigation with GetX](/flutter/getx-navigation)\n- [Dependency Injection in GetX](/flutter/getx-dependency-injection)\n- [Bindings and App Organization](/flutter/getx-bindings)\n- [Controllers: Lifecycle and Best Practices](/flutter/getx-controller)"
     },
     {
       "type": "heading",
@@ -147,8 +182,31 @@
         "Replace `MaterialApp` with `GetMaterialApp`.",
         "Import `package:get/get.dart`.",
         "Create controllers by extending `GetxController` and use `.obs` for reactive variables.",
-        "Inject controllers with `Get.put()` and listen to changes with `Obx()`."
+        "Inject controllers with `Get.put()` and listen to changes with `Obx()`.",
+        "Verify installation with `Get.snackbar`."
       ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I need to use GetMaterialApp to use GetX?",
+      "answer": "Yes, GetMaterialApp is required for most GetX features like navigation, snackbars, and dialogs. If you only need state management, you can use GetX without it, but it's recommended to use GetMaterialApp for full functionality."
+    },
+    {
+      "question": "What is the latest version of GetX?",
+      "answer": "The latest stable version as of 2026 is 4.6.6. Always check pub.dev for the most recent version."
+    },
+    {
+      "question": "Can I use GetX with Cupertino?",
+      "answer": "Yes, GetX provides `GetCupertinoApp` for Cupertino-style apps. It works similarly to `GetMaterialApp`."
+    },
+    {
+      "question": "Does GetX work with Flutter web?",
+      "answer": "Yes, GetX fully supports Flutter web. The same installation steps apply."
+    },
+    {
+      "question": "How do I update GetX to the latest version?",
+      "answer": "Update the version in `pubspec.yaml` and run `flutter pub get`. Or run `flutter pub upgrade get`."
     }
   ],
   "tryEditor": {
@@ -189,8 +247,9 @@
   ],
   "related": [
     "getx-introduction",
-    "flutter-getx-state-management",
-    "flutter-getx-navigation",
-    "flutter-getx-bindings"
+    "getx-state-management",
+    "getx-navigation",
+    "getx-bindings",
+    "getx-controller"
   ]
 }

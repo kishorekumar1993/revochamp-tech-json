@@ -3,8 +3,8 @@
   "course": "Flutter",
   "title": "GetX Clean Architecture: Build Scalable Flutter Apps",
   "meta": {
-    "title": "GetX Clean Architecture – Scalable Flutter App Structure",
-    "description": "Learn how to implement Clean Architecture with GetX in Flutter. Organize your app with presentation, domain, and data layers using GetX for dependency injection, state management, and navigation.",
+    "title": "GetX Clean Architecture – Scalable Flutter App Structure (2026)",
+    "description": "Learn how to implement Clean Architecture with GetX in Flutter. Organize your app with presentation, domain, and data layers using GetX for dependency injection, state management, and navigation. Includes code examples and best practices.",
     "keywords": [
       "GetX clean architecture",
       "Flutter clean architecture",
@@ -111,6 +111,24 @@
     },
     {
       "type": "heading",
+      "value": "Comparison: Clean Architecture with GetX vs Standard GetX"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Aspect", "GetX Clean Architecture", "Standard GetX"],
+        "rows": [
+          ["Separation of concerns", "High (3 layers + use cases)", "Medium (UI + controller + service)"],
+          ["Testability", "Excellent (domain isolated)", "Good (services mockable)"],
+          ["Scalability", "Very high", "Medium to high"],
+          ["Learning curve", "Steeper", "Gentle"],
+          ["Boilerplate", "Moderate", "Minimal"],
+          ["Best for", "Large apps, teams", "Small to medium apps"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
       "value": "Benefits of This Approach"
     },
     {
@@ -134,7 +152,8 @@
         "**Use interfaces for repositories** – Allows easy mocking and multiple implementations.",
         "**Make use cases single‑purpose** – One use case per business operation (e.g., `LoginUseCase`, `GetUserUseCase`).",
         "**Inject dependencies via constructor** – Makes testing and replacement trivial.",
-        "**Use bindings for DI** – Avoid scattering `Get.put` inside views."
+        "**Use bindings for DI** – Avoid scattering `Get.put` inside views.",
+        "**Use `Get.lazyPut` for dependencies that may not be used immediately** – Improves startup performance."
       ]
     },
     {
@@ -147,21 +166,8 @@
         "❌ **Putting business logic in controllers** – Controllers should only orchestrate use cases.\n✅ Move logic to use cases.",
         "❌ **Directly calling data sources from presentation** – Violates dependency rule.\n✅ Always go through use cases.",
         "❌ **Tight coupling with GetX in domain** – Reduces testability and flexibility.\n✅ Keep domain GetX‑free.",
-        "❌ **Ignoring dependency injection** – Hardcoding dependencies makes the code rigid.\n✅ Use GetX DI or constructor injection."
-      ]
-    },
-    {
-      "type": "heading",
-      "value": "FAQ"
-    },
-    {
-      "type": "list",
-      "value": [
-        "**Q: Is Clean Architecture overkill for small apps?**  \nA: It can be, but the principles (separation of concerns) always help. For very small apps, a simpler MVVM with GetX may suffice, but Clean Architecture scales seamlessly.",
-        "**Q: How do I handle state with GetX in this architecture?**  \nA: Controllers hold reactive state and call use cases. The UI observes the state with `Obx`.",
-        "**Q: Can I use GetStorage or shared preferences in the data layer?**  \nA: Yes, they belong in the data layer, accessed via repository implementations.",
-        "**Q: How to test the domain layer?**  \nA: Create a mock repository that implements `IUserRepository` and pass it to the use case. No GetX needed.",
-        "**Q: Where do I put navigation logic?**  \nA: In controllers, after a successful use case execution, use `Get.toNamed` or similar."
+        "❌ **Ignoring dependency injection** – Hardcoding dependencies makes the code rigid.\n✅ Use GetX DI or constructor injection.",
+        "❌ **Creating huge use cases** – Violates single responsibility.\n✅ Split into smaller use cases."
       ]
     },
     {
@@ -171,6 +177,32 @@
     {
       "type": "text",
       "value": "Combining GetX with Clean Architecture gives you a robust, testable, and maintainable Flutter application. The clear separation of layers, together with GetX's powerful DI and state management, allows you to focus on business logic while keeping the UI clean and reactive."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Is Clean Architecture overkill for small apps?",
+      "answer": "It can be, but the principles (separation of concerns) always help. For very small apps, a simpler MVVM with GetX may suffice, but Clean Architecture scales seamlessly."
+    },
+    {
+      "question": "How do I handle state with GetX in this architecture?",
+      "answer": "Controllers hold reactive state and call use cases. The UI observes the state with `Obx`."
+    },
+    {
+      "question": "Can I use GetStorage or shared preferences in the data layer?",
+      "answer": "Yes, they belong in the data layer, accessed via repository implementations."
+    },
+    {
+      "question": "How to test the domain layer?",
+      "answer": "Create a mock repository that implements `IUserRepository` and pass it to the use case. No GetX needed."
+    },
+    {
+      "question": "Where do I put navigation logic?",
+      "answer": "In controllers, after a successful use case execution, use `Get.toNamed` or similar."
+    },
+    {
+      "question": "How do I handle complex dependency chains?",
+      "answer": "Use GetX bindings to wire everything. For services that depend on each other, you can use `Get.find` inside the binding."
     }
   ],
   "tryEditor": {

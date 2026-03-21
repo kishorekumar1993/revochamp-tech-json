@@ -3,15 +3,16 @@
   "course": "Flutter",
   "title": "GetX BottomSheet: Persistent & Modal Sheets Without Context",
   "meta": {
-    "title": "GetX BottomSheet – Modal & Persistent Sheets in Flutter",
-    "description": "Learn how to use GetX bottom sheets: Get.bottomSheet, custom height, scroll control, dismissal behavior, and returning values. No BuildContext required.",
+    "title": "GetX BottomSheet – Modal & Persistent Sheets in Flutter (2026)",
+    "description": "Learn how to use GetX bottom sheets: Get.bottomSheet, custom height, scroll control, dismissal behavior, and returning values. No BuildContext required. Includes modal and persistent sheets.",
     "keywords": [
       "GetX bottomsheet",
       "Get.bottomSheet",
       "Flutter bottomsheet",
       "GetX modal sheet",
       "GetX persistent sheet",
-      "context-free bottomsheet"
+      "context-free bottomsheet",
+      "GetX sheet"
     ]
   },
   "content": [
@@ -130,6 +131,24 @@
     },
     {
       "type": "heading",
+      "value": "Comparison: GetX vs Native BottomSheet"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Aspect", "GetX BottomSheet", "Native showModalBottomSheet"],
+        "rows": [
+          ["Requires BuildContext", "No", "Yes"],
+          ["Can be called from controller", "Yes", "No (needs context)"],
+          ["Return value support", "Yes (Future)", "Yes (Future)"],
+          ["Persistent sheet", "Yes (isDismissible: false)", "No (always modal)"],
+          ["Custom shape", "Yes", "Yes"],
+          ["Animation control", "Yes", "Yes"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
       "value": "Best Practices"
     },
     {
@@ -157,26 +176,41 @@
     },
     {
       "type": "heading",
-      "value": "FAQ"
-    },
-    {
-      "type": "list",
-      "value": [
-        "**Q: Can I show a bottom sheet without a `BuildContext`?**  \nA: Yes! That's the primary advantage of GetX bottom sheets.",
-        "**Q: How do I make the sheet expand to full screen?**  \nA: Set `isScrollControlled: true` and give the sheet `height: double.infinity`.",
-        "**Q: Can I have multiple bottom sheets stacked?**  \nA: You can, but the new one will overlay the previous. Dismiss them in reverse order.",
-        "**Q: How to prevent the user from dragging to dismiss?**  \nA: Set `enableDrag: false`.",
-        "**Q: How to make the sheet appear from the left/right?**  \nA: Bottom sheets are always from the bottom. For side sheets, use `Get.dialog` with a custom widget.",
-        "**Q: Can I show a bottom sheet from a `GetxService`?**  \nA: Yes, anywhere."
-      ]
-    },
-    {
-      "type": "heading",
       "value": "Conclusion"
     },
     {
       "type": "text",
       "value": "GetX bottom sheets provide a simple, context‑free API for showing modal and persistent sheets. With extensive customization options and the ability to return values, they are perfect for actions, filters, forms, and more in your Flutter app."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I show a bottom sheet without a `BuildContext`?",
+      "answer": "Yes! That's the primary advantage of GetX bottom sheets. You can call `Get.bottomSheet` from anywhere – controllers, services, or even plain Dart classes."
+    },
+    {
+      "question": "How do I make the sheet expand to full screen?",
+      "answer": "Set `isScrollControlled: true` and give the sheet `height: double.infinity`."
+    },
+    {
+      "question": "Can I have multiple bottom sheets stacked?",
+      "answer": "You can, but the new one will overlay the previous. Dismiss them in reverse order by calling `Get.back()` for each."
+    },
+    {
+      "question": "How to prevent the user from dragging to dismiss?",
+      "answer": "Set `enableDrag: false`."
+    },
+    {
+      "question": "How to make the sheet appear from the left/right?",
+      "answer": "Bottom sheets are always from the bottom. For side sheets, use `Get.dialog` with a custom widget that slides in from the side."
+    },
+    {
+      "question": "Can I show a bottom sheet from a `GetxService`?",
+      "answer": "Yes, anywhere."
+    },
+    {
+      "question": "How do I close a bottom sheet programmatically?",
+      "answer": "Call `Get.back()` from anywhere inside the sheet's widget tree."
     }
   ],
   "tryEditor": {
@@ -203,6 +237,16 @@
       "question": "How do you prevent the user from dismissing a bottom sheet by tapping outside?",
       "options": ["set `isDismissible: false`", "set `dismissOnTap: false`", "set `barrierDismissible: false`", "set `enableDrag: false`"],
       "answer": 0
+    },
+    {
+      "question": "What is a key advantage of GetX bottom sheet over native Flutter bottom sheet?",
+      "options": [
+        "Better animations",
+        "No BuildContext required",
+        "Supports more platforms",
+        "Automatically dismisses after timeout"
+      ],
+      "answer": 1
     }
   ],
   "related": [

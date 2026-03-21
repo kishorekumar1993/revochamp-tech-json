@@ -1,0 +1,238 @@
+{
+  "slug": "bloc-selector",
+  "course": "Flutter",
+  "title": "BlocSelector: Optimized State Selection in Flutter Bloc",
+  "meta": {
+    "title": "Flutter BlocSelector – Optimized Rebuilds Guide (2026)",
+    "description": "Learn how to use BlocSelector to rebuild only when specific parts of the state change. Improve performance, reduce unnecessary rebuilds, and write efficient Flutter Bloc code.",
+    "keywords": [
+      "flutter blocselector",
+      "bloc selector",
+      "bloc performance",
+      "flutter bloc rebuild optimization",
+      "context.select"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "9 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "blocselector", "performance", "optimization"],
+  "content": [
+    {
+      "type": "text",
+      "value": "When your state objects become complex, rebuilding the entire UI on every state change can hurt performance. `BlocSelector` solves this by allowing you to listen to only the specific parts of the state that your widget cares about. It rebuilds only when the selected value changes, making your app faster and more efficient."
+    },
+    {
+      "type": "heading",
+      "value": "What is BlocSelector?"
+    },
+    {
+      "type": "text",
+      "value": "`BlocSelector<Bloc, State, Selected>` is a Flutter widget that rebuilds only when the selected value changes. It takes a selector function that extracts a part of the state, and a builder that receives the selected value. Unlike `BlocBuilder`, which rebuilds on any state change, `BlocSelector` gives you fine‑grained control over rebuilds."
+    },
+    {
+      "type": "highlight",
+      "value": "BlocSelector → Selects part of state → Rebuilds only when selected part changes"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use BlocSelector"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Large state objects** – When state has many fields and you only need a few.",
+        "**Frequent state changes** – To avoid rebuilding expensive widgets.",
+        "**Performance‑critical screens** – Lists, animations, or complex forms.",
+        "**Independent UI components** – When widgets depend on different parts of the same state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "Define a selector function that returns the part of the state you need. The builder receives the selected value and returns a widget. The widget rebuilds only when the selected value changes (based on `==` equality)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocSelector<UserBloc, UserState, String>(\n  selector: (state) => state.user.name,\n  builder: (context, name) {\n    return Text('Hello, $name');\n  },\n)"
+    },
+    {
+      "type": "text",
+      "value": "In this example, the `Text` widget rebuilds only when the user's name changes, not when other fields like `email` or `age` change."
+    },
+    {
+      "type": "heading",
+      "value": "Comparing BlocSelector with Other Approaches"
+    },
+    {
+      "type": "subheading",
+      "value": "BlocBuilder (full rebuild)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Rebuilds on ANY state change\nBlocBuilder<UserBloc, UserState>(\n  builder: (context, state) {\n    return Text('Hello, ${state.user.name}');\n  },\n)"
+    },
+    {
+      "type": "subheading",
+      "value": "BlocSelector (partial rebuild)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Rebuilds only when name changes\nBlocSelector<UserBloc, UserState, String>(\n  selector: (state) => state.user.name,\n  builder: (context, name) {\n    return Text('Hello, $name');\n  },\n)"
+    },
+    {
+      "type": "subheading",
+      "value": "context.select (alternative)"
+    },
+    {
+      "type": "text",
+      "value": "You can achieve similar behaviour using `context.select` inside a `BlocBuilder` or a custom widget, but `BlocSelector` is the dedicated widget for this purpose and often more readable."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Using context.select inside a Builder\nBuilder(\n  builder: (context) {\n    final name = context.select((UserBloc bloc) => bloc.state.user.name);\n    return Text('Hello, $name');\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Example"
+    },
+    {
+      "type": "text",
+      "value": "Consider a `Dashboard` screen with a complex `DashboardState` containing user profile, notifications, and settings. Different widgets need different parts of the state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DashboardState extends Equatable {\n  final User user;\n  final List<Notification> notifications;\n  final bool darkMode;\n  // ... many other fields\n\n  DashboardState({required this.user, required this.notifications, required this.darkMode});\n\n  @override\n  List<Object> get props => [user, notifications, darkMode];\n}\n\n// Widget that shows only the user's avatar\nBlocSelector<DashboardBloc, DashboardState, String>(\n  selector: (state) => state.user.avatarUrl,\n  builder: (context, avatarUrl) {\n    return CircleAvatar(backgroundImage: NetworkImage(avatarUrl));\n  },\n)\n\n// Widget that shows only the unread count\nBlocSelector<DashboardBloc, DashboardState, int>(\n  selector: (state) => state.notifications.where((n) => !n.isRead).length,\n  builder: (context, unreadCount) {\n    return Badge(label: Text('$unreadCount'), child: Icon(Icons.notifications));\n  },\n)\n\n// Widget that rebuilds only when darkMode changes\nBlocSelector<DashboardBloc, DashboardState, bool>(\n  selector: (state) => state.darkMode,\n  builder: (context, isDarkMode) {\n    return Switch(value: isDarkMode, onChanged: (value) {});\n  },\n)"
+    },
+    {
+      "type": "note",
+      "value": "For `BlocSelector` to work correctly, your state must implement proper equality (use `Equatable`). The selector's return value is compared with the previous value using `==`. If the objects are equal (based on their properties), the builder won't run."
+    },
+    {
+      "type": "heading",
+      "value": "BlocSelector with Complex Selections"
+    },
+    {
+      "type": "text",
+      "value": "The selector can return any type, including custom objects. However, ensure those objects are immutable and implement equality (Equatable) to avoid false positives."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Select a custom object\nBlocSelector<CartBloc, CartState, CartItem?>(\n  selector: (state) => state.items.firstWhereOrNull((item) => item.id == productId),\n  builder: (context, item) {\n    return Text('Quantity: ${item?.quantity ?? 0}');\n  },\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Benefits"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Fewer rebuilds** – Only widgets that depend on changed data rebuild.",
+        "**Better frame rates** – Reduces layout and painting work, especially on low‑end devices.",
+        "**Cleaner separation** – Each widget explicitly declares its dependencies.",
+        "**Easier debugging** – You can trace exactly why a widget rebuilt by checking the selected value."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `BlocSelector` for widgets that depend on a small part of the state** – Avoid passing the entire state to a widget that only needs one field.",
+        "**Combine with `Equatable`** – Always extend `Equatable` on your state classes to enable correct equality checks.",
+        "**Keep selectors simple** – If a selector becomes complex, move it to a method or a getter on the state class.",
+        "**Use `BlocSelector` inside `ListView.builder` items** – Prevents rebuilding the entire list when one item's data changes.",
+        "**Prefer `BlocSelector` over manual `context.select` inside `build`** – It's more declarative and easier to read."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not using `Equatable`** – The selector's return value will be compared by reference, causing unnecessary rebuilds even when data is the same.",
+        "❌ **Selecting a mutable object** – If the selected object is mutated (not replaced), equality won't detect changes. Always use immutable state.",
+        "❌ **Selecting the entire state** – That defeats the purpose; use `BlocBuilder` instead if you need the whole state.",
+        "❌ **Over‑optimizing prematurely** – For small states, `BlocBuilder` is fine; use `BlocSelector` when performance issues appear.",
+        "❌ **Forgetting to include the selected value in the builder** – The builder receives only the selected value, not the full state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you know how to optimise rebuilds, explore other Bloc widgets like `BlocListener` for side effects and `BlocConsumer` for combined builder and listener patterns."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [BlocListener](/bloc-listener) and [BlocConsumer](/bloc-consumer)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between BlocSelector and BlocBuilder?",
+      "answer": "`BlocBuilder` rebuilds its child on every state change. `BlocSelector` rebuilds only when the selected part of the state changes. This makes `BlocSelector` more efficient for complex states where only specific fields are needed."
+    },
+    {
+      "question": "Can I use BlocSelector with Cubit?",
+      "answer": "Yes, `BlocSelector` works with any `Bloc` or `Cubit`. The selector receives the current state from the cubit, and the builder rebuilds when the selected value changes."
+    },
+    {
+      "question": "How does BlocSelector compare values?",
+      "answer": "It uses the `==` operator on the selected value. For custom objects, you should implement `==` and `hashCode` (or use `Equatable`) to ensure correct comparison. Primitives like `int`, `String`, and `bool` work out of the box."
+    },
+    {
+      "question": "Can I select multiple fields?",
+      "answer": "Yes, you can select a composite object (e.g., a tuple or a custom class containing multiple fields). However, ensure that object implements equality correctly, or it may cause unnecessary rebuilds. Alternatively, use multiple `BlocSelector` widgets for each field."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "What is the primary benefit of using BlocSelector over BlocBuilder?",
+      "options": [
+        "It automatically handles errors",
+        "It reduces unnecessary widget rebuilds",
+        "It provides a simpler API",
+        "It works with multiple blocs"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which package is essential for correct equality checks in BlocSelector?",
+      "options": ["bloc_concurrency", "equatable", "flutter_bloc", "provider"],
+      "answer": 1
+    },
+    {
+      "question": "When should you consider using BlocSelector?",
+      "options": [
+        "For every widget that uses a bloc",
+        "Only when using Cubit",
+        "When state objects are large and only small parts are needed",
+        "When you need to handle side effects"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "bloc-builder",
+    "bloc-consumer",
+    "bloc-listener",
+    "bloc-provider",
+    "bloc-architecture"
+  ]
+}

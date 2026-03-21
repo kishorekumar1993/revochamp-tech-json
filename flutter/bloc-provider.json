@@ -1,0 +1,266 @@
+{
+  "slug": "bloc-provider",
+  "course": "Flutter",
+  "title": "BlocProvider: Dependency Injection for Flutter Bloc",
+  "meta": {
+    "title": "Flutter BlocProvider – Complete Guide (2026)",
+    "description": "Learn how to use BlocProvider, BlocProvider.value, and MultiBlocProvider to inject blocs into the widget tree. Scope, lifecycle, and best practices for dependency injection in Flutter.",
+    "keywords": [
+      "flutter blocprovider",
+      "bloc provider",
+      "multiblocprovider",
+      "bloc dependency injection",
+      "flutter bloc scope",
+      "blocprovider.value"
+    ]
+  },
+  "level": "Intermediate",
+  "readingTime": "9 min",
+  "lastUpdated": "2026-03-21",
+  "tags": ["bloc", "flutter", "blocprovider", "dependency-injection"],
+  "content": [
+    {
+      "type": "text",
+      "value": "`BlocProvider` is a Flutter widget that provides a bloc to its descendants. It handles the lifecycle of the bloc, automatically closing it when no longer needed. This guide explains how to use `BlocProvider` effectively, from basic setup to advanced scoping strategies."
+    },
+    {
+      "type": "heading",
+      "value": "What is BlocProvider?"
+    },
+    {
+      "type": "text",
+      "value": "`BlocProvider` is a dependency injection (DI) widget that makes a bloc instance available to all widgets in its subtree. It uses Flutter's `InheritedWidget` mechanism under the hood, ensuring that you can access the same bloc instance from anywhere below it."
+    },
+    {
+      "type": "highlight",
+      "value": "BlocProvider → Provides Bloc → All descendants can access it"
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "text",
+      "value": "Wrap a part of your widget tree with `BlocProvider` and provide a bloc via the `create` parameter. The bloc will be created once when the provider is first inserted."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocProvider(\n  create: (context) => CounterBloc(),\n  child: CounterPage(),\n)"
+    },
+    {
+      "type": "text",
+      "value": "Inside the child widgets, access the bloc using `context.read<CounterBloc>()` or `context.watch<CounterBloc>()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      body: Center(\n        child: Text(\n          'Value: ${context.watch<CounterBloc>().state.value}',\n        ),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: () => context.read<CounterBloc>().add(IncrementPressed()),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "BlocProvider vs BlocProvider.value"
+    },
+    {
+      "type": "text",
+      "value": "There are two ways to create a `BlocProvider`:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "`BlocProvider(create: ...)` – creates a new bloc instance and automatically closes it when the provider is removed.",
+        "`BlocProvider.value(...)` – provides an existing bloc instance. Use this when the bloc is already created elsewhere (e.g., in a parent provider)."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Use create when you want a new instance\nBlocProvider(\n  create: (_) => CounterBloc(),\n  child: MyWidget(),\n)\n\n// Use value when you have an existing instance\nBlocProvider.value(\n  value: existingBloc,\n  child: MyWidget(),\n)"
+    },
+    {
+      "type": "note",
+      "value": "`BlocProvider.value` does NOT close the bloc automatically. It's your responsibility to close it (usually the original creator will close it)."
+    },
+    {
+      "type": "heading",
+      "value": "MultiBlocProvider"
+    },
+    {
+      "type": "text",
+      "value": "When you need to provide multiple blocs, use `MultiBlocProvider` to avoid nesting. It takes a list of providers and a single child."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "MultiBlocProvider(\n  providers: [\n    BlocProvider<AuthBloc>(create: (context) => AuthBloc()),\n    BlocProvider<ProfileBloc>(create: (context) => ProfileBloc()),\n    BlocProvider<SettingsBloc>(create: (context) => SettingsBloc()),\n  ],\n  child: MyApp(),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Scoping Blocs"
+    },
+    {
+      "type": "text",
+      "value": "The placement of `BlocProvider` determines the scope of the bloc. Blocs are available only to descendants of the provider. This allows you to create isolated blocs for specific parts of your app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Global scope\nMaterialApp(\n  home: BlocProvider(\n    create: (_) => AuthBloc(),\n    child: HomePage(),\n  ),\n)\n\n// Feature-specific scope\nclass FeaturePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocProvider(\n      create: (_) => FeatureBloc(),\n      child: FeatureContent(),\n    );\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "When a widget needs a bloc that is not provided in its context, you'll get a `ProviderNotFoundException`. Ensure the bloc is provided at or above the widget that needs it."
+    },
+    {
+      "type": "heading",
+      "value": "Accessing Blocs"
+    },
+    {
+      "type": "subheading",
+      "value": "context.read<T>()"
+    },
+    {
+      "type": "text",
+      "value": "Gets the bloc without listening to state changes. Use this for adding events or calling methods."
+    },
+    {
+      "type": "subheading",
+      "value": "context.watch<T>()"
+    },
+    {
+      "type": "text",
+      "value": "Gets the bloc and listens to state changes. The widget will rebuild whenever the state changes. Use this in `build` methods to display state."
+    },
+    {
+      "type": "subheading",
+      "value": "context.select<T, R>(R selector)"
+    },
+    {
+      "type": "text",
+      "value": "Listens only to a specific part of the state. The widget rebuilds only when the selected value changes. This is more efficient than `watch` for complex states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Rebuilds only when the counter value changes\nfinal count = context.select((CounterBloc bloc) => bloc.state.value);\n\n// Rebuilds only when the user name changes\nfinal name = context.select((ProfileBloc bloc) => bloc.state.user.name);"
+    },
+    {
+      "type": "heading",
+      "value": "Lifecycle Management"
+    },
+    {
+      "type": "text",
+      "value": "Blocs created with `BlocProvider(create: ...)` are automatically closed when the provider is removed from the tree. This prevents memory leaks. You should never manually close blocs provided this way."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyWidget extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocProvider(\n      create: (context) => MyBloc(), // Auto-closed when MyWidget is removed\n      child: ...\n    );\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "If you need to keep a bloc alive across route changes, provide it at a higher level (e.g., above `MaterialApp`)."
+    },
+    {
+      "type": "heading",
+      "value": "Testing with BlocProvider"
+    },
+    {
+      "type": "text",
+      "value": "In widget tests, you can use `BlocProvider` to inject mock blocs."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "testWidgets('displays counter value', (tester) async {\n  final mockBloc = MockCounterBloc();\n  whenListen(mockBloc, Stream.value(CounterState(5)));\n\n  await tester.pumpWidget(\n    MaterialApp(\n      home: BlocProvider.value(\n        value: mockBloc,\n        child: CounterPage(),\n      ),\n    ),\n  );\n\n  expect(find.text('Value: 5'), findsOneWidget);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Provide blocs at the highest level needed** – Not globally unless necessary.",
+        "**Use `MultiBlocProvider` for multiple blocs** – Avoids deep nesting.",
+        "**Prefer `create` over `value`** – Let BlocProvider handle lifecycle automatically.",
+        "**Use `context.read` for events, `context.watch` for state** – Clear separation.",
+        "**Use `context.select` for performance** – Avoid unnecessary rebuilds in large widgets.",
+        "**Keep blocs scoped to features** – Prevents namespace pollution and accidental misuse."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Creating a bloc inside `build`** – Use `BlocProvider` or `BlocProvider.value` to share instances.",
+        "❌ **Using `BlocProvider.value` for new instances** – Use `create` instead to get auto‑close.",
+        "❌ **Providing a bloc too low** – The bloc is not available to widgets that need it.",
+        "❌ **Accessing bloc with `read` inside `build`** – Won't rebuild on state changes; use `watch` or `select`.",
+        "❌ **Not providing a bloc before using it** – Leads to `ProviderNotFoundException`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "What's Next?"
+    },
+    {
+      "type": "text",
+      "value": "Now that you know how to inject blocs, learn how to emit states effectively and test your blocs."
+    },
+    {
+      "type": "text",
+      "value": "Next, explore [Bloc emit patterns](/bloc-emit) and [Bloc testing](/bloc-testing)."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between BlocProvider and BlocProvider.value?",
+      "answer": "`BlocProvider(create:)` creates a new bloc instance and automatically closes it when the provider is removed. `BlocProvider.value:` uses an existing bloc and does not close it automatically. Use `create` for new instances; use `value` for sharing existing blocs (e.g., from a parent)."
+    },
+    {
+      "question": "Can I use BlocProvider without MultiBlocProvider for multiple blocs?",
+      "answer": "Yes, you can nest BlocProviders. However, `MultiBlocProvider` is more readable and avoids deep nesting. It's recommended when providing three or more blocs."
+    },
+    {
+      "question": "How do I access a bloc from a nested route?",
+      "answer": "Ensure the `BlocProvider` is placed above the `Navigator`. For example, wrap `MaterialApp` with the provider, or wrap the route's builder with a provider if you need a fresh instance per route."
+    },
+    {
+      "question": "Why do I get ProviderNotFoundException?",
+      "answer": "It means you tried to access a bloc that hasn't been provided in the current context. Check that you have a `BlocProvider` for that bloc above the widget that is trying to access it."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "Which widget should you use to provide multiple blocs without nesting?",
+      "options": ["BlocBuilder", "BlocListener", "MultiBlocProvider", "BlocConsumer"],
+      "answer": 2
+    },
+    {
+      "question": "What happens to a bloc created with BlocProvider(create: ...) when the provider is removed?",
+      "options": [
+        "It remains in memory",
+        "It is automatically closed",
+        "It throws an exception",
+        "It continues to listen to events"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method should you use to listen to state changes and rebuild only when a specific field changes?",
+      "options": ["context.read", "context.watch", "context.select", "BlocBuilder"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "bloc-introduction",
+    "bloc-installation",
+    "bloc-bloc-class",
+    "bloc-emit",
+    "bloc-testing"
+  ]
+}

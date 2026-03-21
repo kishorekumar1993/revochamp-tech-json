@@ -1,0 +1,266 @@
+{
+  "slug": "bloc-upload-download",
+  "course": "Flutter",
+  "title": "BLoC File Upload & Download: Progress Tracking & Cancellation",
+  "meta": {
+    "title": "BLoC File Upload & Download – Progress Tracking & Cancellation in Flutter (2026)",
+    "description": "Learn how to handle file uploads and downloads with BLoC in Flutter. Track progress, cancel requests, manage errors, and build responsive UIs using dio and flutter_bloc.",
+    "keywords": [
+      "bloc file upload",
+      "bloc file download",
+      "flutter upload progress",
+      "download progress bloc",
+      "cancel request bloc",
+      "dio upload",
+      "flutter_bloc upload"
+    ]
+  },
+  "level": "Advanced",
+  "readingTime": "14 min",
+  "lastUpdated": "2026-03-21",
+  "difficulty": "Advanced",
+  "tags": ["bloc", "upload", "download", "dio", "progress", "cancellation"],
+  "content": [
+    {
+      "type": "text",
+      "value": "File upload and download are common tasks in many Flutter apps. Managing progress, cancellations, and errors while keeping the UI responsive can be challenging. By combining BLoC with Dio (or `http`), you can build a clean, reactive system that handles upload/download operations with ease. This guide covers everything from setting up a repository with progress tracking to managing cancellation and showing real‑time progress in the UI."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use BLoC for Upload/Download?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Reactive UI** – Progress updates automatically drive UI changes.",
+        "**Separation of concerns** – Network logic stays in repositories, UI only reacts to state.",
+        "**Cancellation support** – BLoC can easily cancel ongoing requests.",
+        "**Error handling** – Dedicated error states provide user feedback.",
+        "**Testability** – Repositories and blocs can be unit‑tested with mocked clients."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Dependencies"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter:\n    sdk: flutter\n  flutter_bloc: ^8.1.5\n  equatable: ^2.0.5\n  dio: ^5.4.0\n  get_it: ^7.6.7\n  file_picker: ^6.0.0  # for picking files\n  path_provider: ^2.1.0\n  permission_handler: ^11.0.0"
+    },
+    {
+      "type": "heading",
+      "value": "1. Upload Implementation"
+    },
+    {
+      "type": "subheading",
+      "value": "Repository with Upload Progress"
+    },
+    {
+      "type": "text",
+      "value": "We'll create a repository that uses Dio to upload a file. The repository will expose a stream for progress updates and return a `Future` that completes when the upload finishes."
+    },
+    {
+      "type": "code",
+      "title": "repositories/upload_repository.dart",
+      "language": "dart",
+      "value": "import 'package:dio/dio.dart';\nimport 'package:path/path.dart' as path;\n\nabstract class UploadRepository {\n  Future<String> uploadFile(String filePath, Function(double progress) onProgress);\n  void cancelUpload();\n}\n\nclass UploadRepositoryImpl implements UploadRepository {\n  final Dio dio;\n  CancelToken? _cancelToken;\n\n  UploadRepositoryImpl(this.dio);\n\n  @override\n  Future<String> uploadFile(String filePath, Function(double progress) onProgress) async {\n    _cancelToken = CancelToken();\n    final file = await MultipartFile.fromFile(filePath,\n        filename: path.basename(filePath));\n    final formData = FormData.fromMap({\n      'file': file,\n    });\n\n    try {\n      final response = await dio.post(\n        'https://your-api.com/upload',\n        data: formData,\n        cancelToken: _cancelToken,\n        onSendProgress: (sent, total) {\n          final progressPercent = sent / total;\n          onProgress(progressPercent);\n        },\n      );\n      return response.data['url'] as String;\n    } catch (e) {\n      if (CancelToken.isCancel(e)) {\n        throw Exception('Upload cancelled');\n      }\n      rethrow;\n    } finally {\n      _cancelToken = null;\n    }\n  }\n\n  @override\n  void cancelUpload() {\n    _cancelToken?.cancel('Upload cancelled by user');\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Upload States & Events"
+    },
+    {
+      "type": "code",
+      "title": "bloc/upload_state.dart",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nabstract class UploadState extends Equatable {\n  const UploadState();\n  @override List<Object?> get props => [];\n}\n\nclass UploadInitial extends UploadState {}\n\nclass UploadInProgress extends UploadState {\n  final double progress;\n  const UploadInProgress(this.progress);\n  @override List<Object?> get props => [progress];\n}\n\nclass UploadSuccess extends UploadState {\n  final String url;\n  const UploadSuccess(this.url);\n  @override List<Object?> get props => [url];\n}\n\nclass UploadFailure extends UploadState {\n  final String message;\n  const UploadFailure(this.message);\n  @override List<Object?> get props => [message];\n}"
+    },
+    {
+      "type": "code",
+      "title": "bloc/upload_event.dart",
+      "language": "dart",
+      "value": "import 'package:equatable/equatable.dart';\n\nabstract class UploadEvent extends Equatable {\n  const UploadEvent();\n  @override List<Object?> get props => [];\n}\n\nclass StartUpload extends UploadEvent {\n  final String filePath;\n  const StartUpload(this.filePath);\n  @override List<Object?> get props => [filePath];\n}\n\nclass CancelUpload extends UploadEvent {}"
+    },
+    {
+      "type": "subheading",
+      "value": "Upload Bloc"
+    },
+    {
+      "type": "code",
+      "title": "bloc/upload_bloc.dart",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\nimport '../../repositories/upload_repository.dart';\nimport 'upload_event.dart';\nimport 'upload_state.dart';\n\nclass UploadBloc extends Bloc<UploadEvent, UploadState> {\n  final UploadRepository repository;\n\n  UploadBloc(this.repository) : super(UploadInitial()) {\n    on<StartUpload>(_onStartUpload);\n    on<CancelUpload>(_onCancelUpload);\n  }\n\n  Future<void> _onStartUpload(StartUpload event, Emitter<UploadState> emit) async {\n    emit(UploadInProgress(0.0));\n    try {\n      final url = await repository.uploadFile(\n        event.filePath,\n        (progress) => add(UploadProgressEvent(progress)), // custom internal event\n      );\n      emit(UploadSuccess(url));\n    } catch (e) {\n      emit(UploadFailure(e.toString()));\n    }\n  }\n\n  void _onCancelUpload(CancelUpload event, Emitter<UploadState> emit) {\n    repository.cancelUpload();\n    emit(UploadInitial());\n  }\n\n  // Internal event for progress updates (optional, can be done via stream inside repository)\n  void updateProgress(double progress) {\n    if (state is UploadInProgress) {\n      emit(UploadInProgress(progress));\n    }\n  }\n}\n\n// Alternative: use a stream inside the repository to emit progress"
+    },
+    {
+      "type": "heading",
+      "value": "2. Download Implementation"
+    },
+    {
+      "type": "subheading",
+      "value": "Download Repository"
+    },
+    {
+      "type": "code",
+      "title": "repositories/download_repository.dart",
+      "language": "dart",
+      "value": "import 'package:dio/dio.dart';\nimport 'dart:io';\n\nabstract class DownloadRepository {\n  Future<String> downloadFile(String url, String savePath, Function(double) onProgress);\n  void cancelDownload();\n}\n\nclass DownloadRepositoryImpl implements DownloadRepository {\n  final Dio dio;\n  CancelToken? _cancelToken;\n\n  DownloadRepositoryImpl(this.dio);\n\n  @override\n  Future<String> downloadFile(String url, String savePath, Function(double) onProgress) async {\n    _cancelToken = CancelToken();\n    try {\n      await dio.download(\n        url,\n        savePath,\n        cancelToken: _cancelToken,\n        onReceiveProgress: (received, total) {\n          if (total != -1) {\n            final progress = received / total;\n            onProgress(progress);\n          }\n        },\n      );\n      return savePath;\n    } catch (e) {\n      if (CancelToken.isCancel(e)) {\n        throw Exception('Download cancelled');\n      }\n      rethrow;\n    } finally {\n      _cancelToken = null;\n    }\n  }\n\n  @override\n  void cancelDownload() {\n    _cancelToken?.cancel('Download cancelled by user');\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Download States & Events"
+    },
+    {
+      "type": "code",
+      "title": "bloc/download_state.dart",
+      "language": "dart",
+      "value": "abstract class DownloadState extends Equatable {\n  const DownloadState();\n  @override List<Object?> get props => [];\n}\n\nclass DownloadInitial extends DownloadState {}\n\nclass DownloadInProgress extends DownloadState {\n  final double progress;\n  const DownloadInProgress(this.progress);\n  @override List<Object?> get props => [progress];\n}\n\nclass DownloadSuccess extends DownloadState {\n  final String filePath;\n  const DownloadSuccess(this.filePath);\n  @override List<Object?> get props => [filePath];\n}\n\nclass DownloadFailure extends DownloadState {\n  final String message;\n  const DownloadFailure(this.message);\n  @override List<Object?> get props => [message];\n}"
+    },
+    {
+      "type": "code",
+      "title": "bloc/download_event.dart",
+      "language": "dart",
+      "value": "abstract class DownloadEvent extends Equatable {\n  const DownloadEvent();\n  @override List<Object?> get props => [];\n}\n\nclass StartDownload extends DownloadEvent {\n  final String url;\n  final String savePath;\n  const StartDownload(this.url, this.savePath);\n  @override List<Object?> get props => [url, savePath];\n}\n\nclass CancelDownload extends DownloadEvent {}"
+    },
+    {
+      "type": "subheading",
+      "value": "Download Bloc"
+    },
+    {
+      "type": "code",
+      "title": "bloc/download_bloc.dart",
+      "language": "dart",
+      "value": "class DownloadBloc extends Bloc<DownloadEvent, DownloadState> {\n  final DownloadRepository repository;\n\n  DownloadBloc(this.repository) : super(DownloadInitial()) {\n    on<StartDownload>(_onStartDownload);\n    on<CancelDownload>(_onCancelDownload);\n  }\n\n  Future<void> _onStartDownload(StartDownload event, Emitter<DownloadState> emit) async {\n    emit(DownloadInProgress(0.0));\n    try {\n      final filePath = await repository.downloadFile(\n        event.url,\n        event.savePath,\n        (progress) => add(DownloadProgressEvent(progress)), // internal\n      );\n      emit(DownloadSuccess(filePath));\n    } catch (e) {\n      emit(DownloadFailure(e.toString()));\n    }\n  }\n\n  void _onCancelDownload(CancelDownload event, Emitter<DownloadState> emit) {\n    repository.cancelDownload();\n    emit(DownloadInitial());\n  }\n\n  void updateProgress(double progress) {\n    if (state is DownloadInProgress) {\n      emit(DownloadInProgress(progress));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "UI Integration"
+    },
+    {
+      "type": "text",
+      "value": "Now we can use these blocs in our UI. For upload, we can pick a file and start the upload with progress indicator and cancel button."
+    },
+    {
+      "type": "code",
+      "title": "upload_page.dart",
+      "language": "dart",
+      "value": "class UploadPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Upload File')),\n      body: BlocConsumer<UploadBloc, UploadState>(\n        listener: (context, state) {\n          if (state is UploadSuccess) {\n            ScaffoldMessenger.of(context).showSnackBar(\n              SnackBar(content: Text('Uploaded: ${state.url}')),\n            );\n          }\n          if (state is UploadFailure) {\n            ScaffoldMessenger.of(context).showSnackBar(\n              SnackBar(content: Text(state.message)),\n            );\n          }\n        },\n        builder: (context, state) {\n          if (state is UploadInProgress) {\n            return Center(\n              child: Column(\n                mainAxisAlignment: MainAxisAlignment.center,\n                children: [\n                  LinearProgressIndicator(value: state.progress),\n                  SizedBox(height: 10),\n                  Text('${(state.progress * 100).toStringAsFixed(0)}%'),\n                  ElevatedButton(\n                    onPressed: () => context.read<UploadBloc>().add(CancelUpload()),\n                    child: Text('Cancel'),\n                  ),\n                ],\n              ),\n            );\n          }\n          return Center(\n            child: ElevatedButton(\n              onPressed: () async {\n                final result = await FilePicker.platform.pickFiles();\n                if (result != null) {\n                  context.read<UploadBloc>().add(StartUpload(result.files.single.path!));\n                }\n              },\n              child: Text('Pick File and Upload'),\n            ),\n          );\n        },\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Multiple Files"
+    },
+    {
+      "type": "text",
+      "value": "For multiple uploads/downloads, you may want to have separate blocs per item or keep a list of states in a single bloc. Using a map of `CancelToken`s and progress streams can help manage concurrent operations."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Example: Managing multiple uploads\nclass MultiUploadState {\n  final Map<String, UploadStatus> statuses; // key = file name\n}\n\n// You can use a map of CancelTokens in the repository and use an ID to cancel specific uploads."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `CancelToken`** – Always allow cancellation for long‑running uploads/downloads.",
+        "**Handle network errors** – Show user‑friendly messages and allow retry.",
+        "**Provide progress feedback** – Use `LinearProgressIndicator` or similar to keep users informed.",
+        "**Dispose of resources** – Cancel any pending requests in `dispose` of the bloc or widget.",
+        "**Use `Equatable`** – To avoid unnecessary UI rebuilds.",
+        "**Test with mocked Dio** – Use `MockClient` or `Dio` with `HttpClientAdapter` for testing.",
+        "**Request permissions** – For Android, you may need `WRITE_EXTERNAL_STORAGE` or scoped storage permissions for downloads."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not cancelling tokens when the screen is disposed** – May cause memory leaks or crashes.\n✅ Cancel in `close()` or dispose of bloc.",
+        "❌ **Not handling `CancelToken.isCancel`** – May show error messages for cancelled requests.\n✅ Check and handle gracefully.",
+        "❌ **Not checking storage permissions** – Download may fail on Android 10+.\n✅ Request permissions or use scoped storage.",
+        "❌ **Blocking UI with large files** – Use `onSendProgress` and `onReceiveProgress` to keep UI responsive.",
+        "❌ **Using `setState` inside progress callbacks** – May cause rebuilds outside the widget tree.\n✅ Emit states from the bloc and rebuild via `BlocBuilder`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "BLoC provides an elegant way to handle file uploads and downloads in Flutter. By combining it with Dio's progress and cancellation capabilities, you can build responsive, user‑friendly interfaces that keep the user informed about long‑running operations. The pattern scales well for multiple files and can be easily tested. Remember to always provide feedback and cancellation options for a great user experience."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use `http` instead of `dio` for upload/download with progress?",
+      "answer": "The built-in `http` package does not support progress callbacks. You would need to use `dio` or `http` with custom streaming. Dio is recommended for such use cases."
+    },
+    {
+      "question": "How do I save files to external storage on Android?",
+      "answer": "On Android 10+, you should use scoped storage. You can use `path_provider` to get a directory like `getExternalStorageDirectory()` and request appropriate permissions. Alternatively, use `file_picker` to let the user choose a save location."
+    },
+    {
+      "question": "How to handle upload of very large files?",
+      "answer": "Use `dio` with `onSendProgress` to monitor progress. You might also consider chunked uploads or using a background service to keep the upload alive if the app is backgrounded."
+    },
+    {
+      "question": "How to test upload/download blocs?",
+      "answer": "Use `bloc_test` and mock the repository. You can simulate progress callbacks and verify that states are emitted correctly. For integration tests, you can use a local test server."
+    },
+    {
+      "question": "Can I show multiple simultaneous uploads in a list?",
+      "answer": "Yes. You can have a single bloc that holds a list of upload items, each with its own progress and cancel token. Each item can be identified by a unique ID, and you can update its status accordingly."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "comment": "File operations and network calls are not suitable for the interactive editor."
+  },
+  "quiz": [
+    {
+      "question": "What is the purpose of `CancelToken` in Dio?",
+      "options": [
+        "To authenticate requests",
+        "To cancel ongoing requests",
+        "To set request timeouts",
+        "To add headers"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you update UI with upload progress using BLoC?",
+      "options": [
+        "By calling `setState` inside the progress callback",
+        "By emitting a new state with the progress value",
+        "By using a `StreamBuilder` directly",
+        "By passing a callback to the widget"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What should you do in the bloc's `close` method for an ongoing upload?",
+      "options": [
+        "Nothing, it's automatic",
+        "Cancel the upload using the repository's cancel method",
+        "Wait for the upload to finish",
+        "Restart the upload"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "bloc-api-integration",
+    "bloc-state-management",
+    "flutter-dio",
+    "flutter-file-upload",
+    "bloc-error-handling"
+  ]
+}
