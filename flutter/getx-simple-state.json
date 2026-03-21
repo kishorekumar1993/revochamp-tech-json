@@ -1,0 +1,205 @@
+{
+  "slug": "getx-simple-state",
+  "course": "Flutter",
+  "title": "GetX Simple State Management: GetBuilder & update() Guide",
+  "meta": {
+    "title": "GetX Simple State Management – GetBuilder and update() Explained",
+    "description": "Learn simple state management in GetX using GetBuilder and update(). Perfect for performance-critical parts of your Flutter app. Includes examples, best practices, and when to use vs reactive state.",
+    "keywords": [
+      "GetX simple state",
+      "GetBuilder",
+      "update method GetX",
+      "GetX state management",
+      "manual rebuild GetX",
+      "GetBuilder vs Obx",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Simple State in GetX?"
+    },
+    {
+      "type": "text",
+      "value": "Simple state in GetX is a lightweight approach to state management that gives you explicit control over when the UI should rebuild. Instead of automatically reacting to every change (like reactive state), you manually trigger updates using the `update()` method. This makes it ideal for performance-sensitive parts of your app where you want to batch updates or avoid unnecessary rebuilds."
+    },
+    {
+      "type": "heading",
+      "value": "The GetBuilder Widget"
+    },
+    {
+      "type": "text",
+      "value": "`GetBuilder` is the core widget for simple state. It listens to updates from a controller and rebuilds only the widget tree inside it when `update()` is called. It's efficient because it doesn't rely on reactive variables and only rebuilds the exact part of the UI you wrap with it."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterController extends GetxController {\n  int count = 0;\n\n  void increment() {\n    count++;\n    update(); // triggers rebuild of all GetBuilder widgets using this controller\n  }\n}\n\n// In your view\nGetBuilder<CounterController>(\n  builder: (controller) => Text('Count: ${controller.count}'),\n)\n// OR using the controller directly if already injected\nGetBuilder<CounterController>(\n  builder: (_) => Text('Count: ${Get.find<CounterController>().count}'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Updating Specific Parts"
+    },
+    {
+      "type": "text",
+      "value": "You can pass an optional `id` to `update()` and to `GetBuilder` to update only specific widgets. This is useful when a controller manages multiple independent parts of the UI."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  int count1 = 0;\n  int count2 = 0;\n\n  void increment1() {\n    count1++;\n    update(['counter1']); // only rebuilds widgets with id 'counter1'\n  }\n\n  void increment2() {\n    count2++;\n    update(['counter2']);\n  }\n}\n\n// In your view\nGetBuilder<MyController>(\n  id: 'counter1',\n  builder: (controller) => Text('Count1: ${controller.count1}'),\n)\nGetBuilder<MyController>(\n  id: 'counter2',\n  builder: (controller) => Text('Count2: ${controller.count2}'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "GetBuilder vs Obx"
+    },
+    {
+      "type": "text",
+      "value": "Understanding when to use each approach is crucial for building performant apps."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**GetBuilder (Simple State)**:\n  - Manual rebuilds with `update()`\n  - No reactive variables needed\n  - Perfect for simple counters, forms, or when you need precise control\n  - Lightweight and fast for many small updates\n  - Better for performance when you know exactly when to rebuild\n\n**Obx (Reactive State)**:\n  - Automatic rebuilds on any change\n  - Uses `.obs` variables\n  - Great for real-time updates, complex UIs with many dependencies\n  - Less boilerplate for frequently changing data\n  - Can cause more rebuilds if not used granularly"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Simple State"
+    },
+    {
+      "type": "list",
+      "value": [
+        "When you have a small number of state variables that change infrequently.",
+        "When you want to batch multiple state changes before rebuilding.",
+        "When you need to rebuild only specific parts of the UI with IDs.",
+        "When you're migrating from a StatefulWidget and want minimal changes.",
+        "For performance-critical animations or timers where you want to control rebuild frequency."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Lifecycle with GetBuilder"
+    },
+    {
+      "type": "text",
+      "value": "GetBuilder automatically listens to the controller's lifecycle. When the controller is disposed, the GetBuilder widget is also disposed, preventing memory leaks. You don't need to manually manage listeners."
+    },
+    {
+      "type": "heading",
+      "value": "Mixing Simple and Reactive State"
+    },
+    {
+      "type": "text",
+      "value": "You can combine both approaches in the same controller. This gives you the best of both worlds: reactive variables for automatic UI updates and simple state for performance-critical parts."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HybridController extends GetxController {\n  // Reactive\n  var reactiveCount = 0.obs;\n\n  // Simple\n  int simpleCount = 0;\n\n  void incrementReactive() => reactiveCount++;\n\n  void incrementSimple() {\n    simpleCount++;\n    update(); // only GetBuilder widgets rebuild\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Considerations"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use IDs wisely**: Updating only necessary widgets prevents unnecessary rebuilds.",
+        "**Avoid large widgets inside GetBuilder**: If you wrap a large widget tree, it will all rebuild when `update()` is called. Use multiple smaller GetBuilder widgets instead.",
+        "**Prefer GetBuilder for animations**: Since you control when rebuilds happen, you can synchronize with animation frames.",
+        "**Batch updates**: Group multiple state changes before calling `update()` to avoid multiple rebuilds."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep controllers focused**: One controller per screen or feature, with clear responsibilities.",
+        "**Use `Get.put` in bindings**: Inject controllers outside the build method to avoid duplicates.",
+        "**Call `update()` only when needed**: Don't call it if no state actually changed.",
+        "**Use `GetView` for cleaner syntax**: `class MyView extends GetView<MyController>` gives you direct `controller` access.",
+        "**Combine with reactive when beneficial**: Don't be afraid to mix both patterns in the same app."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `update()` inside build method** – Causes infinite loops.\n✅ Call `update()` only in response to events (like button presses).",
+        "❌ **Using GetBuilder without a controller** – Forgetting to register the controller leads to errors.\n✅ Use `Get.put` or bindings before using GetBuilder.",
+        "❌ **Not using IDs when needed** – Updating unrelated parts of the UI.\n✅ Use IDs to target specific widgets.",
+        "❌ **Overusing GetBuilder when Obx would be simpler** – More code than necessary.\n✅ For simple reactive needs, consider Obx."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I use GetBuilder without GetMaterialApp?**  \nA: No, GetX features require `GetMaterialApp` for full functionality.",
+        "**Q: Does GetBuilder automatically dispose controllers?**  \nA: Yes, when the controller is no longer referenced (e.g., the route is closed), GetX will dispose it. Use `permanent: true` if you need it to stay alive.",
+        "**Q: How many GetBuilder widgets can I have per controller?**  \nA: Unlimited. Each one will rebuild when `update()` is called (or only specific ones if you use IDs).",
+        "**Q: Can I use GetBuilder inside a ListView?**  \nA: Yes, but ensure you provide a unique `id` for each item if you want to update individually, or the whole list will rebuild.",
+        "**Q: Is GetBuilder faster than Obx?**  \nA: For simple use cases, both are very fast. GetBuilder can be more predictable because you control rebuilds, which can be beneficial in animations or when you want to avoid unnecessary rebuilds.",
+        "**Q: Can I use GetBuilder with reactive variables?**  \nA: Yes, but it's redundant. If you have reactive variables, use Obx; if you use GetBuilder, you don't need reactive variables.",
+        "**Q: How do I test a controller that uses GetBuilder?**  \nA: You can instantiate the controller and call its methods; `update()` will still work, but you don't need to test the UI rebuilding part separately."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX simple state with GetBuilder provides a lightweight, manual approach to state management that's perfect for performance-critical parts of your app. By understanding when to use it vs reactive state, and by following best practices, you can build efficient, maintainable Flutter applications."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: SimpleStateDemo(),\n    );\n  }\n}\n\nclass CounterController extends GetxController {\n  int count = 0;\n  int totalClicks = 0;\n\n  void increment() {\n    count++;\n    totalClicks++;\n    update(); // rebuild both counters\n  }\n\n  void reset() {\n    count = 0;\n    update();\n  }\n\n  void showTotalClicks() {\n    Get.snackbar('Total Clicks', '$totalClicks', snackPosition: SnackPosition.BOTTOM);\n  }\n}\n\nclass SimpleStateDemo extends StatelessWidget {\n  final controller = Get.put(CounterController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetBuilder Example')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Simple state with GetBuilder'),\n            SizedBox(height: 20),\n            GetBuilder<CounterController>(\n              builder: (ctrl) => Text(\n                'Count: ${ctrl.count}',\n                style: TextStyle(fontSize: 32),\n              ),\n            ),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: controller.increment,\n                  child: Text('Increment'),\n                ),\n                SizedBox(width: 10),\n                ElevatedButton(\n                  onPressed: controller.reset,\n                  child: Text('Reset'),\n                ),\n                SizedBox(width: 10),\n                ElevatedButton(\n                  onPressed: controller.showTotalClicks,\n                  child: Text('Show Total Clicks'),\n                ),\n              ],\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method is used to trigger a rebuild in GetBuilder?",
+      "options": ["setState()", "refresh()", "update()", "rebuild()"],
+      "answer": 2
+    },
+    {
+      "question": "How can you update only specific GetBuilder widgets?",
+      "options": [
+        "Use different controllers",
+        "Use the `id` parameter in update() and GetBuilder",
+        "Call update() with a widget reference",
+        "Use Obx instead"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "When should you prefer GetBuilder over Obx?",
+      "options": [
+        "When you want automatic rebuilds",
+        "When you need manual control over rebuilds",
+        "When you have many reactive variables",
+        "Never, Obx is always better"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-reactive-state",
+    "getx-dependency-injection",
+    "getx-bindings"
+  ]
+}

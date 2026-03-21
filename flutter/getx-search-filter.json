@@ -1,0 +1,177 @@
+{
+  "slug": "getx-search-filter",
+  "course": "Flutter",
+  "title": "GetX Search & Filter: Reactive Search with Debounce",
+  "meta": {
+    "title": "GetX Search & Filter – Real‑time Search & Filtering in Flutter",
+    "description": "Learn how to implement search and filter functionality with GetX. Use reactive queries, debouncing for performance, and computed filtered lists. Perfect for real‑time search experiences.",
+    "keywords": [
+      "GetX search",
+      "GetX filter",
+      "reactive search",
+      "debounce GetX",
+      "search with GetX",
+      "Flutter search filter",
+      "GetX list filtering"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Search and filtering are common features in apps that handle large lists. With GetX, you can build a reactive search experience that updates the UI as the user types, with automatic debouncing to avoid excessive updates. This guide covers how to implement search and filter using reactive state, workers, and computed values."
+    },
+    {
+      "type": "heading",
+      "value": "1. Basic Search with Reactive State"
+    },
+    {
+      "type": "text",
+      "value": "The simplest approach is to store the search query as a reactive variable and compute the filtered list in a getter. The getter accesses the original list and the query; `Obx` will automatically rebuild whenever either changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchController extends GetxController {\n  var allItems = <String>[].obs;\n  var query = ''.obs;\n\n  List<String> get filteredItems {\n    if (query.value.isEmpty) return allItems;\n    return allItems.where((item) => item.toLowerCase().contains(query.value.toLowerCase())).toList();\n  }\n}\n\n// In UI\nTextField(\n  onChanged: (value) => controller.query.value = value,\n  decoration: InputDecoration(labelText: 'Search'),\n),\nObx(() => ListView.builder(\n  itemCount: controller.filteredItems.length,\n  itemBuilder: (_, i) => ListTile(title: Text(controller.filteredItems[i])),\n));"
+    },
+    {
+      "type": "heading",
+      "value": "2. Debouncing Search Input"
+    },
+    {
+      "type": "text",
+      "value": "To avoid rebuilding the list on every keystroke (which could be expensive), use a debounce worker. This will wait until the user stops typing for a short period before updating the query (or before performing an API call)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchController extends GetxController {\n  var allItems = <String>[].obs;\n  var query = ''.obs;\n  var filteredItems = <String>[].obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    debounce(query, (_) => _performSearch(), time: Duration(milliseconds: 500));\n  }\n\n  void _performSearch() {\n    if (query.value.isEmpty) {\n      filteredItems.assignAll(allItems);\n    } else {\n      final filtered = allItems.where((item) => item.toLowerCase().contains(query.value.toLowerCase())).toList();\n      filteredItems.assignAll(filtered);\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Combining Search with Server‑Side Filtering"
+    },
+    {
+      "type": "text",
+      "value": "When the data is large, you may want to perform the search on the server. Use the same debounce pattern to call an API when the user stops typing. Show a loading indicator while the request is in progress."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchController extends GetxController {\n  var query = ''.obs;\n  var results = <String>[].obs;\n  var isLoading = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    debounce(query, (_) => search(), time: Duration(milliseconds: 500));\n  }\n\n  Future<void> search() async {\n    if (query.value.isEmpty) {\n      results.clear();\n      return;\n    }\n    isLoading.value = true;\n    try {\n      final data = await api.search(query.value);\n      results.assignAll(data);\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}\n\n// UI\nObx(() => controller.isLoading.value\n    ? CircularProgressIndicator()\n    : ListView.builder(...));"
+    },
+    {
+      "type": "heading",
+      "value": "4. Filtering with Multiple Criteria"
+    },
+    {
+      "type": "text",
+      "value": "For more complex filters (e.g., categories, price ranges), add additional reactive variables and compute the combined filtered list."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FilterController extends GetxController {\n  var allProducts = <Product>[].obs;\n  var searchQuery = ''.obs;\n  var selectedCategory = ''.obs;\n  var minPrice = 0.obs;\n  var maxPrice = 1000.obs;\n\n  List<Product> get filteredProducts {\n    List<Product> result = allProducts;\n    if (searchQuery.value.isNotEmpty) {\n      result = result.where((p) => p.name.toLowerCase().contains(searchQuery.value.toLowerCase())).toList();\n    }\n    if (selectedCategory.value.isNotEmpty) {\n      result = result.where((p) => p.category == selectedCategory.value).toList();\n    }\n    result = result.where((p) => p.price >= minPrice.value && p.price <= maxPrice.value).toList();\n    return result;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Performance Tips for Large Lists"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use debounce** – Prevents filtering on every keystroke.",
+        "**Pre‑filter using getters** – Works well for client‑side filtering with moderately sized lists.",
+        "**Consider using `StateMixin`** – If you have loading/error states, combine with search.",
+        "**Avoid heavy operations inside getters** – If the filtering logic is expensive, use a worker to update a separate reactive list only when needed.",
+        "**Use `ListView.builder`** – Even for filtered lists, always use a builder to avoid rendering all items at once."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep the original data intact** – Always store the unfiltered list separately, and derive the filtered view.",
+        "**Use `debounce` for async search** – Avoid calling the API on every key press.",
+        "**Show search results incrementally** – For client‑side filtering, you can update on each keystroke if the list is small, but still use debounce for performance.",
+        "**Provide visual feedback** – Show a loading indicator when searching remotely.",
+        "**Clear search easily** – Provide a clear button to reset the query.",
+        "**Test with different data sizes** – Ensure performance remains smooth."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not using debounce for server‑side search** – Causes many API calls.\n✅ Use `debounce` to wait for the user to stop typing.",
+        "❌ **Storing filtered list separately and forgetting to update it** – Leads to inconsistencies.\n✅ Use a getter or a worker that updates automatically.",
+        "❌ **Filtering inside `build` without `Obx`** – UI won't update.\n✅ Wrap the filtered list with `Obx` or use `GetX` widget.",
+        "❌ **Ignoring case sensitivity** – Users expect case‑insensitive search.\n✅ Use `toLowerCase()` on both sides."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Should I use `Obx` with a getter that filters a large list?**  \nA: Yes, but be aware that the getter runs on every rebuild. For huge lists, consider using a worker that updates a separate reactive list only when the query changes.",
+        "**Q: How do I reset filters?**  \nA: Set each filter variable back to its default (e.g., empty string, min=0, max=1000) and the computed list will update automatically.",
+        "**Q: Can I combine local filtering with remote search?**  \nA: Yes, you can first fetch the list from the server and then filter locally, or always call the server with the search term.",
+        "**Q: How to implement a dropdown filter with GetX?**  \nA: Use a reactive variable for the selected option and include it in the filtered getter.",
+        "**Q: Does GetX provide any built‑in search widget?**  \nA: Not directly, but you can easily combine `TextField` with reactive state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX makes search and filtering simple and reactive. Whether you're filtering a local list or calling a remote API, you can use reactive variables, getters, and debounce workers to build a smooth user experience. These patterns are essential for modern apps that need to handle large datasets."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: SearchDemo(),\n    );\n  }\n}\n\nclass SearchController extends GetxController {\n  var allItems = <String>[].obs;\n  var query = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Generate some demo data\n    allItems.assignAll(List.generate(50, (i) => 'Item ${i + 1}'));\n  }\n\n  List<String> get filteredItems {\n    if (query.value.isEmpty) return allItems;\n    return allItems.where((item) => item.toLowerCase().contains(query.value.toLowerCase())).toList();\n  }\n}\n\nclass SearchDemo extends StatelessWidget {\n  final controller = Get.put(SearchController());\n  final TextEditingController textController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Search & Filter')),\n      body: Column(\n        children: [\n          Padding(\n            padding: const EdgeInsets.all(16.0),\n            child: TextField(\n              controller: textController,\n              decoration: InputDecoration(\n                labelText: 'Search',\n                prefixIcon: Icon(Icons.search),\n                suffixIcon: IconButton(\n                  icon: Icon(Icons.clear),\n                  onPressed: () {\n                    textController.clear();\n                    controller.query.value = '';\n                  },\n                ),\n              ),\n              onChanged: (value) => controller.query.value = value,\n            ),\n          ),\n          Expanded(\n            child: Obx(() => ListView.builder(\n              itemCount: controller.filteredItems.length,\n              itemBuilder: (_, index) => ListTile(\n                title: Text(controller.filteredItems[index]),\n              ),\n            )),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How can you avoid filtering on every keystroke to improve performance?",
+      "options": ["Use a Timer", "Use a debounce worker", "Use a Future.delayed", "Use a Stream"],
+      "answer": 1
+    },
+    {
+      "question": "What is the recommended way to store filtered data when the original list is large?",
+      "options": [
+        "Store a separate filtered list and update it manually",
+        "Use a getter that filters the original list",
+        "Always filter on the server",
+        "Use a Set instead of List"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Which widget should you use to make the UI react to the search query changes?",
+      "options": ["GetBuilder", "Obx", "GetX", "All of the above"],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-reactive-state",
+    "getx-workers",
+    "getx-computed-state"
+  ]
+}

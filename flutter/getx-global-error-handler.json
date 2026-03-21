@@ -1,0 +1,222 @@
+{
+  "slug": "getx-global-error-handler",
+  "course": "Flutter",
+  "title": "GetX Global Error Handler: Catch All Exceptions & Show User Feedback",
+  "meta": {
+    "title": "GetX Global Error Handler – Catch All Exceptions in Flutter",
+    "description": "Learn how to implement a global error handler in GetX to catch uncaught exceptions, display user-friendly messages, and log errors for debugging.",
+    "keywords": [
+      "GetX global error handler",
+      "Flutter error handling",
+      "GetX onError",
+      "FlutterError.onError",
+      "Zone error handling",
+      "GetX error logging",
+      "uncaught exceptions"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "No matter how carefully you write your code, errors will happen. A robust app must handle them gracefully, showing users a friendly message and logging the details for debugging. GetX provides the tools to build a centralised error handler that catches both Flutter‑specific errors and uncaught exceptions from your Dart code. This guide covers how to set up a global error handler that integrates with GetX's reactive state and dependency injection."
+    },
+    {
+      "type": "heading",
+      "value": "1. Flutter's Error Handling Mechanisms"
+    },
+    {
+      "type": "text",
+      "value": "Flutter provides two main ways to catch errors:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`FlutterError.onError`** – Catches errors from the Flutter framework (e.g., build errors).",
+        "**`PlatformDispatcher.instance.onError`** – Catches uncaught Dart exceptions that occur outside the Flutter framework (e.g., async errors).",
+        "**Zones** – A more advanced way to isolate and handle errors in specific parts of your code."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Creating a Global Error Service"
+    },
+    {
+      "type": "text",
+      "value": "Create a service that extends `GetxService` to centralise error handling. This service will register itself as the global error handler and expose a reactive variable to show errors in the UI."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/foundation.dart';\nimport 'package:get/get.dart';\n\nclass GlobalErrorService extends GetxService {\n  // Reactive error message that can be displayed in UI\n  var lastError = ''.obs;\n  var lastErrorDetails = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    _setupErrorHandlers();\n  }\n\n  void _setupErrorHandlers() {\n    // Handle Flutter framework errors\n    FlutterError.onError = (FlutterErrorDetails details) {\n      // Show in UI\n      lastError.value = 'Flutter Error';\n      lastErrorDetails.value = details.toString();\n      // Log to console\n      FlutterError.dumpErrorToConsole(details);\n      // Optionally show a snackbar\n      Get.snackbar('Error', 'Something went wrong', snackPosition: SnackPosition.BOTTOM);\n    };\n\n    // Handle uncaught Dart exceptions\n    PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {\n      lastError.value = error.toString();\n      lastErrorDetails.value = stack.toString();\n      Get.snackbar('Error', error.toString());\n      return true; // Prevent the default handler\n    };\n  }\n\n  void logError(dynamic error, StackTrace? stack) {\n    lastError.value = error.toString();\n    lastErrorDetails.value = stack?.toString() ?? '';\n    // You can also send to a logging service\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Registering the Service"
+    },
+    {
+      "type": "text",
+      "value": "Register the service as permanent in an initial binding. It will be available throughout the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.put(GlobalErrorService(), permanent: true);\n  }\n}\n\nvoid main() {\n  WidgetsFlutterBinding.ensureInitialized();\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      initialBinding: AppBinding(),\n      home: HomePage(),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Displaying Errors in the UI"
+    },
+    {
+      "type": "text",
+      "value": "You can use the service's reactive variables to show a global error banner, or listen to errors and show snackbars via workers."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class GlobalErrorConsumer extends StatelessWidget {\n  final errorService = Get.find<GlobalErrorService>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Obx(() {\n      if (errorService.lastError.value.isNotEmpty) {\n        return SnackBar(\n          content: Text(errorService.lastError.value),\n          duration: Duration(seconds: 3),\n        );\n      }\n      return SizedBox.shrink();\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Catching Errors in GetX Controllers"
+    },
+    {
+      "type": "text",
+      "value": "For async operations in controllers, always use try‑catch and update a reactive error variable. You can then use a worker to forward those errors to the global service."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  final errorService = Get.find<GlobalErrorService>();\n  var error = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(error, (err) {\n      if (err.isNotEmpty) errorService.logError(err, null);\n    });\n  }\n\n  Future<void> fetchData() async {\n    try {\n      // do something that might throw\n      throw Exception('Network error');\n    } catch (e) {\n      error.value = e.toString();\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Handling Errors in Workers"
+    },
+    {
+      "type": "text",
+      "value": "Workers that perform async operations should also catch errors and forward them to the global service."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "debounce(query, (value) async {\n  try {\n    await search();\n  } catch (e) {\n    Get.find<GlobalErrorService>().logError(e, null);\n  }\n}, time: Duration(milliseconds: 500));"
+    },
+    {
+      "type": "heading",
+      "value": "7. Using Zones for Even More Control"
+    },
+    {
+      "type": "text",
+      "value": "If you want to catch errors in a specific part of your app (e.g., a particular widget subtree), you can use a `Zone`. This is useful for isolating errors and providing custom handling."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "runZonedGuarded(() {\n  runApp(MyApp());\n}, (error, stack) {\n  Get.find<GlobalErrorService>().logError(error, stack);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "8. Logging Errors to a Remote Service"
+    },
+    {
+      "type": "text",
+      "value": "In production, you should send errors to a logging service like Firebase Crashlytics or Sentry. Extend your error service to include this."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void logError(dynamic error, StackTrace? stack) {\n  // Local logging\n  lastError.value = error.toString();\n  // Remote logging\n  if (kReleaseMode) {\n    FirebaseCrashlytics.instance.recordError(error, stack);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use a centralised error service** – One place to handle logging and user feedback.",
+        "**Always catch exceptions in async code** – Uncaught async errors will crash the app.",
+        "**Show user‑friendly messages** – Avoid displaying technical stack traces.",
+        "**Log errors with context** – Include screen name, user action, etc.",
+        "**Test error handling** – Simulate errors and verify they are caught and displayed.",
+        "**Don't rely solely on global handlers** – They are a safety net, but you should still handle expected errors locally."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not initializing the error service before `runApp`** – Global handlers may not be set.\n✅ Set up the service in an initial binding and ensure it runs before any code that could error.",
+        "❌ **Swallowing errors without logging** – Makes debugging impossible.\n✅ Always log or forward errors to a central handler.",
+        "❌ **Showing raw exception messages to users** – May expose internal details.\n✅ Map exceptions to user‑friendly strings.",
+        "❌ **Forgetting to handle errors in workers and controllers** – Only global handler catches uncaught; but if you catch locally, you must still log."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Does GetX have a built‑in global error handler?**  \nA: No, but it provides the tools to create one easily using Flutter's error handling APIs.",
+        "**Q: How do I prevent the default Flutter error overlay from showing?**  \nA: In `FlutterError.onError`, after handling, do not call `dumpErrorToConsole` if you want to suppress the overlay. But for development, you might still want it.",
+        "**Q: Can I catch errors from GetX navigation?**  \nA: Yes, errors inside `onPressed` or `Get.to` are caught by the global handlers. For async navigation, use try‑catch.",
+        "**Q: How to handle errors in isolated parts of the app?**  \nA: Use `runZonedGuarded` around those parts. This gives you fine‑grained control.",
+        "**Q: Should I use `FlutterError.onError` or `PlatformDispatcher.instance.onError`?**  \nA: Both. They cover different categories of errors. Use both for full coverage."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "A global error handler is essential for production Flutter apps. By combining Flutter's error handling APIs with GetX's dependency injection and reactive state, you can build a system that not only logs errors but also provides a smooth user experience. Remember to test your error handling thoroughly and always provide a way for users to continue using the app after an error."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "Which API should you use to catch uncaught Dart exceptions?",
+      "options": ["FlutterError.onError", "PlatformDispatcher.instance.onError", "Get.onError", "Zone.current.onError"],
+      "answer": 1
+    },
+    {
+      "question": "How can you make a global error service available throughout the app?",
+      "options": [
+        "Create a singleton class",
+        "Use Get.put with permanent: true in an initial binding",
+        "Store it in a global variable",
+        "Inherit from GetxController"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the recommended way to show a user‑friendly error message after an exception?",
+      "options": [
+        "Show the full stack trace",
+        "Show a generic message and optionally log the details",
+        "Ignore the error",
+        "Crash the app"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-error-handling",
+    "getx-state-mixin",
+    "getx-snackbar",
+    "getx-services"
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "slug": "getx-rx-workers-advanced",
+  "course": "Flutter",
+  "title": "GetX Workers Advanced: Complex Reactive Patterns & Use Cases",
+  "meta": {
+    "title": "GetX Workers Advanced – Mastering Reactive Side Effects",
+    "description": "Go beyond basics: chain workers, conditionally trigger, combine multiple Rx, custom worker logic, performance optimization, and advanced patterns for GetX workers.",
+    "keywords": [
+      "GetX workers advanced",
+      "GetX everAll",
+      "GetX onceAll",
+      "chaining workers",
+      "GetX reactive patterns",
+      "custom workers",
+      "GetX debounce advanced"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Workers in GetX are a powerful way to react to state changes. Beyond the basics (`ever`, `once`, `debounce`, `interval`), you can create complex reactive flows by combining workers, conditionally triggering side effects, and using `everAll` and `onceAll`. This guide covers advanced worker patterns to handle intricate business logic with minimal code."
+    },
+    {
+      "type": "heading",
+      "value": "1. Recap: Basic Workers"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`ever`** – Executes on every change of a reactive variable.",
+        "**`once`** – Executes only on the first change.",
+        "**`debounce`** – Waits for a pause before executing (ideal for search inputs).",
+        "**`interval`** – Executes at a fixed rate while changes occur.",
+        "**`everAll`** – Executes when any of a list of reactive variables changes.",
+        "**`onceAll`** – Executes once when any of a list of reactive variables changes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Chaining Workers"
+    },
+    {
+      "type": "text",
+      "value": "You can chain workers to create multi‑step reactive flows. For example, after a debounced search, call another worker to log the result."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchController extends GetxController {\n  var query = ''.obs;\n  var results = <String>[].obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Step 1: debounce search input\n    debounce(query, (_) => performSearch(), time: Duration(milliseconds: 500));\n\n    // Step 2: when results change, log them\n    ever(results, (list) {\n      print('Results updated: ${list.length} items');\n    });\n  }\n\n  Future<void> performSearch() async {\n    if (query.value.isEmpty) {\n      results.clear();\n      return;\n    }\n    // simulate API\n    await Future.delayed(Duration(milliseconds: 200));\n    results.assignAll(['Result for ${query.value}']);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Conditional Triggers"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you only want to react when a variable reaches a certain value. You can wrap the worker callback with a condition, or use a custom `Rx` with a filter."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterController extends GetxController {\n  var count = 0.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(count, (value) {\n      if (value == 10) {\n        Get.snackbar('Milestone', 'Reached 10!');\n      }\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Combining Multiple Rx with everAll"
+    },
+    {
+      "type": "text",
+      "value": "`everAll` listens to a list of reactive variables and triggers when any of them change. It provides the list of new values. This is perfect for validating forms or combining multiple state pieces."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FormController extends GetxController {\n  var username = ''.obs;\n  var email = ''.obs;\n  var password = ''.obs;\n  var isFormValid = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    everAll([username, email, password], (_) {\n      final valid = username.value.isNotEmpty &&\n          email.value.contains('@') &&\n          password.value.length >= 6;\n      isFormValid.value = valid;\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. onceAll – One‑Time Reaction"
+    },
+    {
+      "type": "text",
+      "value": "`onceAll` executes only once when any of the observed variables change. It's useful for onboarding flows or one‑time setups triggered by user interaction."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class OnboardingController extends GetxController {\n  var step1Completed = false.obs;\n  var step2Completed = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    onceAll([step1Completed, step2Completed], (_) {\n      Get.snackbar('Congratulations', 'You finished onboarding!');\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Custom Worker Logic: Debounce with Immediate First Call"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need a debounce that also triggers immediately on the first change. You can implement a custom worker or combine `once` and `debounce`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchController extends GetxController {\n  var query = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Immediate trigger on first change, then debounce\n    once(query, (_) => search());\n    debounce(query, (_) => search(), time: Duration(milliseconds: 500));\n  }\n\n  void search() {\n    print('Searching for: ${query.value}');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Throttling with interval"
+    },
+    {
+      "type": "text",
+      "value": "`interval` executes at a fixed interval while the variable changes. This can be used to throttle high‑frequency events like scroll or mouse movements."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ScrollController extends GetxController {\n  var scrollY = 0.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    interval(scrollY, (value) {\n      print('Scroll position: $value');\n    }, time: Duration(milliseconds: 200));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "8. Worker Cleanup & Disposal"
+    },
+    {
+      "type": "text",
+      "value": "Workers are automatically disposed when the controller is disposed. However, if you need to stop a worker manually (e.g., conditionally), you can use a flag inside the worker callback. There's no direct API to remove a worker, but you can set a condition that prevents execution."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  var active = true.obs;\n  var data = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(data, (value) {\n      if (active.value) {\n        print('Data changed: $value');\n      }\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "9. Asynchronous Workers"
+    },
+    {
+      "type": "text",
+      "value": "Workers can perform async operations, but you need to be careful about overlapping calls. Use a flag to prevent multiple executions or cancel previous requests."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AsyncController extends GetxController {\n  var query = ''.obs;\n  var isLoading = false.obs;\n  CancelToken? _cancelToken;\n\n  @override\n  void onInit() {\n    super.onInit();\n    debounce(query, (_) => search(), time: Duration(milliseconds: 500));\n  }\n\n  Future<void> search() async {\n    _cancelToken?.cancel();\n    _cancelToken = CancelToken();\n    isLoading.value = true;\n    try {\n      await api.search(query.value, cancelToken: _cancelToken);\n    } catch (e) {\n      if (e is CancelledException) return;\n      // handle error\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "10. Performance Considerations"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Avoid heavy computations inside worker callbacks** – Move heavy work to separate isolates or use `compute`.",
+        "**Use `debounce` for frequent changes** – Prevents excessive executions.",
+        "**Unsubscribe from expensive workers when not needed** – Use a conditional flag or dispose controller early.",
+        "**Prefer `ever` over polling** – It’s event‑driven and more efficient."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep workers focused** – One worker per side effect.",
+        "**Use `everAll` for dependent state** – Reduces duplicate logic.",
+        "**Combine `debounce` with `once` for immediate + delayed actions** – Improves UX.",
+        "**Always handle errors in async workers** – Prevent uncaught exceptions.",
+        "**Test workers** – Use `Get.reset` and simulate state changes to verify behavior."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Creating workers that cause infinite loops** – Modifying the same Rx variable inside its own worker.\n✅ Avoid modifying the observed variable; use a flag or different variable.",
+        "❌ **Forgetting to cancel previous async calls** – Results from old requests may overwrite new ones.\n✅ Use a cancel token or ignore stale responses.",
+        "❌ **Using `ever` when `debounce` is more appropriate** – Unnecessary CPU usage.\n✅ Choose the right worker type.",
+        "❌ **Not handling null in workers** – The value may be null if the Rx is cleared.\n✅ Check for null."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I use workers with GetBuilder?**  \nA: Workers are independent of UI; they react to Rx variables. They work regardless of whether the UI uses `Obx` or `GetBuilder`.",
+        "**Q: How do I stop a worker?**  \nA: Workers are tied to the controller's lifecycle. To stop it early, you can use a conditional flag inside the callback, or delete the controller with `Get.delete`.",
+        "**Q: Can workers listen to multiple variables with different debounce times?**  \nA: Not directly; you would need separate workers or combine them with a custom Rx that aggregates changes.",
+        "**Q: What's the difference between `everAll` and `ever` with a list?**  \nA: `everAll` triggers when any of the observed variables change, and you get all their values. You can also use `ever` on a computed getter that depends on them, but that runs on every access.",
+        "**Q: Can I use workers inside a service (GetxService)?**  \nA: Yes, services have the same lifecycle and can use workers."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Advanced worker patterns allow you to build sophisticated reactive flows with minimal code. By combining workers, handling async operations, and leveraging `everAll` and `onceAll`, you can orchestrate complex side effects cleanly. Remember to test your workers and consider performance for heavy operations."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: WorkerDemo(),\n    );\n  }\n}\n\nclass DemoController extends GetxController {\n  var username = ''.obs;\n  var email = ''.obs;\n  var password = ''.obs;\n  var isFormValid = false.obs;\n  var searchQuery = ''.obs;\n  var searchResults = <String>[].obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n\n    // everAll – validate form\n    everAll([username, email, password], (_) {\n      isFormValid.value = username.value.isNotEmpty &&\n          email.value.contains('@') &&\n          password.value.length >= 6;\n    });\n\n    // debounce search\n    debounce(searchQuery, (_) => performSearch(), time: Duration(milliseconds: 500));\n  }\n\n  Future<void> performSearch() async {\n    if (searchQuery.value.isEmpty) {\n      searchResults.clear();\n      return;\n    }\n    await Future.delayed(Duration(milliseconds: 300));\n    searchResults.assignAll(['Result for \"${searchQuery.value}\"']);\n  }\n}\n\nclass WorkerDemo extends StatelessWidget {\n  final controller = Get.put(DemoController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Advanced Workers')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          children: [\n            TextField(\n              onChanged: (v) => controller.username.value = v,\n              decoration: InputDecoration(labelText: 'Username'),\n            ),\n            TextField(\n              onChanged: (v) => controller.email.value = v,\n              decoration: InputDecoration(labelText: 'Email'),\n            ),\n            TextField(\n              onChanged: (v) => controller.password.value = v,\n              obscureText: true,\n              decoration: InputDecoration(labelText: 'Password'),\n            ),\n            Obx(() => Text(\n              controller.isFormValid.value ? 'Form valid' : 'Form invalid',\n              style: TextStyle(color: controller.isFormValid.value ? Colors.green : Colors.red),\n            )),\n            Divider(),\n            TextField(\n              onChanged: (v) => controller.searchQuery.value = v,\n              decoration: InputDecoration(labelText: 'Search (debounced)'),\n            ),\n            Obx(() => Column(\n              children: controller.searchResults.map((r) => Text(r)).toList(),\n            )),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which worker should you use to react when any of a list of reactive variables changes?",
+      "options": ["ever", "once", "everAll", "interval"],
+      "answer": 2
+    },
+    {
+      "question": "How can you implement a debounce that also triggers immediately on the first change?",
+      "options": [
+        "Use only debounce",
+        "Use only once",
+        "Combine once and debounce",
+        "Use interval with a short duration"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What is a common pitfall when using async workers without cancellation?",
+      "options": [
+        "Memory leaks",
+        "Out‑of‑order responses overwriting newer data",
+        "UI freezes",
+        "Workers stop working"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-workers",
+    "getx-state-management",
+    "getx-reactive-state",
+    "getx-api-integration"
+  ]
+}

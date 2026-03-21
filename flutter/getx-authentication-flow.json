@@ -1,0 +1,195 @@
+{
+  "slug": "getx-authentication-flow",
+  "course": "Flutter",
+  "title": "GetX Authentication Flow: Login, Token Storage & Route Guards",
+  "meta": {
+    "title": "GetX Authentication Flow – Complete Login & Route Protection Guide",
+    "description": "Learn how to implement authentication in Flutter using GetX. Manage user state, store tokens, protect routes with middleware, and handle login/logout flows.",
+    "keywords": [
+      "GetX authentication",
+      "Flutter login GetX",
+      "GetX route guards",
+      "GetX token storage",
+      "GetX middleware auth",
+      "GetX user session"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Authentication is a core part of many apps. GetX provides a clean, reactive way to manage user state, store tokens, and protect routes. With its built‑in dependency injection, reactive state, and middleware, you can build a robust authentication flow with minimal boilerplate. This guide covers everything from login to token persistence and route guards."
+    },
+    {
+      "type": "heading",
+      "value": "1. Setting Up the AuthController"
+    },
+    {
+      "type": "text",
+      "value": "Create a controller that holds the user's authentication state. Use reactive variables to reflect login status and user data. The controller will also handle login, logout, and token storage."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthController extends GetxController {\n  final storage = GetStorage();\n  var isLoggedIn = false.obs;\n  var user = User().obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Check for existing token on app start\n    String? token = storage.read('token');\n    if (token != null) {\n      isLoggedIn.value = true;\n      // Optionally fetch user data\n      fetchUser();\n    }\n  }\n\n  Future<void> login(String email, String password) async {\n    try {\n      // Call your API\n      final response = await api.login(email, password);\n      // Save token\n      storage.write('token', response.token);\n      user.value = response.user;\n      isLoggedIn.value = true;\n    } catch (e) {\n      Get.snackbar('Error', e.toString());\n    }\n  }\n\n  void logout() {\n    storage.remove('token');\n    isLoggedIn.value = false;\n    user.value = User();\n    Get.offAllNamed('/login');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Token Persistence with GetStorage"
+    },
+    {
+      "type": "text",
+      "value": "Use `GetStorage` to save the authentication token. Initialize GetStorage in `main()` and then read/write tokens inside the controller. The token can be used in API calls by attaching it to headers."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In main.dart\nvoid main() async {\n  await GetStorage.init();\n  runApp(MyApp());\n}\n\n// In AuthController\nString? get token => storage.read('token');\n\n// In API service\nclass ApiService {\n  Future<LoginResponse> login(String email, String password) async {\n    final response = await http.post(\n      Uri.parse('$baseUrl/login'),\n      body: {'email': email, 'password': password},\n    );\n    return LoginResponse.fromJson(json.decode(response.body));\n  }\n\n  Future<User> fetchUser() async {\n    final token = Get.find<AuthController>().token;\n    final response = await http.get(\n      Uri.parse('$baseUrl/me'),\n      headers: {'Authorization': 'Bearer $token'},\n    );\n    return User.fromJson(json.decode(response.body));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Protecting Routes with Middleware"
+    },
+    {
+      "type": "text",
+      "value": "Use `GetMiddleware` to guard routes that require authentication. Override `redirect` to check login status and redirect to login if not authenticated."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthMiddleware extends GetMiddleware {\n  @override\n  RouteSettings? redirect(String? route) {\n    final auth = Get.find<AuthController>();\n    if (!auth.isLoggedIn.value) {\n      Get.snackbar('Access Denied', 'Please login first');\n      return RouteSettings(name: '/login');\n    }\n    return null;\n  }\n}\n\n// In your routes\nGetPage(\n  name: '/profile',\n  page: () => ProfilePage(),\n  middlewares: [AuthMiddleware()],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "4. Login Page UI"
+    },
+    {
+      "type": "text",
+      "value": "Create a simple login page with reactive validation and loading state. Use `GetX` or `Obx` to react to the authentication state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginPage extends GetView<AuthController> {\n  final emailController = TextEditingController();\n  final passwordController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          children: [\n            TextField(controller: emailController, decoration: InputDecoration(labelText: 'Email')),\n            TextField(controller: passwordController, obscureText: true, decoration: InputDecoration(labelText: 'Password')),\n            SizedBox(height: 20),\n            Obx(() => ElevatedButton(\n              onPressed: controller.isLoading.value\n                  ? null\n                  : () => controller.login(emailController.text, passwordController.text),\n              child: controller.isLoading.value\n                  ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))\n                  : Text('Login'),\n            )),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Redirecting After Login"
+    },
+    {
+      "type": "text",
+      "value": "After successful login, use `Get.offAllNamed` to navigate to the home screen and remove the login page from the stack."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Inside AuthController login method\nGet.offAllNamed('/home');"
+    },
+    {
+      "type": "heading",
+      "value": "6. Logout and Cleanup"
+    },
+    {
+      "type": "text",
+      "value": "Implement logout by clearing the token, resetting the reactive state, and navigating to the login screen."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void logout() {\n  storage.remove('token');\n  isLoggedIn.value = false;\n  Get.offAllNamed('/login');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Using AuthController Throughout the App"
+    },
+    {
+      "type": "text",
+      "value": "Since the controller is permanent (or registered globally), you can access it anywhere with `Get.find<AuthController>()`. For example, in a profile page to display the user's name."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfilePage extends GetView<AuthController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Profile')),\n      body: Center(\n        child: Obx(() => Text('Hello, ${controller.user.value.name}')),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Make AuthController permanent** – Use `permanent: true` or extend `GetxService` so it never gets disposed.",
+        "**Use middleware for route protection** – Centralise authentication checks.",
+        "**Store tokens securely** – For production, consider using FlutterSecureStorage for sensitive data.",
+        "**Clear token on logout** – Always remove the token and reset state.",
+        "**Handle token expiration** – In your API client, check for 401 responses and automatically redirect to login."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not initializing GetStorage before use** – Causes errors.\n✅ Call `await GetStorage.init()` in main.",
+        "❌ **Making AuthController non‑permanent** – It may be disposed when a route is popped.\n✅ Set `permanent: true` or use `GetxService`.",
+        "❌ **Forgetting to redirect after login** – User may stay on login page.\n✅ Use `Get.offAllNamed` to replace the route.",
+        "❌ **Not handling token refresh** – After logout, the token is gone, but the user may still have access to protected routes if not guarded properly.\n✅ Use middleware to check state on every navigation."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: How do I persist user session after app restart?**  \nA: Store the token in GetStorage and read it in `onInit` of AuthController. If token exists, set `isLoggedIn = true` and optionally fetch user data.",
+        "**Q: Can I use GetX middleware to redirect to login on 401?**  \nA: Yes, you can listen to API responses and call `Get.offAllNamed('/login')` when a 401 is received.",
+        "**Q: How to protect routes that depend on roles?**  \nA: In your middleware, after checking `isLoggedIn`, you can also check the user's role and redirect if insufficient.",
+        "**Q: Should I store the user object in GetStorage as well?**  \nA: If the user data is small, you can. Otherwise, fetch it after login and store only the token.",
+        "**Q: How to show a loading indicator during login?**  \nA: Use an `isLoading` reactive boolean and disable the button while true."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX makes authentication flows straightforward. By combining reactive state, persistent storage with GetStorage, and route guards with middleware, you can build a secure and user‑friendly login system. The patterns shown here scale from simple apps to complex enterprise solutions."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\nimport 'package:get_storage/get_storage.dart';\n\nvoid main() async {\n  await GetStorage.init();\n  runApp(MyApp());\n}\n\nclass AuthController extends GetxController {\n  final storage = GetStorage();\n  var isLoggedIn = false.obs;\n  var isLoading = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    isLoggedIn.value = storage.read('token') != null;\n  }\n\n  Future<void> login(String email, String password) async {\n    isLoading.value = true;\n    await Future.delayed(Duration(seconds: 1)); // Simulate network call\n    if (email == 'user@example.com' && password == 'pass') {\n      storage.write('token', 'fake-token');\n      isLoggedIn.value = true;\n      Get.offAllNamed('/home');\n    } else {\n      Get.snackbar('Error', 'Invalid credentials');\n    }\n    isLoading.value = false;\n  }\n\n  void logout() {\n    storage.remove('token');\n    isLoggedIn.value = false;\n    Get.offAllNamed('/login');\n  }\n}\n\nclass AuthMiddleware extends GetMiddleware {\n  @override\n  RouteSettings? redirect(String? route) {\n    final auth = Get.find<AuthController>();\n    if (!auth.isLoggedIn.value && route != '/login') {\n      return RouteSettings(name: '/login');\n    }\n    return null;\n  }\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    Get.put(AuthController(), permanent: true);\n    return GetMaterialApp(\n      initialRoute: '/',\n      getPages: [\n        GetPage(name: '/', page: () => SplashPage()),\n        GetPage(name: '/login', page: () => LoginPage()),\n        GetPage(name: '/home', page: () => HomePage(), middlewares: [AuthMiddleware()]),\n        GetPage(name: '/profile', page: () => ProfilePage(), middlewares: [AuthMiddleware()]),\n      ],\n    );\n  }\n}\n\nclass SplashPage extends StatelessWidget {\n  final auth = Get.find<AuthController>();\n\n  @override\n  Widget build(BuildContext context) {\n    Future.delayed(Duration(seconds: 1), () {\n      if (auth.isLoggedIn.value) {\n        Get.offAllNamed('/home');\n      } else {\n        Get.offAllNamed('/login');\n      }\n    });\n    return Scaffold(body: Center(child: CircularProgressIndicator()));\n  }\n}\n\nclass LoginPage extends StatelessWidget {\n  final auth = Get.find<AuthController>();\n  final emailCtrl = TextEditingController();\n  final passCtrl = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          children: [\n            TextField(controller: emailCtrl, decoration: InputDecoration(labelText: 'Email (user@example.com)')),\n            TextField(controller: passCtrl, obscureText: true, decoration: InputDecoration(labelText: 'Password (pass)')),\n            SizedBox(height: 20),\n            Obx(() => ElevatedButton(\n              onPressed: auth.isLoading.value ? null : () => auth.login(emailCtrl.text, passCtrl.text),\n              child: auth.isLoading.value\n                  ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))\n                  : Text('Login'),\n            )),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  final auth = Get.find<AuthController>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Home')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Welcome! You are logged in.'),\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/profile'),\n              child: Text('Profile'),\n            ),\n            ElevatedButton(\n              onPressed: auth.logout,\n              child: Text('Logout'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass ProfilePage extends StatelessWidget {\n  final auth = Get.find<AuthController>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Profile')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('This is a protected page.'),\n            ElevatedButton(\n              onPressed: () => Get.back(),\n              child: Text('Back'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you make AuthController permanent so it never gets disposed?",
+      "options": ["Set permanent: true in Get.put", "Extend GetxService", "Both A and B", "None of the above"],
+      "answer": 2
+    },
+    {
+      "question": "Which GetX feature is used to protect routes by checking authentication status?",
+      "options": ["GetBuilder", "GetMiddleware", "GetPage", "GetView"],
+      "answer": 1
+    },
+    {
+      "question": "What method should you use to navigate to the home screen after login and remove the login page from the back stack?",
+      "options": ["Get.to", "Get.off", "Get.offAllNamed", "Get.toAndRemoveUntil"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-storage",
+    "getx-middleware",
+    "getx-permanent-controller",
+    "getx-navigation"
+  ]
+}

@@ -1,0 +1,237 @@
+{
+  "slug": "getx-memory-management",
+  "course": "Flutter",
+  "title": "GetX Memory Management: Prevent Leaks & Optimize Performance",
+  "meta": {
+    "title": "GetX Memory Management – Prevent Leaks & Optimize Performance",
+    "description": "Learn how GetX manages controller lifecycle, how to properly dispose resources, avoid memory leaks, and optimize memory usage in Flutter apps.",
+    "keywords": [
+      "GetX memory management",
+      "GetX controller disposal",
+      "prevent memory leaks",
+      "onClose GetX",
+      "GetX lifecycle",
+      "Flutter memory optimization",
+      "GetX best practices"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Memory management is crucial for building smooth, long‑running Flutter apps. GetX helps by automatically disposing controllers when they are no longer needed, but you must still clean up custom resources like streams, timers, and listeners. This guide explains how GetX handles memory, how to properly implement `onClose`, and best practices to prevent memory leaks."
+    },
+    {
+      "type": "heading",
+      "value": "1. How GetX Manages Controllers"
+    },
+    {
+      "type": "text",
+      "value": "GetX tracks controller usage through a reference count. When you call `Get.put` or `Get.lazyPut`, the controller is registered. Each time `Get.find` is called from a mounted widget, the reference count increases. When the widget is unmounted, the count decreases. When the count reaches zero, GetX calls `onClose()` and disposes the controller. This automatic disposal prevents most memory leaks, but you still need to clean up any resources you created (e.g., streams, timers, animations) inside `onClose`."
+    },
+    {
+      "type": "heading",
+      "value": "2. The onClose Method"
+    },
+    {
+      "type": "text",
+      "value": "Override `onClose` to release any resources that are not automatically cleaned up by GetX. Common resources to dispose:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Stream subscriptions (e.g., from Firebase, `StreamController`, or `StreamSubscription`).",
+        "Timers (`Timer`, `Ticker`).",
+        "Controllers (`TextEditingController`, `AnimationController`).",
+        "Listeners (e.g., `ScrollController`, `PageController`).",
+        "Dio clients or other network connections."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  StreamSubscription? _subscription;\n  Timer? _timer;\n  final TextEditingController textController = TextEditingController();\n\n  @override\n  void onInit() {\n    super.onInit();\n    _subscription = someStream.listen((data) {});\n    _timer = Timer.periodic(Duration(seconds: 1), (_) {});\n  }\n\n  @override\n  void onClose() {\n    _subscription?.cancel();\n    _timer?.cancel();\n    textController.dispose();\n    super.onClose();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Avoiding Memory Leaks in Common Scenarios"
+    },
+    {
+      "type": "subheading",
+      "value": "Streams & Broadcast Streams"
+    },
+    {
+      "type": "text",
+      "value": "Always cancel subscriptions in `onClose`. For broadcast streams, you must cancel each subscription individually."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Good\nStreamSubscription? sub;\nvoid onInit() {\n  sub = stream.listen(print);\n}\nvoid onClose() {\n  sub?.cancel();\n}\n\n// Dangerous – anonymous subscription not stored\nvoid onInit() {\n  stream.listen(print); // cannot cancel – memory leak\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Timers & Animations"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Timer? _timer;\nvoid onInit() {\n  _timer = Timer.periodic(Duration(seconds: 1), (_) {});\n}\nvoid onClose() {\n  _timer?.cancel();\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "TextEditingController & FocusNode"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final TextEditingController controller = TextEditingController();\n@override\nvoid onClose() {\n  controller.dispose();\n  super.onClose();\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "AnimationController"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "late AnimationController _controller;\n@override\nvoid onInit() {\n  super.onInit();\n  _controller = AnimationController(vsync: this);\n}\n@override\nvoid onClose() {\n  _controller.dispose();\n  super.onClose();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Permanent Controllers & Memory"
+    },
+    {
+      "type": "text",
+      "value": "Controllers marked `permanent: true` or extending `GetxService` are never disposed automatically. Use them only for truly global services (e.g., authentication, API client). For such controllers, you should still implement `onClose` to clean up resources when you eventually delete them (if ever). If you never delete them, resources like streams will stay alive – ensure they are either not used or are properly managed (e.g., using a single subscription that lives as long as the app)."
+    },
+    {
+      "type": "heading",
+      "value": "5. Detecting Memory Leaks"
+    },
+    {
+      "type": "text",
+      "value": "To check if controllers are being disposed correctly, add print statements in `onClose`. Use Flutter DevTools to inspect the widget tree and memory usage. Look for controllers that are not being disposed when you pop routes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@override\nvoid onClose() {\n  print('Controller disposed');\n  super.onClose();\n}"
+    },
+    {
+      "type": "text",
+      "value": "If you suspect a leak, use the DevTools memory tab and force garbage collection. If a controller stays in memory after its route is popped, you may have a lingering reference."
+    },
+    {
+      "type": "heading",
+      "value": "6. Common Pitfalls"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Creating controllers inside build method** – New controller on every rebuild, never disposed.\n✅ Use bindings or inject once.",
+        "**Not canceling stream subscriptions** – Subscriptions keep the controller alive.\n✅ Cancel in `onClose`.",
+        "**Using `Get.put` in a widget that rebuilds often** – Creates duplicate instances.\n✅ Use `Get.lazyPut` or bindings.",
+        "**Keeping permanent controllers that hold large data** – Unnecessary memory usage.\n✅ Only make essential controllers permanent.",
+        "**Forgetting to call `super.onClose()`** – GetX internal cleanup may be skipped.\n✅ Always call `super.onClose()` at the end of your override."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "7. Testing Memory Management"
+    },
+    {
+      "type": "text",
+      "value": "In unit tests, you can verify that `onClose` is called by creating a controller, disposing it via `Get.delete`, and checking that the flag was set. For widget tests, use `tester.pumpAndSettle` and verify that `onClose` logs appear."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "test('Controller disposes correctly', () {\n  final controller = MyController();\n  Get.put(controller);\n  Get.delete<MyController>();\n  // Expect that onClose was called (add a flag in controller to verify)\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Always dispose custom resources in `onClose`** – Streams, timers, controllers.",
+        "**Avoid storing large data in controllers unnecessarily** – Offload to services with caching.",
+        "**Use bindings** – Let GetX manage lifecycle automatically.",
+        "**Prefer `Get.lazyPut`** – Defer creation until needed.",
+        "**Limit permanent controllers** – Only for app‑wide services.",
+        "**Test disposal** – Use logs and DevTools to ensure cleanup."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not canceling subscriptions** – Memory leak.\n✅ Cancel in `onClose`.",
+        "❌ **Storing `BuildContext` in a controller** – Can cause leaks if context outlives the widget.\n✅ Avoid storing contexts; use `Get.context` when needed.",
+        "❌ **Using `Get.put` inside a widget's `build`** – Creates new instances on each rebuild.\n✅ Register in `initState` or bindings.",
+        "❌ **Forgetting to call `super.onClose()`** – Breaks internal cleanup.\n✅ Always call `super.onClose()`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Does GetX automatically dispose controllers when using bindings?**  \nA: Yes, if the controller is registered inside a binding and the route is popped, GetX will dispose it (unless marked permanent).",
+        "**Q: How do I dispose a controller manually?**  \nA: Call `Get.delete<MyController>()`. This triggers `onClose` and removes it from the registry.",
+        "**Q: What happens if I don't call `super.onClose()`?**  \nA: GetX's internal cleanup may not run, causing memory leaks. Always call it.",
+        "**Q: Can I use `onClose` to save data before the controller is destroyed?**  \nA: Yes, it's a great place to save user input or state to `GetStorage`.",
+        "**Q: Why is my controller not being disposed?**  \nA: It might be permanent, or there may be a lingering reference (e.g., a stream subscription that wasn't cancelled). Check `isRegistered` and logs."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX automates most controller lifecycle management, but you still need to clean up custom resources. By properly implementing `onClose` and following the best practices in this guide, you can ensure your Flutter app remains memory‑efficient and leak‑free."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "Where should you dispose resources like streams and timers in a GetX controller?",
+      "options": ["onInit", "onReady", "onClose", "onStart"],
+      "answer": 2
+    },
+    {
+      "question": "What should you always do at the end of your onClose override?",
+      "options": ["Call dispose()", "Call super.onClose()", "Call delete()", "Call reset()"],
+      "answer": 1
+    },
+    {
+      "question": "What is the main reason for not cancelling a stream subscription in a controller?",
+      "options": [
+        "The app will crash",
+        "Memory leak",
+        "Performance improvement",
+        "Automatic cancellation"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-controller",
+    "getx-lifecycle",
+    "getx-smart-management",
+    "getx-permanent-controller"
+  ]
+}

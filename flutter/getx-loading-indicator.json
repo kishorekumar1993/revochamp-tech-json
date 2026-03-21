@@ -1,0 +1,194 @@
+{
+  "slug": "getx-loading-indicator",
+  "course": "Flutter",
+  "title": "GetX Loading Indicator: Show Loading States in Flutter",
+  "meta": {
+    "title": "GetX Loading Indicator – Show Loading States & Progress",
+    "description": "Learn how to implement loading indicators with GetX. Use reactive booleans, StateMixin, loading overlays, and button loading states to provide visual feedback during async operations.",
+    "keywords": [
+      "GetX loading indicator",
+      "Flutter loading state",
+      "GetX progress indicator",
+      "StateMixin loading",
+      "GetX button loading",
+      "loading overlay GetX",
+      "reactive loading"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Loading indicators are essential for providing visual feedback to users while async operations (like API calls, database queries, or file uploads) are in progress. GetX makes it easy to manage loading states using reactive variables, the `StateMixin`, or even modal overlays. This guide covers the most common patterns for showing loading indicators in GetX-powered Flutter apps."
+    },
+    {
+      "type": "heading",
+      "value": "1. Basic Loading with Reactive Bool"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way is to use a reactive boolean (`isLoading.obs`) in your controller. Set it to `true` before the async operation and `false` after (including in `finally`). Then in the UI, use `Obx` to conditionally show a loading widget."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  var isLoading = false.obs;\n  var data = ''.obs;\n\n  Future<void> fetchData() async {\n    isLoading.value = true;\n    try {\n      // simulate async work\n      await Future.delayed(Duration(seconds: 2));\n      data.value = 'Data loaded';\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}\n\n// UI\nObx(() => controller.isLoading.value\n    ? CircularProgressIndicator()\n    : Text(controller.data.value));"
+    },
+    {
+      "type": "heading",
+      "value": "2. Using StateMixin for Clean Loading/Error/Success"
+    },
+    {
+      "type": "text",
+      "value": "`StateMixin` provides built‑in loading, success, and error states. It reduces boilerplate and gives you a standard way to handle all states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController with StateMixin<String> {\n  Future<void> fetchData() async {\n    change(null, status: RxStatus.loading());\n    try {\n      await Future.delayed(Duration(seconds: 2));\n      change('Data loaded', status: RxStatus.success());\n    } catch (e) {\n      change(null, status: RxStatus.error(e.toString()));\n    }\n  }\n}\n\n// UI\ncontroller.obx(\n  (data) => Text(data!),\n  onLoading: CircularProgressIndicator(),\n  onError: (error) => Text('Error: $error'),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "3. Loading Overlay with Get.dialog"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want to block the whole screen with a loading indicator while an operation is in progress. You can use `Get.dialog` to show a modal loading overlay and dismiss it when done."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  Future<void> performAsyncTask() async {\n    // Show loading dialog\n    Get.dialog(\n      Center(child: CircularProgressIndicator()),\n      barrierDismissible: false, // prevent tap to close\n    );\n    try {\n      await Future.delayed(Duration(seconds: 2));\n      Get.back(); // close dialog\n      Get.snackbar('Success', 'Task completed');\n    } catch (e) {\n      Get.back(); // close dialog on error\n      Get.snackbar('Error', e.toString());\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Button Loading State"
+    },
+    {
+      "type": "text",
+      "value": "A common pattern is to disable a button and show a progress indicator inside it while loading. You can achieve this with a reactive boolean and a custom button widget."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  var isLoading = false.obs;\n\n  Future<void> submit() async {\n    isLoading.value = true;\n    try {\n      await Future.delayed(Duration(seconds: 2));\n      Get.snackbar('Success', 'Submitted');\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}\n\n// In UI\nObx(() => ElevatedButton(\n  onPressed: controller.isLoading.value ? null : controller.submit,\n  child: controller.isLoading.value\n      ? SizedBox(\n          width: 20,\n          height: 20,\n          child: CircularProgressIndicator(strokeWidth: 2),\n        )\n      : Text('Submit'),\n));"
+    },
+    {
+      "type": "heading",
+      "value": "5. Using Workers for Loading Side Effects"
+    },
+    {
+      "type": "text",
+      "value": "You can use workers to react to loading state changes. For example, you could show a snackbar when loading finishes (success or error) or log the duration."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  var isLoading = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(isLoading, (loading) {\n      if (!loading) {\n        Get.snackbar('Info', 'Loading finished');\n      }\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Skeleton Screens (Placeholder Loading)"
+    },
+    {
+      "type": "text",
+      "value": "For a more advanced loading experience, you can show skeleton screens while content loads. This can be combined with reactive loading flags: show skeleton when loading, actual content when loaded."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Obx(() => controller.isLoading.value\n    ? SkeletonItem()\n    : ContentWidget());"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Always set loading to false in `finally`** – Ensures the loading state is reset even if an error occurs.",
+        "**Disable buttons while loading** – Prevents multiple submissions.",
+        "**Provide visual feedback** – Users should know something is happening.",
+        "**Use `StateMixin` for consistency** – It standardises loading/error/success across your app.",
+        "**Avoid showing loading indicators for very fast operations** – A flickering indicator is worse than none. Consider a minimum duration.",
+        "**Test loading states** – Ensure the UI doesn't freeze and the loading indicator appears/disappears correctly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not resetting loading state on error** – The UI stays stuck in loading.\n✅ Use `finally` or catch blocks to set loading false.",
+        "❌ **Putting loading logic directly in UI** – Mixing concerns.\n✅ Keep loading state in the controller.",
+        "❌ **Allowing multiple submissions** – Tapping the button again while loading starts another operation.\n✅ Disable the button or use a debounce.",
+        "❌ **Using `Obx` with `StateMixin` incorrectly** – `obx` already handles loading, no need for extra `Obx`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: How do I show a loading indicator for a specific part of the UI, not the whole screen?**  \nA: Use a local `isLoading` variable and wrap only that part with `Obx`. For example, show a `CircularProgressIndicator` inside a `Card` while that section loads.",
+        "**Q: Can I use `Get.dialog` with a custom loading widget?**  \nA: Yes, pass any widget to `Get.dialog`. For a custom loader, you can use `AlertDialog` with a progress indicator or a full‑screen overlay.",
+        "**Q: How to handle loading state for multiple independent operations?**  \nA: Create separate reactive booleans for each operation, or use a map of loading flags.",
+        "**Q: How do I show a loading indicator with a text (e.g., 'Loading...')?**  \nA: Use `Obx` and return a `Column` with a `CircularProgressIndicator` and a `Text` widget.",
+        "**Q: What's the difference between `isLoading` and `StateMixin` loading?**  \nA: `StateMixin` encapsulates loading, success, and error in one object, and provides `.obx` helper. A plain boolean gives you more flexibility but requires manual handling of error and success states."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Loading indicators are a fundamental part of user experience. With GetX, you can implement them cleanly and reactively. Whether you use a simple boolean, `StateMixin`, or a modal overlay, GetX gives you the tools to keep your UI responsive and your users informed."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: LoadingDemo(),\n    );\n  }\n}\n\nclass LoadingController extends GetxController {\n  var isLoading = false.obs;\n  var data = ''.obs;\n\n  Future<void> loadData() async {\n    isLoading.value = true;\n    data.value = '';\n    try {\n      await Future.delayed(Duration(seconds: 2));\n      data.value = 'Data loaded successfully!';\n    } finally {\n      isLoading.value = false;\n    }\n  }\n\n  Future<void> loadWithOverlay() async {\n    Get.dialog(\n      Center(child: CircularProgressIndicator()),\n      barrierDismissible: false,\n    );\n    await Future.delayed(Duration(seconds: 2));\n    Get.back();\n    Get.snackbar('Done', 'Operation completed');\n  }\n}\n\nclass LoadingDemo extends StatelessWidget {\n  final controller = Get.put(LoadingController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Loading Indicators')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() => controller.isLoading.value\n                ? CircularProgressIndicator()\n                : Text(controller.data.value, style: TextStyle(fontSize: 20))),\n            SizedBox(height: 20),\n            Obx(() => ElevatedButton(\n              onPressed: controller.isLoading.value ? null : controller.loadData,\n              child: controller.isLoading.value\n                  ? SizedBox(\n                      width: 20,\n                      height: 20,\n                      child: CircularProgressIndicator(strokeWidth: 2),\n                    )\n                  : Text('Load Data'),\n            )),\n            SizedBox(height: 10),\n            ElevatedButton(\n              onPressed: controller.loadWithOverlay,\n              child: Text('Load with Overlay'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the simplest way to show a loading indicator in GetX?",
+      "options": [
+        "Use a StatefulWidget",
+        "Use a reactive boolean and Obx",
+        "Use setState",
+        "Use a FutureBuilder"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you ensure the loading state is reset even if an error occurs?",
+      "options": [
+        "Set isLoading false in catch block",
+        "Set isLoading false in finally block",
+        "It's automatic",
+        "Use StateMixin only"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which GetX feature provides built‑in loading, success, and error states?",
+      "options": ["GetxController", "Obx", "StateMixin", "GetBuilder"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-state-mixin",
+    "getx-api-integration",
+    "getx-snackbar"
+  ]
+}

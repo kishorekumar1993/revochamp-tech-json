@@ -1,0 +1,202 @@
+{
+  "slug": "getx-api-integration",
+  "course": "Flutter",
+  "title": "GetX API Integration: Fetch Data with Reactive State",
+  "meta": {
+    "title": "GetX API Integration – Reactive Data Fetching in Flutter",
+    "description": "Learn how to integrate REST APIs with GetX. Use GetxService, reactive state, workers, and error handling to build robust data-fetching logic in Flutter.",
+    "keywords": [
+      "GetX API integration",
+      "GetX http",
+      "GetX dio",
+      "reactive API calls",
+      "GetX loading state",
+      "GetX error handling",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Integrating APIs is a core part of most Flutter apps. GetX simplifies this by providing reactive state, dependency injection, and a clean separation of concerns. This guide shows how to fetch data from an API, handle loading and error states, and display the results reactively using GetX."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up the Service"
+    },
+    {
+      "type": "text",
+      "value": "Create a service class that extends `GetxService` (or `GetxController`) to manage API calls. Use `http` or `dio` for networking. The service will be injected via GetX dependency injection."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:get/get.dart';\nimport 'package:http/http.dart' as http;\nimport 'dart:convert';\n\nclass ApiService extends GetxService {\n  final String baseUrl = 'https://jsonplaceholder.typicode.com';\n\n  Future<List<dynamic>> fetchPosts() async {\n    final response = await http.get(Uri.parse('$baseUrl/posts'));\n    if (response.statusCode == 200) {\n      return json.decode(response.body);\n    } else {\n      throw Exception('Failed to load posts');\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Controller with Reactive State"
+    },
+    {
+      "type": "text",
+      "value": "Create a controller that holds the reactive state (data, loading, error). It will call the service and update the state accordingly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostsController extends GetxController {\n  final ApiService apiService;\n  PostsController(this.apiService);\n\n  var posts = <dynamic>[].obs;\n  var isLoading = false.obs;\n  var error = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    fetchPosts();\n  }\n\n  Future<void> fetchPosts() async {\n    isLoading.value = true;\n    error.value = '';\n    try {\n      final result = await apiService.fetchPosts();\n      posts.assignAll(result);\n    } catch (e) {\n      error.value = e.toString();\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Dependency Injection with Bindings"
+    },
+    {
+      "type": "text",
+      "value": "Use a binding to register the service and controller. This ensures they are created when the route is opened."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostsBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<ApiService>(() => ApiService());\n    Get.lazyPut<PostsController>(() => PostsController(Get.find()));\n  }\n}\n\n// In route\nGetPage(\n  name: '/posts',\n  page: () => PostsPage(),\n  binding: PostsBinding(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "UI with Obx"
+    },
+    {
+      "type": "text",
+      "value": "The UI listens to the controller's reactive variables using `Obx`. It shows a loading indicator, error message, or the list of data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostsPage extends GetView<PostsController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Posts')),\n      body: Obx(() {\n        if (controller.isLoading.value) {\n          return Center(child: CircularProgressIndicator());\n        }\n        if (controller.error.value.isNotEmpty) {\n          return Center(\n            child: Column(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                Text('Error: ${controller.error.value}'),\n                ElevatedButton(\n                  onPressed: controller.fetchPosts,\n                  child: Text('Retry'),\n                ),\n              ],\n            ),\n          );\n        }\n        return ListView.builder(\n          itemCount: controller.posts.length,\n          itemBuilder: (_, index) {\n            final post = controller.posts[index];\n            return ListTile(\n              title: Text(post['title']),\n              subtitle: Text(post['body']),\n            );\n          },\n        );\n      }),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using StateMixin for Cleaner Code"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides `StateMixin` that reduces boilerplate by handling loading, error, and success states. Extend `StateMixin<T>` and use `change` to update the state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostsController extends GetxController with StateMixin<List<dynamic>> {\n  final ApiService apiService;\n  PostsController(this.apiService);\n\n  @override\n  void onInit() {\n    super.onInit();\n    fetchPosts();\n  }\n\n  Future<void> fetchPosts() async {\n    change(null, status: RxStatus.loading());\n    try {\n      final result = await apiService.fetchPosts();\n      change(result, status: RxStatus.success());\n    } catch (e) {\n      change(null, status: RxStatus.error(e.toString()));\n    }\n  }\n}\n\n// In UI\nclass PostsPage extends GetView<PostsController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Posts')),\n      body: controller.obx(\n        (data) => ListView.builder(\n          itemCount: data!.length,\n          itemBuilder: (_, index) => ListTile(\n            title: Text(data[index]['title']),\n            subtitle: Text(data[index]['body']),\n          ),\n        ),\n        onLoading: Center(child: CircularProgressIndicator()),\n        onError: (error) => Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Text('Error: $error'),\n              ElevatedButton(\n                onPressed: controller.fetchPosts,\n                child: Text('Retry'),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Pagination"
+    },
+    {
+      "type": "text",
+      "value": "For paginated data, you can use a combination of reactive lists and a `loadMore` method. Use `debounce` to avoid excessive calls while scrolling."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PaginatedController extends GetxController {\n  final ApiService apiService;\n  PaginatedController(this.apiService);\n\n  var items = <dynamic>[].obs;\n  var isLoadingMore = false.obs;\n  var hasMore = true.obs;\n  int page = 1;\n\n  Future<void> fetchItems({bool refresh = false}) async {\n    if (refresh) {\n      page = 1;\n      items.clear();\n      hasMore.value = true;\n    }\n    if (isLoadingMore.value || !hasMore.value) return;\n\n    isLoadingMore.value = true;\n    try {\n      final newItems = await apiService.getItems(page);\n      if (newItems.isEmpty) {\n        hasMore.value = false;\n      } else {\n        items.addAll(newItems);\n        page++;\n      }\n    } catch (e) {\n      // handle error\n    } finally {\n      isLoadingMore.value = false;\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling with Workers"
+    },
+    {
+      "type": "text",
+      "value": "You can use workers to react to errors globally, for example to show a snackbar when an error occurs."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostsController extends GetxController {\n  // ...\n  @override\n  void onInit() {\n    super.onInit();\n    ever(error, (err) {\n      if (err.isNotEmpty) {\n        Get.snackbar('Error', err, snackPosition: SnackPosition.BOTTOM);\n      }\n    });\n    fetchPosts();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `GetxService` for API clients** – They are permanent and can be reused across controllers.",
+        "**Keep controllers focused** – One controller per screen or data entity.",
+        "**Use `StateMixin`** – It reduces boilerplate for loading/error/success states.",
+        "**Handle errors gracefully** – Show user-friendly messages and provide a retry option.",
+        "**Use `debounce` for search inputs** – Avoid making API calls on every keystroke.",
+        "**Cancel previous requests when appropriate** – Use `CancelToken` with dio to avoid race conditions."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling API in the view** – Mixing logic with UI.\n✅ Call APIs in controllers or services.",
+        "❌ **Not handling loading/error states** – User experience suffers.\n✅ Always show loading indicators and handle errors.",
+        "❌ **Forgetting to dispose controllers** – Services are permanent, but controllers should be disposed.\n✅ Use bindings to manage lifecycle.",
+        "❌ **Not using `assignAll` for lists** – Using `list.value = newList` doesn't trigger UI updates correctly.\n✅ Use `assignAll` to replace list contents."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Should I use `http` or `dio`?**  \nA: `dio` offers more features like interceptors, cancel tokens, and form data. `http` is simpler for basic needs.",
+        "**Q: How do I add headers (e.g., authentication) to API calls?**  \nA: In your service, pass headers to the HTTP client. For `dio`, you can use interceptors to add them globally.",
+        "**Q: How do I cache API responses?**  \nA: You can use `GetStorage` or a more advanced caching package like `hive`. Store data after fetching and load from cache when offline.",
+        "**Q: How do I handle multiple simultaneous requests?**  \nA: Use `Future.wait` or `Stream.fromFutures`. With GetX, you can use `Obx` with multiple reactive variables.",
+        "**Q: How to test API integration with GetX?**  \nA: Mock the service using a fake implementation and inject it via `Get.put` in tests."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides a clean, reactive approach to API integration. By combining services, controllers with reactive state, and proper error handling, you can build robust data-driven Flutter apps with minimal boilerplate. The pattern is scalable and testable, making it ideal for both small projects and large applications."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\nimport 'package:http/http.dart' as http;\nimport 'dart:convert';\n\nvoid main() => runApp(MyApp());\n\nclass ApiService extends GetxService {\n  final String baseUrl = 'https://jsonplaceholder.typicode.com';\n\n  Future<List<dynamic>> fetchPosts() async {\n    final response = await http.get(Uri.parse('$baseUrl/posts'));\n    if (response.statusCode == 200) {\n      return json.decode(response.body);\n    } else {\n      throw Exception('Failed to load posts');\n    }\n  }\n}\n\nclass PostsController extends GetxController {\n  final ApiService apiService;\n  PostsController(this.apiService);\n\n  var posts = <dynamic>[].obs;\n  var isLoading = false.obs;\n  var error = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    fetchPosts();\n  }\n\n  Future<void> fetchPosts() async {\n    isLoading.value = true;\n    error.value = '';\n    try {\n      final result = await apiService.fetchPosts();\n      posts.assignAll(result);\n    } catch (e) {\n      error.value = e.toString();\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}\n\nclass PostsBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<ApiService>(() => ApiService());\n    Get.lazyPut<PostsController>(() => PostsController(Get.find()));\n  }\n}\n\nclass PostsPage extends GetView<PostsController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('API Integration')),\n      body: Obx(() {\n        if (controller.isLoading.value) {\n          return Center(child: CircularProgressIndicator());\n        }\n        if (controller.error.value.isNotEmpty) {\n          return Center(\n            child: Column(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                Text('Error: ${controller.error.value}'),\n                ElevatedButton(\n                  onPressed: controller.fetchPosts,\n                  child: Text('Retry'),\n                ),\n              ],\n            ),\n          );\n        }\n        return ListView.builder(\n          itemCount: controller.posts.length,\n          itemBuilder: (_, index) {\n            final post = controller.posts[index];\n            return ListTile(\n              title: Text(post['title']),\n              subtitle: Text(post['body']),\n            );\n          },\n        );\n      }),\n    );\n  }\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      initialRoute: '/',\n      getPages: [\n        GetPage(name: '/', page: () => PostsPage(), binding: PostsBinding()),\n      ],\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the recommended way to hold API data in a GetX controller?",
+      "options": [
+        "A normal variable",
+        "A reactive variable (e.g., `.obs`)",
+        "A Future",
+        "A Stream"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which GetX feature can help reduce boilerplate for loading/error/success states?",
+      "options": ["StateMixin", "Obx", "GetBuilder", "Workers"],
+      "answer": 0
+    },
+    {
+      "question": "How do you replace all items in an RxList with a new list?",
+      "options": ["list.value = newList", "list.assignAll(newList)", "list.clear() then list.addAll", "Both B and C"],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-services",
+    "getx-reactive-state",
+    "getx-dependency-injection"
+  ]
+}

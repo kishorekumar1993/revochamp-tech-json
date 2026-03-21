@@ -1,0 +1,193 @@
+{
+  "slug": "getx-computed-state",
+  "course": "Flutter",
+  "title": "GetX Computed State: Derived Values & Reactive Calculations",
+  "meta": {
+    "title": "GetX Computed State – Derived Values & Reactive Calculations",
+    "description": "Learn how to compute derived values from reactive state in GetX. Use getters, Rx with workers, GetX widget, and performance tips for efficient reactive calculations.",
+    "keywords": [
+      "GetX computed state",
+      "GetX derived values",
+      "reactive calculations",
+      "GetX getter",
+      "GetX computed property",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Computed State?"
+    },
+    {
+      "type": "text",
+      "value": "Computed state refers to values that are derived from other reactive state. Instead of storing the computed value separately and manually updating it whenever its dependencies change, you can compute it on the fly. In GetX, you can use simple getters, `Rx` variables updated with workers, or the `GetX` widget to efficiently manage computed state."
+    },
+    {
+      "type": "heading",
+      "value": "1. Using Getters in Controllers"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to create a computed value is to use a getter in your controller. The getter will be re-evaluated every time it is accessed, and if you use it inside `Obx`, it will be re-evaluated whenever any of its dependencies change."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfileController extends GetxController {\n  var firstName = 'John'.obs;\n  var lastName = 'Doe'.obs;\n\n  // Computed value using a getter\n  String get fullName => '${firstName.value} ${lastName.value}';\n}\n\n// In UI\nObx(() => Text(controller.fullName)); // rebuilds when firstName or lastName changes"
+    },
+    {
+      "type": "heading",
+      "value": "2. Reactive Computed Variables with Workers"
+    },
+    {
+      "type": "text",
+      "value": "If you want the computed value to be reactive itself (so you can observe it as an `Rx`), you can use a worker to update a secondary reactive variable whenever its dependencies change."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfileController extends GetxController {\n  var firstName = 'John'.obs;\n  var lastName = 'Doe'.obs;\n  var fullName = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    everAll([firstName, lastName], (_) {\n      fullName.value = '${firstName.value} ${lastName.value}';\n    });\n  }\n}\n\n// UI\nObx(() => Text(controller.fullName.value));"
+    },
+    {
+      "type": "heading",
+      "value": "3. Using the GetX Widget for Efficient Computations"
+    },
+    {
+      "type": "text",
+      "value": "The `GetX` widget is ideal for computed state because it allows you to recompute only when its observed variables change, without storing an extra reactive variable. It also supports returning a widget directly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfileController extends GetxController {\n  var firstName = 'John'.obs;\n  var lastName = 'Doe'.obs;\n}\n\n// In UI\nGetX<ProfileController>(\n  builder: (controller) {\n    // This builder runs only when firstName or lastName changes\n    final fullName = '${controller.firstName.value} ${controller.lastName.value}';\n    return Text(fullName);\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "4. Computed Lists and Filtering"
+    },
+    {
+      "type": "text",
+      "value": "A common use case is filtering a reactive list based on a search query. You can compute the filtered list on the fly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TodoController extends GetxController {\n  var todos = <String>[].obs;\n  var filter = ''.obs;\n\n  List<String> get filteredTodos {\n    if (filter.value.isEmpty) return todos;\n    return todos.where((todo) => todo.contains(filter.value)).toList();\n  }\n}\n\n// UI\nObx(() => ListView.builder(\n  itemCount: controller.filteredTodos.length,\n  itemBuilder: (_, i) => Text(controller.filteredTodos[i]),\n));"
+    },
+    {
+      "type": "heading",
+      "value": "5. Performance Considerations"
+    },
+    {
+      "type": "text",
+      "value": "When using getters for computed values, the computation runs every time the getter is accessed. If the computation is expensive, you may want to memoize the result. Using `GetX` widget with a builder ensures the computation only runs when dependencies change, not on every frame. For lists, consider using `RxList` and updating it only when needed (e.g., after filter changes) if the list is large."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Expensive computation - only recompute when dependencies change\nGetX<ExpensiveController>(\n  builder: (ctrl) {\n    final result = ctrl.expensiveComputation();\n    return Text(result);\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "6. Computed State with StateMixin"
+    },
+    {
+      "type": "text",
+      "value": "You can combine computed state with `StateMixin` to handle loading/error states alongside derived data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DataController extends GetxController with StateMixin<List<int>> {\n  var filter = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    fetchData();\n  }\n\n  Future<void> fetchData() async {\n    change(null, status: RxStatus.loading());\n    try {\n      final data = await api.getNumbers();\n      change(data, status: RxStatus.success());\n    } catch (e) {\n      change(null, status: RxStatus.error(e.toString()));\n    }\n  }\n\n  List<int> get filteredData {\n    final data = state;\n    if (data == null || filter.value.isEmpty) return data ?? [];\n    return data.where((n) => n.toString().contains(filter.value)).toList();\n  }\n}\n\n// UI\ncontroller.obx(\n  (data) => Column(\n    children: [\n      TextField(onChanged: (v) => controller.filter.value = v),\n      Expanded(\n        child: Obx(() => ListView.builder(\n          itemCount: controller.filteredData.length,\n          itemBuilder: (_, i) => Text('${controller.filteredData[i]}'),\n        )),\n      ),\n    ],\n  ),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use getters for simple, cheap computations** – They are easy to read and maintain.",
+        "**Use `GetX` widget for expensive computations** – It recomputes only when dependencies change, avoiding unnecessary work.",
+        "**Memoize expensive results** – Cache computed values if they are reused and recomputed often.",
+        "**Keep computed logic in the controller** – Not in the UI, to maintain separation of concerns.",
+        "**Avoid calling getters inside `build` without `Obx`** – The value won't update when dependencies change.",
+        "**Use `everAll` or `debounce` for complex derived state** – Especially if you need to perform async work after a change."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using a getter inside `Obx` but the getter accesses non‑reactive variables** – The UI won't update.\n✅ Ensure all dependencies are reactive (`.obs`).",
+        "❌ **Re‑computing expensive values on every rebuild** – Causes performance issues.\n✅ Use `GetX` widget to limit recomputation.",
+        "❌ **Storing computed state in an `Rx` variable that is manually updated** – Leads to duplicate state and potential bugs.\n✅ Use getters or workers to derive it automatically.",
+        "❌ **Not handling null cases in computed values** – If the source data can be null, handle it gracefully."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: When should I use a getter vs a worker + `Rx` variable?**  \nA: Use a getter for simple synchronous computations. Use a worker + `Rx` when you need to perform side effects or when the computed value is expensive and you want to memoize it.",
+        "**Q: Does `Obx` work with getters?**  \nA: Yes, as long as the getter accesses reactive variables, `Obx` will listen to them and rebuild when they change.",
+        "**Q: Can I combine multiple reactive sources in a computed value?**  \nA: Yes, the getter can access any number of `Rx` variables; `Obx` will track all of them.",
+        "**Q: How to compute a value that depends on an async operation?**  \nA: Use a worker to listen to the async result (e.g., after a future completes) and update a reactive variable. Or use `StateMixin` and compute based on the state.",
+        "**Q: What's the difference between `GetX` widget and `Obx` with a getter?**  \nA: `GetX` widget rebuilds only the widget returned by the builder, and it can access the controller via a callback, which can be more efficient if the computation is inside the builder. `Obx` with a getter also works, but the getter is called on every frame where the widget is built (though still efficient if the computation is cheap)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Computed state is a powerful pattern in reactive programming. GetX offers multiple ways to implement it, from simple getters to reactive workers and the `GetX` widget. By choosing the right approach based on complexity and performance needs, you can keep your controllers clean and your UI responsive."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: ComputedDemo(),\n    );\n  }\n}\n\nclass TodoController extends GetxController {\n  var todos = <String>[].obs;\n  var filter = ''.obs;\n\n  void addTodo(String text) {\n    todos.add(text);\n  }\n\n  List<String> get filteredTodos {\n    if (filter.value.isEmpty) return todos;\n    return todos.where((todo) => todo.contains(filter.value)).toList();\n  }\n}\n\nclass ComputedDemo extends StatelessWidget {\n  final controller = Get.put(TodoController());\n  final TextEditingController textController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Computed State Demo')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          children: [\n            Row(\n              children: [\n                Expanded(\n                  child: TextField(\n                    controller: textController,\n                    decoration: InputDecoration(labelText: 'New todo'),\n                  ),\n                ),\n                IconButton(\n                  icon: Icon(Icons.add),\n                  onPressed: () {\n                    if (textController.text.isNotEmpty) {\n                      controller.addTodo(textController.text);\n                      textController.clear();\n                    }\n                  },\n                ),\n              ],\n            ),\n            TextField(\n              decoration: InputDecoration(labelText: 'Filter'),\n              onChanged: (value) => controller.filter.value = value,\n            ),\n            SizedBox(height: 10),\n            Expanded(\n              child: Obx(() => ListView.builder(\n                itemCount: controller.filteredTodos.length,\n                itemBuilder: (_, i) => ListTile(\n                  title: Text(controller.filteredTodos[i]),\n                ),\n              )),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you create a computed value that automatically updates when its dependencies change?",
+      "options": [
+        "Use a getter that accesses reactive variables",
+        "Store the computed value in a separate Rx variable and update it manually",
+        "Use a Worker to update a reactive variable",
+        "All of the above"
+      ],
+      "answer": 3
+    },
+    {
+      "question": "Which widget is best for expensive computations that should only run when dependencies change?",
+      "options": ["Obx", "GetBuilder", "GetX", "GetView"],
+      "answer": 2
+    },
+    {
+      "question": "What will happen if you use a getter inside `Obx` that accesses non‑reactive variables?",
+      "options": [
+        "The UI will update when the getter returns a new value",
+        "The UI will never update because the dependencies are not tracked",
+        "An error will be thrown",
+        "The getter will be called only once"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-reactive-state",
+    "getx-workers",
+    "getx-controller"
+  ]
+}

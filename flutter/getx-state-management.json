@@ -1,0 +1,255 @@
+{
+  "slug": "getx-dependency-injection",
+  "course": "Flutter",
+  "title": "GetX Dependency Injection: Manage Controllers & Services Like a Pro",
+  "meta": {
+    "title": "GetX Dependency Injection – Complete Guide with Examples",
+    "description": "Master dependency injection in GetX: Get.put, Get.lazyPut, Get.create, Get.putAsync, fenix, permanent controllers, and best practices for managing dependencies in Flutter apps.",
+    "keywords": [
+      "GetX dependency injection",
+      "GetX DI",
+      "Get.put",
+      "Get.lazyPut",
+      "Get.create",
+      "Get.putAsync",
+      "GetX controller",
+      "dependency injection Flutter",
+      "GetX service"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction to Dependency Injection in GetX"
+    },
+    {
+      "type": "text",
+      "value": "Dependency injection (DI) is a design pattern that allows you to manage the dependencies of your classes efficiently. GetX provides a powerful, built-in DI system that automatically handles the lifecycle of your controllers, services, and other dependencies. This reduces boilerplate, improves testability, and makes your code more modular."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use GetX for DI?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Automatic disposal**: GetX disposes controllers when they are no longer needed.",
+        "**No BuildContext required**: Access dependencies anywhere in your app.",
+        "**Lazy loading**: Create instances only when needed for better performance.",
+        "**Smart management**: Control whether a dependency is permanent or temporary.",
+        "**Easy testing**: Mock dependencies without modifying production code."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "1. Get.put – Simple Injection"
+    },
+    {
+      "type": "text",
+      "value": "`Get.put` is the most straightforward way to inject a dependency. It creates an instance and makes it available throughout the app. Use it when you need the instance immediately."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  // your logic\n}\n\n// Inject in a widget, binding, or anywhere\nfinal controller = Get.put(MyController());\n\n// Later, access it anywhere\nfinal controller = Get.find<MyController>();"
+    },
+    {
+      "type": "heading",
+      "value": "2. Get.lazyPut – Lazy Injection"
+    },
+    {
+      "type": "text",
+      "value": "`Get.lazyPut` delays the creation of the instance until it is first accessed. This is ideal for improving startup performance and for dependencies that may not be used immediately."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.lazyPut<MyController>(() => MyController());\n\n// The instance is created only when this line is called\nfinal controller = Get.find<MyController>();"
+    },
+    {
+      "type": "heading",
+      "value": "3. Get.putAsync – Asynchronous Injection"
+    },
+    {
+      "type": "text",
+      "value": "Use `Get.putAsync` when your dependency requires asynchronous initialization (e.g., opening a database connection, reading files)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.putAsync<DatabaseService>(() async {\n  final db = await DatabaseService.init();\n  return db;\n});\n\n// Later, you can find it synchronously\nfinal db = Get.find<DatabaseService>();"
+    },
+    {
+      "type": "heading",
+      "value": "4. Get.create – Fresh Instance Each Time"
+    },
+    {
+      "type": "text",
+      "value": "`Get.create` creates a new instance every time you call `Get.find`. This is useful for dependencies that should not be shared (e.g., a transient service)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.create<MyController>(() => MyController());\n\n// Each Get.find creates a new instance\nfinal c1 = Get.find<MyController>();\nfinal c2 = Get.find<MyController>();\n// c1 != c2"
+    },
+    {
+      "type": "heading",
+      "value": "5. fenix: true – Keep Instance Alive"
+    },
+    {
+      "type": "text",
+      "value": "By default, when a controller is no longer referenced (e.g., the view is closed), GetX disposes it. Setting `fenix: true` allows the instance to be recreated later if needed, without losing the state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.lazyPut<MyController>(\n  () => MyController(),\n  fenix: true,\n);\n// Now if the controller is disposed, Get.find will create a new one."
+    },
+    {
+      "type": "heading",
+      "value": "6. Permanent Controllers"
+    },
+    {
+      "type": "text",
+      "value": "You can make a controller permanent so it is never disposed automatically. Use `permanent: true`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.put(MyController(), permanent: true);\n// This instance will live for the entire app lifecycle."
+    },
+    {
+      "type": "heading",
+      "value": "7. Removing Dependencies Manually"
+    },
+    {
+      "type": "text",
+      "value": "In some cases, you may want to manually remove a dependency from GetX's memory."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.delete<MyController>(); // deletes the instance\n\n// Check if an instance exists\nif (Get.isRegistered<MyController>()) { ... }\n\n// Delete with force\nGet.delete<MyController>(force: true);"
+    },
+    {
+      "type": "heading",
+      "value": "8. Bindings – The Recommended Way"
+    },
+    {
+      "type": "text",
+      "value": "Bindings allow you to define dependencies for a specific route. This keeps your code organized and ensures that controllers are created and disposed with the route. Bindings are the recommended approach in larger apps."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<HomeController>(() => HomeController());\n    Get.lazyPut<ApiService>(() => ApiService());\n  }\n}\n\n// In your route declaration\nGetPage(\n  name: '/home',\n  page: () => HomeView(),\n  binding: HomeBinding(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "9. GetView and GetWidget"
+    },
+    {
+      "type": "text",
+      "value": "GetView provides a convenient way to access a controller without manually calling `Get.find`. It automatically looks up the controller type you specify."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeView extends GetView<HomeController> {\n  @override\n  Widget build(BuildContext context) {\n    // controller is automatically available\n    return Text('${controller.count}');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "10. Injecting Dependencies into Controllers"
+    },
+    {
+      "type": "text",
+      "value": "Controllers often depend on services. You can inject them using the constructor."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ApiService extends GetxService { ... }\n\nclass HomeController extends GetxController {\n  final ApiService api;\n  HomeController(this.api);\n}\n\n// In your binding or injection:\nGet.lazyPut<ApiService>(() => ApiService());\nGet.lazyPut<HomeController>(() => HomeController(Get.find()));"
+    },
+    {
+      "type": "heading",
+      "value": "11. GetxService – App-Wide Services"
+    },
+    {
+      "type": "text",
+      "value": "GetxService is a special type of controller that is never disposed unless you manually delete it. Use it for app-wide services like authentication, theme, or local storage."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthService extends GetxService {\n  Future<void> login(String email, String password) async { ... }\n  void logout() { ... }\n}\n\n// Register as a service\nawait Get.putAsync<AuthService>(() => AuthService().init());"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use Bindings** – Keep your dependency registration near the route.",
+        "**Prefer `Get.lazyPut`** – Improve startup performance unless you need the instance immediately.",
+        "**Inject dependencies via constructor** – Makes testing easier.",
+        "**Use `GetxService` for singletons** – Like API clients, database connections.",
+        "**Avoid using `Get.put` inside widgets** – Use bindings or `Get.lazyPut` to avoid duplicate instances on rebuilds."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `Get.put` in build method** – Causes duplicate controllers.\n✅ Use `Get.lazyPut` or bindings.",
+        "❌ **Forgetting to dispose streams in `onClose`** – Can cause memory leaks.\n✅ Always clean up resources.",
+        "❌ **Not using `Get.find` after async injection** – `Get.putAsync` must be awaited before using `Get.find`.\n✅ Use `FutureBuilder` or await before accessing.",
+        "❌ **Overusing permanent controllers** – Keep them only for truly global dependencies."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX's dependency injection system is powerful yet simple. It reduces boilerplate, automatically manages lifecycle, and makes your code more modular and testable. By understanding the different injection methods and combining them with bindings, you can build scalable Flutter applications with ease."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: HomePage(),\n    );\n  }\n}\n\n// A simple service\nclass CounterService extends GetxService {\n  int count = 0;\n  void increment() => count++;\n}\n\n// Controller that depends on the service\nclass HomeController extends GetxController {\n  final CounterService service;\n  HomeController(this.service);\n\n  void increment() => service.increment();\n  int get count => service.count;\n}\n\nclass HomePage extends StatelessWidget {\n  // Inject dependencies using Get.lazyPut\n  @override\n  Widget build(BuildContext context) {\n    // Register service and controller using lazyPut\n    if (!Get.isRegistered<CounterService>()) {\n      Get.lazyPut<CounterService>(() => CounterService());\n    }\n    if (!Get.isRegistered<HomeController>()) {\n      Get.lazyPut<HomeController>(() => HomeController(Get.find()));\n    }\n\n    // Use GetView for cleaner access\n    return GetView<HomeController>(\n      builder: (controller) {\n        return Scaffold(\n          appBar: AppBar(title: Text('DI Example')),\n          body: Center(\n            child: Obx(() => Text(\n              'Count: ${controller.count}',\n              style: TextStyle(fontSize: 32),\n            )),\n          ),\n          floatingActionButton: FloatingActionButton(\n            onPressed: controller.increment,\n            child: Icon(Icons.add),\n          ),\n        );\n      },\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method should you use to delay the creation of a dependency until it is first accessed?",
+      "options": ["Get.put", "Get.lazyPut", "Get.create", "Get.putAsync"],
+      "answer": 1
+    },
+    {
+      "question": "What does `fenix: true` do in `Get.lazyPut`?",
+      "options": [
+        "Makes the controller permanent",
+        "Allows recreation after disposal",
+        "Forces synchronous creation",
+        "Enables hot reload"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which class should you extend for an app-wide service that should never be disposed automatically?",
+      "options": ["GetxController", "GetxService", "Bindings", "GetView"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-installation",
+    "getx-structure",
+    "getx-state-management",
+    "flutter-getx-bindings"
+  ]
+}

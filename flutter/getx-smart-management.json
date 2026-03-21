@@ -1,0 +1,192 @@
+{
+  "slug": "getx-smart-management",
+  "course": "Flutter",
+  "title": "GetX Smart Management: Automatic Controller Lifecycle",
+  "meta": {
+    "title": "GetX Smart Management – Automatic Controller Disposal & Lifecycle",
+    "description": "Learn how GetX automatically creates, caches, and disposes controllers. Understand permanent, fenix, and how smart management prevents memory leaks in Flutter apps.",
+    "keywords": [
+      "GetX smart management",
+      "GetX controller lifecycle",
+      "automatic disposal",
+      "GetX permanent",
+      "GetX fenix",
+      "GetX memory management",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is GetX Smart Management?"
+    },
+    {
+      "type": "text",
+      "value": "One of GetX's most powerful features is its **smart management** system, which automatically handles the lifecycle of your controllers and dependencies. It tracks when a controller is being used and disposes of it when it's no longer needed, preventing memory leaks. This guide explains how this system works and how to control it with `permanent`, `fenix`, and proper registration patterns."
+    },
+    {
+      "type": "heading",
+      "value": "How Smart Management Works"
+    },
+    {
+      "type": "text",
+      "value": "GetX monitors whether a controller is actively being used. A controller is considered \"in use\" when:\n- It is injected via `Get.put` and the widget that called `Get.put` is still in the widget tree.\n- It is accessed via `Get.find` inside a widget that is currently mounted.\n- It is part of a route that is currently active.\n\nWhen a controller is no longer referenced by any active widget or route, GetX automatically calls its `onClose()` method and disposes it. This is the default behavior and helps keep your app memory‑efficient."
+    },
+    {
+      "type": "heading",
+      "value": "Controller Lifecycle in Routes"
+    },
+    {
+      "type": "text",
+      "value": "When you use bindings with `GetPage`, GetX ties the controller lifecycle to the route. When the route is popped, the controller is automatically disposed (unless marked `permanent`)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut(() => HomeController()); // disposed when route is popped\n  }\n}\n\nGetPage(\n  name: '/home',\n  page: () => HomePage(),\n  binding: HomeBinding(),\n);"
+    },
+    {
+      "type": "text",
+      "value": "If you register a controller inside a widget using `Get.put` (not recommended outside of simple cases), the controller will be disposed when that widget is removed from the tree."
+    },
+    {
+      "type": "heading",
+      "value": "Controlling Lifecycle with permanent"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want a controller to live for the entire app duration. Use `permanent: true` to prevent automatic disposal."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// This controller will never be disposed\nGet.put(AuthController(), permanent: true);\n\n// Also works with lazyPut\nGet.lazyPut(() => AuthService(), permanent: true);"
+    },
+    {
+      "type": "heading",
+      "value": "fenix – Resurrection After Disposal"
+    },
+    {
+      "type": "text",
+      "value": "If you want a controller to be recreated after it has been disposed (e.g., when the user revisits a route), use `fenix: true` with `lazyPut`. When the route is popped, the controller is disposed, but the next `Get.find` will create a fresh instance."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.lazyPut(() => ProfileController(), fenix: true);\n// After the controller is disposed, calling Get.find will create a new one."
+    },
+    {
+      "type": "heading",
+      "value": "Smart Management in Practice"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Default (no flags)** – The controller is disposed when the route is popped or when the widget that created it is removed.",
+        "**`permanent: true`** – The controller lives forever. Use for app‑wide services.",
+        "**`fenix: true`** – The controller is disposed when not used, but can be recreated automatically later.",
+        "**`Get.create`** – Always returns a new instance; does not cache."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Detecting Disposal"
+    },
+    {
+      "type": "text",
+      "value": "Override `onClose()` to perform cleanup and confirm that disposal is happening as expected."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  @override\n  void onClose() {\n    print('Controller disposed');\n    super.onClose();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Pitfalls"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Registering controllers inside `build`** – Creates a new controller on every rebuild, causing leaks and duplicate instances.\n✅ Register in `initState`, bindings, or `onInit` of other controllers.",
+        "**Assuming a controller is still alive** – Always check `Get.isRegistered<T>()` before using `Get.find` if you're not certain.",
+        "**Forgetting to set `permanent` for global services** – They might be disposed unexpectedly when a route is popped.\n✅ Use `permanent: true` for app‑wide services.",
+        "**Not disposing resources in `onClose`** – Even though the controller is disposed, streams and timers may still be active.\n✅ Always clean up in `onClose`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use bindings** – Let GetX manage the controller lifecycle automatically based on routes.",
+        "**Avoid `Get.put` inside widgets** – Prefer bindings or at least use `Get.lazyPut` if you must create a controller in a widget.",
+        "**Use `permanent` only for truly global dependencies** – Like authentication, theme, database services.",
+        "**Use `fenix` for controllers that should be recreated when needed** – Especially for routes that may be opened multiple times.",
+        "**Test disposal** – Use `onClose` logs during development to verify controllers are being disposed correctly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: How does GetX know when a controller is no longer used?**  \nA: GetX uses an internal reference counter. Each time `Get.find` is called from a widget that is mounted, it increments a count. When the widget is unmounted, it decrements. When the count reaches zero, the controller is disposed.",
+        "**Q: What happens if I use `Get.put` in multiple places?**  \nA: The first call creates the instance; subsequent calls return the same instance (unless tags are used). The reference count is increased accordingly.",
+        "**Q: Can I manually delete a controller?**  \nA: Yes, call `Get.delete<MyController>()`. It will call `onClose` and remove it from the registry.",
+        "**Q: Why is my controller not being disposed?**  \nA: It might be marked `permanent`, or there may still be a reference to it in a widget that is still mounted. Check if you are using `Get.put` inside a widget that never gets removed.",
+        "**Q: How to dispose a controller when using `Get.lazyPut` without `fenix`?**  \nA: It will be disposed when the route is popped or when the last reference is removed. To force disposal, use `Get.delete`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX smart management eliminates the need to manually dispose controllers, reducing memory leaks and boilerplate. By understanding how it works and using `permanent` and `fenix` appropriately, you can build efficient, scalable Flutter apps."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: HomePage(),\n    );\n  }\n}\n\nclass DemoController extends GetxController {\n  @override\n  void onInit() {\n    super.onInit();\n    print('Controller created');\n  }\n\n  @override\n  void onClose() {\n    print('Controller disposed');\n    super.onClose();\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  final controller = Get.put(DemoController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Smart Management')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Check console for lifecycle logs'),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () => Get.to(SecondPage()),\n              child: Text('Go to Second Page'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass SecondPage extends StatelessWidget {\n  // This controller will be disposed when this page is popped\n  final controller = Get.put(DemoController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Second Page')),\n      body: Center(\n        child: ElevatedButton(\n          onPressed: () => Get.back(),\n          child: Text('Back'),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the default behavior of a controller injected with Get.lazyPut in a binding?",
+      "options": [
+        "It stays forever",
+        "It is disposed when the route is popped",
+        "It is never created",
+        "It must be manually disposed"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which flag prevents a controller from being automatically disposed?",
+      "options": ["permanent", "fenix", "keepAlive", "persist"],
+      "answer": 0
+    },
+    {
+      "question": "What does `fenix: true` do?",
+      "options": [
+        "Makes the controller permanent",
+        "Allows recreation after disposal",
+        "Creates the controller immediately",
+        "Prevents the controller from being created"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-controller",
+    "getx-lifecycle",
+    "getx-bindings",
+    "getx-dependency-injection"
+  ]
+}

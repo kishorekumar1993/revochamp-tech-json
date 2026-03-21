@@ -1,0 +1,234 @@
+{
+  "slug": "getx-navigation-arguments",
+  "course": "Flutter",
+  "title": "GetX Navigation Arguments: Passing Data Between Screens",
+  "meta": {
+    "title": "GetX Navigation Arguments – Complete Guide to Passing Data",
+    "description": "Learn how to pass data between screens in GetX: using arguments, dynamic parameters, returning results, and best practices. Master GetX navigation with complex data.",
+    "keywords": [
+      "GetX navigation arguments",
+      "Get.arguments",
+      "Get.parameters",
+      "Get.back result",
+      "pass data GetX",
+      "GetX route parameters",
+      "GetX named routes arguments",
+      "Flutter GetX navigation"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction to Passing Data in GetX Navigation"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides several powerful ways to pass data between screens. Whether you're using direct navigation (`Get.to`) or named routes (`Get.toNamed`), you can send data using arguments, dynamic path parameters, or even return results from a closed screen. This guide covers all these techniques with practical examples."
+    },
+    {
+      "type": "heading",
+      "value": "1. Basic Arguments with Get.to"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to pass data is using the `arguments` parameter of `Get.to()`. This works with both widget‑based and named navigation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Sending data\nGet.to(DetailsPage(), arguments: {'title': 'Hello', 'id': 42});\n\n// Receiving data in the destination\nclass DetailsPage extends StatelessWidget {\n  final args = Get.arguments;\n\n  @override\n  Widget build(BuildContext context) {\n    String title = args['title'];\n    int id = args['id'];\n    return Text('$title - $id');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Named Routes with Arguments"
+    },
+    {
+      "type": "text",
+      "value": "When using named routes, you can also pass arguments using the `arguments` parameter. This is useful for sending any type of data without modifying the route definition."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Navigation\nGet.toNamed('/details', arguments: User(name: 'Alice', age: 30));\n\n// Destination\nclass DetailsPage extends StatelessWidget {\n  final user = Get.arguments as User;\n  // ...\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Dynamic Parameters (Path Segments)"
+    },
+    {
+      "type": "text",
+      "value": "For values that should be part of the URL (like IDs), use dynamic parameters defined with `:` in the route definition. These are accessed via `Get.parameters`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Route definition\nGetPage(\n  name: '/user/:id',\n  page: () => UserPage(),\n);\n\n// Navigation\nGet.toNamed('/user/123');\n\n// In UserPage\nfinal userId = Get.parameters['id']; // '123'"
+    },
+    {
+      "type": "heading",
+      "value": "4. Query Parameters (URL Style)"
+    },
+    {
+      "type": "text",
+      "value": "GetX also automatically parses query strings. Combine with dynamic segments or use alone."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Navigation with query parameters\nGet.toNamed('/search?q=flutter&page=2');\n\n// In SearchPage\nfinal query = Get.parameters['q']; // 'flutter'\nfinal page = Get.parameters['page']; // '2'"
+    },
+    {
+      "type": "heading",
+      "value": "5. Returning Results"
+    },
+    {
+      "type": "text",
+      "value": "To get a result back from a pushed screen, use `await` and then `Get.back(result: value)`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In the source screen\nfinal result = await Get.to(SelectionPage());\nprint('Selected: $result');\n\n// In the destination screen\nvoid selectItem(String item) {\n  Get.back(result: item);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Passing Complex Objects"
+    },
+    {
+      "type": "text",
+      "value": "You can pass any object, including custom classes, maps, or lists. Just ensure they are serializable if you need to preserve state across restarts."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Product {\n  final String id;\n  final String name;\n  final double price;\n  Product(this.id, this.name, this.price);\n}\n\n// Send product\nfinal product = Product('p1', 'Laptop', 999.99);\nGet.toNamed('/product', arguments: product);\n\n// Receive\nfinal product = Get.arguments as Product;"
+    },
+    {
+      "type": "heading",
+      "value": "7. Passing Multiple Values"
+    },
+    {
+      "type": "text",
+      "value": "When you need to pass several values, you can use a map, a custom class, or a list. Maps are often convenient for simple scenarios."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Using Map\nGet.toNamed('/details', arguments: {\n  'title': 'Welcome',\n  'userId': 101,\n  'isAdmin': true,\n});\n\n// Receiving\nfinal title = Get.arguments['title'];\nfinal userId = Get.arguments['userId'];\nfinal isAdmin = Get.arguments['isAdmin'];\n\n// Using a custom class (recommended for type safety)\nGet.toNamed('/profile', arguments: UserProfile(name: 'John', age: 25));\nfinal profile = Get.arguments as UserProfile;"
+    },
+    {
+      "type": "heading",
+      "value": "8. Accessing Arguments in onInit"
+    },
+    {
+      "type": "text",
+      "value": "If you're using a controller, you can access arguments inside `onInit` or `onReady` to initialize data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DetailsController extends GetxController {\n  late final String id;\n\n  @override\n  void onInit() {\n    super.onInit();\n    id = Get.parameters['id'] ?? ''; // from path\n    // or\n    final args = Get.arguments;\n    // use args...\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "9. Using GetView with Arguments"
+    },
+    {
+      "type": "text",
+      "value": "When using `GetView`, you still access arguments via `Get.arguments` inside the view or pass them to the controller via injection."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DetailsView extends GetView<DetailsController> {\n  @override\n  Widget build(BuildContext context) {\n    final id = Get.parameters['id'];\n    return Text('ID: $id');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use typed classes for complex data** – Avoid maps for large or structured data; use custom classes with named fields.",
+        "**Validate arguments** – Check if arguments are null and provide defaults to avoid crashes.",
+        "**Use dynamic parameters for IDs** – Makes URLs more meaningful and supports deep linking.",
+        "**Return results with `Get.back`** – Use `await` to handle user selections or form results.",
+        "**Keep argument objects serializable** – If you need to save the app state, ensure arguments can be serialized."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Accessing `Get.arguments` before they are set** – Ensure you are in the destination screen.\n✅ Use `onInit` or the build method after navigation.",
+        "❌ **Assuming the type of arguments without casting** – This can cause runtime errors.\n✅ Use `as` or `is` to check the type.",
+        "❌ **Forgetting to handle null** – `Get.arguments` can be null.\n✅ Always provide a fallback or check for null.",
+        "❌ **Mixing `parameters` and `arguments`** – They serve different purposes; use parameters for URL segments, arguments for arbitrary data."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: What is the difference between `Get.arguments` and `Get.parameters`?**  \nA: `Get.parameters` extracts dynamic path segments defined with `:` in the route name. `Get.arguments` is for any data you pass via the `arguments` parameter. They are completely separate.",
+        "**Q: Can I pass a function as an argument?**  \nA: Yes, you can pass any object, including functions. But be careful about serialization if you need to restore state.",
+        "**Q: How do I pass arguments with `Get.offAllNamed`?**  \nA: Just like `Get.toNamed`: `Get.offAllNamed('/home', arguments: someData);`",
+        "**Q: Can I get arguments in a binding?**  \nA: Yes, bindings can access arguments if you pass them via the route. For example, in a custom binding you could read `Get.arguments` inside `dependencies()` if the route has already been accessed, but it's better to pass data through the controller's constructor.",
+        "**Q: How do I handle missing parameters?**  \nA: Use `Get.parameters['id'] ?? defaultValue` to provide a fallback, and consider a 404 route for missing resources.",
+        "**Q: Is there a way to pass data from a dialog back?**  \nA: Yes, `Get.dialog` returns a `Future` that completes when the dialog is closed. You can use `Get.back(result: data)` inside the dialog."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Passing data between screens is a fundamental part of app development. GetX simplifies this with multiple flexible options: arguments for arbitrary data, dynamic parameters for clean URLs, and result returning for callbacks. By following the patterns and best practices outlined here, you can build robust and maintainable navigation flows."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'Navigation Arguments Demo',\n      initialRoute: '/',\n      getPages: [\n        GetPage(name: '/', page: () => HomePage()),\n        GetPage(name: '/details/:id', page: () => DetailsPage()),\n        GetPage(name: '/profile', page: () => ProfilePage()),\n      ],\n    );\n  }\n}\n\nclass User {\n  final String name;\n  final int age;\n  User(this.name, this.age);\n}\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Passing Data')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            // 1. Arguments with Get.to\n            ElevatedButton(\n              onPressed: () {\n                Get.to(\n                  SimpleDetailsPage(),\n                  arguments: {'message': 'Hello from Get.to'},\n                );\n              },\n              child: Text('Get.to with arguments'),\n            ),\n            // 2. Named route with arguments\n            ElevatedButton(\n              onPressed: () {\n                Get.toNamed('/profile', arguments: User('Alice', 30));\n              },\n              child: Text('Named route with arguments'),\n            ),\n            // 3. Dynamic parameters\n            ElevatedButton(\n              onPressed: () {\n                Get.toNamed('/details/42');\n              },\n              child: Text('Dynamic parameter (ID: 42)'),\n            ),\n            // 4. Returning result\n            ElevatedButton(\n              onPressed: () async {\n                final result = await Get.to(SelectionPage());\n                Get.snackbar('Result', 'You selected: $result');\n              },\n              child: Text('Return result'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass SimpleDetailsPage extends StatelessWidget {\n  final args = Get.arguments;\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Simple Details')),\n      body: Center(\n        child: Text('Message: ${args['message']}'),\n      ),\n    );\n  }\n}\n\nclass ProfilePage extends StatelessWidget {\n  final user = Get.arguments as User;\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Profile')),\n      body: Center(\n        child: Text('Name: ${user.name}, Age: ${user.age}'),\n      ),\n    );\n  }\n}\n\nclass DetailsPage extends StatelessWidget {\n  final id = Get.parameters['id'];\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Details')),\n      body: Center(\n        child: Text('Showing details for ID: $id'),\n      ),\n    );\n  }\n}\n\nclass SelectionPage extends StatelessWidget {\n  final items = ['Apple', 'Banana', 'Orange'];\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Select an item')),\n      body: ListView.builder(\n        itemCount: items.length,\n        itemBuilder: (_, index) {\n          return ListTile(\n            title: Text(items[index]),\n            onTap: () => Get.back(result: items[index]),\n          );\n        },\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which property is used to access dynamic path segments like '/user/:id'?",
+      "options": ["Get.arguments", "Get.parameters", "Get.pathParams", "Get.segments"],
+      "answer": 1
+    },
+    {
+      "question": "How do you return a result from a screen pushed with Get.to?",
+      "options": [
+        "Get.return(result)",
+        "Get.back(result: value)",
+        "Get.result(value)",
+        "Get.close(value)"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the recommended way to pass multiple values of different types?",
+      "options": [
+        "Use separate route parameters",
+        "Use a Map or a custom class",
+        "Concatenate strings",
+        "Use global variables"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-navigation",
+    "getx-named-routes",
+    "getx-route-management",
+    "getx-dependency-injection"
+  ]
+}

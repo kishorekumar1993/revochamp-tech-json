@@ -1,0 +1,198 @@
+{
+  "slug": "getx-permanent-controller",
+  "course": "Flutter",
+  "title": "GetX Permanent Controller: Keep Controllers Alive Forever",
+  "meta": {
+    "title": "GetX Permanent Controller – Keep Controllers Alive in Flutter",
+    "description": "Learn how to create permanent controllers in GetX that survive route changes and app navigation. Perfect for global services, authentication, and app-wide state.",
+    "keywords": [
+      "GetX permanent controller",
+      "permanent GetX",
+      "GetX global controller",
+      "GetxService",
+      "GetX controller lifecycle",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Permanent Controller?"
+    },
+    {
+      "type": "text",
+      "value": "By default, GetX automatically disposes controllers when they are no longer in use (e.g., when a route is popped). A **permanent controller** is one that never gets disposed automatically. It lives for the entire lifetime of the app, making it ideal for global services like authentication, theme management, API clients, or any shared state that must persist across routes."
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Permanent Controller"
+    },
+    {
+      "type": "text",
+      "value": "To make a controller permanent, set `permanent: true` when registering it with `Get.put` or `Get.lazyPut`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Using Get.put\nGet.put(AuthController(), permanent: true);\n\n// Using Get.lazyPut\nGet.lazyPut(() => AuthController(), permanent: true);"
+    },
+    {
+      "type": "text",
+      "value": "You can also use `GetxService`, which is a convenience class that is already permanent by default."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthService extends GetxService {\n  // This service is automatically permanent\n}\n\n// Register\nGet.put(AuthService()); // or Get.lazyPut(() => AuthService());"
+    },
+    {
+      "type": "heading",
+      "value": "Permanent vs Non-Permanent"
+    },
+    {
+      "type": "table",
+      "headers": ["Feature", "Permanent Controller", "Non-Permanent Controller"],
+      "rows": [
+        ["Lifecycle", "Lives entire app session", "Disposed when route is popped or widget unmounted"],
+        ["Use case", "Global services, app-wide state", "Screen-specific logic, temporary data"],
+        ["Disposal", "Manual only (Get.delete)", "Automatic (when not in use)"],
+        ["Memory", "Always in memory", "Cleaned up when not needed"]
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Permanent Controllers"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Authentication state** – User login status should survive across screens.",
+        "**Theme / settings** – App-wide preferences that should persist.",
+        "**API services** – Dio client, database connections, etc.",
+        "**Notification handlers** – Services that listen for push notifications.",
+        "**Analytics** – Track user sessions across the whole app."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Lifecycle of a Permanent Controller"
+    },
+    {
+      "type": "text",
+      "value": "A permanent controller is created once (when first registered or accessed, if lazy) and never disposed unless you manually call `Get.delete`. Its `onInit()` is called once, and `onClose()` is called only when you delete it manually."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PermanentController extends GetxController {\n  @override\n  void onInit() {\n    super.onInit();\n    print('Initialized once');\n  }\n\n  @override\n  void onClose() {\n    print('Closed only when manually deleted');\n    super.onClose();\n  }\n}\n\n// Later, to delete:\nGet.delete<PermanentController>();"
+    },
+    {
+      "type": "heading",
+      "value": "Permanent Controllers in Bindings"
+    },
+    {
+      "type": "text",
+      "value": "You can register permanent controllers in bindings. They will be created when the route is first opened and remain alive even after the route is closed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut(() => AuthService(), permanent: true);\n    Get.lazyPut(() => ApiClient(), permanent: true);\n  }\n}\n\nGetMaterialApp(\n  initialBinding: AppBinding(),\n  // ...\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Accessing Permanent Controllers Anywhere"
+    },
+    {
+      "type": "text",
+      "value": "Because they are permanent, you can access them from any controller, widget, or service using `Get.find<MyController>()` at any time."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In any widget or controller\nfinal auth = Get.find<AuthService>();\nif (auth.isLoggedIn.value) { ... }"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `GetxService` for app-wide services** – It clearly communicates intent and is permanent by default.",
+        "**Limit permanent controllers** – Only for truly global dependencies. Overusing them can lead to memory bloat.",
+        "**Dispose resources manually when needed** – If your permanent controller holds streams or timers, close them in `onClose` (which you may call manually when the app terminates).",
+        "**Avoid holding large data in permanent controllers** – Prefer caching strategies that can be cleared.",
+        "**Test with `Get.reset()`** – In unit tests, reset the dependency container to avoid state leakage."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Making every controller permanent** – Unnecessary memory usage.\n✅ Use permanent only for global services.",
+        "❌ **Not cleaning up resources** – Even permanent controllers should close streams in `onClose` if they are ever deleted manually.\n✅ Override `onClose` and dispose resources.",
+        "❌ **Registering a permanent controller inside a widget's `build`** – Causes re‑registration and potential leaks.\n✅ Use bindings or initState.",
+        "❌ **Assuming permanent controllers are automatically disposed** – They are not; you must call `Get.delete` if you ever need to remove them."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: What's the difference between `permanent: true` and `GetxService`?**  \nA: `GetxService` is a convenience class that already has `permanent: true` set. It's the recommended way for app‑wide services, but both work identically.",
+        "**Q: Can I make a permanent controller lazy?**  \nA: Yes, use `Get.lazyPut(() => MyController(), permanent: true)`. It will be created on first access and never disposed.",
+        "**Q: How do I manually delete a permanent controller?**  \nA: Call `Get.delete<MyController>()`. This will call `onClose()` and remove it from the registry.",
+        "**Q: Will a permanent controller survive a hot restart?**  \nA: Hot restart re‑runs `main()`, so all controllers are re‑initialized. They will be recreated.",
+        "**Q: Should I use `permanent` for a controller that holds a WebSocket connection?**  \nA: Yes, that's a good use case. But remember to close the connection in `onClose` if you ever delete the controller (or in a `close` method)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Permanent controllers are a powerful feature in GetX that let you create global, long‑lived dependencies. By using `permanent: true` or `GetxService`, you can manage app‑wide state and services with ease. However, use them judiciously to keep your app memory‑efficient."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass PermanentCounter extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n\n  @override\n  void onInit() {\n    super.onInit();\n    print('Permanent controller created');\n  }\n\n  @override\n  void onClose() {\n    print('Permanent controller closed (only on manual delete)');\n    super.onClose();\n  }\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    // Register permanent controller\n    Get.put(PermanentCounter(), permanent: true);\n    return GetMaterialApp(\n      home: HomePage(),\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  final counter = Get.find<PermanentCounter>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Permanent Controller')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() => Text('Count: ${counter.count}', style: TextStyle(fontSize: 32))),\n            ElevatedButton(\n              onPressed: counter.increment,\n              child: Text('Increment'),\n            ),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () => Get.to(SecondPage()),\n              child: Text('Go to Second Page'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass SecondPage extends StatelessWidget {\n  final counter = Get.find<PermanentCounter>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Second Page')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() => Text('Count: ${counter.count}', style: TextStyle(fontSize: 32))),\n            ElevatedButton(\n              onPressed: counter.increment,\n              child: Text('Increment'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.back(),\n              child: Text('Back'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you make a controller permanent when using Get.put?",
+      "options": ["Get.put(MyController(), keepAlive: true)", "Get.put(MyController(), permanent: true)", "Get.putPermanent(MyController())", "MyController().permanent()"],
+      "answer": 1
+    },
+    {
+      "question": "What happens to a permanent controller when a route that uses it is popped?",
+      "options": [
+        "It is automatically disposed",
+        "It stays alive",
+        "It is recreated",
+        "It throws an error"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which class is a permanent controller by default?",
+      "options": ["GetxController", "GetxService", "Obx", "GetView"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-controller",
+    "getx-lifecycle",
+    "getx-smart-management",
+    "getx-services"
+  ]
+}

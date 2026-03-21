@@ -1,0 +1,216 @@
+{
+  "slug": "getx-put",
+  "course": "Flutter",
+  "title": "GetX Get.put: The Complete Guide to Immediate Dependency Injection",
+  "meta": {
+    "title": "GetX Get.put – Immediate Dependency Injection in Flutter",
+    "description": "Master Get.put in GetX: syntax, usage, permanent dependencies, tags, and best practices. Learn how to inject controllers and services immediately for your Flutter apps.",
+    "keywords": [
+      "GetX Get.put",
+      "Get.put",
+      "GetX dependency injection",
+      "GetX immediate injection",
+      "GetX controller injection",
+      "GetX service injection",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Get.put?"
+    },
+    {
+      "type": "text",
+      "value": "`Get.put` is the primary method in GetX for **immediate dependency injection**. It creates an instance of a class (usually a controller or service) and makes it available throughout your app. Unlike `Get.lazyPut`, the instance is created right away, not lazily on first access. This is perfect for dependencies that you know will be needed soon, or for global services that must be ready immediately."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Simple injection\nGet.put(MyController());\n\n// Store the instance\nfinal controller = Get.put(MyController());\n\n// Later, retrieve anywhere\nfinal controller = Get.find<MyController>();"
+    },
+    {
+      "type": "heading",
+      "value": "Returning the Instance"
+    },
+    {
+      "type": "text",
+      "value": "`Get.put` returns the instance you just created, so you can store it directly for later use. This is common in views to have a typed reference without needing `Get.find`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomePage extends StatelessWidget {\n  final controller = Get.put(HomeController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Obx(() => Text('${controller.count}'));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Permanent Controllers"
+    },
+    {
+      "type": "text",
+      "value": "By default, controllers injected with `Get.put` are not permanent – they will be disposed when the route that created them is popped, unless you set `permanent: true`. Use this for global services that should live the entire app lifecycle."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Permanent – never disposed automatically\nGet.put(MyController(), permanent: true);\n\n// Also works with lazyPut\nGet.lazyPut(() => MyController(), permanent: true);"
+    },
+    {
+      "type": "heading",
+      "value": "Using Tags for Multiple Instances"
+    },
+    {
+      "type": "text",
+      "value": "If you need multiple instances of the same type, you can give each a unique `tag`. This allows you to differentiate them when using `Get.find`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Register two instances of UserController with different tags\nGet.put(UserController(), tag: 'user1');\nGet.put(UserController(), tag: 'user2');\n\n// Retrieve the specific one\nfinal user1 = Get.find<UserController>(tag: 'user1');\nfinal user2 = Get.find<UserController>(tag: 'user2');"
+    },
+    {
+      "type": "heading",
+      "value": "Injection with Bindings"
+    },
+    {
+      "type": "text",
+      "value": "In a binding, you can also use `Get.put` if you need the instance immediately. However, `Get.lazyPut` is often preferred for better startup performance."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeBinding extends Bindings {\n  @override\n  void dependencies() {\n    // Immediate injection\n    Get.put(HomeController());\n    // Or lazy (recommended)\n    Get.lazyPut(() => ApiService());\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Get.put vs Get.lazyPut"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`Get.put`** – Creates instance immediately. Use when the dependency is needed right away or you want the instance to be ready even if never accessed.",
+        "**`Get.lazyPut`** – Creates instance only on first `Get.find`. Use for better startup performance when the dependency might not be used immediately."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Get.put vs Get.create"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`Get.put`** – Creates a **singleton** instance. Each `Get.find` returns the same instance.",
+        "**`Get.create`** – Creates a **new instance** every time `Get.find` is called. Useful for transient dependencies."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Checking Registration"
+    },
+    {
+      "type": "text",
+      "value": "Before using `Get.find`, you can check if an instance is already registered to avoid errors."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "if (!Get.isRegistered<MyController>()) {\n  Get.put(MyController());\n}\nfinal controller = Get.find<MyController>();"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `Get.put` in `initState` or bindings** – Avoid placing it directly in the `build` method to prevent duplicate instances on rebuilds.",
+        "**Prefer `Get.lazyPut` for most cases** – It improves startup performance, especially for routes that may not be visited.",
+        "**Use `permanent: true` sparingly** – Only for truly global dependencies (e.g., authentication service, theme manager).",
+        "**Use tags when you need multiple instances** – For example, in a list of items where each item has its own controller.",
+        "**Inject dependencies via constructor** – Even with `Get.put`, you can pass dependencies to the controller's constructor for better testability."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `Get.put` inside `build` method** – Creates a new instance on every rebuild.\n✅ Place it in `initState` of a `StatefulWidget`, or better, use bindings.",
+        "❌ **Forgetting to check `isRegistered` before `Get.put`** – Can accidentally overwrite existing instances.\n✅ Use `Get.isRegistered` or rely on the framework to ensure you don't duplicate.",
+        "❌ **Using `Get.put` when you need multiple instances** – Overwrites the previous one.\n✅ Use tags to distinguish instances.",
+        "❌ **Not disposing resources in `onClose`** – Even with permanent controllers, you should clean up listeners."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: When should I use `Get.put` vs `Get.lazyPut`?**  \nA: Use `Get.put` if you need the instance immediately (e.g., in the initial binding of a route that will be accessed). Use `Get.lazyPut` for most other cases to defer creation until needed.",
+        "**Q: Can I use `Get.put` inside a controller?**  \nA: Yes, but be careful about circular dependencies. It's better to inject dependencies via the controller's constructor and register them in bindings.",
+        "**Q: What happens if I call `Get.put` twice for the same type?**  \nA: The second call will overwrite the first if no tag is used. Use `Get.isRegistered` to check before re-registering.",
+        "**Q: How do I remove an instance registered with `Get.put`?**  \nA: Use `Get.delete<MyController>()` (optionally with a tag). This will also call the controller's `onClose`.",
+        "**Q: Does `Get.put` automatically dispose the controller?**  \nA: By default, it is tied to the route's lifecycle. When the route is popped, the controller is disposed unless `permanent: true` is set."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "`Get.put` is a simple yet powerful method for immediate dependency injection in GetX. It gives you fine control over when dependencies are created, and combined with tags and permanence, it handles everything from simple controllers to complex global services. When used judiciously, it contributes to clean, maintainable Flutter applications."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: HomePage(),\n    );\n  }\n}\n\nclass CounterController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n\n  @override\n  void onClose() {\n    print('CounterController disposed');\n    super.onClose();\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  // Get.put creates the instance immediately and returns it\n  final controller = Get.put(CounterController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Get.put Example')),\n      body: Center(\n        child: Obx(() => Text(\n          'Count: ${controller.count}',\n          style: TextStyle(fontSize: 32),\n        )),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: controller.increment,\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does Get.put do?",
+      "options": [
+        "Creates a lazy instance",
+        "Creates an instance immediately and registers it",
+        "Creates a new instance every time",
+        "Deletes an instance"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How can you create a permanent controller that never gets disposed?",
+      "options": [
+        "Get.put(MyController(), permanent: true)",
+        "Get.lazyPut(MyController(), permanent: true)",
+        "Both of the above",
+        "None of the above"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What is the purpose of the `tag` parameter in Get.put?",
+      "options": [
+        "To set a name for debugging",
+        "To allow multiple instances of the same type",
+        "To make the controller permanent",
+        "To dispose the controller automatically"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-dependency-injection",
+    "getx-lazyput",
+    "getx-create",
+    "getx-bindings"
+  ]
+}

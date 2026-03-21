@@ -1,0 +1,211 @@
+{
+  "slug": "getx-error-handling",
+  "course": "Flutter",
+  "title": "GetX Error Handling: Best Practices for Robust Apps",
+  "meta": {
+    "title": "GetX Error Handling – Catching & Displaying Errors in Flutter",
+    "description": "Learn how to handle errors effectively in GetX. Use try-catch, workers, Rx variables, and UI feedback to build resilient Flutter applications.",
+    "keywords": [
+      "GetX error handling",
+      "Flutter error handling",
+      "GetX snackbar error",
+      "GetX workers error",
+      "Rx error state",
+      "GetX try catch"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Error handling is a critical part of any application. In GetX, you can handle errors in a clean, reactive way using the same tools you use for state management. This guide covers how to catch errors in controllers, display user‑friendly messages, use workers for side effects, and implement global error handling."
+    },
+    {
+      "type": "heading",
+      "value": "1. Basic Error Handling in Controllers"
+    },
+    {
+      "type": "text",
+      "value": "When performing asynchronous operations (like API calls), wrap your code in `try-catch` and update reactive error variables. Then, display the error in the UI using `Obx`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginController extends GetxController {\n  var isLoading = false.obs;\n  var error = ''.obs;\n\n  Future<void> login(String email, String password) async {\n    isLoading.value = true;\n    error.value = '';\n    try {\n      // simulate API call\n      await Future.delayed(Duration(seconds: 2));\n      if (email != 'test@example.com' || password != '123') {\n        throw Exception('Invalid credentials');\n      }\n      Get.snackbar('Success', 'Logged in');\n    } catch (e) {\n      error.value = e.toString();\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}\n\n// In the UI\nObx(() {\n  if (controller.isLoading.value) return CircularProgressIndicator();\n  if (controller.error.value.isNotEmpty) {\n    return Text('Error: ${controller.error.value}');\n  }\n  return ElevatedButton(...);\n})"
+    },
+    {
+      "type": "heading",
+      "value": "2. Using StateMixin for Error States"
+    },
+    {
+      "type": "text",
+      "value": "`StateMixin` simplifies error handling by providing a built‑in error state. Use `change(null, status: RxStatus.error(message))` to set an error, and display it with `.obx(onError: ...)`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginController extends GetxController with StateMixin<String> {\n  final IAuthRepository repository;\n  LoginController(this.repository);\n\n  Future<void> login(String email, String password) async {\n    change(null, status: RxStatus.loading());\n    try {\n      final token = await repository.login(email, password);\n      change(token, status: RxStatus.success());\n      Get.snackbar('Success', 'Logged in');\n    } catch (e) {\n      change(null, status: RxStatus.error(e.toString()));\n    }\n  }\n}\n\n// UI\ncontroller.obx(\n  (data) => Text('Welcome $data'),\n  onError: (error) => Text('Error: $error'),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "3. Using Workers for Error Notifications"
+    },
+    {
+      "type": "text",
+      "value": "You can use workers to react to error changes and show a snackbar or dialog automatically. This keeps the UI code clean."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginController extends GetxController {\n  var error = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(error, (err) {\n      if (err.isNotEmpty) {\n        Get.snackbar('Error', err, snackPosition: SnackPosition.BOTTOM);\n      }\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Global Error Handling"
+    },
+    {
+      "type": "text",
+      "value": "Flutter has a `FlutterError.onError` and a `PlatformDispatcher.instance.onError` for uncaught errors. You can combine these with GetX to log errors or show a global fallback."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  FlutterError.onError = (FlutterErrorDetails details) {\n    FlutterError.dumpErrorToConsole(details);\n    // Log to analytics or show a snackbar\n    Get.snackbar('Unexpected Error', details.exception.toString());\n  };\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Error Handling in HTTP Requests"
+    },
+    {
+      "type": "text",
+      "value": "When using `http` or `dio`, catch specific status codes and network errors. You can create a custom exception class to differentiate errors."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ApiException implements Exception {\n  final String message;\n  final int? statusCode;\n  ApiException(this.message, {this.statusCode});\n}\n\nFuture<dynamic> get(String url) async {\n  try {\n    final response = await http.get(Uri.parse(url));\n    if (response.statusCode == 200) {\n      return json.decode(response.body);\n    } else {\n      throw ApiException('Server error', statusCode: response.statusCode);\n    }\n  } on SocketException {\n    throw ApiException('No internet connection');\n  } on FormatException {\n    throw ApiException('Invalid response format');\n  } catch (e) {\n    throw ApiException('Unexpected error: $e');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Handling Validation Errors in Forms"
+    },
+    {
+      "type": "text",
+      "value": "Form validation errors are also errors that should be shown to the user. Use reactive error strings that update as the user types."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FormController extends GetxController {\n  var email = ''.obs;\n  var emailError = ''.obs;\n\n  void validateEmail(String value) {\n    email.value = value;\n    if (value.isEmpty) {\n      emailError.value = 'Email is required';\n    } else if (!value.contains('@')) {\n      emailError.value = 'Invalid email';\n    } else {\n      emailError.value = '';\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Logging Errors"
+    },
+    {
+      "type": "text",
+      "value": "For debugging and monitoring, you may want to log errors. Use `print` during development, or send to a service like Firebase Crashlytics in production."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ErrorService extends GetxService {\n  void logError(dynamic error, StackTrace? stackTrace) {\n    // In development\n    print('ERROR: $error');\n    // In production\n    // FirebaseCrashlytics.instance.recordError(error, stackTrace);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Always use try-catch for async operations** – Unhandled exceptions can crash the app.",
+        "**Show user‑friendly error messages** – Avoid technical jargon.",
+        "**Provide a retry option** – Especially for network errors.",
+        "**Use `StateMixin`** – Reduces boilerplate for loading/error/success.",
+        "**Log errors** – Helps with debugging and monitoring.",
+        "**Set a global error handler** – Catches unexpected errors outside GetX."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Catching errors but not showing them** – User sees nothing.\n✅ Display errors in UI (snackbar, dialog, or text).",
+        "❌ **Using `Get.snackbar` inside a build method** – May cause issues.\n✅ Call it from controllers or workers.",
+        "❌ **Not resetting error state before retry** – Old error may still appear.\n✅ Clear error before new request.",
+        "❌ **Swallowing errors** – Doing nothing in catch block hides problems.\n✅ Always handle or at least log."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: How do I handle errors in workers?**  \nA: Wrap the worker callback in a try-catch, or use `ever` on an error variable to show notifications.",
+        "**Q: Can I use `Get.dialog` to show error alerts?**  \nA: Yes, inside the error handler you can call `Get.dialog` with an error message.",
+        "**Q: How to handle errors from `Get.to`?**  \nA: You can await `Get.to` and wrap it in a try-catch if the pushed screen might throw.",
+        "**Q: What about `onInit` errors?**  \nA: Since `onInit` is not `async`, you cannot use `await`. Use `Future.microtask` or move async calls to a separate method called from `onInit`.",
+        "**Q: How to test error handling?**  \nA: Mock the failing dependency and verify that the error variable is updated or that `Get.snackbar` is called."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Error handling in GetX is straightforward when you combine reactive state, workers, and the same patterns you use for data. By following these practices, you can build Flutter apps that gracefully recover from errors and provide a smooth user experience."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: ErrorDemo(),\n    );\n  }\n}\n\nclass ErrorController extends GetxController {\n  var isLoading = false.obs;\n  var error = ''.obs;\n  var data = ''.obs;\n\n  Future<void> fetchData(bool fail) async {\n    isLoading.value = true;\n    error.value = '';\n    try {\n      await Future.delayed(Duration(seconds: 1));\n      if (fail) {\n        throw Exception('Something went wrong!');\n      }\n      data.value = 'Success! Data loaded.';\n    } catch (e) {\n      error.value = e.toString();\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}\n\nclass ErrorDemo extends StatelessWidget {\n  final controller = Get.put(ErrorController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Error Handling Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() {\n              if (controller.isLoading.value) return CircularProgressIndicator();\n              if (controller.error.value.isNotEmpty) {\n                return Column(\n                  children: [\n                    Text('Error: ${controller.error.value}', style: TextStyle(color: Colors.red)),\n                    SizedBox(height: 10),\n                    ElevatedButton(\n                      onPressed: () => controller.fetchData(false),\n                      child: Text('Retry'),\n                    ),\n                  ],\n                );\n              }\n              return Text(controller.data.value, style: TextStyle(fontSize: 20));\n            }),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: () => controller.fetchData(false),\n                  child: Text('Success'),\n                ),\n                SizedBox(width: 10),\n                ElevatedButton(\n                  onPressed: () => controller.fetchData(true),\n                  child: Text('Simulate Error'),\n                ),\n              ],\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the best way to show an error message in the UI when using GetX?",
+      "options": [
+        "Use a global variable",
+        "Use a reactive error variable and Obx",
+        "Throw an exception",
+        "Call setState"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How can you automatically show a snackbar whenever an error occurs?",
+      "options": [
+        "Wrap every method with try-catch",
+        "Use a worker on the error variable",
+        "Call Get.snackbar in each catch block",
+        "Use FlutterError.onError"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What does `StateMixin` provide for error handling?",
+      "options": [
+        "Automatic error logging",
+        "Built‑in error status and `.obx(onError)`",
+        "Global error handler",
+        "Network retry"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-state-mixin",
+    "getx-snackbar",
+    "getx-api-integration"
+  ]
+}

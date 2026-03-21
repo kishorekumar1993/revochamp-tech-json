@@ -1,0 +1,173 @@
+{
+  "slug": "getx-form-validation",
+  "course": "Flutter",
+  "title": "GetX Form Validation: Real-Time Validation with Reactive State",
+  "meta": {
+    "title": "GetX Form Validation – Real-Time Validation & Error Handling",
+    "description": "Learn how to handle form validation in Flutter using GetX. Reactive validation, error messages, submit handling, and best practices for clean, testable forms.",
+    "keywords": [
+      "GetX form validation",
+      "Flutter form validation",
+      "reactive validation",
+      "GetX controller",
+      "form validation GetX",
+      "real-time validation",
+      "GetX text field"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction to Form Validation with GetX"
+    },
+    {
+      "type": "text",
+      "value": "Form validation is a common requirement in mobile apps. GetX simplifies this by combining its reactive state management with Flutter's form widgets. You can create real‑time validation, manage error messages reactively, and handle submission with minimal boilerplate. This guide covers how to build a reactive login form with validation using GetX."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up the Controller"
+    },
+    {
+      "type": "text",
+      "value": "Create a controller that extends `GetxController`. Use reactive variables for form fields and error messages. Add validation logic and a submit method."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginController extends GetxController {\n  // Reactive form fields\n  var email = ''.obs;\n  var password = ''.obs;\n\n  // Reactive error messages\n  var emailError = ''.obs;\n  var passwordError = ''.obs;\n\n  void validateEmail(String value) {\n    email.value = value;\n    if (value.isEmpty) {\n      emailError.value = 'Email is required';\n    } else if (!value.contains('@')) {\n      emailError.value = 'Enter a valid email address';\n    } else {\n      emailError.value = '';\n    }\n  }\n\n  void validatePassword(String value) {\n    password.value = value;\n    if (value.isEmpty) {\n      passwordError.value = 'Password is required';\n    } else if (value.length < 6) {\n      passwordError.value = 'Password must be at least 6 characters';\n    } else {\n      passwordError.value = '';\n    }\n  }\n\n  bool get isFormValid => emailError.value.isEmpty && passwordError.value.isEmpty && email.value.isNotEmpty && password.value.isNotEmpty;\n\n  void submit() {\n    if (isFormValid) {\n      // Perform login\n      Get.snackbar('Success', 'Logged in with ${email.value}');\n    } else {\n      Get.snackbar('Error', 'Please fix validation errors');\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Building the UI"
+    },
+    {
+      "type": "text",
+      "value": "Use `Obx` to reactively update the UI when validation errors or field values change. TextFields call the controller's validation methods on each change."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginPage extends GetView<LoginController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          children: [\n            TextField(\n              decoration: InputDecoration(\n                labelText: 'Email',\n                errorText: controller.emailError.value.isEmpty ? null : controller.emailError.value,\n              ),\n              onChanged: controller.validateEmail,\n            ),\n            SizedBox(height: 16),\n            TextField(\n              obscureText: true,\n              decoration: InputDecoration(\n                labelText: 'Password',\n                errorText: controller.passwordError.value.isEmpty ? null : controller.passwordError.value,\n              ),\n              onChanged: controller.validatePassword,\n            ),\n            SizedBox(height: 20),\n            Obx(() => ElevatedButton(\n              onPressed: controller.isFormValid ? controller.submit : null,\n              child: Text('Login'),\n            )),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Form State and GlobalKey"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you may want to use Flutter's `Form` widget and `GlobalKey<FormState>` for more advanced validation (e.g., cross-field validation, custom formatters). You can still combine it with GetX."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FormController extends GetxController {\n  final formKey = GlobalKey<FormState>();\n  var email = ''.obs;\n  var password = ''.obs;\n\n  String? validateEmail(String? value) {\n    if (value == null || value.isEmpty) return 'Email is required';\n    if (!value.contains('@')) return 'Invalid email';\n    email.value = value;\n    return null;\n  }\n\n  String? validatePassword(String? value) {\n    if (value == null || value.isEmpty) return 'Password is required';\n    if (value.length < 6) return 'Minimum 6 characters';\n    password.value = value;\n    return null;\n  }\n\n  void submit() {\n    if (formKey.currentState!.validate()) {\n      // Form is valid, proceed\n      Get.snackbar('Success', 'Welcome ${email.value}');\n    }\n  }\n}\n\nclass FormPage extends GetView<FormController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Form with GlobalKey')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Form(\n          key: controller.formKey,\n          child: Column(\n            children: [\n              TextFormField(\n                decoration: InputDecoration(labelText: 'Email'),\n                validator: controller.validateEmail,\n              ),\n              TextFormField(\n                decoration: InputDecoration(labelText: 'Password'),\n                obscureText: true,\n                validator: controller.validatePassword,\n              ),\n              SizedBox(height: 20),\n              ElevatedButton(\n                onPressed: controller.submit,\n                child: Text('Submit'),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Reactive Validation with Workers"
+    },
+    {
+      "type": "text",
+      "value": "You can also use workers to react to form field changes and perform validation in a more centralized way."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AdvancedController extends GetxController {\n  var email = ''.obs;\n  var password = ''.obs;\n  var emailError = ''.obs;\n  var passwordError = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(email, validateEmail);\n    ever(password, validatePassword);\n  }\n\n  void validateEmail(String value) {\n    if (value.isEmpty) emailError.value = 'Required';\n    else if (!value.contains('@')) emailError.value = 'Invalid email';\n    else emailError.value = '';\n  }\n\n  void validatePassword(String value) {\n    if (value.isEmpty) passwordError.value = 'Required';\n    else if (value.length < 6) passwordError.value = 'Minimum 6 chars';\n    else passwordError.value = '';\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep validation logic in the controller** – Not in the widget. This improves testability and separation of concerns.",
+        "**Use reactive variables for field values and errors** – So the UI updates automatically.",
+        "**Consider using `debounce` for expensive validations** – If validating against a server, use `debounce` to avoid excessive calls.",
+        "**Use `GetView` to get the controller** – Cleaner than `Get.find` inside the widget.",
+        "**Provide immediate feedback** – Show errors as the user types, or after they leave the field, depending on UX.",
+        "**Disable submit button until form is valid** – Prevents invalid submissions and improves UX."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `TextEditingController` in addition to GetX reactive variables** – Duplicate state can lead to inconsistencies.\n✅ Use only reactive variables for field values; update them via `onChanged`.",
+        "❌ **Calling `validate` methods inside `build`** – Triggers validation on every rebuild.\n✅ Use `onChanged` or workers to validate when needed.",
+        "❌ **Not resetting error messages when field becomes valid** – The error will remain.\n✅ Clear error messages when validation passes.",
+        "❌ **Using `Form` and `GlobalKey` without handling `onChanged`** – The reactive variables won't update until validation, which only happens on submit.\n✅ Use `onChanged` to keep reactive values in sync."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Should I use `TextEditingController` or reactive variables?**  \nA: Prefer reactive variables (`.obs`) to keep state in the controller. `TextEditingController` can be used, but then you have two sources of truth. If you need advanced text editing features, you can sync both, but reactive variables are simpler.",
+        "**Q: How do I handle form submission and loading state?**  \nA: Add an `isLoading` reactive variable, show a progress indicator when it's true, and disable the submit button.",
+        "**Q: Can I use GetX with Flutter's `Form` widget?**  \nA: Yes, as shown in the second example. You can keep the `GlobalKey` in the controller and call `validate()` inside the submit method.",
+        "**Q: How do I reset the form after submission?**  \nA: Set the reactive field values to empty strings and clear error messages.",
+        "**Q: What about server-side validation errors?**  \nA: After API call, you can set error messages in the controller (e.g., `emailError.value = 'Email already taken'`)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX simplifies form validation by letting you use reactive variables for fields and errors, and by providing a clean separation between UI and validation logic. Whether you choose simple reactive validation or combine with Flutter's `Form` widget, GetX helps you build responsive, user‑friendly forms with minimal code."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: LoginPage(),\n      initialBinding: LoginBinding(),\n    );\n  }\n}\n\nclass LoginController extends GetxController {\n  var email = ''.obs;\n  var password = ''.obs;\n  var emailError = ''.obs;\n  var passwordError = ''.obs;\n\n  void validateEmail(String value) {\n    email.value = value;\n    if (value.isEmpty) {\n      emailError.value = 'Email is required';\n    } else if (!value.contains('@')) {\n      emailError.value = 'Enter a valid email address';\n    } else {\n      emailError.value = '';\n    }\n  }\n\n  void validatePassword(String value) {\n    password.value = value;\n    if (value.isEmpty) {\n      passwordError.value = 'Password is required';\n    } else if (value.length < 6) {\n      passwordError.value = 'Password must be at least 6 characters';\n    } else {\n      passwordError.value = '';\n    }\n  }\n\n  bool get isFormValid => emailError.value.isEmpty && passwordError.value.isEmpty && email.value.isNotEmpty && password.value.isNotEmpty;\n\n  void submit() {\n    if (isFormValid) {\n      Get.snackbar('Success', 'Logged in with ${email.value}');\n    } else {\n      Get.snackbar('Error', 'Please fix validation errors');\n    }\n  }\n}\n\nclass LoginBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut(() => LoginController());\n  }\n}\n\nclass LoginPage extends GetView<LoginController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          children: [\n            TextField(\n              decoration: InputDecoration(\n                labelText: 'Email',\n                errorText: controller.emailError.value.isEmpty ? null : controller.emailError.value,\n              ),\n              onChanged: controller.validateEmail,\n            ),\n            SizedBox(height: 16),\n            TextField(\n              obscureText: true,\n              decoration: InputDecoration(\n                labelText: 'Password',\n                errorText: controller.passwordError.value.isEmpty ? null : controller.passwordError.value,\n              ),\n              onChanged: controller.validatePassword,\n            ),\n            SizedBox(height: 20),\n            Obx(() => ElevatedButton(\n              onPressed: controller.isFormValid ? controller.submit : null,\n              child: Text('Login'),\n            )),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the recommended way to store form field values in a GetX controller?",
+      "options": [
+        "TextEditingController",
+        "Reactive variables (`.obs`)",
+        "GlobalKey<FormState>",
+        "StatefulWidget state"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How can you automatically validate a field as the user types?",
+      "options": [
+        "Using `onChanged` to call a validation method",
+        "Using a timer",
+        "Using `onEditingComplete` only",
+        "Using `Form`'s autovalidate mode"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What is the purpose of the `isFormValid` getter in the controller?",
+      "options": [
+        "To enable/disable the submit button",
+        "To validate the entire form on submit",
+        "To reset the form",
+        "To show loading indicator"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-reactive-state",
+    "getx-workers",
+    "getx-controller"
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "slug": "getx-clean-architecture",
+  "course": "Flutter",
+  "title": "GetX Clean Architecture: Build Scalable Flutter Apps",
+  "meta": {
+    "title": "GetX Clean Architecture – Scalable Flutter App Structure",
+    "description": "Learn how to implement Clean Architecture with GetX in Flutter. Organize your app with presentation, domain, and data layers using GetX for dependency injection, state management, and navigation.",
+    "keywords": [
+      "GetX clean architecture",
+      "Flutter clean architecture",
+      "GetX MVVM",
+      "GetX repository pattern",
+      "GetX use cases",
+      "GetX layered architecture",
+      "scalable Flutter app"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Clean Architecture?"
+    },
+    {
+      "type": "text",
+      "value": "Clean Architecture is a software design philosophy that separates the concerns of an application into distinct layers, making it more maintainable, testable, and scalable. The core idea is that the **inner layers** (business logic) should be independent of the **outer layers** (UI, frameworks, databases). GetX, with its dependency injection and state management, is a perfect fit for implementing Clean Architecture in Flutter."
+    },
+    {
+      "type": "heading",
+      "value": "Layers of Clean Architecture"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Presentation Layer** – UI components, pages, and state management (GetX controllers, widgets).",
+        "**Domain Layer** – Business logic: use cases, entities, and repository interfaces. This layer is framework‑agnostic.",
+        "**Data Layer** – Implementation of repositories: API clients, local databases, and data sources."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Dependency Rule"
+    },
+    {
+      "type": "text",
+      "value": "Dependencies point **inward**. The presentation layer depends on the domain layer, and the domain layer depends on the data layer only through **abstract interfaces**. This allows you to swap implementations (e.g., a mock repository for testing) without affecting the domain or presentation."
+    },
+    {
+      "type": "heading",
+      "value": "Folder Structure"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "lib/\n├── main.dart\n├── app/\n│   ├── routes/\n│   │   └── app_pages.dart\n│   ├── bindings/\n│   │   └── app_bindings.dart\n│   └── utils/\n│       └── constants.dart\n├── presentation/\n│   ├── pages/\n│   │   ├── home/\n│   │   │   ├── home_page.dart\n│   │   │   └── home_controller.dart\n│   │   └── login/\n│   │       ├── login_page.dart\n│   │       └── login_controller.dart\n│   └── widgets/\n│       └── custom_button.dart\n├── domain/\n│   ├── entities/\n│   │   └── user.dart\n│   ├── repositories/\n│   │   └── i_user_repository.dart\n│   └── usecases/\n│       ├── login_use_case.dart\n│       └── get_user_use_case.dart\n└── data/\n    ├── repositories/\n    │   └── user_repository_impl.dart\n    ├── datasources/\n    │   ├── remote/\n    │   │   ├── api_service.dart\n    │   │   └── user_api.dart\n    │   └── local/\n    │       └── local_storage.dart\n    └── models/\n        └── user_model.dart"
+    },
+    {
+      "type": "heading",
+      "value": "Implementing with GetX"
+    },
+    {
+      "type": "subheading",
+      "value": "1. Domain Layer"
+    },
+    {
+      "type": "text",
+      "value": "Define entities (pure Dart classes) and repository interfaces (abstract classes). Use cases contain the business logic and depend on the repository interfaces."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// domain/entities/user.dart\nclass User {\n  final String id;\n  final String name;\n  final String email;\n  User({required this.id, required this.name, required this.email});\n}\n\n// domain/repositories/i_user_repository.dart\nabstract class IUserRepository {\n  Future<User> login(String email, String password);\n  Future<User> getUser(String id);\n}\n\n// domain/usecases/login_use_case.dart\nclass LoginUseCase {\n  final IUserRepository repository;\n  LoginUseCase(this.repository);\n\n  Future<User> execute(String email, String password) async {\n    // Business logic (e.g., validation) can be added here\n    if (email.isEmpty || password.isEmpty) {\n      throw Exception('Email and password are required');\n    }\n    return await repository.login(email, password);\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Data Layer"
+    },
+    {
+      "type": "text",
+      "value": "Implement the repository interface, using data sources (API, database). Data sources can be GetX services."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// data/datasources/remote/user_api.dart\nclass UserApi extends GetxService {\n  Future<User> login(String email, String password) async {\n    // simulate API call\n    await Future.delayed(Duration(seconds: 1));\n    return User(id: '1', name: 'John Doe', email: email);\n  }\n}\n\n// data/repositories/user_repository_impl.dart\nclass UserRepositoryImpl implements IUserRepository {\n  final UserApi api;\n  UserRepositoryImpl(this.api);\n\n  @override\n  Future<User> login(String email, String password) async {\n    return await api.login(email, password);\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Presentation Layer"
+    },
+    {
+      "type": "text",
+      "value": "Controllers use use cases and expose reactive state. Pages use `Obx` to react to state changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// presentation/login/login_controller.dart\nclass LoginController extends GetxController {\n  final LoginUseCase loginUseCase;\n  LoginController(this.loginUseCase);\n\n  var isLoading = false.obs;\n  var error = ''.obs;\n\n  Future<void> login(String email, String password) async {\n    isLoading.value = true;\n    error.value = '';\n    try {\n      final user = await loginUseCase.execute(email, password);\n      Get.snackbar('Success', 'Welcome ${user.name}');\n      // navigate to home\n    } catch (e) {\n      error.value = e.toString();\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}\n\n// presentation/login/login_page.dart\nclass LoginPage extends StatelessWidget {\n  final controller = Get.find<LoginController>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: Obx(() => Column(\n        children: [\n          if (controller.error.isNotEmpty) Text(controller.error),\n          if (controller.isLoading.value) CircularProgressIndicator(),\n          ElevatedButton(\n            onPressed: () => controller.login('test@example.com', 'pass'),\n            child: Text('Login'),\n          ),\n        ],\n      )),\n    );\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "4. Dependency Injection with GetX"
+    },
+    {
+      "type": "text",
+      "value": "Use GetX bindings to wire everything together. The binding registers the repository implementation and use cases."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// presentation/login/login_binding.dart\nclass LoginBinding extends Bindings {\n  @override\n  void dependencies() {\n    // Data layer\n    Get.lazyPut<UserApi>(() => UserApi());\n    Get.lazyPut<IUserRepository>(() => UserRepositoryImpl(Get.find()));\n    // Domain layer\n    Get.lazyPut(() => LoginUseCase(Get.find<IUserRepository>()));\n    // Presentation layer\n    Get.lazyPut(() => LoginController(Get.find()));\n  }\n}\n\n// In routes\nGetPage(\n  name: '/login',\n  page: () => LoginPage(),\n  binding: LoginBinding(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Benefits of This Approach"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Separation of concerns** – UI, business logic, and data are isolated.",
+        "**Testability** – Each layer can be unit‑tested independently (mock repositories for domain).",
+        "**Flexibility** – Swap data sources (API → local) without changing domain or UI.",
+        "**Scalability** – Adding new features follows the same pattern, reducing cognitive load.",
+        "**GetX integration** – Use GetX for DI, navigation, and reactive state without boilerplate."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep domain pure** – No Flutter or GetX imports in domain layer (except pure Dart).",
+        "**Use interfaces for repositories** – Allows easy mocking and multiple implementations.",
+        "**Make use cases single‑purpose** – One use case per business operation (e.g., `LoginUseCase`, `GetUserUseCase`).",
+        "**Inject dependencies via constructor** – Makes testing and replacement trivial.",
+        "**Use bindings for DI** – Avoid scattering `Get.put` inside views."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Putting business logic in controllers** – Controllers should only orchestrate use cases.\n✅ Move logic to use cases.",
+        "❌ **Directly calling data sources from presentation** – Violates dependency rule.\n✅ Always go through use cases.",
+        "❌ **Tight coupling with GetX in domain** – Reduces testability and flexibility.\n✅ Keep domain GetX‑free.",
+        "❌ **Ignoring dependency injection** – Hardcoding dependencies makes the code rigid.\n✅ Use GetX DI or constructor injection."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Is Clean Architecture overkill for small apps?**  \nA: It can be, but the principles (separation of concerns) always help. For very small apps, a simpler MVVM with GetX may suffice, but Clean Architecture scales seamlessly.",
+        "**Q: How do I handle state with GetX in this architecture?**  \nA: Controllers hold reactive state and call use cases. The UI observes the state with `Obx`.",
+        "**Q: Can I use GetStorage or shared preferences in the data layer?**  \nA: Yes, they belong in the data layer, accessed via repository implementations.",
+        "**Q: How to test the domain layer?**  \nA: Create a mock repository that implements `IUserRepository` and pass it to the use case. No GetX needed.",
+        "**Q: Where do I put navigation logic?**  \nA: In controllers, after a successful use case execution, use `Get.toNamed` or similar."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Combining GetX with Clean Architecture gives you a robust, testable, and maintainable Flutter application. The clear separation of layers, together with GetX's powerful DI and state management, allows you to focus on business logic while keeping the UI clean and reactive."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\n// --- Domain Layer ---\nclass User {\n  final String name;\n  User(this.name);\n}\n\nabstract class IUserRepository {\n  Future<User> login(String email, String password);\n}\n\nclass LoginUseCase {\n  final IUserRepository repository;\n  LoginUseCase(this.repository);\n\n  Future<User> execute(String email, String password) async {\n    if (email.isEmpty || password.isEmpty) {\n      throw Exception('Email and password required');\n    }\n    return await repository.login(email, password);\n  }\n}\n\n// --- Data Layer ---\nclass FakeUserRepository implements IUserRepository {\n  @override\n  Future<User> login(String email, String password) async {\n    await Future.delayed(Duration(seconds: 1));\n    if (email == 'test@example.com' && password == '123') {\n      return User('John Doe');\n    } else {\n      throw Exception('Invalid credentials');\n    }\n  }\n}\n\n// --- Presentation Layer ---\nclass LoginController extends GetxController {\n  final LoginUseCase loginUseCase;\n  LoginController(this.loginUseCase);\n\n  var isLoading = false.obs;\n  var error = ''.obs;\n\n  Future<void> login(String email, String password) async {\n    isLoading.value = true;\n    error.value = '';\n    try {\n      final user = await loginUseCase.execute(email, password);\n      Get.snackbar('Success', 'Welcome ${user.name}');\n    } catch (e) {\n      error.value = e.toString();\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}\n\n// Binding\nclass LoginBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<IUserRepository>(() => FakeUserRepository());\n    Get.lazyPut(() => LoginUseCase(Get.find()));\n    Get.lazyPut(() => LoginController(Get.find()));\n  }\n}\n\n// Page\nclass LoginPage extends StatelessWidget {\n  final controller = Get.find<LoginController>();\n  final TextEditingController emailController = TextEditingController();\n  final TextEditingController passwordController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Clean Architecture Demo')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            TextField(controller: emailController, decoration: InputDecoration(labelText: 'Email')),\n            TextField(controller: passwordController, decoration: InputDecoration(labelText: 'Password'), obscureText: true),\n            SizedBox(height: 20),\n            Obx(() => controller.isLoading.value\n                ? CircularProgressIndicator()\n                : ElevatedButton(\n                    onPressed: () => controller.login(emailController.text, passwordController.text),\n                    child: Text('Login'),\n                  )),\n            Obx(() => controller.error.isNotEmpty ? Text(controller.error, style: TextStyle(color: Colors.red)) : SizedBox.shrink()),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\n// App\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      initialRoute: '/login',\n      getPages: [\n        GetPage(name: '/login', page: () => LoginPage(), binding: LoginBinding()),\n      ],\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which layer in Clean Architecture should be completely independent of frameworks like Flutter?",
+      "options": ["Presentation", "Domain", "Data", "All layers"],
+      "answer": 1
+    },
+    {
+      "question": "What is the main responsibility of a use case?",
+      "options": [
+        "Fetch data from API",
+        "Display data on screen",
+        "Encapsulate a single business action",
+        "Manage dependency injection"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "How do you inject dependencies in GetX following Clean Architecture?",
+      "options": [
+        "Using `Get.put` directly in pages",
+        "Using bindings and constructor injection",
+        "Using global variables",
+        "Using static methods"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-dependency-injection",
+    "getx-bindings",
+    "getx-state-management",
+    "getx-services"
+  ]
+}

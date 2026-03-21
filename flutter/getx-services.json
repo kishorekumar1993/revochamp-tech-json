@@ -1,0 +1,204 @@
+{
+  "slug": "getx-services",
+  "course": "Flutter",
+  "title": "GetX Services: Building App-Wide Services with GetxService",
+  "meta": {
+    "title": "GetX Services – GetxService: Global Services & Lifecycle",
+    "description": "Learn how to create app-wide services in GetX using GetxService. Perfect for API clients, authentication, local storage, and shared utilities with automatic lifecycle management.",
+    "keywords": [
+      "GetX services",
+      "GetxService",
+      "GetX service",
+      "Flutter GetX",
+      "app-wide services",
+      "GetX API service",
+      "GetX dependency injection service"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is GetxService?"
+    },
+    {
+      "type": "text",
+      "value": "`GetxService` is a specialized class in GetX designed for **app-wide services** that live throughout the entire application lifecycle. Unlike `GetxController`, which is typically tied to a route and disposed when the route is closed, `GetxService` is never automatically disposed (unless manually deleted). This makes it perfect for shared resources like API clients, authentication managers, theme managers, database helpers, and any other singleton that should persist for the app's duration."
+    },
+    {
+      "type": "heading",
+      "value": "GetxService vs GetxController"
+    },
+    {
+      "type": "table",
+      "headers": ["Feature", "GetxService", "GetxController"],
+      "rows": [
+        ["Lifecycle", "Persists entire app life", "Disposed with route (unless permanent)"],
+        ["Use case", "Global services (API, auth, theme)", "Screen/feature-specific logic"],
+        ["Disposal", "Manual only (Get.delete)", "Automatic when route is popped"],
+        ["Default injection", "Often used with Get.put and permanent: true", "Often lazy with bindings"]
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Service"
+    },
+    {
+      "type": "text",
+      "value": "To create a service, extend `GetxService` instead of `GetxController`. You can add any methods and reactive state just like a controller."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthService extends GetxService {\n  // Reactive state\n  var isLoggedIn = false.obs;\n  var user = User().obs;\n\n  Future<void> login(String email, String password) async {\n    // API call\n    await Future.delayed(Duration(seconds: 1));\n    isLoggedIn.value = true;\n    user.value = User(email: email);\n  }\n\n  void logout() {\n    isLoggedIn.value = false;\n    user.value = User();\n  }\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Initialize service (e.g., load token from storage)\n    print('AuthService initialized');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Registering a Service"
+    },
+    {
+      "type": "text",
+      "value": "Register a service using `Get.put` or `Get.lazyPut`, usually with `permanent: true` (though it's automatically permanent). You can also use `Get.putAsync` for async initialization."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Simple registration\nGet.put(AuthService());\n\n// Lazy registration (created on first use)\nGet.lazyPut(() => AuthService());\n\n// Async initialization\nGet.putAsync<AuthService>(() async {\n  final service = AuthService();\n  await service.init();\n  return service;\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Initialization with onInit and onReady"
+    },
+    {
+      "type": "text",
+      "value": "Services have the same lifecycle methods as controllers: `onInit` (called after instance creation) and `onReady` (called after the widget tree is ready). Use them for initializing data, setting up streams, or loading preferences."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class StorageService extends GetxService {\n  late SharedPreferences _prefs;\n\n  @override\n  Future<void> onInit() async {\n    super.onInit();\n    _prefs = await SharedPreferences.getInstance();\n  }\n\n  void setString(String key, String value) => _prefs.setString(key, value);\n  String? getString(String key) => _prefs.getString(key);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Accessing Services Anywhere"
+    },
+    {
+      "type": "text",
+      "value": "Once registered, you can access the service using `Get.find<MyService>()` from any controller, view, or utility class."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeController extends GetxController {\n  final auth = Get.find<AuthService>();\n\n  void checkAccess() {\n    if (auth.isLoggedIn.value) {\n      // do something\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Service Examples"
+    },
+    {
+      "type": "subheading",
+      "value": "API Service"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ApiService extends GetxService {\n  final Dio _dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'));\n\n  Future<Map<String, dynamic>> get(String endpoint) async {\n    final response = await _dio.get(endpoint);\n    return response.data;\n  }\n\n  @override\n  void onClose() {\n    _dio.close();\n    super.onClose();\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Theme Service"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ThemeService extends GetxService {\n  var isDarkMode = false.obs;\n\n  void toggleTheme() {\n    isDarkMode.value = !isDarkMode.value;\n    Get.changeThemeMode(isDarkMode.value ? ThemeMode.dark : ThemeMode.light);\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Local Storage Service"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class StorageService extends GetxService {\n  SharedPreferences? _prefs;\n\n  Future<StorageService> init() async {\n    _prefs = await SharedPreferences.getInstance();\n    return this;\n  }\n\n  void saveToken(String token) => _prefs?.setString('token', token);\n  String? getToken() => _prefs?.getString('token');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use services for app-wide logic** – API clients, auth, analytics, notifications.",
+        "**Keep services stateless when possible** – Prefer storing state in controllers; services should provide methods and data access.",
+        "**Inject services via constructor** – Makes testing easier: `class MyController extends GetxController { final ApiService api; MyController(this.api); }`.",
+        "**Initialize async services in `onInit`** – Use `await` there, and consider `Get.putAsync` for registration.",
+        "**Dispose resources in `onClose`** – Close database connections, cancel timers, etc.",
+        "**Use `Get.find` inside controllers** – Don't re‑register services."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `GetxService` for screen-specific logic** – It will stay in memory forever.\n✅ Use `GetxController` for per‑screen logic.",
+        "❌ **Forgetting to dispose resources** – Even though services aren't disposed automatically, you should clean up in `onClose` if needed.",
+        "❌ **Registering the same service multiple times** – Causes duplicates unless you use tags.\n✅ Check `Get.isRegistered` before registering.",
+        "❌ **Assuming `Get.put` for service is lazy** – It's not; use `Get.lazyPut` for deferred creation."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Do I need to mark a service as `permanent`?**  \nA: No, `GetxService` is automatically permanent. It will never be disposed unless you call `Get.delete`.",
+        "**Q: Can I use reactive state in a service?**  \nA: Yes, services can have `.obs` variables and controllers can listen to them using `Obx` or workers.",
+        "**Q: How do I test a service?**  \nA: You can instantiate it directly in tests. For integration, use `Get.reset()` to clear registrations.",
+        "**Q: Can a service depend on another service?**  \nA: Yes, simply `Get.find` the dependent service inside the constructor or `onInit`.",
+        "**Q: Should I use `Get.put` or `Get.lazyPut` for services?**  \nA: If the service is needed immediately (e.g., auth check on start), use `Get.put` with async init. Otherwise, lazy is fine.",
+        "**Q: Can I use `GetxService` with bindings?**  \nA: Yes, you can register services in initialBinding or in per‑route bindings (though they will live beyond the route)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetxService is a powerful tool for managing global, long‑lived dependencies in your Flutter app. By extending `GetxService`, you can create clean, testable services that stay alive throughout the app lifecycle. Combine them with GetX dependency injection and reactive state to build robust applications."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    // Register the service before app starts\n    Get.put(AuthService());\n    return GetMaterialApp(\n      home: HomePage(),\n    );\n  }\n}\n\n// Simple Auth Service\nclass AuthService extends GetxService {\n  var isLoggedIn = false.obs;\n  var userName = ''.obs;\n\n  void login(String name) {\n    isLoggedIn.value = true;\n    userName.value = name;\n  }\n\n  void logout() {\n    isLoggedIn.value = false;\n    userName.value = '';\n  }\n\n  @override\n  void onInit() {\n    super.onInit();\n    print('AuthService initialized');\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  final auth = Get.find<AuthService>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetX Service Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() => Text(\n              auth.isLoggedIn.value\n                  ? 'Welcome, ${auth.userName.value}'\n                  : 'Not logged in',\n              style: TextStyle(fontSize: 24),\n            )),\n            SizedBox(height: 20),\n            if (!auth.isLoggedIn.value)\n              ElevatedButton(\n                onPressed: () => auth.login('Flutter User'),\n                child: Text('Login'),\n              ),\n            if (auth.isLoggedIn.value)\n              ElevatedButton(\n                onPressed: auth.logout,\n                child: Text('Logout'),\n              ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What class should you extend to create an app-wide service in GetX?",
+      "options": ["GetxController", "GetxService", "GetxWidget", "GetxApp"],
+      "answer": 1
+    },
+    {
+      "question": "How do you register a service with asynchronous initialization?",
+      "options": ["Get.putAsync", "Get.lazyPut", "Get.create", "Get.put"],
+      "answer": 0
+    },
+    {
+      "question": "What lifecycle method is called when the service is first created?",
+      "options": ["onReady", "onStart", "onInit", "initState"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-dependency-injection",
+    "getx-controller",
+    "getx-lifecycle",
+    "getx-state-management"
+  ]
+}

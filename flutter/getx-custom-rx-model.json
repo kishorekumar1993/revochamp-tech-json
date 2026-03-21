@@ -1,0 +1,206 @@
+{
+  "slug": "getx-custom-rx-model",
+  "course": "Flutter",
+  "title": "GetX Custom Rx Models: Reactive Objects & Nested Properties",
+  "meta": {
+    "title": "GetX Custom Rx Models – Reactive Custom Objects & Nested State",
+    "description": "Learn how to make custom classes reactive in GetX. Master Rx<T>, .obs, updating nested properties, and working with reactive lists of custom objects.",
+    "keywords": [
+      "GetX custom model",
+      "Rx custom object",
+      "GetX reactive object",
+      "GetX nested reactivity",
+      "update vs refresh GetX",
+      "GetX Rx<T>",
+      "Flutter GetX model"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "In GetX, you can make any class reactive by wrapping it with `Rx<T>` or using the `.obs` extension. This is essential when you need to react to changes in complex data structures. This guide covers how to create reactive custom models, update nested properties, and handle lists of custom objects effectively."
+    },
+    {
+      "type": "heading",
+      "value": "1. Making a Custom Class Reactive"
+    },
+    {
+      "type": "text",
+      "value": "To make a custom class reactive, you have two options: use the `.obs` extension or the `Rx<T>` constructor. Both create an observable variable that notifies listeners when its value changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class User {\n  String name;\n  int age;\n  User(this.name, this.age);\n}\n\nclass MyController extends GetxController {\n  // Option 1: Using .obs\n  var user = User('Alice', 30).obs;\n\n  // Option 2: Using Rx<T>\n  late Rx<User> user2;\n\n  @override\n  void onInit() {\n    super.onInit();\n    user2 = Rx<User>(User('Bob', 25));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Accessing and Modifying the Object"
+    },
+    {
+      "type": "text",
+      "value": "To read or update the entire object, use the `.value` property. Assigning a new object to `.value` triggers a UI update."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Reading\nUser currentUser = controller.user.value;\n\n// Updating (replaces the whole object)\ncontroller.user.value = User('Charlie', 35);"
+    },
+    {
+      "type": "heading",
+      "value": "3. Updating Nested Properties"
+    },
+    {
+      "type": "text",
+      "value": "If you modify a property of the object directly, the UI **will not** update because the object reference hasn't changed. To fix this, you have two options: use the `update` method or call `refresh()` after modification."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ❌ Does NOT trigger UI update\ncontroller.user.value.name = 'David';\n\n// ✅ Using update() – recommended\ncontroller.user.update((user) {\n  user?.name = 'David';\n});\n\n// ✅ Using refresh()\ncontroller.user.value.name = 'David';\ncontroller.user.refresh();"
+    },
+    {
+      "type": "heading",
+      "value": "4. The update Method Explained"
+    },
+    {
+      "type": "text",
+      "value": "The `update` method accepts a callback where you can modify the object. It automatically triggers a UI update after the callback finishes. This is the cleanest way to modify nested properties."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "controller.user.update((user) {\n  user?.name = 'Eve';\n  user?.age = 28;\n}); // UI updates once"
+    },
+    {
+      "type": "heading",
+      "value": "5. Reactive Lists of Custom Objects"
+    },
+    {
+      "type": "text",
+      "value": "Use `RxList<T>` to create a reactive list of custom objects. You can add, remove, or modify items, and the UI will update automatically when the list structure changes. However, modifying a property of an item inside the list still requires a refresh."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  var users = <User>[].obs;\n\n  void addUser(String name, int age) {\n    users.add(User(name, age)); // UI updates\n  }\n\n  void removeUser(int index) {\n    users.removeAt(index); // UI updates\n  }\n\n  void updateUserName(int index, String newName) {\n    // Modifying a property of an existing item: need to refresh\n    users[index].name = newName;\n    users.refresh(); // or users[index] = users[index] (replace) also works\n  }\n\n  // Alternative: replace the item\n  void updateUser(int index, User newUser) {\n    users[index] = newUser; // UI updates because the reference changed\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Using Workers with Custom Models"
+    },
+    {
+      "type": "text",
+      "value": "You can use workers to react to changes in the whole object or specific properties. Since workers only track the object reference, they will not fire when a nested property changes unless you call `refresh()` or `update()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  var user = User('Alice', 30).obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(user, (user) {\n      print('User changed: ${user?.name}');\n    });\n  }\n\n  void updateName(String newName) {\n    user.update((u) => u?.name = newName); // triggers worker\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Immutability vs Mutability"
+    },
+    {
+      "type": "text",
+      "value": "To avoid having to call `refresh()` on nested changes, you can make your model immutable and always replace the entire object when something changes. This is often easier and less error‑prone."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class User {\n  final String name;\n  final int age;\n  const User(this.name, this.age);\n\n  User copyWith({String? name, int? age}) {\n    return User(name ?? this.name, age ?? this.age);\n  }\n}\n\n// Updating\ncontroller.user.value = controller.user.value.copyWith(name: 'Bob');\n// Or using update\ncontroller.user.update((u) => u = u?.copyWith(name: 'Bob'));"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use immutable models when possible** – Replace the whole object to avoid manual `refresh()` calls.",
+        "**Use `update` for nested modifications** – It’s concise and ensures the UI updates.",
+        "**Avoid storing large objects as reactive** – If the object is large and changes frequently, consider splitting it into smaller reactive parts.",
+        "**Use `refresh()` sparingly** – It forces a rebuild even if no change occurred; prefer `update` or value assignment.",
+        "**Keep your models simple** – Business logic should stay in controllers, not in models."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Modifying a property without `update` or `refresh`** – UI does not update.\n✅ Use `update` or `refresh()` after modification.",
+        "❌ **Using `.value` repeatedly inside `Obx`** – Can cause unnecessary rebuilds if not needed.\n✅ Use local variables or computed getters.",
+        "❌ **Forgetting that workers only react to reference changes** – Nested changes won’t trigger workers.\n✅ Call `refresh()` or use `update`.",
+        "❌ **Not initializing `Rx` variables** – Trying to use `null` Rx can cause errors.\n✅ Always initialize with a value."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: When should I use `update` vs `refresh`?**  \nA: Use `update` when you want to modify the object and automatically notify listeners. Use `refresh` after manual modifications to the object’s properties.",
+        "**Q: Can I use `Rx` with freezed classes?**  \nA: Yes, freezed classes work perfectly with Rx because they are immutable. Simply assign a new instance to `.value`.",
+        "**Q: How do I make a reactive list of custom objects that each have their own reactive properties?**  \nA: You can make each item itself reactive (e.g., `Rx<User>` inside a `RxList<Rx<User>>`). But that’s complex; usually it’s easier to refresh the whole list when an item changes.",
+        "**Q: What’s the difference between `RxList` and `List` with `.obs`?**  \nA: They are the same: `var list = <User>[].obs` creates an `RxList<User>`.",
+        "**Q: How to listen to changes in a specific property of a custom model?**  \nA: You can use workers on the whole object, or split the property into its own `Rx` variable inside the controller. If you need fine-grained reactivity, consider using computed values."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Making custom models reactive in GetX is straightforward. By understanding how to update nested properties, when to use `update`, and how to work with reactive lists, you can build reactive UIs that react to changes in complex data structures. Adopting immutable models can simplify the pattern further and reduce the risk of missing updates."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: CustomRxDemo(),\n    );\n  }\n}\n\nclass User {\n  String name;\n  int age;\n  User(this.name, this.age);\n\n  // Immutable copyWith method (optional)\n  User copyWith({String? name, int? age}) {\n    return User(name ?? this.name, age ?? this.age);\n  }\n}\n\nclass UserController extends GetxController {\n  var user = User('Alice', 30).obs;\n\n  void updateName(String newName) {\n    // Using update – triggers UI update\n    user.update((u) => u?.name = newName);\n  }\n\n  void incrementAge() {\n    // Using copyWith (immutable approach)\n    user.value = user.value.copyWith(age: user.value.age + 1);\n  }\n\n  void resetUser() {\n    user.value = User('Alice', 30);\n  }\n}\n\nclass CustomRxDemo extends StatelessWidget {\n  final controller = Get.put(UserController());\n  final TextEditingController textController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Custom Rx Model')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() => Text(\n              'Name: ${controller.user.value.name}\\nAge: ${controller.user.value.age}',\n              style: TextStyle(fontSize: 24),\n              textAlign: TextAlign.center,\n            )),\n            SizedBox(height: 20),\n            TextField(\n              controller: textController,\n              decoration: InputDecoration(labelText: 'New name'),\n            ),\n            SizedBox(height: 10),\n            ElevatedButton(\n              onPressed: () {\n                if (textController.text.isNotEmpty) {\n                  controller.updateName(textController.text);\n                  textController.clear();\n                }\n              },\n              child: Text('Update Name'),\n            ),\n            ElevatedButton(\n              onPressed: controller.incrementAge,\n              child: Text('Increment Age'),\n            ),\n            ElevatedButton(\n              onPressed: controller.resetUser,\n              child: Text('Reset'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What happens if you modify a property of a custom object inside an Rx variable without calling update or refresh?",
+      "options": [
+        "The UI updates automatically",
+        "The UI does not update",
+        "An error is thrown",
+        "The object becomes immutable"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method is recommended for modifying nested properties of an Rx object?",
+      "options": ["refresh()", "update()", "assign()", "set()"],
+      "answer": 1
+    },
+    {
+      "question": "How can you make a list of custom objects reactive?",
+      "options": [
+        "Use RxList<T> or .obs on a List<T>",
+        "It's not possible",
+        "Use only primitive lists",
+        "Use GetBuilder"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-rx-types",
+    "getx-state-management",
+    "getx-reactive-state",
+    "getx-workers"
+  ]
+}

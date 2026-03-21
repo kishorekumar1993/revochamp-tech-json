@@ -1,0 +1,198 @@
+{
+  "slug": "getx-feature-modular-architecture",
+  "course": "Flutter",
+  "title": "GetX Feature Modular Architecture: Scalable Project Structure",
+  "meta": {
+    "title": "GetX Feature Modular Architecture – Scalable Flutter Apps",
+    "description": "Learn how to organize your GetX app into feature modules. Improve scalability, maintainability, and team collaboration with a modular architecture.",
+    "keywords": [
+      "GetX modular architecture",
+      "GetX feature modules",
+      "Flutter modular",
+      "GetX scalable architecture",
+      "GetX folder structure",
+      "GetX modules"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "As your Flutter app grows, keeping all your code in a single flat folder becomes unsustainable. A **feature‑modular architecture** organizes your app by features (e.g., authentication, products, cart) rather than by technical layer (controllers, views). GetX’s dependency injection and routing system are perfectly suited for this approach. This guide shows how to structure your app into independent, lazy‑loaded modules that are easy to maintain, test, and scale."
+    },
+    {
+      "type": "heading",
+      "value": "What is a Feature Module?"
+    },
+    {
+      "type": "text",
+      "value": "A feature module is a self‑contained unit that encapsulates all the code related to a specific feature: UI (pages), business logic (controllers), data (models/repositories), and routing (bindings). Modules are independent – they can be developed, tested, and even reused across projects. GetX enables this through `GetPage` and bindings that load only the required modules when the route is accessed."
+    },
+    {
+      "type": "heading",
+      "value": "Recommended Folder Structure"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "lib/\n├── main.dart\n├── app/\n│   ├── routes/\n│   │   ├── app_pages.dart\n│   │   └── app_routes.dart\n│   ├── shared/\n│   │   ├── widgets/\n│   │   ├── utils/\n│   │   └── services/\n│   └── modules/\n│       ├── auth/\n│       │   ├── bindings/\n│       │   │   └── auth_binding.dart\n│       │   ├── controllers/\n│       │   │   └── auth_controller.dart\n│       │   ├── views/\n│       │   │   ├── login_page.dart\n│       │   │   └── register_page.dart\n│       │   └── models/\n│       │       └── user_model.dart\n│       ├── home/\n│       │   ├── bindings/\n│       │   │   └── home_binding.dart\n│       │   ├── controllers/\n│       │   │   └── home_controller.dart\n│       │   └── views/\n│       │       └── home_page.dart\n│       └── product/\n│           ├── bindings/\n│           │   └── product_binding.dart\n│           ├── controllers/\n│           │   └── product_controller.dart\n│           ├── views/\n│           │   ├── product_list_page.dart\n│           │   └── product_detail_page.dart\n│           ├── models/\n│           │   └── product.dart\n│           └── repositories/\n│               └── product_repository.dart"
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Module"
+    },
+    {
+      "type": "text",
+      "value": "Each module typically consists of:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`bindings/`** – Registers the module’s controllers and dependencies.",
+        "**`controllers/`** – Business logic, state, and workers.",
+        "**`views/`** – UI pages that use the controllers.",
+        "**`models/`** – Data classes (optional).",
+        "**`repositories/`** – API or data access logic (optional)."
+      ]
+    },
+    {
+      "type": "subheading",
+      "value": "Example: Product Module"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// product/bindings/product_binding.dart\nimport 'package:get/get.dart';\n\nclass ProductBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<ProductRepository>(() => ProductRepository());\n    Get.lazyPut<ProductController>(() => ProductController(Get.find()));\n  }\n}\n\n// product/controllers/product_controller.dart\nclass ProductController extends GetxController {\n  final ProductRepository repository;\n  ProductController(this.repository);\n\n  var products = <Product>[].obs;\n  var isLoading = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    fetchProducts();\n  }\n\n  Future<void> fetchProducts() async {\n    isLoading.value = true;\n    try {\n      products.value = await repository.getProducts();\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Routing with Modules"
+    },
+    {
+      "type": "text",
+      "value": "Define all routes in `app/routes/app_routes.dart` and `app_pages.dart`. Each route can specify its own binding, which loads only the required module when the route is visited. This enables lazy loading and keeps the initial app small."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// app/routes/app_routes.dart\npart of 'app_pages.dart';\n\nclass AppRoutes {\n  static const String login = '/login';\n  static const String home = '/home';\n  static const String products = '/products';\n  static const String productDetail = '/product/:id';\n}\n\n// app/routes/app_pages.dart\nimport 'package:get/get.dart';\nimport '../../modules/auth/bindings/auth_binding.dart';\nimport '../../modules/auth/views/login_page.dart';\nimport '../../modules/home/bindings/home_binding.dart';\nimport '../../modules/home/views/home_page.dart';\nimport '../../modules/product/bindings/product_binding.dart';\nimport '../../modules/product/views/product_list_page.dart';\nimport '../../modules/product/views/product_detail_page.dart';\n\npart 'app_routes.dart';\n\nclass AppPages {\n  static const INITIAL = AppRoutes.login;\n\n  static final routes = [\n    GetPage(\n      name: AppRoutes.login,\n      page: () => LoginPage(),\n      binding: AuthBinding(),\n    ),\n    GetPage(\n      name: AppRoutes.home,\n      page: () => HomePage(),\n      binding: HomeBinding(),\n    ),\n    GetPage(\n      name: AppRoutes.products,\n      page: () => ProductListPage(),\n      binding: ProductBinding(),\n    ),\n    GetPage(\n      name: AppRoutes.productDetail,\n      page: () => ProductDetailPage(),\n      binding: ProductBinding(), // can reuse binding\n    ),\n  ];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Communication Between Modules"
+    },
+    {
+      "type": "text",
+      "value": "Modules can communicate via shared services (like `AuthService` placed in `app/shared/services`). Since the service is registered globally (e.g., in `initialBinding`), any module can access it using `Get.find<AuthService>()`. This keeps modules loosely coupled."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// app/shared/services/auth_service.dart\nclass AuthService extends GetxService {\n  var isLoggedIn = false.obs;\n\n  void login() => isLoggedIn.value = true;\n  void logout() => isLoggedIn.value = false;\n}\n\n// In main.dart or initialBinding\nvoid main() async {\n  await GetStorage.init();\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      initialBinding: AppBinding(), // registers AuthService\n      getPages: AppPages.routes,\n      initialRoute: AppPages.INITIAL,\n    );\n  }\n}\n\nclass AppBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.put(AuthService(), permanent: true);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Lazy Loading & Performance"
+    },
+    {
+      "type": "text",
+      "value": "Because each module is registered via `Get.lazyPut` inside its binding, the controllers and services are only created when the route is visited. This significantly reduces startup time and memory usage. You can also set `permanent: true` for global services that must stay alive."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep modules self‑contained** – Each module should ideally not import other modules directly (except via shared services).",
+        "**Use shared services for cross‑module communication** – This keeps the dependency graph clean.",
+        "**Lazy load modules** – Use `Get.lazyPut` in bindings and avoid global registrations unless necessary.",
+        "**Use constants for route names** – Prevents typos and makes refactoring easier.",
+        "**Place each module in its own folder** – Makes it easy to move or reuse modules later.",
+        "**Keep shared code in `app/shared`** – Reusable widgets, utilities, and services.",
+        "**Test modules in isolation** – Because modules are independent, you can test them separately."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Creating circular dependencies between modules** – Module A imports Module B, Module B imports Module A.\n✅ Use shared services to break cycles.",
+        "❌ **Putting all routes in one giant `GetPage` list without module separation** – Still works, but not modular.\n✅ Define routes with their respective bindings.",
+        "❌ **Using `Get.put` inside views instead of bindings** – This scatters the dependency registration.\n✅ Keep registration inside bindings.",
+        "❌ **Not providing a binding for a route** – The controllers may not be registered.\n✅ Always define a binding for each route."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I share a module between multiple projects?**  \nA: Yes, you can extract a module into its own package or copy it; it should be self‑contained if it uses only shared services.",
+        "**Q: How to handle deep linking with modules?**  \nA: Define dynamic routes in `GetPage` (e.g., `/product/:id`). The binding will be called when that route is opened.",
+        "**Q: Can a module have multiple pages?**  \nA: Absolutely. The product module can have both a list page and a detail page; both can share the same binding.",
+        "**Q: What about global dependencies like API clients?**  \nA: Place them in `app/shared/services` and register them in `initialBinding` with `permanent: true`.",
+        "**Q: Does this structure work with GetX CLI?**  \nA: Yes, the CLI’s `get create page:name` follows a similar modular structure."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "A feature‑modular architecture using GetX gives you a scalable, maintainable app structure. By separating concerns into independent modules, you enable better team collaboration, easier testing, and the ability to load only what’s needed. Combined with GetX’s lazy loading and dependency injection, it’s a powerful pattern for any Flutter project."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "Where should you place the binding for a module?",
+      "options": [
+        "Inside the view file",
+        "In the module’s bindings folder, registered with GetPage",
+        "In main.dart",
+        "In a shared services file"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do modules communicate without creating direct dependencies?",
+      "options": [
+        "Using global variables",
+        "Through shared services registered in initialBinding",
+        "By importing each other",
+        "Using Get.put inside views"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the benefit of using `Get.lazyPut` inside module bindings?",
+      "options": [
+        "It makes controllers permanent",
+        "It delays creation until the route is visited, improving startup time",
+        "It allows using tags",
+        "It automatically disposes controllers"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-structure",
+    "getx-bindings",
+    "getx-named-routes",
+    "getx-dependency-injection"
+  ]
+}

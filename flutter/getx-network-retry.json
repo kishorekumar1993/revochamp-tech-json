@@ -1,0 +1,217 @@
+{
+  "slug": "getx-network-retry",
+  "course": "Flutter",
+  "title": "GetX Network Retry: Robust HTTP Request Handling",
+  "meta": {
+    "title": "GetX Network Retry – Automatic & Manual Retry for HTTP Requests",
+    "description": "Learn how to implement network retry strategies with GetX. Handle transient errors, exponential backoff, user-triggered retries, and integrate with Dio interceptors.",
+    "keywords": [
+      "GetX network retry",
+      "Flutter retry mechanism",
+      "Dio retry interceptor",
+      "exponential backoff",
+      "GetX error handling",
+      "HTTP retry Flutter",
+      "network resilience"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Network requests can fail for many reasons: no internet, timeouts, server errors (5xx), or rate limiting. A robust app should be able to retry these requests automatically or give users the option to retry. GetX, combined with an HTTP client like Dio, provides powerful tools to implement retry logic with minimal boilerplate. This guide covers strategies for automatic retries with exponential backoff, user‑triggered retries, and integrating retry state into your GetX controllers."
+    },
+    {
+      "type": "heading",
+      "value": "1. Simple Retry with Recursion"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to implement a retry is to call the same function recursively on failure. This gives you full control over the retry count and delay."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<T> retry<T>(Future<T> Function() action, {int retries = 3, Duration delay = const Duration(seconds: 1)}) async {\n  try {\n    return await action();\n  } catch (e) {\n    if (retries <= 0) rethrow;\n    await Future.delayed(delay);\n    return retry(action, retries: retries - 1, delay: delay * 2); // exponential backoff\n  }\n}\n\n// Usage in a controller\nFuture<void> fetchData() async {\n  try {\n    final data = await retry(() => api.getData());\n    // success\n  } catch (e) {\n    // all retries failed\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Using Dio Interceptor for Retry"
+    },
+    {
+      "type": "text",
+      "value": "If you use Dio, the `dio_retry` package provides a ready‑made interceptor. You can also write your own interceptor for fine‑grained control."
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  dio: ^5.4.0\n  dio_retry: ^5.0.0"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:dio/dio.dart';\nimport 'package:dio_retry/dio_retry.dart';\n\nclass ApiService extends GetxService {\n  late Dio _dio;\n\n  @override\n  void onInit() {\n    super.onInit();\n    _dio = Dio(BaseOptions(baseUrl: 'https://api.example.com'));\n    _dio.interceptors.add(\n      RetryInterceptor(\n        dio: _dio,\n        retries: 3,\n        retryDelays: const [\n          Duration(seconds: 1),\n          Duration(seconds: 2),\n          Duration(seconds: 4),\n        ],\n        retryEvaluator: (DioException error, int attempt) {\n          // Retry on network errors or 5xx server errors\n          return error.type == DioExceptionType.connectionTimeout ||\n              error.type == DioExceptionType.receiveTimeout ||\n              (error.response?.statusCode ?? 0) >= 500;\n        },\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Exponential Backoff with Jitter"
+    },
+    {
+      "type": "text",
+      "value": "Exponential backoff (increasing delay between retries) prevents overwhelming the server. Adding a small random jitter helps avoid thundering herd problems when many clients retry simultaneously."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<T> retryWithBackoff<T>(Future<T> Function() action, {int maxRetries = 3, Duration initialDelay = const Duration(seconds: 1)}) async {\n  int attempts = 0;\n  Duration delay = initialDelay;\n\n  while (true) {\n    try {\n      return await action();\n    } catch (e) {\n      attempts++;\n      if (attempts > maxRetries) rethrow;\n      // Add jitter (±20%)\n      final jitter = Duration(milliseconds: (delay.inMilliseconds * 0.2).toInt());\n      final actualDelay = delay + Duration(milliseconds: Random().nextInt(jitter.inMilliseconds));\n      await Future.delayed(actualDelay);\n      delay = delay * 2; // exponential\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. User‑Triggered Retry with GetX"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want to let the user decide when to retry (e.g., after showing an error message). Use a reactive boolean to indicate a retry state and expose a method that the UI can call."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DataController extends GetxController {\n  var data = ''.obs;\n  var isLoading = false.obs;\n  var error = ''.obs;\n\n  Future<void> fetchData() async {\n    isLoading.value = true;\n    error.value = '';\n    try {\n      final result = await api.getData();\n      data.value = result;\n    } catch (e) {\n      error.value = e.toString();\n      // No automatic retry; user must tap a retry button\n    } finally {\n      isLoading.value = false;\n    }\n  }\n\n  void retry() => fetchData(); // called from UI\n}\n\n// In UI\nObx(() {\n  if (controller.isLoading.value) return CircularProgressIndicator();\n  if (controller.error.value.isNotEmpty) {\n    return Column(\n      children: [\n        Text('Error: ${controller.error.value}'),\n        ElevatedButton(\n          onPressed: controller.retry,\n          child: Text('Retry'),\n        ),\n      ],\n    );\n  }\n  return Text(controller.data.value);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "5. Automatic Retry with GetX Workers"
+    },
+    {
+      "type": "text",
+      "value": "You can combine a retry mechanism with a worker that listens to an error state and automatically retries after a delay."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DataController extends GetxController {\n  var data = ''.obs;\n  var error = ''.obs;\n  var retryCount = 0.obs;\n  var isRetrying = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Listen to error and automatically retry (max 3 times)\n    ever(error, (err) async {\n      if (err.isNotEmpty && retryCount.value < 3 && !isRetrying.value) {\n        isRetrying.value = true;\n        await Future.delayed(Duration(seconds: 2));\n        retryCount.value++;\n        await fetchData();\n        isRetrying.value = false;\n      }\n    });\n  }\n\n  Future<void> fetchData() async {\n    error.value = '';\n    try {\n      final result = await api.getData();\n      data.value = result;\n      retryCount.value = 0; // reset on success\n    } catch (e) {\n      error.value = e.toString();\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Showing Retry Progress"
+    },
+    {
+      "type": "text",
+      "value": "When retrying automatically, you may want to show a countdown or a message like \"Retrying in X seconds…\" to inform the user."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DataController extends GetxController {\n  var data = ''.obs;\n  var error = ''.obs;\n  var retryDelay = 0.obs;\n  Timer? _timer;\n\n  Future<void> fetchData() async {\n    error.value = '';\n    try {\n      final result = await api.getData();\n      data.value = result;\n    } catch (e) {\n      error.value = e.toString();\n      _startRetryCountdown();\n    }\n  }\n\n  void _startRetryCountdown() {\n    retryDelay.value = 3;\n    _timer?.cancel();\n    _timer = Timer.periodic(Duration(seconds: 1), (timer) {\n      if (retryDelay.value <= 1) {\n        timer.cancel();\n        fetchData();\n      } else {\n        retryDelay.value--;\n      }\n    });\n  }\n\n  @override\n  void onClose() {\n    _timer?.cancel();\n    super.onClose();\n  }\n}\n\n// UI\nObx(() {\n  if (controller.error.value.isNotEmpty) {\n    return Column(\n      children: [\n        Text('Error: ${controller.error.value}'),\n        Text('Retrying in ${controller.retryDelay.value}s...'),\n        ElevatedButton(\n          onPressed: controller.fetchData,\n          child: Text('Retry now'),\n        ),\n      ],\n    );\n  }\n  // ...\n});"
+    },
+    {
+      "type": "heading",
+      "value": "7. Handling Idempotent Requests"
+    },
+    {
+      "type": "text",
+      "value": "Not all requests are safe to retry automatically (e.g., POST requests that create resources). Always check if the request is idempotent before retrying. For Dio, you can check the HTTP method."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "bool shouldRetry(DioException error, int attempt) {\n  // Only retry GET, HEAD, PUT, DELETE (idempotent methods)\n  final isIdempotent = error.requestOptions.method == 'GET' ||\n      error.requestOptions.method == 'HEAD' ||\n      error.requestOptions.method == 'PUT' ||\n      error.requestOptions.method == 'DELETE';\n  if (!isIdempotent) return false;\n\n  // Retry on network errors or 5xx\n  return error.type == DioExceptionType.connectionTimeout ||\n      error.type == DioExceptionType.receiveTimeout ||\n      (error.response?.statusCode ?? 0) >= 500;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Limit retries** – Usually 3‑5 attempts maximum.",
+        "**Use exponential backoff** – Prevents overwhelming the server.",
+        "**Add jitter** – Avoids thundering herd problems.",
+        "**Only retry idempotent requests** – Avoid duplicating non‑idempotent operations (e.g., POST).",
+        "**Notify the user** – Show a message when retrying automatically, or provide a manual retry button.",
+        "**Cancel retries on navigation** – If the user leaves the screen, cancel ongoing retry timers.",
+        "**Test retry logic** – Simulate network failures to ensure retries work correctly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Retrying POST/PATCH requests** – May create duplicate records.\n✅ Only retry idempotent requests.",
+        "❌ **Infinite retries** – Without a max limit, may loop forever.\n✅ Always set a maximum retry count.",
+        "❌ **Immediate retries** – Causes cascading failures; always add a delay.\n✅ Use backoff strategies.",
+        "❌ **Not handling retry cancellation** – Timers may fire after the controller is disposed.\n✅ Cancel timers in `onClose`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Should I retry on 401 (Unauthorized)?**  \nA: Usually no. 401 means the token is invalid; you should refresh the token or redirect to login.",
+        "**Q: How do I retry only on certain error types?**  \nA: In your retry logic, check the exception type or status code and return `true` only for those you want to retry.",
+        "**Q: Can I combine automatic and manual retry?**  \nA: Yes, provide a manual retry button that resets the retry counter and calls the same fetch method.",
+        "**Q: Does `dio_retry` work with GetX?**  \nA: Yes, just add it as an interceptor in your `ApiService`. It will automatically retry according to your configuration.",
+        "**Q: How to test retry logic?**  \nA: Use mockito to throw exceptions on the first few calls, then succeed on the third. Verify the number of attempts."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Implementing network retry is crucial for building resilient Flutter apps. GetX provides the flexibility to implement both automatic and manual retries, integrate with Dio interceptors, and manage retry state reactively. By following the patterns in this guide, you can ensure your app gracefully recovers from transient network issues."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "Which HTTP methods are generally considered safe to retry automatically?",
+      "options": [
+        "POST, PATCH",
+        "GET, HEAD, PUT, DELETE",
+        "All methods",
+        "Only GET"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of exponential backoff?",
+      "options": [
+        "To increase retry speed",
+        "To prevent overwhelming the server",
+        "To reduce code complexity",
+        "To handle user input"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you ensure retry timers don't fire after a controller is disposed?",
+      "options": [
+        "Cancel timers in onClose",
+        "Use a global variable",
+        "Do nothing, it's automatic",
+        "Use async/await"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-api-integration",
+    "getx-error-handling",
+    "getx-state-management",
+    "getx-workers"
+  ]
+}

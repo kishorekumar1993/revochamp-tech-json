@@ -1,0 +1,208 @@
+{
+  "slug": "getx-offline-support",
+  "course": "Flutter",
+  "title": "GetX Offline Support: Build Resilient Apps That Work Without Internet",
+  "meta": {
+    "title": "GetX Offline Support – Cache, Sync, and Connectivity Detection",
+    "description": "Learn how to build offline-first Flutter apps with GetX. Cache API responses, detect network status, queue actions, and sync data when back online.",
+    "keywords": [
+      "GetX offline support",
+      "Flutter offline mode",
+      "GetX connectivity",
+      "GetStorage caching",
+      "offline-first GetX",
+      "GetX network detection",
+      "sync offline data"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Modern apps need to work even when the user is offline or has a poor connection. An offline‑first approach caches data locally, allows actions to be queued, and synchronizes when connectivity returns. GetX, with its reactive state and `GetStorage`, provides an excellent foundation for building resilient offline experiences. This guide covers how to detect connectivity, cache API responses, queue user actions, and sync them when the app comes back online."
+    },
+    {
+      "type": "heading",
+      "value": "1. Detecting Network Connectivity"
+    },
+    {
+      "type": "text",
+      "value": "First, you need to know whether the device is online. Use the `connectivity_plus` package to listen to network changes. Combine it with GetX to make the connectivity state reactive."
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  connectivity_plus: ^5.0.0\n  get: ^4.6.6\n  get_storage: ^2.1.1"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:connectivity_plus/connectivity_plus.dart';\nimport 'package:get/get.dart';\n\nclass ConnectivityService extends GetxService {\n  final Connectivity _connectivity = Connectivity();\n  var isOnline = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    _initConnectivity();\n    _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);\n  }\n\n  Future<void> _initConnectivity() async {\n    final result = await _connectivity.checkConnectivity();\n    _updateConnectionStatus(result);\n  }\n\n  void _updateConnectionStatus(ConnectivityResult result) {\n    isOnline.value = result != ConnectivityResult.none;\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "Register the service permanently in an initial binding."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.put(ConnectivityService(), permanent: true);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Caching API Responses with GetStorage"
+    },
+    {
+      "type": "text",
+      "value": "Store API responses locally using `GetStorage`. When the app is offline, read from cache instead of making a network request. You can also cache for a certain time to implement stale‑while‑revalidate strategies."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostRepository {\n  final ApiService api;\n  final GetStorage cache = GetStorage();\n  final Duration cacheDuration = Duration(minutes: 5);\n\n  Future<List<Post>> getPosts() async {\n    final cached = cache.read('posts');\n    final cachedTime = cache.read('posts_timestamp');\n    final isCacheValid = cached != null && cachedTime != null &&\n        DateTime.now().difference(DateTime.parse(cachedTime)) < cacheDuration;\n\n    final isOnline = Get.find<ConnectivityService>().isOnline.value;\n\n    if (isOnline) {\n      // Fetch fresh data\n      final posts = await api.getPosts();\n      cache.write('posts', posts.map((p) => p.toJson()).toList());\n      cache.write('posts_timestamp', DateTime.now().toIso8601String());\n      return posts;\n    } else if (isCacheValid) {\n      // Return cached data\n      final List list = cached;\n      return list.map((json) => Post.fromJson(json)).toList();\n    } else {\n      throw Exception('No internet and no valid cache');\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Offline‑First Controller with Reactive State"
+    },
+    {
+      "type": "text",
+      "value": "Create a controller that uses the repository and also tracks offline state to show appropriate UI."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostsController extends GetxController with StateMixin<List<Post>> {\n  final PostRepository repository;\n  final ConnectivityService connectivity = Get.find();\n\n  PostsController(this.repository);\n\n  @override\n  void onInit() {\n    super.onInit();\n    loadPosts();\n    // Reload when connectivity returns\n    ever(connectivity.isOnline, (online) {\n      if (online) loadPosts();\n    });\n  }\n\n  Future<void> loadPosts() async {\n    change(null, status: RxStatus.loading());\n    try {\n      final posts = await repository.getPosts();\n      change(posts, status: RxStatus.success());\n    } catch (e) {\n      change(null, status: RxStatus.error(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Queuing Actions for When Offline"
+    },
+    {
+      "type": "text",
+      "value": "For operations like creating a post, you can queue them locally when offline and sync them when connectivity returns. Store actions in a list and process them one by one."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class OfflineQueueService extends GetxService {\n  final GetStorage _storage = GetStorage();\n  var pendingActions = <Map<String, dynamic>>[].obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Load pending actions from storage\n    final saved = _storage.read('pending_actions');\n    if (saved != null) pendingActions.assignAll(saved.cast<Map<String, dynamic>>());\n    // Listen for online status to sync\n    final connectivity = Get.find<ConnectivityService>();\n    ever(connectivity.isOnline, (online) {\n      if (online) syncAll();\n    });\n  }\n\n  void addAction(String type, Map<String, dynamic> data) {\n    final action = {'type': type, 'data': data, 'timestamp': DateTime.now().toIso8601String()};\n    pendingActions.add(action);\n    _storage.write('pending_actions', pendingActions.toList());\n  }\n\n  Future<void> syncAll() async {\n    if (pendingActions.isEmpty) return;\n    // Make a copy to avoid modification during iteration\n    final actions = List<Map<String, dynamic>>.from(pendingActions);\n    for (final action in actions) {\n      try {\n        await _executeAction(action);\n        pendingActions.remove(action);\n        _storage.write('pending_actions', pendingActions.toList());\n      } catch (e) {\n        // Log error, maybe keep action for later\n      }\n    }\n  }\n\n  Future<void> _executeAction(Map<String, dynamic> action) async {\n    final type = action['type'];\n    final data = action['data'];\n    if (type == 'create_post') {\n      await api.createPost(data);\n    }\n    // other action types\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Showing Offline UI"
+    },
+    {
+      "type": "text",
+      "value": "Use the connectivity service to show an offline banner or change the UI. For example, show a snackbar when offline and hide it when back online."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class OfflineBanner extends StatelessWidget {\n  final connectivity = Get.find<ConnectivityService>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Obx(() {\n      if (!connectivity.isOnline.value) {\n        return Container(\n          color: Colors.orange,\n          padding: EdgeInsets.all(8),\n          child: Row(\n            children: [\n              Icon(Icons.wifi_off, color: Colors.white),\n              SizedBox(width: 8),\n              Text('You are offline', style: TextStyle(color: Colors.white)),\n            ],\n          ),\n        );\n      }\n      return SizedBox.shrink();\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Complete Offline Post Creation Example"
+    },
+    {
+      "type": "text",
+      "value": "Putting it all together, here's how a controller can use both caching and queuing."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostController extends GetxController {\n  final PostRepository repository;\n  final OfflineQueueService queue;\n  final ConnectivityService connectivity;\n  var posts = <Post>[].obs;\n  var isCreating = false.obs;\n\n  PostController(this.repository, this.queue, this.connectivity);\n\n  @override\n  void onInit() {\n    super.onInit();\n    loadPosts();\n    ever(connectivity.isOnline, (_) => loadPosts());\n  }\n\n  Future<void> loadPosts() async {\n    final data = await repository.getPosts();\n    posts.assignAll(data);\n  }\n\n  Future<void> createPost(String title, String body) async {\n    isCreating.value = true;\n    try {\n      if (connectivity.isOnline.value) {\n        // online: send immediately\n        final newPost = await api.createPost(title, body);\n        posts.insert(0, newPost);\n      } else {\n        // offline: queue action\n        queue.addAction('create_post', {'title': title, 'body': body});\n        Get.snackbar('Offline', 'Post saved locally, will sync when online');\n      }\n    } finally {\n      isCreating.value = false;\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `connectivity_plus`** – It’s the standard package for network detection.",
+        "**Cache with expiration** – Set a TTL to serve stale data while fetching fresh.",
+        "**Queue non‑idempotent actions** – Only queue actions that can be safely retried (e.g., POST).",
+        "**Show offline indicators** – Keep the user informed about connectivity status.",
+        "**Sync in the background** – Use a worker that listens to connectivity changes to process the queue.",
+        "**Handle conflicts** – When syncing, resolve conflicts (e.g., timestamp, server‑generated IDs).",
+        "**Persist queues** – Use `GetStorage` to store pending actions so they survive app restarts."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not handling race conditions** – Multiple sync attempts may send duplicates.\n✅ Use a mutex flag or process queue one at a time.",
+        "❌ **Assuming cache is always valid** – Cache may be stale; always validate.",
+        "❌ **Not clearing cache when logging out** – User data may persist incorrectly.\n✅ Clear relevant cache on logout.",
+        "❌ **Storing large objects without expiration** – Accumulates unnecessary data.\n✅ Use TTL and clean up old entries."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I use `GetStorage` for caching large lists?**  \nA: Yes, but it’s a simple key‑value store. For large amounts of data, consider Hive or SQLite.",
+        "**Q: How do I detect a weak connection?**  \nA: `connectivity_plus` only tells you if any network is available, not its quality. You can implement a ping test or use `dio` with timeouts.",
+        "**Q: How to sync offline changes when the app is in the background?**  \nA: Use a background fetch service or listen to connectivity changes in a service; you can also use a timer to retry periodically.",
+        "**Q: What about offline support for Firebase?**  \nA: Firebase has built‑in offline persistence; you can combine it with GetX for state management. The concepts are similar but use Firebase's offline capabilities.",
+        "**Q: How to test offline mode?**  \nA: Use a simulator or real device and enable/disable Wi‑Fi. You can also mock the connectivity service in tests to simulate offline/online transitions."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Building offline‑capable apps with GetX is achievable by combining connectivity detection, caching, and action queues. With reactive state, you can provide a seamless experience even when the network is unavailable. The patterns shown here give you a solid foundation for an offline‑first architecture."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "Which package is commonly used to detect network connectivity in Flutter?",
+      "options": ["network_info_plus", "connectivity_plus", "internet_connection_checker", "wifi_info_flutter"],
+      "answer": 1
+    },
+    {
+      "question": "How can you persist pending actions to survive app restarts?",
+      "options": [
+        "Store them in memory",
+        "Use GetStorage or SharedPreferences",
+        "Use a local database",
+        "Both B and C"
+      ],
+      "answer": 3
+    },
+    {
+      "question": "What is the purpose of setting a cache expiration (TTL)?",
+      "options": [
+        "To reduce storage size",
+        "To ensure data is not too old when the app is offline",
+        "To improve performance",
+        "To prevent memory leaks"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-storage",
+    "getx-api-integration",
+    "getx-state-management",
+    "getx-workers"
+  ]
+}

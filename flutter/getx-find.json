@@ -1,0 +1,206 @@
+{
+  "slug": "getx-find",
+  "course": "Flutter",
+  "title": "GetX Get.find: Retrieving Dependencies Anywhere",
+  "meta": {
+    "title": "GetX Get.find – Access Dependencies Without Context",
+    "description": "Master Get.find in GetX: retrieve controllers and services anywhere in your Flutter app, use tags, check registration, and avoid common mistakes.",
+    "keywords": [
+      "GetX Get.find",
+      "Get.find",
+      "GetX dependency injection",
+      "retrieve controller GetX",
+      "Get.isRegistered",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Get.find?"
+    },
+    {
+      "type": "text",
+      "value": "`Get.find` is the method used to **retrieve** an already registered dependency in GetX. It looks up the instance by its type (and optionally a tag) and returns it. This allows you to access controllers, services, or any registered class from anywhere in your app without needing a `BuildContext`."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Retrieve a controller registered earlier\nfinal controller = Get.find<MyController>();\n\n// Now use it\ncontroller.someMethod();"
+    },
+    {
+      "type": "heading",
+      "value": "Using Get.find"
+    },
+    {
+      "type": "text",
+      "value": "Once you have registered a dependency using `Get.put`, `Get.lazyPut`, or `Get.putAsync`, you can retrieve it with `Get.find`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeController extends GetxController { ... }\n\n// Register (in a binding or initState)\nGet.put(HomeController());\n\n// Later, anywhere:\nfinal controller = Get.find<HomeController>();"
+    },
+    {
+      "type": "heading",
+      "value": "Retrieving Without Storing"
+    },
+    {
+      "type": "text",
+      "value": "You don't have to store the result in a variable if you only need to call a method or access a property."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Direct method call\nGet.find<HomeController>().increment();\n\n// In a widget\nObx(() => Text(Get.find<HomeController>().count.toString()))"
+    },
+    {
+      "type": "heading",
+      "value": "Using Tags"
+    },
+    {
+      "type": "text",
+      "value": "If you registered multiple instances of the same type using different tags, you must specify the tag in `Get.find`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.put(UserController(), tag: 'alice');\nGet.put(UserController(), tag: 'bob');\n\nfinal alice = Get.find<UserController>(tag: 'alice');\nfinal bob = Get.find<UserController>(tag: 'bob');"
+    },
+    {
+      "type": "heading",
+      "value": "Checking if a Dependency is Registered"
+    },
+    {
+      "type": "text",
+      "value": "Before calling `Get.find`, you can check if the dependency exists using `Get.isRegistered` to avoid runtime errors."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "if (Get.isRegistered<MyController>()) {\n  final controller = Get.find<MyController>();\n} else {\n  // Register it or handle absence\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Find vs GetX Widgets"
+    },
+    {
+      "type": "text",
+      "value": "`Get.find` is used to retrieve dependencies in logic code. In widgets, you can also use `GetView<T>` to get a typed controller without calling `Get.find` manually."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomePage extends GetView<HomeController> {\n  @override\n  Widget build(BuildContext context) {\n    // controller is already available via GetView\n    return Obx(() => Text('${controller.count}'));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Find with LazyPut"
+    },
+    {
+      "type": "text",
+      "value": "When you use `Get.lazyPut`, the instance is created exactly when you call `Get.find` for the first time."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.lazyPut<HeavyService>(() => HeavyService());\n\n// At this point, HeavyService is NOT created yet\n// But when we call find, it will be instantiated\nfinal service = Get.find<HeavyService>();"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `GetView` in widgets** – It automatically provides a typed `controller` without manual `Get.find`.",
+        "**Check `isRegistered` before find** – Especially in scenarios where the dependency may not be guaranteed to exist.",
+        "**Store the result in a local variable if used multiple times** – Avoid repeated `Get.find` calls for performance (though it's already fast).",
+        "**Use tags for multiple instances** – This keeps your DI organized and prevents accidental overwrites.",
+        "**Avoid using `Get.find` in `onClose` of the same controller** – May cause infinite loops; instead pass references via constructor."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `Get.find` before registration** – Throws an exception.\n✅ Always register first, or check with `Get.isRegistered`.",
+        "❌ **Forgetting tags when multiple instances exist** – Returns the wrong instance or throws if ambiguous.\n✅ Always specify the tag if you registered with one.",
+        "❌ **Using `Get.find` inside a build method without `GetView`** – Works, but `GetView` is cleaner and ensures the controller is available.",
+        "❌ **Assuming `Get.find` creates the instance** – It only retrieves. Use `Get.put` or `Get.lazyPut` to register first."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: What happens if I call `Get.find` for a type that was never registered?**  \nA: It throws an exception. Always ensure registration before using `Get.find`.",
+        "**Q: Can I use `Get.find` in a background isolate?**  \nA: No, GetX dependency injection is tied to the main isolate. Use standard Flutter communication (e.g., `sendPort`) between isolates.",
+        "**Q: Does `Get.find` work after the controller is disposed?**  \nA: If the controller was disposed and not marked `fenix: true`, `Get.find` will fail. Check `isRegistered` or use `fenix` to allow recreation.",
+        "**Q: Can I use `Get.find` inside a service?**  \nA: Yes, as long as the dependency you're looking for is registered. This allows services to access controllers or other services.",
+        "**Q: Is `Get.find` thread‑safe?**  \nA: Yes, within the Flutter UI thread. Do not use it from other threads."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "`Get.find` is a simple yet powerful method to access registered dependencies anywhere in your Flutter app. Combined with `Get.put`, `Get.lazyPut`, and tags, it forms the backbone of GetX's dependency injection system. By following best practices, you can keep your code clean, testable, and efficient."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: HomePage(),\n    );\n  }\n}\n\nclass CounterController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n}\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    // Register the controller (could also be in a binding)\n    Get.put(CounterController());\n\n    return Scaffold(\n      appBar: AppBar(title: Text('Get.find Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            // Using Get.find directly in Obx\n            Obx(() => Text(\n              'Count: ${Get.find<CounterController>().count}',\n              style: TextStyle(fontSize: 32),\n            )),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () {\n                // Retrieve and call method\n                Get.find<CounterController>().increment();\n              },\n              child: Text('Increment'),\n            ),\n            ElevatedButton(\n              onPressed: () {\n                // Check if registered\n                if (Get.isRegistered<CounterController>()) {\n                  Get.snackbar('Info', 'Controller exists');\n                } else {\n                  Get.snackbar('Info', 'Controller not found');\n                }\n              },\n              child: Text('Check Registration'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does Get.find do?",
+      "options": [
+        "Registers a new dependency",
+        "Retrieves an existing registered dependency",
+        "Deletes a dependency",
+        "Creates a lazy dependency"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you safely check if a dependency exists before calling Get.find?",
+      "options": [
+        "Get.exists()",
+        "Get.isRegistered()",
+        "Get.has()",
+        "Get.available()"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of the tag parameter in Get.find?",
+      "options": [
+        "To set a name for debugging",
+        "To differentiate between multiple instances of the same type",
+        "To make the instance permanent",
+        "To lazy load the instance"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-dependency-injection",
+    "getx-put",
+    "getx-lazyput",
+    "getx-bindings"
+  ]
+}

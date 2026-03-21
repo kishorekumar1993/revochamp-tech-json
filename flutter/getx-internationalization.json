@@ -1,0 +1,191 @@
+{
+  "slug": "getx-internationalization",
+  "course": "Flutter",
+  "title": "GetX Internationalization (i18n): Multi-Language Support",
+  "meta": {
+    "title": "GetX Internationalization – Multi-Language Apps with GetX",
+    "description": "Learn how to add multi-language support to your Flutter app using GetX. Translations, locale switching, parameters, pluralization, and best practices for i18n.",
+    "keywords": [
+      "GetX internationalization",
+      "GetX i18n",
+      "GetX translations",
+      "Flutter multi-language",
+      "GetX locale",
+      "GetX tr",
+      "GetX localization"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction to GetX Internationalization"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides a built‑in internationalization (i18n) system that makes it easy to add multi‑language support to your Flutter app. You can define translations in JSON or Dart maps, switch languages without restarting the app, and even use reactive translation updates. The system integrates seamlessly with `GetMaterialApp` and works with both stateless and reactive widgets."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Translations"
+    },
+    {
+      "type": "text",
+      "value": "To enable translations, create a class that extends `Translations` and define your language maps. Then pass it to `GetMaterialApp`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:get/get.dart';\n\nclass AppTranslations extends Translations {\n  @override\n  Map<String, Map<String, String>> get keys => {\n    'en_US': {\n      'title': 'Hello World',\n      'welcome': 'Welcome to my app',\n      'greeting': 'Hello, %s',\n    },\n    'es_ES': {\n      'title': 'Hola Mundo',\n      'welcome': 'Bienvenido a mi aplicación',\n      'greeting': 'Hola, %s',\n    },\n    'fr_FR': {\n      'title': 'Bonjour le Monde',\n      'welcome': 'Bienvenue dans mon application',\n      'greeting': 'Bonjour, %s',\n    },\n  };\n}\n\n// In main.dart\nvoid main() {\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      translations: AppTranslations(),\n      locale: Locale('en', 'US'), // default locale\n      fallbackLocale: Locale('en', 'US'), // fallback if translation missing\n      home: HomePage(),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Translations in UI"
+    },
+    {
+      "type": "text",
+      "value": "Use the `.tr` extension on any string to get the translated value. It's as simple as that."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Text('title'.tr) // displays translated title\n\n// With parameters\nText('greeting'.trParams({'name': 'John'})) // replaces %s with John"
+    },
+    {
+      "type": "heading",
+      "value": "Switching Locale Dynamically"
+    },
+    {
+      "type": "text",
+      "value": "Change the app language at runtime using `Get.updateLocale`. The UI will automatically rebuild with the new translations."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Switch to Spanish\nGet.updateLocale(Locale('es', 'ES'));\n\n// Switch to French\nGet.updateLocale(Locale('fr', 'FR'));"
+    },
+    {
+      "type": "heading",
+      "value": "Supported Locales & Fallback"
+    },
+    {
+      "type": "text",
+      "value": "You can specify a list of supported locales to restrict the user's choice, and a fallback locale if a key is missing in the current language."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetMaterialApp(\n  translations: AppTranslations(),\n  locale: Locale('en', 'US'),\n  fallbackLocale: Locale('en', 'US'),\n  supportedLocales: [\n    Locale('en', 'US'),\n    Locale('es', 'ES'),\n    Locale('fr', 'FR'),\n  ],\n  home: HomePage(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Reactive Translation Updates"
+    },
+    {
+      "type": "text",
+      "value": "When you call `Get.updateLocale`, all widgets using `.tr` will automatically rebuild. This is thanks to GetX's reactive system. You don't need any extra code."
+    },
+    {
+      "type": "heading",
+      "value": "Pluralization"
+    },
+    {
+      "type": "text",
+      "value": "GetX supports pluralization using the `plural` method. Define different translations for singular and plural cases."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Translation keys\n'en_US': {\n  'apples': 'apple',\n  'apples_plural': 'apples',\n  'apples_count': '%s apple',\n  'apples_count_plural': '%s apples',\n}\n\n// Usage\nint count = 5;\nText(count.plural('apples')) // returns '5 apples'\n\n// Or with custom format\nText(count.plural('apples_count')) // returns '5 apples' (if key with _plural exists)"
+    },
+    {
+      "type": "heading",
+      "value": "Using Translation Files (JSON)"
+    },
+    {
+      "type": "text",
+      "value": "For larger apps, you may want to store translations in separate JSON files. You can create a custom `Translations` class that loads them from assets."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// assets/locales/en.json\n{\n  \"title\": \"Hello World\",\n  \"welcome\": \"Welcome to my app\"\n}\n\n// Custom translations loader\nimport 'dart:convert';\nimport 'package:flutter/services.dart';\n\nclass JsonTranslations extends Translations {\n  final Map<String, Map<String, String>> _keys = {};\n\n  JsonTranslations() {\n    loadTranslations();\n  }\n\n  Future<void> loadTranslations() async {\n    for (String locale in ['en', 'es', 'fr']) {\n      String data = await rootBundle.loadString('assets/locales/$locale.json');\n      Map<String, dynamic> decoded = json.decode(data);\n      _keys[locale] = decoded.map((key, value) => MapEntry(key, value.toString()));\n    }\n  }\n\n  @override\n  Map<String, Map<String, String>> get keys => _keys;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use language codes consistently** – `en_US`, `es_ES`, etc. This avoids ambiguity.",
+        "**Define a fallback locale** – Prevents missing key errors.",
+        "**Use `.tr` directly in widgets** – No need for extra `Obx` – the system handles updates automatically.",
+        "**Organize translations by feature** – Consider splitting large translation maps into modules.",
+        "**Test language switching** – Ensure all UI elements update correctly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to set `translations` in `GetMaterialApp`** – Translations won't work.\n✅ Always pass the `translations` instance.",
+        "❌ **Using hard‑coded strings in widgets** – They won't update when language changes.\n✅ Always use `.tr`.",
+        "❌ **Not providing a fallback locale** – Missing keys may cause empty strings.\n✅ Set `fallbackLocale`.",
+        "❌ **Over‑complicating with reactive state for translations** – GetX already updates automatically."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I change the language without restarting the app?**  \nA: Yes, `Get.updateLocale` updates the locale and rebuilds the UI instantly.",
+        "**Q: How do I get the current locale?**  \nA: Use `Get.locale` or `Get.deviceLocale`.",
+        "**Q: Does GetX support right‑to‑left (RTL) languages?**  \nA: Yes, Flutter handles RTL automatically based on the locale. Just ensure your layouts use `Directionality` or `textDirection` correctly.",
+        "**Q: Can I use GetX i18n with other GetX features like state management?**  \nA: Absolutely. The translation system is independent but can be combined with reactive variables (e.g., a language switch controlled by a controller).",
+        "**Q: How do I handle plurals for different languages?**  \nA: The `plural` method works with the same base key; you need to define the singular and plural forms in your translation map as shown above."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX internationalization provides a simple yet powerful way to make your Flutter app speak multiple languages. With just a few lines of setup, you can support translations, dynamic language switching, and even pluralization. The integration with GetMaterialApp and reactive updates makes it a breeze to implement and maintain."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass AppTranslations extends Translations {\n  @override\n  Map<String, Map<String, String>> get keys => {\n    'en': {\n      'title': 'Multi-Language App',\n      'welcome': 'Welcome',\n      'greeting': 'Hello, %s',\n    },\n    'es': {\n      'title': 'Aplicación Multilenguaje',\n      'welcome': 'Bienvenido',\n      'greeting': 'Hola, %s',\n    },\n    'fr': {\n      'title': 'Application Multilingue',\n      'welcome': 'Bienvenue',\n      'greeting': 'Bonjour, %s',\n    },\n  };\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'GetX i18n Demo',\n      translations: AppTranslations(),\n      locale: Locale('en'),\n      fallbackLocale: Locale('en'),\n      home: HomePage(),\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('title'.tr)),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('welcome'.tr, style: TextStyle(fontSize: 24)),\n            SizedBox(height: 10),\n            Text('greeting'.trParams({'name': 'User'})),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: () => Get.updateLocale(Locale('en')),\n                  child: Text('English'),\n                ),\n                ElevatedButton(\n                  onPressed: () => Get.updateLocale(Locale('es')),\n                  child: Text('Español'),\n                ),\n                ElevatedButton(\n                  onPressed: () => Get.updateLocale(Locale('fr')),\n                  child: Text('Français'),\n                ),\n              ],\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method is used to change the app language dynamically in GetX?",
+      "options": ["Get.changeLocale", "Get.setLocale", "Get.updateLocale", "Get.locale ="],
+      "answer": 2
+    },
+    {
+      "question": "How do you display a translated string in a Text widget?",
+      "options": ["Text(translate('key'))", "Text('key'.tr)", "Text(Tr('key'))", "Text(Localization.of(key))"],
+      "answer": 1
+    },
+    {
+      "question": "What property in GetMaterialApp specifies the language to use if a key is missing?",
+      "options": ["defaultLocale", "fallbackLocale", "missingLocale", "baseLocale"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-structure",
+    "getx-controller",
+    "getx-storage"
+  ]
+}

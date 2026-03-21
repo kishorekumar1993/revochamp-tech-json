@@ -1,0 +1,222 @@
+{
+  "slug": "getx-vs-provider-vs-bloc",
+  "course": "Flutter",
+  "title": "GetX vs Provider vs BLoC: Which State Management to Choose?",
+  "meta": {
+    "title": "GetX vs Provider vs BLoC – State Management Comparison",
+    "description": "Compare GetX, Provider, and BLoC for Flutter state management. Learn the differences, pros, cons, performance, and when to use each approach.",
+    "keywords": [
+      "GetX vs Provider",
+      "GetX vs BLoC",
+      "Provider vs BLoC",
+      "Flutter state management comparison",
+      "GetX state management",
+      "Provider state management",
+      "BLoC state management"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Choosing the right state management approach is crucial for building scalable, maintainable Flutter apps. Three popular options are **GetX**, **Provider**, and **BLoC**. Each has its own philosophy, strengths, and trade-offs. This guide compares them side‑by‑side to help you decide which one fits your project."
+    },
+    {
+      "type": "heading",
+      "value": "Overview"
+    },
+    {
+      "type": "subheading",
+      "value": "GetX"
+    },
+    {
+      "type": "text",
+      "value": "GetX is a micro‑framework that combines state management, dependency injection, and navigation. It offers two state management approaches: reactive (`.obs` + `Obx`) and simple (`GetBuilder` + `update()`). It has a minimal learning curve and requires very little boilerplate."
+    },
+    {
+      "type": "subheading",
+      "value": "Provider"
+    },
+    {
+      "type": "text",
+      "value": "Provider is a wrapper around InheritedWidget. It's the recommended approach by the Flutter team for simple to medium apps. It uses a `ChangeNotifier` and `Consumer` widgets. It promotes separation of concerns but still requires some boilerplate."
+    },
+    {
+      "type": "subheading",
+      "value": "BLoC (Business Logic Component)"
+    },
+    {
+      "type": "text",
+      "value": "BLoC is a pattern that uses streams to separate business logic from UI. It is very predictable and testable, but comes with more boilerplate. The `flutter_bloc` package provides widgets to simplify its usage."
+    },
+    {
+      "type": "heading",
+      "value": "Comparison Table"
+    },
+    {
+      "type": "table",
+      "headers": ["Feature", "GetX", "Provider", "BLoC"],
+      "rows": [
+        ["Learning Curve", "Low", "Low", "Medium to High"],
+        ["Boilerplate", "Very low", "Low", "Medium"],
+        ["Reactivity", "Automatic (`.obs` + `Obx`)", "Manual (`notifyListeners()`)", "Stream-based"],
+        ["Performance", "Very high (only rebuilds dependencies)", "Good (rebuilds Consumer widgets)", "High (streams, but can be overused)"],
+        ["Navigation", "Built‑in (context‑free)", "Requires separate package", "Requires separate package"],
+        ["Dependency Injection", "Built‑in (`Get.put`, `Get.lazyPut`)", "Via `Provider` or `MultiProvider`", "Not built‑in; use `get_it` or `Provider`"],
+        ["Testing", "Easy (plain Dart controllers)", "Easy (mock ChangeNotifier)", "Easy (bloc test)"],
+        ["Community & Support", "Growing", "Large (official recommendation)", "Very large"],
+        ["Project Size", "Small to Large", "Small to Medium", "Medium to Large"]
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Code Example: Simple Counter"
+    },
+    {
+      "type": "subheading",
+      "value": "GetX"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n}\n\nclass HomePage extends StatelessWidget {\n  final controller = Get.put(CounterController());\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      body: Center(\n        child: Obx(() => Text('${controller.count}')),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: controller.increment,\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Provider"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterModel extends ChangeNotifier {\n  int _count = 0;\n  int get count => _count;\n  void increment() {\n    _count++;\n    notifyListeners();\n  }\n}\n\nvoid main() => runApp(\n  ChangeNotifierProvider(\n    create: (_) => CounterModel(),\n    child: MyApp(),\n  ),\n);\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final counter = Provider.of<CounterModel>(context);\n    return Scaffold(\n      body: Center(\n        child: Text('${counter.count}'),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: counter.increment,\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "BLoC (flutter_bloc)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Events\nabstract class CounterEvent {}\nclass Increment extends CounterEvent {}\n\n// State\nclass CounterState {\n  final int count;\n  CounterState(this.count);\n}\n\n// Bloc\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(CounterState(0));\n\n  @override\n  Stream<CounterState> mapEventToState(CounterEvent event) async* {\n    if (event is Increment) {\n      yield CounterState(state.count + 1);\n    }\n  }\n}\n\n// UI\nvoid main() => runApp(\n  BlocProvider(\n    create: (_) => CounterBloc(),\n    child: MyApp(),\n  ),\n);\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      body: Center(\n        child: BlocBuilder<CounterBloc, CounterState>(\n          builder: (context, state) => Text('${state.count}'),\n        ),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: () => context.read<CounterBloc>().add(Increment()),\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Each"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**GetX** – Choose GetX when you want an all‑in‑one solution with minimal boilerplate. It's great for rapid development, small to large apps, and when you need built‑in navigation and DI.",
+        "**Provider** – Choose Provider for simple to medium apps where you want a lightweight, official solution. It's easy to learn and works well with ChangeNotifier.",
+        "**BLoC** – Choose BLoC for large, complex apps where you need strict separation of concerns, predictability, and testability. It shines in enterprise projects and when using streams is natural."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Performance Considerations"
+    },
+    {
+      "type": "text",
+      "value": "All three options are performant when used correctly. GetX's reactive system only rebuilds widgets that depend on changed values. Provider rebuilds the `Consumer` subtree. BLoC rebuilds the `BlocBuilder` subtree. Inefficient usage (e.g., putting `BlocBuilder` high up) can cause unnecessary rebuilds, but that's true for any approach."
+    },
+    {
+      "type": "heading",
+      "value": "Pros and Cons"
+    },
+    {
+      "type": "subheading",
+      "value": "GetX"
+    },
+    {
+      "type": "list",
+      "value": [
+        "✅ Minimal boilerplate, fast development",
+        "✅ Built‑in navigation, DI, utilities",
+        "✅ Reactive state with `.obs`",
+        "✅ Very good performance",
+        "❌ Can be too magical for some developers",
+        "❌ All‑in‑one nature may be overkill for tiny apps"
+      ]
+    },
+    {
+      "type": "subheading",
+      "value": "Provider"
+    },
+    {
+      "type": "list",
+      "value": [
+        "✅ Official Flutter recommendation",
+        "✅ Simple and easy to understand",
+        "✅ Good integration with existing Flutter patterns",
+        "❌ Manual `notifyListeners()` can be error‑prone",
+        "❌ No built‑in navigation or DI (but can be combined)"
+      ]
+    },
+    {
+      "type": "subheading",
+      "value": "BLoC"
+    },
+    {
+      "type": "list",
+      "value": [
+        "✅ Very testable and predictable",
+        "✅ Clear separation of business logic",
+        "✅ Great for large teams and enterprise apps",
+        "❌ Steep learning curve",
+        "❌ More boilerplate",
+        "❌ Streams can be overkill for simple state"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I mix them?**  \nA: Yes, you can use GetX for navigation and Provider for state, but it's often simpler to pick one and stick with it.",
+        "**Q: Which is best for beginners?**  \nA: Provider has a gentle learning curve and official support. GetX is also easy to pick up. BLoC is more advanced.",
+        "**Q: Which has the best performance?**  \nA: All are fast. GetX's fine‑grained reactivity can be slightly more efficient in some cases, but the difference is negligible for most apps.",
+        "**Q: What about Riverpod?**  \nA: Riverpod is an improved version of Provider. It's not covered in this comparison but is another excellent option.",
+        "**Q: Which is most scalable?**  \nA: BLoC and GetX both scale well. GetX's modular structure (bindings) and BLoC's strict patterns both support large apps."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "There is no one‑size‑fits‑all answer. **GetX** is perfect if you want an all‑in‑one framework with minimal code. **Provider** is great for simplicity and official backing. **BLoC** excels in complex, test‑driven projects. Evaluate your team's experience, app complexity, and long‑term maintenance needs to make the right choice."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "Which state management approach requires manual `notifyListeners()` calls?",
+      "options": ["GetX", "Provider", "BLoC", "Riverpod"],
+      "answer": 1
+    },
+    {
+      "question": "Which approach uses `.obs` for reactive state?",
+      "options": ["GetX", "Provider", "BLoC", "Redux"],
+      "answer": 0
+    },
+    {
+      "question": "Which is the official Flutter recommendation for simple state management?",
+      "options": ["GetX", "BLoC", "Provider", "MobX"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "flutter-provider-guide",
+    "flutter-bloc-tutorial"
+  ]
+}

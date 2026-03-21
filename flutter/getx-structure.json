@@ -1,0 +1,221 @@
+{
+  "slug": "getx-structure",
+  "course": "Flutter",
+  "title": "GetX Folder Structure: Organize Your Flutter App Like a Pro",
+  "meta": {
+    "title": "GetX Folder Structure & Architecture – Best Practices for Scalable Apps",
+    "description": "Learn the recommended folder structure for GetX in Flutter. Organize controllers, views, bindings, services, and routes to build scalable, maintainable applications with GetX.",
+    "keywords": [
+      "GetX structure",
+      "GetX folder structure",
+      "Flutter GetX architecture",
+      "GetX best practices",
+      "GetX bindings",
+      "GetX project organization",
+      "scalable GetX app"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why a Good Folder Structure Matters"
+    },
+    {
+      "type": "text",
+      "value": "A well-organized folder structure is crucial for any Flutter project, especially when using GetX. It helps with:\n\n- **Maintainability**: Easy to find and update code.\n- **Scalability**: Adding new features becomes straightforward.\n- **Team Collaboration**: Consistent structure makes it easier for multiple developers to work together.\n- **Separation of Concerns**: Clear boundaries between UI, business logic, and data layers."
+    },
+    {
+      "type": "heading",
+      "value": "Recommended GetX Folder Structure"
+    },
+    {
+      "type": "text",
+      "value": "Here’s the industry-standard folder layout for GetX projects:"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "lib/\n├── main.dart\n├── app/\n│   ├── routes/\n│   │   └── app_pages.dart\n│   │   └── app_routes.dart\n│   ├── bindings/\n│   │   └── app_bindings.dart\n│   └── utils/\n│       ├── constants.dart\n│       ├── themes.dart\n│       └── helpers/\n├── modules/\n│   ├── home/\n│   │   ├── bindings/\n│   │   │   └── home_binding.dart\n│   │   ├── controllers/\n│   │   │   └── home_controller.dart\n│   │   ├── views/\n│   │   │   └── home_view.dart\n│   │   └── models/\n│   │       └── home_model.dart\n│   ├── counter/\n│   │   ├── bindings/\n│   │   ├── controllers/\n│   │   ├── views/\n│   │   └── models/\n│   └── ...\n├── services/\n│   ├── api_service.dart\n│   ├── storage_service.dart\n│   └── ...\n└── widgets/\n    ├── custom_button.dart\n    ├── loading_widget.dart\n    └── ..."
+    },
+    {
+      "type": "heading",
+      "value": "Explanation of Each Folder"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`app/`**: Contains global app configurations like routes, bindings, and utilities.",
+        "**`app/routes/`**: Defines all route names and pages using GetX’s routing system.",
+        "**`app/bindings/`**: Global bindings (like initial bindings) that are loaded when the app starts.",
+        "**`app/utils/`**: Constants, themes, helper functions, extensions.",
+        "**`modules/`**: Feature-based organization. Each feature (home, profile, cart) has its own subfolder with controllers, views, bindings, and models.",
+        "**`services/`**: Shared services like API calls, local storage, authentication.",
+        "**`widgets/`**: Reusable UI components used across multiple modules."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Feature-Based Organization"
+    },
+    {
+      "type": "text",
+      "value": "The **modules** folder is where the magic happens. Each module is a self-contained feature. For example, a `counter` module:"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "modules/\n└── counter/\n    ├── bindings/\n    │   └── counter_binding.dart\n    ├── controllers/\n    │   └── counter_controller.dart\n    ├── views/\n    │   └── counter_view.dart\n    └── models/\n        └── counter_model.dart"
+    },
+    {
+      "type": "heading",
+      "value": "Example: Counter Module Implementation"
+    },
+    {
+      "type": "heading",
+      "value": "1. Counter Model (counter_model.dart)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterModel {\n  int count;\n  CounterModel({this.count = 0});\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Counter Controller (counter_controller.dart)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:get/get.dart';\nimport '../models/counter_model.dart';\n\nclass CounterController extends GetxController {\n  var model = CounterModel().obs;\n\n  void increment() => model.update((val) => val?.count++);\n  void decrement() => model.update((val) => val?.count--);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Counter Binding (counter_binding.dart)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:get/get.dart';\nimport '../controllers/counter_controller.dart';\n\nclass CounterBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<CounterController>(() => CounterController());\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Counter View (counter_view.dart)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\nimport '../controllers/counter_controller.dart';\n\nclass CounterView extends GetView<CounterController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Counter')),\n      body: Center(\n        child: Obx(() => Text(\n          'Count: ${controller.model.value.count}',\n          style: TextStyle(fontSize: 24),\n        )),\n      ),\n      floatingActionButton: Row(\n        mainAxisAlignment: MainAxisAlignment.end,\n        children: [\n          FloatingActionButton(\n            onPressed: controller.decrement,\n            child: Icon(Icons.remove),\n          ),\n          SizedBox(width: 10),\n          FloatingActionButton(\n            onPressed: controller.increment,\n            child: Icon(Icons.add),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Routes"
+    },
+    {
+      "type": "text",
+      "value": "In `app/routes/app_routes.dart`, define all route names:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "part of 'app_pages.dart';\n\nclass AppRoutes {\n  static const HOME = '/home';\n  static const COUNTER = '/counter';\n}"
+    },
+    {
+      "type": "text",
+      "value": "In `app/routes/app_pages.dart`, map routes to pages with their bindings:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:get/get.dart';\nimport '../../modules/home/bindings/home_binding.dart';\nimport '../../modules/home/views/home_view.dart';\nimport '../../modules/counter/bindings/counter_binding.dart';\nimport '../../modules/counter/views/counter_view.dart';\n\npart 'app_routes.dart';\n\nclass AppPages {\n  static const INITIAL = AppRoutes.HOME;\n\n  static final routes = [\n    GetPage(\n      name: AppRoutes.HOME,\n      page: () => HomeView(),\n      binding: HomeBinding(),\n    ),\n    GetPage(\n      name: AppRoutes.COUNTER,\n      page: () => CounterView(),\n      binding: CounterBinding(),\n    ),\n  ];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using the Structure in main.dart"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\nimport 'app/routes/app_pages.dart';\n\nvoid main() {\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'GetX App',\n      initialRoute: AppPages.INITIAL,\n      getPages: AppPages.routes,\n      initialBinding: AppBindings(), // optional global bindings\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep controllers small**: Move business logic to services if a controller becomes too large.",
+        "**Use lazy loading**: Use `Get.lazyPut()` in bindings to improve startup performance.",
+        "**Avoid large global widgets**: Keep reusable widgets in the `widgets/` folder, not inside view files.",
+        "**Use GetX’s smart management**: Let GetX dispose controllers automatically when not needed.",
+        "**Follow consistent naming**: Use `_controller`, `_binding`, `_view` suffixes for clarity.",
+        "**Use part files for routes** (optional): Group route names and pages in one file with `.part` to avoid clutter."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes to Avoid"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ Placing all controllers in one folder – leads to disorganization.\n✅ Keep controllers inside their respective modules.",
+        "❌ Mixing UI code with business logic in controllers.\n✅ Controllers should only hold state and logic, not build widgets.",
+        "❌ Hardcoding routes in views.\n✅ Use named routes and constants.",
+        "❌ Forgetting to dispose streams/timers in `onClose()`.\n✅ Always clean up resources to avoid memory leaks.",
+        "❌ Not using bindings and relying on `Get.put()` inside views.\n✅ Use bindings to decouple dependency injection."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "A well-structured GetX app makes development faster, collaboration easier, and maintenance a breeze. The feature-based module structure with clear separation of concerns scales beautifully from small projects to enterprise-level applications. Start organizing your app today and reap the benefits of clean architecture."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\n// Example simplified version of the structure\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'GetX Structure Demo',\n      home: CounterView(),\n    );\n  }\n}\n\n// Counter Controller\nclass CounterController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n  void decrement() => count--;\n}\n\n// Counter View\nclass CounterView extends StatelessWidget {\n  final controller = Get.put(CounterController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Counter Demo')),\n      body: Center(\n        child: Obx(() => Text(\n          'Count: ${controller.count}',\n          style: TextStyle(fontSize: 32),\n        )),\n      ),\n      floatingActionButton: Row(\n        mainAxisAlignment: MainAxisAlignment.end,\n        children: [\n          FloatingActionButton(\n            onPressed: controller.decrement,\n            child: Icon(Icons.remove),\n          ),\n          SizedBox(width: 10),\n          FloatingActionButton(\n            onPressed: controller.increment,\n            child: Icon(Icons.add),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Where should you place reusable UI components like custom buttons in a GetX project?",
+      "options": [
+        "Inside the views folder of each module",
+        "In the widgets/ folder",
+        "In the controllers/ folder",
+        "In the main.dart file"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of bindings in GetX?",
+      "options": [
+        "To define routes",
+        "To manage dependency injection when navigating",
+        "To store UI constants",
+        "To handle API calls"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which of the following is the recommended folder structure for a feature module?",
+      "options": [
+        "lib/features/feature_name/",
+        "lib/modules/feature_name/",
+        "lib/feature_name/",
+        "lib/views/feature_name/"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-installation",
+    "flutter-getx-state-management",
+    "flutter-getx-navigation",
+    "flutter-getx-bindings"
+  ]
+}

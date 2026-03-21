@@ -1,0 +1,229 @@
+{
+  "slug": "getx-navigation-transitions",
+  "course": "Flutter",
+  "title": "GetX Navigation Transitions: Custom Animations & Effects",
+  "meta": {
+    "title": "GetX Navigation Transitions – Custom Page Animations & Effects",
+    "description": "Master navigation transitions in GetX: built-in transitions (fade, slide, zoom, cupertino), custom transitions, transition duration, curves, and per-route or global settings.",
+    "keywords": [
+      "GetX navigation transitions",
+      "GetX custom transition",
+      "GetPage transition",
+      "Get.to transition",
+      "Flutter page animation",
+      "GetX route animation",
+      "slide transition GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides a powerful and flexible system for page transitions. You can choose from several built‑in animations or create your own custom transitions. Transitions can be defined per route (in `GetPage`) or overridden when calling `Get.to`. You can also control duration, curve, and even use your own `Transition` widget. This guide covers all the options to make your app’s navigation smooth and engaging."
+    },
+    {
+      "type": "heading",
+      "value": "Built‑in Transitions"
+    },
+    {
+      "type": "text",
+      "value": "GetX comes with a set of ready‑to‑use transitions that you can apply directly. Here are the most common ones:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "`Transition.fade` – A simple cross‑fade animation.",
+        "`Transition.fadeIn` – Fade in the new page from transparent to opaque.",
+        "`Transition.rightToLeft` – Slide the new page in from the right (default).",
+        "`Transition.leftToRight` – Slide the new page in from the left.",
+        "`Transition.upToDown` – Slide the new page down from the top.",
+        "`Transition.downToUp` – Slide the new page up from the bottom.",
+        "`Transition.zoom` – Scale the new page from small to normal.",
+        "`Transition.cupertino` – iOS‑style slide (similar to CupertinoPageRoute).",
+        "`Transition.native` – Uses the platform’s default transition (iOS/Android).",
+        "`Transition.size` – Grows the new page from the source location.",
+        "`Transition.noTransition` – No animation."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Using Transitions with Named Routes"
+    },
+    {
+      "type": "text",
+      "value": "The most common way to set a transition is inside the `GetPage` definition. You can also set a default transition globally."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetMaterialApp(\n  defaultTransition: Transition.fade,\n  getPages: [\n    GetPage(\n      name: '/home',\n      page: () => HomePage(),\n    ),\n    GetPage(\n      name: '/details',\n      page: () => DetailsPage(),\n      transition: Transition.cupertino,\n      transitionDuration: Duration(milliseconds: 500),\n      curve: Curves.easeInOut,\n    ),\n    GetPage(\n      name: '/zoom',\n      page: () => ZoomPage(),\n      transition: Transition.zoom,\n    ),\n  ],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Transitions with Get.to (Widget‑Based Navigation)"
+    },
+    {
+      "type": "text",
+      "value": "When using `Get.to`, you can pass the transition parameters directly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.to(\n  DetailsPage(),\n  transition: Transition.rightToLeft,\n  duration: Duration(milliseconds: 400),\n  curve: Curves.easeOutCubic,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Custom Transitions"
+    },
+    {
+      "type": "text",
+      "value": "For complete control, you can create a custom transition by implementing the `CustomTransition` class or using the `customTransition` property in `GetPage`. You’ll receive the animation controller and the child widget."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetPage(\n  name: '/custom',\n  page: () => CustomPage(),\n  customTransition: (context, animation, secondaryAnimation, child) {\n    return ScaleTransition(\n      scale: animation,\n      child: child,\n    );\n  },\n);"
+    },
+    {
+      "type": "text",
+      "value": "You can also use `Get.to` with a custom transition by passing a `CustomTransition` object."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.to(\n  CustomPage(),\n  customTransition: (context, animation, secondaryAnimation, child) {\n    return RotationTransition(\n      turns: animation,\n      child: child,\n    );\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Transition Duration & Curve"
+    },
+    {
+      "type": "text",
+      "value": "You can customize the animation duration and curve for any transition. If not set, the default duration is 300ms and the curve is `Curves.linear` (or platform defaults)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetPage(\n  name: '/slow',\n  page: () => SlowPage(),\n  transition: Transition.fade,\n  transitionDuration: Duration(seconds: 1),\n  curve: Curves.bounceOut,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Global Defaults"
+    },
+    {
+      "type": "text",
+      "value": "Set a default transition for all routes in `GetMaterialApp`. You can also set a default duration and curve."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetMaterialApp(\n  defaultTransition: Transition.rightToLeft,\n  defaultTransitionDuration: Duration(milliseconds: 350),\n  defaultTransitionCurve: Curves.easeInOut,\n  getPages: [...],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Reversing Transitions on Pop"
+    },
+    {
+      "type": "text",
+      "value": "When you navigate back, the transition automatically reverses. The reverse animation uses the same settings (duration, curve). For custom transitions, you can use `secondaryAnimation` to animate the outgoing page."
+    },
+    {
+      "type": "heading",
+      "value": "Advanced: Animated Switcher Style"
+    },
+    {
+      "type": "text",
+      "value": "If you need more complex animations (e.g., shared element transitions), you can combine GetX navigation with Flutter’s `Hero` widget. Hero animations work seamlessly with GetX navigation because the routes are pushed onto the same navigator."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In the first page\nHero(\n  tag: 'avatar',\n  child: CircleAvatar(backgroundImage: NetworkImage(url)),\n)\n\n// In the second page\nHero(\n  tag: 'avatar',\n  child: CircleAvatar(backgroundImage: NetworkImage(url), radius: 50),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use consistent transitions** – For a cohesive experience, pick a default transition that matches your app’s style.",
+        "**Keep durations short** – 250–400ms is typical; longer durations can feel sluggish.",
+        "**Use curves for polish** – `Curves.easeInOut` or `Curves.easeOutCubic` give a natural feel.",
+        "**Test on both platforms** – iOS users expect slide, Android users may expect fade or slide from right.",
+        "**Avoid heavy custom transitions** – Keep them simple to maintain performance."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Setting both `transition` and `customTransition`** – They conflict; use only one.\n✅ Choose either built‑in or custom.",
+        "❌ **Using `transition: Transition.cupertino` on Android** – It may look out of place; consider `Transition.rightToLeft` for Android.\n✅ Test on both platforms.",
+        "❌ **Forgetting to set `transitionDuration`** – The default may be too fast or too slow for your effect.\n✅ Explicitly set a duration that fits your design.",
+        "❌ **Using `Obx` inside the transition builder** – Might cause rebuilds; not recommended."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I have different transitions for push and pop?**  \nA: Not directly, but you can create a custom transition that checks the direction using `animation.status` and applies different animations.",
+        "**Q: How do I make a transition that slides from the bottom?**  \nA: Use `Transition.upToDown` for entering from top or `Transition.downToUp` for from bottom. You can also create a custom slide.",
+        "**Q: Can I combine multiple transitions (e.g., fade + scale)?**  \nA: Yes, inside a custom transition you can combine `FadeTransition` and `ScaleTransition` or use `AnimatedBuilder` to compose.",
+        "**Q: Does GetX support shared element transitions?**  \nA: It supports Flutter’s native `Hero` widget without any extra code. Just use matching tags.",
+        "**Q: How to remove all transitions?**  \nA: Use `transition: Transition.noTransition` in your route or set `defaultTransition: Transition.noTransition`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX navigation transitions give you the flexibility to create beautiful page animations with minimal effort. Whether you use the built‑in transitions or craft your own, you can easily control the look and feel of your app’s navigation. Combine them with GetX’s other features for a complete routing solution."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'Transition Demo',\n      defaultTransition: Transition.rightToLeft,\n      getPages: [\n        GetPage(name: '/', page: () => HomePage()),\n        GetPage(\n          name: '/fade',\n          page: () => DetailsPage(title: 'Fade'),\n          transition: Transition.fade,\n          transitionDuration: Duration(milliseconds: 600),\n        ),\n        GetPage(\n          name: '/zoom',\n          page: () => DetailsPage(title: 'Zoom'),\n          transition: Transition.zoom,\n        ),\n        GetPage(\n          name: '/cupertino',\n          page: () => DetailsPage(title: 'Cupertino'),\n          transition: Transition.cupertino,\n        ),\n        GetPage(\n          name: '/custom',\n          page: () => DetailsPage(title: 'Custom Scale'),\n          customTransition: (context, animation, secondaryAnimation, child) {\n            return ScaleTransition(\n              scale: animation,\n              child: child,\n            );\n          },\n        ),\n      ],\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Transitions')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/fade'),\n              child: Text('Fade Transition'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/zoom'),\n              child: Text('Zoom Transition'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/cupertino'),\n              child: Text('Cupertino Transition'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/custom'),\n              child: Text('Custom Scale Transition'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.to(\n                DetailsPage(title: 'Right to Left'),\n                transition: Transition.rightToLeft,\n              ),\n              child: Text('Right to Left (Get.to)'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass DetailsPage extends StatelessWidget {\n  final String title;\n  const DetailsPage({required this.title});\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text(title)),\n      body: Center(\n        child: ElevatedButton(\n          onPressed: () => Get.back(),\n          child: Text('Go Back'),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which property in GetPage defines the built‑in transition?",
+      "options": ["transition", "customTransition", "animation", "pageTransition"],
+      "answer": 0
+    },
+    {
+      "question": "How do you set a global default transition for all routes?",
+      "options": [
+        "defaultTransition in GetMaterialApp",
+        "transition in each GetPage",
+        "Get.defaultTransition",
+        "It cannot be set globally"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What widget can you use with GetX navigation to create shared element animations?",
+      "options": ["SharedElement", "Hero", "AnimatedSwitcher", "FadeTransition"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-navigation",
+    "getx-named-routes",
+    "getx-route-management",
+    "getx-navigation-arguments"
+  ]
+}

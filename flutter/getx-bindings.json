@@ -1,0 +1,217 @@
+{
+  "slug": "getx-bindings",
+  "course": "Flutter",
+  "title": "GetX Bindings: Complete Guide to Dependency Injection for Routes",
+  "meta": {
+    "title": "GetX Bindings – Route-Level Dependency Injection Explained",
+    "description": "Learn how to use GetX bindings to manage dependencies at the route level. Discover how bindings improve code organization, performance, and automatic disposal of controllers in Flutter apps.",
+    "keywords": [
+      "GetX bindings",
+      "GetX dependency injection",
+      "GetPage binding",
+      "GetX route management",
+      "Bindings in GetX",
+      "Flutter GetX",
+      "Get.lazyPut"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are GetX Bindings?"
+    },
+    {
+      "type": "text",
+      "value": "Bindings in GetX are classes that handle dependency injection for specific routes. They define which controllers and services should be created when a route is opened, and they automatically clean them up when the route is closed. This promotes better code organization, lazy loading, and prevents memory leaks."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Bindings?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Separation of Concerns** – Keep dependency registration separate from UI code.",
+        "**Automatic Lifecycle** – Controllers are disposed when the route is popped (unless marked permanent).",
+        "**Lazy Loading** – Dependencies are created only when the route is actually visited.",
+        "**Testability** – Easily mock dependencies for unit tests.",
+        "**Cleaner Code** – No scattered `Get.put` calls inside widgets."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Basic Binding"
+    },
+    {
+      "type": "text",
+      "value": "A binding is a class that implements the `Bindings` interface and overrides the `dependencies()` method."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<HomeController>(() => HomeController());\n    // Register any other dependencies needed for this route\n    Get.lazyPut<ApiService>(() => ApiService());\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Bindings with GetPage"
+    },
+    {
+      "type": "text",
+      "value": "Bindings are typically used with named routes in `GetMaterialApp`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetMaterialApp(\n  initialRoute: '/',\n  getPages: [\n    GetPage(\n      name: '/',\n      page: () => HomePage(),\n      binding: HomeBinding(),\n    ),\n    GetPage(\n      name: '/details',\n      page: () => DetailsPage(),\n      binding: DetailsBinding(),\n    ),\n  ],\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Initial Binding (App-Level)"
+    },
+    {
+      "type": "text",
+      "value": "You can also set an initial binding that runs when the app starts. This is useful for global dependencies like authentication services, theme managers, or local storage."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppBindings extends Bindings {\n  @override\n  void dependencies() {\n    Get.put(AuthService());\n    Get.lazyPut<StorageService>(() => StorageService());\n  }\n}\n\n// In main.dart\nGetMaterialApp(\n  initialBinding: AppBindings(),\n  // ...\n)"
+    },
+    {
+      "type": "heading",
+      "value": "Binding with Multiple Controllers"
+    },
+    {
+      "type": "text",
+      "value": "A single binding can register multiple controllers and services."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfileBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<ProfileController>(() => ProfileController());\n    Get.lazyPut<UserService>(() => UserService());\n    Get.lazyPut<ImagePickerService>(() => ImagePickerService());\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Binding Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "When a route with a binding is opened:\n\n1. The binding's `dependencies()` method is called.\n2. Controllers are registered (but not instantiated if using `lazyPut`).\n3. The page widget is built.\n4. When a controller is accessed (e.g., via `Get.find()` or `GetView`), it is instantiated.\n5. When the route is popped, GetX checks if the controllers are marked `permanent`; if not, they are disposed (and `onClose()` is called)."
+    },
+    {
+      "type": "heading",
+      "value": "Binding with Parameters"
+    },
+    {
+      "type": "text",
+      "value": "You can pass parameters to bindings using `GetPage` with `binding` that takes arguments."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Define a binding that accepts parameters\nclass UserBinding extends Bindings {\n  final String userId;\n  UserBinding(this.userId);\n\n  @override\n  void dependencies() {\n    Get.lazyPut<UserController>(() => UserController(userId));\n  }\n}\n\n// In navigation\nGet.toNamed('/user', arguments: '123');\n// Or with GetPage\nGetPage(\n  name: '/user/:id',\n  page: () => UserPage(),\n  binding: (context) {\n    final id = context.params['id'];\n    return UserBinding(id!);\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Nested Bindings"
+    },
+    {
+      "type": "text",
+      "value": "For complex apps, you can nest bindings or use multiple bindings per route (though not common). GetX allows you to use `Get.create` and `Get.lazyPut` inside bindings, and you can also inject dependencies that themselves depend on others."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class NestedBinding extends Bindings {\n  @override\n  void dependencies() {\n    // This service may be used by multiple controllers\n    Get.lazyPut<ApiService>(() => ApiService());\n    // Controller depends on ApiService\n    Get.lazyPut<HomeController>(() => HomeController(Get.find()));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**One binding per route** – Keep dependencies grouped by feature or screen.",
+        "**Use `lazyPut` by default** – Improves startup performance; instantiate only when needed.",
+        "**Inject dependencies via constructors** – Makes testing easier and clarifies dependencies.",
+        "**Avoid heavy work in binding** – Keep binding only for registration; move initialization to controller's `onInit`.",
+        "**Use initial binding for truly global services** – Like API clients, database helpers, theme managers.",
+        "**Name bindings consistently** – e.g., `HomeBinding`, `ProfileBinding` to match route names."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `Get.put` inside a binding without lazy** – Can still work, but lazy is generally better.\n✅ Use `Get.lazyPut` unless you need the instance immediately.",
+        "❌ **Forgetting to dispose of stream subscriptions** – Controllers are disposed, but you still need to clean up manually in `onClose`.\n✅ Always override `onClose` to dispose listeners.",
+        "❌ **Creating bindings inside build methods** – Causes re-creation of binding objects.\n✅ Define bindings as separate classes or use `GetPage` with constant references.",
+        "❌ **Overusing permanent controllers** – Can cause memory leaks if they hold onto resources.\n✅ Use `permanent: true` only for truly global dependencies."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Do I have to use bindings with GetX?**  \nA: No, they are optional. You can still use `Get.put` directly in your widgets. Bindings just provide a cleaner organization, especially for large apps.",
+        "**Q: Can I use both `Get.put` inside a binding and in a view?**  \nA: Yes, but be careful not to create duplicate controllers. The binding will create it once; additional `Get.put` might try to create again unless you check `isRegistered` first.",
+        "**Q: How do I test a controller that is injected via binding?**  \nA: You can use `Get.reset()` to clear registrations and then manually register mock dependencies before testing.",
+        "**Q: What happens if I navigate to the same route twice?**  \nA: Each navigation will trigger its own binding, but if the same controller class is used, and it's not marked `permanent`, a new instance is created for the new route (if using `lazyPut` without `fenix`).",
+        "**Q: Can I have a binding without a route?**  \nA: Yes, you can manually call `InitialBinding().dependencies()` at startup, but it's better to use `initialBinding` in `GetMaterialApp`.",
+        "**Q: How do I pass data to a controller via binding?**  \nA: Use the binding's constructor to accept arguments, then pass them to the controller registration as shown in the example."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX bindings provide a powerful, route-centric way to manage dependencies. They improve code structure, performance, and lifecycle management. By adopting bindings, you ensure that your controllers are created and disposed at the right time, leading to cleaner, more maintainable Flutter apps."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'GetX Bindings Demo',\n      initialRoute: '/',\n      getPages: [\n        GetPage(\n          name: '/',\n          page: () => HomePage(),\n          binding: HomeBinding(),\n        ),\n        GetPage(\n          name: '/details',\n          page: () => DetailsPage(),\n          binding: DetailsBinding(),\n        ),\n      ],\n    );\n  }\n}\n\n// Controllers\nclass HomeController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n\n  @override\n  void onInit() {\n    super.onInit();\n    print('HomeController created');\n  }\n\n  @override\n  void onClose() {\n    print('HomeController disposed');\n    super.onClose();\n  }\n}\n\nclass DetailsController extends GetxController {\n  final String message;\n  DetailsController(this.message);\n\n  @override\n  void onInit() {\n    super.onInit();\n    print('DetailsController created with message: $message');\n  }\n\n  @override\n  void onClose() {\n    print('DetailsController disposed');\n    super.onClose();\n  }\n}\n\n// Bindings\nclass HomeBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut(() => HomeController());\n  }\n}\n\nclass DetailsBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut(() => DetailsController('Hello from binding!'));\n  }\n}\n\n// Views\nclass HomePage extends GetView<HomeController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Home')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() => Text('Count: ${controller.count}', style: TextStyle(fontSize: 24))),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: controller.increment,\n              child: Text('Increment'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/details'),\n              child: Text('Go to Details'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass DetailsPage extends GetView<DetailsController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Details')),\n      body: Center(\n        child: Text('Message: ${controller.message}'),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What method must be overridden in a binding class?",
+      "options": ["init()", "dependencies()", "onStart()", "register()"],
+      "answer": 1
+    },
+    {
+      "question": "What is the main benefit of using bindings?",
+      "options": [
+        "They automatically create widgets",
+        "They manage dependencies at the route level",
+        "They replace state management",
+        "They improve animations"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you register a binding for a named route in GetPage?",
+      "options": [
+        "binding: MyBinding()",
+        "bind: MyBinding()",
+        "inject: MyBinding()",
+        "deps: MyBinding()"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-dependency-injection",
+    "getx-controller",
+    "getx-lifecycle",
+    "getx-navigation"
+  ]
+}

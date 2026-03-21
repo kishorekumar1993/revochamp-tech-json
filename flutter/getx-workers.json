@@ -1,0 +1,211 @@
+{
+  "slug": "getx-workers",
+  "course": "Flutter",
+  "title": "GetX Workers: ever, once, debounce, interval & More",
+  "meta": {
+    "title": "GetX Workers – Complete Guide to ever, once, debounce, interval",
+    "description": "Master GetX workers to react to state changes. Learn ever, once, debounce, interval, everAll, onceAll with practical examples, best practices, and performance tips for reactive Flutter apps.",
+    "keywords": [
+      "GetX workers",
+      "ever GetX",
+      "once GetX",
+      "debounce GetX",
+      "interval GetX",
+      "GetX reactive",
+      "GetX state management workers",
+      "GetX everAll"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are GetX Workers?"
+    },
+    {
+      "type": "text",
+      "value": "Workers in GetX are powerful tools that allow you to react to changes in reactive variables (Rx types). They execute side effects like logging, API calls, navigation, or any logic whenever the observed Rx variable changes. Workers are typically registered inside the `onInit()` method of a controller and are automatically disposed when the controller is destroyed."
+    },
+    {
+      "type": "heading",
+      "value": "1. ever – React to Every Change"
+    },
+    {
+      "type": "text",
+      "value": "The `ever` worker triggers the callback every time the observed Rx variable changes. It's perfect for logging, saving data, or any action that should happen on every update."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  var count = 0.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(count, (_) => print('Count changed to $count'));\n  }\n\n  void increment() => count++;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. once – React Only Once"
+    },
+    {
+      "type": "text",
+      "value": "The `once` worker executes the callback only the first time the Rx variable changes. Subsequent changes are ignored. This is useful for one-time events like showing a tutorial or navigating after a condition is met."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  var isLoggedIn = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    once(isLoggedIn, (_) => Get.snackbar('Welcome', 'You are now logged in!'));\n  }\n\n  void login() => isLoggedIn.value = true;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. debounce – Wait for a Pause"
+    },
+    {
+      "type": "text",
+      "value": "The `debounce` worker waits for a specified period of inactivity before executing the callback. It's ideal for search inputs, form validations, or any scenario where you want to react after the user stops typing."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchController extends GetxController {\n  var query = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    debounce(query, (_) => performSearch(), time: Duration(milliseconds: 500));\n  }\n\n  void performSearch() {\n    print('Searching for: ${query.value}');\n    // Call API, update results, etc.\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. interval – Trigger Periodically"
+    },
+    {
+      "type": "text",
+      "value": "The `interval` worker executes the callback at a fixed time interval while the Rx variable is changing. It's useful for throttling events, like tracking progress or limiting API calls during rapid changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProgressController extends GetxController {\n  var progress = 0.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    interval(progress, (_) => print('Progress: $progress%'), time: Duration(milliseconds: 200));\n  }\n\n  void updateProgress() {\n    if (progress < 100) progress++;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. everAll – React to Multiple Variables"
+    },
+    {
+      "type": "text",
+      "value": "The `everAll` worker listens to a list of Rx variables and executes the callback whenever any of them changes. This is useful when you need to react to combined state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FormController extends GetxController {\n  var name = ''.obs;\n  var email = ''.obs;\n  var isFormValid = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    everAll([name, email], (_) => validateForm());\n  }\n\n  void validateForm() {\n    isFormValid.value = name.value.isNotEmpty && email.value.isNotEmpty;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. onceAll – Trigger Once When Any Changes"
+    },
+    {
+      "type": "text",
+      "value": "The `onceAll` worker triggers the callback the first time any of the observed Rx variables change. After that, it stops listening. This is great for onboarding or initial setup that should happen after user interaction."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class OnboardingController extends GetxController {\n  var step1Completed = false.obs;\n  var step2Completed = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    onceAll([step1Completed, step2Completed], (_) => showCongrats());\n  }\n\n  void showCongrats() => Get.snackbar('Congratulations', 'You completed your first action!');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Workers in Practice: Search with Debounce"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchController extends GetxController {\n  var query = ''.obs;\n  var results = <String>[].obs;\n  var isLoading = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    debounce(query, (_) => search(), time: Duration(milliseconds: 500));\n  }\n\n  Future<void> search() async {\n    if (query.value.isEmpty) return;\n    isLoading.value = true;\n    // Simulate API call\n    await Future.delayed(Duration(seconds: 1));\n    results.assignAll(['Result for ${query.value}']);\n    isLoading.value = false;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Workers in Practice: Logging with ever"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AnalyticsController extends GetxController {\n  var screenName = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(screenName, (name) => logScreenView(name));\n  }\n\n  void logScreenView(String name) {\n    // Send to analytics service\n    print('Screen viewed: $name');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Register workers in `onInit`** – This ensures they are set up when the controller is created.",
+        "**Keep callbacks lightweight** – Avoid heavy computations in workers; delegate to separate methods if needed.",
+        "**Use `debounce` for user input** – Prevents excessive API calls during typing.",
+        "**Dispose automatically** – Workers are disposed when the controller is destroyed, no manual cleanup needed.",
+        "**Avoid infinite loops** – Don't modify the same Rx variable inside its own worker without a guard condition.",
+        "**Combine with async/await** – You can use `async` callbacks, but be mindful of cancelled requests."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Registering workers outside `onInit`** – May cause memory leaks if not properly managed.\n✅ Always register in `onInit`.",
+        "❌ **Using `ever` when `debounce` is appropriate** – Triggers on every keystroke, causing performance issues.\n✅ Use `debounce` for search inputs.",
+        "❌ **Not handling async operations properly** – Workers don't automatically cancel previous async tasks.\n✅ Use a cancel token or ignore results from stale requests.",
+        "❌ **Creating circular dependencies** – Modifying the same Rx variable inside its worker can cause infinite loops.\n✅ Use a flag to prevent recursion if needed.",
+        "❌ **Forgetting to check for disposed controller** – After async operations, check `Get.isRegistered` or use `if (mounted)` pattern.\n✅ Use `if (Get.isRegistered<MyController>())` before accessing."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Do workers automatically stop when the controller is disposed?**  \nA: Yes, workers are tied to the controller's lifecycle and are automatically cleaned up when the controller is disposed.",
+        "**Q: Can I use workers without a controller?**  \nA: You can, but it's not recommended. Workers are meant to be used inside controllers to leverage automatic disposal and lifecycle.",
+        "**Q: How do I handle async operations in workers?**  \nA: You can use async callbacks, but be aware that if the Rx variable changes again before the async operation completes, you may get multiple overlapping calls. Consider using `debounce` or a cancel token.",
+        "**Q: What's the difference between `debounce` and `interval`?**  \nA: `debounce` waits for a pause before executing; `interval` executes repeatedly at a fixed rate while changes are happening.",
+        "**Q: Can I remove a worker manually?**  \nA: Workers are not directly removable, but since they're disposed with the controller, you can call `Get.delete<MyController>()` to remove the controller and its workers.",
+        "**Q: Do workers work with `GetBuilder`?**  \nA: Workers listen to Rx variables, so they work regardless of whether you use `Obx` or `GetBuilder`. They are independent of the UI.",
+        "**Q: Can I use `everAll` with a mix of Rx types?**  \nA: Yes, `everAll` accepts a list of any `Rx` variables, regardless of their type."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Workers are a powerful feature of GetX that allow you to react to state changes in a declarative and efficient way. By understanding ever, once, debounce, interval, and their all variants, you can build responsive applications with clean separation of concerns. Remember to register workers in `onInit` and keep side effects light for optimal performance."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: WorkersDemo(),\n    );\n  }\n}\n\nclass DemoController extends GetxController {\n  var count = 0.obs;\n  var query = ''.obs;\n  var status = 'Waiting'.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n\n    // ever: triggers on every change\n    ever(count, (_) => print('Count changed to $count'));\n\n    // once: triggers only once\n    once(count, (_) => Get.snackbar('Once', 'Count changed for first time!'));\n\n    // debounce: waits for 500ms of inactivity\n    debounce(query, (_) => status.value = 'Searching for: ${query.value}', time: Duration(milliseconds: 500));\n\n    // interval: triggers every second while changing\n    interval(count, (_) => print('Interval: count is $count'), time: Duration(seconds: 1));\n  }\n\n  void increment() => count++;\n  void updateQuery(String value) => query.value = value;\n}\n\nclass WorkersDemo extends StatelessWidget {\n  final controller = Get.put(DemoController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Workers Demo')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          children: [\n            Card(\n              child: Padding(\n                padding: const EdgeInsets.all(12.0),\n                child: Column(\n                  children: [\n                    Text('ever & once', style: TextStyle(fontWeight: FontWeight.bold)),\n                    Obx(() => Text('Count: ${controller.count}', style: TextStyle(fontSize: 24))),\n                    ElevatedButton(onPressed: controller.increment, child: Text('Increment')),\n                  ],\n                ),\n              ),\n            ),\n            SizedBox(height: 16),\n            Card(\n              child: Padding(\n                padding: const EdgeInsets.all(12.0),\n                child: Column(\n                  children: [\n                    Text('debounce', style: TextStyle(fontWeight: FontWeight.bold)),\n                    TextField(\n                      onChanged: controller.updateQuery,\n                      decoration: InputDecoration(labelText: 'Type something...'),\n                    ),\n                    Obx(() => Text('Status: ${controller.status}')),\n                  ],\n                ),\n              ),\n            ),\n            SizedBox(height: 16),\n            Card(\n              child: Padding(\n                padding: const EdgeInsets.all(12.0),\n                child: Column(\n                  children: [\n                    Text('Check console for interval output', style: TextStyle(fontStyle: FontStyle.italic)),\n                    Text('Every second while count changes, interval worker logs'),\n                  ],\n                ),\n              ),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which worker should you use to react to changes only once, the first time a variable changes?",
+      "options": ["ever", "once", "debounce", "interval"],
+      "answer": 1
+    },
+    {
+      "question": "Which worker is ideal for search inputs to avoid excessive API calls?",
+      "options": ["ever", "once", "debounce", "interval"],
+      "answer": 2
+    },
+    {
+      "question": "What method is used to register workers inside a GetX controller?",
+      "options": ["initState", "onInit", "onReady", "onStart"],
+      "answer": 1
+    },
+    {
+      "question": "Which worker executes the callback at fixed intervals while a variable is changing?",
+      "options": ["ever", "once", "debounce", "interval"],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-reactive-state",
+    "getx-rx-types",
+    "getx-dependency-injection"
+  ]
+}

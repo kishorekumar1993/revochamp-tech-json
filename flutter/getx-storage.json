@@ -1,0 +1,266 @@
+{
+  "slug": "getx-storage",
+  "course": "Flutter",
+  "title": "GetX Storage: Lightweight Key-Value Storage with GetStorage",
+  "meta": {
+    "title": "GetX Storage – GetStorage: Simple Persistent Storage in Flutter",
+    "description": "Learn how to use GetStorage, the lightweight key-value storage from GetX. Simple API, no context, reactive, and perfect for user preferences, app state, and caching.",
+    "keywords": [
+      "GetX storage",
+      "GetStorage",
+      "Flutter storage",
+      "key-value storage",
+      "GetX preferences",
+      "persistent storage",
+      "GetX GetStorage"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is GetStorage?"
+    },
+    {
+      "type": "text",
+      "value": "GetStorage is a simple, fast, and lightweight key-value storage solution that comes with GetX. It stores data in a JSON file on the device (Android, iOS, Web, Desktop) and provides a synchronous API with reactive capabilities. It's perfect for storing user preferences, app settings, small caches, or any small amount of data that needs to persist across app launches."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use GetStorage?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**No context needed** – Can be used anywhere in your app, including controllers and services.",
+        "**Simple API** – `write`, `read`, `delete`, `hasData` – very straightforward.",
+        "**Reactive** – GetStorage can be observed with `.obs` or workers, so UI updates automatically.",
+        "**Lightweight** – Stores data in a single JSON file; no complex setup.",
+        "**Cross-platform** – Works on Android, iOS, Web, macOS, Windows, Linux.",
+        "**Synchronous** – No `async/await` for simple operations (though writing is async behind the scenes)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Installation"
+    },
+    {
+      "type": "text",
+      "value": "GetStorage is part of the GetX package. Just add GetX to your `pubspec.yaml`."
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  get: ^4.6.6"
+    },
+    {
+      "type": "heading",
+      "value": "Initialization"
+    },
+    {
+      "type": "text",
+      "value": "Before using GetStorage, you need to initialize it. It's recommended to do this in `main()` before `runApp`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  await GetStorage.init(); // initializes default storage\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "text",
+      "value": "You can also create named storage boxes by passing a name."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "await GetStorage.init('settings'); // creates a separate box"
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "subheading",
+      "value": "Writing Data"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final box = GetStorage();\nbox.write('username', 'john_doe');\nbox.write('isLogged', true);\nbox.write('age', 25);"
+    },
+    {
+      "type": "subheading",
+      "value": "Reading Data"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final username = box.read('username'); // returns dynamic\nfinal isLogged = box.read('isLogged') ?? false;\nfinal age = box.read('age');"
+    },
+    {
+      "type": "subheading",
+      "value": "Checking if Key Exists"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "if (box.hasData('username')) {\n  // do something\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Deleting Data"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "box.remove('username');\n\n// Clear all data in the box\nbox.erase();"
+    },
+    {
+      "type": "heading",
+      "value": "Working with Named Boxes"
+    },
+    {
+      "type": "text",
+      "value": "You can create multiple isolated storage boxes using names. This helps organize data by module."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final userBox = GetStorage('user');\nuserBox.write('name', 'Alice');\n\nfinal appBox = GetStorage('app');\nappBox.write('theme', 'dark');"
+    },
+    {
+      "type": "heading",
+      "value": "Reactive Storage"
+    },
+    {
+      "type": "text",
+      "value": "GetStorage can be observed just like any reactive variable. You can make a `GetStorage` instance observable by calling `.obs` or use workers to react to changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SettingsController extends GetxController {\n  final box = GetStorage();\n  var themeMode = 'light'.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Load saved value\n    themeMode.value = box.read('theme') ?? 'light';\n    // Listen to changes\n    ever(themeMode, (mode) {\n      box.write('theme', mode);\n    });\n  }\n\n  void setTheme(String mode) => themeMode.value = mode;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using GetStorage with GetBuilder/Obx"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In your view\nclass SettingsPage extends GetView<SettingsController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      body: Center(\n        child: Obx(() => Text('Theme: ${controller.themeMode}')),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Storage Service with GetxService"
+    },
+    {
+      "type": "text",
+      "value": "For better organization, encapsulate storage logic in a `GetxService` that can be used throughout the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class StorageService extends GetxService {\n  late final GetStorage _box;\n\n  Future<StorageService> init() async {\n    await GetStorage.init();\n    _box = GetStorage();\n    return this;\n  }\n\n  void write(String key, dynamic value) => _box.write(key, value);\n  T? read<T>(String key) => _box.read(key);\n  bool hasData(String key) => _box.hasData(key);\n  void remove(String key) => _box.remove(key);\n  void clear() => _box.erase();\n}\n\n// In main\nvoid main() async {\n  await GetStorage.init();\n  await Get.putAsync<StorageService>(() => StorageService().init());\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Comparison with Other Storage Options"
+    },
+    {
+      "type": "table",
+      "headers": ["Feature", "GetStorage", "SharedPreferences", "Hive"],
+      "rows": [
+        ["API", "Synchronous (mostly)", "Async", "Async"],
+        ["Data types", "Primitives + List/Map", "Primitives", "Any (custom adapters)"],
+        ["Reactive", "Yes (with .obs/workers)", "No", "No (but with Hive listener)"],
+        ["Setup", "Minimal (init once)", "Simple", "Requires adapters registration"],
+        ["Performance", "Very fast", "Fast", "Very fast (binary)"],
+        ["Use case", "Preferences, settings", "Preferences, settings", "Complex data, large datasets"]
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Initialize in `main`** – Call `await GetStorage.init()` before `runApp` to ensure storage is ready.",
+        "**Use named boxes for modules** – Keep data separate (e.g., `user`, `app`, `cache`).",
+        "**Encapsulate storage in services** – Makes it easier to test and change underlying storage later.",
+        "**Use reactive patterns** – Combine with `Obx` for automatic UI updates when preferences change.",
+        "**Provide defaults** – Use the `??` operator when reading to avoid null errors.",
+        "**Avoid storing large data** – GetStorage is not meant for large files or complex relational data; use SQLite or Hive for that."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to initialize** – Using `GetStorage()` before `init()` will throw an exception.\n✅ Always call `GetStorage.init()` first.",
+        "❌ **Using `read` without checking existence** – Can return null; handle with `??` or `hasData`.",
+        "❌ **Storing custom objects directly** – GetStorage only supports primitive types and lists/maps. Convert custom objects to Map first.",
+        "❌ **Using async/await unnecessarily** – `write` is actually synchronous (it writes to disk on a separate thread), so you don't need to await it unless you want to ensure it's written before proceeding."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Is GetStorage persistent?**  \nA: Yes, it persists data across app restarts. Data is stored in a JSON file on the device.",
+        "**Q: Can I store custom objects?**  \nA: Not directly. You need to convert them to `Map` (e.g., `{'name': user.name, 'age': user.age}`) and then store. When reading, convert back.",
+        "**Q: How do I listen to changes in GetStorage?**  \nA: Wrap the storage read in an `Obx` or use workers on a reactive variable that holds the value. The storage itself doesn't have listeners, but you can combine it with reactive variables.",
+        "**Q: What's the maximum storage size?**  \nA: It's limited by the file system, but for large data (e.g., >10MB) consider using Hive or SQLite.",
+        "**Q: Can I use GetStorage on the web?**  \nA: Yes, it uses `localStorage` on web, and the API is identical.",
+        "**Q: How to delete all data from a box?**  \nA: Use `box.erase()`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetStorage is a simple, powerful solution for persistent key-value storage in Flutter. It integrates seamlessly with GetX's state management and dependency injection, making it easy to manage app preferences and cached data. With its straightforward API and reactive capabilities, it's an excellent choice for most Flutter apps."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() async {\n  await GetStorage.init();\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: StorageDemo(),\n    );\n  }\n}\n\nclass SettingsController extends GetxController {\n  final box = GetStorage();\n  var username = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    username.value = box.read('username') ?? '';\n  }\n\n  void saveUsername(String name) {\n    username.value = name;\n    box.write('username', name);\n  }\n\n  void clearUsername() {\n    username.value = '';\n    box.remove('username');\n  }\n}\n\nclass StorageDemo extends StatelessWidget {\n  final controller = Get.put(SettingsController());\n  final TextEditingController textController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetStorage Demo')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() => Text(\n              'Stored username: ${controller.username.value.isEmpty ? 'Not set' : controller.username.value}',\n              style: TextStyle(fontSize: 20),\n            )),\n            SizedBox(height: 20),\n            TextField(\n              controller: textController,\n              decoration: InputDecoration(labelText: 'Enter username'),\n            ),\n            SizedBox(height: 10),\n            ElevatedButton(\n              onPressed: () {\n                if (textController.text.isNotEmpty) {\n                  controller.saveUsername(textController.text);\n                  textController.clear();\n                }\n              },\n              child: Text('Save'),\n            ),\n            ElevatedButton(\n              onPressed: controller.clearUsername,\n              child: Text('Clear'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method is used to initialize GetStorage?",
+      "options": ["GetStorage.init()", "GetStorage.load()", "GetStorage.prepare()", "GetStorage.start()"],
+      "answer": 0
+    },
+    {
+      "question": "How do you write a value to GetStorage?",
+      "options": ["box.set('key', value)", "box.write('key', value)", "box.put('key', value)", "box.add('key', value)"],
+      "answer": 1
+    },
+    {
+      "question": "What should you do before using GetStorage in your app?",
+      "options": [
+        "Call GetStorage.initialize()",
+        "Await GetStorage.init()",
+        "Import 'package:get_storage/get_storage.dart'",
+        "Nothing, it's ready to use"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-services",
+    "getx-dependency-injection",
+    "getx-flutter-widgets"
+  ]
+}

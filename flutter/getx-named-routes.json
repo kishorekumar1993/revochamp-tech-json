@@ -1,0 +1,239 @@
+{
+  "slug": "getx-named-routes",
+  "course": "Flutter",
+  "title": "GetX Named Routes: Complete Guide to Organized Navigation",
+  "meta": {
+    "title": "GetX Named Routes – Route Management with GetPage and Bindings",
+    "description": "Master GetX named routes: define GetPages, pass parameters and arguments, use middlewares, transitions, and bindings. Learn to build scalable navigation in Flutter.",
+    "keywords": [
+      "GetX named routes",
+      "GetPage",
+      "Get.toNamed",
+      "Get.offNamed",
+      "Get.offAllNamed",
+      "GetX route management",
+      "GetX routing",
+      "Flutter GetX navigation"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Named Routes in GetX?"
+    },
+    {
+      "type": "text",
+      "value": "Named routes are a way to define routes with string identifiers, making navigation more organized and maintainable. Instead of directly pushing widget instances, you navigate using route names. GetX provides a powerful named routing system built on top of `GetPage` and `GetMaterialApp`, supporting parameters, arguments, transitions, middlewares, and automatic dependency injection via bindings."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Named Routes"
+    },
+    {
+      "type": "text",
+      "value": "To use named routes, replace `MaterialApp` with `GetMaterialApp` and define the routes in the `getPages` list."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetMaterialApp(\n  initialRoute: '/',\n  getPages: [\n    GetPage(name: '/', page: () => HomePage()),\n    GetPage(name: '/details', page: () => DetailsPage()),\n    GetPage(name: '/profile/:id', page: () => ProfilePage()),\n  ],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Basic Navigation"
+    },
+    {
+      "type": "text",
+      "value": "Use `Get.toNamed`, `Get.offNamed`, and `Get.offAllNamed` to navigate."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Push new route\nGet.toNamed('/details');\n\n// Replace current route\nGet.offNamed('/details');\n\n// Clear all previous routes and push\nGet.offAllNamed('/details');\n\n// Navigate with result\nfinal result = await Get.toNamed('/details');\n\n// Go back\nGet.back();"
+    },
+    {
+      "type": "heading",
+      "value": "Passing Data: Parameters vs Arguments"
+    },
+    {
+      "type": "text",
+      "value": "GetX supports two ways to pass data to named routes: **parameters** (dynamic path segments) and **arguments** (any data)."
+    },
+    {
+      "type": "subheading",
+      "value": "Parameters (Path Segments)"
+    },
+    {
+      "type": "text",
+      "value": "Define placeholders with `:` in the route name, then access via `Get.parameters`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Route definition\nGetPage(name: '/user/:id', page: () => UserPage()),\n\n// Navigation\nGet.toNamed('/user/123');\n\n// Inside UserPage\nfinal userId = Get.parameters['id']; // '123'"
+    },
+    {
+      "type": "subheading",
+      "value": "Arguments (Arbitrary Data)"
+    },
+    {
+      "type": "text",
+      "value": "Pass any object using the `arguments` parameter, and retrieve with `Get.arguments`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Navigation with arguments\nGet.toNamed('/details', arguments: {'title': 'Hello', 'id': 42});\n\n// In the destination\nfinal args = Get.arguments;\nString title = args['title'];\nint id = args['id'];"
+    },
+    {
+      "type": "heading",
+      "value": "Transitions & Animations"
+    },
+    {
+      "type": "text",
+      "value": "Define transitions per route using the `transition` parameter in `GetPage`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetPage(\n  name: '/details',\n  page: () => DetailsPage(),\n  transition: Transition.fadeIn,\n  duration: Duration(milliseconds: 500),\n  curve: Curves.easeInOut,\n);\n\n// Available transitions: fade, rightToLeft, leftToRight, upToDown, downToUp, zoom, etc."
+    },
+    {
+      "type": "heading",
+      "value": "Route Guards with Middlewares"
+    },
+    {
+      "type": "text",
+      "value": "Middlewares intercept navigation and can redirect, log, or block access. Perfect for authentication checks."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthMiddleware extends GetMiddleware {\n  @override\n  RouteSettings? redirect(String? route) {\n    final isLogged = Get.find<AuthController>().isLogged.value;\n    if (!isLogged && route != '/login') {\n      return RouteSettings(name: '/login');\n    }\n    return null;\n  }\n}\n\nGetPage(\n  name: '/profile',\n  page: () => ProfilePage(),\n  middlewares: [AuthMiddleware()],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Bindings with Named Routes"
+    },
+    {
+      "type": "text",
+      "value": "Attach a binding to a `GetPage` to automatically inject dependencies when the route is opened."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfileBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<ProfileController>(() => ProfileController());\n  }\n}\n\nGetPage(\n  name: '/profile',\n  page: () => ProfilePage(),\n  binding: ProfileBinding(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Initial Route and Unknown Route"
+    },
+    {
+      "type": "text",
+      "value": "Set the initial route with `initialRoute`, and handle unknown routes with `unknownRoute`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetMaterialApp(\n  initialRoute: '/',\n  unknownRoute: GetPage(name: '/notfound', page: () => NotFoundPage()),\n  getPages: [...],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Nested Named Routes"
+    },
+    {
+      "type": "text",
+      "value": "For complex UIs like tabs, you can nest navigators using `Navigator` widgets and `Get.nested`. Each nested navigator can have its own `GetPage` list and an `id` to target navigation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final tabNavigatorKey = GlobalKey<NavigatorState>();\n\n// In your widget tree\nNavigator(\n  key: tabNavigatorKey,\n  initialRoute: '/tab1',\n  onGenerateRoute: (settings) => GetPageRoute(\n    settings: settings,\n    page: () => Tab1Page(),\n  ),\n);\n\n// Navigate inside the nested navigator\nGet.toNamed('/tab2', id: 1); // id corresponds to the nested navigator"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use constants for route names** – Avoid typos and make refactoring easier. Example: `class Routes { static const home = '/'; }`.",
+        "**Use bindings** – Keep dependency injection organized and ensure automatic disposal.",
+        "**Prefer parameters for IDs** – Use dynamic segments for resource identifiers (e.g., `/user/:id`).",
+        "**Use arguments for complex data** – Pass models or maps via `arguments` when needed.",
+        "**Add a 404 route** – Always define `unknownRoute` to handle invalid URLs gracefully.",
+        "**Document your routes** – Especially in large apps, keep a list of all routes and their expected arguments."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting `GetMaterialApp`** – Named routes won't work without it.\n✅ Always use `GetMaterialApp` (or `GetCupertinoApp`).",
+        "❌ **Hardcoding route names in `Get.toNamed`** – Risk of typos.\n✅ Use constants.",
+        "❌ **Using both `parameters` and `arguments` for the same route** – Can be confusing.\n✅ Choose the appropriate method for each case.",
+        "❌ **Not handling null arguments** – `Get.arguments` can be null; always check.",
+        "❌ **Overusing `Get.offAllNamed`** – May cause unexpected navigation stack.\n✅ Use it only when you truly need to clear history."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I use both widget navigation and named routes together?**  \nA: Yes, `Get.to` and `Get.toNamed` can be mixed. However, named routes are generally recommended for large apps for better organization.",
+        "**Q: How do I pass data back from a named route?**  \nA: Use `await Get.toNamed(...)` and then `Get.back(result: value)` in the destination. The result will be returned as the future value.",
+        "**Q: Can I add transitions to named routes?**  \nA: Yes, define `transition` in `GetPage`. You can also override transitions per navigation using `Get.toNamed(..., arguments: ..., id: ..., preventDuplicates: ...)`. Transitions can be customized further with `transitionDuration` and `curve`.",
+        "**Q: How do I navigate with parameters that are not part of the path?**  \nA: Use `arguments`. It's perfect for passing objects, maps, or lists.",
+        "**Q: What is the difference between `Get.parameters` and `Get.arguments`?**  \nA: `Get.parameters` gives you the dynamic path segments (e.g., `:id`), while `Get.arguments` gives the data passed via the `arguments` parameter.",
+        "**Q: Can I define routes dynamically?**  \nA: Yes, you can build `getPages` list dynamically. For example, you can load routes from a JSON or a database."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX named routes offer a structured, scalable way to manage navigation in Flutter apps. With features like dynamic parameters, arguments, transitions, middlewares, and bindings, you can build complex routing systems with minimal code. Combine named routes with GetX state management and dependency injection for a complete, maintainable architecture."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'Named Routes Demo',\n      initialRoute: '/',\n      getPages: [\n        GetPage(name: '/', page: () => HomePage()),\n        GetPage(name: '/details', page: () => DetailsPage()),\n        GetPage(name: '/profile/:id', page: () => ProfilePage()),\n      ],\n      unknownRoute: GetPage(name: '/notfound', page: () => NotFoundPage()),\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Named Routes')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/details', arguments: {'message': 'Hello from home!'}),\n              child: Text('Go to Details (with arguments)'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/profile/42'),\n              child: Text('Go to Profile (ID 42)'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/invalid'),\n              child: Text('Go to Invalid (404)'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass DetailsPage extends StatelessWidget {\n  final message = Get.arguments?['message'] ?? 'No message';\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Details')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Message: $message'),\n            ElevatedButton(\n              onPressed: () => Get.back(result: 'closed'),\n              child: Text('Go Back'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass ProfilePage extends StatelessWidget {\n  final id = Get.parameters['id'];\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Profile')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('User ID: $id'),\n            ElevatedButton(\n              onPressed: () => Get.back(),\n              child: Text('Back'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass NotFoundPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('404')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Page not found'),\n            ElevatedButton(\n              onPressed: () => Get.offAllNamed('/'),\n              child: Text('Go Home'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you define a dynamic route segment like '/user/:id' in GetPage?",
+      "options": [
+        "GetPage(name: '/user/id', page: () => UserPage())",
+        "GetPage(name: '/user/:id', page: () => UserPage())",
+        "GetPage(name: '/user/{id}', page: () => UserPage())",
+        "GetPage(name: '/user/<id>', page: () => UserPage())"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method is used to replace the current route with a named route?",
+      "options": ["Get.toNamed", "Get.offNamed", "Get.offAllNamed", "Get.replaceNamed"],
+      "answer": 1
+    },
+    {
+      "question": "How do you access data passed via the `arguments` parameter in a named route?",
+      "options": ["Get.parameters", "Get.arguments", "Get.data", "Get.args"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-navigation",
+    "getx-bindings",
+    "getx-dependency-injection",
+    "getx-route-management"
+  ]
+}

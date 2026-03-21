@@ -1,0 +1,228 @@
+
+{
+  "slug": "getx-rebuild-optimization",
+  "course": "Flutter",
+  "title": "GetX Rebuild Optimization: Performance Best Practices",
+  "meta": {
+    "title": "GetX Rebuild Optimization – Improve Flutter App Performance",
+    "description": "Learn how to optimize rebuilds in GetX. Master granular Obx, GetBuilder, GetX widget, selective updates, and avoid unnecessary widget rebuilds for high-performance Flutter apps.",
+    "keywords": [
+      "GetX performance",
+      "GetX rebuild optimization",
+      "granular Obx",
+      "GetBuilder vs Obx",
+      "avoid unnecessary rebuilds",
+      "GetX best practices",
+      "Flutter performance"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "One of GetX's strengths is its ability to rebuild only the widgets that depend on changed state. However, misuse can lead to unnecessary rebuilds, affecting performance. This guide covers best practices to optimize rebuilds: choosing the right state management approach, granular reactivity, and understanding when each widget should be used."
+    },
+    {
+      "type": "heading",
+      "value": "1. Granular Obx – Rebuild Only What Changes"
+    },
+    {
+      "type": "text",
+      "value": "The `Obx` widget rebuilds its entire child subtree whenever any reactive variable accessed inside its builder changes. To minimize rebuilds, keep `Obx` as granular as possible."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ❌ BAD – entire column rebuilds when count changes\nObx(() => Column(\n  children: [\n    Text('Count: ${controller.count}'),\n    Text('Static text'),\n    ElevatedButton(...),\n  ],\n));\n\n// ✅ GOOD – only the Text rebuilds\nColumn(\n  children: [\n    Obx(() => Text('Count: ${controller.count}')),\n    Text('Static text'),\n    ElevatedButton(...),\n  ],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "2. GetBuilder for Manual Control"
+    },
+    {
+      "type": "text",
+      "value": "`GetBuilder` only rebuilds when you explicitly call `update()`. This gives you fine-grained control. Use it when you want to batch multiple state changes or when you don't need automatic reactivity."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  int count = 0;\n  void increment() {\n    count++;\n    update(); // only widgets wrapped with GetBuilder rebuild\n  }\n}\n\n// In UI, only this specific widget rebuilds\nGetBuilder<MyController>(\n  builder: (controller) => Text('Count: ${controller.count}'),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "3. GetX Widget – Isolate Dependencies"
+    },
+    {
+      "type": "text",
+      "value": "The `GetX` widget accepts a builder that receives the controller and returns a widget. It rebuilds only when the reactive variables used inside the builder change. This is similar to `Obx` but can also accept a controller instance."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetX<MyController>(\n  init: MyController(), // optional, can use existing\n  builder: (controller) {\n    // only rebuilds when controller.count changes\n    return Text('Count: ${controller.count}');\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "4. Avoid Putting Reactive Variables Inside Large Widgets"
+    },
+    {
+      "type": "text",
+      "value": "Never wrap a large widget tree with `Obx` if only a small part of it changes. Use multiple `Obx` widgets at the leaf level. This prevents the entire tree from rebuilding."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ❌ BAD – entire form rebuilds on every keystroke\nObx(() => Column(\n  children: [\n    TextField(\n      onChanged: controller.validateEmail,\n      decoration: InputDecoration(errorText: controller.emailError.value),\n    ),\n    // many other widgets\n  ],\n));\n\n// ✅ GOOD – only error text rebuilds\nColumn(\n  children: [\n    TextField(\n      onChanged: controller.validateEmail,\n      decoration: InputDecoration(\n        errorText: Obx(() => controller.emailError.value),\n      ),\n    ),\n    // other widgets unchanged\n  ],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "5. Use Get.find Sparingly in Build Methods"
+    },
+    {
+      "type": "text",
+      "value": "Calling `Get.find<MyController>()` inside a build method is fine, but if the controller is not needed, consider using `GetView` or inject the controller as a parameter. Also, storing the controller in a local variable outside the build method (or in a `StatefulWidget`'s state) can avoid repeated lookups."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Option 1: GetView (recommended)\nclass HomePage extends GetView<HomeController> {\n  @override\n  Widget build(BuildContext context) {\n    return Obx(() => Text('${controller.count}'));\n  }\n}\n\n// Option 2: Store reference\nclass HomePage extends StatelessWidget {\n  final controller = Get.find<HomeController>();\n  @override\n  Widget build(BuildContext context) => ...;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Avoid Unnecessary Rebuilds in Lists"
+    },
+    {
+      "type": "text",
+      "value": "When using `ListView.builder` with `Obx`, ensure the builder itself is not wrapped in `Obx`, but only the part that actually changes. For list items, consider using `GetBuilder` with unique IDs or `Obx` inside each item if needed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Only the item content rebuilds, not the whole list\nListView.builder(\n  itemCount: controller.items.length,\n  itemBuilder: (_, index) {\n    final item = controller.items[index];\n    return ListTile(\n      title: Obx(() => Text('${item.name}')),\n      trailing: Obx(() => Icon(item.isFavorite.value ? Icons.star : Icons.star_border)),\n    );\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "7. Using IDs with GetBuilder"
+    },
+    {
+      "type": "text",
+      "value": "If a controller manages multiple independent pieces of state, you can use the `id` parameter in `update()` and `GetBuilder` to rebuild only specific widgets."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MultiController extends GetxController {\n  int counter1 = 0;\n  int counter2 = 0;\n\n  void increment1() {\n    counter1++;\n    update(['counter1']); // only widgets with id 'counter1' rebuild\n  }\n\n  void increment2() {\n    counter2++;\n    update(['counter2']);\n  }\n}\n\n// In UI\nGetBuilder<MultiController>(\n  id: 'counter1',\n  builder: (ctrl) => Text('${ctrl.counter1}'),\n)\nGetBuilder<MultiController>(\n  id: 'counter2',\n  builder: (ctrl) => Text('${ctrl.counter2}'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "8. Performance Comparison"
+    },
+    {
+      "type": "table",
+      "headers": ["Approach", "Rebuild Scope", "When to Use"],
+      "rows": [
+        ["Obx", "Whole child widget", "Small, isolated parts"],
+        ["Granular Obx", "Only the changed leaf", "Recommended default"],
+        ["GetBuilder", "Only GetBuilder widgets", "Manual control, batching"],
+        ["GetX", "Builder function", "When you need the controller in builder"],
+        ["GetView", "Nothing, just controller access", "Provide typed controller without rebuilds"]
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep `Obx` as deep as possible** – Move `Obx` inside the widget tree, close to the changing data.",
+        "**Prefer `GetView` for accessing controllers** – No rebuild overhead, just a typed reference.",
+        "**Use `GetBuilder` with IDs for multiple independent states** – Avoid rebuilding everything.",
+        "**Avoid putting `Get.find` inside build if you can use `GetView`** – Reduces redundant lookups.",
+        "**Use `StateMixin` for loading/error/success** – It already optimizes rebuilds with `.obx()`.",
+        "**Don't over‑optimize prematurely** – Build clean code first, then profile and optimize hotspots."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Wrapping the whole screen with `Obx`** – Rebuilds everything on every state change.\n✅ Wrap only the parts that change.",
+        "❌ **Using `GetBuilder` without `update()`** – UI never updates.\n✅ Always call `update()` after state changes.",
+        "❌ **Calling `update()` without IDs** – Rebuilds all `GetBuilder` widgets for that controller.\n✅ Use IDs to target specific widgets.",
+        "❌ **Creating controllers inside build** – Causes multiple instances and leaks.\n✅ Use bindings or inject once."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Is `Obx` slower than `GetBuilder`?**  \nA: Not inherently. `Obx` is highly optimized and only rebuilds when observed variables change. However, if you have many dependencies, granular `Obx` can be more efficient than a large one.",
+        "**Q: How to debug rebuilds?**  \nA: Use `print` inside `Obx` builders or the `WidgetsBinding.instance.addPostFrameCallback` to see when widgets rebuild.",
+        "**Q: Does `GetX` widget cause extra rebuilds compared to `Obx`?**  \nA: It's similar; both only rebuild when accessed reactive variables change. `GetX` also allows passing an `init` controller.",
+        "**Q: How to handle nested reactive variables?**  \nA: If you modify a property of a custom object inside an `Rx` variable, the UI may not rebuild because the reference didn't change. Use `refresh()` or `update()` to force a rebuild, or consider splitting into smaller reactive parts.",
+        "**Q: Can I use both `Obx` and `GetBuilder` in the same app?**  \nA: Absolutely. Choose the right tool for each part."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Optimizing rebuilds in GetX is about using the right pattern for each scenario: granular `Obx`, `GetBuilder` with IDs, and avoiding large reactive subtrees. By following these best practices, you can keep your Flutter app fast and responsive even with complex state management."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: OptimizationDemo(),\n    );\n  }\n}\n\nclass DemoController extends GetxController {\n  var count = 0.obs;\n  var text = 'Hello'.obs;\n\n  void increment() => count++;\n  void changeText() => text.value = 'New text';\n}\n\nclass OptimizationDemo extends StatelessWidget {\n  final controller = Get.put(DemoController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Rebuild Optimization')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            // Granular Obx – only this text rebuilds on count change\n            Obx(() => Text('Count: ${controller.count}', style: TextStyle(fontSize: 24))),\n            SizedBox(height: 10),\n            // Another Obx – only this text rebuilds on text change\n            Obx(() => Text('Text: ${controller.text}', style: TextStyle(fontSize: 24))),\n            SizedBox(height: 20),\n            // Static widgets don't rebuild\n            Text('This text never rebuilds'),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: controller.increment,\n              child: Text('Increment Count'),\n            ),\n            ElevatedButton(\n              onPressed: controller.changeText,\n              child: Text('Change Text'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the recommended way to rebuild only a small part of the UI when a reactive variable changes?",
+      "options": [
+        "Wrap the whole screen with Obx",
+        "Use GetBuilder with IDs",
+        "Place Obx only around the widget that uses the variable",
+        "Use a StatefulWidget"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "When should you use GetBuilder instead of Obx?",
+      "options": [
+        "When you want automatic rebuilds",
+        "When you need manual control and batching of updates",
+        "Always, it's faster",
+        "For large lists only"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How can you make GetBuilder rebuild only a specific widget, not all widgets using the same controller?",
+      "options": [
+        "Use separate controllers",
+        "Use the id parameter in update() and GetBuilder",
+        "Use GetX widget",
+        "Use Obx instead"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-reactive-state",
+    "getx-simple-state",
+    "getx-controller"
+  ]
+}

@@ -1,0 +1,224 @@
+{
+  "slug": "getx-reactive-state",
+  "course": "Flutter",
+  "title": "GetX Reactive State: .obs, Obx, Workers & Advanced Patterns",
+  "meta": {
+    "title": "GetX Reactive State Management – Complete Guide with .obs, Obx, Workers",
+    "description": "Master reactive state management in GetX. Learn .obs, Rx types, Obx widget, workers (ever, once, debounce), and advanced patterns for building reactive Flutter apps.",
+    "keywords": [
+      "GetX reactive state",
+      "GetX .obs",
+      "Obx widget",
+      "GetX workers",
+      "reactive programming Flutter",
+      "Rx types GetX",
+      "GetX state management reactive"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Reactive State in GetX?"
+    },
+    {
+      "type": "text",
+      "value": "Reactive state is the core of GetX's powerful state management system. It uses **observable variables** (marked with `.obs`) that automatically notify the UI when they change. This eliminates the need for manual `setState` calls and reduces boilerplate code. Reactive state is ideal for real-time updates, form inputs, and any scenario where you want the UI to react to changes instantly."
+    },
+    {
+      "type": "heading",
+      "value": "1. Reactive Variables with .obs"
+    },
+    {
+      "type": "text",
+      "value": "To make any variable reactive, simply append `.obs` to it. GetX provides `.obs` extensions for primitive types, collections, and custom types."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  // Primitive types\n  var count = 0.obs;\n  var name = 'John'.obs;\n  var isLogged = false.obs;\n\n  // Collections\n  var items = <String>[].obs;\n  var userMap = <String, dynamic>{}.obs;\n\n  // Custom types\n  var user = User(name: 'Alice', age: 30).obs;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Rx Types"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides dedicated Rx types for better performance and IDE support. You can also use the generic `Rx<T>` type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Rx types\nRxInt count = 0.obs;\nRxString name = 'John'.obs;\nRxBool isLogged = false.obs;\nRxList<String> items = <String>[].obs;\nRxMap<String, dynamic> userMap = <String, dynamic>{}.obs;\n\n// Generic Rx\nRx<User> user = User(name: 'Alice', age: 30).obs;"
+    },
+    {
+      "type": "heading",
+      "value": "3. The Obx Widget"
+    },
+    {
+      "type": "text",
+      "value": "`Obx` is a widget that listens to changes in reactive variables and automatically rebuilds its child when any observed variable changes. You only need to wrap the parts of the UI that depend on the reactive data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeView extends StatelessWidget {\n  final controller = Get.put(MyController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      body: Center(\n        child: Obx(() => Text('Count: ${controller.count}')),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: () => controller.count++,\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Updating Reactive Values"
+    },
+    {
+      "type": "text",
+      "value": "There are several ways to update reactive values, depending on the type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// For primitives: direct assignment\ncontroller.count.value = 10;\n// or just assign (if using .obs on var)\ncontroller.count = 10;\n\n// For collections: use methods\ncontroller.items.add('new item');\ncontroller.items.removeAt(0);\ncontroller.items.assignAll(['a', 'b']);\n\n// For custom types: use update or assign\ncontroller.user.update((user) {\n  user?.name = 'Bob';\n});\n// or assign a new instance\ncontroller.user.value = User(name: 'Bob', age: 31);"
+    },
+    {
+      "type": "heading",
+      "value": "5. Workers – Reacting to Changes"
+    },
+    {
+      "type": "text",
+      "value": "Workers let you execute code when reactive variables change, without needing an Obx widget. They are perfect for side effects like logging, API calls, or navigation. You typically set them up inside `onInit()` of a controller."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  var count = 0.obs;\n  var name = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n\n    // ever: triggers on every change\n    ever(count, (_) => print('Count changed to $count'));\n\n    // once: triggers only the first time\n    once(count, (_) => print('Count changed for first time'));\n\n    // debounce: waits for 1 second of inactivity\n    debounce(name, (_) => print('User stopped typing'), time: Duration(seconds: 1));\n\n    // interval: triggers every second while changing\n    interval(count, (_) => print('Count changed every second'), time: Duration(seconds: 1));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Advanced Rx Patterns"
+    },
+    {
+      "type": "heading",
+      "value": "6.1 refresh() – Force Update"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you modify an object's properties directly and need to notify the UI. Use `refresh()` to force an update."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "var user = User(name: 'Alice', age: 30).obs;\n\nvoid changeName(String newName) {\n  user.value.name = newName;\n  user.refresh(); // Manually trigger UI update\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6.2 assign and assignAll"
+    },
+    {
+      "type": "text",
+      "value": "For collections, `assign` replaces the entire list, while `assignAll` replaces with an iterable. Both trigger UI updates."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "var items = <String>[].obs;\n\nitems.assign(['a', 'b']); // replaces entire list\nitems.assignAll(['c', 'd']); // also replaces"
+    },
+    {
+      "type": "heading",
+      "value": "6.3 Nested Objects"
+    },
+    {
+      "type": "text",
+      "value": "When dealing with nested objects, you need to ensure reactivity propagates. The simplest way is to update the whole object or use `refresh()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Address {\n  String street;\n  Address(this.street);\n}\n\nclass User {\n  String name;\n  Address address;\n  User(this.name, this.address);\n}\n\nvar user = User('Alice', Address('Main St')).obs;\n\nvoid updateStreet(String newStreet) {\n  user.update((user) => user?.address.street = newStreet);\n  user.refresh(); // necessary because we modified a nested property\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Performance Optimization Tips"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Granular Obx**: Wrap only the parts that change, not the whole screen. This avoids unnecessary rebuilds.",
+        "**Avoid heavy computations inside Obx**: Keep the builder simple; move heavy logic to controllers or use computed values.",
+        "**Use `GetX` widget for more control**: The `GetX` widget provides a builder that gives you the controller instance and allows fine-grained rebuilds.",
+        "**Use `GetBuilder` when you need manual control**: For performance-critical sections where you want to call `update()` explicitly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "8. Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `.obs` inside build method** – Creates new reactive variables on every rebuild.\n✅ Declare reactive variables inside the controller only.",
+        "❌ **Not using `Obx`** – The UI won't update because it doesn't listen to changes.\n✅ Always wrap dependent widgets with `Obx` or `GetX`.",
+        "❌ **Modifying nested objects without refreshing** – UI doesn't react because the reference didn't change.\n✅ Use `refresh()` or update the entire object.",
+        "❌ **Creating controllers inside build** – Causes duplicate controllers and memory leaks.\n✅ Use `Get.put` outside build or use bindings."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: What's the difference between `.obs` and `Rx<T>`?**  \nA: `.obs` is an extension that returns an `Rx<T>` instance. Both are equivalent; `.obs` is just syntactic sugar for brevity.",
+        "**Q: Can I use reactive variables without a controller?**  \nA: Yes, but it's not recommended. Controllers provide lifecycle management and a natural place to organize logic.",
+        "**Q: Does GetX support `ValueListenable`?**  \nA: Yes, you can use `ValueListenable` with GetX, but it's not needed. GetX's reactive system is built on `Rx` and works seamlessly.",
+        "**Q: How do I dispose workers?**  \nA: Workers are automatically disposed when the controller is disposed. You don't need to manually remove them.",
+        "**Q: Can I use `Obx` with multiple reactive variables?**  \nA: Yes, `Obx` listens to any reactive variable accessed inside its builder. If any of them change, the widget rebuilds.",
+        "**Q: What's the performance impact of using many `Obx` widgets?**  \nA: GetX's reactivity is highly optimized. Using many granular `Obx` widgets is actually better than one large `Obx` because it limits rebuilds to the smallest necessary areas.",
+        "**Q: How do I combine reactive state with API calls?**  \nA: Use a `Rx` variable for loading state, data, and error. Set them asynchronously and the UI will react automatically. Consider using `StateMixin` for even cleaner patterns."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX reactive state management is intuitive, powerful, and highly performant. By leveraging `.obs`, `Obx`, and workers, you can build responsive Flutter apps with minimal code. Combine these techniques with dependency injection and bindings for a complete, scalable architecture."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: ReactiveDemo(),\n    );\n  }\n}\n\nclass ReactiveController extends GetxController {\n  // Reactive variables\n  var count = 0.obs;\n  var name = ''.obs;\n  var items = <String>[].obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Worker: ever\n    ever(count, (_) => print('Count changed to $count'));\n    // Worker: debounce\n    debounce(name, (_) => print('User stopped typing: $name'), time: Duration(seconds: 1));\n  }\n\n  void increment() => count++;\n  void decrement() => count--;\n  void updateName(String newName) => name.value = newName;\n  void addItem() => items.add('Item ${items.length + 1}');\n  void removeItem(int index) => items.removeAt(index);\n}\n\nclass ReactiveDemo extends StatelessWidget {\n  final controller = Get.put(ReactiveController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Reactive State Demo')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          children: [\n            // Counter section\n            Card(\n              child: Padding(\n                padding: const EdgeInsets.all(12.0),\n                child: Column(\n                  children: [\n                    Text('Counter', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),\n                    Obx(() => Text(\n                      '${controller.count}',\n                      style: TextStyle(fontSize: 32),\n                    )),\n                    Row(\n                      mainAxisAlignment: MainAxisAlignment.center,\n                      children: [\n                        ElevatedButton(onPressed: controller.decrement, child: Text('-')),\n                        SizedBox(width: 10),\n                        ElevatedButton(onPressed: controller.increment, child: Text('+')),\n                      ],\n                    ),\n                  ],\n                ),\n              ),\n            ),\n            SizedBox(height: 16),\n            // Text input with debounce\n            Card(\n              child: Padding(\n                padding: const EdgeInsets.all(12.0),\n                child: Column(\n                  children: [\n                    Text('Debounced Input', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),\n                    TextField(\n                      onChanged: controller.updateName,\n                      decoration: InputDecoration(labelText: 'Type something...'),\n                    ),\n                    Obx(() => Text('You typed: ${controller.name}')),\n                  ],\n                ),\n              ),\n            ),\n            SizedBox(height: 16),\n            // List section\n            Card(\n              child: Padding(\n                padding: const EdgeInsets.all(12.0),\n                child: Column(\n                  children: [\n                    Text('Dynamic List', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),\n                    ElevatedButton(onPressed: controller.addItem, child: Text('Add Item')),\n                    SizedBox(height: 8),\n                    Obx(() => Expanded(\n                      child: ListView.builder(\n                        shrinkWrap: true,\n                        itemCount: controller.items.length,\n                        itemBuilder: (_, index) => ListTile(\n                          title: Text(controller.items[index]),\n                          trailing: IconButton(\n                            icon: Icon(Icons.delete),\n                            onPressed: () => controller.removeItem(index),\n                          ),\n                        ),\n                      ),\n                    )),\n                  ],\n                ),\n              ),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you make a variable reactive in GetX?",
+      "options": [
+        "Use `GetX` widget",
+        "Append `.obs` to the variable",
+        "Use `StatefulWidget`",
+        "Call `update()`"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget listens to reactive changes and rebuilds automatically?",
+      "options": ["Obx", "GetBuilder", "StatefulBuilder", "ReactiveWidget"],
+      "answer": 0
+    },
+    {
+      "question": "What worker method is used to react to changes after a pause in activity?",
+      "options": ["ever", "once", "debounce", "interval"],
+      "answer": 2
+    },
+    {
+      "question": "When updating a nested object property, what must you call to notify the UI?",
+      "options": ["update()", "setState()", "refresh()", "rebuild()"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-dependency-injection",
+    "getx-bindings",
+    "flutter-getx-workers"
+  ]
+}

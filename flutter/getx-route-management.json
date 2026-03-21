@@ -1,0 +1,246 @@
+{
+  "slug": "getx-route-management",
+  "course": "Flutter",
+  "title": "GetX Route Management: Organize Routes Like a Pro",
+  "meta": {
+    "title": "GetX Route Management – Advanced Routing, Middlewares, Guards & Navigation Stack",
+    "description": "Master route management in GetX: organize routes with constants, use middlewares for guards, handle navigation stacks, deep linking, route observers, and advanced patterns for scalable Flutter apps.",
+    "keywords": [
+      "GetX route management",
+      "GetX routing",
+      "GetX middlewares",
+      "route guards",
+      "navigation stack",
+      "deep linking",
+      "GetX route observer",
+      "Flutter GetX navigation",
+      "GetX route patterns"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction to Route Management in GetX"
+    },
+    {
+      "type": "text",
+      "value": "Route management goes beyond simple navigation. It involves organizing routes, controlling access with guards, handling complex navigation flows, managing the navigation stack, and supporting deep linking. GetX provides a comprehensive set of tools to handle all these aspects elegantly, without the need for context or boilerplate."
+    },
+    {
+      "type": "heading",
+      "value": "1. Organizing Routes with Constants"
+    },
+    {
+      "type": "text",
+      "value": "For large apps, hardcoding route strings is error-prone. Define all route names in a dedicated class or enum to keep them maintainable and avoid typos."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// routes/app_routes.dart\nclass AppRoutes {\n  static const String splash = '/';\n  static const String home = '/home';\n  static const String profile = '/profile';\n  static const String settings = '/settings';\n  static const String details = '/details/:id';\n}\n\n// In your app\nGetMaterialApp(\n  getPages: [\n    GetPage(name: AppRoutes.splash, page: () => SplashPage()),\n    GetPage(name: AppRoutes.home, page: () => HomePage()),\n    GetPage(name: AppRoutes.profile, page: () => ProfilePage()),\n    GetPage(name: AppRoutes.settings, page: () => SettingsPage()),\n    GetPage(name: AppRoutes.details, page: () => DetailsPage()),\n  ],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "2. Route Guards with Middlewares"
+    },
+    {
+      "type": "text",
+      "value": "Middlewares intercept navigation before the route is built. You can use them for authentication checks, logging, analytics, or redirects. They are defined per route and executed in order."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthMiddleware extends GetMiddleware {\n  @override\n  RouteSettings? redirect(String? route) {\n    final authController = Get.find<AuthController>();\n    if (!authController.isLoggedIn && route != AppRoutes.login) {\n      return RouteSettings(name: AppRoutes.login);\n    }\n    return null;\n  }\n\n  @override\n  List<GetPage> onPageCalled(GetPage page) {\n    // Called when the page is about to be built\n    print('Navigating to ${page.name}');\n    return [page];\n  }\n}\n\nGetPage(\n  name: AppRoutes.home,\n  page: () => HomePage(),\n  middlewares: [AuthMiddleware()],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "3. Global Middlewares & Priority"
+    },
+    {
+      "type": "text",
+      "value": "You can also register a global middleware that runs for all routes. Use the `priority` property to control execution order (lower priority runs first)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoggingMiddleware extends GetMiddleware {\n  @override\n  int? get priority => 0; // runs first\n\n  @override\n  RouteSettings? redirect(String? route) {\n    print('Navigating to: $route');\n    return null;\n  }\n}\n\nGetMaterialApp(\n  getPages: [...],\n  defaultTransition: Transition.fade,\n  routingCallback: (routing) {\n    // Alternative: global callback for every navigation\n    print('Global routing: ${routing?.current}');\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "4. Handling Navigation Stack"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides methods to manipulate the navigation stack precisely."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Remove the current route and go to a new one\nGet.offNamed(AppRoutes.home);\n\n// Clear all routes and push new one\nGet.offAllNamed(AppRoutes.home);\n\n// Pop until a specific route\nGet.until((route) => route.settings.name == AppRoutes.home);\n\n// Remove a route by predicate\nGet.removeRoute((route) => route.settings.name == AppRoutes.settings);\n\n// Get the current route\nString currentRoute = Get.currentRoute;\n\n// Check if a route is present\nbool hasRoute = Get.routeTree.contains(AppRoutes.profile);"
+    },
+    {
+      "type": "heading",
+      "value": "5. Deep Linking"
+    },
+    {
+      "type": "text",
+      "value": "GetX supports deep linking out of the box. Configure your app to handle URLs by setting `initialRoute` and `getPages`. Use `Get.parameters` to capture dynamic segments."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In AndroidManifest.xml or Info.plist, define your scheme\n// For example: myapp://product/123\n\nGetMaterialApp(\n  initialRoute: '/',\n  getPages: [\n    GetPage(name: '/', page: () => HomePage()),\n    GetPage(name: '/product/:id', page: () => ProductPage()),\n  ],\n  // Optional: handle initial deep link\n  onGenerateRoute: (settings) {\n    if (settings.name?.startsWith('/product') ?? false) {\n      // custom handling\n    }\n    return null;\n  },\n);\n\n// In ProductPage\nfinal productId = Get.parameters['id'];"
+    },
+    {
+      "type": "heading",
+      "value": "6. Route Observers"
+    },
+    {
+      "type": "text",
+      "value": "Attach a `RouteObserver` to listen to route events. This is useful for analytics, screen tracking, or managing focus."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final routeObserver = Get.routeObserver;\n\nclass MyRouteObserver extends RouteObserver<PageRoute> {\n  @override\n  void didPush(Route route, Route? previousRoute) {\n    print('Pushed: ${route.settings.name}');\n  }\n\n  @override\n  void didPop(Route route, Route? previousRoute) {\n    print('Popped: ${route.settings.name}');\n  }\n}\n\n// Register globally\nGetMaterialApp(\n  navigatorObservers: [MyRouteObserver()],\n  // ...\n);"
+    },
+    {
+      "type": "heading",
+      "value": "7. Route Transitions"
+    },
+    {
+      "type": "text",
+      "value": "Define custom transitions per route or globally. GetX offers a variety of built‑in transitions and you can also create your own."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Per route\nGetPage(\n  name: '/details',\n  page: () => DetailsPage(),\n  transition: Transition.cupertino,\n  transitionDuration: Duration(milliseconds: 400),\n  curve: Curves.easeInOut,\n);\n\n// Global default\ngetPages: [...],\ndefaultTransition: Transition.fade,\n\n// Custom transition\nGetPage(\n  name: '/custom',\n  page: () => CustomPage(),\n  customTransition: (context, animation, secondaryAnimation, child) {\n    return FadeTransition(opacity: animation, child: child);\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "8. Nested Navigation"
+    },
+    {
+      "type": "text",
+      "value": "For tab bars or inner navigators, use nested navigation. Each nested navigator has its own `id` and you can target navigation to a specific one."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final nestedKey = GlobalKey<NavigatorState>();\n\nScaffold(\n  body: Navigator(\n    key: nestedKey,\n    initialRoute: '/tab1',\n    onGenerateRoute: (settings) => GetPageRoute(\n      page: () => Tab1Page(),\n      settings: settings,\n    ),\n  ),\n  bottomNavigationBar: ...,\n);\n\n// Navigate inside this nested navigator\nGet.toNamed('/tab2', id: 1); // id = 1 corresponds to the nested navigator\n\n// Or use the key directly\nnestedKey.currentState?.pushNamed('/tab2');"
+    },
+    {
+      "type": "heading",
+      "value": "9. Preventing Duplicate Navigation"
+    },
+    {
+      "type": "text",
+      "value": "Avoid pushing the same route multiple times by using `preventDuplicates: true`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.toNamed(AppRoutes.details, preventDuplicates: true);\n\n// Or set globally\nGetMaterialApp(\n  defaultPreventDuplicates: true,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "10. Route Parameters and Query Strings"
+    },
+    {
+      "type": "text",
+      "value": "Besides dynamic segments, you can pass query parameters. GetX parses them automatically into `Get.parameters`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Navigate with query string\nGet.toNamed('/search?q=flutter&page=1');\n\n// In the SearchPage\nfinal query = Get.parameters['q']; // 'flutter'\nfinal page = Get.parameters['page']; // '1'\n\n// You can also combine dynamic and query\nGet.toNamed('/user/123?tab=profile');\nfinal userId = Get.parameters['id']; // '123'\nfinal tab = Get.parameters['tab']; // 'profile'"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use route constants** – Avoid string literals across the codebase.",
+        "**Centralize route definitions** – Keep all `GetPage` objects in a single file for easy maintenance.",
+        "**Implement authentication middlewares** – Protect sensitive routes.",
+        "**Add a 404 page** – Handle unknown routes gracefully with `unknownRoute`.",
+        "**Use `preventDuplicates`** – Avoid accidental double navigation.",
+        "**Lazy load routes with bindings** – Improve startup performance.",
+        "**Test route behavior** – Use `Get.reset()` in tests to clear the route tree."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `Get.to` inside a `build` method** – Can cause multiple navigations.\n✅ Use it inside callbacks like `onPressed`.",
+        "❌ **Hardcoding route names** – Prone to errors when refactoring.\n✅ Use constants.",
+        "❌ **Not handling null in `Get.parameters` or `Get.arguments`** – Causes crashes.\n✅ Always provide a default or check for null.",
+        "❌ **Forgetting `GetMaterialApp`** – Navigation methods will not work.\n✅ Always use `GetMaterialApp`.",
+        "❌ **Overusing `Get.offAllNamed`** – May break the expected back stack.\n✅ Use it only when you truly need to clear history."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I use `Get.offAllNamed` while keeping some routes?**  \nA: No, it clears everything. Use `Get.until` with a predicate to keep specific routes.",
+        "**Q: How do I pass data back from a route?**  \nA: Use `await Get.toNamed(...)` and then `Get.back(result: data)` in the destination.",
+        "**Q: Can I have multiple middlewares for one route?**  \nA: Yes, they are executed in the order of priority (lower priority first).",
+        "**Q: How do I navigate without animation?**  \nA: Set `transition: Transition.noTransition` in `GetPage` or use `Get.offAllNamed(..., transition: Transition.noTransition)`.",
+        "**Q: How to handle deep links with parameters?**  \nA: Use dynamic segments (e.g., `/product/:id`). GetX extracts them into `Get.parameters`.",
+        "**Q: How to get the current route stack?**  \nA: Use `Get.routeTree` to inspect the current route tree."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Effective route management is essential for building scalable Flutter applications. GetX provides a rich set of tools: organized route definitions, powerful middlewares, stack manipulation, deep linking, and nested navigation. By adopting these patterns, you can create maintainable and user-friendly navigation flows."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'Route Management Demo',\n      initialRoute: '/',\n      getPages: [\n        GetPage(name: '/', page: () => HomePage()),\n        GetPage(name: '/protected', page: () => ProtectedPage(), middlewares: [AuthMiddleware()]),\n        GetPage(name: '/login', page: () => LoginPage()),\n        GetPage(name: '/details/:id', page: () => DetailsPage()),\n      ],\n      unknownRoute: GetPage(name: '/404', page: () => NotFoundPage()),\n      defaultTransition: Transition.fade,\n    );\n  }\n}\n\n// Simple auth controller\nclass AuthController extends GetxController {\n  var isLoggedIn = false.obs;\n  void login() => isLoggedIn.value = true;\n  void logout() => isLoggedIn.value = false;\n}\n\n// Middleware to protect routes\nclass AuthMiddleware extends GetMiddleware {\n  @override\n  RouteSettings? redirect(String? route) {\n    final auth = Get.find<AuthController>();\n    if (!auth.isLoggedIn.value) {\n      Get.snackbar('Access Denied', 'Please login first');\n      return RouteSettings(name: '/login');\n    }\n    return null;\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  final auth = Get.put(AuthController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Route Management')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() => Text('Logged in: ${auth.isLoggedIn.value}')),\n            SizedBox(height: 10),\n            ElevatedButton(\n              onPressed: () => auth.login(),\n              child: Text('Login'),\n            ),\n            ElevatedButton(\n              onPressed: () => auth.logout(),\n              child: Text('Logout'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/protected'),\n              child: Text('Go to Protected Page'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/details/123'),\n              child: Text('Go to Details (ID: 123)'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/invalid'),\n              child: Text('Go to Invalid (404)'),\n            ),\n            SizedBox(height: 20),\n            Text('Current route: ${Get.currentRoute}'),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass LoginPage extends StatelessWidget {\n  final auth = Get.find<AuthController>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: Center(\n        child: ElevatedButton(\n          onPressed: () {\n            auth.login();\n            Get.offAllNamed('/'); // Go back to home\n          },\n          child: Text('Login'),\n        ),\n      ),\n    );\n  }\n}\n\nclass ProtectedPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Protected')),\n      body: Center(\n        child: Text('You have access to this protected page'),\n      ),\n    );\n  }\n}\n\nclass DetailsPage extends StatelessWidget {\n  final id = Get.parameters['id'];\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Details')),\n      body: Center(\n        child: Text('Showing details for ID: $id'),\n      ),\n    );\n  }\n}\n\nclass NotFoundPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('404')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Page not found'),\n            ElevatedButton(\n              onPressed: () => Get.offAllNamed('/'),\n              child: Text('Go Home'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the recommended way to avoid typos in route names?",
+      "options": [
+        "Use comments",
+        "Define route names as constants in a class",
+        "Use string literals everywhere",
+        "Let the compiler guess"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which GetX class is used to create route guards?",
+      "options": ["RouteGuard", "GetGuard", "GetMiddleware", "RouteMiddleware"],
+      "answer": 2
+    },
+    {
+      "question": "How do you access dynamic path segments like ':id' from a named route?",
+      "options": ["Get.arguments", "Get.params", "Get.parameters", "Get.data"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-navigation",
+    "getx-named-routes",
+    "getx-bindings",
+    "getx-middleware"
+  ]
+}

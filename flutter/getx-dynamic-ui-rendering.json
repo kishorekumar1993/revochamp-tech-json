@@ -1,0 +1,202 @@
+{
+  "slug": "getx-dynamic-ui-rendering",
+  "course": "Flutter",
+  "title": "GetX Dynamic UI Rendering: Reactive, Conditional & Animated Widgets",
+  "meta": {
+    "title": "GetX Dynamic UI Rendering – Reactive & Conditional Widgets in Flutter",
+    "description": "Learn how to build dynamic UIs with GetX: conditional visibility, reactive lists, state-driven widgets, animations, and performance optimization.",
+    "keywords": [
+      "GetX dynamic UI",
+      "reactive UI Flutter",
+      "GetX conditional rendering",
+      "dynamic list GetX",
+      "GetX animations",
+      "obx dynamic widget",
+      "Flutter dynamic UI"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Dynamic UI rendering is the ability to change what the user sees based on application state. With GetX, you can build highly interactive UIs where widgets appear, disappear, or change their content reactively – all with minimal code. This guide covers the most common patterns: conditional visibility, reactive lists, state‑driven widget switching, and combining animations with GetX's reactive state."
+    },
+    {
+      "type": "heading",
+      "value": "1. Conditional Visibility with Obx"
+    },
+    {
+      "type": "text",
+      "value": "The simplest form of dynamic UI is showing or hiding widgets based on a boolean reactive variable. Use `Obx` to wrap the widget you want to show/hide, and the UI will update automatically when the boolean changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  var isVisible = true.obs;\n\n  void toggle() => isVisible.toggle();\n}\n\n// In UI\nObx(() => controller.isVisible.value\n    ? Text('Visible')\n    : SizedBox.shrink()  // or an empty container\n);\n\n// Or using Offstage\nObx(() => Offstage(\n  offstage: !controller.isVisible.value,\n  child: Text('Visible'),\n));"
+    },
+    {
+      "type": "heading",
+      "value": "2. Dynamic Lists"
+    },
+    {
+      "type": "text",
+      "value": "Reactive lists (`RxList`) automatically update the UI when items are added, removed, or modified. Use `Obx` with a `ListView.builder` to render dynamic collections efficiently."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TodoController extends GetxController {\n  var todos = <String>[].obs;\n\n  void addTodo(String text) => todos.add(text);\n  void removeTodo(int index) => todos.removeAt(index);\n}\n\n// UI\nObx(() => ListView.builder(\n  itemCount: controller.todos.length,\n  itemBuilder: (_, i) => ListTile(\n    title: Text(controller.todos[i]),\n    trailing: IconButton(\n      icon: Icon(Icons.delete),\n      onPressed: () => controller.removeTodo(i),\n    ),\n  ),\n));"
+    },
+    {
+      "type": "heading",
+      "value": "3. State‑Driven Widget Switching"
+    },
+    {
+      "type": "text",
+      "value": "Often you need to display different widgets based on loading, error, or success states. You can handle this with `Obx` and conditionals, or use the built‑in `StateMixin` for a cleaner pattern."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DataController extends GetxController with StateMixin<String> {\n  @override\n  void onInit() {\n    super.onInit();\n    fetchData();\n  }\n\n  Future<void> fetchData() async {\n    change(null, status: RxStatus.loading());\n    try {\n      await Future.delayed(Duration(seconds: 2));\n      change('Hello, World!', status: RxStatus.success());\n    } catch (e) {\n      change(null, status: RxStatus.error(e.toString()));\n    }\n  }\n}\n\n// UI\ncontroller.obx(\n  (data) => Text(data!),\n  onLoading: CircularProgressIndicator(),\n  onError: (error) => Text('Error: $error'),\n  onEmpty: Text('No data'),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "4. Reactive Form Fields"
+    },
+    {
+      "type": "text",
+      "value": "Form fields can be made dynamic by binding their value to a reactive variable. The UI will update as the user types or as you programmatically change the variable."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FormController extends GetxController {\n  var name = ''.obs;\n  var greeting = ''.obs;\n\n  void updateGreeting() {\n    greeting.value = 'Hello, ${name.value}';\n  }\n}\n\n// UI\nTextField(\n  onChanged: (value) => controller.name.value = value,\n  decoration: InputDecoration(labelText: 'Name'),\n),\nObx(() => Text(controller.greeting.value)),\nElevatedButton(\n  onPressed: controller.updateGreeting,\n  child: Text('Say Hello'),\n)"
+    },
+    {
+      "type": "heading",
+      "value": "5. Animated UI with GetX"
+    },
+    {
+      "type": "text",
+      "value": "GetX works seamlessly with Flutter's built‑in animations. You can trigger animations by changing a reactive variable and using `AnimatedBuilder` or implicit animations like `AnimatedContainer`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AnimatedController extends GetxController {\n  var isExpanded = false.obs;\n  void toggle() => isExpanded.toggle();\n}\n\n// UI\nObx(() => AnimatedContainer(\n  duration: Duration(milliseconds: 300),\n  height: controller.isExpanded.value ? 200 : 100,\n  width: controller.isExpanded.value ? 200 : 100,\n  color: Colors.blue,\n  child: Center(child: Text('Click me')),\n));\n\nElevatedButton(\n  onPressed: controller.toggle,\n  child: Text('Animate'),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "6. Conditional Widgets Based on Multiple States"
+    },
+    {
+      "type": "text",
+      "value": "When you have more than two possible states, you can use `switch` or `if-else` inside the `Obx` builder. For complex logic, consider computing a widget in a getter."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ThemeController extends GetxController {\n  var theme = 'light'.obs;\n\n  Widget get themeWidget {\n    switch(theme.value) {\n      case 'light': return Icon(Icons.wb_sunny, color: Colors.yellow);\n      case 'dark': return Icon(Icons.nightlight_round, color: Colors.grey);\n      default: return Icon(Icons.device_unknown);\n    }\n  }\n}\n\n// UI\nObx(() => controller.themeWidget);\nElevatedButton(\n  onPressed: () => controller.theme.value = 'dark',\n  child: Text('Dark'),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "7. Performance Tips"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep `Obx` granular** – Wrap only the part that changes, not the whole screen.",
+        "**Use `assignAll` for lists** – Replacing an entire list with `list.value = newList` may not trigger UI updates correctly; use `assignAll` instead.",
+        "**Avoid heavy computations inside `Obx`** – Move logic to getters or computed values.",
+        "**Use `GetX` widget for complex builders** – It isolates rebuilds and can accept a controller instance.",
+        "**Don't use `Obx` around expensive widgets that rarely change** – Use `GetBuilder` with manual `update()` for better control."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep state in controllers** – UI should only react to state, not manage it.",
+        "**Use `StateMixin` for loading/error/success** – Reduces boilerplate.",
+        "**Test dynamic UI changes** – Simulate state changes and verify that the correct widgets appear.",
+        "**Provide feedback for empty states** – Show a message when a list is empty.",
+        "**Use `Obx` sparingly on large trees** – Granularity improves performance."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Placing `Obx` too high** – Rebuilds too much of the tree.\n✅ Move `Obx` inside the widget where the reactive variable is used.",
+        "❌ **Not using `assignAll` for lists** – UI may not update.\n✅ Always use `assignAll` to replace list contents.",
+        "❌ **Mutating reactive variables inside `Obx`** – Can cause infinite loops.\n✅ Never modify reactive state inside the `Obx` builder; do it in callbacks.",
+        "❌ **Forgetting to wrap widgets with `Obx`** – UI doesn't react to changes.\n✅ Always wrap dynamic parts with `Obx` or `GetX`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: How do I update only a part of a list item without rebuilding the whole list?**  \nA: If each item has its own reactive state, you can wrap the specific widget inside the item with `Obx`. Or use `GetBuilder` with IDs.",
+        "**Q: Can I animate a widget when its reactive variable changes?**  \nA: Yes, combine `Obx` with an `AnimatedWidget` or implicit animation widgets like `AnimatedContainer`, `AnimatedOpacity`, etc.",
+        "**Q: How do I conditionally show a different layout (e.g., login vs home) without rebuilding everything?**  \nA: You can have a root `Obx` that switches between two `Scaffold` widgets based on `isLoggedIn`. The previous tree is replaced, but that's acceptable.",
+        "**Q: How do I prevent flickering when the list updates?**  \nA: Use `ListView.builder` with a key if needed, but the default behavior should be smooth. Large updates may cause a slight rebuild; consider using `animateItem` if needed.",
+        "**Q: What's the difference between `Obx` and `GetBuilder` for dynamic UI?**  \nA: `Obx` automatically rebuilds when any observed reactive variable changes. `GetBuilder` rebuilds only when you call `update()`. Use `Obx` for most dynamic UI; use `GetBuilder` for performance-critical areas where you want to control rebuilds manually."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Dynamic UI rendering is at the heart of reactive Flutter apps. GetX makes it straightforward: use reactive variables, `Obx`, and `StateMixin` to build UIs that respond instantly to state changes. By following the patterns and performance tips in this guide, you can create fluid, interactive experiences with minimal code."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: DynamicUIDemo(),\n    );\n  }\n}\n\nclass DynamicController extends GetxController {\n  var isVisible = true.obs;\n  var items = <String>[].obs;\n  var text = ''.obs;\n\n  void toggle() => isVisible.toggle();\n  void addItem() => items.add('Item ${items.length + 1}');\n  void updateText(String value) => text.value = value;\n}\n\nclass DynamicUIDemo extends StatelessWidget {\n  final controller = Get.put(DynamicController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Dynamic UI Demo')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          children: [\n            // Conditional visibility\n            Obx(() => controller.isVisible.value\n                ? Card(child: Padding(\n                    padding: const EdgeInsets.all(16.0),\n                    child: Text('This text can be hidden'),\n                  ))\n                : const SizedBox.shrink()),\n            ElevatedButton(\n              onPressed: controller.toggle,\n              child: Obx(() => Text(controller.isVisible.value ? 'Hide' : 'Show')),\n            ),\n            const Divider(),\n            // Dynamic list\n            Row(\n              children: [\n                Expanded(\n                  child: TextField(\n                    onChanged: controller.updateText,\n                    decoration: const InputDecoration(labelText: 'Type something'),\n                  ),\n                ),\n                IconButton(\n                  icon: const Icon(Icons.add),\n                  onPressed: () {\n                    if (controller.text.value.isNotEmpty) {\n                      controller.addItem();\n                      controller.updateText('');\n                    }\n                  },\n                ),\n              ],\n            ),\n            Expanded(\n              child: Obx(() => ListView.builder(\n                itemCount: controller.items.length,\n                itemBuilder: (_, i) => ListTile(\n                  title: Text(controller.items[i]),\n                ),\n              )),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What widget should you use to make a part of the UI react to reactive variables?",
+      "options": ["Obx", "GetBuilder", "Both A and B", "StatefulWidget"],
+      "answer": 2
+    },
+    {
+      "question": "How do you replace the entire contents of an RxList?",
+      "options": ["list.value = newList", "list.assignAll(newList)", "list.clear() then list.addAll", "Both B and C"],
+      "answer": 3
+    },
+    {
+      "question": "What is the main benefit of keeping `Obx` as granular as possible?",
+      "options": [
+        "Better performance (fewer rebuilds)",
+        "Easier to read code",
+        "Automatic error handling",
+        "It's required by GetX"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-reactive-state",
+    "getx-rebuild-optimization",
+    "getx-computed-state"
+  ]
+}

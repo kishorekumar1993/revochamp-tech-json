@@ -1,0 +1,232 @@
+{
+  "slug": "getx-rx-types",
+  "course": "Flutter",
+  "title": "GetX Rx Types: RxInt, RxString, RxList, RxMap & More",
+  "meta": {
+    "title": "GetX Rx Types – Complete Guide to Reactive Variables",
+    "description": "Deep dive into GetX Rx types: RxInt, RxString, RxBool, RxList, RxMap, RxSet, and Rx<T>. Learn how to use .obs, value, assign, assignAll, refresh, and workers for powerful reactive state management.",
+    "keywords": [
+      "GetX Rx types",
+      "RxInt",
+      "RxString",
+      "RxList",
+      "RxMap",
+      "RxSet",
+      "GetX .obs",
+      "reactive variables",
+      "GetX state management"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Rx Types in GetX?"
+    },
+    {
+      "type": "text",
+      "value": "Rx types are the building blocks of reactive state management in GetX. They are observable variables that notify the UI whenever their value changes. GetX provides specialized Rx classes for primitive types, collections, and any custom type through the generic `Rx<T>`."
+    },
+    {
+      "type": "heading",
+      "value": "1. Primitive Rx Types"
+    },
+    {
+      "type": "text",
+      "value": "GetX offers dedicated Rx types for common primitive types, each with optimized performance and helpful methods."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  RxInt count = 0.obs;\n  RxDouble price = 19.99.obs;\n  RxString name = 'John'.obs;\n  RxBool isLogged = false.obs;\n\n  void updateValues() {\n    count.value = 10;\n    price.value = 24.99;\n    name.value = 'Jane';\n    isLogged.value = true;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Collection Rx Types"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides reactive collections that automatically notify UI when items are added, removed, or modified."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  RxList<String> items = <String>[].obs;\n  RxMap<String, dynamic> userData = <String, dynamic>{}.obs;\n  RxSet<int> uniqueIds = <int>{}.obs;\n\n  void manipulateCollections() {\n    items.add('New Item');\n    items.removeAt(0);\n    items.assign(['a', 'b', 'c']); // replace entire list\n\n    userData['name'] = 'Alice';\n    userData.remove('age');\n\n    uniqueIds.add(123);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Generic Rx Type (Rx<T>)"
+    },
+    {
+      "type": "text",
+      "value": "For custom classes, use the generic `Rx<T>` type. This allows you to make any object reactive."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class User {\n  String name;\n  int age;\n  User(this.name, this.age);\n}\n\nclass MyController extends GetxController {\n  Rx<User> user = User('Alice', 30).obs;\n\n  void updateUser() {\n    // Update the whole object\n    user.value = User('Bob', 25);\n    // Or modify properties and refresh\n    user.update((user) {\n      user?.name = 'Charlie';\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Accessing and Modifying Values"
+    },
+    {
+      "type": "text",
+      "value": "Each Rx type has a `.value` getter/setter to access or change the underlying value. For collections, you can also use collection methods directly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Primitive types\nfinal count = 0.obs;\ncount.value++;  // increment\ncount.value = 10; // set\n\n// Collections\nfinal items = <String>[].obs;\nitems.add('apple');  // triggers UI update\nitems.addAll(['banana', 'orange']);\nitems.remove('apple');\nitems[0] = 'grape';  // also triggers update\n\n// Custom types\nfinal user = User('Alice', 30).obs;\nuser.value.name = 'Bob'; // modifies property but DOES NOT trigger update\nuser.refresh(); // manually trigger UI update\nuser.update((u) => u?.name = 'Bob'); // update triggers automatically"
+    },
+    {
+      "type": "heading",
+      "value": "5. Useful Rx Methods"
+    },
+    {
+      "type": "text",
+      "value": "Rx types come with built-in methods to simplify common operations."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`value`** – Get or set the current value.",
+        "**`refresh()`** – Manually notify listeners (useful after modifying nested properties).",
+        "**`assign(T value)`** – Replace the entire value (works for all Rx types).",
+        "**`assignAll(Iterable<T> iterable)`** – Replace collection contents with another iterable (for RxList/RxSet).",
+        "**`update(void Function(T) fn)`** – Modify the value inside a callback and automatically notify listeners.",
+        "**`bindStream(Stream<T> stream)`** – Bind an Rx variable to a stream, updating automatically when stream emits.",
+        "**`call()`** – Shortcut for `.value` (e.g., `count()` instead of `count.value`)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "6. Working with Streams"
+    },
+    {
+      "type": "text",
+      "value": "Rx types can be easily connected to streams, making them perfect for real-time data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final counter = 0.obs;\nfinal stream = Stream.periodic(Duration(seconds: 1), (i) => i);\ncounter.bindStream(stream);\n\n// Now counter will automatically update every second"
+    },
+    {
+      "type": "heading",
+      "value": "7. Rx Types with Workers"
+    },
+    {
+      "type": "text",
+      "value": "Workers can listen to Rx variables to react to changes, log, or trigger side effects."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  var count = 0.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(count, (_) => print('Count changed to $count'));\n    debounce(count, (_) => print('User stopped incrementing'), time: Duration(seconds: 1));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "8. Converting Rx to Non-Rx"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to access the raw value without reactivity. Use `.value` to get the underlying value."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final name = 'John'.obs;\nString rawName = name.value;\n\nfinal items = <String>[].obs;\nList<String> rawList = items.toList(); // or items.value"
+    },
+    {
+      "type": "heading",
+      "value": "9. Performance Tips"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use primitive Rx types** for simple values – they're lightweight.",
+        "**Avoid large objects in Rx** – break them into smaller reactive pieces if possible.",
+        "**Use `update` for nested modifications** – it's cleaner and ensures notifications.",
+        "**Batch modifications** – when updating a collection with many changes, consider using `assign` or `assignAll` instead of multiple add/remove calls.",
+        "**Use `refresh()` sparingly** – prefer `update` or direct value assignment to maintain automatic notifications."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "10. Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Modifying nested properties without refreshing** – UI doesn't update.\n✅ Use `update` method or call `refresh()` after modification.",
+        "❌ **Using `.obs` inside build method** – Creates new reactive variables on each rebuild.\n✅ Declare Rx variables in controllers only.",
+        "❌ **Assigning a new list without triggering update** – `items = newList` won't work because items is a getter; use `items.value = newList` or `items.assignAll(newList)`.",
+        "❌ **Not using `.value` when needed** – `print(count)` might print the RxInt wrapper, not the number. Use `print(count.value)`.",
+        "❌ **Comparing Rx values with `==`** – `if (count == 0)` might not work as expected. Compare using `count.value == 0`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: What's the difference between `RxInt` and `int.obs`?**  \nA: `int.obs` is syntactic sugar that returns an `RxInt`. They are functionally identical.",
+        "**Q: Can I use `RxList` with custom objects?**  \nA: Yes, `RxList<User>` works perfectly. Ensure your objects are immutable or you call `refresh()` after modifying them.",
+        "**Q: How do I make a primitive reactive without `.obs`?**  \nA: You can use `RxInt(0)`, `RxString('')`, etc., but `.obs` is the recommended concise syntax.",
+        "**Q: Why doesn't my UI update when I change a property of a custom object?**  \nA: Because the Rx variable is observing the object reference, not its properties. Use `update` or reassign the whole object.",
+        "**Q: What is the `call()` method?**  \nA: It's a shorthand for `.value`. For example, `count()` returns the current value. This is useful in Obx where you can write `Text('${controller.count()}')`.",
+        "**Q: Can I use `Rx` with enums?**  \nA: Yes, `Rx<MyEnum>(MyEnum.value1)` works perfectly.",
+        "**Q: How do I dispose of Rx variables?**  \nA: They are automatically disposed when the controller is disposed. You don't need to manually clean them up.",
+        "**Q: Can I use Rx types outside of GetX controllers?**  \nA: Yes, you can, but then you lose automatic lifecycle management. It's better to keep them inside controllers."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Rx types are the heart of GetX's reactive system. By mastering RxInt, RxString, RxList, RxMap, and the generic Rx<T>, you can build highly responsive Flutter applications. Combine them with workers and best practices for a clean, scalable architecture."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: RxTypesDemo(),\n    );\n  }\n}\n\nclass User {\n  String name;\n  int age;\n  User(this.name, this.age);\n}\n\nclass RxDemoController extends GetxController {\n  // Primitive Rx types\n  var count = 0.obs;\n  var name = 'GetX'.obs;\n\n  // Collection Rx types\n  var items = <String>[].obs;\n\n  // Custom type\n  var user = User('Alice', 30).obs;\n\n  void increment() => count++;\n  void changeName() => name.value = 'Flutter';\n  void addItem() => items.add('Item ${items.length + 1}');\n  void updateUserAge() {\n    user.update((u) => u?.age++);\n  }\n}\n\nclass RxTypesDemo extends StatelessWidget {\n  final controller = Get.put(RxDemoController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Rx Types Demo')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          crossAxisAlignment: CrossAxisAlignment.start,\n          children: [\n            Text('RxInt', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),\n            Obx(() => Text('Count: ${controller.count}', style: TextStyle(fontSize: 24))),\n            ElevatedButton(onPressed: controller.increment, child: Text('Increment')),\n            SizedBox(height: 16),\n            Text('RxString', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),\n            Obx(() => Text('Name: ${controller.name}', style: TextStyle(fontSize: 24))),\n            ElevatedButton(onPressed: controller.changeName, child: Text('Change Name')),\n            SizedBox(height: 16),\n            Text('RxList', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),\n            Obx(() => Column(\n              children: [\n                ...controller.items.map((item) => Text('- $item')),\n                if (controller.items.isEmpty) Text('No items yet'),\n              ],\n            )),\n            ElevatedButton(onPressed: controller.addItem, child: Text('Add Item')),\n            SizedBox(height: 16),\n            Text('Rx<User>', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),\n            Obx(() => Text('User: ${controller.user.value.name}, Age: ${controller.user.value.age}')),\n            ElevatedButton(onPressed: controller.updateUserAge, child: Text('Increment Age')),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you make an integer reactive in GetX?",
+      "options": [
+        "int.obs",
+        "RxInt(0)",
+        "Both of the above",
+        "None of the above"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What method should you use to modify a nested property of a custom object and automatically notify the UI?",
+      "options": ["refresh()", "update()", "assign()", "value()"],
+      "answer": 1
+    },
+    {
+      "question": "Which of the following correctly replaces the contents of an RxList?",
+      "options": [
+        "items = ['a', 'b'];",
+        "items.value = ['a', 'b'];",
+        "items.assignAll(['a', 'b']);",
+        "Both B and C"
+      ],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-reactive-state",
+    "getx-dependency-injection",
+    "flutter-getx-workers"
+  ]
+}

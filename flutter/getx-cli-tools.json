@@ -1,0 +1,276 @@
+{
+  "slug": "getx-cli-tools",
+  "course": "Flutter",
+  "title": "GetX CLI: Supercharge Your Flutter Development",
+  "meta": {
+    "title": "GetX CLI – Code Generation & Project Scaffolding",
+    "description": "Learn how to use the GetX CLI to generate controllers, views, bindings, and pages automatically. Speed up your Flutter development with code generation.",
+    "keywords": [
+      "GetX CLI",
+      "GetX code generation",
+      "flutter getx cli",
+      "getx scaffold",
+      "get generate",
+      "GetX command line"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the GetX CLI?"
+    },
+    {
+      "type": "text",
+      "value": "The GetX CLI is a command‑line tool that automates the creation of common GetX files: controllers, views, bindings, and full pages. It follows the modular structure recommended by GetX, saving you time and enforcing consistency. By using the CLI, you can generate boilerplate code with a single command, keeping your development workflow fast and organized."
+    },
+    {
+      "type": "heading",
+      "value": "Installation"
+    },
+    {
+      "type": "text",
+      "value": "The GetX CLI is a Dart package that you can install globally. Run the following command in your terminal:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "dart pub global activate get_cli"
+    },
+    {
+      "type": "text",
+      "value": "After activation, you may need to add the global Dart bin to your PATH. The CLI will show instructions. You can verify the installation with:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "get --version"
+    },
+    {
+      "type": "heading",
+      "value": "Creating a New Project"
+    },
+    {
+      "type": "text",
+      "value": "The CLI can create a new Flutter project already set up with GetX and a recommended folder structure. Navigate to the directory where you want your project and run:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "get create project:my_app"
+    },
+    {
+      "type": "text",
+      "value": "This creates a new Flutter project named `my_app` with GetX dependencies, an initial binding, and a home module. You can also create a project without a module using `get create project:my_app --no-module`."
+    },
+    {
+      "type": "heading",
+      "value": "Generating Modules"
+    },
+    {
+      "type": "text",
+      "value": "The core concept of GetX CLI is the **module**. A module is a self‑contained feature that includes its own controller, view, binding, and optionally model. To generate a new module, run:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "get create page:product"
+    },
+    {
+      "type": "text",
+      "value": "This creates a folder `product` inside `lib/app/modules/` with:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "`product_controller.dart`",
+        "`product_page.dart` (the view)",
+        "`product_binding.dart`"
+      ]
+    },
+    {
+      "type": "text",
+      "value": "The CLI also automatically registers the module in `app_routes.dart` and `app_pages.dart`."
+    },
+    {
+      "type": "heading",
+      "value": "Generating Individual Components"
+    },
+    {
+      "type": "text",
+      "value": "You can generate individual files without creating a full module:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "get create controller:user\nget create view:profile\nget create binding:settings\nget create model:product"
+    },
+    {
+      "type": "text",
+      "value": "Each command creates the corresponding file in the appropriate directory (e.g., `lib/app/controllers/user_controller.dart`)."
+    },
+    {
+      "type": "heading",
+      "value": "Generating a Full Page with All Components"
+    },
+    {
+      "type": "text",
+      "value": "For a complete screen, use the `page` command. It creates the controller, view, binding, and updates the route files automatically. You can also pass options to create a model or a service."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "get create page:checkout --model=order --service=payment"
+    },
+    {
+      "type": "heading",
+      "value": "Generating Services"
+    },
+    {
+      "type": "text",
+      "value": "Services (extending `GetxService`) can be generated with:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "get create service:auth\n\n# Or with custom location\nget create service:logger --path=lib/services"
+    },
+    {
+      "type": "heading",
+      "value": "Generating Providers / Repositories"
+    },
+    {
+      "type": "text",
+      "value": "For data layers, you can generate providers (e.g., API clients) and repositories:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "get create provider:user_api\nget create repository:user_repository"
+    },
+    {
+      "type": "heading",
+      "value": "Customizing the Structure"
+    },
+    {
+      "type": "text",
+      "value": "The CLI uses templates stored in the `get_cli` package. You can override them by creating a `.get_cli` folder in your project root and placing custom templates there. This allows you to tailor the generated files to your own coding style."
+    },
+    {
+      "type": "heading",
+      "value": "Updating Routes Automatically"
+    },
+    {
+      "type": "text",
+      "value": "When you generate a page with `get create page`, the CLI adds the route to `app_pages.dart` and `app_routes.dart` automatically. You can also manually update routes with:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "get update pages"
+    },
+    {
+      "type": "heading",
+      "value": "Getting Help"
+    },
+    {
+      "type": "text",
+      "value": "To see all available commands, run:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "get --help"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use modules for each feature** – Keep related files together.",
+        "**Use the CLI to enforce consistency** – Everyone on the team follows the same structure.",
+        "**Customize templates** – Adapt the generated code to your project's conventions.",
+        "**Commit generated files** – The generated code is part of your source control; don't ignore it.",
+        "**Run `get update pages` after manual route changes** – Keeps the route list consistent."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Running commands outside the project root** – The CLI needs to be in a Flutter project directory.\n✅ `cd` into your project first.",
+        "❌ **Forgetting to import generated files** – The CLI may not add imports if you generate individual components.\n✅ Manually import when needed.",
+        "❌ **Using the CLI without version control** – Generated files can be overwritten; commit changes to track them.",
+        "❌ **Over‑generating** – Not every widget needs its own module. Use the CLI for full features, not for tiny components."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Do I need to install anything else besides `get_cli`?**  \nA: No, the CLI handles everything. It adds GetX to your `pubspec.yaml` if not present.",
+        "**Q: Can I use the CLI with an existing GetX project?**  \nA: Yes, you can run `get create page:name` inside an existing project, and it will create the files in the expected folders.",
+        "**Q: Where are files generated?**  \nA: By default, inside `lib/app/`. You can change the base path with the `--path` flag.",
+        "**Q: How do I remove a generated page?**  \nA: The CLI doesn't have a delete command. You must manually delete the folder and remove the route references.",
+        "**Q: Does the CLI support generating tests?**  \nA: Not directly, but you can create custom templates to generate test files."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "The GetX CLI is a powerful tool that automates repetitive tasks and enforces a consistent architecture. By using it, you can focus on business logic instead of boilerplate, and ensure your project follows GetX best practices from the start."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "What command installs the GetX CLI globally?",
+      "options": [
+        "flutter pub add get_cli",
+        "dart pub global activate get_cli",
+        "npm install -g get_cli",
+        "pub get get_cli"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which command creates a new module with controller, view, and binding?",
+      "options": [
+        "get create module:name",
+        "get create page:name",
+        "get create feature:name",
+        "get create screen:name"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Where does the CLI place generated modules by default?",
+      "options": [
+        "lib/modules/",
+        "lib/app/modules/",
+        "lib/pages/",
+        "lib/features/"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-structure",
+    "getx-bindings",
+    "getx-controller",
+    "getx-navigation"
+  ]
+}

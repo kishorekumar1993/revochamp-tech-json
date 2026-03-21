@@ -1,0 +1,213 @@
+{
+  "slug": "getx-route-observer",
+  "course": "Flutter",
+  "title": "GetX Route Observer: Track & Intercept Navigation Events",
+  "meta": {
+    "title": "GetX Route Observer – Page Tracking & Analytics",
+    "description": "Learn how to use GetX route observers to track navigation events, implement analytics, log user behavior, and create custom observers for monitoring route changes.",
+    "keywords": [
+      "GetX route observer",
+      "GetX navigation tracking",
+      "GetX analytics",
+      "RouteObserver Flutter",
+      "GetX page tracking",
+      "GetX screen tracking",
+      "navigation logging"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Understanding how users navigate through your app is crucial for analytics, debugging, and user experience improvements. GetX provides a flexible way to observe navigation events via the built‑in `RouteObserver` and `Get.routeObserver`. You can track when a route is pushed, popped, or replaced, and attach custom logic like logging, analytics events, or even conditional redirects. This guide covers how to implement route observers in GetX and use them for page tracking, logging, and more."
+    },
+    {
+      "type": "heading",
+      "value": "1. What is RouteObserver?"
+    },
+    {
+      "type": "text",
+      "value": "`RouteObserver` is a Flutter class that listens to the navigation stack. It notifies you when routes are pushed, popped, or removed. GetX exposes a global `RouteObserver` instance via `Get.routeObserver` that you can use to add your own observers or to listen to navigation events from anywhere in your app."
+    },
+    {
+      "type": "heading",
+      "value": "2. Basic Usage – Listening to Navigation"
+    },
+    {
+      "type": "text",
+      "value": "You can attach a custom `NavigatorObserver` to `GetMaterialApp`. GetX already includes a `GetObserver` that you can extend or use directly. To add your own observer, subclass `GetObserver` and override its methods."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyRouteObserver extends GetObserver {\n  @override\n  void didPush(Route route, Route? previousRoute) {\n    print('Pushed: ${route.settings.name}');\n    super.didPush(route, previousRoute);\n  }\n\n  @override\n  void didPop(Route route, Route? previousRoute) {\n    print('Popped: ${route.settings.name}');\n    super.didPop(route, previousRoute);\n  }\n\n  @override\n  void didRemove(Route route, Route? previousRoute) {\n    print('Removed: ${route.settings.name}');\n    super.didRemove(route, previousRoute);\n  }\n\n  @override\n  void didReplace({Route? newRoute, Route? oldRoute}) {\n    print('Replaced: ${oldRoute?.settings.name} -> ${newRoute?.settings.name}');\n    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);\n  }\n}\n\n// In GetMaterialApp\nGetMaterialApp(\n  navigatorObservers: [MyRouteObserver()],\n  // ...\n);"
+    },
+    {
+      "type": "heading",
+      "value": "3. Using Get.routeObserver for Global Tracking"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides a static `Get.routeObserver` that you can subscribe to. This is useful if you want to add observers without subclassing. You can add a `RouteAware` widget to listen to route events for a specific page."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In a controller or service\nGet.routeObserver.subscribe(this, ModalRoute.of(context)!);\n\n// Then implement RouteAware\nclass MyController extends GetxController implements RouteAware {\n  @override\n  void onInit() {\n    super.onInit();\n    // Subscribe in onInit or after the route is built\n  }\n\n  @override\n  void didPush() => print('Page entered');\n  @override\n  void didPop() => print('Page exited');\n  @override\n  void didPopNext() => print('Returned to this page');\n  @override\n  void didPushNext() => print('Navigated away from this page');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Implementing Page Tracking with Analytics"
+    },
+    {
+      "type": "text",
+      "value": "A common use case is sending analytics events whenever the user navigates to a new screen. You can do this by creating a custom observer that records the route name."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AnalyticsObserver extends GetObserver {\n  @override\n  void didPush(Route route, Route? previousRoute) {\n    final routeName = route.settings.name ?? 'unknown';\n    // Send to analytics service\n    Get.find<AnalyticsService>().logScreenView(routeName);\n    super.didPush(route, previousRoute);\n  }\n}\n\n// In GetMaterialApp\nGetMaterialApp(\n  navigatorObservers: [AnalyticsObserver()],\n  getPages: [...],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "5. Route Tracking with Bindings & Arguments"
+    },
+    {
+      "type": "text",
+      "value": "You can also access route arguments and parameters inside the observer. This allows you to track more details like user IDs or product IDs."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@override\nvoid didPush(Route route, Route? previousRoute) {\n  if (route is GetPageRoute) {\n    final name = route.name;\n    final arguments = route.arguments;\n    print('Pushed $name with arguments $arguments');\n  }\n  super.didPush(route, previousRoute);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. RouteObserver with GetX Controllers"
+    },
+    {
+      "type": "text",
+      "value": "You can make a controller implement `RouteAware` and subscribe to the observer. This is useful for per‑screen analytics or to react to navigation (e.g., pausing/resuming timers when the screen is not visible)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeController extends GetxController implements RouteAware {\n  @override\n  void onInit() {\n    super.onInit();\n    // Subscribe to the current route\n    Get.routeObserver.subscribe(this, Get.context!);\n  }\n\n  @override\n  void onClose() {\n    Get.routeObserver.unsubscribe(this);\n    super.onClose();\n  }\n\n  @override\n  void didPush() => debugPrint('Home page appeared');\n  @override\n  void didPop() => debugPrint('Home page disappeared');\n  @override\n  void didPushNext() => debugPrint('Navigated away from home');\n  @override\n  void didPopNext() => debugPrint('Returned to home');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Logging Navigation with Middleware"
+    },
+    {
+      "type": "text",
+      "value": "You can also use GetX middleware to log navigation. This is simpler if you only need to log when a route is about to be opened. Middleware runs before the page is built, while observers run after the transition."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoggingMiddleware extends GetMiddleware {\n  @override\n  List<GetPage> onPageCalled(GetPage page) {\n    print('Navigating to ${page.name}');\n    return [page];\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "8. Debugging Navigation Issues"
+    },
+    {
+      "type": "text",
+      "value": "Route observers are excellent for debugging navigation problems. You can see exactly when a route is pushed, popped, and what the stack looks like. Add logs to your observer to trace the flow."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DebugObserver extends GetObserver {\n  @override\n  void didPush(Route route, Route? previousRoute) {\n    print('Push: ${route.settings.name}');\n    print('Previous: ${previousRoute?.settings.name}');\n    super.didPush(route, previousRoute);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use a single observer for analytics** – Avoid creating many observers that do the same thing.",
+        "**Unsubscribe RouteAware objects** – Always unsubscribe in `onClose` to avoid memory leaks.",
+        "**Use middleware for pre‑navigation checks** – Observers run after navigation, so use middleware for redirects.",
+        "**Log only in debug mode** – Wrap analytics calls in conditionals if you don't want logs in production.",
+        "**Keep observers lightweight** – Don't perform heavy operations inside navigation callbacks."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not unsubscribing RouteAware** – Causes memory leaks.\n✅ Unsubscribe in `onClose`.",
+        "❌ **Using `Get.routeObserver.subscribe` before the route is built** – May fail because context is null.\n✅ Subscribe in `onInit` after the route is ready, or use a `Future.microtask`.",
+        "❌ **Assuming `didPush` is called for initial route** – It may not be. Use `didPush` after navigation, and handle initial screen separately.",
+        "❌ **Adding multiple observers that duplicate work** – Can slow down navigation.\n✅ Combine logic into one observer."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: What is the difference between `GetObserver` and `NavigatorObserver`?**  \nA: `GetObserver` is a subclass of `NavigatorObserver` that integrates with GetX's routing system. It gives you access to `GetPageRoute` and other GetX specifics.",
+        "**Q: How do I get the current route name inside a controller?**  \nA: Use `Get.currentRoute` or, if you need to listen to changes, use a route observer and update a reactive variable.",
+        "**Q: Can I use `RouteObserver` with named routes and dynamic segments?**  \nA: Yes, the observer will receive the full route name including parameters. You can parse them inside the observer.",
+        "**Q: Does `Get.routeObserver` work with `Get.off` and `Get.offAll`?**  \nA: Yes, all navigation methods trigger the observer callbacks appropriately.",
+        "**Q: How to track screen views with arguments?**  \nA: Inside `didPush`, check if `route is GetPageRoute` and access `route.arguments`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX route observers give you deep insight into your app's navigation flow. Whether you're implementing analytics, debugging, or building features that react to route changes, the observer system is flexible and easy to use. Combine it with GetX's dependency injection and reactive state for powerful navigation tracking."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "Which class should you extend to create a custom route observer for GetX?",
+      "options": ["NavigatorObserver", "RouteObserver", "GetObserver", "GetRouteObserver"],
+      "answer": 2
+    },
+    {
+      "question": "How do you subscribe a controller to route events using Get.routeObserver?",
+      "options": [
+        "Get.routeObserver.addListener(controller)",
+        "Get.routeObserver.subscribe(controller, context)",
+        "Get.routeObserver.attach(controller)",
+        "Get.routeObserver.watch(controller)"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the main difference between middleware and route observers?",
+      "options": [
+        "Observers run before navigation, middleware after",
+        "Middleware runs before navigation, observers after",
+        "They are the same",
+        "Middleware is only for authentication"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-navigation",
+    "getx-named-routes",
+    "getx-route-management",
+    "getx-middleware"
+  ]
+}

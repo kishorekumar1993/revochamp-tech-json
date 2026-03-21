@@ -1,0 +1,261 @@
+{
+  "slug": "getx-multi-module-project",
+  "course": "Flutter",
+  "title": "GetX Multi‑Module Project: Scaling Flutter Apps with Feature Packages",
+  "meta": {
+    "title": "GetX Multi‑Module Project – Scale Flutter Apps with Feature Modules",
+    "description": "Learn how to structure a large Flutter app using GetX with multiple feature modules (packages). Improve team collaboration, code reuse, and build speed with a modular monorepo.",
+    "keywords": [
+      "GetX multi-module",
+      "Flutter modular architecture",
+      "GetX feature packages",
+      "monorepo Flutter",
+      "GetX scalable app",
+      "Flutter package architecture"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "As your Flutter app grows, a single codebase can become hard to maintain, test, and scale across multiple teams. A **multi‑module project** splits the app into independent feature modules (packages) that communicate through well‑defined interfaces. GetX’s dependency injection, navigation, and modular design make it an excellent choice for building such architectures. This guide shows you how to structure a Flutter app with multiple GetX modules, manage dependencies, and keep the codebase clean."
+    },
+    {
+      "type": "heading",
+      "value": "What is a Multi‑Module Project?"
+    },
+    {
+      "type": "text",
+      "value": "A multi‑module project (often called a **monorepo**) organizes your app’s code into separate packages (or modules) that each represent a feature (e.g., authentication, products, cart). These modules can be developed, tested, and versioned independently, while still being assembled into a final app. GetX facilitates this by allowing each module to define its own routes, bindings, and controllers, and to communicate through shared services."
+    },
+    {
+      "type": "heading",
+      "value": "Benefits"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Team Scalability** – Different teams can work on different modules without merge conflicts.",
+        "**Code Reusability** – Modules can be reused across multiple apps (e.g., a login module used in both customer and admin apps).",
+        "**Faster Builds** – Changes in one module don’t force recompilation of the entire app if using proper dependency management.",
+        "**Isolated Testing** – Each module can be unit‑tested independently.",
+        "**Clear Boundaries** – Enforces separation of concerns and prevents spaghetti code.",
+        "**Lazy Loading** – Modules can be loaded only when needed, reducing startup time."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Recommended Project Structure (Monorepo)"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "my_flutter_app/                 # Root folder\n├── packages/                    # All modules (packages)\n│   ├── core/                    # Shared code (themes, utils, base classes)\n│   │   ├── lib/\n│   │   │   ├── core.dart        # Exports all core functionality\n│   │   │   ├── services/\n│   │   │   ├── themes/\n│   │   │   ├── utils/\n│   │   │   └── widgets/\n│   │   └── pubspec.yaml\n│   ├── auth/                    # Authentication module\n│   │   ├── lib/\n│   │   │   ├── auth.dart\n│   │   │   ├── bindings/\n│   │   │   ├── controllers/\n│   │   │   ├── views/\n│   │   │   ├── models/\n│   │   │   └── repositories/\n│   │   └── pubspec.yaml\n│   ├── products/                # Products module\n│   │   ├── lib/\n│   │   │   ├── products.dart\n│   │   │   └── ...\n│   │   └── pubspec.yaml\n│   └── cart/                    # Cart module\n│       ├── lib/\n│       └── pubspec.yaml\n├── app/                         # The main app (or app entry point)\n│   ├── lib/\n│   │   ├── main.dart\n│   │   ├── app_binding.dart\n│   │   └── app_pages.dart\n│   └── pubspec.yaml\n└── pubspec.yaml                 # Root pubspec (for workspace management)"
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up the Workspace"
+    },
+    {
+      "type": "text",
+      "value": "Create a root folder and initialize a Flutter project (optional). Then add a `packages/` folder. Each module is a Dart package. Use relative dependencies in the root `pubspec.yaml` to reference local packages."
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "# Root pubspec.yaml (workspace)\nname: my_flutter_app\nversion: 1.0.0\n\nenvironment:\n  sdk: \">=3.0.0 <4.0.0\"\n\ndependencies:\n  flutter:\n    sdk: flutter\n  get: ^4.6.6\n  core:\n    path: packages/core\n  auth:\n    path: packages/auth\n  products:\n    path: packages/products\n  cart:\n    path: packages/cart\n\n# ..."
+    },
+    {
+      "type": "text",
+      "value": "Each module’s `pubspec.yaml` should declare its own dependencies, including `get` and any other modules it uses (e.g., `core`). This ensures modules are self‑contained."
+    },
+    {
+      "type": "heading",
+      "value": "Building a Module (Example: Auth)"
+    },
+    {
+      "type": "subheading",
+      "value": "1. Define the Module’s Public API"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// packages/auth/lib/auth.dart\nlibrary auth;\n\nexport 'bindings/auth_binding.dart';\nexport 'controllers/auth_controller.dart';\nexport 'views/login_page.dart';\nexport 'views/register_page.dart';\nexport 'models/user_model.dart';\n// Optionally, export a service if needed"
+    },
+    {
+      "type": "subheading",
+      "value": "2. Binding"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// packages/auth/lib/bindings/auth_binding.dart\nimport 'package:get/get.dart';\nimport '../controllers/auth_controller.dart';\nimport '../repositories/auth_repository.dart';\n\nclass AuthBinding extends Bindings {\n  @override\n  void dependencies() {\n    // Register the repository and controller\n    Get.lazyPut<AuthRepository>(() => AuthRepository());\n    Get.lazyPut<AuthController>(() => AuthController(Get.find()));\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "3. Controller"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// packages/auth/lib/controllers/auth_controller.dart\nimport 'package:get/get.dart';\nimport 'package:core/core.dart'; // shared services\nimport '../repositories/auth_repository.dart';\n\nclass AuthController extends GetxController {\n  final AuthRepository repository;\n  AuthController(this.repository);\n\n  var isLoading = false.obs;\n  var user = Rxn<User>();\n\n  Future<void> login(String email, String password) async {\n    isLoading.value = true;\n    try {\n      final userData = await repository.login(email, password);\n      user.value = userData;\n      // Notify other modules via a shared service\n      Get.find<AuthService>().setUser(userData);\n      Get.offAllNamed('/home');\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "4. View (Page)"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// packages/auth/lib/views/login_page.dart\nimport 'package:flutter/material.dart';\nimport 'package:get/get.dart';\nimport '../bindings/auth_binding.dart';\nimport '../controllers/auth_controller.dart';\n\nclass LoginPage extends GetView<AuthController> {\n  const LoginPage({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: Obx(() => Center(\n        child: ElevatedButton(\n          onPressed: controller.isLoading.value ? null : () => controller.login('test@test.com', 'pass'),\n          child: controller.isLoading.value ? CircularProgressIndicator() : Text('Login'),\n        ),\n      )),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Core Module: Shared Code"
+    },
+    {
+      "type": "text",
+      "value": "The `core` module contains shared code used by other modules: base classes, utilities, themes, and global services. It should have no knowledge of specific features."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// packages/core/lib/services/auth_service.dart\nimport 'package:get/get.dart';\n\nclass AuthService extends GetxService {\n  var user = Rxn<User>();\n  var isLoggedIn = false.obs;\n\n  void setUser(User? user) {\n    this.user.value = user;\n    isLoggedIn.value = user != null;\n  }\n}\n\n// packages/core/lib/core.dart\nexport 'services/auth_service.dart';\nexport 'themes/app_theme.dart';\nexport 'widgets/loading_button.dart';\n// ..."
+    },
+    {
+      "type": "heading",
+      "value": "Integrating Modules in the Main App"
+    },
+    {
+      "type": "text",
+      "value": "The main app (or the app entry point) imports all modules and defines the global routing table. It registers the core services in an initial binding."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// app/lib/main.dart\nimport 'package:flutter/material.dart';\nimport 'package:get/get.dart';\nimport 'package:core/core.dart';\nimport 'package:auth/auth.dart';\nimport 'package:products/products.dart';\nimport 'package:cart/cart.dart';\n\nvoid main() async {\n  await GetStorage.init();\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'Multi-Module Demo',\n      initialBinding: AppBinding(),\n      initialRoute: '/',\n      getPages: [\n        GetPage(\n          name: '/',\n          page: () => LoginPage(),\n          binding: AuthBinding(),\n        ),\n        GetPage(\n          name: '/home',\n          page: () => HomePage(),\n          binding: HomeBinding(),\n        ),\n        GetPage(\n          name: '/products',\n          page: () => ProductListPage(),\n          binding: ProductBinding(),\n        ),\n        GetPage(\n          name: '/cart',\n          page: () => CartPage(),\n          binding: CartBinding(),\n        ),\n      ],\n    );\n  }\n}\n\nclass AppBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.put(AuthService(), permanent: true);\n    // any other global dependencies\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Inter‑Module Communication"
+    },
+    {
+      "type": "text",
+      "value": "Modules should not directly import each other. Instead, they communicate through **shared services** located in the `core` module. For example, the `AuthService` holds the logged‑in user state; the `Products` module can listen to it to know whether to show user‑specific content."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In products module controller\nclass ProductController extends GetxController {\n  final AuthService auth = Get.find();\n\n  var products = <Product>[].obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(auth.isLoggedIn, (_) => fetchProducts());\n    fetchProducts();\n  }\n\n  Future<void> fetchProducts() async {\n    if (!auth.isLoggedIn.value) return;\n    // fetch products using the user's token\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Dependency Management"
+    },
+    {
+      "type": "text",
+      "value": "Use **version constraints** in each module’s `pubspec.yaml` to ensure compatibility. The root `pubspec.yaml` references local paths during development, but for production you can publish modules to a private pub repository or use git dependencies."
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "# packages/products/pubspec.yaml\ndependencies:\n  flutter:\n    sdk: flutter\n  get: ^4.6.6\n  core:\n    path: ../core    # relative path during development"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Define clear module boundaries** – Each module should represent a single business feature.",
+        "**Use `core` for shared code** – Avoid duplicating utilities, themes, and base classes.",
+        "**Keep modules loosely coupled** – Communicate only via core services, not by importing other feature modules directly.",
+        "**Use `Get.lazyPut` inside bindings** – Delay creation until the module’s route is accessed.",
+        "**Version your modules** – Even when using path dependencies, consider semantic versioning for production.",
+        "**Test modules in isolation** – Write unit tests inside each module; integration tests can go in the main app.",
+        "**Use code generation for serialization** – (e.g., `json_serializable`) inside each module."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Creating circular dependencies between modules** – Module A imports Module B and vice versa.\n✅ Use core services to break cycles.",
+        "❌ **Placing UI code inside core** – Core should be framework‑agnostic as much as possible.\n✅ Keep UI in feature modules.",
+        "❌ **Using `Get.put` inside widgets instead of bindings** – Scatters registration and can lead to duplicate instances.\n✅ Always use bindings for module dependencies.",
+        "❌ **Hardcoding routes in views** – Makes refactoring hard.\n✅ Use route constants from a shared file (or core)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I use different versions of GetX across modules?**  \nA: It’s best to use the same version to avoid conflicts. The root `pubspec.yaml` will resolve the version if you declare a single dependency there.",
+        "**Q: How to handle navigation between modules?**  \nA: Use named routes (constants defined in core or in the main app) and `Get.toNamed`. Modules should not know the exact route names of other modules; they can use route constants from core.",
+        "**Q: How do I share a theme between modules?**  \nA: Define the theme in the core module and use it in the main app’s `GetMaterialApp`. All modules will inherit it.",
+        "**Q: What about state persistence across modules?**  \nA: Use `GetStorage` or a shared service that handles persistence. For example, `AuthService` could store/load the token from `GetStorage`.",
+        "**Q: Can I lazy load modules?**  \nA: Yes, because each module’s binding uses `Get.lazyPut`, the controllers are only created when the route is visited. The module’s code is already imported, but the actual instances are lazy."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "A multi‑module architecture with GetX gives you the scalability and maintainability needed for large Flutter projects. By separating features into independent packages, you enable parallel development, code reuse, and better testability. With GetX’s dependency injection and navigation, modules stay loosely coupled and can be assembled into a final app with minimal effort."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "What is the primary benefit of splitting a Flutter app into multiple modules?",
+      "options": [
+        "Smaller app size",
+        "Better team collaboration and code reuse",
+        "Faster execution",
+        "Automatic state management"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How should modules communicate with each other in a GetX multi‑module setup?",
+      "options": [
+        "By importing each other's packages",
+        "Through shared services in the core module",
+        "Using global variables",
+        "Through direct function calls"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the recommended way to register dependencies inside a module?",
+      "options": [
+        "Using Get.put inside views",
+        "Using a binding that uses Get.lazyPut",
+        "Using a static variable",
+        "Using initState of the page"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-structure",
+    "getx-feature-modular-architecture",
+    "getx-bindings",
+    "getx-named-routes"
+  ]
+}

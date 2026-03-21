@@ -1,0 +1,185 @@
+{
+  "slug": "getx-app-lifecycle",
+  "course": "Flutter",
+  "title": "GetX App Lifecycle: React to App State Changes",
+  "meta": {
+    "title": "GetX App Lifecycle – Handle App State (Resume, Pause, Detach)",
+    "description": "Learn how to react to app lifecycle events in Flutter using GetX. Detect when the app goes to background, foreground, or is closed, and execute code accordingly.",
+    "keywords": [
+      "GetX app lifecycle",
+      "GetX lifecycle",
+      "Flutter app lifecycle",
+      "Get.onAppLifecycleState",
+      "WidgetsBindingObserver",
+      "background detection",
+      "foreground detection"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Flutter apps can be in various states: foreground, background, inactive, or paused. Detecting these state changes is essential for tasks like pausing animations, saving data, or refreshing when the app returns. GetX provides a simple way to listen to app lifecycle events using `Get.onAppLifecycleState` or by integrating `WidgetsBindingObserver` with GetX controllers. This guide covers both approaches and best practices."
+    },
+    {
+      "type": "heading",
+      "value": "1. Using Get.onAppLifecycleState"
+    },
+    {
+      "type": "text",
+      "value": "GetX offers a built‑in method to register a callback that fires whenever the app's lifecycle state changes. You can set it up once in your `main()` or inside a controller."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  Get.onAppLifecycleState = (state) {\n    print('App lifecycle: $state');\n    if (state == AppLifecycleState.resumed) {\n      // App came to foreground\n    } else if (state == AppLifecycleState.paused) {\n      // App went to background\n    }\n  };\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "text",
+      "value": "Note: This callback is global. For per‑controller lifecycle handling, consider using `WidgetsBindingObserver` or a service."
+    },
+    {
+      "type": "heading",
+      "value": "2. Using WidgetsBindingObserver in a Controller"
+    },
+    {
+      "type": "text",
+      "value": "A more flexible approach is to make a controller implement `WidgetsBindingObserver` and register it as an observer. This gives you granular control per controller."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LifecycleController extends GetxController with WidgetsBindingObserver {\n  @override\n  void onInit() {\n    super.onInit();\n    WidgetsBinding.instance.addObserver(this);\n  }\n\n  @override\n  void onClose() {\n    WidgetsBinding.instance.removeObserver(this);\n    super.onClose();\n  }\n\n  @override\n  void didChangeAppLifecycleState(AppLifecycleState state) {\n    print('Lifecycle state: $state');\n    switch (state) {\n      case AppLifecycleState.resumed:\n        // App is in foreground\n        break;\n      case AppLifecycleState.inactive:\n        // App is transitioning\n        break;\n      case AppLifecycleState.paused:\n        // App is in background\n        break;\n      case AppLifecycleState.detached:\n        // App is about to be destroyed\n        break;\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Creating a Lifecycle Service"
+    },
+    {
+      "type": "text",
+      "value": "For global lifecycle handling that many parts of the app can use, create a service that extends `GetxService` and implements `WidgetsBindingObserver`. Other controllers can then listen to its reactive state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppLifecycleService extends GetxService with WidgetsBindingObserver {\n  var appState = AppLifecycleState.resumed.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    WidgetsBinding.instance.addObserver(this);\n  }\n\n  @override\n  void onClose() {\n    WidgetsBinding.instance.removeObserver(this);\n    super.onClose();\n  }\n\n  @override\n  void didChangeAppLifecycleState(AppLifecycleState state) {\n    appState.value = state;\n    // Optionally broadcast to other parts\n  }\n\n  bool get isInForeground => appState.value == AppLifecycleState.resumed;\n}\n\n// Register in initialBinding\nGet.put(AppLifecycleService(), permanent: true);\n\n// In another controller\nclass DataController extends GetxController {\n  final AppLifecycleService lifecycle = Get.find();\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(lifecycle.appState, (state) {\n      if (state == AppLifecycleState.resumed) {\n        refreshData();\n      }\n    });\n  }\n\n  void refreshData() {\n    // fetch fresh data\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Common Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Refresh data when app returns to foreground** – Use `ever` on the lifecycle service's state.",
+        "**Pause/Resume animations** – Stop heavy animations when app goes to background to save battery.",
+        "**Save user data** – Write unsaved changes when the app is paused.",
+        "**Close WebSocket connections** – Disconnect when background, reconnect on resume.",
+        "**Analytics tracking** – Send session start/end events."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "5. Handling App Termination"
+    },
+    {
+      "type": "text",
+      "value": "The `detached` state indicates the app is about to be terminated. You can perform final cleanup here, but note that there is no guarantee that the callback will complete. For critical saves, prefer using `paused`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "case AppLifecycleState.detached:\n  // App is being destroyed\n  // Save final state, close connections\n  break;"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use a single global lifecycle service** – Centralise handling and share state.",
+        "**Don't do heavy work in lifecycle callbacks** – Avoid blocking the main thread; use asynchronous methods.",
+        "**Dispose resources properly** – Remove observers in `onClose` to prevent memory leaks.",
+        "**Test lifecycle events** – Use the Flutter dev tools to simulate background/foreground.",
+        "**Consider platform differences** – Lifecycle behavior may differ slightly on iOS vs Android, but the states are consistent."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not removing the observer** – Causes memory leaks.\n✅ Always call `removeObserver` in `onClose`.",
+        "❌ **Assuming `paused` means the app is about to be killed** – It only means the app is in the background; the user can return.\n✅ Use `detached` for final cleanup.",
+        "❌ **Performing expensive operations in lifecycle callbacks** – May cause jank.\n✅ Move heavy work to separate isolates or defer with `Future.microtask`.",
+        "❌ **Relying on `Get.onAppLifecycleState` for per‑controller logic** – That callback is global; use a service or controller observer for scoped logic."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: What is the difference between `resumed` and `inactive`?**  \nA: `resumed` means the app is visible and responding to user input. `inactive` means it's visible but not receiving user input (e.g., when a notification shade is pulled down).",
+        "**Q: How do I detect when the app comes back from background?**  \nA: Listen for `AppLifecycleState.resumed`. In a service, use `ever` on the state observable.",
+        "**Q: Can I use `GetX` to handle app lifecycle without `WidgetsBindingObserver`?**  \nA: Yes, `Get.onAppLifecycleState` provides a simple global callback, but for more control, the observer pattern is recommended.",
+        "**Q: Does `Get.onAppLifecycleState` work in all platforms?**  \nA: Yes, it's based on Flutter's native lifecycle and works on Android, iOS, web, and desktop (with some limitations on web).",
+        "**Q: How to handle Android's 'Don't keep activities'?**  \nA: When the activity is destroyed, the app will restart with the initial route. You need to rely on persisted state (e.g., `GetStorage`) to restore session, not on lifecycle callbacks."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Handling app lifecycle events is crucial for building responsive and battery‑efficient Flutter apps. GetX makes this easy with the global `Get.onAppLifecycleState` callback and the ability to use `WidgetsBindingObserver` inside controllers and services. By centralising lifecycle logic in a service, you can react to state changes anywhere in your app."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() {\n  // Global lifecycle callback\n  Get.onAppLifecycleState = (state) {\n    print('Global callback: $state');\n  };\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: LifecycleDemo(),\n      initialBinding: LifecycleBinding(),\n    );\n  }\n}\n\n// Lifecycle service\nclass LifecycleService extends GetxService with WidgetsBindingObserver {\n  var appState = AppLifecycleState.resumed.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    WidgetsBinding.instance.addObserver(this);\n  }\n\n  @override\n  void onClose() {\n    WidgetsBinding.instance.removeObserver(this);\n    super.onClose();\n  }\n\n  @override\n  void didChangeAppLifecycleState(AppLifecycleState state) {\n    appState.value = state;\n    print('Service: $state');\n  }\n}\n\nclass LifecycleBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.put(LifecycleService(), permanent: true);\n  }\n}\n\nclass LifecycleDemo extends StatelessWidget {\n  final service = Get.find<LifecycleService>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('App Lifecycle')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() => Text('Current state: ${service.appState.value}')),\n            SizedBox(height: 20),\n            Text('Check console for logs'),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method is used to listen to app lifecycle events globally in GetX?",
+      "options": [
+        "Get.lifecycle",
+        "Get.onAppLifecycleState",
+        "Get.observeLifecycle",
+        "Get.onLifecycleChange"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the correct way to add a lifecycle observer to a GetX controller?",
+      "options": [
+        "Extend GetxController and implement WidgetsBindingObserver, then add and remove observer",
+        "Use Get.onAppLifecycleState inside the controller",
+        "Call WidgetsBinding.instance.addObserver automatically",
+        "It's not possible"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "When should you remove the observer from the controller?",
+      "options": ["onInit", "onReady", "onClose", "didChangeAppLifecycleState"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-controller",
+    "getx-lifecycle",
+    "getx-services",
+    "getx-state-management"
+  ]
+}

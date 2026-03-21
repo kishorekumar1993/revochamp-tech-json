@@ -1,0 +1,196 @@
+{
+  "slug": "getx-installation",
+  "course": "Flutter",
+  "title": "GetX Installation & Setup: Complete Guide for Flutter",
+  "meta": {
+    "title": "GetX Installation and Setup in Flutter – Step by Step Guide",
+    "description": "Learn how to install GetX in Flutter, set up GetMaterialApp, and create your first reactive app with GetX. Includes pubspec.yaml configuration, import statements, and basic usage examples.",
+    "keywords": [
+      "GetX installation",
+      "GetX setup",
+      "Flutter GetX",
+      "GetMaterialApp",
+      "GetX pubspec.yaml",
+      "GetX tutorial",
+      "GetX first app"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "GetX is a powerful micro-framework for Flutter that combines state management, dependency injection, and navigation in one lightweight package. This guide will walk you through installing GetX in your Flutter project and setting up your first GetX-powered app."
+    },
+    {
+      "type": "heading",
+      "value": "Step 1: Add GetX to pubspec.yaml"
+    },
+    {
+      "type": "text",
+      "value": "Open your `pubspec.yaml` file and add the GetX dependency under `dependencies`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter:\n    sdk: flutter\n  get: ^4.6.6  # Use the latest version"
+    },
+    {
+      "type": "text",
+      "value": "After adding, run `flutter pub get` in your terminal to install the package."
+    },
+    {
+      "type": "heading",
+      "value": "Step 2: Import GetX"
+    },
+    {
+      "type": "text",
+      "value": "In any Dart file where you want to use GetX, import the package:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:get/get.dart';"
+    },
+    {
+      "type": "heading",
+      "value": "Step 3: Replace MaterialApp with GetMaterialApp"
+    },
+    {
+      "type": "text",
+      "value": "To enable all GetX features (navigation, snackbars, dialogs, etc.), replace `MaterialApp` with `GetMaterialApp` in your `main.dart`:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'GetX Demo',\n      home: HomePage(),\n    );\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "`GetMaterialApp` is a drop-in replacement for `MaterialApp` and adds GetX’s routing, internationalization, and other capabilities."
+    },
+    {
+      "type": "heading",
+      "value": "Step 4: Create a Controller"
+    },
+    {
+      "type": "text",
+      "value": "A controller in GetX holds your business logic and reactive state. Create a class that extends `GetxController`:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterController extends GetxController {\n  var count = 0.obs; // Observable variable\n\n  void increment() => count++;\n  void decrement() => count--;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Step 5: Use the Controller in Your View"
+    },
+    {
+      "type": "text",
+      "value": "In your widget, inject the controller using `Get.put()` and use `Obx` to react to changes:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomePage extends StatelessWidget {\n  final controller = Get.put(CounterController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetX Counter')),\n      body: Center(\n        child: Obx(() => Text(\n          'Count: ${controller.count}',\n          style: TextStyle(fontSize: 24),\n        )),\n      ),\n      floatingActionButton: Row(\n        mainAxisAlignment: MainAxisAlignment.end,\n        children: [\n          FloatingActionButton(\n            onPressed: controller.decrement,\n            child: Icon(Icons.remove),\n          ),\n          SizedBox(width: 10),\n          FloatingActionButton(\n            onPressed: controller.increment,\n            child: Icon(Icons.add),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Step 6: Run Your App"
+    },
+    {
+      "type": "text",
+      "value": "Run `flutter run` and you’ll see a working counter app powered by GetX. Tap the buttons to see the UI update reactively."
+    },
+    {
+      "type": "heading",
+      "value": "Alternative Installation Methods"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using Flutter CLI**: You can also add GetX by running `flutter pub add get` in the terminal.",
+        "**Using Git dependency**: For the latest development version, you can reference the Git repository directly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Issues & Solutions"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Error: 'GetMaterialApp' not found** – Make sure you imported `package:get/get.dart` and ran `flutter pub get`.",
+        "**Build fails with version conflicts** – Check your `pubspec.lock` and ensure compatibility with other packages.",
+        "**Hot reload not working properly** – Sometimes a full restart (hot restart) is needed after adding GetX."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Next Steps"
+    },
+    {
+      "type": "text",
+      "value": "Now that GetX is installed and set up, you can explore more advanced features:\n\n- [State Management with GetX](/flutter/getx-state-management)\n- [Navigation with GetX](/flutter/getx-navigation)\n- [Dependency Injection in GetX](/flutter/getx-dependency-injection)\n- [Bindings and App Organization](/flutter/getx-bindings)"
+    },
+    {
+      "type": "heading",
+      "value": "Key Takeaways"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Add `get: ^4.6.6` to pubspec.yaml and run `flutter pub get`.",
+        "Replace `MaterialApp` with `GetMaterialApp`.",
+        "Import `package:get/get.dart`.",
+        "Create controllers by extending `GetxController` and use `.obs` for reactive variables.",
+        "Inject controllers with `Get.put()` and listen to changes with `Obx()`."
+      ]
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: HomePage(),\n    );\n  }\n}\n\nclass CounterController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n}\n\nclass HomePage extends StatelessWidget {\n  final controller = Get.put(CounterController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetX Counter')),\n      body: Center(\n        child: Obx(() => Text(\n          'Count: ${controller.count}',\n          style: TextStyle(fontSize: 32),\n        )),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: controller.increment,\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What widget should replace MaterialApp to enable all GetX features?",
+      "options": [
+        "GetApp",
+        "GetMaterialApp",
+        "MaterialAppX",
+        "GetXApp"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you make a variable reactive in GetX?",
+      "options": [
+        "Use `Get.reactive()`",
+        "Use `.obs`",
+        "Use `Obx()` on the variable",
+        "Use `reactive` keyword"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method is used to inject a controller in the view?",
+      "options": [
+        "Get.inject()",
+        "Get.find()",
+        "Get.put()",
+        "Get.create()"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "flutter-getx-state-management",
+    "flutter-getx-navigation",
+    "flutter-getx-bindings"
+  ]
+}

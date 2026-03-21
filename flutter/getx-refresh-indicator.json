@@ -1,0 +1,169 @@
+{
+  "slug": "getx-refresh-indicator",
+  "course": "Flutter",
+  "title": "GetX Refresh Indicator: Pull-to-Refresh with Reactive Data",
+  "meta": {
+    "title": "GetX Refresh Indicator – Pull-to-Refresh in Flutter",
+    "description": "Learn how to implement pull-to-refresh in Flutter using GetX. Manage loading states, update data reactively, and handle errors with RefreshIndicator and GetX controllers.",
+    "keywords": [
+      "GetX refresh indicator",
+      "pull to refresh GetX",
+      "RefreshIndicator GetX",
+      "Flutter pull to refresh",
+      "GetX data refresh",
+      "GetX reactive refresh"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Pull-to-refresh is a common UX pattern where users swipe down to reload content. In Flutter, the `RefreshIndicator` widget provides this functionality. When combined with GetX, you can manage the refresh state reactively, showing loading indicators and updating the data seamlessly. This guide covers how to implement pull-to-refresh with GetX controllers, including error handling and best practices."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Setup"
+    },
+    {
+      "type": "text",
+      "value": "First, create a controller that holds the data and a method to fetch it. Use reactive variables to automatically update the UI when the data changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ItemsController extends GetxController {\n  var items = <String>[].obs;\n  var isLoading = false.obs;\n\n  Future<void> fetchItems() async {\n    isLoading.value = true;\n    try {\n      // Simulate network call\n      await Future.delayed(Duration(seconds: 1));\n      items.assignAll(['Item 1', 'Item 2', 'Item 3']);\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Implementing RefreshIndicator"
+    },
+    {
+      "type": "text",
+      "value": "In your view, wrap a `ListView` with `RefreshIndicator`. The `onRefresh` callback should call the controller's fetch method and return a `Future`. GetX automatically updates the UI when `items` changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ItemsPage extends GetView<ItemsController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Items')),\n      body: RefreshIndicator(\n        onRefresh: controller.fetchItems,\n        child: Obx(() {\n          if (controller.isLoading.value && controller.items.isEmpty) {\n            return Center(child: CircularProgressIndicator());\n          }\n          return ListView.builder(\n            itemCount: controller.items.length,\n            itemBuilder: (_, index) => ListTile(\n              title: Text(controller.items[index]),\n            ),\n          );\n        }),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Refresh State"
+    },
+    {
+      "type": "text",
+      "value": "The `onRefresh` callback should return a `Future`. The `RefreshIndicator` shows its built‑in loading spinner while the future is pending. You don't need a separate loading indicator for the refresh action, but you may want to show a loading state for the initial load."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@override\nvoid onInit() {\n  super.onInit();\n  fetchItems(); // initial load\n}\n\nFuture<void> fetchItems() async {\n  // For initial load, we use isLoading; for refresh, RefreshIndicator shows its own spinner\n  if (items.isEmpty) isLoading.value = true;\n  try {\n    // ... fetch data\n  } finally {\n    isLoading.value = false;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling During Refresh"
+    },
+    {
+      "type": "text",
+      "value": "If an error occurs during refresh, you should show a message to the user. You can use `Get.snackbar` or a reactive error variable. The `RefreshIndicator` will still finish (the spinner stops), so you need to handle the error separately."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ItemsController extends GetxController {\n  var items = <String>[].obs;\n  var error = ''.obs;\n\n  Future<void> fetchItems() async {\n    error.value = '';\n    try {\n      // Simulate a potential error\n      await Future.delayed(Duration(seconds: 1));\n      if (Random().nextBool()) throw Exception('Network error');\n      items.assignAll(['Item 1', 'Item 2']);\n    } catch (e) {\n      error.value = e.toString();\n      Get.snackbar('Error', error.value, snackPosition: SnackPosition.BOTTOM);\n      rethrow; // rethrow so RefreshIndicator knows it failed (optional)\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using StateMixin for Cleaner Code"
+    },
+    {
+      "type": "text",
+      "value": "You can also use `StateMixin` to handle loading, error, and data states in one place. Then your view can use `.obx()` and the `onRefresh` callback can simply call the fetch method that updates the mixin state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ItemsController extends GetxController with StateMixin<List<String>> {\n  @override\n  void onInit() {\n    super.onInit();\n    fetchItems();\n  }\n\n  Future<void> fetchItems() async {\n    change(null, status: RxStatus.loading());\n    try {\n      await Future.delayed(Duration(seconds: 1));\n      final data = ['Item A', 'Item B'];\n      change(data, status: RxStatus.success());\n    } catch (e) {\n      change(null, status: RxStatus.error(e.toString()));\n    }\n  }\n}\n\n// UI\nRefreshIndicator(\n  onRefresh: controller.fetchItems,\n  child: controller.obx(\n    (data) => ListView.builder(\n      itemCount: data!.length,\n      itemBuilder: (_, i) => ListTile(title: Text(data[i])),\n    ),\n    onLoading: Center(child: CircularProgressIndicator()),\n    onError: (error) => Center(child: Text('Error: $error')),\n  ),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Show initial loading state** – When the screen first opens, show a loading indicator if data is empty.",
+        "**Use `assignAll` to update lists** – Replacing the whole list with `.value = newList` can be less efficient; use `.assignAll` to trigger reactivity properly.",
+        "**Handle errors gracefully** – Show a snackbar or a widget with a retry button.",
+        "**Avoid duplicate refreshes** – Use a flag to prevent multiple simultaneous refresh calls, though `RefreshIndicator` already handles that.",
+        "**Keep the controller focused** – One controller per data source or screen."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to call `refresh` on the controller** – The `onRefresh` callback must return a `Future` that completes when data is ready.",
+        "❌ **Not handling the case where refresh fails** – The user sees the spinner disappear but no feedback.\n✅ Show an error message.",
+        "❌ **Using `Obx` incorrectly inside `RefreshIndicator`** – The `child` of `RefreshIndicator` must be a scrollable widget; using `Obx` that returns a `ListView` is fine.",
+        "❌ **Setting `isLoading` to true inside refresh** – This will show an extra loading indicator over the refresh spinner, causing visual duplication.\n✅ Only use `isLoading` for initial load or for operations not triggered by refresh."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I use `RefreshIndicator` with a `CustomScrollView`?**  \nA: Yes, as long as the `child` is a scrollable widget. Wrap the `CustomScrollView` with `RefreshIndicator`.",
+        "**Q: How do I add a pull-to-refresh to a `GridView`?**  \nA: Same approach – wrap the `GridView` with `RefreshIndicator`.",
+        "**Q: Does `RefreshIndicator` work on the web?**  \nA: Yes, with mouse drag it works similarly.",
+        "**Q: How to combine refresh with pagination?**  \nA: In your controller, have separate methods for initial load and load more. For refresh, reset the page and fetch from scratch.",
+        "**Q: Can I use `GetBuilder` instead of `Obx`?**  \nA: Yes, but `Obx` is more concise. If you need fine‑grained control, you can use `GetBuilder` with `update()`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Implementing pull-to-refresh with GetX is straightforward: combine `RefreshIndicator` with a controller that holds your data and a fetch method. By using reactive state, you ensure the UI updates automatically when data changes. With the added patterns like `StateMixin`, you can also handle loading and error states elegantly."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: RefreshDemo(),\n    );\n  }\n}\n\nclass ItemsController extends GetxController {\n  var items = <String>[].obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    fetchItems();\n  }\n\n  Future<void> fetchItems() async {\n    await Future.delayed(Duration(seconds: 1));\n    items.assignAll(['Item 1', 'Item 2', 'Item 3']);\n  }\n}\n\nclass RefreshDemo extends StatelessWidget {\n  final controller = Get.put(ItemsController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Pull to Refresh')),\n      body: RefreshIndicator(\n        onRefresh: controller.fetchItems,\n        child: Obx(() => ListView.builder(\n          itemCount: controller.items.length,\n          itemBuilder: (_, index) => ListTile(\n            title: Text(controller.items[index]),\n          ),\n        )),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget in Flutter provides pull‑to‑refresh functionality?",
+      "options": ["RefreshIndicator", "PullToRefresh", "SwipeRefresh", "RefreshView"],
+      "answer": 0
+    },
+    {
+      "question": "What should the `onRefresh` callback return?",
+      "options": ["void", "Future", "Stream", "bool"],
+      "answer": 1
+    },
+    {
+      "question": "How do you update a reactive list in GetX after a refresh?",
+      "options": ["list = newList", "list.assignAll(newList)", "list.addAll(newList)", "list.update(newList)"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-state-mixin",
+    "getx-loading-indicator",
+    "getx-api-integration"
+  ]
+}

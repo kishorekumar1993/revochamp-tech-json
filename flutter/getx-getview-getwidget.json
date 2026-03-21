@@ -1,0 +1,182 @@
+{
+  "slug": "getx-getview-getwidget",
+  "course": "Flutter",
+  "title": "GetView & GetWidget: Clean UI with GetX",
+  "meta": {
+    "title": "GetX GetView & GetWidget – Simplify UI with Controller Injection",
+    "description": "Learn how to use GetView and GetWidget to clean up your Flutter UI code. Automatically inject controllers without calling Get.find, and build reactive widgets with less boilerplate.",
+    "keywords": [
+      "GetX GetView",
+      "GetWidget",
+      "GetView vs GetWidget",
+      "GetX controller injection",
+      "GetX UI widgets",
+      "Flutter GetX",
+      "GetX best practices"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "When building Flutter apps with GetX, you often need to access controllers in your widgets. The most common way is to call `Get.find<MyController>()` or use `Get.put` and store the instance. GetX provides two dedicated widgets that reduce this boilerplate: **`GetView`** and **`GetWidget`**. These widgets automatically find and inject the controller of the specified type, making your UI code cleaner and more focused on layout."
+    },
+    {
+      "type": "heading",
+      "value": "GetView – Type‑Safe Controller Access"
+    },
+    {
+      "type": "text",
+      "value": "`GetView` is a generic StatelessWidget that expects a controller type `T` (which must extend `GetxController`). It provides a `controller` property that is automatically retrieved via `Get.find<T>()`. This eliminates the need to call `Get.find` or `Get.put` inside your widget."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomePage extends GetView<HomeController> {\n  @override\n  Widget build(BuildContext context) {\n    // `controller` is already available\n    return Obx(() => Text('Count: ${controller.count}'));\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "Because `GetView` is a StatelessWidget, it does not manage the lifecycle of the controller. The controller must already be registered (e.g., via bindings or earlier `Get.put`)."
+    },
+    {
+      "type": "heading",
+      "value": "GetWidget – Stateless with Reactive Callback"
+    },
+    {
+      "type": "text",
+      "value": "`GetWidget` is a simpler alternative that does not require a generic type. Instead, it provides a `controller` getter that returns the controller of the type you specify, but you must pass a function that returns the controller instance. It is often used when you don't need the full `GetView` generic, or when you need to access multiple controllers."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SettingsPage extends GetWidget<SettingsController> {\n  @override\n  Widget build(BuildContext context) {\n    // `controller` is available here as well\n    return Text('Theme: ${controller.themeMode}');\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "In practice, `GetWidget` works almost identically to `GetView`. The main difference is that `GetWidget` does not have a generic constraint (though you can still specify one). Both provide a `controller` getter."
+    },
+    {
+      "type": "heading",
+      "value": "GetView vs GetWidget – What’s the Difference?"
+    },
+    {
+      "type": "table",
+      "headers": ["Feature", "GetView", "GetWidget"],
+      "rows": [
+        ["Generic type", "Required (T extends GetxController)", "Optional (extends StatelessWidget)"],
+        ["Controller access", "`controller` (typed)", "`controller` (typed if generic used)"],
+        ["Use case", "When you have a single main controller", "When you want minimal syntax or multiple controllers"],
+        ["Reactivity", "Doesn’t rebuild automatically; use Obx/GetBuilder inside", "Same as GetView"],
+        ["Lifecycle", "StatelessWidget", "StatelessWidget"]
+      ]
+    },
+    {
+      "type": "text",
+      "value": "In most cases, the two are interchangeable. The choice is often a matter of style. Many developers prefer `GetView` because it explicitly declares the controller type."
+    },
+    {
+      "type": "heading",
+      "value": "Using GetView with Bindings"
+    },
+    {
+      "type": "text",
+      "value": "For clean architecture, combine `GetView` with bindings. The binding registers the controller, and the view automatically finds it when built."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Binding\nclass HomeBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<HomeController>(() => HomeController());\n  }\n}\n\n// View\nclass HomePage extends GetView<HomeController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      body: Center(\n        child: Obx(() => Text('Count: ${controller.count}')),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: controller.increment,\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}\n\n// Route registration\nGetPage(\n  name: '/home',\n  page: () => HomePage(),\n  binding: HomeBinding(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `GetView` for every screen** – It clearly communicates which controller the view uses.",
+        "**Combine with bindings** – Keep dependency injection out of your UI widgets.",
+        "**Don’t put `Get.put` inside `GetView`** – The controller should already be registered.",
+        "**Use `Obx` or `GetBuilder` inside `GetView` for reactivity** – `GetView` itself is not reactive; it just provides the controller.",
+        "**Consider `GetWidget` for small, stateless parts** – If you need a controller but prefer less generic syntax."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Assuming `GetView` creates the controller** – It only finds an existing controller.\n✅ Register the controller first (e.g., in a binding).",
+        "❌ **Using `GetView` without a controller registered** – Throws an error.\n✅ Ensure the controller is registered before the view is built.",
+        "❌ **Placing reactive code directly inside `GetView` without `Obx`** – The UI won’t update when the controller’s reactive variables change.\n✅ Wrap the reactive parts with `Obx`.",
+        "❌ **Using `GetWidget` with a different generic type than the registered controller** – Causes a type error.\n✅ Keep the generic type consistent."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Does `GetView` work with `Get.lazyPut`?**  \nA: Yes, as long as the controller is registered before the view builds. With bindings, `lazyPut` will create the controller when the view tries to access it.",
+        "**Q: Can I access multiple controllers in one view?**  \nA: With `GetView`, you get one typed controller. For multiple, you can use `Get.find` inside the build method, or use `GetWidget` and call `Get.find` separately.",
+        "**Q: What’s the difference between `GetView` and using `Get.find` in a StatelessWidget?**  \nA: `GetView` is simply a convenience wrapper. It reduces boilerplate and clearly indicates the controller type. There’s no performance difference.",
+        "**Q: Can I use `GetView` with `GetBuilder`?**  \nA: Yes, `GetBuilder` works inside `GetView` the same way as in any StatelessWidget.",
+        "**Q: Is `GetWidget` still useful?**  \nA: Yes, some developers prefer it for its slightly simpler syntax when they don’t need the generic type (though you can also just use a StatelessWidget with `Get.find`).",
+        "**Q: Do `GetView` and `GetWidget` dispose the controller?**  \nA: No, they only retrieve it. Disposal is handled by GetX based on the registration options (e.g., via bindings)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "`GetView` and `GetWidget` are simple but powerful tools that make your UI code cleaner and more maintainable. By using them consistently, you reduce the need for repetitive `Get.find` calls and make the relationship between your views and controllers explicit."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: GetViewExample(),\n      initialBinding: HomeBinding(),\n    );\n  }\n}\n\n// Controller\nclass HomeController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n}\n\n// Binding\nclass HomeBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut(() => HomeController());\n  }\n}\n\n// View using GetView\nclass GetViewExample extends GetView<HomeController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetView Example')),\n      body: Center(\n        child: Obx(() => Text('Count: ${controller.count}', style: TextStyle(fontSize: 32))),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: controller.increment,\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does GetView provide?",
+      "options": [
+        "A reactive StatefulWidget",
+        "A stateless widget with a typed controller property",
+        "Automatic controller disposal",
+        "A replacement for GetBuilder"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Where should the controller be registered when using GetView?",
+      "options": [
+        "Inside GetView itself",
+        "In a binding or before the view is built",
+        "In the widget's constructor",
+        "In the main function"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget would you use to make the UI reactive inside GetView?",
+      "options": ["GetView", "GetWidget", "Obx or GetBuilder", "GetX"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-controller",
+    "getx-bindings",
+    "getx-state-management",
+    "getx-reactive-state"
+  ]
+}

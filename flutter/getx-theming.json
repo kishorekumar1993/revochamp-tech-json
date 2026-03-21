@@ -1,0 +1,189 @@
+
+{
+  "slug": "getx-theming",
+  "course": "Flutter",
+  "title": "GetX Theming: Dynamic Theme Switching in Flutter",
+  "meta": {
+    "title": "GetX Theming – Dark Mode & Dynamic Theme Switching",
+    "description": "Learn how to implement dynamic theming in Flutter using GetX. Switch between light/dark modes, create custom themes, persist preferences with GetStorage, and update UI reactively.",
+    "keywords": [
+      "GetX theming",
+      "GetX dark mode",
+      "Get.changeTheme",
+      "Get.changeThemeMode",
+      "Flutter theme switching",
+      "GetX theme controller",
+      "reactive theming"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction to Theming with GetX"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides built‑in support for dynamic theming, allowing you to change your app's theme at runtime without needing to restart or rebuild the entire widget tree. With methods like `Get.changeTheme` and `Get.changeThemeMode`, you can instantly switch between light, dark, or system themes, and combine it with GetX's reactive state to build a seamless user experience. This guide covers everything from basic theme switching to persisting the user's preference using GetStorage."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Themes"
+    },
+    {
+      "type": "text",
+      "value": "First, define your light and dark themes as `ThemeData` objects. You can place them in a separate file or directly in your main widget."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppThemes {\n  static final lightTheme = ThemeData(\n    brightness: Brightness.light,\n    primarySwatch: Colors.blue,\n    scaffoldBackgroundColor: Colors.white,\n    appBarTheme: AppBarTheme(\n      backgroundColor: Colors.blue,\n      foregroundColor: Colors.white,\n    ),\n  );\n\n  static final darkTheme = ThemeData(\n    brightness: Brightness.dark,\n    primarySwatch: Colors.blue,\n    scaffoldBackgroundColor: Colors.black,\n    appBarTheme: AppBarTheme(\n      backgroundColor: Colors.grey[900],\n      foregroundColor: Colors.white,\n    ),\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Basic Theme Switching"
+    },
+    {
+      "type": "text",
+      "value": "In your `GetMaterialApp`, set the `theme` and `darkTheme` properties. GetX will automatically handle the rest when you call `Get.changeTheme`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetMaterialApp(\n  title: 'My App',\n  theme: AppThemes.lightTheme,\n  darkTheme: AppThemes.darkTheme,\n  themeMode: ThemeMode.system, // or light/dark\n  home: HomePage(),\n);"
+    },
+    {
+      "type": "text",
+      "value": "To switch themes, simply call:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Switch to light theme\nGet.changeTheme(ThemeData.light());\n\n// Switch to dark theme\nGet.changeTheme(ThemeData.dark());\n\n// Switch theme mode (light/dark/system)\nGet.changeThemeMode(ThemeMode.dark);"
+    },
+    {
+      "type": "heading",
+      "value": "Reactive Theme Controller"
+    },
+    {
+      "type": "text",
+      "value": "For more control, create a controller that holds the current theme mode and persists it. You can then listen to it in your UI and use it to update other parts of the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ThemeController extends GetxController {\n  var themeMode = ThemeMode.system.obs;\n\n  void setTheme(ThemeMode mode) {\n    themeMode.value = mode;\n    Get.changeThemeMode(mode);\n  }\n\n  void toggleDarkMode() {\n    if (themeMode.value == ThemeMode.light) {\n      setTheme(ThemeMode.dark);\n    } else if (themeMode.value == ThemeMode.dark) {\n      setTheme(ThemeMode.light);\n    } else {\n      // system mode: toggle based on current brightness\n      final brightness = Get.mediaQuery?.platformBrightness ?? Brightness.light;\n      setTheme(brightness == Brightness.light ? ThemeMode.dark : ThemeMode.light);\n    }\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "In your UI, you can use `Obx` to reflect the current mode and provide a toggle button."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SettingsPage extends GetView<ThemeController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      body: Center(\n        child: Obx(() => SwitchListTile(\n          title: Text('Dark Mode'),\n          value: controller.themeMode.value == ThemeMode.dark,\n          onChanged: (_) => controller.toggleDarkMode(),\n        )),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Persisting Theme with GetStorage"
+    },
+    {
+      "type": "text",
+      "value": "To remember the user's theme preference across app restarts, combine GetX with `GetStorage`. Save the theme mode when changed and load it on app start."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ThemeController extends GetxController {\n  final storage = GetStorage();\n  var themeMode = ThemeMode.system.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Load saved theme\n    String? saved = storage.read('themeMode');\n    if (saved != null) {\n      themeMode.value = _stringToThemeMode(saved);\n      Get.changeThemeMode(themeMode.value);\n    }\n  }\n\n  void setTheme(ThemeMode mode) {\n    themeMode.value = mode;\n    storage.write('themeMode', _themeModeToString(mode));\n    Get.changeThemeMode(mode);\n  }\n\n  String _themeModeToString(ThemeMode mode) {\n    return mode.name;\n  }\n\n  ThemeMode _stringToThemeMode(String str) {\n    return ThemeMode.values.firstWhere((e) => e.name == str, orElse: () => ThemeMode.system);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using GetX with Custom Theme Extensions"
+    },
+    {
+      "type": "text",
+      "value": "For custom colors beyond the standard theme, you can use `ThemeExtension`. Create a custom extension class and access it via `Theme.of(context).extension`. This allows you to have app‑specific colors that also react to theme changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyColors extends ThemeExtension<MyColors> {\n  final Color brandColor;\n  final Color accentColor;\n\n  MyColors({required this.brandColor, required this.accentColor});\n\n  @override\n  MyColors copyWith({Color? brandColor, Color? accentColor}) {\n    return MyColors(\n      brandColor: brandColor ?? this.brandColor,\n      accentColor: accentColor ?? this.accentColor,\n    );\n  }\n\n  @override\n  MyColors lerp(ThemeExtension<MyColors>? other, double t) {\n    if (other is! MyColors) return this;\n    return MyColors(\n      brandColor: Color.lerp(brandColor, other.brandColor, t)!,\n      accentColor: Color.lerp(accentColor, other.accentColor, t)!,\n    );\n  }\n}\n\n// In theme definitions\nstatic final lightTheme = ThemeData(\n  // ...\n  extensions: [MyColors(brandColor: Colors.blue, accentColor: Colors.orange)],\n);\n\nstatic final darkTheme = ThemeData(\n  // ...\n  extensions: [MyColors(brandColor: Colors.lightBlue, accentColor: Colors.deepOrange)],\n);\n\n// Usage in widgets\nfinal colors = Theme.of(context).extension<MyColors>()!;\nText('Hello', style: TextStyle(color: colors.brandColor));"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Define all theme data centrally** – Keep your light/dark themes in a separate class or file for maintainability.",
+        "**Use `Get.changeThemeMode` for system‑aware switching** – It respects the device's light/dark mode setting.",
+        "**Persist user preference** – Store the chosen theme in `GetStorage` or SharedPreferences.",
+        "**Use a theme controller** – Encapsulate the logic for switching and persistence in a single controller.",
+        "**Test theme changes** – Ensure UI updates correctly by using `Obx` or `GetBuilder` where needed."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `Get.changeTheme` with the same theme** – Unnecessary rebuilds.\n✅ Only change when the theme actually differs.",
+        "❌ **Forgetting to set `darkTheme` in `GetMaterialApp`** – Dark mode may not work properly.\n✅ Always define both light and dark themes.",
+        "❌ **Not handling system theme changes** – The app may not respond when the device theme changes.\n✅ Use `ThemeMode.system` and listen to platform brightness.",
+        "❌ **Hardcoding colors instead of using theme** – Makes theme switching ineffective.\n✅ Use `Theme.of(context)` or theme extensions."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: What's the difference between `Get.changeTheme` and `Get.changeThemeMode`?**  \nA: `changeTheme` directly sets a `ThemeData` object, while `changeThemeMode` switches between `ThemeMode.light`, `ThemeMode.dark`, or `ThemeMode.system`, using the predefined light/dark themes from `GetMaterialApp`.",
+        "**Q: How do I listen to theme changes in a controller?**  \nA: You can use workers on a reactive variable that holds the theme mode, or simply rely on `Obx` in the UI.",
+        "**Q: Can I use GetX theming with Cupertino?**  \nA: Yes, use `GetCupertinoApp` and define `theme` and `darkTheme` as `CupertinoThemeData`.",
+        "**Q: How do I apply a custom font or text theme with theming?**  \nA: Include `textTheme` in your `ThemeData` for light and dark variations.",
+        "**Q: Does GetX theming work with Flutter's `Theme` inheritance?**  \nA: Yes, it's fully compatible. All widgets that read the theme will update when the theme changes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX makes dynamic theming simple and reactive. With just a few lines of code, you can add light/dark mode switching, persist user preferences, and even extend your theme with custom colors. Combined with GetX state management, you can build apps that adapt beautifully to any user preference."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\nimport 'package:get_storage/get_storage.dart';\n\nvoid main() async {\n  await GetStorage.init();\n  runApp(MyApp());\n}\n\nclass ThemeController extends GetxController {\n  final storage = GetStorage();\n  var themeMode = ThemeMode.system.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    String? saved = storage.read('themeMode');\n    if (saved != null) {\n      themeMode.value = ThemeMode.values.firstWhere(\n        (e) => e.name == saved,\n        orElse: () => ThemeMode.system,\n      );\n      Get.changeThemeMode(themeMode.value);\n    }\n  }\n\n  void setTheme(ThemeMode mode) {\n    themeMode.value = mode;\n    storage.write('themeMode', mode.name);\n    Get.changeThemeMode(mode);\n  }\n\n  void toggleDarkMode() {\n    if (themeMode.value == ThemeMode.light) {\n      setTheme(ThemeMode.dark);\n    } else if (themeMode.value == ThemeMode.dark) {\n      setTheme(ThemeMode.light);\n    } else {\n      final brightness = Get.mediaQuery?.platformBrightness ?? Brightness.light;\n      setTheme(brightness == Brightness.light ? ThemeMode.dark : ThemeMode.light);\n    }\n  }\n}\n\nclass AppThemes {\n  static final light = ThemeData(\n    brightness: Brightness.light,\n    primarySwatch: Colors.blue,\n    scaffoldBackgroundColor: Colors.white,\n  );\n  static final dark = ThemeData(\n    brightness: Brightness.dark,\n    primarySwatch: Colors.blue,\n    scaffoldBackgroundColor: Colors.black,\n  );\n}\n\nclass MyApp extends StatelessWidget {\n  final controller = Get.put(ThemeController());\n\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'GetX Theming',\n      theme: AppThemes.light,\n      darkTheme: AppThemes.dark,\n      themeMode: controller.themeMode.value,\n      home: HomePage(),\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  final controller = Get.find<ThemeController>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Theming Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() => Text('Current mode: ${controller.themeMode.value.name}')),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: () => controller.setTheme(ThemeMode.light),\n                  child: Text('Light'),\n                ),\n                SizedBox(width: 10),\n                ElevatedButton(\n                  onPressed: () => controller.setTheme(ThemeMode.dark),\n                  child: Text('Dark'),\n                ),\n                SizedBox(width: 10),\n                ElevatedButton(\n                  onPressed: () => controller.setTheme(ThemeMode.system),\n                  child: Text('System'),\n                ),\n              ],\n            ),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: controller.toggleDarkMode,\n              child: Text('Toggle Dark Mode'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which GetX method switches between light, dark, or system theme?",
+      "options": ["Get.setTheme", "Get.changeTheme", "Get.changeThemeMode", "Get.updateTheme"],
+      "answer": 2
+    },
+    {
+      "question": "What is the recommended way to persist the user's theme preference?",
+      "options": ["SharedPreferences", "GetStorage", "LocalStorage", "Both A and B"],
+      "answer": 3
+    },
+    {
+      "question": "What must be set in GetMaterialApp to support dark mode switching?",
+      "options": ["theme and darkTheme", "darkMode: true", "themeMode and darkTheme", "only theme"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-storage",
+    "getx-controller",
+    "getx-services"
+  ]
+}

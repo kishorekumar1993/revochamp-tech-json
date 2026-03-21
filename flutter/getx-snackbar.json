@@ -1,0 +1,225 @@
+{
+  "slug": "getx-snackbar",
+  "course": "Flutter",
+  "title": "GetX Snackbar: The Ultimate Guide to Toast & Notifications",
+  "meta": {
+    "title": "GetX Snackbar – Toast Notifications in Flutter",
+    "description": "Master GetX snackbars: simple toasts, custom positions, durations, buttons, and advanced features. Learn how to show elegant notifications without BuildContext.",
+    "keywords": [
+      "GetX snackbar",
+      "Get.snackbar",
+      "Get.showSnackbar",
+      "Flutter toast",
+      "GetX notifications",
+      "GetX popup",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is GetX Snackbar?"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides a powerful, context‑free way to show snackbars (toast‑like notifications) anywhere in your app. Unlike Flutter's native `ScaffoldMessenger`, you don't need a `BuildContext`. You can show a snackbar from a controller, a service, or any Dart class with a single line of code. This makes it ideal for showing temporary messages like success, error, or information."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Simple snackbar\nGet.snackbar('Title', 'This is the message');\n\n// With more options\nGet.snackbar(\n  'Success',\n  'Your data has been saved',\n  snackPosition: SnackPosition.BOTTOM,\n  duration: Duration(seconds: 3),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Key Parameters"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**title** – The main title (required).",
+        "**message** – The descriptive message (required).",
+        "**snackPosition** – Where to show the snackbar: `SnackPosition.TOP` (default) or `SnackPosition.BOTTOM`.",
+        "**duration** – How long it stays on screen. Default is 3 seconds.",
+        "**backgroundColor** – Background color of the snackbar.",
+        "**colorText** – Text color for title and message.",
+        "**mainButton** – A button (e.g., `TextButton`) that appears at the end.",
+        "**onTap** – Callback when the snackbar is tapped.",
+        "**isDismissible** – Whether the user can swipe to dismiss (default true).",
+        "**showProgressIndicator** – Show a progress indicator.",
+        "**progressIndicatorBackgroundColor** – Color of the progress bar background.",
+        "**progressIndicatorValueColor** – Color of the progress indicator.",
+        "**margin** – Margin around the snackbar.",
+        "**padding** – Padding inside the snackbar.",
+        "**borderRadius** – Corner radius of the snackbar.",
+        "**icon** – An icon to show at the beginning.",
+        "**shouldIconPulse** – Whether the icon should pulse.",
+        "**leftBarIndicatorColor** – Color of a vertical bar on the left.",
+        "**forwardAnimationCurve** – Animation curve when appearing.",
+        "**reverseAnimationCurve** – Animation curve when disappearing."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Positioning"
+    },
+    {
+      "type": "text",
+      "value": "You can control where the snackbar appears using `snackPosition`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Show at the top (default)\nGet.snackbar('Info', 'This is a top snackbar');\n\n// Show at the bottom\nGet.snackbar(\n  'Info',\n  'This is a bottom snackbar',\n  snackPosition: SnackPosition.BOTTOM,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Customization"
+    },
+    {
+      "type": "text",
+      "value": "GetX snackbars are highly customizable. You can change colors, add icons, and even a button."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.snackbar(\n  'Error',\n  'Please check your internet connection',\n  backgroundColor: Colors.red,\n  colorText: Colors.white,\n  icon: Icon(Icons.wifi_off, color: Colors.white),\n  snackPosition: SnackPosition.BOTTOM,\n  duration: Duration(seconds: 5),\n  mainButton: TextButton(\n    onPressed: () => Get.back(),\n    child: Text('Retry', style: TextStyle(color: Colors.white)),\n  ),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Snackbar with Progress Indicator"
+    },
+    {
+      "type": "text",
+      "value": "You can show a progress indicator that moves during the snackbar's lifetime."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.snackbar(\n  'Uploading',\n  'Please wait...',\n  showProgressIndicator: true,\n  progressIndicatorBackgroundColor: Colors.grey,\n  progressIndicatorValueColor: AlwaysStoppedAnimation<Color>(Colors.blue),\n  duration: Duration(seconds: 2),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Using Get.showSnackbar for More Control"
+    },
+    {
+      "type": "text",
+      "value": "If you need even more flexibility, you can use `Get.showSnackbar` with a `GetSnackBar` widget. This allows you to define a custom widget as content."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.showSnackbar(\n  GetSnackBar(\n    title: 'Custom Snackbar',\n    message: 'This is a fully custom snackbar',\n    duration: Duration(seconds: 4),\n    snackPosition: SnackPosition.TOP,\n    backgroundColor: Colors.purple,\n    borderRadius: 20,\n    margin: EdgeInsets.all(10),\n    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),\n    icon: Icon(Icons.favorite, color: Colors.white),\n    mainButton: TextButton(\n      onPressed: () => Get.back(),\n      child: Text('Close'),\n    ),\n  ),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Dismissing Snackbars"
+    },
+    {
+      "type": "text",
+      "value": "By default, snackbars auto‑dismiss after the duration. You can also dismiss them manually."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Show a snackbar that cannot be swiped away\nGet.snackbar(\n  'Important',\n  'This message requires attention',\n  isDismissible: false,\n  duration: Duration(seconds: 5),\n);\n\n// Manually dismiss the currently visible snackbar (if any)\nGet.closeCurrentSnackbar();"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use snackbars for temporary messages** – They are great for feedback after user actions, errors, or success confirmations.",
+        "**Keep messages short and actionable** – Avoid long texts. If needed, provide a button for more info.",
+        "**Choose appropriate colors** – Use green for success, red for error, blue for info, and yellow for warnings.",
+        "**Avoid overusing snackbars** – They can become annoying if shown too frequently.",
+        "**Use `Get.snackbar` for simple messages** – It's concise and works well in most cases.",
+        "**Use `Get.showSnackbar` when you need custom widgets** – For complex designs or custom animations."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `Get.snackbar` without `GetMaterialApp`** – Snackbars won't work.\n✅ Always use `GetMaterialApp` (or `GetCupertinoApp`) as your root widget.",
+        "❌ **Not setting a duration for important messages** – Users may miss them.\n✅ Set an appropriate duration, or make them non‑dismissible if critical.",
+        "❌ **Using snackbars for critical errors that require user action** – Snackbars are transient; use dialogs for important decisions.\n✅ Choose the right UI element.",
+        "❌ **Ignoring the `snackPosition`** – Users may expect them at the bottom in some apps.\n✅ Consider the platform and user expectation."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I show a snackbar from a controller?**  \nA: Absolutely! Since `Get.snackbar` doesn't need context, you can call it from any class.",
+        "**Q: How do I show a snackbar without a title?**  \nA: You can pass an empty string for title, or use `Get.showSnackbar` with a custom widget.",
+        "**Q: Can I have multiple snackbars stacked?**  \nA: By default, only one snackbar is shown at a time. The new one replaces the old one.",
+        "**Q: How to handle snackbar tap?**  \nA: Use the `onTap` parameter of `GetSnackBar` or `Get.snackbar` (via `onTap`).",
+        "**Q: Does GetX snackbar work with Cupertino?**  \nA: Yes, use `GetCupertinoApp` instead of `GetMaterialApp`. The snackbar will still show, but the style may be material by default. For full Cupertino styling, consider `showCupertinoDialog` or custom `Get.showSnackbar` with a Cupertino‑styled widget.",
+        "**Q: Can I change the animation?**  \nA: Yes, you can use `forwardAnimationCurve` and `reverseAnimationCurve` parameters."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX snackbars offer a simple, context‑free way to display temporary notifications in your Flutter app. With extensive customization options and easy usage from any part of your code, they are a perfect fit for modern Flutter applications."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: SnackbarDemo(),\n    );\n  }\n}\n\nclass SnackbarDemo extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetX Snackbar Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            ElevatedButton(\n              onPressed: () {\n                Get.snackbar('Success', 'Your action was successful');\n              },\n              child: Text('Simple Snackbar'),\n            ),\n            ElevatedButton(\n              onPressed: () {\n                Get.snackbar(\n                  'Error',\n                  'Something went wrong',\n                  backgroundColor: Colors.red,\n                  colorText: Colors.white,\n                  icon: Icon(Icons.error, color: Colors.white),\n                  snackPosition: SnackPosition.BOTTOM,\n                  duration: Duration(seconds: 4),\n                  mainButton: TextButton(\n                    onPressed: () => Get.back(),\n                    child: Text('Retry', style: TextStyle(color: Colors.white)),\n                  ),\n                );\n              },\n              child: Text('Error Snackbar'),\n            ),\n            ElevatedButton(\n              onPressed: () {\n                Get.snackbar(\n                  'Uploading',\n                  'Please wait...',\n                  showProgressIndicator: true,\n                  progressIndicatorBackgroundColor: Colors.grey,\n                  progressIndicatorValueColor: AlwaysStoppedAnimation<Color>(Colors.blue),\n                  duration: Duration(seconds: 2),\n                );\n              },\n              child: Text('With Progress'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method is used to show a simple snackbar in GetX?",
+      "options": [
+        "Get.toast()",
+        "Get.showSnackbar()",
+        "Get.snackbar()",
+        "Get.message()"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "How do you change the position of a GetX snackbar?",
+      "options": [
+        "Use the position parameter",
+        "Use the snackPosition parameter with SnackPosition.TOP or SnackPosition.BOTTOM",
+        "Use alignment",
+        "Use margin"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What widget must be used at the root of the app for GetX snackbars to work?",
+      "options": [
+        "MaterialApp",
+        "CupertinoApp",
+        "GetMaterialApp (or GetCupertinoApp)",
+        "Scaffold"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-navigation",
+    "getx-dialog",
+    "getx-utils",
+    "getx-flutter-widgets"
+  ]
+}

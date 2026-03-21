@@ -1,0 +1,247 @@
+{
+  "slug": "getx-introduction",
+  "course": "Flutter",
+  "title": "GetX: The Ultimate State Management & Dependency Injection Solution",
+  "meta": {
+    "title": "GetX Introduction: State Management, Navigation & Dependency Injection",
+    "description": "Complete guide to GetX – a powerful micro-framework for Flutter. Learn reactive state management, dependency injection, navigation, bindings, and lifecycle with practical examples.",
+    "keywords": [
+      "GetX",
+      "state management",
+      "dependency injection",
+      "GetX Flutter",
+      "reactive programming",
+      "GetX navigation",
+      "GetX tutorial",
+      "GetX controller",
+      "GetX bindings",
+      "GetX vs Provider",
+      "Flutter GetX example"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is GetX?"
+    },
+    {
+      "type": "text",
+      "value": "GetX is an extra-light and powerful micro-framework for Flutter. It combines high-performance state management, intelligent dependency injection, and route management quickly and practically. GetX is built around three core pillars: State Management, Dependency Injection, and Navigation – all working together to reduce boilerplate and boost productivity."
+    },
+    {
+      "type": "heading",
+      "value": "Key Features"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**State Management**: Reactive and simple state management without BuildContext.",
+        "**Dependency Injection**: Easy to bind and manage dependencies with automatic disposal.",
+        "**Navigation**: Named routes with no context needed, and easy to pass arguments.",
+        "**Utility Methods**: Snackbars, dialogs, bottom sheets with simple syntax.",
+        "**Internationalization**: Built-in support for multi-language apps.",
+        "**Performance**: Only rebuilds widgets that depend on changed values (no need for `setState`)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Installation"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  get: ^4.6.6"
+    },
+    {
+      "type": "heading",
+      "value": "GetX Architecture Overview"
+    },
+    {
+      "type": "text",
+      "value": "GetX follows a layered architecture that promotes separation of concerns. The main components are Controllers (business logic and state), Views (UI that reacts to state), and Services (reusable business logic, API calls, etc.). This structure makes your code modular, testable, and maintainable."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Example: Reactive State Management"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: HomePage(),\n    );\n  }\n}\n\nclass Controller extends GetxController {\n  var count = 0.obs; // .obs makes it reactive\n\n  void increment() => count++;\n}\n\nclass HomePage extends StatelessWidget {\n  final controller = Get.put(Controller()); // inject controller\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetX Counter')),\n      body: Center(\n        child: Obx(() => Text('Count: ${controller.count}', style: TextStyle(fontSize: 24))),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: controller.increment,\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Dependency Injection"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides three main ways to manage dependencies:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "`Get.put()` – Injects an instance and makes it available throughout the app.",
+        "`Get.lazyPut()` – Creates the instance only when first used.",
+        "`Get.create()` – Creates a new instance each time it is called."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Navigation without BuildContext"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Navigate to next page\nGet.to(NextPage());\n\n// Navigate with arguments\nGet.to(NextPage(), arguments: 'Hello');\n\n// Named navigation (define routes in GetMaterialApp)\nGet.toNamed('/details');\n\n// Go back\nGet.back();\n\n// Snackbar\nGet.snackbar('Title', 'Message');"
+    },
+    {
+      "type": "heading",
+      "value": "GetBuilder vs Obx"
+    },
+    {
+      "type": "text",
+      "value": "GetX offers two main approaches to update the UI:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Obx** – Reactive: Automatically updates the widget whenever an observable variable changes. Perfect for real-time UI updates with minimal code.",
+        "**GetBuilder** – Manual: Uses `update()` method to rebuild specific parts. More efficient for simple cases where you want to control rebuilds manually.",
+        "For most apps, `Obx` is preferred because it’s simpler and still very performant."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Types of State Management in GetX"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Reactive State** (Rx variables + Obx) – Ideal for real-time updates.",
+        "**Simple State** (GetBuilder) – Lightweight and manual control.",
+        "**Mixin State** – Advanced use cases where you combine both approaches."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Bindings in GetX"
+    },
+    {
+      "type": "text",
+      "value": "Bindings are a powerful feature that helps you manage dependencies when navigating between pages. They ensure that controllers are created, disposed, and injected correctly, making your app more organized."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut(() => Controller());\n  }\n}\n\n// Use with named route\nGetPage(name: '/home', page: () => HomePage(), binding: HomeBinding());"
+    },
+    {
+      "type": "heading",
+      "value": "Controller Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "GetX controllers have a lifecycle that you can hook into:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "`onInit()` – Called when the controller is created. Used for initialization tasks like fetching data.",
+        "`onReady()` – Called after the widget tree is rendered. Good for actions that require the UI to be ready.",
+        "`onClose()` – Called when the controller is disposed. Clean up resources here (e.g., timers, streams)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Use Case Example"
+    },
+    {
+      "type": "text",
+      "value": "GetX is widely used in large applications for API handling, form validation, navigation, and dependency management. A typical setup includes:\n\n- A `Controller` that handles API calls using `http` or `dio` and stores data in observable variables.\n- The view uses `Obx` to display the data and `GetX` widgets for reactive forms.\n- Bindings to inject dependencies when navigating to a screen.\n- Services for shared logic (e.g., authentication)."
+    },
+    {
+      "type": "heading",
+      "value": "Recommended Folder Structure"
+    },
+    {
+      "type": "text",
+      "value": "For a scalable GetX app, follow this structure:"
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "lib/\n ├── controllers/      # GetX controllers\n ├── views/            # UI screens\n ├── bindings/         # Bindings for dependency injection\n ├── services/         # API services, local storage, etc.\n ├── routes/           # App routes and pages\n ├── models/           # Data models\n └── utils/            # Helpers, constants, themes"
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Is GetX better than Provider?** – It depends. GetX offers more features (navigation, DI, utilities) and is more opinionated. Provider is simpler but requires additional packages for navigation and DI. GetX is often preferred for large apps.",
+        "**Does GetX improve performance?** – Yes, GetX only rebuilds widgets that depend on changed observables, avoiding unnecessary rebuilds and improving performance.",
+        "**Is GetX suitable for large apps?** – Absolutely. With its modular architecture, bindings, and clear separation of concerns, GetX scales very well.",
+        "**What are alternatives to GetX?** – Popular alternatives include Provider, Riverpod, BLoC, and MobX. Each has its own strengths."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Points to Remember"
+    },
+    {
+      "type": "list",
+      "value": [
+        "Use `GetMaterialApp` instead of `MaterialApp` to enable GetX features.",
+        "Mark variables as `.obs` to make them reactive.",
+        "Wrap widgets that depend on reactive variables with `Obx()`.",
+        "Use `Get.put()` to inject dependencies, and `Get.find()` to retrieve them.",
+        "GetX has built-in smart management to dispose controllers when not needed.",
+        "Use bindings to keep dependency injection clean and maintainable."
+      ]
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: HomePage(),\n    );\n  }\n}\n\nclass CounterController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n  void decrement() => count--;\n}\n\nclass HomePage extends StatelessWidget {\n  final controller = Get.put(CounterController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetX Counter')),\n      body: Center(\n        child: Obx(() => Text(\n          'Count: ${controller.count}',\n          style: TextStyle(fontSize: 32),\n        )),\n      ),\n      floatingActionButton: Row(\n        mainAxisAlignment: MainAxisAlignment.end,\n        children: [\n          FloatingActionButton(\n            onPressed: controller.decrement,\n            child: Icon(Icons.remove),\n          ),\n          SizedBox(width: 10),\n          FloatingActionButton(\n            onPressed: controller.increment,\n            child: Icon(Icons.add),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What method do you use to inject a dependency in GetX that is created only when first accessed?",
+      "options": [
+        "Get.put()",
+        "Get.lazyPut()",
+        "Get.create()",
+        "Get.find()"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which widget is used to automatically rebuild when an observable changes?",
+      "options": [
+        "StatefulBuilder",
+        "ValueListenableBuilder",
+        "Obx",
+        "GetBuilder"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which lifecycle method is called after the UI is rendered in GetX?",
+      "options": [
+        "onInit()",
+        "onReady()",
+        "onClose()",
+        "initState()"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-getx-state-management",
+    "flutter-getx-navigation",
+    "flutter-getx-dependency-injection",
+    "flutter-obx-widget",
+    "flutter-getx-bindings"
+  ]
+}

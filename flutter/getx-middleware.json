@@ -1,0 +1,210 @@
+{
+  "slug": "getx-middleware",
+  "course": "Flutter",
+  "title": "GetX Middleware: Route Guards & Interceptors",
+  "meta": {
+    "title": "GetX Middleware – Route Guards, Redirects & Logging",
+    "description": "Learn how to use GetX middleware to intercept navigation, protect routes with guards, log user actions, and redirect based on conditions. Build secure, observable Flutter apps.",
+    "keywords": [
+      "GetX middleware",
+      "GetMiddleware",
+      "route guards",
+      "navigation interceptor",
+      "GetX redirect",
+      "authentication guard",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is GetX Middleware?"
+    },
+    {
+      "type": "text",
+      "value": "Middleware in GetX allows you to intercept route navigation events. You can use it to redirect users (e.g., authentication checks), log page views, modify route data, or perform any action before a route is displayed. Middleware is defined per route and can be chained, with each middleware having a priority to control execution order."
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Basic Middleware"
+    },
+    {
+      "type": "text",
+      "value": "To create a middleware, extend `GetMiddleware` and override one or more of its methods."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyMiddleware extends GetMiddleware {\n  @override\n  RouteSettings? redirect(String? route) {\n    // Return a new RouteSettings to redirect, or null to continue\n    return null;\n  }\n\n  @override\n  List<GetPage> onPageCalled(GetPage page) {\n    // Called when the page is about to be built\n    print('Navigating to ${page.name}');\n    return [page];\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Key Methods"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`redirect(String? route)`** – Called before the route is built. Return a `RouteSettings` to redirect to another route, or `null` to proceed. Use this for guards.",
+        "**`onPageCalled(GetPage page)`** – Called after `redirect` but before the page is built. You can modify the page or perform side effects.",
+        "**`getPriority()`** – Override to set the execution order (lower numbers run first).",
+        "**`onPageDispose()`** – Called when the page is disposed (optional)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Priority"
+    },
+    {
+      "type": "text",
+      "value": "If multiple middlewares are assigned to a route, they execute in order of priority (lower priority runs first)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoggingMiddleware extends GetMiddleware {\n  @override\n  int? get priority => 0; // runs first\n}\n\nclass AuthMiddleware extends GetMiddleware {\n  @override\n  int? get priority => 1; // runs after LoggingMiddleware\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Authentication Guard Example"
+    },
+    {
+      "type": "text",
+      "value": "A common use case is protecting routes that require authentication."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthMiddleware extends GetMiddleware {\n  @override\n  RouteSettings? redirect(String? route) {\n    final auth = Get.find<AuthController>();\n    if (!auth.isLoggedIn.value && route != '/login') {\n      // Redirect to login and show a message\n      Get.snackbar('Access Denied', 'Please login first');\n      return RouteSettings(name: '/login');\n    }\n    return null;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Logging Middleware"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoggingMiddleware extends GetMiddleware {\n  @override\n  List<GetPage> onPageCalled(GetPage page) {\n    print('Navigating to: ${page.name}');\n    return [page];\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Registering Middleware with GetPage"
+    },
+    {
+      "type": "text",
+      "value": "Attach middleware to a route using the `middlewares` parameter. Order matters: they execute in the order they appear, but priority can override."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetPage(\n  name: '/profile',\n  page: () => ProfilePage(),\n  middlewares: [\n    LoggingMiddleware(),\n    AuthMiddleware(),\n  ],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Global Middleware via InitialBinding"
+    },
+    {
+      "type": "text",
+      "value": "You can also register a middleware globally by adding it to `GetMaterialApp` using `routingCallback` or by using a custom navigator observer. For per‑route middleware, use the `GetPage` approach."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetMaterialApp(\n  routingCallback: (routing) {\n    print('Current route: ${routing?.current}');\n    // global guard logic\n  },\n  // ...\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Redirect Logic"
+    },
+    {
+      "type": "text",
+      "value": "The `redirect` method receives the current route name. You can inspect it and decide to redirect to another route. Always return `null` if no redirection is needed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class OnboardingMiddleware extends GetMiddleware {\n  @override\n  RouteSettings? redirect(String? route) {\n    final hasSeenOnboarding = Get.find<SettingsController>().hasSeenOnboarding;\n    if (!hasSeenOnboarding && route != '/onboarding') {\n      return RouteSettings(name: '/onboarding');\n    }\n    return null;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep middleware focused** – One middleware per concern (auth, logging, analytics).",
+        "**Use `priority` to control order** – Ensure logging runs before auth, etc.",
+        "**Avoid heavy operations** – Middleware runs before the page loads; keep it fast.",
+        "**Use `Get.find` to access services** – Inject controllers/services via GetX DI.",
+        "**Return `null` when no redirection** – Always return `null` to proceed normally."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to return `null`** – Causes the route to be blocked.\n✅ Always return `null` unless you want to redirect.",
+        "❌ **Using middleware without registering in `GetPage`** – Won't execute.\n✅ Attach middleware to the route definition.",
+        "❌ **Calling `Get.to` inside middleware** – Can cause infinite loops.\n✅ Use `return RouteSettings(...)` for redirection.",
+        "❌ **Not handling async operations** – Middleware methods are synchronous; use a controller to hold state and react."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I have multiple middlewares on one route?**  \nA: Yes, they execute in the order of priority (lowest first).",
+        "**Q: How do I pass data from middleware to the page?**  \nA: You can modify `page.arguments` or store data in a controller that the page can access.",
+        "**Q: Does middleware run for every navigation?**  \nA: Yes, for every navigation to a route that has that middleware attached.",
+        "**Q: Can I use middleware for deep links?**  \nA: Yes, the middleware receives the route name and can redirect accordingly.",
+        "**Q: What's the difference between `redirect` and `onPageCalled`?**  \nA: `redirect` is for changing the route; `onPageCalled` is for side effects like logging."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX middleware provides a clean, powerful way to intercept and control navigation. Whether you're implementing authentication, analytics, or simple logging, middleware helps keep your code organized and your routes secure."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      title: 'Middleware Demo',\n      initialRoute: '/',\n      getPages: [\n        GetPage(name: '/', page: () => HomePage()),\n        GetPage(\n          name: '/protected',\n          page: () => ProtectedPage(),\n          middlewares: [AuthMiddleware()],\n        ),\n        GetPage(name: '/login', page: () => LoginPage()),\n      ],\n    );\n  }\n}\n\n// Simple auth controller\nclass AuthController extends GetxController {\n  var isLoggedIn = false.obs;\n  void login() => isLoggedIn.value = true;\n  void logout() => isLoggedIn.value = false;\n}\n\n// Middleware that protects routes\nclass AuthMiddleware extends GetMiddleware {\n  @override\n  RouteSettings? redirect(String? route) {\n    final auth = Get.find<AuthController>();\n    if (!auth.isLoggedIn.value) {\n      Get.snackbar('Access Denied', 'Please login first');\n      return RouteSettings(name: '/login');\n    }\n    return null;\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  final auth = Get.put(AuthController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Home')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Obx(() => Text('Logged in: ${auth.isLoggedIn.value}')),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () => auth.login(),\n              child: Text('Login'),\n            ),\n            ElevatedButton(\n              onPressed: () => auth.logout(),\n              child: Text('Logout'),\n            ),\n            ElevatedButton(\n              onPressed: () => Get.toNamed('/protected'),\n              child: Text('Go to Protected Page'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass ProtectedPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Protected')),\n      body: Center(\n        child: Text('You have access to this protected page'),\n      ),\n    );\n  }\n}\n\nclass LoginPage extends StatelessWidget {\n  final auth = Get.find<AuthController>();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: Center(\n        child: ElevatedButton(\n          onPressed: () {\n            auth.login();\n            Get.offAllNamed('/');\n          },\n          child: Text('Login'),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method should you override in GetMiddleware to redirect a route?",
+      "options": ["onPageCalled", "redirect", "getPriority", "onPageDispose"],
+      "answer": 1
+    },
+    {
+      "question": "How do you attach middleware to a specific route?",
+      "options": [
+        "Add it to GetMaterialApp",
+        "Use the middlewares parameter in GetPage",
+        "Call Get.useMiddleware()",
+        "Register it in a binding"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What does a middleware's `redirect` method return to allow navigation to proceed?",
+      "options": ["true", "false", "null", "RouteSettings.current"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-navigation",
+    "getx-named-routes",
+    "getx-route-management",
+    "getx-dependency-injection"
+  ]
+}

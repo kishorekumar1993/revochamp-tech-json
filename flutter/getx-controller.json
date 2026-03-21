@@ -1,0 +1,228 @@
+{
+  "slug": "getx-controller",
+  "course": "Flutter",
+  "title": "GetX Controller: Lifecycle, Methods & Best Practices",
+  "meta": {
+    "title": "GetX Controller – Complete Guide with Lifecycle and Best Practices",
+    "description": "Master GetX controllers: lifecycle methods (onInit, onReady, onClose), dependency injection, state management, and best practices for building scalable Flutter apps.",
+    "keywords": [
+      "GetX controller",
+      "GetxController",
+      "GetX lifecycle",
+      "onInit",
+      "onReady",
+      "onClose",
+      "GetX state management",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a GetX Controller?"
+    },
+    {
+      "type": "text",
+      "value": "A GetX controller is a class that extends `GetxController` and holds your business logic, state, and side effects. It is the heart of GetX's architecture, providing lifecycle management, reactive state, and easy dependency injection. Controllers are automatically disposed when not needed, preventing memory leaks."
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Controller"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  // Your logic and state here\n  var count = 0.obs;\n\n  void increment() => count++;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Controller Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "GetX controllers have three main lifecycle methods that you can override to execute code at specific moments."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`onInit()`** – Called immediately after the controller is created. Perfect for initializing data, setting up workers, or calling APIs.",
+        "**`onReady()`** – Called after the widget tree is fully rendered. Ideal for tasks that require the UI to be ready (e.g., showing dialogs, starting animations).",
+        "**`onClose()`** – Called when the controller is about to be destroyed. Clean up resources like streams, timers, or dispose subscriptions."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  @override\n  void onInit() {\n    super.onInit();\n    print('Controller initialized');\n    // Initialize data, start workers\n  }\n\n  @override\n  void onReady() {\n    super.onReady();\n    print('UI is ready');\n    // Show welcome dialog, start animations\n  }\n\n  @override\n  void onClose() {\n    print('Controller disposed');\n    // Clean up resources\n    super.onClose();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Dependency Injection with Controllers"
+    },
+    {
+      "type": "text",
+      "value": "Controllers are typically managed by GetX's dependency injection system. You can inject them in several ways."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// 1. Using Get.put - immediate creation\nfinal controller = Get.put(MyController());\n\n// 2. Using Get.lazyPut - created when first used\nGet.lazyPut(() => MyController());\n\n// 3. Using Get.create - new instance each time\nGet.create(() => MyController());\n\n// 4. Using bindings (recommended for large apps)\nclass HomeBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut(() => HomeController());\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Accessing Controllers"
+    },
+    {
+      "type": "text",
+      "value": "Once registered, you can access a controller anywhere in your app using `Get.find()` or by using `GetView`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Using Get.find\nfinal controller = Get.find<MyController>();\n\n// Using GetView (recommended for views)\nclass MyView extends GetView<MyController> {\n  @override\n  Widget build(BuildContext context) {\n    // controller is automatically available\n    return Text('${controller.count}');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "State Management in Controllers"
+    },
+    {
+      "type": "text",
+      "value": "Controllers can hold both reactive and simple state, and decide how to notify the UI."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  // Reactive state (auto UI updates with Obx)\n  var reactiveCount = 0.obs;\n\n  // Simple state (manual updates with update())\n  int simpleCount = 0;\n\n  void incrementReactive() => reactiveCount++;\n\n  void incrementSimple() {\n    simpleCount++;\n    update(); // triggers GetBuilder rebuilds\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Communication Between Controllers"
+    },
+    {
+      "type": "text",
+      "value": "Controllers can communicate using GetX's DI system. One controller can find another and call its methods or listen to its state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthController extends GetxController {\n  var user = User().obs;\n\n  void login(String email, String password) { ... }\n}\n\nclass ProfileController extends GetxController {\n  final AuthController auth = Get.find();\n\n  void updateProfile() {\n    // Access auth controller's state\n    if (auth.user.value.isLoggedIn) { ... }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Workers in Controllers"
+    },
+    {
+      "type": "text",
+      "value": "Workers are typically set up in `onInit()` to react to state changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchController extends GetxController {\n  var query = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    debounce(query, (_) => performSearch(), time: Duration(milliseconds: 500));\n  }\n\n  void performSearch() => print('Searching: ${query.value}');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Permanent vs Non-Permanent Controllers"
+    },
+    {
+      "type": "text",
+      "value": "By default, GetX disposes controllers when the route that uses them is removed. You can make a controller permanent to keep it alive for the entire app lifecycle."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Permanent controller (never disposed)\nGet.put(MyController(), permanent: true);\n\n// With lazyPut, fenix allows recreation after disposal\nGet.lazyPut(() => MyController(), fenix: true);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Single Responsibility** – Each controller should handle one feature or screen. Avoid giant controllers with unrelated logic.",
+        "**Use `onInit` for initialization** – Never put async code directly in the constructor.",
+        "**Use `onClose` for cleanup** – Dispose streams, timers, and any listeners.",
+        "**Prefer bindings for injection** – Keeps the UI clean and avoids scattered `Get.put` calls.",
+        "**Use `GetView` for cleaner UI code** – Eliminates repetitive `Get.find` calls.",
+        "**Avoid accessing controllers in UI before they're registered** – Ensure `Get.put` or bindings are called first.",
+        "**Use `Get.isRegistered<T>()`** – Check if a controller exists before accessing."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Creating controllers inside build method** – Causes multiple instances on rebuilds.\n✅ Use `Get.put` or bindings outside build.",
+        "❌ **Forgetting to call `super.onInit()`** – Breaks internal GetX setup.\n✅ Always call `super.onInit()` in overridden methods.",
+        "❌ **Using `onReady` for heavy work that blocks UI** – It's called after UI is ready but can still block if not async.\n✅ Use async methods or delay heavy operations.",
+        "❌ **Not disposing resources** – Leads to memory leaks.\n✅ Clear streams, timers, and dispose listeners in `onClose`.",
+        "❌ **Hardcoding `Get.find` in many places** – Makes refactoring harder.\n✅ Use `GetView` or pass dependencies via constructor."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: What's the difference between `GetxController` and `GetxService`?**  \nA: `GetxService` is a controller that is never disposed automatically. Use it for app-wide services like API clients, theme managers, etc. `GetxController` is disposed when the route is removed (unless marked `permanent`).",
+        "**Q: Can I have multiple controllers per screen?**  \nA: Yes, it's common to have one controller per logical feature. For complex screens, split into multiple smaller controllers.",
+        "**Q: How do I test a controller?**  \nA: You can instantiate it normally and call its methods. Use `Get.reset()` to clear registrations between tests. Mock dependencies if needed.",
+        "**Q: Can controllers listen to each other's state?**  \nA: Yes, one controller can `Get.find` another and observe its Rx variables using workers or `Obx` in the UI.",
+        "**Q: Do I need to dispose controllers manually?**  \nA: No, GetX automatically disposes them when the associated route is removed. Only use `Get.delete` if you need to remove it earlier.",
+        "**Q: What is the order of lifecycle methods?**  \nA: Constructor -> `onInit` -> the view is built -> `onReady` -> (when route is popped) -> `onClose`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX controllers provide a robust foundation for managing state, logic, and lifecycle in Flutter apps. By understanding their lifecycle, injection options, and best practices, you can build maintainable, scalable applications with minimal boilerplate."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: HomePage(),\n    );\n  }\n}\n\n// A simple controller\nclass CounterController extends GetxController {\n  var count = 0.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    print('Controller initialized');\n  }\n\n  @override\n  void onReady() {\n    super.onReady();\n    print('UI is ready');\n    // Show a welcome message\n    Get.snackbar('Welcome', 'The UI is ready!');\n  }\n\n  @override\n  void onClose() {\n    print('Controller disposed');\n    super.onClose();\n  }\n\n  void increment() => count++;\n}\n\nclass HomePage extends StatelessWidget {\n  final controller = Get.put(CounterController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetX Controller Demo')),\n      body: Center(\n        child: Obx(() => Text(\n          'Count: ${controller.count}',\n          style: TextStyle(fontSize: 32),\n        )),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: controller.increment,\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which lifecycle method is called immediately after the controller is created?",
+      "options": ["onStart", "onInit", "onReady", "onClose"],
+      "answer": 1
+    },
+    {
+      "question": "What should you do in the onClose method?",
+      "options": [
+        "Initialize data",
+        "Show dialogs",
+        "Clean up resources (streams, timers)",
+        "Call update()"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "How do you make a controller permanent (never disposed)?",
+      "options": [
+        "Use `permanent: true` in Get.put",
+        "Use `Get.lazyPut`",
+        "Use `Get.create`",
+        "It's permanent by default"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-dependency-injection",
+    "getx-reactive-state",
+    "getx-workers"
+  ]
+}

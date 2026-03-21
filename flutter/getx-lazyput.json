@@ -1,0 +1,216 @@
+{
+  "slug": "getx-lazyput",
+  "course": "Flutter",
+  "title": "GetX Get.lazyPut: Lazy Dependency Injection in Flutter",
+  "meta": {
+    "title": "GetX Get.lazyPut – Lazy Dependency Injection Guide",
+    "description": "Learn how to use Get.lazyPut for lazy dependency injection in GetX. Improve startup performance, manage optional dependencies, and use fenix and permanent flags effectively.",
+    "keywords": [
+      "GetX Get.lazyPut",
+      "Get.lazyPut",
+      "lazy injection GetX",
+      "GetX dependency injection",
+      "GetX performance",
+      "fenix GetX",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Get.lazyPut?"
+    },
+    {
+      "type": "text",
+      "value": "`Get.lazyPut` is a method in GetX that registers a dependency but **defers its creation** until it is first accessed. This is in contrast to `Get.put`, which creates the instance immediately. Lazy injection is ideal for improving startup performance and for dependencies that may not be used in every session of your app."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.lazyPut<MyController>(() => MyController());\n\n// The instance is NOT created yet\n// It will be created only when this line runs:\nfinal controller = Get.find<MyController>();"
+    },
+    {
+      "type": "heading",
+      "value": "How It Works"
+    },
+    {
+      "type": "text",
+      "value": "When you call `Get.lazyPut`, GetX stores a factory function that creates the instance. The actual object is not instantiated until you (or GetX internally) call `Get.find` for that type. After that, the instance is cached and reused for subsequent `Get.find` calls."
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Get.lazyPut"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Improve startup time** – Avoid creating many controllers at once when the app launches.",
+        "**Optional dependencies** – Controllers that are only needed under certain conditions (e.g., admin features).",
+        "**Routes with bindings** – In `GetPage` bindings, using `lazyPut` ensures controllers are created only when the route is visited.",
+        "**Large services** – Heavy initialisation (e.g., database connections) should be lazy to avoid blocking the UI."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Parameters"
+    },
+    {
+      "type": "subheading",
+      "value": "fenix"
+    },
+    {
+      "type": "text",
+      "value": "The `fenix` (phoenix) flag, when set to `true`, allows the instance to be **recreated** after it has been disposed. This is useful for dependencies that you want to be able to resurrect without re-registering manually."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.lazyPut<MyController>(\n  () => MyController(),\n  fenix: true,\n);\n// If the controller is disposed (e.g., route popped), the next Get.find will create a new one automatically."
+    },
+    {
+      "type": "subheading",
+      "value": "permanent"
+    },
+    {
+      "type": "text",
+      "value": "Setting `permanent: true` prevents the instance from ever being disposed automatically. This is similar to using `Get.put` with `permanent: true`, but the instance is still created lazily."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.lazyPut<MyController>(\n  () => MyController(),\n  permanent: true,\n);\n// The instance will live for the entire app lifecycle, but only created on first access."
+    },
+    {
+      "type": "subheading",
+      "value": "tag"
+    },
+    {
+      "type": "text",
+      "value": "Use tags to register multiple instances of the same type. Each tag creates a separate lazy registration."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.lazyPut<UserController>(() => UserController('Alice'), tag: 'alice');\nGet.lazyPut<UserController>(() => UserController('Bob'), tag: 'bob');\n\nfinal alice = Get.find<UserController>(tag: 'alice');\nfinal bob = Get.find<UserController>(tag: 'bob');"
+    },
+    {
+      "type": "heading",
+      "value": "Get.lazyPut vs Get.put"
+    },
+    {
+      "type": "table",
+      "headers": ["Feature", "Get.put", "Get.lazyPut"],
+      "rows": [
+        ["Creation time", "Immediately", "On first Get.find"],
+        ["Startup impact", "Higher (all created)", "Lower (deferred)"],
+        ["Use case", "Required immediately", "Optional / may not be used"],
+        ["Can be permanent", "Yes", "Yes"],
+        ["Can use fenix", "No (immediate creation)", "Yes"]
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Using with Bindings"
+    },
+    {
+      "type": "text",
+      "value": "The most common pattern is to use `Get.lazyPut` inside a binding. This ensures that controllers are only created when the route is actually opened."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<HomeController>(() => HomeController());\n    Get.lazyPut<ApiService>(() => ApiService());\n  }\n}\n\nGetPage(\n  name: '/home',\n  page: () => HomeView(),\n  binding: HomeBinding(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Prefer `lazyPut` in bindings** – Defer creation until the route is visited.",
+        "**Use `fenix: true` for disposable controllers** – Allows recreation after route disposal without re-registration.",
+        "**Avoid using `lazyPut` for truly global dependencies** – Use `Get.put(permanent: true)` instead if you need the instance immediately.",
+        "**Don't overuse `permanent`** – Let GetX dispose controllers automatically when possible.",
+        "**Check registration before find** – Use `Get.isRegistered` to avoid errors when you're not sure if the dependency is registered yet."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `Get.find` before any registration** – Throws an error.\n✅ Always register first, or check with `Get.isRegistered`.",
+        "❌ **Using `lazyPut` when you need the instance immediately after registration** – The instance won't exist yet.\n✅ Use `Get.put` instead.",
+        "❌ **Forgetting to set `fenix: true` for re‑usable controllers** – After disposal, they won't be recreated.\n✅ Set `fenix: true` if you want them to come back to life.",
+        "❌ **Assuming `lazyPut` creates a new instance each time** – It's still a singleton; use `Get.create` for fresh instances."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I use `Get.lazyPut` without `Get.find`?**  \nA: Yes, you can register a dependency that may never be used. It will simply never be created.",
+        "**Q: What happens if I call `Get.lazyPut` multiple times with the same type?**  \nA: Unless you use different tags, the later registration overwrites the earlier one. You can check with `Get.isRegistered` first.",
+        "**Q: How do I know if a lazy instance has been created?**  \nA: Use `Get.isRegistered<MyController>()`. It returns `true` once the instance has been created (or if it was registered but not yet created? Actually, `isRegistered` returns true as soon as the lazy registration is made, because the dependency is \"registered\", even if the instance is not yet created. To know if the instance exists, you can check internally, but for most use cases you don't need to distinguish.",
+        "**Q: Can I convert a lazy registration to a permanent one later?**  \nA: No, once registered, you cannot change its flags. You would need to delete and re‑register.",
+        "**Q: Is `Get.lazyPut` thread‑safe?**  \nA: Yes, GetX is designed for Flutter's single-threaded UI environment."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "`Get.lazyPut` is an essential tool for efficient dependency management in GetX. By deferring creation until the first use, you can significantly improve your app's startup time and reduce memory footprint. Combined with bindings, `fenix`, and tags, it provides a flexible and powerful way to manage dependencies in large Flutter applications."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: HomePage(),\n    );\n  }\n}\n\nclass CounterController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n\n  @override\n  void onInit() {\n    super.onInit();\n    print('CounterController created');\n  }\n\n  @override\n  void onClose() {\n    print('CounterController disposed');\n    super.onClose();\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    // Register lazily – no instance is created yet\n    Get.lazyPut<CounterController>(() => CounterController());\n\n    // Print status: should be false because the instance hasn't been accessed yet\n    // You can't see this output in the UI but it will appear in the console.\n    print('Is registered? ${Get.isRegistered<CounterController>()}'); // true\n\n    return Scaffold(\n      appBar: AppBar(title: Text('Get.lazyPut Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Check console to see when controller is created'),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () {\n                // This will create the controller for the first time\n                final controller = Get.find<CounterController>();\n                controller.increment();\n              },\n              child: Text('Increment (creates controller)'),\n            ),\n            ElevatedButton(\n              onPressed: () {\n                final controller = Get.find<CounterController>();\n                Get.snackbar('Count', '${controller.count}');\n              },\n              child: Text('Show Count'),\n            ),\n            ElevatedButton(\n              onPressed: () {\n                Get.delete<CounterController>();\n                Get.snackbar('Deleted', 'Controller disposed');\n              },\n              child: Text('Delete Controller'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "When does Get.lazyPut create the instance?",
+      "options": [
+        "Immediately when Get.lazyPut is called",
+        "On first call to Get.find",
+        "When the app starts",
+        "Only if permanent is true"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What does fenix: true do?",
+      "options": [
+        "Makes the instance permanent",
+        "Allows recreation after disposal",
+        "Creates the instance asynchronously",
+        "Prevents lazy loading"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method would you use to register a controller that may not be used at all during a session?",
+      "options": ["Get.put", "Get.lazyPut", "Get.create", "Get.putAsync"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-dependency-injection",
+    "getx-put",
+    "getx-create",
+    "getx-bindings"
+  ]
+}

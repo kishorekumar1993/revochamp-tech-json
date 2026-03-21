@@ -1,0 +1,246 @@
+{
+  "slug": "getx-logging-debugging",
+  "course": "Flutter",
+  "title": "GetX Logging & Debugging: Track State, Errors & Performance",
+  "meta": {
+    "title": "GetX Logging & Debugging – Effective Debugging Techniques",
+    "description": "Learn how to debug GetX apps effectively: logging, debugging controllers, workers, navigation, using DevTools, and best practices for tracking state and errors.",
+    "keywords": [
+      "GetX logging",
+      "GetX debugging",
+      "Flutter debug",
+      "Get.log",
+      "debugPrint",
+      "GetX workers debug",
+      "GetX error logging"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Debugging is an essential part of Flutter development. GetX provides several tools and patterns to make debugging easier, from simple logging to tracking reactive state changes. This guide covers how to effectively log events, debug controllers, monitor navigation, and use DevTools with GetX. You'll learn techniques to catch issues early and build more reliable apps."
+    },
+    {
+      "type": "heading",
+      "value": "1. Basic Logging with print and debugPrint"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to log is using `print()`. However, on large outputs, Flutter may truncate long strings. Use `debugPrint()` instead – it splits long strings into chunks, preventing truncation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  debugPrint('App started');\n  runApp(MyApp());\n}\n\nclass MyController extends GetxController {\n  void doSomething() {\n    debugPrint('Button clicked');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. GetX's Built‑in Logging"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides a static `Get.log()` method that formats logs with a timestamp and a prefix. It's useful for distinguishing logs from different parts of the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.log('Login attempt');\nGet.log('API call succeeded', isError: false);\nGet.log('Error occurred', isError: true);"
+    },
+    {
+      "type": "heading",
+      "value": "3. Logging Controller Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "Add logs in `onInit`, `onReady`, and `onClose` to verify that controllers are being created and disposed correctly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyController extends GetxController {\n  @override\n  void onInit() {\n    super.onInit();\n    debugPrint('MyController initialized');\n  }\n\n  @override\n  void onReady() {\n    super.onReady();\n    debugPrint('MyController ready');\n  }\n\n  @override\n  void onClose() {\n    debugPrint('MyController closed');\n    super.onClose();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Debugging Reactive State Changes"
+    },
+    {
+      "type": "text",
+      "value": "Use workers to log when reactive variables change. This is invaluable for understanding why your UI updates (or doesn't)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterController extends GetxController {\n  var count = 0.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    ever(count, (value) {\n      debugPrint('Count changed to $value');\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Debugging Navigation"
+    },
+    {
+      "type": "text",
+      "value": "To log every navigation, you can use `Get.routeObserver` or add a global middleware. A middleware can log route changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoggingMiddleware extends GetMiddleware {\n  @override\n  List<GetPage> onPageCalled(GetPage page) {\n    debugPrint('Navigating to ${page.name}');\n    return [page];\n  }\n}\n\n// Add to GetPage\nGetPage(\n  name: '/home',\n  page: () => HomePage(),\n  middlewares: [LoggingMiddleware()],\n);"
+    },
+    {
+      "type": "text",
+      "value": "Alternatively, set a global routing callback in `GetMaterialApp`:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "GetMaterialApp(\n  routingCallback: (routing) {\n    debugPrint('Route: ${routing?.current}');\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "6. Logging API Calls with Interceptors"
+    },
+    {
+      "type": "text",
+      "value": "If you use Dio, add a logging interceptor to log requests and responses. This is extremely helpful for debugging network issues."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "dio.interceptors.add(LogInterceptor(\n  requestBody: true,\n  responseBody: true,\n));"
+    },
+    {
+      "type": "heading",
+      "value": "7. Using Flutter DevTools with GetX"
+    },
+    {
+      "type": "text",
+      "value": "Flutter DevTools provides a rich debugging experience. To inspect reactive state, you can use the 'Widget Inspector' to see widget rebuilds, and the 'Memory' tab to verify controllers are being disposed. Add breakpoints in `onInit` and `onClose` to trace lifecycle."
+    },
+    {
+      "type": "heading",
+      "value": "8. Debugging Workers"
+    },
+    {
+      "type": "text",
+      "value": "If a worker isn't triggering, check that the reactive variable is actually changing. Add logs inside the worker callback and ensure the variable is updated. Also verify that the worker is registered after the variable is created (in `onInit`)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "debounce(query, (value) {\n  debugPrint('Debounce triggered for: $value');\n}, time: Duration(milliseconds: 500));"
+    },
+    {
+      "type": "heading",
+      "value": "9. Logging Errors Globally"
+    },
+    {
+      "type": "text",
+      "value": "Use the global error handling techniques covered in the `getx-global-error-handler` topic to log all uncaught exceptions. This helps catch issues that might otherwise go unnoticed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "FlutterError.onError = (details) {\n  debugPrint('Flutter error: ${details.exception}');\n};\nPlatformDispatcher.instance.onError = (error, stack) {\n  debugPrint('Uncaught error: $error');\n  return true;\n};"
+    },
+    {
+      "type": "heading",
+      "value": "10. Performance Logging"
+    },
+    {
+      "type": "text",
+      "value": "To measure performance, use `Stopwatch` around critical operations. Log the duration to spot bottlenecks."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final stopwatch = Stopwatch()..start();\nawait heavyOperation();\nstopwatch.stop();\ndebugPrint('Heavy operation took ${stopwatch.elapsedMilliseconds} ms');"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `debugPrint` instead of `print`** – Prevents truncation.",
+        "**Log controller lifecycle** – Helps ensure proper disposal.",
+        "**Use workers to track state changes** – Great for debugging reactive flow.",
+        "**Add middleware for route logging** – Track navigation easily.",
+        "**Use a logging interceptor for HTTP** – See exactly what is sent/received.",
+        "**Keep logs informative but not noisy** – Avoid flooding the console in production.",
+        "**Use conditional logging** – Wrap logs with `kDebugMode` to avoid logging in release builds.",
+        "**Use DevTools** – Leverage inspector and memory tools."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `print` for long strings** – May get truncated.\n✅ Use `debugPrint`.",
+        "❌ **Logging sensitive data** – Tokens, passwords, etc.\n✅ Redact or avoid logging sensitive info.",
+        "❌ **Forgetting to add logs in workers** – Hard to know if they fire.\n✅ Add logs to see when workers run.",
+        "❌ **Logging too much in production** – Can impact performance and expose data.\n✅ Use `kDebugMode` or a configuration flag."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: How do I log only in debug mode?**  \nA: Use `if (kDebugMode) debugPrint(...)`. `kDebugMode` is a constant from `foundation.dart` that is true in debug builds.",
+        "**Q: Can I use `Get.log` with custom tags?**  \nA: `Get.log` doesn't support custom tags out of the box, but you can create your own wrapper.",
+        "**Q: How to see which widgets are rebuilding?**  \nA: Use DevTools' 'Widget Inspector' with 'Highlight repaints' enabled. This shows green borders around widgets that rebuild.",
+        "**Q: Why is my worker not triggering?**  \nA: Ensure the reactive variable is being updated (check with a log). Also ensure the worker is set up in `onInit`, not after the variable changes.",
+        "**Q: How to log the entire state of a controller?**  \nA: Override `toString` in your controller and call it from a debug function, or use `debugPrint(controller.toString())`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Effective logging and debugging are essential for building reliable Flutter apps. GetX provides the building blocks to log state changes, lifecycle events, and navigation. By combining these with Flutter's DevTools and best practices, you can quickly identify and fix issues during development."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "Which function should you use to print long strings without truncation?",
+      "options": ["print()", "debugPrint()", "console.log()", "log()"],
+      "answer": 1
+    },
+    {
+      "question": "How can you log every time a reactive variable changes?",
+      "options": [
+        "Use a worker like ever",
+        "Use Get.log inside the setter",
+        "Override the variable's setter",
+        "Use debugPrint in the UI"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Which GetX feature can you use to log route changes globally?",
+      "options": ["Get.logRoute", "routingCallback", "Get.routeObserver", "Both B and C"],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-controller",
+    "getx-workers",
+    "getx-global-error-handler",
+    "getx-api-integration"
+  ]
+}

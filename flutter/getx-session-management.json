@@ -1,0 +1,215 @@
+{
+  "slug": "getx-session-management",
+  "course": "Flutter",
+  "title": "GetX Session Management: User State, Persistence & Auto-Login",
+  "meta": {
+    "title": "GetX Session Management – User State, Persistence & Auto-Login",
+    "description": "Learn how to manage user sessions in GetX. Store tokens, persist login state, auto-login, session timeout, and logout with reactive state and GetStorage.",
+    "keywords": [
+      "GetX session management",
+      "GetX user state",
+      "Flutter session management",
+      "GetX auto-login",
+      "GetX token storage",
+      "GetX logout",
+      "session timeout GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Session management is the backbone of any app that requires user authentication. It involves storing the user's credentials (like a token), persisting them across app restarts, automatically logging the user back in, and handling logout. GetX makes session management straightforward with its reactive state, dependency injection, and easy integration with `GetStorage`. This guide covers everything you need to build a robust session management system in your Flutter app."
+    },
+    {
+      "type": "heading",
+      "value": "1. Defining Session State"
+    },
+    {
+      "type": "text",
+      "value": "Create a service (or controller) that holds the session state. Extend `GetxService` to keep it permanent. Use reactive variables for user data and authentication status."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SessionService extends GetxService {\n  final GetStorage _storage = GetStorage();\n  \n  // Reactive state\n  var isLoggedIn = false.obs;\n  var user = Rxn<User>();\n  var token = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Load saved session on start\n    loadSession();\n  }\n\n  void loadSession() {\n    token.value = _storage.read('token') ?? '';\n    final userJson = _storage.read('user');\n    if (userJson != null) {\n      user.value = User.fromJson(userJson);\n    }\n    isLoggedIn.value = token.value.isNotEmpty;\n  }\n\n  void setSession(String newToken, User newUser) {\n    token.value = newToken;\n    user.value = newUser;\n    isLoggedIn.value = true;\n    _storage.write('token', newToken);\n    _storage.write('user', newUser.toJson());\n  }\n\n  void clearSession() {\n    token.value = '';\n    user.value = null;\n    isLoggedIn.value = false;\n    _storage.remove('token');\n    _storage.remove('user');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Registering the Session Service"
+    },
+    {
+      "type": "text",
+      "value": "Register the service in an initial binding with `permanent: true` so it lives for the entire app lifecycle."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.put(SessionService(), permanent: true);\n  }\n}\n\nvoid main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  await GetStorage.init();\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      initialBinding: AppBinding(),\n      initialRoute: '/',\n      getPages: [\n        GetPage(name: '/', page: () => SplashPage()),\n        GetPage(name: '/login', page: () => LoginPage()),\n        GetPage(name: '/home', page: () => HomePage(), middlewares: [AuthMiddleware()]),\n      ],\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Auto‑Login on App Start"
+    },
+    {
+      "type": "text",
+      "value": "In the splash screen, check the session state. If the user is logged in, navigate to the home screen; otherwise, go to login."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SplashPage extends StatelessWidget {\n  final SessionService session = Get.find();\n\n  @override\n  Widget build(BuildContext context) {\n    // Simulate a short loading time\n    Future.delayed(Duration(seconds: 1), () {\n      if (session.isLoggedIn.value) {\n        Get.offAllNamed('/home');\n      } else {\n        Get.offAllNamed('/login');\n      }\n    });\n    return Scaffold(body: Center(child: CircularProgressIndicator()));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Login Flow"
+    },
+    {
+      "type": "text",
+      "value": "When the user logs in, call the API, get the token and user data, then store them using the session service."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginController extends GetxController {\n  final SessionService session = Get.find();\n  var isLoading = false.obs;\n  var error = ''.obs;\n\n  Future<void> login(String email, String password) async {\n    isLoading.value = true;\n    error.value = '';\n    try {\n      final response = await api.login(email, password);\n      session.setSession(response.token, response.user);\n      Get.offAllNamed('/home');\n    } catch (e) {\n      error.value = e.toString();\n      Get.snackbar('Error', error.value);\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Logout"
+    },
+    {
+      "type": "text",
+      "value": "Clearing the session and navigating back to login. Use `Get.offAllNamed` to remove the home screen from the stack."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void logout() {\n  session.clearSession();\n  Get.offAllNamed('/login');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Session Timeout"
+    },
+    {
+      "type": "text",
+      "value": "To automatically log out after a period of inactivity, you can use a timer that resets on user interaction. Combine with a worker that watches session state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SessionService extends GetxService {\n  Timer? _inactivityTimer;\n  final Duration timeoutDuration = Duration(minutes: 30);\n\n  void resetTimer() {\n    _inactivityTimer?.cancel();\n    _inactivityTimer = Timer(timeoutDuration, () {\n      if (isLoggedIn.value) {\n        clearSession();\n        Get.offAllNamed('/login');\n        Get.snackbar('Session Expired', 'Please login again');\n      }\n    });\n  }\n\n  // Call resetTimer whenever user interacts (e.g., on any touch)\n  // You can use a GestureDetector at the root of your app.\n}"
+    },
+    {
+      "type": "heading",
+      "value": "7. Handling Token Expiration"
+    },
+    {
+      "type": "text",
+      "value": "If your API returns a 401 (Unauthorized), you can automatically clear the session and redirect to login. Use an interceptor in your API client."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthInterceptor extends Interceptor {\n  final SessionService session = Get.find();\n\n  @override\n  void onError(DioException err, ErrorInterceptorHandler handler) {\n    if (err.response?.statusCode == 401) {\n      session.clearSession();\n      Get.offAllNamed('/login');\n    }\n    handler.next(err);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "8. Reacting to Session Changes in UI"
+    },
+    {
+      "type": "text",
+      "value": "Use `Obx` to listen to session state. For example, show different drawer items based on login status, or display the user's name."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfileButton extends StatelessWidget {\n  final SessionService session = Get.find();\n\n  @override\n  Widget build(BuildContext context) {\n    return Obx(() {\n      if (session.isLoggedIn.value) {\n        return Text('Hello, ${session.user.value?.name}');\n      } else {\n        return Text('Not logged in');\n      }\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `GetxService` for session management** – It stays alive for the whole app.",
+        "**Persist only the essential data** – Store token and minimal user info; fetch the rest from API.",
+        "**Use `GetStorage`** – Simple and fast for key‑value storage.",
+        "**Secure sensitive data** – For production, consider encrypting tokens with `flutter_secure_storage`.",
+        "**Clear session on 401** – Always handle token expiration gracefully.",
+        "**Provide a logout button** – Give users a way to end their session.",
+        "**Test session persistence** – Verify that after killing and reopening the app, the user stays logged in if token is valid."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Storing password or other sensitive data** – Use token instead.\n✅ Store only the token and basic user info.",
+        "❌ **Not handling token expiration** – App may crash or show odd behaviour.\n✅ Intercept 401 and redirect to login.",
+        "❌ **Forgetting to call `loadSession` in `onInit`** – The session may not be restored.\n✅ Always load persisted data on service initialization.",
+        "❌ **Using `Get.put` inside a widget for the service** – Creates duplicate instances.\n✅ Register in initial binding with `permanent: true`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Should I store the password in session?**  \nA: No, only store the authentication token. The password should never be persisted.",
+        "**Q: How to handle multiple user sessions?**  \nA: Most apps have one active session. If you need multi‑account, you can store a list of user profiles, but that’s more advanced.",
+        "**Q: How do I keep the session alive when the token is about to expire?**  \nA: Use a refresh token mechanism. When a 401 occurs, try to refresh the token silently. If it fails, redirect to login.",
+        "**Q: Can I use `GetX` with other storage like SharedPreferences?**  \nA: Yes, but `GetStorage` is simpler and works on web. You can easily replace it.",
+        "**Q: How to implement 'remember me' with session?**  \nA: By default, we persist the token. If 'remember me' is false, you can store the token only in memory (not in `GetStorage`) or set a short expiration."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides a clean, reactive way to manage user sessions. By combining a permanent `SessionService` with `GetStorage` for persistence, you can implement auto‑login, session timeout, and logout with minimal boilerplate. The patterns shown here form the foundation for secure and user‑friendly authentication in your Flutter app."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "Which GetX class is best for creating a permanent session manager?",
+      "options": ["GetxController", "GetxService", "Obx", "GetView"],
+      "answer": 1
+    },
+    {
+      "question": "How do you store the token and user data across app restarts?",
+      "options": [
+        "In a global variable",
+        "In GetStorage or SharedPreferences",
+        "In memory only",
+        "In the widget tree"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What method should you call in the session service to restore persisted data when the app starts?",
+      "options": ["onReady", "loadSession (called in onInit)", "onClose", "initState"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-storage",
+    "getx-permanent-controller",
+    "getx-authentication-flow",
+    "getx-middleware"
+  ]
+}

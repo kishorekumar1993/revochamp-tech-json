@@ -1,0 +1,238 @@
+{
+  "slug": "getx-lifecycle",
+  "course": "Flutter",
+  "title": "GetX Lifecycle: Complete Guide to Controllers, Routes & Widgets",
+  "meta": {
+    "title": "GetX Lifecycle – Controllers, Routes, Widgets Explained",
+    "description": "Deep dive into GetX lifecycle: controller lifecycle (onInit, onReady, onClose), route lifecycle, navigation, and how GetX manages memory and dependencies automatically.",
+    "keywords": [
+      "GetX lifecycle",
+      "GetX controller lifecycle",
+      "onInit",
+      "onReady",
+      "onClose",
+      "GetX route lifecycle",
+      "GetX navigation",
+      "GetX dispose",
+      "Flutter GetX"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction to GetX Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides a powerful lifecycle system that automatically manages the creation, state, and disposal of controllers and dependencies. Understanding this lifecycle is essential for building efficient, memory-safe Flutter applications. This guide covers the full lifecycle of GetX controllers, widgets, routes, and navigation."
+    },
+    {
+      "type": "heading",
+      "value": "1. Controller Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "Every controller that extends `GetxController` follows a predictable lifecycle. You can hook into it using the following methods:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`onInit()`** – Called immediately after the controller is created. Used for initializing data, setting up workers, or starting API calls.",
+        "**`onReady()`** – Called after the widget tree has been rendered. Ideal for UI-dependent actions (e.g., showing dialogs, starting animations).",
+        "**`onClose()`** – Called when the controller is about to be destroyed. Clean up streams, timers, or any resources."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LifecycleController extends GetxController {\n  @override\n  void onInit() {\n    super.onInit();\n    print('1. onInit');\n  }\n\n  @override\n  void onReady() {\n    super.onReady();\n    print('2. onReady (UI is ready)');\n  }\n\n  @override\n  void onClose() {\n    print('3. onClose');\n    super.onClose();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Widget Lifecycle & Controllers"
+    },
+    {
+      "type": "text",
+      "value": "GetX widgets like `GetView`, `GetWidget`, `Obx`, and `GetBuilder` integrate seamlessly with controller lifecycle."
+    },
+    {
+      "type": "subheading",
+      "value": "GetView / GetWidget"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyView extends GetView<MyController> {\n  @override\n  Widget build(BuildContext context) {\n    // controller is automatically found\n    // The controller is registered when the view is first built\n    return Text('${controller.count}');\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "When `GetView` is used, the controller is created when the view is first built (if not already registered). The controller is then disposed when the view is removed from the widget tree (unless `permanent: true`)."
+    },
+    {
+      "type": "subheading",
+      "value": "Obx and GetBuilder"
+    },
+    {
+      "type": "text",
+      "value": "These widgets listen to controllers but do not affect their lifecycle. The controller's lifecycle is independent; the widgets simply rebuild when notified."
+    },
+    {
+      "type": "heading",
+      "value": "3. Route & Navigation Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "GetX's navigation system (using `Get.to`, `Get.off`, etc.) automatically manages controllers associated with routes, especially when bindings are used."
+    },
+    {
+      "type": "subheading",
+      "value": "With Bindings"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut(() => HomeController());\n  }\n}\n\nGetPage(\n  name: '/home',\n  page: () => HomeView(),\n  binding: HomeBinding(),\n);"
+    },
+    {
+      "type": "text",
+      "value": "When the route is pushed, the binding's `dependencies()` is called, registering the controller. When the route is popped, the controller is automatically disposed (unless marked `permanent: true` or `fenix: true`)."
+    },
+    {
+      "type": "subheading",
+      "value": "Without Bindings"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.to(NextPage());\n// Inside NextPage:\nfinal controller = Get.put(MyController());"
+    },
+    {
+      "type": "text",
+      "value": "The controller is created when `Get.put` is called and disposed when the route is removed (because the controller is tied to the route's lifecycle)."
+    },
+    {
+      "type": "heading",
+      "value": "4. Full Lifecycle Sequence"
+    },
+    {
+      "type": "text",
+      "value": "Here's the typical order when navigating to a new route with a binding and controller:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "1. Navigation triggered (`Get.toNamed('/details')`).",
+        "2. Binding's `dependencies()` runs, registering controllers (lazy).",
+        "3. Route page widget is created (but not yet built).",
+        "4. Controller's constructor runs (if lazy is used, it runs only when first accessed).",
+        "5. Controller's `onInit()` runs (if the controller is accessed in the view).",
+        "6. Widget is built – the view uses `GetView<MyController>` or `Get.find()` to access the controller.",
+        "7. After the first frame, controller's `onReady()` runs.",
+        "8. While route is active, controllers can be accessed and modified.",
+        "9. When route is popped, GetX checks if the controller is permanent; if not, it calls `onClose()` and disposes the controller."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "5. Managing Controller Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "You can control how long a controller lives using injection options."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Permanent: never disposed automatically\nGet.put(MyController(), permanent: true);\n\n// Lazy, but can be recreated after disposal\nGet.lazyPut(() => MyController(), fenix: true);\n\n// Manually delete\nGet.delete<MyController>();"
+    },
+    {
+      "type": "heading",
+      "value": "6. Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `onInit` for initialization** – Never put async code in the constructor; use `onInit` instead.",
+        "**Use `onReady` for UI-related tasks** – Safe to show dialogs or start animations after the UI is ready.",
+        "**Clean up in `onClose`** – Dispose streams, cancel timers, and remove listeners to avoid memory leaks.",
+        "**Use bindings** – Automatically tie controllers to routes, ensuring proper disposal.",
+        "**Avoid `permanent: true` unless necessary** – Let GetX manage lifecycle for most controllers.",
+        "**Use `Get.isRegistered<T>()`** – Check before accessing a controller that might not exist yet."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "7. Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `Get.put` inside build** – Creates a new controller on each rebuild.\n✅ Place in `initState`, bindings, or use `Get.lazyPut`.",
+        "❌ **Not calling `super.onInit()`** – Breaks internal setup.\n✅ Always call `super.onInit()` when overriding.",
+        "❌ **Forgetting to dispose resources in `onClose`** – Causes memory leaks.\n✅ Clean up streams, timers, and controllers manually if needed.",
+        "❌ **Using `Get.find` before registration** – Throws an error.\n✅ Ensure registration with `Get.put` or bindings first."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: When is `onReady` called?**  \nA: After the widget tree is rendered for the first time, which is typically after the first frame. It's called once per controller.",
+        "**Q: Are controllers disposed when using `Get.off`?**  \nA: Yes, if the controller was tied to that route (e.g., via binding), it will be disposed. If it was marked permanent, it stays.",
+        "**Q: What's the difference between `onClose` and `onDelete`?**  \nA: `onClose` is the standard lifecycle method; `onDelete` is not part of GetX. Use `onClose`.",
+        "**Q: How do I check if a controller is still alive?**  \nA: Use `Get.isRegistered<MyController>()`.",
+        "**Q: Can I call `Get.put` in `onInit` of another controller?**  \nA: Yes, but be mindful of circular dependencies. Use `Get.lazyPut` or pass through constructors when possible.",
+        "**Q: Does GetX dispose controllers when the app goes to background?**  \nA: No, controllers persist. They are only disposed when the associated route is removed or you manually call `Get.delete`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Mastering the GetX lifecycle allows you to build efficient, leak-free Flutter apps. By leveraging `onInit`, `onReady`, and `onClose`, and using bindings to manage dependencies, you can ensure your controllers are created and disposed exactly when needed."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: LifecycleDemo(),\n    );\n  }\n}\n\nclass DemoController extends GetxController {\n  DemoController() {\n    print('Constructor');\n  }\n\n  @override\n  void onInit() {\n    super.onInit();\n    print('onInit');\n  }\n\n  @override\n  void onReady() {\n    super.onReady();\n    print('onReady');\n    Get.snackbar('Ready', 'Controller is ready!');\n  }\n\n  @override\n  void onClose() {\n    print('onClose');\n    super.onClose();\n  }\n\n  void disposeController() {\n    Get.delete<DemoController>();\n  }\n}\n\nclass LifecycleDemo extends StatelessWidget {\n  final controller = Get.put(DemoController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Lifecycle Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Check console for lifecycle logs'),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () {\n                Get.to(SecondPage());\n              },\n              child: Text('Navigate to new page'),\n            ),\n            SizedBox(height: 10),\n            ElevatedButton(\n              onPressed: controller.disposeController,\n              child: Text('Manually delete controller'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass SecondPage extends StatelessWidget {\n  final controller = Get.put(DemoController()); // new instance\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Second Page')),\n      body: Center(\n        child: Text('This page has its own controller.\\nCheck console when you pop this page.'),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method is called after the UI is fully rendered?",
+      "options": ["onInit", "onReady", "onClose", "initState"],
+      "answer": 1
+    },
+    {
+      "question": "What should you do in onClose?",
+      "options": [
+        "Initialize data",
+        "Start animations",
+        "Dispose streams and timers",
+        "Register new controllers"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "When is a controller disposed automatically?",
+      "options": [
+        "When the app closes",
+        "When the route it's tied to is popped",
+        "Never",
+        "After 10 seconds of inactivity"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-controller",
+    "getx-dependency-injection",
+    "getx-state-management",
+    "getx-navigation"
+  ]
+}

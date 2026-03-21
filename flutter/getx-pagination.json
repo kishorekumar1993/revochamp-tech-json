@@ -1,0 +1,180 @@
+{
+  "slug": "getx-pagination",
+  "course": "Flutter",
+  "title": "GetX Pagination: Infinite Scroll & Load More Data",
+  "meta": {
+    "title": "GetX Pagination – Infinite Scrolling & Load More",
+    "description": "Learn how to implement pagination in Flutter using GetX. Handle infinite scrolling, load more data, pull-to-refresh, and manage loading states with reactive patterns.",
+    "keywords": [
+      "GetX pagination",
+      "infinite scroll GetX",
+      "load more GetX",
+      "GetX list pagination",
+      "Flutter pagination",
+      "GetX StateMixin pagination"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Pagination is essential when dealing with large datasets. Instead of loading everything at once, you load data in chunks (pages) as the user scrolls. GetX makes it easy to implement pagination with reactive state, handling loading indicators, error states, and pull-to-refresh. This guide covers common patterns for pagination using GetX."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Pagination with Reactive State"
+    },
+    {
+      "type": "text",
+      "value": "Create a controller that holds the list of items, the current page, and a flag to indicate if more data is available. Use reactive variables so the UI updates automatically."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PaginationController extends GetxController {\n  var items = <String>[].obs;\n  var currentPage = 1.obs;\n  var hasMore = true.obs;\n  var isLoading = false.obs;\n\n  Future<void> fetchItems() async {\n    if (isLoading.value || !hasMore.value) return;\n    isLoading.value = true;\n    try {\n      final newItems = await api.getItems(page: currentPage.value);\n      if (newItems.isEmpty) {\n        hasMore.value = false;\n      } else {\n        items.addAll(newItems);\n        currentPage.value++;\n      }\n    } catch (e) {\n      Get.snackbar('Error', e.toString());\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "UI: Infinite Scrolling"
+    },
+    {
+      "type": "text",
+      "value": "In your view, use a `ListView.builder` with a `ScrollController`. When the user reaches the end, trigger the next page load."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ItemsPage extends GetView<PaginationController> {\n  final ScrollController scrollController = ScrollController();\n\n  @override\n  void initState() {\n    super.initState();\n    scrollController.addListener(() {\n      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {\n        controller.fetchItems();\n      }\n    });\n  }\n\n  @override\n  void dispose() {\n    scrollController.dispose();\n    super.dispose();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Pagination')),\n      body: Obx(() => ListView.builder(\n        controller: scrollController,\n        itemCount: controller.items.length + (controller.hasMore.value ? 1 : 0),\n        itemBuilder: (_, index) {\n          if (index == controller.items.length) {\n            return Center(child: CircularProgressIndicator());\n          }\n          return ListTile(title: Text(controller.items[index]));\n        },\n      )),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using StateMixin for Pagination"
+    },
+    {
+      "type": "text",
+      "value": "`StateMixin` can help manage the loading, error, and success states for the entire pagination flow. The list itself is part of the state, and we can still load more without changing the state type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PaginationController extends GetxController with StateMixin<List<String>> {\n  var currentPage = 1;\n  var hasMore = true;\n  var isLoadingMore = false;\n\n  @override\n  void onInit() {\n    super.onInit();\n    fetchItems();\n  }\n\n  Future<void> fetchItems({bool refresh = false}) async {\n    if (refresh) {\n      currentPage = 1;\n      hasMore = true;\n      change([], status: RxStatus.loading());\n    }\n    if (isLoadingMore || !hasMore) return;\n\n    isLoadingMore = true;\n    try {\n      final newItems = await api.getItems(page: currentPage);\n      if (newItems.isEmpty) {\n        hasMore = false;\n      } else {\n        final currentList = state ?? [];\n        final updatedList = [...currentList, ...newItems];\n        currentPage++;\n        change(updatedList, status: RxStatus.success());\n      }\n    } catch (e) {\n      change(state, status: RxStatus.error(e.toString()));\n    } finally {\n      isLoadingMore = false;\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Pull-to-Refresh with Pagination"
+    },
+    {
+      "type": "text",
+      "value": "Combine `RefreshIndicator` with your paginated list to allow the user to manually refresh and reset the pagination state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "RefreshIndicator(\n  onRefresh: () => controller.fetchItems(refresh: true),\n  child: controller.obx(\n    (data) => ListView.builder(\n      controller: scrollController,\n      itemCount: data!.length + (controller.hasMore ? 1 : 0),\n      itemBuilder: (_, i) {\n        if (i == data.length) {\n          return Center(child: CircularProgressIndicator());\n        }\n        return ListTile(title: Text(data[i]));\n      },\n    ),\n    onLoading: Center(child: CircularProgressIndicator()),\n    onError: (error) => Center(\n      child: Column(\n        mainAxisAlignment: MainAxisAlignment.center,\n        children: [\n          Text('Error: $error'),\n          ElevatedButton(\n            onPressed: () => controller.fetchItems(refresh: true),\n            child: Text('Retry'),\n          ),\n        ],\n      ),\n    ),\n  ),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling & Retry"
+    },
+    {
+      "type": "text",
+      "value": "When a page load fails, you can show an error message and provide a retry button. For a better user experience, you can keep the existing items and allow the user to retry the failed page."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<void> fetchItems() async {\n  if (isLoading.value) return;\n  isLoading.value = true;\n  try {\n    final newItems = await api.getItems(page: currentPage.value);\n    if (newItems.isEmpty) {\n      hasMore.value = false;\n    } else {\n      items.addAll(newItems);\n      currentPage.value++;\n      error.value = '';\n    }\n  } catch (e) {\n    error.value = e.toString();\n    Get.snackbar('Error', error.value);\n  } finally {\n    isLoading.value = false;\n  }\n}\n\n// In the builder, show a retry widget instead of the loading indicator\nif (controller.error.value.isNotEmpty && index == controller.items.length) {\n  return Center(\n    child: Column(\n      children: [\n        Text('Failed to load more'),\n        ElevatedButton(\n          onPressed: controller.fetchItems,\n          child: Text('Retry'),\n        ),\n      ],\n    ),\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `addListener` on `ScrollController`** – Detect when the user reaches the end of the list.",
+        "**Dispose the `ScrollController`** – Prevent memory leaks in your view.",
+        "**Avoid loading more while already loading** – Check `isLoadingMore` to prevent duplicate requests.",
+        "**Reset pagination on refresh** – Clear the list and reset the page counter.",
+        "**Show a loading indicator at the bottom** – Provide visual feedback when loading the next page.",
+        "**Handle edge cases** – Empty lists, no more data, and network errors gracefully."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not checking if `hasMore` before loading** – May attempt to load beyond the last page.\n✅ Check `hasMore` and stop when no more data.",
+        "❌ **Calling `fetchItems` multiple times in quick succession** – Causes duplicate requests.\n✅ Use a loading flag to prevent overlapping calls.",
+        "❌ **Not resetting the list on refresh** – New data will be appended instead of replaced.\n✅ Clear the list and reset the page counter.",
+        "❌ **Forgetting to dispose `ScrollController`** – Causes memory leaks.\n✅ Always dispose in `dispose` method."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: How do I implement pagination with a `GridView`?**  \nA: Same principle – use a `GridView.builder` with the same `ScrollController` and item count logic.",
+        "**Q: How to handle pagination when the API uses page size and offset?**  \nA: Maintain `page` and `limit` variables; when fetching, pass `page` and `limit`. Increment page after successful fetch.",
+        "**Q: Can I use `GetX` widgets like `Obx` with pagination?**  \nA: Yes, `Obx` works perfectly. However, be careful with large lists; use `ListView.builder` to avoid building all items at once.",
+        "**Q: How do I show a loading indicator at the bottom without affecting the scroll position?**  \nA: Add an extra item at the end of the list that shows the loading indicator only when `isLoadingMore` is true.",
+        "**Q: How to implement pagination with a search filter?**  \nA: Reset the pagination state (page = 1, clear list) when the filter changes, then fetch new data."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Pagination with GetX is straightforward. By combining reactive state, scroll controllers, and proper state management, you can create smooth infinite scrolling experiences. Remember to handle loading states, errors, and edge cases to keep your app robust."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: PaginationDemo(),\n    );\n  }\n}\n\n// Mock API\nFuture<List<String>> fetchItems(int page, {int perPage = 10}) async {\n  await Future.delayed(Duration(seconds: 1));\n  if (page > 3) return []; // simulate no more data after page 3\n  return List.generate(perPage, (i) => 'Item ${(page - 1) * perPage + i + 1}');\n}\n\nclass PaginationController extends GetxController {\n  var items = <String>[].obs;\n  var currentPage = 1.obs;\n  var hasMore = true.obs;\n  var isLoading = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    fetchItems();\n  }\n\n  Future<void> fetchItems() async {\n    if (isLoading.value || !hasMore.value) return;\n    isLoading.value = true;\n    try {\n      final newItems = await fetchItems(currentPage.value);\n      if (newItems.isEmpty) {\n        hasMore.value = false;\n      } else {\n        items.addAll(newItems);\n        currentPage.value++;\n      }\n    } catch (e) {\n      Get.snackbar('Error', e.toString());\n    } finally {\n      isLoading.value = false;\n    }\n  }\n\n  void refreshItems() {\n    items.clear();\n    currentPage.value = 1;\n    hasMore.value = true;\n    fetchItems();\n  }\n}\n\nclass PaginationDemo extends StatelessWidget {\n  final controller = Get.put(PaginationController());\n  final ScrollController scrollController = ScrollController();\n\n  @override\n  void initState() {\n    super.initState();\n    scrollController.addListener(() {\n      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {\n        controller.fetchItems();\n      }\n    });\n  }\n\n  @override\n  void dispose() {\n    scrollController.dispose();\n    super.dispose();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(\n        title: Text('Pagination Demo'),\n        actions: [\n          IconButton(\n            icon: Icon(Icons.refresh),\n            onPressed: controller.refreshItems,\n          ),\n        ],\n      ),\n      body: RefreshIndicator(\n        onRefresh: () async => controller.refreshItems(),\n        child: Obx(() => ListView.builder(\n          controller: scrollController,\n          itemCount: controller.items.length + (controller.hasMore.value ? 1 : 0),\n          itemBuilder: (_, index) {\n            if (index == controller.items.length) {\n              return Center(\n                child: Padding(\n                  padding: const EdgeInsets.all(16.0),\n                  child: CircularProgressIndicator(),\n                ),\n              );\n            }\n            return ListTile(title: Text(controller.items[index]));\n          },\n        )),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What condition should you check before triggering the next page load?",
+      "options": [
+        "Whether the list is empty",
+        "Whether the user is at the top",
+        "Whether a load is already in progress and whether more data is available",
+        "Whether the app is in foreground"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "How do you reset pagination when the user pulls to refresh?",
+      "options": [
+        "Clear the list and set page back to 1",
+        "Just call fetchItems again",
+        "Do nothing, it's automatic",
+        "Reset the scroll controller"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What should you use to listen to the scroll position and detect when the end is reached?",
+      "options": ["ScrollNotification", "NotificationListener", "ScrollController.addListener", "GestureDetector"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-state-management",
+    "getx-api-integration",
+    "getx-state-mixin",
+    "getx-refresh-indicator"
+  ]
+}

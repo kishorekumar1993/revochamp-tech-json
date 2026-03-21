@@ -1,0 +1,228 @@
+{
+  "slug": "getx-with-firebase",
+  "course": "Flutter",
+  "title": "GetX with Firebase: Build Reactive Apps with Firestore & Auth",
+  "meta": {
+    "title": "GetX with Firebase – Firestore & Authentication Integration",
+    "description": "Learn how to integrate Firebase with GetX in Flutter. Reactive Firestore streams, authentication with GetX controllers, error handling, and best practices.",
+    "keywords": [
+      "GetX Firebase",
+      "Flutter Firebase GetX",
+      "GetX Firestore",
+      "Firebase Auth GetX",
+      "reactive Firestore",
+      "GetX stream",
+      "GetX authentication"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Firebase provides a suite of backend services (authentication, real‑time database, Firestore, storage) that are ideal for Flutter apps. Combining Firebase with GetX gives you reactive, real‑time data synchronization and state management with minimal boilerplate. This guide covers how to integrate Firebase Authentication and Firestore with GetX, using streams, reactive state, and dependency injection to build scalable apps."
+    },
+    {
+      "type": "heading",
+      "value": "1. Setting Up Firebase"
+    },
+    {
+      "type": "text",
+      "value": "Follow the official FlutterFire documentation to add Firebase to your Flutter project. You'll need to create a Firebase project, add the configuration files (`google-services.json` for Android, `GoogleService-Info.plist` for iOS), and add the required dependencies."
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter:\n    sdk: flutter\n  get: ^4.6.6\n  firebase_core: ^2.24.0\n  firebase_auth: ^4.16.0\n  cloud_firestore: ^4.14.0"
+    },
+    {
+      "type": "text",
+      "value": "Initialize Firebase in your `main()` function before running the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  await Firebase.initializeApp();\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Firebase Service with GetX"
+    },
+    {
+      "type": "text",
+      "value": "Create a service class that extends `GetxService` (or `GetxController`) to encapsulate Firebase functionality. This service can be made permanent so it lives throughout the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// firebase_service.dart\nimport 'package:firebase_auth/firebase_auth.dart';\nimport 'package:cloud_firestore/cloud_firestore.dart';\nimport 'package:get/get.dart';\n\nclass FirebaseService extends GetxService {\n  final FirebaseAuth _auth = FirebaseAuth.instance;\n  final FirebaseFirestore _firestore = FirebaseFirestore.instance;\n\n  // Reactive user state\n  Rx<User?> user = Rx<User?>(null);\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Listen to auth state changes\n    _auth.authStateChanges().listen((User? user) {\n      this.user.value = user;\n    });\n  }\n\n  // Authentication methods\n  Future<User?> signIn(String email, String password) async {\n    try {\n      final result = await _auth.signInWithEmailAndPassword(\n        email: email,\n        password: password,\n      );\n      return result.user;\n    } on FirebaseAuthException catch (e) {\n      throw Exception(e.message);\n    }\n  }\n\n  Future<void> signOut() async {\n    await _auth.signOut();\n  }\n\n  // Firestore collection reference\n  CollectionReference<Map<String, dynamic>> get todosCollection =>\n      _firestore.collection('todos');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Registering the Service"
+    },
+    {
+      "type": "text",
+      "value": "Register the service in an initial binding with `permanent: true` so it stays alive across the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.put(FirebaseService(), permanent: true);\n  }\n}\n\n// In main.dart\nGetMaterialApp(\n  initialBinding: AppBinding(),\n  // ...\n);"
+    },
+    {
+      "type": "heading",
+      "value": "4. Authentication Controller"
+    },
+    {
+      "type": "text",
+      "value": "Create a controller that uses the `FirebaseService`. It will manage login state, loading, and error messages reactively."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthController extends GetxController {\n  final FirebaseService firebase = Get.find();\n  var isLoading = false.obs;\n  var error = ''.obs;\n\n  Future<void> login(String email, String password) async {\n    isLoading.value = true;\n    error.value = '';\n    try {\n      final user = await firebase.signIn(email, password);\n      if (user != null) {\n        Get.offAllNamed('/home');\n      }\n    } catch (e) {\n      error.value = e.toString();\n      Get.snackbar('Login Failed', error.value);\n    } finally {\n      isLoading.value = false;\n    }\n  }\n\n  void logout() async {\n    await firebase.signOut();\n    Get.offAllNamed('/login');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Reactive Firestore Data"
+    },
+    {
+      "type": "text",
+      "value": "To display Firestore data reactively, you can use a stream inside a controller and convert it to an `RxList` using `RxList.fromStream` or by listening to the stream and updating a reactive list."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TodoController extends GetxController {\n  final FirebaseService firebase = Get.find();\n  var todos = <Todo>[].obs;\n  StreamSubscription? _subscription;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Listen to Firestore collection where the user's ID matches\n    final userId = firebase.user.value?.uid;\n    if (userId != null) {\n      _subscription = firebase.todosCollection\n          .where('userId', isEqualTo: userId)\n          .snapshots()\n          .listen((snapshot) {\n        final list = snapshot.docs.map((doc) {\n          return Todo.fromMap(doc.data(), doc.id);\n        }).toList();\n        todos.assignAll(list);\n      });\n    }\n  }\n\n  @override\n  void onClose() {\n    _subscription?.cancel();\n    super.onClose();\n  }\n\n  Future<void> addTodo(String title) async {\n    await firebase.todosCollection.add({\n      'title': title,\n      'completed': false,\n      'userId': firebase.user.value?.uid,\n      'createdAt': FieldValue.serverTimestamp(),\n    });\n  }\n\n  Future<void> toggleTodo(String id, bool completed) async {\n    await firebase.todosCollection.doc(id).update({'completed': !completed});\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "Note: Make sure to cancel the stream subscription in `onClose` to avoid memory leaks."
+    },
+    {
+      "type": "heading",
+      "value": "6. Using Rx Streams with GetX"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides a handy `RxStream` class that you can use to convert a stream into a reactive variable. However, for Firestore, it’s often easier to use a manual subscription as above to have more control."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Alternative: using RxStream\nvar todosStream = RxStream<QuerySnapshot>(firebase.todosCollection.snapshots());\n// Then in UI: Obx(() => StreamBuilder(...)) – but this still requires a StreamBuilder."
+    },
+    {
+      "type": "heading",
+      "value": "7. Protecting Routes with Middleware"
+    },
+    {
+      "type": "text",
+      "value": "Use GetX middleware to guard routes that require authentication. The middleware can check the Firebase user state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthMiddleware extends GetMiddleware {\n  @override\n  RouteSettings? redirect(String? route) {\n    final firebase = Get.find<FirebaseService>();\n    if (firebase.user.value == null && route != '/login') {\n      return RouteSettings(name: '/login');\n    }\n    return null;\n  }\n}\n\n// In GetPage\nGetPage(\n  name: '/home',\n  page: () => HomePage(),\n  middlewares: [AuthMiddleware()],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "8. Error Handling"
+    },
+    {
+      "type": "text",
+      "value": "FirebaseAuth methods throw `FirebaseAuthException`. Catch these and convert them to user‑friendly messages."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "String handleAuthError(FirebaseAuthException e) {\n  switch (e.code) {\n    case 'user-not-found':\n      return 'No user found with this email.';\n    case 'wrong-password':\n      return 'Wrong password provided.';\n    case 'email-already-in-use':\n      return 'Email already in use.';\n    default:\n      return 'An error occurred. Please try again.';\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep Firebase logic in a service** – Centralize Firebase calls to avoid duplication.",
+        "**Use `GetxService` for the Firebase service** – It’s permanent and will survive route changes.",
+        "**Dispose stream subscriptions** – Always cancel Firestore subscriptions in `onClose` to prevent memory leaks.",
+        "**Use reactive variables for user state** – Update the UI automatically when the auth state changes.",
+        "**Use middleware for route protection** – Keep the authentication check in one place.",
+        "**Handle errors gracefully** – Show user‑friendly messages for Firebase exceptions.",
+        "**Use Firestore security rules** – Never rely solely on client‑side checks; always secure your data at the backend."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not initializing Firebase before `runApp`** – Causes runtime errors.\n✅ Call `await Firebase.initializeApp()` in `main` before running the app.",
+        "❌ **Keeping Firestore listeners active after disposing controller** – Memory leaks.\n✅ Cancel subscriptions in `onClose`.",
+        "❌ **Hardcoding Firestore collection names** – Prone to typos.\n✅ Use constants or a dedicated service.",
+        "❌ **Assuming the user is always logged in** – Always check `firebase.user.value != null` before accessing user‑specific data."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I use GetX with Firebase Realtime Database?**  \nA: Yes, the same principles apply. Use `databaseReference.onValue` and listen to the stream, updating an `Rx` variable.",
+        "**Q: How do I handle Firebase Cloud Messaging (FCM) with GetX?**  \nA: Create a `NotificationService` that extends `GetxService` and listens to FCM events. Use `Get.find` to access other controllers if needed.",
+        "**Q: Should I use `GetX` for all Firebase interactions?**  \nA: Not necessarily, but GetX provides convenient tools for reactive state, dependency injection, and lifecycle management. It's a good fit.",
+        "**Q: How to handle Firestore offline persistence?**  \nA: Firestore automatically enables offline persistence. Your data will be cached and synced when back online. No extra code needed.",
+        "**Q: Can I use GetX with Firebase Storage?**  \nA: Yes, you can create a service for storage uploads/downloads, and use reactive state to show progress."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Integrating Firebase with GetX gives you a powerful, reactive backend solution. With a well‑structured service and controllers, you can build real‑time apps that automatically reflect data changes and handle authentication seamlessly. Combine it with GetX’s routing, state management, and dependency injection for a complete, production‑ready architecture."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "Which GetX class is best suited for creating a long‑lived Firebase service?",
+      "options": ["GetxController", "GetxService", "Obx", "GetBuilder"],
+      "answer": 1
+    },
+    {
+      "question": "How do you listen to authentication state changes in GetX?",
+      "options": [
+        "Using GetX middleware",
+        "Using FirebaseAuth.authStateChanges() inside a GetxService",
+        "Using GetBuilder with a stream",
+        "Using a timer"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Where should you dispose a Firestore stream subscription?",
+      "options": ["onInit", "onClose", "build method", "onReady"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-services",
+    "getx-authentication-flow",
+    "getx-state-management",
+    "getx-middleware"
+  ]
+}

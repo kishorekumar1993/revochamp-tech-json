@@ -1,0 +1,239 @@
+{
+  "slug": "getx-testing",
+  "course": "Flutter",
+  "title": "Testing GetX Controllers & Services: Unit Tests & Integration",
+  "meta": {
+    "title": "GetX Testing – Unit Testing Controllers, Services & State",
+    "description": "Learn how to test GetX controllers, services, and reactive state. Mock dependencies, use Get.reset, and write reliable unit and integration tests for your Flutter app.",
+    "keywords": [
+      "GetX testing",
+      "test GetX controller",
+      "GetX unit test",
+      "Get.reset",
+      "mock GetX dependencies",
+      "Flutter GetX testing"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction to Testing GetX"
+    },
+    {
+      "type": "text",
+      "value": "Testing is essential for building reliable Flutter apps. GetX makes it easy to test your controllers and services because they are plain Dart classes with dependency injection. With a few simple techniques, you can write unit tests that verify state changes, business logic, and side effects. This guide covers how to test GetX controllers, use mocking, and manage the dependency injection container during tests."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up the Test Environment"
+    },
+    {
+      "type": "text",
+      "value": "Add the required dependencies to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dev_dependencies:\n  flutter_test:\n    sdk: flutter\n  mockito: ^5.4.0\n  build_runner: ^2.4.0"
+    },
+    {
+      "type": "text",
+      "value": "Create a test file in the `test/` folder, e.g., `test/controllers/login_controller_test.dart`. Use `setUp` and `tearDown` to reset GetX before each test."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter_test/flutter_test.dart';\nimport 'package:get/get.dart';\nimport 'package:your_app/controllers/login_controller.dart';\n\nvoid main() {\n  setUp(() {\n    Get.reset(); // Clears all registered dependencies\n  });\n\n  tearDown(() {\n    Get.reset();\n  });\n\n  // tests go here\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing a Basic Controller"
+    },
+    {
+      "type": "text",
+      "value": "Consider a simple counter controller:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterController extends GetxController {\n  var count = 0.obs;\n\n  void increment() => count++;\n  void decrement() => count--;\n}"
+    },
+    {
+      "type": "text",
+      "value": "Test it by creating an instance and verifying state changes:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "test('CounterController initial value is 0', () {\n  final controller = CounterController();\n  expect(controller.count.value, 0);\n});\n\ntest('increment increases count', () {\n  final controller = CounterController();\n  controller.increment();\n  expect(controller.count.value, 1);\n});\n\ntest('decrement decreases count', () {\n  final controller = CounterController();\n  controller.decrement();\n  expect(controller.count.value, -1);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Controllers with Dependencies"
+    },
+    {
+      "type": "text",
+      "value": "When a controller depends on a service, you should mock that service. Use `Mockito` to generate mocks."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Define an abstract repository\nabstract class IUserRepository {\n  Future<String> login(String email, String password);\n}\n\n// Create a mock with Mockito\nimport 'package:mockito/annotations.dart';\nimport 'package:mockito/mockito.dart';\n\n@GenerateMocks([IUserRepository])\nvoid main() { ... }"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Controller that uses the repository\nclass LoginController extends GetxController {\n  final IUserRepository repository;\n  LoginController(this.repository);\n\n  var isLoading = false.obs;\n  var error = ''.obs;\n\n  Future<bool> login(String email, String password) async {\n    isLoading.value = true;\n    error.value = '';\n    try {\n      await repository.login(email, password);\n      return true;\n    } catch (e) {\n      error.value = e.toString();\n      return false;\n    } finally {\n      isLoading.value = false;\n    }\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "Now write a test using the mock:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:mockito/mockito.dart';\nimport 'login_controller_test.mocks.dart';\n\nvoid main() {\n  late MockIUserRepository mockRepo;\n  late LoginController controller;\n\n  setUp(() {\n    Get.reset();\n    mockRepo = MockIUserRepository();\n    controller = LoginController(mockRepo);\n  });\n\n  test('login success updates state', () async {\n    when(mockRepo.login('test@test.com', '123'))\n        .thenAnswer((_) async => 'token');\n\n    final result = await controller.login('test@test.com', '123');\n\n    expect(result, true);\n    expect(controller.isLoading.value, false);\n    expect(controller.error.value, '');\n    verify(mockRepo.login('test@test.com', '123')).called(1);\n  });\n\n  test('login failure sets error', () async {\n    when(mockRepo.login('test@test.com', 'wrong'))\n        .thenThrow(Exception('Invalid credentials'));\n\n    final result = await controller.login('test@test.com', 'wrong');\n\n    expect(result, false);\n    expect(controller.isLoading.value, false);\n    expect(controller.error.value, 'Exception: Invalid credentials');\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Reactive State with Get.reset"
+    },
+    {
+      "type": "text",
+      "value": "When your controller uses `Get.put` or `Get.find`, you need to manage the GetX dependency container. Use `Get.reset()` before each test to clear registrations. Then you can manually inject mocks with `Get.put`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "test('controller uses Get.find', () {\n  Get.lazyPut<MyService>(() => MockMyService());\n  final controller = Get.put(MyController());\n  // test logic\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Workers"
+    },
+    {
+      "type": "text",
+      "value": "Workers can be tested by changing the reactive variable and verifying the side effect. You may need to use `Future.microtask` or `pump` to let the worker execute."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class WorkerController extends GetxController {\n  var query = ''.obs;\n  var searchCalled = false.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    debounce(query, (_) => searchCalled.value = true, time: Duration(milliseconds: 300));\n  }\n}\n\ntest('debounce worker triggers after delay', () async {\n  final controller = WorkerController();\n  controller.query.value = 'hello';\n\n  // Worker hasn't triggered yet\n  expect(controller.searchCalled.value, false);\n\n  // Wait for debounce period\n  await Future.delayed(Duration(milliseconds: 350));\n\n  expect(controller.searchCalled.value, true);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Testing GetxService"
+    },
+    {
+      "type": "text",
+      "value": "Services are tested similarly to controllers, but they are usually permanent. In tests, you can instantiate them directly or use `Get.put`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyService extends GetxService {\n  int getValue() => 42;\n}\n\ntest('MyService returns correct value', () {\n  final service = MyService();\n  expect(service.getValue(), 42);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Integration Testing with GetX"
+    },
+    {
+      "type": "text",
+      "value": "For widget tests that involve GetX widgets like `Obx` or `GetBuilder`, you can use `GetMaterialApp` as the test widget. Ensure you register controllers in the test environment, for example via bindings."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "testWidgets('CounterPage shows initial count', (tester) async {\n  await tester.pumpWidget(\n    GetMaterialApp(\n      home: CounterPage(),\n      initialBinding: CounterBinding(),\n    ),\n  );\n\n  expect(find.text('0'), findsOneWidget);\n  await tester.tap(find.byIcon(Icons.add));\n  await tester.pump();\n  expect(find.text('1'), findsOneWidget);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Reset GetX before each test** – Use `setUp(() => Get.reset())` to avoid state leakage.",
+        "**Mock dependencies** – Use `Mockito` or manual mocks to isolate the controller under test.",
+        "**Test reactive variables directly** – They are just Dart objects; you can read their `.value`.",
+        "**Avoid testing implementation details** – Focus on public methods and state changes.",
+        "**Use `Future.delayed` for worker tests** – Account for debounce/interval durations.",
+        "**Keep tests fast** – Avoid real network calls; mock them."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not resetting GetX** – Previous registrations can cause tests to interfere.\n✅ Call `Get.reset()` in `setUp`.",
+        "❌ **Testing reactive state with `==` on `.value`** – Works, but ensure you're comparing values, not references.",
+        "❌ **Using `Get.find` without registration** – Throws error. Register mocks first.",
+        "❌ **Forgetting to await async operations** – Use `await` or `pump` to let futures complete.",
+        "❌ **Testing workers with hardcoded delays** – Use realistic but small delays, or use `pumpAndSettle` in widget tests."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Do I need to mock GetX itself?**  \nA: No, GetX is a framework. You just mock your own dependencies.",
+        "**Q: How do I test a controller that uses `Get.parameters`?**  \nA: You can either pass parameters via the route in a widget test, or extract the logic into a method that receives the parameter.",
+        "**Q: Can I test the `onInit` lifecycle?**  \nA: Yes. When you instantiate a controller, `onInit` runs automatically. You can test side effects after instantiation.",
+        "**Q: How to test `Get.snackbar` calls?**  \nA: In unit tests, you can mock `Get` with a custom implementation. For widget tests, you can verify the snackbar appears.",
+        "**Q: Is it possible to test `GetX` navigation?**  \nA: Yes, in widget tests you can tap buttons that call `Get.to` and verify that the new route is built."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Testing GetX controllers and services is straightforward once you understand how to manage the DI container and mock dependencies. With `Get.reset()` and proper mocks, you can write reliable unit tests that cover your business logic. Combine these with widget tests for full confidence in your Flutter app."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "defaultCode": ""
+  },
+  "quiz": [
+    {
+      "question": "What method should you call in setUp to clear all registered dependencies?",
+      "options": ["Get.clean()", "Get.clear()", "Get.reset()", "Get.deleteAll()"],
+      "answer": 2
+    },
+    {
+      "question": "How can you mock a repository for a controller test?",
+      "options": [
+        "Use the real implementation",
+        "Create a mock using Mockito and inject it",
+        "Use Get.find to find the real one",
+        "Hardcode values in the controller"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "When testing a worker with debounce, how do you simulate the delay?",
+      "options": [
+        "Call pump()",
+        "Use Future.delayed",
+        "Use fakeAsync",
+        "Both B and C"
+      ],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-controller",
+    "getx-dependency-injection",
+    "getx-state-management",
+    "getx-workers"
+  ]
+}

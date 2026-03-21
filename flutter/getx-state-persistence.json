@@ -1,0 +1,202 @@
+{
+  "slug": "getx-state-persistence",
+  "course": "Flutter",
+  "title": "GetX State Persistence: Save & Restore App State with GetStorage",
+  "meta": {
+    "title": "GetX State Persistence – Save & Restore App State",
+    "description": "Learn how to persist app state in GetX using GetStorage. Save user preferences, settings, and data automatically with workers, and restore state on app start.",
+    "keywords": [
+      "GetX state persistence",
+      "GetStorage",
+      "persist state GetX",
+      "save app state",
+      "restore state",
+      "GetX local storage",
+      "Flutter GetX persistence"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "State persistence is the ability to save your app's state (like user preferences, settings, or even data) to a local storage and restore it when the app is reopened. In GetX, the simplest way to achieve this is with `GetStorage` – a lightweight key‑value storage that integrates seamlessly with reactive variables and workers. This guide covers how to persist and restore state using GetX patterns."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up GetStorage"
+    },
+    {
+      "type": "text",
+      "value": "Add GetX to your `pubspec.yaml` (GetStorage is included). Initialize GetStorage in `main()` before running the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  await GetStorage.init(); // initializes default storage\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Basic Persistence with Workers"
+    },
+    {
+      "type": "text",
+      "value": "The most common pattern is to save a reactive variable's value to storage whenever it changes, using a worker. Then load the saved value in `onInit`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SettingsController extends GetxController {\n  final storage = GetStorage();\n  var themeMode = ThemeMode.system.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Load saved value\n    String? saved = storage.read('themeMode');\n    if (saved != null) {\n      themeMode.value = ThemeMode.values.firstWhere(\n        (e) => e.name == saved,\n        orElse: () => ThemeMode.system,\n      );\n    }\n    // Save when changed\n    ever(themeMode, (mode) {\n      storage.write('themeMode', mode.name);\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Persisting Multiple Values"
+    },
+    {
+      "type": "text",
+      "value": "For multiple settings, you can create a method to load all at once, or use separate workers. A dedicated settings service can help organize."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SettingsController extends GetxController {\n  final storage = GetStorage();\n  var username = ''.obs;\n  var notificationsEnabled = true.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Load all at once\n    username.value = storage.read('username') ?? '';\n    notificationsEnabled.value = storage.read('notifications') ?? true;\n\n    // Save when changed\n    ever(username, (value) => storage.write('username', value));\n    ever(notificationsEnabled, (value) => storage.write('notifications', value));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Persisting Complex Data"
+    },
+    {
+      "type": "text",
+      "value": "GetStorage only supports primitive types, lists, and maps. To store custom objects, convert them to a map (JSON) first. You can also use a helper service."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class User {\n  final String name;\n  final int age;\n  User(this.name, this.age);\n\n  Map<String, dynamic> toJson() => {'name': name, 'age': age};\n  factory User.fromJson(Map<String, dynamic> json) => User(json['name'], json['age']);\n}\n\nclass UserController extends GetxController {\n  final storage = GetStorage();\n  var user = Rx<User?>(null);\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Load\n    Map<String, dynamic>? data = storage.read('user');\n    if (data != null) user.value = User.fromJson(data);\n\n    // Save on change\n    ever(user, (user) {\n      if (user != null) {\n        storage.write('user', user.toJson());\n      } else {\n        storage.remove('user');\n      }\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Persisting Lists"
+    },
+    {
+      "type": "text",
+      "value": "You can store reactive lists as `RxList` and persist them using `assignAll` when loading, and save whenever the list changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TodoController extends GetxController {\n  final storage = GetStorage();\n  var todos = <String>[].obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Load list\n    List<dynamic>? saved = storage.read('todos');\n    if (saved != null) todos.assignAll(saved.cast<String>());\n\n    // Save on every change\n    ever(todos, (list) {\n      storage.write('todos', list.toList());\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Restoring State on App Start"
+    },
+    {
+      "type": "text",
+      "value": "You can also create a service that loads all persisted data before any controller is initialized. Use an `initialBinding` to load and then inject the data into controllers."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppInitializer extends Bindings {\n  @override\n  void dependencies() {\n    final storage = GetStorage();\n    // Load global settings\n    final theme = storage.read('themeMode') ?? 'system';\n    Get.put<ThemeService>(ThemeService(theme));\n    // ... other global data\n  }\n}\n\nvoid main() async {\n  await GetStorage.init();\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      initialBinding: AppInitializer(),\n      // ...\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using with StateMixin"
+    },
+    {
+      "type": "text",
+      "value": "You can combine persistence with `StateMixin` to manage loading/error states while restoring data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DataController extends GetxController with StateMixin<List<Item>> {\n  final storage = GetStorage();\n\n  @override\n  void onInit() {\n    super.onInit();\n    loadData();\n  }\n\n  void loadData() {\n    change(null, status: RxStatus.loading());\n    try {\n      List<dynamic>? saved = storage.read('items');\n      if (saved != null) {\n        final items = saved.map((e) => Item.fromJson(e)).toList();\n        change(items, status: RxStatus.success());\n      } else {\n        change([], status: RxStatus.empty());\n      }\n    } catch (e) {\n      change(null, status: RxStatus.error(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Initialize GetStorage early** – Call `await GetStorage.init()` before `runApp`.",
+        "**Use workers to auto‑save** – `ever` saves on every change; `debounce` can be used for less frequent saves.",
+        "**Keep data small** – GetStorage is not meant for large datasets; use Hive or SQLite for that.",
+        "**Handle null defaults** – Provide fallback values when reading.",
+        "**Separate concerns** – Create a service for persistence logic, not inside controllers if it becomes complex.",
+        "**Encapsulate persistence in a service** – A `StorageService` can provide methods like `saveTheme`, `loadTheme`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to call `GetStorage.init()`** – Causes runtime errors.\n✅ Call it in main before runApp.",
+        "❌ **Storing large objects** – May cause performance issues or disk limits.\n✅ Use appropriate storage for large data.",
+        "❌ **Not handling null when reading** – Can cause exceptions.\n✅ Use `??` default values.",
+        "❌ **Saving on every tiny change without debounce** – May cause unnecessary writes.\n✅ Use `debounce` for fields like text inputs."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I use SharedPreferences instead of GetStorage?**  \nA: Yes, but GetStorage is faster and has a simpler API. It also works on web (localStorage).",
+        "**Q: How do I clear all persisted data?**  \nA: Use `GetStorage().erase()` to clear the entire storage box.",
+        "**Q: Is it safe to persist user tokens?**  \nA: Yes, but consider security. GetStorage stores in plain text; for sensitive data, consider encrypting or using FlutterSecureStorage.",
+        "**Q: How to handle multiple storage boxes?**  \nA: Use named boxes: `GetStorage('settings')` and `GetStorage('user')`. Initialize each with `GetStorage.init('boxName')`.",
+        "**Q: Can I persist state across app updates?**  \nA: Yes, GetStorage persists across updates as long as the storage file format remains compatible."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Persisting state with GetX and GetStorage is straightforward. By using workers to automatically save reactive variables and loading them in `onInit`, you can create apps that remember user preferences and data across sessions. For more complex data, you can serialize objects and combine with StateMixin for a full data layer."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\nimport 'package:get_storage/get_storage.dart';\n\nvoid main() async {\n  await GetStorage.init();\n  runApp(MyApp());\n}\n\nclass SettingsController extends GetxController {\n  final storage = GetStorage();\n  var username = ''.obs;\n\n  @override\n  void onInit() {\n    super.onInit();\n    // Load saved username\n    username.value = storage.read('username') ?? '';\n    // Save when changed\n    ever(username, (value) {\n      storage.write('username', value);\n    });\n  }\n\n  void setUsername(String name) {\n    username.value = name;\n  }\n}\n\nclass MyApp extends StatelessWidget {\n  final controller = Get.put(SettingsController());\n\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('State Persistence')),\n        body: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Obx(() => Text('Saved username: ${controller.username.value}', style: TextStyle(fontSize: 20))),\n              SizedBox(height: 20),\n              TextField(\n                onChanged: controller.setUsername,\n                decoration: InputDecoration(labelText: 'Enter username'),\n              ),\n              SizedBox(height: 10),\n              ElevatedButton(\n                onPressed: () => controller.setUsername(''),\n                child: Text('Clear'),\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method is used to initialize GetStorage?",
+      "options": ["GetStorage.prepare()", "GetStorage.init()", "GetStorage.start()", "GetStorage.load()"],
+      "answer": 1
+    },
+    {
+      "question": "What is the recommended way to auto‑save a reactive variable when it changes?",
+      "options": ["Use a timer", "Use a worker like ever", "Call storage.write manually every time", "Use a StreamSubscription"],
+      "answer": 1
+    },
+    {
+      "question": "How do you store a custom object in GetStorage?",
+      "options": [
+        "Store it directly",
+        "Convert to Map/JSON first",
+        "Use a special wrapper",
+        "It's not possible"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-storage",
+    "getx-state-management",
+    "getx-workers",
+    "getx-controller"
+  ]
+}

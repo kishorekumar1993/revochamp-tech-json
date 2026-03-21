@@ -1,0 +1,215 @@
+{
+  "slug": "getx-bottomsheet",
+  "course": "Flutter",
+  "title": "GetX BottomSheet: Persistent & Modal Sheets Without Context",
+  "meta": {
+    "title": "GetX BottomSheet – Modal & Persistent Sheets in Flutter",
+    "description": "Learn how to use GetX bottom sheets: Get.bottomSheet, custom height, scroll control, dismissal behavior, and returning values. No BuildContext required.",
+    "keywords": [
+      "GetX bottomsheet",
+      "Get.bottomSheet",
+      "Flutter bottomsheet",
+      "GetX modal sheet",
+      "GetX persistent sheet",
+      "context-free bottomsheet"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is GetX BottomSheet?"
+    },
+    {
+      "type": "text",
+      "value": "GetX provides a context‑free way to show bottom sheets – modal or persistent – anywhere in your app. Unlike Flutter's native `showModalBottomSheet`, you don't need a `BuildContext`. This makes it ideal for showing actions, forms, or additional content from controllers, services, or any Dart class. You can also await the result and control whether the user can dismiss it by tapping outside."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage: Get.bottomSheet"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.bottomSheet(\n  Container(\n    height: 200,\n    color: Colors.white,\n    child: Center(\n      child: Text('This is a bottom sheet'),\n    ),\n  ),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Key Parameters"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**backgroundColor** – Background color of the sheet (default is white).",
+        "**barrierColor** – Color of the overlay behind the sheet.",
+        "**isScrollControlled** – Whether the sheet can expand to full screen (default false). When true, the sheet can take any height, even beyond the safe area.",
+        "**enableDrag** – Whether the user can drag to dismiss (default true).",
+        "**isDismissible** – Whether tapping outside dismisses the sheet (default true).",
+        "**elevation** – Elevation of the sheet (default 4.0).",
+        "**shape** – Custom shape (e.g., RoundedRectangleBorder).",
+        "**clipBehavior** – How to clip the sheet (default Clip.none).",
+        "**settings** – Route settings.",
+        "**enterBottomSheetDuration** – Animation duration for entering (default 250ms).",
+        "**exitBottomSheetDuration** – Animation duration for exiting (default 250ms).",
+        "**ignoreSafeArea** – Whether to ignore safe area (default false).",
+        "**useRootNavigator** – Whether to use the root navigator (default false)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Custom Height & Scrollable Content"
+    },
+    {
+      "type": "text",
+      "value": "By default, the bottom sheet has a fixed height. To make it scrollable or full screen, use `isScrollControlled: true`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.bottomSheet(\n  Container(\n    height: 400,\n    child: SingleChildScrollView(\n      child: Column(\n        children: List.generate(20, (index) => ListTile(title: Text('Item $index'))),\n      ),\n    ),\n  ),\n  isScrollControlled: true,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Full‑Screen Bottom Sheet"
+    },
+    {
+      "type": "text",
+      "value": "Combine `isScrollControlled: true` with `height: double.infinity` to fill the screen."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.bottomSheet(\n  Container(\n    height: double.infinity,\n    color: Colors.white,\n    child: Center(child: Text('Full screen sheet')),\n  ),\n  isScrollControlled: true,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Returning Values"
+    },
+    {
+      "type": "text",
+      "value": "You can await the bottom sheet and return a value using `Get.back(result: value)`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Future<void> showSelection() async {\n  final selected = await Get.bottomSheet(\n    Container(\n      height: 250,\n      child: Column(\n        children: [\n          ListTile(\n            title: Text('Option 1'),\n            onTap: () => Get.back(result: 'Option 1'),\n          ),\n          ListTile(\n            title: Text('Option 2'),\n            onTap: () => Get.back(result: 'Option 2'),\n          ),\n        ],\n      ),\n    ),\n  );\n\n  if (selected != null) {\n    Get.snackbar('Selected', selected);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Persistent Bottom Sheets"
+    },
+    {
+      "type": "text",
+      "value": "By default, bottom sheets are modal (they block interaction with the underlying content). You can create a persistent bottom sheet that stays open while allowing interaction with the background by using `isDismissible: false` and `enableDrag: false`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.bottomSheet(\n  Container(\n    height: 200,\n    child: Center(child: Text('Persistent sheet')),\n  ),\n  isDismissible: false,\n  enableDrag: false,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Customizing Shape & Animation"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "Get.bottomSheet(\n  Container(\n    height: 300,\n    decoration: BoxDecoration(\n      color: Colors.white,\n      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),\n    ),\n    child: ...\n  ),\n  shape: RoundedRectangleBorder(\n    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),\n  ),\n  enterBottomSheetDuration: Duration(milliseconds: 400),\n  exitBottomSheetDuration: Duration(milliseconds: 400),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Using with Controllers"
+    },
+    {
+      "type": "text",
+      "value": "Since `Get.bottomSheet` doesn't need a context, you can call it directly from a controller or service."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomeController extends GetxController {\n  void showFilterSheet() {\n    Get.bottomSheet(FilterSheet());\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `isScrollControlled` for scrollable content** – Avoid overflow issues.",
+        "**Provide a clear close action** – Include a close button or gesture, especially when `isDismissible` is false.",
+        "**Return values when applicable** – Let callers know what was selected.",
+        "**Keep the sheet height appropriate** – Not too tall, not too short, unless full screen is intended.",
+        "**Test on small screens** – Ensure content fits and is scrollable if needed."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to handle return values** – The future may be ignored; but if you need the result, await it.",
+        "❌ **Setting `isScrollControlled` without adjusting height** – The sheet may not be visible if height is too small.",
+        "❌ **Using `Get.bottomSheet` without `GetMaterialApp`** – Won't work.",
+        "❌ **Making the sheet non‑dismissible without a close button** – Users may get stuck.\n✅ Always provide a way to close."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Can I show a bottom sheet without a `BuildContext`?**  \nA: Yes! That's the primary advantage of GetX bottom sheets.",
+        "**Q: How do I make the sheet expand to full screen?**  \nA: Set `isScrollControlled: true` and give the sheet `height: double.infinity`.",
+        "**Q: Can I have multiple bottom sheets stacked?**  \nA: You can, but the new one will overlay the previous. Dismiss them in reverse order.",
+        "**Q: How to prevent the user from dragging to dismiss?**  \nA: Set `enableDrag: false`.",
+        "**Q: How to make the sheet appear from the left/right?**  \nA: Bottom sheets are always from the bottom. For side sheets, use `Get.dialog` with a custom widget.",
+        "**Q: Can I show a bottom sheet from a `GetxService`?**  \nA: Yes, anywhere."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "GetX bottom sheets provide a simple, context‑free API for showing modal and persistent sheets. With extensive customization options and the ability to return values, they are perfect for actions, filters, forms, and more in your Flutter app."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:get/get.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return GetMaterialApp(\n      home: BottomSheetDemo(),\n    );\n  }\n}\n\nclass BottomSheetDemo extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('GetX BottomSheet')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            ElevatedButton(\n              onPressed: () {\n                Get.bottomSheet(\n                  Container(\n                    height: 200,\n                    color: Colors.white,\n                    child: Center(\n                      child: Text('Simple sheet'),\n                    ),\n                  ),\n                );\n              },\n              child: Text('Simple BottomSheet'),\n            ),\n            ElevatedButton(\n              onPressed: () async {\n                final result = await Get.bottomSheet(\n                  Container(\n                    height: 250,\n                    color: Colors.white,\n                    child: Column(\n                      children: [\n                        ListTile(\n                          title: Text('Option A'),\n                          onTap: () => Get.back(result: 'A'),\n                        ),\n                        ListTile(\n                          title: Text('Option B'),\n                          onTap: () => Get.back(result: 'B'),\n                        ),\n                      ],\n                    ),\n                  ),\n                );\n                if (result != null) {\n                  Get.snackbar('Selected', result);\n                }\n              },\n              child: Text('With Return Value'),\n            ),\n            ElevatedButton(\n              onPressed: () {\n                Get.bottomSheet(\n                  Container(\n                    height: 400,\n                    child: SingleChildScrollView(\n                      child: Column(\n                        children: List.generate(20, (index) => ListTile(title: Text('Item $index'))),\n                      ),\n                    ),\n                  ),\n                  isScrollControlled: true,\n                );\n              },\n              child: Text('Scrollable Sheet'),\n            ),\n            ElevatedButton(\n              onPressed: () {\n                Get.bottomSheet(\n                  Container(\n                    height: 300,\n                    decoration: BoxDecoration(\n                      color: Colors.white,\n                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),\n                    ),\n                    child: Center(\n                      child: Text('Custom shape'),\n                    ),\n                  ),\n                  shape: RoundedRectangleBorder(\n                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),\n                  ),\n                );\n              },\n              child: Text('Custom Shape'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method is used to show a bottom sheet in GetX?",
+      "options": ["Get.showBottomSheet", "Get.modalBottomSheet", "Get.bottomSheet", "Get.sheet"],
+      "answer": 2
+    },
+    {
+      "question": "How do you make a bottom sheet full screen?",
+      "options": [
+        "Set `fullscreen: true`",
+        "Set `isScrollControlled: true` and height to `double.infinity`",
+        "Set `expand: true`",
+        "Use `Get.fullScreenSheet()`"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you prevent the user from dismissing a bottom sheet by tapping outside?",
+      "options": ["set `isDismissible: false`", "set `dismissOnTap: false`", "set `barrierDismissible: false`", "set `enableDrag: false`"],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-navigation",
+    "getx-dialog",
+    "getx-snackbar",
+    "getx-utils"
+  ]
+}

@@ -1,0 +1,233 @@
+{
+  "slug": "getx-with-rest-api-architecture",
+  "course": "Flutter",
+  "title": "GetX with REST API: Clean Architecture & Best Practices",
+  "meta": {
+    "title": "GetX REST API Architecture – Clean, Scalable HTTP Clients",
+    "description": "Learn how to structure REST API clients in GetX using repository pattern, dependency injection, interceptors, and reactive state. Build maintainable and testable HTTP integrations.",
+    "keywords": [
+      "GetX REST API",
+      "GetX HTTP client",
+      "GetX Dio",
+      "repository pattern GetX",
+      "API service GetX",
+      "GetX clean architecture",
+      "Flutter GetX networking"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "A well‑structured API client is essential for any Flutter app that communicates with a backend. GetX provides the tools to build a clean, maintainable REST API layer: dependency injection, reactive state, and lifecycle management. This guide covers how to design an API client using the repository pattern, integrate it with GetX controllers, handle errors, and add interceptors for authentication and logging."
+    },
+    {
+      "type": "heading",
+      "value": "1. Choosing an HTTP Client"
+    },
+    {
+      "type": "text",
+      "value": "You can use the built‑in `http` package for simple needs, or `dio` for advanced features (interceptors, request cancellation, form data). This guide uses `dio` because it’s more flexible for production apps. Add the dependencies to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  dio: ^5.4.0\n  get: ^4.6.6"
+    },
+    {
+      "type": "heading",
+      "value": "2. Defining Data Models"
+    },
+    {
+      "type": "text",
+      "value": "Create model classes for your API responses. Use `json_serializable` or manual `fromJson`/`toJson` methods. Example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class Post {\n  final int id;\n  final String title;\n  final String body;\n\n  Post({required this.id, required this.title, required this.body});\n\n  factory Post.fromJson(Map<String, dynamic> json) {\n    return Post(\n      id: json['id'],\n      title: json['title'],\n      body: json['body'],\n    );\n  }\n\n  Map<String, dynamic> toJson() => {\n    'id': id,\n    'title': title,\n    'body': body,\n  };\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Creating the API Client Service"
+    },
+    {
+      "type": "text",
+      "value": "Encapsulate Dio setup in a service that extends `GetxService`. This service will be injected into repositories and can be made permanent. Add interceptors for logging, authentication, etc."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:dio/dio.dart';\nimport 'package:get/get.dart';\n\nclass ApiService extends GetxService {\n  late Dio _dio;\n\n  @override\n  void onInit() {\n    super.onInit();\n    _dio = Dio(BaseOptions(\n      baseUrl: 'https://jsonplaceholder.typicode.com',\n      connectTimeout: Duration(seconds: 30),\n      receiveTimeout: Duration(seconds: 30),\n      headers: {'Content-Type': 'application/json'},\n    ));\n\n    // Add interceptors\n    _dio.interceptors.add(InterceptorsWrapper(\n      onRequest: (options, handler) {\n        // Add auth token if available\n        final token = Get.find<AuthService>().token;\n        if (token != null) {\n          options.headers['Authorization'] = 'Bearer $token';\n        }\n        return handler.next(options);\n      },\n      onResponse: (response, handler) => handler.next(response),\n      onError: (error, handler) => handler.next(error),\n    ));\n  }\n\n  Future<Response> get(String path, {Map<String, dynamic>? queryParams}) async {\n    try {\n      return await _dio.get(path, queryParameters: queryParams);\n    } on DioException catch (e) {\n      throw _handleError(e);\n    }\n  }\n\n  Future<Response> post(String path, {dynamic data}) async {\n    try {\n      return await _dio.post(path, data: data);\n    } on DioException catch (e) {\n      throw _handleError(e);\n    }\n  }\n\n  // Add put, delete, etc.\n\n  Exception _handleError(DioException e) {\n    if (e.type == DioExceptionType.connectionTimeout) {\n      return Exception('Connection timeout');\n    } else if (e.type == DioExceptionType.receiveTimeout) {\n      return Exception('Receive timeout');\n    } else if (e.type == DioExceptionType.cancel) {\n      return Exception('Request cancelled');\n    } else if (e.response != null) {\n      final statusCode = e.response!.statusCode;\n      final message = e.response!.data['message'] ?? 'Server error';\n      return Exception('$statusCode: $message');\n    } else {\n      return Exception('Network error: ${e.message}');\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Repository Pattern"
+    },
+    {
+      "type": "text",
+      "value": "Repositories abstract the data source (API, local database) and provide a clean interface for controllers. They depend on the `ApiService` and can be injected via GetX DI."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostRepository {\n  final ApiService api;\n  PostRepository(this.api);\n\n  Future<List<Post>> getPosts() async {\n    final response = await api.get('/posts');\n    final List data = response.data;\n    return data.map((json) => Post.fromJson(json)).toList();\n  }\n\n  Future<Post> getPost(int id) async {\n    final response = await api.get('/posts/$id');\n    return Post.fromJson(response.data);\n  }\n\n  Future<Post> createPost(Post post) async {\n    final response = await api.post('/posts', data: post.toJson());\n    return Post.fromJson(response.data);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "5. Controller with Reactive State"
+    },
+    {
+      "type": "text",
+      "value": "The controller uses the repository and exposes reactive state (loading, data, error). Use `StateMixin` for simplicity."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostController extends GetxController with StateMixin<List<Post>> {\n  final PostRepository repository;\n  PostController(this.repository);\n\n  @override\n  void onInit() {\n    super.onInit();\n    fetchPosts();\n  }\n\n  Future<void> fetchPosts() async {\n    change(null, status: RxStatus.loading());\n    try {\n      final posts = await repository.getPosts();\n      if (posts.isEmpty) {\n        change(posts, status: RxStatus.empty());\n      } else {\n        change(posts, status: RxStatus.success());\n      }\n    } catch (e) {\n      change(null, status: RxStatus.error(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "6. Dependency Injection with Bindings"
+    },
+    {
+      "type": "text",
+      "value": "Use bindings to register the service, repository, and controller. This ensures lazy loading and proper disposal."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostBinding extends Bindings {\n  @override\n  void dependencies() {\n    Get.lazyPut<ApiService>(() => ApiService(), fenix: true);\n    Get.lazyPut<PostRepository>(() => PostRepository(Get.find()));\n    Get.lazyPut<PostController>(() => PostController(Get.find()));\n  }\n}\n\n// In route\nGetPage(\n  name: '/posts',\n  page: () => PostsPage(),\n  binding: PostBinding(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "7. UI with Obx/obx"
+    },
+    {
+      "type": "text",
+      "value": "The UI uses the controller's state to show loading, error, or data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostsPage extends GetView<PostController> {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Posts')),\n      body: controller.obx(\n        (data) => ListView.builder(\n          itemCount: data!.length,\n          itemBuilder: (_, i) => ListTile(\n            title: Text(data[i].title),\n            subtitle: Text(data[i].body),\n          ),\n        ),\n        onLoading: Center(child: CircularProgressIndicator()),\n        onError: (error) => Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              Text('Error: $error'),\n              ElevatedButton(\n                onPressed: controller.fetchPosts,\n                child: Text('Retry'),\n              ),\n            ],\n          ),\n        ),\n        onEmpty: Center(child: Text('No posts found')),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "8. Adding Authentication Token"
+    },
+    {
+      "type": "text",
+      "value": "If your API requires authentication, you can store the token (e.g., in `GetStorage`) and add it to Dio interceptors. Example:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthInterceptor extends Interceptor {\n  final GetStorage storage = GetStorage();\n\n  @override\n  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {\n    final token = storage.read('token');\n    if (token != null) {\n      options.headers['Authorization'] = 'Bearer $token';\n    }\n    handler.next(options);\n  }\n}\n\n// In ApiService.onInit\n_dio.interceptors.add(AuthInterceptor());"
+    },
+    {
+      "type": "heading",
+      "value": "9. Error Handling & Retry"
+    },
+    {
+      "type": "text",
+      "value": "For a more robust solution, you can implement retry logic on certain errors (e.g., network issues, 5xx). Use `dio`'s `RetryInterceptor` or a custom one."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use a service layer for Dio** – Centralizes base URL, timeouts, and interceptors.",
+        "**Implement repository pattern** – Keeps API logic separate from controllers, making testing easier.",
+        "**Use `StateMixin`** – Reduces boilerplate for loading/error/success states.",
+        "**Handle errors gracefully** – Catch specific exceptions and provide user‑friendly messages.",
+        "**Add interceptors for auth and logging** – Keeps request/response handling clean.",
+        "**Test the repository with mocks** – Use `Mockito` to test API calls without making real network requests.",
+        "**Cancel requests when needed** – Use `CancelToken` for long‑running or repetitive requests."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Putting API calls directly in controllers** – Makes testing hard and mixes concerns.\n✅ Use repositories.",
+        "❌ **Not handling Dio exceptions** – May cause crashes or unhelpful errors.\n✅ Catch `DioException` and convert to meaningful messages.",
+        "❌ **Forgetting to add interceptors for auth** – Each request must include the token; centralise it.",
+        "❌ **Not cancelling streams/subscriptions** – Controllers may live beyond the view; cancel in `onClose`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "FAQ"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Q: Should I use `http` or `dio`?**  \nA: `dio` is more feature‑rich (interceptors, cancellation, progress, form data). For simple needs, `http` is fine, but `dio` scales better.",
+        "**Q: How to handle token refresh?**  \nA: You can add an interceptor that checks for 401 responses, refreshes the token, and retries the original request. Use `dio`'s `QueueInterceptor` or a custom solution.",
+        "**Q: How to test the repository?**  \nA: Mock the `ApiService` using `Mockito` and test that the repository calls the correct endpoints and handles responses correctly.",
+        "**Q: Can I use this architecture with `GetxService`?**  \nA: Yes, `ApiService` extends `GetxService` to keep it alive across the app. Repositories and controllers are `GetxController` and are disposed when not needed.",
+        "**Q: How to show a loading indicator for individual API calls?**  \nA: Use separate reactive flags (e.g., `isLoading`) or split into smaller controllers. `StateMixin` already provides a global loading state; for per‑action loading, use additional booleans."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "A well‑architected REST API client using GetX gives you clean separation of concerns, testability, and maintainability. By using services, repositories, and controllers, you can build robust networking layers that integrate seamlessly with GetX's reactive state and dependency injection."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false
+  },
+  "quiz": [
+    {
+      "question": "Which layer should contain the Dio instance and interceptors?",
+      "options": [
+        "Controller",
+        "Repository",
+        "Service (ApiService)",
+        "View"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What is the purpose of the repository pattern in this architecture?",
+      "options": [
+        "To hold UI state",
+        "To abstract the data source and provide a clean interface",
+        "To manage navigation",
+        "To store Dio options"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you handle loading and error states for API calls in a controller?",
+      "options": [
+        "Using GetBuilder",
+        "Using StateMixin or reactive booleans",
+        "Using FutureBuilder",
+        "Using StreamBuilder"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "getx-introduction",
+    "getx-services",
+    "getx-state-mixin",
+    "getx-dependency-injection",
+    "getx-api-integration"
+  ]
+}
