@@ -1,0 +1,239 @@
+{
+  "slug": "bloc-code-generation",
+  "course": "Flutter",
+  "title": "BLoC Code Generation: Automate Boilerplate with bloc_generator & Annotations",
+  "meta": {
+    "title": "BLoC Code Generation – Automate State & Event Boilerplate (2026)",
+    "description": "Learn how to use bloc_generator and bloc_annotations to automatically generate BLoC files, reduce boilerplate, and maintain consistency across your Flutter app. Includes setup, annotations, and advanced tips.",
+    "keywords": [
+      "Flutter BLoC code generation",
+      "bloc_generator",
+      "bloc_annotations",
+      "build_runner BLoC",
+      "automate BLoC boilerplate",
+      "bloc template",
+      "BLoC code generation best practices"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BLoC Code Generation?"
+    },
+    {
+      "type": "text",
+      "value": "BLoC code generation refers to using tools like `bloc_generator` and `bloc_annotations` to automatically create the boilerplate code for your BLoCs, states, and events. Instead of manually writing repetitive classes for each feature, you can use annotations to define the structure, and the build system will generate the necessary files. This approach reduces human error, enforces consistency, and speeds up development."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Code Generation?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Reduces Boilerplate** – No more manually writing states, events, and bloc classes.",
+        "**Consistency** – All blocs follow the same pattern, making the codebase easier to navigate.",
+        "**Time Saving** – Focus on business logic rather than repetitive coding.",
+        "**Type Safety** – Generated code is fully typed and integrates seamlessly with `flutter_bloc`.",
+        "**Less Human Error** – Automatically generated equality, copyWith, and event handlers."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Dependencies"
+    },
+    {
+      "type": "text",
+      "value": "Add the required packages to your `pubspec.yaml`. You'll need `bloc_annotations` and `bloc_generator` for code generation, plus `build_runner` to run the generator."
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter_bloc: ^8.1.5\n  bloc_annotations: ^1.0.0\n\ndev_dependencies:\n  build_runner: ^2.4.0\n  bloc_generator: ^1.0.0"
+    },
+    {
+      "type": "heading",
+      "value": "Basic Usage: Annotating a BLoC"
+    },
+    {
+      "type": "text",
+      "value": "Create a file (e.g., `counter_bloc.dart`) and use the `@Bloc` annotation to define the state and events. The generator will produce the full BLoC class, states, and events."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:bloc_annotations/bloc_annotations.dart';\n\npart 'counter_bloc.g.dart';\n\n@Bloc()\nabstract class CounterBloc {\n  @initialState()\n  int get initialState => 0;\n\n  @event()\n  void increment(int currentState) => currentState + 1;\n\n  @event()\n  void decrement(int currentState) => currentState - 1;\n}"
+    },
+    {
+      "type": "text",
+      "value": "Run the generator:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "dart run build_runner build\n# or watch for changes\nflutter pub run build_runner watch"
+    },
+    {
+      "type": "text",
+      "value": "After generation, you'll have `counter_bloc.g.dart` containing the `CounterBloc` class, `CounterEvent` classes, and `CounterState` (which extends `Equatable`). You can then use the generated bloc normally."
+    },
+    {
+      "type": "heading",
+      "value": "Generated Code Structure"
+    },
+    {
+      "type": "text",
+      "value": "The generator typically creates:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**A sealed union of events** – One class per event method, with fields if parameters are passed.",
+        "**A state class** – Extends `Equatable` and contains the state value (or multiple fields).",
+        "**The BLoC class** – Extends `Bloc<GeneratedEvent, GeneratedState>` with event handlers wired up."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Generated code (simplified)\nclass CounterState extends Equatable {\n  final int value;\n  const CounterState(this.value);\n  @override List<Object?> get props => [value];\n}\n\nabstract class CounterEvent extends Equatable {}\nclass IncrementEvent extends CounterEvent {}\nclass DecrementEvent extends CounterEvent {}\n\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(CounterState(0)) {\n    on<IncrementEvent>((event, emit) => emit(CounterState(state.value + 1)));\n    on<DecrementEvent>((event, emit) => emit(CounterState(state.value - 1)));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced Annotations"
+    },
+    {
+      "type": "text",
+      "value": "You can customize the generated code with additional annotations."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@Bloc()\nabstract class TodoBloc {\n  @initialState()\n  TodoState get initialState => TodoState(todos: []);\n\n  @event()\n  Future<void> addTodo(Todo todo, TodoState state) async {\n    // logic here\n  }\n\n  @event(\n    transformer: 'debounce(Duration(milliseconds: 300))',\n  )\n  void search(String query, TodoState state) {\n    // ...\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Custom State Classes"
+    },
+    {
+      "type": "text",
+      "value": "If you need a custom state with multiple fields, you can define it manually and reference it in the annotation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@Bloc(state: TodoState)\nabstract class TodoBloc {\n  @initialState()\n  TodoState get initialState => const TodoState();\n}\n\n// Manually defined state\nclass TodoState extends Equatable {\n  final List<Todo> todos;\n  final bool isLoading;\n  const TodoState({this.todos = const [], this.isLoading = false});\n  // ...\n}"
+    },
+    {
+      "type": "heading",
+      "value": "IDE Integration & Custom Templates"
+    },
+    {
+      "type": "text",
+      "value": "You can create custom snippets or templates in your IDE to quickly scaffold a new bloc file. For VSCode, use the `bloc` extension (by Felix Angelov) which provides commands to generate a new bloc, cubit, or feature. This is an alternative to `bloc_generator` and works well for many developers."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep generated files out of version control** – Add `*.g.dart` to `.gitignore` and regenerate on CI.",
+        "**Use `build_runner watch` during development** – Automatically regenerate when you modify the annotated file.",
+        "**Don't manually edit generated files** – They will be overwritten on next build.",
+        "**Combine with `Equatable` and `freezed`** – For complex states, you can use `freezed` alongside `bloc_generator` (some generators integrate with freezed).",
+        "**Use consistent naming** – The generator infers names from the methods; keep them clear.",
+        "**Test generated blocs normally** – The generated code is just standard BLoC code; unit tests work unchanged."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting the `part` directive** – Without `part 'file.g.dart'`, the generated code won't be linked.",
+        "❌ **Not running `build_runner` after changes** – The generator needs to be run manually or with watch.",
+        "❌ **Using `@Bloc` on a class that is not `abstract`** – The generator expects an abstract class.",
+        "❌ **Modifying generated files** – Changes will be lost; always edit the annotated file.",
+        "❌ **Not adding `bloc_annotations` as a dependency** – The annotations are needed at compile time.",
+        "❌ **Overcomplicating with code generation for simple blocs** – Sometimes manual code is simpler; use generation when boilerplate is repetitive."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "BLoC code generation significantly reduces the amount of boilerplate you need to write, allowing you to focus on business logic. By using `bloc_generator` and `bloc_annotations` (or IDE extensions), you can maintain a consistent, type-safe, and maintainable BLoC architecture across your Flutter projects. Adopt code generation for large apps or whenever you find yourself writing repetitive BLoC classes."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I need to use code generation to use BLoC?",
+      "answer": "No, it's completely optional. Code generation is a convenience tool; you can always write BLoCs manually."
+    },
+    {
+      "question": "What is the difference between `bloc_generator` and the VSCode extension?",
+      "answer": "`bloc_generator` uses annotations and `build_runner` to generate code programmatically. The VSCode extension (Bloc by Felix Angelov) provides snippets and commands to create files manually, without annotations."
+    },
+    {
+      "question": "Can I use code generation with Cubit?",
+      "answer": "Some generators support Cubits, but `bloc_annotations` focuses on BLoC. The VSCode extension can generate Cubits as well."
+    },
+    {
+      "question": "How do I handle complex state with freezed?",
+      "answer": "You can define your state using `freezed` and then reference it in the `@Bloc` annotation. Some advanced generators integrate with freezed to generate immutable states with copyWith."
+    },
+    {
+      "question": "What about performance? Does generated code affect runtime performance?",
+      "answer": "No, generated code is just regular Dart code; it has the same performance as manually written code."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "// This example shows a manual BLoC (no code generation) for demo purposes.\n// To use code generation, you would need build_runner and bloc_annotations.\n// See the description for setup instructions.\n\nimport 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\n// ---------- Manual BLoC ----------\nclass CounterState extends Equatable {\n  final int value;\n  const CounterState(this.value);\n  @override\n  List<Object?> get props => [value];\n}\n\nabstract class CounterEvent extends Equatable {\n  const CounterEvent();\n  @override\n  List<Object?> get props => [];\n}\n\nclass Increment extends CounterEvent {}\nclass Decrement extends CounterEvent {}\n\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(const CounterState(0)) {\n    on<Increment>((event, emit) => emit(CounterState(state.value + 1)));\n    on<Decrement>((event, emit) => emit(CounterState(state.value - 1)));\n  }\n}\n\n// ---------- App ----------\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterBloc(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Manual BLoC vs Code Gen')),\n      body: Center(\n        child: BlocBuilder<CounterBloc, CounterState>(\n          builder: (context, state) {\n            return Column(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                Text('Counter: ${state.value}', style: TextStyle(fontSize: 32)),\n                SizedBox(height: 20),\n                Row(\n                  mainAxisAlignment: MainAxisAlignment.center,\n                  children: [\n                    ElevatedButton(\n                      onPressed: () => context.read<CounterBloc>().add(Increment()),\n                      child: Text('+'),\n                    ),\n                    SizedBox(width: 20),\n                    ElevatedButton(\n                      onPressed: () => context.read<CounterBloc>().add(Decrement()),\n                      child: Text('-'),\n                    ),\n                  ],\n                ),\n                SizedBox(height: 40),\n                Padding(\n                  padding: const EdgeInsets.all(16.0),\n                  child: Text(\n                    'Note: This is a manual BLoC. To see code generation in action, follow the instructions in the article.',\n                    textAlign: TextAlign.center,\n                    style: TextStyle(fontSize: 12),\n                  ),\n                ),\n              ],\n            );\n          },\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which package provides the annotations for BLoC code generation?",
+      "options": ["bloc_generator", "bloc_annotations", "flutter_bloc", "build_runner"],
+      "answer": 1
+    },
+    {
+      "question": "What command do you run to generate code after adding annotations?",
+      "options": [
+        "flutter pub get",
+        "flutter pub run build_runner build",
+        "flutter gen",
+        "dart compile"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which directive must be included in the annotated file to link the generated code?",
+      "options": ["import", "export", "part", "library"],
+      "answer": 2
+    },
+    {
+      "question": "Why should you avoid manually editing generated `.g.dart` files?",
+      "options": [
+        "They are encrypted",
+        "They will be overwritten on next build",
+        "They cause runtime errors",
+        "They are not part of the project"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-unit-testing",
+    "flutter-build-runner",
+    "freezed-code-generation",
+    "bloc-state-management"
+  ]
+}

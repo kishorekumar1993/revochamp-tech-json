@@ -1,0 +1,279 @@
+{
+  "slug": "bloc-observer",
+  "course": "Flutter",
+  "title": "BlocObserver: The Complete Guide to Observing BLoC & Cubit Lifecycles",
+  "meta": {
+    "title": "BlocObserver – Master BLoC & Cubit Lifecycle Observers (2026)",
+    "description": "Learn how to use BlocObserver to intercept events, state changes, transitions, and errors in your BLoC architecture. Perfect for logging, analytics, debugging, and crash reporting.",
+    "keywords": [
+      "Flutter BlocObserver",
+      "BLoC lifecycle",
+      "observe BLoC events",
+      "BlocObserver logging",
+      "onChange vs onTransition",
+      "BLoC debugging",
+      "flutter_bloc observer",
+      "monitor BLoC"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BlocObserver?"
+    },
+    {
+      "type": "text",
+      "value": "`BlocObserver` is an abstract class provided by the `flutter_bloc` package that allows you to observe every BLoC and Cubit instance in your application. By extending it, you can intercept key lifecycle events: when an event is added to a BLoC, when a state change occurs (transition), when any state change happens (for both BLoC and Cubit), and when an error is thrown. This gives you powerful capabilities for logging, debugging, analytics, and crash reporting."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use a BlocObserver?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Centralized Logging** – Log all events and state changes in one place, not scattered across BLoCs.",
+        "**Debugging** – Track the exact sequence of events and states leading to a bug.",
+        "**Analytics** – Send user actions (events) and state data to analytics platforms.",
+        "**Crash Reporting** – Attach BLoC context to crash reports for easier debugging.",
+        "**Performance Monitoring** – Measure how often events are processed and how long transitions take.",
+        "**Auditing** – Keep an immutable record of state changes for compliance or debugging."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Key Methods of BlocObserver"
+    },
+    {
+      "type": "text",
+      "value": "`BlocObserver` provides four main methods you can override:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**`onEvent`** – Called when an event is added to a BLoC (not Cubits).",
+        "**`onTransition`** – Called when a BLoC transitions from one state to another (includes event, currentState, nextState).",
+        "**`onChange`** – Called when any `BlocBase` (BLoC or Cubit) changes state. This is the most generic method.",
+        "**`onError`** – Called when an error is thrown inside a BLoC or Cubit."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Custom BlocObserver"
+    },
+    {
+      "type": "text",
+      "value": "Extend `BlocObserver` and override the methods you need. Don't forget to call `super` to maintain the observer chain (if you have multiple observers)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SimpleBlocObserver extends BlocObserver {\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    super.onEvent(bloc, event);\n    print('${bloc.runtimeType} Event: $event');\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    super.onTransition(bloc, transition);\n    print('${bloc.runtimeType} Transition: $transition');\n  }\n\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    super.onChange(bloc, change);\n    print('${bloc.runtimeType} Change: $change');\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    super.onError(bloc, error, stackTrace);\n    print('${bloc.runtimeType} Error: $error');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Registering the Observer"
+    },
+    {
+      "type": "text",
+      "value": "Set the observer before running your app, typically in `main()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  Bloc.observer = SimpleBlocObserver();\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Understanding onEvent vs onTransition vs onChange"
+    },
+    {
+      "type": "text",
+      "value": "These three methods serve different purposes and are called at different moments in a BLoC's lifecycle."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Method", "When Called", "Parameters", "Available for"],
+        "rows": [
+          ["`onEvent`", "Immediately when an event is added to a BLoC", "`bloc`, `event`", "BLoC only"],
+          ["`onTransition`", "After a state change occurs in a BLoC (includes event)", "`bloc`, `transition`", "BLoC only"],
+          ["`onChange`", "After any state change in a BLoC or Cubit", "`bloc`, `change`", "BLoC & Cubit"]
+        ]
+      }
+    },
+    {
+      "type": "text",
+      "value": "For most logging and debugging, `onChange` is sufficient because it covers both BLoC and Cubit. If you need the event that triggered the change, use `onTransition` for BLoCs."
+    },
+    {
+      "type": "heading",
+      "value": "Logging with BlocObserver"
+    },
+    {
+      "type": "text",
+      "value": "A common use case is to log everything to the console. You can use a logging package like `logger` for structured logs."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:logger/logger.dart';\n\nclass LoggingBlocObserver extends BlocObserver {\n  final Logger logger = Logger();\n\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    super.onChange(bloc, change);\n    logger.d('${bloc.runtimeType} - $change');\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    super.onError(bloc, error, stackTrace);\n    logger.e('${bloc.runtimeType} Error: $error', error: error, stackTrace: stackTrace);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Analytics Integration"
+    },
+    {
+      "type": "text",
+      "value": "Use `BlocObserver` to automatically send analytics events for user actions. For example, you can send an event name based on the BLoC and event type."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AnalyticsBlocObserver extends BlocObserver {\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    super.onEvent(bloc, event);\n    // Send to Firebase Analytics or similar\n    FirebaseAnalytics.instance.logEvent(\n      name: 'bloc_event',\n      parameters: {\n        'bloc': bloc.runtimeType.toString(),\n        'event': event.runtimeType.toString(),\n      },\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Crash Reporting with BlocObserver"
+    },
+    {
+      "type": "text",
+      "value": "Capture errors from BLoCs and Cubits and send them to crash reporting services."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CrashlyticsBlocObserver extends BlocObserver {\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    super.onError(bloc, error, stackTrace);\n    FirebaseCrashlytics.instance.recordError(\n      error,\n      stackTrace,\n      reason: 'Error in ${bloc.runtimeType}',\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Monitoring"
+    },
+    {
+      "type": "text",
+      "value": "Measure the duration of transitions to identify slow BLoCs."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PerformanceBlocObserver extends BlocObserver {\n  final Map<BlocBase, DateTime> _startTimes = {};\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    super.onTransition(bloc, transition);\n    final duration = DateTime.now().difference(_startTimes[bloc]!);\n    print('${bloc.runtimeType} transition took ${duration.inMilliseconds}ms');\n    _startTimes.remove(bloc);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Composing Multiple Observers"
+    },
+    {
+      "type": "text",
+      "value": "You can only set one global observer. To have multiple responsibilities, create a composite observer that delegates to several handlers."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CompositeBlocObserver extends BlocObserver {\n  final List<BlocObserver> observers;\n\n  CompositeBlocObserver(this.observers);\n\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    for (var observer in observers) {\n      observer.onChange(bloc, change);\n    }\n  }\n\n  // similarly override other methods\n}\n\nvoid main() {\n  Bloc.observer = CompositeBlocObserver([\n    LoggingBlocObserver(),\n    AnalyticsBlocObserver(),\n  ]);\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep observers lightweight** – Avoid heavy operations; they run on the UI thread.",
+        "**Use async logging carefully** – If logging to a file or network, do it asynchronously to avoid blocking.",
+        "**Don't mutate state inside observers** – Observers are for observation only.",
+        "**Always call `super` methods** – Ensures any internal observer chain (like DevTools) still works.",
+        "**Conditionally enable observers** – Only enable verbose logging in debug mode.",
+        "**Use `Bloc.observer` only once** – Set it in `main()` before the app runs.",
+        "**Test observers separately** – Mock the bloc and verify that the observer methods are called."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to call `super`** – Breaks the observer chain (including the built-in DevTools observer).",
+        "❌ **Accessing `BuildContext` in observer** – Observers don't have a context; use a global key or stream if you need UI feedback.",
+        "❌ **Assuming `onTransition` is called for Cubits** – It's not; Cubits only trigger `onChange`.",
+        "❌ **Logging sensitive data** – Events may contain passwords or tokens; redact them.",
+        "❌ **Setting observer multiple times** – Only the last assignment takes effect; set once.",
+        "❌ **Heavy synchronous work inside observer** – Can cause jank."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "`BlocObserver` is an invaluable tool for understanding what's happening inside your BLoCs and Cubits. Whether you're debugging, adding analytics, or monitoring performance, a well‑crafted observer provides deep insights without polluting your business logic. By following best practices, you can harness its power to build more robust Flutter applications."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I have multiple BlocObservers?",
+      "answer": "Only one global observer can be registered. To use multiple, create a composite observer that delegates to several others."
+    },
+    {
+      "question": "What's the difference between `onChange` and `onTransition`?",
+      "answer": "`onChange` is called for every state change in any `BlocBase` (both BLoC and Cubit). `onTransition` is called only for BLoCs and includes the event that triggered the transition."
+    },
+    {
+      "question": "Does BlocObserver work with HydratedBloc?",
+      "answer": "Yes, observers work with any subclass of `BlocBase`, including `HydratedBloc` and `HydratedCubit`."
+    },
+    {
+      "question": "Can I use BlocObserver to intercept events before they are processed?",
+      "answer": "Yes, `onEvent` is called immediately when an event is added, before it's passed to the event handler. You cannot prevent the event from being processed, but you can log it."
+    },
+    {
+      "question": "How do I test a custom BlocObserver?",
+      "answer": "Set it as the global observer in your test, create a bloc, dispatch an event, and verify that the observer's methods were called (using mocks or recording)."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\n// ---------- Custom BlocObserver ----------\nclass SimpleBlocObserver extends BlocObserver {\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    super.onEvent(bloc, event);\n    print('🎯 EVENT: ${bloc.runtimeType} - $event');\n  }\n\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    super.onChange(bloc, change);\n    print('🔄 CHANGE: ${bloc.runtimeType} - $change');\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    super.onTransition(bloc, transition);\n    print('⚡ TRANSITION: ${bloc.runtimeType} - $transition');\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    super.onError(bloc, error, stackTrace);\n    print('❌ ERROR: ${bloc.runtimeType} - $error');\n  }\n}\n\n// ---------- Counter BLoC ----------\nclass CounterState extends Equatable {\n  final int value;\n  const CounterState(this.value);\n  @override List<Object?> get props => [value];\n}\n\nabstract class CounterEvent extends Equatable {\n  const CounterEvent();\n  @override List<Object?> get props => [];\n}\n\nclass Increment extends CounterEvent {}\nclass Decrement extends CounterEvent {}\nclass ThrowError extends CounterEvent {}\n\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(const CounterState(0)) {\n    on<Increment>((event, emit) => emit(CounterState(state.value + 1)));\n    on<Decrement>((event, emit) => emit(CounterState(state.value - 1)));\n    on<ThrowError>((event, emit) {\n      throw Exception('Simulated error from CounterBloc');\n    });\n  }\n}\n\n// ---------- App ----------\nvoid main() {\n  Bloc.observer = SimpleBlocObserver();\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterBloc(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('BlocObserver Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            BlocBuilder<CounterBloc, CounterState>(\n              builder: (context, state) {\n                return Text('Count: ${state.value}', style: TextStyle(fontSize: 32));\n              },\n            ),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(Increment()),\n                  child: Text('+'),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(Decrement()),\n                  child: Text('-'),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(ThrowError()),\n                  child: Text('Throw Error'),\n                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),\n                ),\n              ],\n            ),\n            SizedBox(height: 20),\n            Text('Open the console to see the observer output!'),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method of BlocObserver is called for every state change in both BLoCs and Cubits?",
+      "options": ["onEvent", "onTransition", "onChange", "onError"],
+      "answer": 2
+    },
+    {
+      "question": "How do you set a global BlocObserver?",
+      "options": [
+        "BlocObserver.set(MyObserver())",
+        "Bloc.observer = MyObserver()",
+        "MaterialApp(observer: MyObserver())",
+        "It's automatically set"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method is called only for BLoCs and includes the event that triggered the state change?",
+      "options": ["onEvent", "onTransition", "onChange", "onError"],
+      "answer": 1
+    },
+    {
+      "question": "Why should you always call `super` when overriding observer methods?",
+      "options": [
+        "To ensure the observer chain (including DevTools) continues to work",
+        "To avoid compilation errors",
+        "It's optional",
+        "To prevent memory leaks"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-logging",
+    "bloc-devtools",
+    "bloc-global-error-handler",
+    "bloc-performance"
+  ]
+}

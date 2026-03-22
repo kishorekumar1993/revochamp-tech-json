@@ -1,0 +1,264 @@
+{
+  "slug": "bloc-caching-strategy",
+  "course": "Flutter",
+  "title": "BLoC Caching Strategy: Local Cache, Offline-First & Invalidation",
+  "meta": {
+    "title": "BLoC Caching Strategy – Local Storage, Offline-First & Invalidation (2026)",
+    "description": "Learn how to implement robust caching strategies in Flutter using BLoC. Master in-memory caches, persistent storage, offline-first patterns, cache invalidation, and performance optimization.",
+    "keywords": [
+      "Flutter BLoC caching",
+      "caching strategy BLoC",
+      "offline-first Flutter",
+      "hydrated_bloc cache",
+      "Hive BLoC",
+      "cache invalidation",
+      "local storage BLoC",
+      "repository pattern cache"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Caching Strategy in BLoC?"
+    },
+    {
+      "type": "text",
+      "value": "A caching strategy in BLoC defines how your app stores and retrieves data to improve performance, reduce network calls, and enable offline functionality. It involves using in-memory caches (within BLoCs or repositories), persistent storage (Hive, SQLite, SharedPreferences), and smart invalidation rules. By combining BLoC's reactive state management with a caching layer, you can create apps that feel instant, work offline, and sync gracefully when connectivity returns."
+    },
+    {
+      "type": "heading",
+      "value": "Why Implement Caching?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Performance** – Serve data instantly from cache instead of waiting for network.",
+        "**Offline Support** – Users can browse previously loaded content without internet.",
+        "**Reduced Bandwidth** – Fewer network requests save data and battery.",
+        "**Better UX** – Avoid loading spinners on every screen.",
+        "**Scalability** – Cache reduces load on backend services."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Caching Layers in BLoC"
+    },
+    {
+      "type": "text",
+      "value": "A typical caching architecture has three layers:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Memory Cache** – Fastest, lives as long as the app runs (e.g., a map in a repository or bloc).",
+        "**Persistent Cache** – Stored on disk, survives app restarts (Hive, SQLite, SharedPreferences).",
+        "**Network** – The source of truth, fallback when cache is stale or missing."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Repository Pattern with Caching"
+    },
+    {
+      "type": "text",
+      "value": "Separate data fetching logic into a repository that handles cache checks and network requests. The BLoC only interacts with the repository, keeping caching transparent."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostRepository {\n  final ApiClient api;\n  final HiveInterface hive;\n\n  PostRepository({required this.api, required this.hive});\n\n  Future<List<Post>> getPosts({bool forceRefresh = false}) async {\n    // 1. Check memory cache (if any)\n    // 2. Check disk cache (if forceRefresh is false)\n    // 3. Fetch from network, update caches, return\n    // ...\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "In-Memory Caching with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "You can keep a simple in-memory cache inside your BLoC or a repository. This is perfect for transient data that doesn't need persistence."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostBloc extends Bloc<PostEvent, PostState> {\n  final PostRepository repository;\n  List<Post>? _cachedPosts; // in-memory cache\n\n  PostBloc(this.repository) : super(PostInitial()) {\n    on<FetchPosts>((event, emit) async {\n      if (_cachedPosts != null && !event.forceRefresh) {\n        emit(PostLoaded(_cachedPosts!));\n        return;\n      }\n      emit(PostLoading());\n      final posts = await repository.getPosts();\n      _cachedPosts = posts;\n      emit(PostLoaded(posts));\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Persistent Caching with Hive"
+    },
+    {
+      "type": "text",
+      "value": "Hive is a lightweight key-value database perfect for caching. Here's a repository that uses Hive for persistent caching."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostRepository {\n  final ApiClient api;\n  final Box<Map> cacheBox;\n\n  PostRepository({required this.api, required this.cacheBox});\n\n  Future<List<Post>> getPosts({bool forceRefresh = false}) async {\n    // Try disk cache\n    if (!forceRefresh && cacheBox.containsKey('posts')) {\n      final cached = cacheBox.get('posts') as List;\n      return cached.map((json) => Post.fromJson(json)).toList();\n    }\n\n    // Fetch from network\n    final posts = await api.fetchPosts();\n    // Store in cache\n    await cacheBox.put('posts', posts.map((p) => p.toJson()).toList());\n    return posts;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Offline-First Strategy with HydratedBloc"
+    },
+    {
+      "type": "text",
+      "value": "`hydrated_bloc` automatically persists your UI state. Combine it with a repository that reads from a local database first. This gives a true offline-first experience."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TodoBloc extends HydratedBloc<TodoEvent, TodoState> {\n  final TodoRepository repository;\n\n  TodoBloc(this.repository) : super(TodoInitial()) {\n    on<LoadTodos>((event, emit) async {\n      // First, emit cached state (if any) – hydrated_bloc already restored from disk\n      if (state is TodoLoaded && (state as TodoLoaded).todos.isNotEmpty) {\n        // Already have cached data\n      }\n      // Then try to fetch fresh data\n      final freshTodos = await repository.getTodos();\n      emit(TodoLoaded(freshTodos)); // will be automatically persisted\n    });\n  }\n\n  @override\n  TodoState fromJson(Map<String, dynamic> json) => TodoState.fromJson(json);\n\n  @override\n  Map<String, dynamic> toJson(TodoState state) => state.toJson();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Cache Invalidation Strategies"
+    },
+    {
+      "type": "text",
+      "value": "Cached data becomes stale. Invalidation ensures users see up-to-date content. Common strategies:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Time-to-Live (TTL)** – Cache expires after a set duration.",
+        "**Manual Refresh** – User pulls to refresh, which bypasses cache.",
+        "**Version-based** – Invalidate when app or API version changes.",
+        "**Event-driven** – Invalidate specific cache entries after mutations (e.g., after adding a post)."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostRepository {\n  Future<List<Post>> getPosts() async {\n    final cached = await getCachedPosts();\n    final timestamp = await getTimestamp();\n    if (cached != null && DateTime.now().difference(timestamp).inMinutes < 5) {\n      return cached; // still fresh\n    }\n    // else fetch fresh\n    final fresh = await api.fetchPosts();\n    await cachePosts(fresh);\n    return fresh;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Mutations (Create, Update, Delete)"
+    },
+    {
+      "type": "text",
+      "value": "When a user creates, updates, or deletes data, you should update both the cache and the backend. Implement optimistic updates for better UX."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<AddTodo>((event, emit) async {\n  // Optimistic update: update state immediately\n  final newList = List<Todo>.from(state.todos)..add(event.todo);\n  emit(TodoLoaded(newList));\n  try {\n    // Actually save to backend\n    await repository.addTodo(event.todo);\n  } catch (e) {\n    // Rollback on failure\n    emit(TodoLoaded(state.todos)); // revert to previous\n    // Show error\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Combining Multiple Caching Strategies"
+    },
+    {
+      "type": "text",
+      "value": "For optimal performance, combine memory, disk, and network:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MultiLayerCacheRepository {\n  List<Post>? _memoryCache;\n  final Box _diskCache;\n\n  Future<List<Post>> getPosts({bool forceRefresh = false}) async {\n    // 1. Return memory cache if available and not forced\n    if (_memoryCache != null && !forceRefresh) return _memoryCache!;\n\n    // 2. Check disk cache\n    final diskCached = _diskCache.get('posts');\n    if (diskCached != null && !forceRefresh) {\n      _memoryCache = (diskCached as List).map((j) => Post.fromJson(j)).toList();\n      return _memoryCache!;\n    }\n\n    // 3. Fetch from network\n    final fresh = await api.fetchPosts();\n    // Update memory and disk\n    _memoryCache = fresh;\n    await _diskCache.put('posts', fresh.map((p) => p.toJson()).toList());\n    return fresh;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Cache only what you need** – Avoid caching large binary data; use local files for images.",
+        "**Set reasonable TTLs** – Balance freshness and performance based on data volatility.",
+        "**Invalidate after mutations** – After POST/PUT/DELETE, clear related cache entries.",
+        "**Use repository pattern** – Keep caching logic separate from BLoC.",
+        "**Handle offline scenarios** – If cache is empty and offline, show an error with retry option.",
+        "**Test caching behavior** – Write tests that simulate network delays and offline conditions.",
+        "**Use hydrated_bloc for UI state** – Persist the entire state for seamless app restarts.",
+        "**Clear cache on logout** – Remove user-specific data when user signs out."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Caching user-sensitive data without encryption** – Use secure storage for tokens and PII.",
+        "❌ **Not invalidating cache after mutations** – Users see outdated data.",
+        "❌ **Over-caching** – Storing huge lists that consume memory.",
+        "❌ **Blocking the UI with cache operations** – Use async operations; Hive is fast but still async.",
+        "❌ **Not handling cache read/write errors** – Fallback to network or empty state.",
+        "❌ **Using `hydrated_bloc` for large datasets** – It's meant for UI state, not large collections; use a local database for that."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Implementing a caching strategy with BLoC elevates your app's performance and user experience. By combining in-memory caches, persistent storage, and smart invalidation, you can build apps that feel instant and work offline. The repository pattern keeps caching logic clean and testable, while BLoC provides reactive state updates. Start with a simple cache and evolve as your app's needs grow."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What's the difference between `hydrated_bloc` and a separate local database?",
+      "answer": "`hydrated_bloc` persists the entire BLoC state, which is great for UI state (e.g., current page, selected item). For large collections (e.g., thousands of posts), use a dedicated local database (Hive, SQLite) to avoid bloating the state and impacting performance."
+    },
+    {
+      "question": "How do I choose between Hive, SharedPreferences, and SQLite?",
+      "answer": "Use SharedPreferences for simple key-value pairs. Use Hive for structured data with quick reads/writes. Use SQLite for complex queries and relational data. Hive is often the best choice for caching because it's fast and easy to use."
+    },
+    {
+      "question": "How do I handle cache when the user logs out?",
+      "answer": "Clear any user-specific cache (e.g., user profile, posts). You can dispatch a `ClearCache` event to your repository or reset the BLoC state to initial."
+    },
+    {
+      "question": "What if the network is slow – how to show cached data while fetching fresh?",
+      "answer": "Emit the cached data immediately, then in the background fetch fresh data and update the state when it arrives. This gives an instant UI and then refreshes."
+    },
+    {
+      "question": "How do I test cache behavior in unit tests?",
+      "answer": "Mock the repository and simulate different conditions: cache hit, cache miss, network error. Use `blocTest` to verify that the correct states are emitted."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\nimport 'package:hive_flutter/hive_flutter.dart';\n\nvoid main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  await Hive.initFlutter();\n  await Hive.openBox('cache');\n  runApp(MyApp());\n}\n\n// ---------- Models ----------\nclass Post extends Equatable {\n  final int id;\n  final String title;\n  final String body;\n\n  const Post({required this.id, required this.title, required this.body});\n\n  Map<String, dynamic> toJson() => {'id': id, 'title': title, 'body': body};\n  factory Post.fromJson(Map<String, dynamic> json) => Post(\n    id: json['id'],\n    title: json['title'],\n    body: json['body'],\n  );\n\n  @override List<Object?> get props => [id, title, body];\n}\n\n// ---------- Repository with Caching ----------\nclass PostRepository {\n  final Box cacheBox;\n\n  PostRepository(this.cacheBox);\n\n  Future<List<Post>> fetchPosts({bool forceRefresh = false}) async {\n    // Check cache\n    if (!forceRefresh && cacheBox.containsKey('posts')) {\n      final cached = cacheBox.get('posts') as List;\n      return cached.map((json) => Post.fromJson(json)).toList();\n    }\n\n    // Simulate network delay\n    await Future.delayed(Duration(seconds: 1));\n    final List<Post> fresh = List.generate(\n      5,\n      (i) => Post(\n        id: i + 1,\n        title: 'Post ${i + 1}',\n        body: 'This is the body of post ${i + 1}.',\n      ),\n    );\n\n    // Store in cache\n    await cacheBox.put('posts', fresh.map((p) => p.toJson()).toList());\n    return fresh;\n  }\n}\n\n// ---------- BLoC ----------\nclass PostsState extends Equatable {\n  final List<Post> posts;\n  final bool isLoading;\n  final bool isCached;\n  final String? error;\n\n  const PostsState({\n    this.posts = const [],\n    this.isLoading = false,\n    this.isCached = false,\n    this.error,\n  });\n\n  PostsState copyWith({\n    List<Post>? posts,\n    bool? isLoading,\n    bool? isCached,\n    String? error,\n  }) {\n    return PostsState(\n      posts: posts ?? this.posts,\n      isLoading: isLoading ?? this.isLoading,\n      isCached: isCached ?? this.isCached,\n      error: error ?? this.error,\n    );\n  }\n\n  @override List<Object?> get props => [posts, isLoading, isCached, error];\n}\n\nabstract class PostsEvent extends Equatable {\n  const PostsEvent();\n  @override List<Object?> get props => [];\n}\n\nclass FetchPosts extends PostsEvent {\n  final bool forceRefresh;\n  const FetchPosts({this.forceRefresh = false});\n  @override List<Object?> get props => [forceRefresh];\n}\n\nclass PostsBloc extends Bloc<PostsEvent, PostsState> {\n  final PostRepository repository;\n\n  PostsBloc(this.repository) : super(const PostsState()) {\n    on<FetchPosts>(_onFetchPosts);\n  }\n\n  Future<void> _onFetchPosts(FetchPosts event, Emitter<PostsState> emit) async {\n    emit(state.copyWith(isLoading: true, error: null));\n    try {\n      final posts = await repository.fetchPosts(forceRefresh: event.forceRefresh);\n      emit(state.copyWith(\n        posts: posts,\n        isLoading: false,\n        isCached: !event.forceRefresh && repository.cacheBox.containsKey('posts'),\n      ));\n    } catch (e) {\n      emit(state.copyWith(isLoading: false, error: e.toString()));\n    }\n  }\n}\n\n// ---------- UI ----------\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final box = Hive.box('cache');\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => PostsBloc(PostRepository(box))..add(FetchPosts()),\n        child: PostsPage(),\n      ),\n    );\n  }\n}\n\nclass PostsPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(\n        title: Text('Caching Demo'),\n        actions: [\n          IconButton(\n            icon: Icon(Icons.refresh),\n            onPressed: () => context.read<PostsBloc>().add(FetchPosts(forceRefresh: true)),\n          ),\n        ],\n      ),\n      body: BlocBuilder<PostsBloc, PostsState>(\n        builder: (context, state) {\n          if (state.isLoading && state.posts.isEmpty) {\n            return Center(child: CircularProgressIndicator());\n          }\n          if (state.error != null) {\n            return Center(child: Text('Error: ${state.error}'));\n          }\n          return Column(\n            children: [\n              if (state.isCached)\n                Container(\n                  width: double.infinity,\n                  color: Colors.green.shade100,\n                  padding: EdgeInsets.all(8),\n                  child: Text('⚡ Showing cached data', textAlign: TextAlign.center),\n                ),\n              Expanded(\n                child: ListView.builder(\n                  itemCount: state.posts.length,\n                  itemBuilder: (_, i) => ListTile(\n                    title: Text(state.posts[i].title),\n                    subtitle: Text(state.posts[i].body),\n                  ),\n                ),\n              ),\n              if (state.isLoading && state.posts.isNotEmpty)\n                Padding(\n                  padding: EdgeInsets.all(8),\n                  child: CircularProgressIndicator(),\n                ),\n            ],\n          );\n        },\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the main benefit of using a caching strategy?",
+      "options": [
+        "Reduces app size",
+        "Improves performance and enables offline access",
+        "Automatically fixes bugs",
+        "Increases network calls"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which package is commonly used for fast, simple persistent storage in Flutter?",
+      "options": ["SQLite", "Hive", "SharedPreferences", "All of the above"],
+      "answer": 3
+    },
+    {
+      "question": "What does TTL stand for in caching?",
+      "options": ["Time to Live", "Time to Load", "Total Transfer Limit", "Technical Test Layer"],
+      "answer": 0
+    },
+    {
+      "question": "How do you ensure the user sees fresh data after a mutation (like adding a post)?",
+      "options": [
+        "Invalidate the cache for that data after the mutation",
+        "Wait for the next app restart",
+        "Use a longer TTL",
+        "Always force refresh"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-offline-support",
+    "bloc-performance",
+    "hive-flutter-tutorial",
+    "bloc-initial-state"
+  ]
+}

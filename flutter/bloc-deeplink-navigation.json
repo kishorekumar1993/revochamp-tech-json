@@ -1,0 +1,240 @@
+{
+  "slug": "bloc-deeplink-navigation",
+  "course": "Flutter",
+  "title": "BLoC Deep Link Navigation: Handling App Links & Universal Links",
+  "meta": {
+    "title": "BLoC Deep Link Navigation – App Links, Universal Links & Routing (2026)",
+    "description": "Learn how to handle deep links in Flutter using BLoC and go_router. Parse incoming links, navigate to specific screens, and manage state with BLoC for a seamless user experience.",
+    "keywords": [
+      "Flutter deep links",
+      "bloc deeplink navigation",
+      "app links flutter",
+      "universal links",
+      "go_router bloc",
+      "handle deep links bloc",
+      "flutter navigation",
+      "bloc routing"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Deep links (also called app links or universal links) allow users to navigate directly to specific content within your app from a URL. When combined with BLoC, you can manage the navigation flow, parse link parameters, and update state accordingly. This guide covers how to set up deep link handling using `go_router` and BLoC, process incoming links, and maintain state across navigation."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use BLoC for Deep Links?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Centralized Logic** – Handle deep link parsing and navigation in one place (BLoC).",
+        "**State Management** – Keep track of deep link data (e.g., user ID, product ID) as part of app state.",
+        "**Testing** – Isolate deep link handling logic for unit tests.",
+        "**Reactive Updates** – Automatically trigger navigation or UI updates when a deep link is received.",
+        "**Platform Abstraction** – Unify iOS (universal links) and Android (app links) handling under a single BLoC interface."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Deep Links"
+    },
+    {
+      "type": "text",
+      "value": "First, configure your app to receive deep links. This involves setting up associated domains (iOS), intent filters (Android), and linking your app with a hosted asset file. This guide assumes you have already configured platform‑specific deep link support. For Flutter, we'll use the `go_router` package which has built‑in deep link handling."
+    },
+    {
+      "type": "subheading",
+      "value": "Add Dependencies"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter:\n    sdk: flutter\n  flutter_bloc: ^8.1.5\n  go_router: ^12.0.0\n  url_launcher: ^6.2.0\n  equatable: ^2.0.5"
+    },
+    {
+      "type": "heading",
+      "value": "Defining Deep Link State & Events"
+    },
+    {
+      "type": "text",
+      "value": "Create a BLoC to manage deep link events. The state holds the current deep link (if any) and whether it has been processed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// deep_link_state.dart\npart of 'deep_link_bloc.dart';\n\n@immutable\nabstract class DeepLinkState extends Equatable {\n  const DeepLinkState();\n}\n\nclass DeepLinkInitial extends DeepLinkState {\n  const DeepLinkInitial();\n\n  @override\n  List<Object?> get props => [];\n}\n\nclass DeepLinkReceived extends DeepLinkState {\n  final Uri uri;\n  final Map<String, String> params;\n\n  const DeepLinkReceived(this.uri, this.params);\n\n  @override\n  List<Object?> get props => [uri, params];\n}\n\nclass DeepLinkProcessed extends DeepLinkState {\n  const DeepLinkProcessed();\n\n  @override\n  List<Object?> get props => [];\n}\n\n// deep_link_event.dart\nabstract class DeepLinkEvent extends Equatable {\n  const DeepLinkEvent();\n}\n\nclass DeepLinkOpened extends DeepLinkEvent {\n  final Uri uri;\n  const DeepLinkOpened(this.uri);\n\n  @override\n  List<Object?> get props => [uri];\n}\n\nclass DeepLinkHandled extends DeepLinkEvent {\n  const DeepLinkHandled();\n\n  @override\n  List<Object?> get props => [];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Deep Link BLoC Implementation"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DeepLinkBloc extends Bloc<DeepLinkEvent, DeepLinkState> {\n  DeepLinkBloc() : super(const DeepLinkInitial()) {\n    on<DeepLinkOpened>(_onDeepLinkOpened);\n    on<DeepLinkHandled>(_onDeepLinkHandled);\n  }\n\n  Future<void> _onDeepLinkOpened(DeepLinkOpened event, Emitter<DeepLinkState> emit) async {\n    // Parse URI parameters (example: /product/123?referrer=email)\n    final pathSegments = event.uri.pathSegments;\n    final queryParams = event.uri.queryParameters;\n    final params = <String, String>{};\n\n    // Example: parse product ID from path\n    if (pathSegments.isNotEmpty && pathSegments.first == 'product' && pathSegments.length > 1) {\n      params['productId'] = pathSegments[1];\n    }\n\n    // Add all query parameters\n    params.addAll(queryParams);\n\n    emit(DeepLinkReceived(event.uri, params));\n  }\n\n  Future<void> _onDeepLinkHandled(DeepLinkHandled event, Emitter<DeepLinkState> emit) async {\n    emit(const DeepLinkProcessed());\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Integrating go_router with Deep Links"
+    },
+    {
+      "type": "text",
+      "value": "`go_router` can handle deep links by defining a `redirect` function that intercepts incoming routes and decides whether to navigate to a specific page based on the deep link data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final router = GoRouter(\n  initialLocation: '/',\n  routes: [\n    GoRoute(\n      path: '/',\n      name: 'home',\n      builder: (context, state) => HomePage(),\n    ),\n    GoRoute(\n      path: '/product/:id',\n      name: 'product',\n      builder: (context, state) => ProductPage(productId: state.params['id']!),\n    ),\n    GoRoute(\n      path: '/profile/:userId',\n      name: 'profile',\n      builder: (context, state) => ProfilePage(userId: state.params['userId']!),\n    ),\n  ],\n  redirect: (context, state) {\n    // Example: check if deep link is pending in BLoC\n    final deepLinkState = context.read<DeepLinkBloc>().state;\n    if (deepLinkState is DeepLinkReceived) {\n      final uri = deepLinkState.uri;\n      // Determine where to navigate based on the URI\n      if (uri.pathSegments.isNotEmpty) {\n        if (uri.pathSegments.first == 'product') {\n          final productId = uri.pathSegments[1];\n          return '/product/$productId';\n        } else if (uri.pathSegments.first == 'profile') {\n          final userId = uri.pathSegments[1];\n          return '/profile/$userId';\n        }\n      }\n      // If no matching route, fallback to home\n      return '/';\n    }\n    return null; // no redirect\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Deep Links at App Start"
+    },
+    {
+      "type": "text",
+      "value": "When the app is launched from a deep link, the initial URI is available via `WidgetsBinding.instance.window.defaultRouteName` or through `go_router`'s initial location. You should read this initial link and add the `DeepLinkOpened` event to the BLoC."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n\n  // Parse initial deep link if any\n  final initialUri = _getInitialUri();\n\n  final deepLinkBloc = DeepLinkBloc();\n  if (initialUri != null) {\n    deepLinkBloc.add(DeepLinkOpened(initialUri));\n  }\n\n  runApp(MyApp(deepLinkBloc: deepLinkBloc));\n}\n\nUri? _getInitialUri() {\n  // For platforms where initial route is a deep link\n  final initialRoute = WidgetsBinding.instance.window.defaultRouteName;\n  if (initialRoute.startsWith('http://') || initialRoute.startsWith('https://')) {\n    return Uri.parse(initialRoute);\n  }\n  return null;\n}\n\nclass MyApp extends StatelessWidget {\n  final DeepLinkBloc deepLinkBloc;\n  const MyApp({required this.deepLinkBloc});\n\n  @override\n  Widget build(BuildContext context) {\n    return BlocProvider(\n      create: (_) => deepLinkBloc,\n      child: MaterialApp.router(\n        routerConfig: router,\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Listening to Deep Links While App is Running"
+    },
+    {
+      "type": "text",
+      "value": "For deep links received when the app is already open, you need to listen to platform events. Use `app_links` or `uni_links` package. Then add a listener that adds the `DeepLinkOpened` event to your BLoC."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:app_links/app_links.dart';\n\nclass DeepLinkService {\n  final DeepLinkBloc deepLinkBloc;\n  final AppLinks _appLinks = AppLinks();\n\n  DeepLinkService(this.deepLinkBloc) {\n    _init();\n  }\n\n  void _init() async {\n    // Handle initial link (if any) – already handled in main\n    // Listen to future links\n    _appLinks.uriLinkStream.listen((Uri? uri) {\n      if (uri != null) {\n        deepLinkBloc.add(DeepLinkOpened(uri));\n      }\n    });\n  }\n}\n\n// In main or a service locator\nfinal deepLinkBloc = DeepLinkBloc();\nfinal deepLinkService = DeepLinkService(deepLinkBloc);"
+    },
+    {
+      "type": "heading",
+      "value": "Using Deep Link Data in Pages"
+    },
+    {
+      "type": "text",
+      "value": "When a deep link leads to a specific page, you can use the BLoC state to retrieve any additional parameters or handle special logic. For example, after the deep link is processed, you might want to show a snackbar or perform some action."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProductPage extends StatelessWidget {\n  final String productId;\n  const ProductPage({required this.productId});\n\n  @override\n  Widget build(BuildContext context) {\n    // Optionally, you can listen to deep link events to show a banner\n    return BlocListener<DeepLinkBloc, DeepLinkState>(\n      listenWhen: (previous, current) =>\n          current is DeepLinkReceived &&\n          current.params['productId'] == productId &&\n          previous is! DeepLinkReceived,\n      listener: (context, state) {\n        if (state is DeepLinkReceived) {\n          // Show a message that the user arrived via deep link\n          ScaffoldMessenger.of(context).showSnackBar(\n            SnackBar(content: Text('Opened via deep link from ${state.params['referrer'] ?? 'unknown'}')),\n          );\n          // Mark as handled so it doesn't show again\n          context.read<DeepLinkBloc>().add(DeepLinkHandled());\n        }\n      },\n      child: Scaffold(\n        appBar: AppBar(title: Text('Product $productId')),\n        body: Center(child: Text('Product details')),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Deep Link Handling"
+    },
+    {
+      "type": "text",
+      "value": "You can test deep link logic by dispatching events to the BLoC and verifying state changes and navigation. Use `blocTest` to simulate deep link events and check expected states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  group('DeepLinkBloc', () {\n    blocTest<DeepLinkBloc, DeepLinkState>(\n      'emits DeepLinkReceived when product link opened',\n      build: () => DeepLinkBloc(),\n      act: (bloc) => bloc.add(DeepLinkOpened(Uri.parse('https://example.com/product/123?ref=email'))),\n      expect: () => [\n        DeepLinkReceived(\n          Uri.parse('https://example.com/product/123?ref=email'),\n          {'productId': '123', 'ref': 'email'},\n        ),\n      ],\n    );\n\n    blocTest<DeepLinkBloc, DeepLinkState>(\n      'emits DeepLinkProcessed after handled',\n      build: () => DeepLinkBloc(),\n      seed: () => DeepLinkReceived(Uri.parse('https://example.com/product/123'), {'productId': '123'}),\n      act: (bloc) => bloc.add(DeepLinkHandled()),\n      expect: () => [const DeepLinkProcessed()],\n    );\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Centralize deep link parsing** – Use a BLoC or service to parse URI and extract parameters.",
+        "**Handle initial and incoming links** – Cover both app start and runtime deep links.",
+        "**Use `go_router` for navigation** – It handles deep link matching and state management well.",
+        "**Keep deep link state in BLoC** – This allows other parts of the app to react to deep link arrival.",
+        "**Mark deep links as handled** – Avoid repeated processing (e.g., showing snackbar multiple times).",
+        "**Test both BLoC and router integration** – Ensure deep links lead to the correct screens.",
+        "**Consider error handling** – If a deep link is malformed, navigate to a default screen."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not handling both startup and runtime links** – Deep links may be missed.\n✅ Listen to both initial and subsequent links.",
+        "❌ **Performing navigation directly inside BLoC** – Should be handled by the router or a navigation service.\n✅ Use `go_router`'s `redirect` or push events to BLoC that trigger navigation.",
+        "❌ **Parsing URIs without validation** – Malformed links can crash the app.\n✅ Validate and provide fallback.",
+        "❌ **Ignoring platform-specific configuration** – Android and iOS require specific setup for deep links to work.\n✅ Follow platform guides for associated domains and intent filters.",
+        "❌ **Not disposing BLoC listeners** – Can cause memory leaks.\n✅ Close subscriptions in `close()` or use `BlocListener` properly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Deep links are a powerful way to drive user engagement. By combining BLoC with a routing solution like `go_router`, you can centralize deep link handling, parse parameters, and navigate seamlessly. The BLoC pattern provides a reactive, testable foundation for managing deep link state across your application."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What packages are needed for deep links in Flutter?",
+      "answer": "For deep link support, you'll need `go_router` (or `auto_route`) for routing and `app_links` or `uni_links` to listen to incoming links. `url_launcher` is optional for testing."
+    },
+    {
+      "question": "How do I test deep links in development?",
+      "answer": "On Android, use `adb shell am start -a android.intent.action.VIEW -d 'https://yourdomain.com/product/123'`. On iOS, use `xcrun simctl openurl booted 'https://yourdomain.com/product/123'`. In Flutter, you can simulate by adding the event to the BLoC directly in tests."
+    },
+    {
+      "question": "Can I use deep links with `go_router` without BLoC?",
+      "answer": "Yes, `go_router` has built‑in deep link support via `redirect` and `initialLocation`. However, BLoC can help manage additional data and coordinate side effects."
+    },
+    {
+      "question": "How do I handle deep links that require authentication?",
+      "answer": "In the `redirect` function, check authentication state (from your auth BLoC). If not authenticated, redirect to login and store the deep link to navigate after login."
+    },
+    {
+      "question": "What's the difference between `app_links` and `uni_links`?",
+      "answer": "Both handle incoming links. `app_links` is more actively maintained and supports both initial and future links in a simpler API."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() {\n  runApp(MyApp());\n}\n\n// Simplified deep link simulation for demo\nclass DeepLinkCubit extends Cubit<Uri?> {\n  DeepLinkCubit() : super(null);\n  void handleDeepLink(String link) => emit(Uri.parse(link));\n  void clear() => emit(null);\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocProvider(\n      create: (_) => DeepLinkCubit(),\n      child: MaterialApp(\n        title: 'Deep Link Demo',\n        home: HomePage(),\n        routes: {\n          '/product': (context) => ProductPage(),\n        },\n      ),\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  final TextEditingController linkController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Deep Link Demo')),\n      body: Padding(\n        padding: EdgeInsets.all(16),\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            TextField(\n              controller: linkController,\n              decoration: InputDecoration(\n                labelText: 'Enter deep link URL',\n                hintText: 'https://example.com/product/123',\n              ),\n            ),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () {\n                final link = linkController.text;\n                if (link.isNotEmpty) {\n                  context.read<DeepLinkCubit>().handleDeepLink(link);\n                }\n              },\n              child: Text('Simulate Deep Link'),\n            ),\n            SizedBox(height: 20),\n            BlocConsumer<DeepLinkCubit, Uri?>(\n              listener: (context, uri) {\n                if (uri != null && uri.pathSegments.isNotEmpty && uri.pathSegments.first == 'product') {\n                  Navigator.pushNamed(context, '/product', arguments: uri);\n                  context.read<DeepLinkCubit>().clear();\n                }\n              },\n              builder: (context, uri) => Container(),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass ProductPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final uri = ModalRoute.of(context)!.settings.arguments as Uri?;\n    final productId = uri?.pathSegments.length == 2 ? uri.pathSegments[1] : 'unknown';\n    return Scaffold(\n      appBar: AppBar(title: Text('Product Details')),\n      body: Center(child: Text('Product ID: $productId')),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What package is commonly used to listen to incoming deep links in Flutter?",
+      "options": ["app_links", "uni_links", "url_launcher", "Both A and B"],
+      "answer": 3
+    },
+    {
+      "question": "In go_router, where do you place logic to handle deep link routing?",
+      "options": ["In the builder of each route", "In the redirect function", "In the initialLocation", "In a separate BlocListener"],
+      "answer": 1
+    },
+    {
+      "question": "Why should you use a BLoC for deep link handling?",
+      "options": [
+        "It replaces the need for a router",
+        "It centralizes parsing and state management",
+        "It improves performance of deep links",
+        "It is required by the platform"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-navigation",
+    "go-router-guide",
+    "bloc-testing"
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "slug": "bloc-concurrency",
+  "course": "Flutter",
+  "title": "BLoC Concurrency: Managing Event Handlers with bloc_concurrency",
+  "meta": {
+    "title": "BLoC Concurrency – Event Transformers & Concurrency Control (2026)",
+    "description": "Learn how to control concurrent event processing in BLoC using bloc_concurrency. Master sequential, droppable, restartable, and concurrent transformers to handle overlapping events and improve app responsiveness.",
+    "keywords": [
+      "Flutter BLoC concurrency",
+      "bloc_concurrency",
+      "event transformer",
+      "droppable bloc",
+      "restartable bloc",
+      "concurrent events",
+      "bloc event handling",
+      "Flutter BLoC best practices"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BLoC Concurrency?"
+    },
+    {
+      "type": "text",
+      "value": "In BLoC, concurrency refers to how multiple events are processed when a handler is already running. By default, BLoC processes events sequentially—one after the other. However, real‑world apps often need more control: you may want to drop new events while a handler is busy, cancel the current handler and restart with the latest event, or allow multiple handlers to run concurrently. The `bloc_concurrency` package provides ready‑made transformers for these scenarios."
+    },
+    {
+      "type": "heading",
+      "value": "Why Concurrency Matters"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Performance** – Avoid unnecessary work by dropping or cancelling stale events.",
+        "**User Experience** – Ensure the UI stays responsive even during long operations.",
+        "**Data Consistency** – Prevent race conditions where events complete in unexpected order.",
+        "**Resource Management** – Limit the number of simultaneous operations (e.g., API calls)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up bloc_concurrency"
+    },
+    {
+      "type": "text",
+      "value": "Add `bloc_concurrency` to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter_bloc: ^8.1.5\n  bloc_concurrency: ^0.2.5"
+    },
+    {
+      "type": "text",
+      "value": "Then import it in your BLoC files."
+    },
+    {
+      "type": "heading",
+      "value": "Default Behavior: Sequential"
+    },
+    {
+      "type": "text",
+      "value": "By default, BLoC uses `sequential()` from `bloc_concurrency`. This queues events and processes them one at a time. If an event handler is running, new events wait in a queue."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:bloc_concurrency/bloc_concurrency.dart';\n\nclass MyBloc extends Bloc<MyEvent, MyState> {\n  MyBloc() : super(MyState()) {\n    on<MyEvent>(\n      _onEvent,\n      transformer: sequential(), // This is the default\n    );\n  }\n\n  Future<void> _onEvent(MyEvent event, Emitter<MyState> emit) async {\n    // Long operation\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Droppable: Ignore New Events While Busy"
+    },
+    {
+      "type": "text",
+      "value": "`droppable()` ignores any new events that arrive while the handler is already processing an event. Only the first event is processed; subsequent ones are dropped."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SubmitBloc extends Bloc<SubmitEvent, SubmitState> {\n  SubmitBloc() : super(SubmitInitial()) {\n    on<SubmitPressed>(\n      _onSubmitPressed,\n      transformer: droppable(),\n    );\n  }\n\n  Future<void> _onSubmitPressed(SubmitPressed event, Emitter<SubmitState> emit) async {\n    emit(Submitting());\n    await Future.delayed(Duration(seconds: 2)); // Simulate network call\n    emit(Submitted());\n  }\n}\n\n// If user taps submit button 5 times quickly, only the first tap is processed."
+    },
+    {
+      "type": "heading",
+      "value": "Restartable: Cancel Previous and Start New"
+    },
+    {
+      "type": "text",
+      "value": "`restartable()` cancels the current running handler (if any) and starts a new one with the latest event. This is perfect for search where you want the latest query to cancel the previous search."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchBloc extends Bloc<SearchEvent, SearchState> {\n  SearchBloc() : super(SearchInitial()) {\n    on<SearchQueryChanged>(\n      _onSearch,\n      transformer: restartable(),\n    );\n  }\n\n  Future<void> _onSearch(SearchQueryChanged event, Emitter<SearchState> emit) async {\n    emit(SearchLoading());\n    try {\n      final results = await searchApi(event.query);\n      emit(SearchSuccess(results));\n    } catch (e) {\n      emit(SearchError(e.toString()));\n    }\n  }\n}\n\n// Each new query cancels the previous in-flight request."
+    },
+    {
+      "type": "heading",
+      "value": "Concurrent: Allow Multiple Handlers Simultaneously"
+    },
+    {
+      "type": "text",
+      "value": "`concurrent()` allows multiple handlers to run at the same time. Each event is processed without waiting for previous ones to finish. Use this when operations are independent and you want them all to proceed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DownloadBloc extends Bloc<DownloadEvent, DownloadState> {\n  DownloadBloc() : super(DownloadInitial()) {\n    on<StartDownload>(\n      _onStartDownload,\n      transformer: concurrent(),\n    );\n  }\n\n  Future<void> _onStartDownload(StartDownload event, Emitter<DownloadState> emit) async {\n    emit(DownloadProgress(event.id, 0));\n    for (int i = 0; i <= 100; i += 10) {\n      await Future.delayed(Duration(milliseconds: 100));\n      emit(DownloadProgress(event.id, i));\n    }\n    emit(DownloadComplete(event.id));\n  }\n}\n\n// Multiple downloads can run concurrently."
+    },
+    {
+      "type": "heading",
+      "value": "Combining Transformers with RxDart"
+    },
+    {
+      "type": "text",
+      "value": "You can compose `bloc_concurrency` transformers with `rxdart` operators. For example, debounce and then restartable:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:rxdart/rxdart.dart';\nimport 'package:bloc_concurrency/bloc_concurrency.dart';\n\non<SearchQueryChanged>(\n  _onSearch,\n  transformer: (events, mapper) => events\n      .debounceTime(Duration(milliseconds: 300))\n      .transform(restartable())\n      .flatMap(mapper),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Creating Custom Transformers"
+    },
+    {
+      "type": "text",
+      "value": "You can build your own transformer by implementing the `EventTransformer` typedef. For instance, a transformer that drops events after a certain number of retries."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "EventTransformer<T> retry<T>(int maxRetries) {\n  return (events, mapper) => events\n      .transform(sequential())\n      .flatMap((event) => mapper(event).retryWhen((errors, stackTrace) => errors.take(maxRetries)));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Choose the right transformer** – `sequential` for ordered operations, `droppable` for non‑critical events, `restartable` for search/autocomplete, `concurrent` for independent tasks.",
+        "**Use `restartable` with cancellation** – Ensure your async operations support cancellation (e.g., using `CancelToken` in Dio) to truly cancel in‑flight requests.",
+        "**Test concurrency** – Simulate rapid events in tests and verify state transitions.",
+        "**Document transformer choices** – Explain why you chose a specific transformer for maintainability.",
+        "**Avoid over‑nesting** – Keep transformers simple; combine only when necessary."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `concurrent` when you need ordering** – Can lead to state inconsistencies.\n✅ Use `sequential` or `restartable` if order matters.",
+        "❌ **Not handling cancellations** – `restartable` doesn’t automatically cancel the underlying async operation; you must implement cancellation (e.g., using `CancelToken`).",
+        "❌ **Forgetting to import `bloc_concurrency`** – The transformers won’t be available.",
+        "❌ **Applying transformers to events that don’t need them** – Adds complexity without benefit."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Managing concurrency is essential for responsive Flutter apps. The `bloc_concurrency` package provides simple, declarative transformers that let you control event processing with minimal code. By choosing the right strategy—sequential, droppable, restartable, or concurrent—you can build robust BLoCs that handle user interactions gracefully."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between sequential and restartable?",
+      "answer": "`sequential` queues events; each event waits for the previous one to finish. `restartable` cancels the current handler and starts a new one immediately with the latest event."
+    },
+    {
+      "question": "Does `restartable` automatically cancel the previous API request?",
+      "answer": "No, it only stops the event handler from continuing. You must implement cancellation in your async operation (e.g., using Dio’s `CancelToken` or `AbortController`)."
+    },
+    {
+      "question": "Can I use `bloc_concurrency` without `flutter_bloc`?",
+      "answer": "Yes, the transformers work with any BLoC or Cubit implementation that uses `on<Event>` with a `transformer` parameter."
+    },
+    {
+      "question": "How do I test a BLoC with a custom transformer?",
+      "answer": "Add events in quick succession and verify the emitted states match your expectations. You can use `blocTest` from `flutter_bloc_test` and control timing with `skip` and `wait`."
+    },
+    {
+      "question": "What happens if I use `concurrent` with events that modify the same data?",
+      "answer": "Race conditions can occur. Use `sequential` or `restartable` when state mutations need to be ordered."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:bloc_concurrency/bloc_concurrency.dart';\n\nvoid main() => runApp(MyApp());\n\n// Events\nabstract class CounterEvent {}\nclass Increment extends CounterEvent {}\nclass Decrement extends CounterEvent {}\n\n// States\nclass CounterState {\n  final int value;\n  CounterState(this.value);\n}\n\n// BLoC with droppable (ignores new events while processing)\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(CounterState(0)) {\n    on<Increment>(\n      _onIncrement,\n      transformer: droppable(),\n    );\n    on<Decrement>(\n      _onDecrement,\n      transformer: droppable(),\n    );\n  }\n\n  Future<void> _onIncrement(Increment event, Emitter<CounterState> emit) async {\n    await Future.delayed(Duration(seconds: 1)); // Simulate async work\n    emit(CounterState(state.value + 1));\n  }\n\n  Future<void> _onDecrement(Decrement event, Emitter<CounterState> emit) async {\n    await Future.delayed(Duration(seconds: 1));\n    emit(CounterState(state.value - 1));\n  }\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterBloc(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('BLoC Concurrency Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            BlocBuilder<CounterBloc, CounterState>(\n              builder: (context, state) {\n                return Text('Value: ${state.value}', style: TextStyle(fontSize: 32));\n              },\n            ),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(Increment()),\n                  child: Text('+ (droppable)'),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(Decrement()),\n                  child: Text('- (droppable)'),\n                ),\n              ],\n            ),\n            SizedBox(height: 20),\n            Text('Try tapping multiple times quickly. Only the first tap will take effect until the operation completes.',\n                textAlign: TextAlign.center),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which transformer would you use to cancel the current handler and process only the latest event?",
+      "options": ["sequential", "droppable", "restartable", "concurrent"],
+      "answer": 2
+    },
+    {
+      "question": "What is the default event transformer in flutter_bloc?",
+      "options": ["concurrent", "restartable", "droppable", "sequential"],
+      "answer": 3
+    },
+    {
+      "question": "Which transformer should you use when you want to ignore any new events while a handler is busy?",
+      "options": ["sequential", "droppable", "restartable", "concurrent"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-stream-transform",
+    "bloc-streams",
+    "flutter-async-programming"
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "slug": "bloc-initial-state",
+  "course": "Flutter",
+  "title": "BLoC Initial State: Setup, Persistence & Lazy Initialization",
+  "meta": {
+    "title": "BLoC Initial State – Setup, HydratedBloc & Lazy Initialization (2026)",
+    "description": "Learn how to properly set up initial state in BLoC, persist state across app restarts with hydrated_bloc, and implement lazy initialization for performance.",
+    "keywords": [
+      "Flutter BLoC initial state",
+      "initial state BLoC",
+      "hydrated_bloc initial state",
+      "lazy initialization BLoC",
+      "persist BLoC state",
+      "bloc initial state best practices",
+      "flutter_bloc initial state"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Initial State in BLoC?"
+    },
+    {
+      "type": "text",
+      "value": "In BLoC, the initial state is the state that a BLoC or Cubit starts with before any events are processed. It represents the default state of your feature – often a loading indicator, an empty list, or a pre‑loaded value. Proper management of initial state is crucial for user experience, testing, and maintaining predictable behavior."
+    },
+    {
+      "type": "heading",
+      "value": "Why Initial State Matters"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**User Experience** – Shows loading indicators or placeholder content immediately.",
+        "**Predictability** – Ensures the app starts in a known state, avoiding unexpected UI.",
+        "**Testing** – You can test how the BLoC behaves from a known starting point.",
+        "**Performance** – Lazy initialization can defer heavy setup until needed.",
+        "**Persistence** – With `hydrated_bloc`, the initial state can be restored from storage."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Initial State Setup"
+    },
+    {
+      "type": "text",
+      "value": "In a standard BLoC, you pass the initial state to the super constructor of `Bloc` or `Cubit`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(const CounterState(value: 0)) {\n    // ... handlers\n  }\n}\n\n// For Cubit:\nclass CounterCubit extends Cubit<int> {\n  CounterCubit() : super(0);\n}\n\n// Or with a custom state class:\nclass CounterCubit extends Cubit<CounterState> {\n  CounterCubit() : super(const CounterState.loading());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Designing Initial States with Loading/Empty States"
+    },
+    {
+      "type": "text",
+      "value": "Often you want to start with a loading or empty state to indicate that data is being fetched. Use a factory constructor or separate state subclasses to represent these states cleanly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@immutable\nclass PostsState extends Equatable {\n  const PostsState();\n  @override List<Object?> get props => [];\n}\n\nclass PostsInitial extends PostsState {}\nclass PostsLoading extends PostsState {}\nclass PostsLoaded extends PostsState {\n  final List<Post> posts;\n  const PostsLoaded(this.posts);\n  @override List<Object?> get props => [posts];\n}\n\n// In BLoC:\nclass PostsBloc extends Bloc<PostsEvent, PostsState> {\n  PostsBloc() : super(PostsInitial()) { ... }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Lazy Initialization"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you don't want to create a BLoC instance until it's actually needed. `BlocProvider` lazily creates the bloc by default. You can also control lazy creation of dependencies inside the BLoC."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Lazy creation – the bloc is created only when accessed\nBlocProvider(\n  create: (context) => MyBloc(),\n  lazy: true, // default\n  child: MyWidget(),\n);\n\n// Or inside a BLoC, lazy initialization of heavy dependencies\nclass MyBloc extends Bloc<MyEvent, MyState> {\n  late final HeavyService _service;\n\n  MyBloc() : super(MyInitial()) {\n    on<InitEvent>((event, emit) {\n      _service = HeavyService(); // only created when InitEvent is added\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Persistent Initial State with HydratedBloc"
+    },
+    {
+      "type": "text",
+      "value": "`hydrated_bloc` automatically restores the last state from storage when the BLoC is created. If no persisted state exists, it falls back to the initial state you provide. This is perfect for user sessions, settings, or any state that should survive app restarts."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SettingsCubit extends HydratedCubit<SettingsState> {\n  SettingsCubit() : super(const SettingsState()); // initial state\n\n  @override\n  SettingsState fromJson(Map<String, dynamic> json) {\n    return SettingsState.fromJson(json);\n  }\n\n  @override\n  Map<String, dynamic> toJson(SettingsState state) {\n    return state.toJson();\n  }\n}\n\n// When the cubit is created, it checks for stored state.\n// If found, it's used as the initial state; otherwise, the constructor's initial state is used."
+    },
+    {
+      "type": "heading",
+      "value": "Initial State from External Sources"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes the initial state depends on async data (e.g., reading from SharedPreferences, fetching a token). You can handle this by emitting a loading state initially, then loading the data in `onInit` or by dispatching an initial event."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthBloc extends Bloc<AuthEvent, AuthState> {\n  final AuthRepository repository;\n\n  AuthBloc({required this.repository}) : super(AuthInitial()) {\n    on<AppStarted>((event, emit) async {\n      emit(AuthLoading());\n      final user = await repository.getCurrentUser();\n      if (user != null) {\n        emit(AuthAuthenticated(user));\n      } else {\n        emit(AuthUnauthenticated());\n      }\n    });\n  }\n}\n\n// In main:\nBlocProvider(\n  create: (context) => AuthBloc(repository: repo)..add(AppStarted()),\n  child: MyApp(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use meaningful initial states** – Represent the actual starting condition (loading, empty, placeholder).",
+        "**Leverage `hydrated_bloc` for persistent state** – Let the user resume where they left off.",
+        "**Avoid expensive work in the initial state constructor** – Keep the constructor light; use `on<AppStarted>` or similar for async initialization.",
+        "**Use `Equatable` for all states** – Ensures correct equality comparisons, especially when restoring from storage.",
+        "**Consider lazy providers** – Create blocs only when needed to save resources.",
+        "**Test the initial state** – Write tests that verify the initial state is correct."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Performing async work in the constructor** – Can lead to race conditions and unclosed streams.",
+        "❌ **Forgetting to handle `hydrated_bloc` initialization** – Without setting `HydratedBloc.storage`, persistence won't work.",
+        "❌ **Using a single initial state that's too generic** – Using `Initial` for everything makes it hard to distinguish between fresh start and no data.",
+        "❌ **Not restoring state correctly in hydrated BLoCs** – If `fromJson` returns a different type than the super initial state, it may be ignored.",
+        "❌ **Creating blocs with `create: (context) => MyBloc()..add(InitEvent())` but forgetting to await?** – Ensure async initial events are handled properly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "The initial state sets the stage for your BLoC's behavior. By designing it thoughtfully, you can create apps that start fast, handle persistence elegantly, and provide a seamless user experience. Whether you're using a simple default state or restoring from storage, following best practices will keep your BLoC code clean and maintainable."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I change the initial state after the BLoC is created?",
+      "answer": "No, the initial state is set once when the BLoC is instantiated. To update the state later, you emit new states from event handlers."
+    },
+    {
+      "question": "What's the difference between initial state and a loading state?",
+      "answer": "Initial state is the very first state before any events are processed. A loading state is often emitted as the first response to an event. In many designs, the initial state is itself a loading state."
+    },
+    {
+      "question": "How do I initialize a BLoC with data from a repository?",
+      "answer": "Emit an initial loading state, then in `on<AppStarted>` (or after creation) fetch the data and emit the loaded state."
+    },
+    {
+      "question": "Does `hydrated_bloc` override the initial state I pass to the constructor?",
+      "answer": "If a persisted state exists, it will be used as the initial state instead of the constructor parameter. If no persisted state exists, the constructor state is used."
+    },
+    {
+      "question": "Should I use `lazy: false` in `BlocProvider`?",
+      "answer": "Only if you need the bloc to be created immediately (e.g., to start listening to streams). Otherwise, lazy creation is preferred for performance."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => DataBloc(),\n        child: DataPage(),\n      ),\n    );\n  }\n}\n\n// ---------- State ----------\nabstract class DataState extends Equatable {\n  const DataState();\n  @override List<Object?> get props => [];\n}\n\nclass DataInitial extends DataState {}\nclass DataLoading extends DataState {}\nclass DataLoaded extends DataState {\n  final String data;\n  const DataLoaded(this.data);\n  @override List<Object?> get props => [data];\n}\nclass DataError extends DataState {\n  final String message;\n  const DataError(this.message);\n  @override List<Object?> get props => [message];\n}\n\n// ---------- Events ----------\nabstract class DataEvent extends Equatable {\n  const DataEvent();\n  @override List<Object?> get props => [];\n}\n\nclass LoadData extends DataEvent {}\n\n// ---------- BLoC ----------\nclass DataBloc extends Bloc<DataEvent, DataState> {\n  DataBloc() : super(DataInitial()) {\n    on<LoadData>((event, emit) async {\n      emit(DataLoading());\n      await Future.delayed(Duration(seconds: 1));\n      emit(DataLoaded('Hello from initial state! 👋'));\n    });\n  }\n}\n\n// ---------- UI ----------\nclass DataPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Initial State Demo')),\n      body: BlocBuilder<DataBloc, DataState>(\n        builder: (context, state) {\n          if (state is DataInitial) {\n            return Center(\n              child: Column(\n                mainAxisAlignment: MainAxisAlignment.center,\n                children: [\n                  Text('Initial state: DataInitial', style: TextStyle(fontSize: 18)),\n                  SizedBox(height: 20),\n                  ElevatedButton(\n                    onPressed: () => context.read<DataBloc>().add(LoadData()),\n                    child: Text('Load Data'),\n                  ),\n                ],\n              ),\n            );\n          } else if (state is DataLoading) {\n            return Center(child: CircularProgressIndicator());\n          } else if (state is DataLoaded) {\n            return Center(\n              child: Column(\n                mainAxisAlignment: MainAxisAlignment.center,\n                children: [\n                  Text('Loaded: ${state.data}', style: TextStyle(fontSize: 24)),\n                  SizedBox(height: 20),\n                  ElevatedButton(\n                    onPressed: () => context.read<DataBloc>().add(LoadData()),\n                    child: Text('Reload'),\n                  ),\n                ],\n              ),\n            );\n          } else if (state is DataError) {\n            return Center(\n              child: Column(\n                mainAxisAlignment: MainAxisAlignment.center,\n                children: [\n                  Text('Error: ${state.message}'),\n                  ElevatedButton(\n                    onPressed: () => context.read<DataBloc>().add(LoadData()),\n                    child: Text('Retry'),\n                  ),\n                ],\n              ),\n            );\n          }\n          return Container();\n        },\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How do you set the initial state for a BLoC?",
+      "options": [
+        "By calling `emit` in the constructor",
+        "By passing it to the super constructor",
+        "By overriding the `initialState` getter",
+        "By using `BlocProvider.initialState`"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What happens if you use `hydrated_bloc` and a persisted state exists?",
+      "options": [
+        "It overrides the initial state passed to the constructor",
+        "It merges with the initial state",
+        "It throws an error",
+        "It ignores the persisted state"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "How should you handle initial state that requires async data (e.g., loading from disk)?",
+      "options": [
+        "Fetch the data in the constructor",
+        "Emit a loading state, then fetch data in an event handler",
+        "Use a FutureBuilder in the UI",
+        "Pass the data as a parameter to the bloc"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the default behavior of `BlocProvider` regarding lazy initialization?",
+      "options": [
+        "Creates the bloc immediately",
+        "Creates the bloc lazily when first accessed",
+        "Never creates the bloc",
+        "Requires manual creation"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-copywith",
+    "bloc-performance",
+    "bloc-logging",
+    "hydrated-bloc-tutorial"
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "slug": "bloc-vs-getx",
+  "course": "Flutter",
+  "title": "BLoC vs GetX: Choosing the Right State Management Solution",
+  "meta": {
+    "title": "BLoC vs GetX – In-Depth Comparison & When to Use (2026)",
+    "description": "Compare BLoC and GetX for Flutter state management: architecture, performance, dependencies, testing, and real-world use cases. Choose the right approach for your next project.",
+    "keywords": [
+      "Flutter BLoC vs GetX",
+      "bloc getx comparison",
+      "state management flutter",
+      "bloc vs getx performance",
+      "getx vs bloc",
+      "flutter bloc vs getx",
+      "state management comparison"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "BLoC and GetX are two of the most popular state management solutions in the Flutter ecosystem. BLoC (Business Logic Component) follows a reactive pattern with streams, while GetX is an all‑in‑one micro‑framework that includes state management, dependency injection, and routing. Both have strong communities and are used in production apps. This guide compares them across multiple dimensions to help you decide which fits your project needs."
+    },
+    {
+      "type": "heading",
+      "value": "Philosophy & Architecture"
+    },
+    {
+      "type": "subheading",
+      "value": "BLoC"
+    },
+    {
+      "type": "text",
+      "value": "BLoC enforces a strict separation of concerns using events and states. It's built on streams and follows a unidirectional data flow: UI dispatches events → BLoC processes events → emits new states → UI rebuilds. It promotes immutability, testability, and predictability. However, it requires more boilerplate than GetX."
+    },
+    {
+      "type": "subheading",
+      "value": "GetX"
+    },
+    {
+      "type": "text",
+      "value": "GetX is a micro‑framework that combines state management, dependency injection, and route management. It uses reactive variables (`.obs`) and smart updates (`.update()`). It aims to reduce boilerplate drastically and provide a simple API. GetX also offers built‑in utilities like snackbars, dialogs, and internationalization."
+    },
+    {
+      "type": "heading",
+      "value": "Feature Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "BLoC", "GetX"],
+        "rows": [
+          ["State Management", "Reactive with streams (Bloc, Cubit)", "Reactive (`.obs`) + simple state (`.update()`)"],
+          ["Dependency Injection", "Manual via `BlocProvider` or `RepositoryProvider`", "Built‑in (`.put`, `.lazyPut`, `.find`)"],
+          ["Routing", "External (go_router, auto_route)", "Built‑in (named routes, navigation with arguments)"],
+          ["Boilerplate", "High (events, states, Equatable, etc.)", "Low (reactive variables, minimal classes)"],
+          ["Learning Curve", "Steep (understanding streams, events, states)", "Gentle (simple reactive programming)"],
+          ["Testing", "Excellent (bloc_test, mocktail)", "Good (easily mockable but less tooling)"],
+          ["Performance", "Optimized (rebuild control with buildWhen)", "Good (smart rebuilds, but can be over‑reactive)"],
+          ["Code Generation", "Optional (freezed, json_serializable)", "Optional (get_cli, but not required)"],
+          ["Offline Support", "Excellent (hydrated_bloc)", "Good (GetStorage, but no built‑in persistence)"],
+          ["Community & Ecosystem", "Mature, official package, large enterprise adoption", "Large, rapidly growing, extensive plugins"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Code Comparison"
+    },
+    {
+      "type": "subheading",
+      "value": "Counter Example with BLoC"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Events\nabstract class CounterEvent {}\nclass Increment extends CounterEvent {}\n\n// State\nclass CounterState {\n  final int count;\n  CounterState(this.count);\n}\n\n// BLoC\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(CounterState(0));\n\n  @override\n  Stream<CounterState> mapEventToState(CounterEvent event) async* {\n    if (event is Increment) {\n      yield CounterState(state.count + 1);\n    }\n  }\n}\n\n// UI\nBlocBuilder<CounterBloc, CounterState>(\n  builder: (context, state) => Text('${state.count}'),\n);\ncontext.read<CounterBloc>().add(Increment());"
+    },
+    {
+      "type": "subheading",
+      "value": "Counter Example with GetX"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Controller\nclass CounterController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n}\n\n// UI\nGetX<CounterController>(\n  builder: (controller) => Text('${controller.count}'),\n);\n// or using Obx:\nObx(() => Text('${Get.find<CounterController>().count}'));\nGet.find<CounterController>().increment();"
+    },
+    {
+      "type": "text",
+      "value": "GetX reduces boilerplate significantly: you don't need separate event classes or state classes for simple cases. BLoC provides more structure and can be easier to reason about in large apps."
+    },
+    {
+      "type": "heading",
+      "value": "Performance Considerations"
+    },
+    {
+      "type": "text",
+      "value": "Both BLoC and GetX are performant when used correctly. BLoC's `buildWhen` allows fine‑grained control over rebuilds, preventing unnecessary widget updates. GetX’s `.obs` variables trigger rebuilds only when the value changes, but if not careful, entire widgets can rebuild. In practice, both can achieve 60fps if optimized."
+    },
+    {
+      "type": "heading",
+      "value": "Testing"
+    },
+    {
+      "type": "text",
+      "value": "BLoC has a dedicated testing package (`bloc_test`) and integrates well with mocking libraries. Because events and states are plain objects, testing is straightforward. GetX also allows testing controllers, but there is less tooling. However, because GetX encourages less boilerplate, testing can still be simple with manual mocks."
+    },
+    {
+      "type": "heading",
+      "value": "Learning Curve"
+    },
+    {
+      "type": "text",
+      "value": "GetX is easier for beginners: you can start with `Obx` and reactive variables without learning streams. BLoC requires understanding of streams, sinks, and the event‑state pattern. For large enterprise apps, BLoC’s structure can enforce discipline, while GetX's flexibility can lead to messy code if not used carefully."
+    },
+    {
+      "type": "heading",
+      "value": "When to Choose BLoC"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Large teams & enterprise projects** – Strict architecture helps maintain consistency.",
+        "**Complex state logic** – Events and states make it easy to trace flows.",
+        "**Offline‑first apps** – `hydrated_bloc` provides built‑in persistence.",
+        "**Test‑driven development** – Excellent test support.",
+        "**If you prefer explicit code** – No magic, everything is explicit."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "When to Choose GetX"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Rapid prototyping** – Minimal code gets you started quickly.",
+        "**Small to medium projects** – Less overhead, faster development.",
+        "**All‑in‑one solution** – GetX also provides routing, dependency injection, and utils.",
+        "**If you dislike boilerplate** – Reactive variables reduce code significantly.",
+        "**Building cross‑platform with minimal complexity** – GetX works consistently on mobile, web, and desktop."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Real‑World Adoption"
+    },
+    {
+      "type": "text",
+      "value": "BLoC is used by many large companies (e.g., Google, BMW, Amazon) and is considered the official recommended approach (though not enforced). GetX has a massive community, especially in Asia and among indie developers, and is often chosen for its productivity. Both are production‑ready and continuously maintained."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**BLoC** – Use `Equatable` for state comparison, separate events and states, use `bloc_test` for unit tests, leverage `hydrated_bloc` for persistence.",
+        "**GetX** – Keep controllers small, avoid storing UI state in controllers, use `Get.put` with `permanent: false` for disposable controllers, use `Obx` only around widgets that depend on the reactive variable."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "There is no one‑size‑fits‑all answer. BLoC excels in large, complex applications where strict patterns and testability matter. GetX shines in smaller projects, rapid development, and when you want a batteries‑included framework. Choose based on your team’s experience, project size, and your preference for explicitness versus brevity."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use BLoC and GetX together?",
+      "answer": "Technically yes, but it’s not recommended because they have overlapping concepts. You could use GetX for dependency injection and routing while using BLoC for state management, but this adds complexity."
+    },
+    {
+      "question": "Which is more performant?",
+      "answer": "Both are performant. BLoC gives you more control over rebuilds with `buildWhen`. GetX’s reactivity can sometimes cause more rebuilds if not used carefully, but in practice both can achieve excellent performance."
+    },
+    {
+      "question": "Is GetX safe for large projects?",
+      "answer": "Yes, many large apps use GetX, but it requires discipline to avoid spaghetti code. BLoC’s structure is more opinionated, which can help in larger teams."
+    },
+    {
+      "question": "Which has better documentation?",
+      "answer": "Both have extensive documentation. BLoC’s official documentation is very thorough; GetX’s documentation is also comprehensive but sometimes less organized."
+    },
+    {
+      "question": "Which should I learn first?",
+      "answer": "If you're new to Flutter, GetX might be easier to start with. If you want to understand reactive streams deeply, BLoC is a great choice."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:get/get.dart';\n\n// BLoC implementation\nclass CounterCubit extends Cubit<int> {\n  CounterCubit() : super(0);\n  void increment() => emit(state + 1);\n}\n\n// GetX controller\nclass CounterController extends GetxController {\n  var count = 0.obs;\n  void increment() => count++;\n}\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'BLoC vs GetX',\n      home: DefaultTabController(\n        length: 2,\n        child: Scaffold(\n          appBar: AppBar(\n            title: Text('BLoC vs GetX'),\n            bottom: TabBar(\n              tabs: [\n                Tab(text: 'BLoC'),\n                Tab(text: 'GetX'),\n              ],\n            ),\n          ),\n          body: TabBarView(\n            children: [\n              BlocProvider(\n                create: (_) => CounterCubit(),\n                child: BlocPage(),\n              ),\n              GetXPage(),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}\n\nclass BlocPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Center(\n      child: Column(\n        mainAxisAlignment: MainAxisAlignment.center,\n        children: [\n          Text('BLoC Counter', style: TextStyle(fontSize: 20)),\n          BlocBuilder<CounterCubit, int>(\n            builder: (context, state) => Text('$state', style: TextStyle(fontSize: 40)),\n          ),\n          ElevatedButton(\n            onPressed: () => context.read<CounterCubit>().increment(),\n            child: Text('Increment'),\n          ),\n        ],\n      ),\n    );\n  }\n}\n\nclass GetXPage extends StatelessWidget {\n  final CounterController controller = Get.put(CounterController());\n\n  @override\n  Widget build(BuildContext context) {\n    return Center(\n      child: Column(\n        mainAxisAlignment: MainAxisAlignment.center,\n        children: [\n          Text('GetX Counter', style: TextStyle(fontSize: 20)),\n          Obx(() => Text('${controller.count}', style: TextStyle(fontSize: 40))),\n          ElevatedButton(\n            onPressed: controller.increment,\n            child: Text('Increment'),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which state management solution requires more boilerplate code for a simple counter?",
+      "options": ["BLoC", "GetX", "Both are the same", "It depends"],
+      "answer": 0
+    },
+    {
+      "question": "Which of the following is built into GetX?",
+      "options": ["Dependency injection", "Routing", "State management", "All of the above"],
+      "answer": 3
+    },
+    {
+      "question": "What is the primary architecture pattern used by BLoC?",
+      "options": ["MVC", "Unidirectional data flow with events and states", "Observer pattern", "MVVM"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "getx-introduction",
+    "bloc-state-management",
+    "getx-state-management",
+    "flutter-state-management"
+  ]
+}

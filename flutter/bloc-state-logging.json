@@ -1,0 +1,240 @@
+{
+  "slug": "bloc-state-logging",
+  "course": "Flutter",
+  "title": "BLoC State Logging: Debugging & Monitoring with BlocObserver",
+  "meta": {
+    "title": "BLoC State Logging – Debug Events, Transitions & Errors (2026)",
+    "description": "Learn how to log BLoC events, state transitions, and errors using BlocObserver. Integrate with dart:developer for DevTools, send logs to analytics, and debug effectively.",
+    "keywords": [
+      "Flutter BLoC logging",
+      "bloc state logging",
+      "BlocObserver",
+      "bloc events logging",
+      "bloc transitions logging",
+      "debug bloc",
+      "flutter_bloc logging",
+      "bloc devtools"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Logging is essential for understanding the behavior of your BLoCs, debugging issues, and monitoring production apps. BLoC provides a built‑in `BlocObserver` that allows you to intercept events, transitions, and errors across all BLoCs and Cubits in your app. This guide covers how to implement comprehensive logging, integrate with Flutter DevTools, send logs to external services, and follow best practices for production‑ready logging."
+    },
+    {
+      "type": "heading",
+      "value": "Why Log BLoC State?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Debugging** – Trace the flow of events and state changes to understand what happened before a bug.",
+        "**Monitoring** – Track performance, error rates, and user behavior in production.",
+        "**Testing** – Validate that events and transitions occur as expected during manual testing.",
+        "**Documentation** – Logs serve as a runtime record of app behavior.",
+        "**Performance Analysis** – Measure how long transitions take (with timestamps)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up a Custom BlocObserver"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to start logging is to create a custom `BlocObserver` that overrides `onEvent`, `onTransition`, and `onError`. Set it globally before running the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SimpleBlocObserver extends BlocObserver {\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    print('${bloc.runtimeType} event: $event');\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    print('${bloc.runtimeType} transition: $transition');\n    super.onTransition(bloc, transition);\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    print('${bloc.runtimeType} error: $error');\n    super.onError(bloc, error, stackTrace);\n  }\n}\n\nvoid main() {\n  Bloc.observer = SimpleBlocObserver();\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Logging with Timestamps"
+    },
+    {
+      "type": "text",
+      "value": "Add timestamps to logs to measure performance and order of events. This is particularly useful for debugging race conditions or slow transitions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TimestampBlocObserver extends BlocObserver {\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    final timestamp = DateTime.now().toIso8601String();\n    print('[$timestamp] EVENT ${bloc.runtimeType}: $event');\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    final timestamp = DateTime.now().toIso8601String();\n    print('[$timestamp] TRANSITION ${bloc.runtimeType}: $transition');\n    super.onTransition(bloc, transition);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Logging to Flutter DevTools"
+    },
+    {
+      "type": "text",
+      "value": "Use `dart:developer`'s `log` function to send logs to the DevTools logging view. This allows filtering, searching, and seeing logs alongside other app events."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:developer' as developer;\n\nclass DevToolsBlocObserver extends BlocObserver {\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    developer.log('$event', name: '${bloc.runtimeType}.event');\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    developer.log(\n      '${transition.currentState} -> ${transition.nextState}',\n      name: '${bloc.runtimeType}.transition',\n    );\n    super.onTransition(bloc, transition);\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    developer.log(\n      error.toString(),\n      name: '${bloc.runtimeType}.error',\n      error: error,\n      stackTrace: stackTrace,\n    );\n    super.onError(bloc, error, stackTrace);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Conditional Logging (Debug vs Production)"
+    },
+    {
+      "type": "text",
+      "value": "Avoid logging sensitive data or performance overhead in production. Use `kDebugMode` to enable logging only in development."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  if (kDebugMode) {\n    Bloc.observer = DebugBlocObserver();\n  }\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Structured Logging with Logger Package"
+    },
+    {
+      "type": "text",
+      "value": "For production apps, consider using a structured logging package like `logger` to output JSON or formatted logs that can be sent to remote services."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:logger/logger.dart';\n\nclass LoggerBlocObserver extends BlocObserver {\n  final Logger _logger = Logger(printer: PrettyPrinter());\n\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    _logger.d('${bloc.runtimeType} event: $event');\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    _logger.d('${bloc.runtimeType} transition: $transition');\n    super.onTransition(bloc, transition);\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    _logger.e('${bloc.runtimeType} error: $error');\n    super.onError(bloc, error, stackTrace);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Remote Logging & Analytics"
+    },
+    {
+      "type": "text",
+      "value": "In production, you may want to send logs to a remote service (e.g., Firebase Crashlytics, Sentry). Use `onError` to capture unhandled errors and `onTransition` to log critical state changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class RemoteBlocObserver extends BlocObserver {\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    // Send to crash reporting service\n    FirebaseCrashlytics.instance.recordError(error, stackTrace);\n    super.onError(bloc, error, stackTrace);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    // Log important transitions (e.g., login, payment)\n    if (transition.nextState is LoginSuccess || transition.nextState is PaymentComplete) {\n      Analytics.logEvent(\n        name: 'state_change',\n        parameters: {\n          'bloc': bloc.runtimeType.toString(),\n          'state': transition.nextState.runtimeType.toString(),\n        },\n      );\n    }\n    super.onTransition(bloc, transition);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Logging Specific BLoCs Only"
+    },
+    {
+      "type": "text",
+      "value": "If you want to log only certain BLoCs (e.g., during development of a feature), you can filter inside the observer."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FilteredBlocObserver extends BlocObserver {\n  final List<Type> allowedBlocs = [AuthBloc, ProfileBloc];\n\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    if (allowedBlocs.contains(bloc.runtimeType)) {\n      print('${bloc.runtimeType} event: $event');\n    }\n    super.onEvent(bloc, event);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Measuring Transition Duration"
+    },
+    {
+      "type": "text",
+      "value": "Use `BlocObserver` to measure how long a transition takes, helping identify performance bottlenecks."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PerformanceBlocObserver extends BlocObserver {\n  final Stopwatch _stopwatch = Stopwatch();\n\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    _stopwatch.reset();\n    _stopwatch.start();\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    _stopwatch.stop();\n    print('${bloc.runtimeType} transition for ${transition.event} took ${_stopwatch.elapsedMilliseconds}ms');\n    super.onTransition(bloc, transition);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Enable logging only in debug builds** – Avoid performance hit and sensitive data leaks in production.",
+        "**Use structured logging** – JSON logs are easier to parse by external tools.",
+        "**Log at appropriate levels** – Use `info` for normal transitions, `warning` for recoverable errors, `error` for exceptions.",
+        "**Avoid logging sensitive data** – Do not log passwords, tokens, or personally identifiable information (PII).",
+        "**Include timestamps** – Essential for debugging race conditions and order of events.",
+        "**Test observers** – Ensure they don’t throw exceptions and handle malformed data gracefully.",
+        "**Rotate logs or limit size** – If writing to file, implement log rotation to avoid disk bloat."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Logging everything in production** – Can slow down the app and expose internal state.\n✅ Use conditional logging or remote logging with sampling.",
+        "❌ **Forgetting to call `super` methods** – May break internal BLoC functionality.\n✅ Always call `super.onEvent/onTransition/onError`.",
+        "❌ **Logging huge state objects** – Clutters logs and impacts performance.\n✅ Log only essential fields or summary.",
+        "❌ **Not handling errors in observers** – Observers themselves can throw, crashing the app.\n✅ Wrap logging in try‑catch if necessary.",
+        "❌ **Using `print` in production** – `print` is not suitable for production; use proper logging packages."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Effective logging of BLoC events and state transitions is a powerful tool for debugging and monitoring. By leveraging `BlocObserver`, you can gain full visibility into your app’s state flow. Combine with DevTools, structured logs, and remote services to create a robust observability layer that helps you ship with confidence."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I have multiple BlocObserver instances?",
+      "answer": "No, you can only set one `Bloc.observer`. If you need multiple observers, you can create a composite observer that delegates to multiple internal observers."
+    },
+    {
+      "question": "How do I log only specific events or states?",
+      "answer": "Inside `onEvent` or `onTransition`, you can check the type of event or state and conditionally log."
+    },
+    {
+      "question": "Does BlocObserver work with Cubit?",
+      "answer": "Yes, `BlocObserver` also observes `Cubit` transitions (events are not applicable for Cubits)."
+    },
+    {
+      "question": "How can I send logs to Firebase Crashlytics?",
+      "answer": "Use `FirebaseCrashlytics.instance.log()` inside `onEvent` or `onTransition` to send custom logs, or `recordError` for errors."
+    },
+    {
+      "question": "What's the difference between `onTransition` and `onEvent`?",
+      "answer": "`onEvent` is called when an event is added to the BLoC. `onTransition` is called when the state changes as a result of processing an event (i.e., after `mapEventToState` yields a new state)."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\nvoid main() {\n  // Set up observer for demo\n  Bloc.observer = SimpleBlocObserver();\n  runApp(MyApp());\n}\n\nclass SimpleBlocObserver extends BlocObserver {\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    print('EVENT: ${bloc.runtimeType} -> $event');\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    print('TRANSITION: ${bloc.runtimeType} -> ${transition.currentState} -> ${transition.nextState}');\n    super.onTransition(bloc, transition);\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    print('ERROR: ${bloc.runtimeType} -> $error');\n    super.onError(bloc, error, stackTrace);\n  }\n}\n\nclass CounterCubit extends Cubit<int> {\n  CounterCubit() : super(0);\n  void increment() => emit(state + 1);\n  void decrement() => emit(state - 1);\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final cubit = context.watch<CounterCubit>();\n    return Scaffold(\n      appBar: AppBar(title: Text('BLoC Logging Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Counter:', style: TextStyle(fontSize: 20)),\n            Text('${cubit.state}', style: TextStyle(fontSize: 40)),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: cubit.increment,\n                  child: Icon(Icons.add),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: cubit.decrement,\n                  child: Icon(Icons.remove),\n                ),\n              ],\n            ),\n            SizedBox(height: 20),\n            Text('Check the console for logged events and transitions!'),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which class should you extend to globally observe BLoC events and transitions?",
+      "options": ["BlocObserver", "BlocListener", "BlocProvider", "BlocBuilder"],
+      "answer": 0
+    },
+    {
+      "question": "What method in BlocObserver is called when a state changes?",
+      "options": ["onEvent", "onTransition", "onStateChange", "onEmit"],
+      "answer": 1
+    },
+    {
+      "question": "How do you enable logging only in development builds?",
+      "options": [
+        "Use conditional import",
+        "Check kDebugMode before setting Bloc.observer",
+        "Wrap logs with if (kDebugMode)",
+        "Both B and C"
+      ],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-devtools",
+    "bloc-testing",
+    "bloc-error-handling"
+  ]
+}

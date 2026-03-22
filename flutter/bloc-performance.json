@@ -1,0 +1,271 @@
+{
+  "slug": "bloc-performance",
+  "course": "Flutter",
+  "title": "BLoC Performance Optimization: Best Practices for High-Performance Apps",
+  "meta": {
+    "title": "BLoC Performance Optimization – Best Practices & Pitfalls (2026)",
+    "description": "Learn how to optimize BLoC performance in Flutter. Reduce rebuilds, use Equatable, leverage event transformers, and structure your state for maximum efficiency.",
+    "keywords": [
+      "Flutter BLoC performance",
+      "BLoC optimization",
+      "Equatable BLoC",
+      "BlocBuilder vs BlocSelector",
+      "BLoC best practices",
+      "reduce rebuilds Flutter",
+      "BLoC state management performance",
+      "bloc performance tips"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BLoC Performance?"
+    },
+    {
+      "type": "text",
+      "value": "BLoC performance refers to the efficiency of your Flutter app when using the BLoC pattern for state management. This includes minimizing unnecessary widget rebuilds, reducing the frequency of state emissions, and ensuring that event handlers execute quickly. Optimizing BLoC is crucial for maintaining smooth UI animations and a responsive user experience, especially in complex apps with frequent state changes."
+    },
+    {
+      "type": "heading",
+      "value": "Why Performance Matters in BLoC"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Smooth UI** – Frequent rebuilds can cause jank and dropped frames.",
+        "**Battery Life** – Unnecessary computations drain battery.",
+        "**Scalability** – As the app grows, performance issues become more visible.",
+        "**User Experience** – A sluggish app leads to poor reviews and user churn.",
+        "**Complex Interactions** – Real-time features like search, animations, and gestures demand efficiency."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Performance Pitfalls"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Not using Equatable** – Causes every state change to trigger a rebuild, even if the data hasn't changed.",
+        "**Rebuilding entire widget trees** – Using `BlocBuilder` at the root instead of selectively listening to parts of the state.",
+        "**Large, monolithic states** – When any part of the state changes, all listeners rebuild.",
+        "**Expensive computations inside event handlers** – Blocking the event loop and causing delays.",
+        "**Missing event transformers** – Processing every keystroke or tap without debouncing/throttling.",
+        "**Overusing `context.watch`** – Causes widgets to rebuild on every state change, even if they only need a small part."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Using Equatable for State Comparison"
+    },
+    {
+      "type": "text",
+      "value": "`Equatable` overrides `==` and `hashCode` so that state objects are considered equal if their properties match. This prevents `BlocBuilder` and `BlocListener` from rebuilding when the state is logically the same but a new instance is emitted."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@immutable\nclass MyState extends Equatable {\n  final List<Item> items;\n  final bool isLoading;\n  final String? error;\n\n  const MyState({required this.items, this.isLoading = false, this.error});\n\n  @override\n  List<Object?> get props => [items, isLoading, error];\n}\n\n// Without Equatable, emitting a new state with identical data would rebuild widgets.\n// With Equatable, only actual changes cause rebuilds."
+    },
+    {
+      "type": "heading",
+      "value": "Selective Widget Rebuilding"
+    },
+    {
+      "type": "text",
+      "value": "Instead of using `BlocBuilder` at the top level, use `BlocSelector` or `context.select` to listen only to the parts of the state that matter to a specific widget."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ❌ Rebuilds everything when state changes\nBlocBuilder<MyBloc, MyState>(\n  builder: (context, state) {\n    return Column(\n      children: [\n        Text('Loading: ${state.isLoading}'),\n        ...state.items.map((item) => ItemWidget(item)),\n      ],\n    );\n  },\n);\n\n// ✅ Only rebuilds when isLoading changes\nBlocSelector<MyBloc, MyState, bool>(\n  selector: (state) => state.isLoading,\n  builder: (context, isLoading) {\n    return Text('Loading: $isLoading');\n  },\n);\n\n// Using context.select in a Consumer widget\nfinal isLoading = context.select((MyBloc bloc) => bloc.state.isLoading);\n\n// For multiple fields, combine selectors\nfinal (items, error) = context.select((MyBloc bloc) => (bloc.state.items, bloc.state.error));"
+    },
+    {
+      "type": "heading",
+      "value": "Optimizing State Granularity"
+    },
+    {
+      "type": "text",
+      "value": "Keep your state classes as small as possible. Split a large state into multiple blocs or use nested states. For example, separate UI state from data state, or have separate blocs for different features."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ❌ Large monolithic state\nclass DashboardState extends Equatable {\n  final List<User> users;\n  final List<Post> posts;\n  final bool isLoadingUsers;\n  final bool isLoadingPosts;\n  final String? userError;\n  final String? postError;\n  // ...\n}\n\n// ✅ Split into multiple blocs\nclass UsersBloc extends Bloc<UsersEvent, UsersState> {...}\nclass PostsBloc extends Bloc<PostsEvent, PostsState> {...}\n// Each bloc manages its own focused state, reducing rebuild scope."
+    },
+    {
+      "type": "heading",
+      "value": "Event Transformers for High-Frequency Events"
+    },
+    {
+      "type": "text",
+      "value": "Use event transformers like `debounce` and `throttle` to reduce the number of processed events. This is essential for search inputs, button spamming, and scrolling events."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchBloc extends Bloc<SearchEvent, SearchState> {\n  SearchBloc() : super(SearchInitial()) {\n    on<SearchQueryChanged>(\n      _onSearchQueryChanged,\n      transformer: debounce(const Duration(milliseconds: 300)),\n    );\n  }\n\n  EventTransformer<Event> debounce<Event>(Duration duration) {\n    return (events, mapper) => events.debounceTime(duration).flatMap(mapper);\n  }\n}\n\n// Without debounce, every keystroke would trigger an expensive search."
+    },
+    {
+      "type": "heading",
+      "value": "Offloading Heavy Computations"
+    },
+    {
+      "type": "text",
+      "value": "Avoid performing heavy synchronous work inside event handlers. Use isolates or delegate to a repository that can do async processing. Keep event handlers focused on state transitions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DataBloc extends Bloc<DataEvent, DataState> {\n  final DataRepository repository;\n\n  DataBloc(this.repository) : super(DataInitial()) {\n    on<LoadData>((event, emit) async {\n      emit(DataLoading());\n      // ❌ Heavy computation inside BLoC\n      // final result = heavyComputation(event.data);\n      \n      // ✅ Offload to repository\n      final result = await repository.processData(event.data);\n      emit(DataLoaded(result));\n    });\n  }\n}\n\nclass DataRepository {\n  Future<List<int>> processData(List<int> data) async {\n    // Use compute() or Isolate for CPU-intensive work\n    return await compute(heavyComputation, data);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Async* with Yield Properly"
+    },
+    {
+      "type": "text",
+      "value": "When using `async*` in event handlers, be mindful of emitting multiple states. If you emit a loading state, then a success state, that's fine. But avoid emitting too many intermediate states unless necessary."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Good: minimal state transitions\non<ProcessData>((event, emit) async* {\n  emit(Loading());\n  final result = await repository.process(event.data);\n  emit(Success(result));\n});\n\n// Avoid: emitting too many granular states\n// emit(Step1());\n// await task1();\n// emit(Step2()); // Often unnecessary and causes extra rebuilds"
+    },
+    {
+      "type": "heading",
+      "value": "BlocProvider and MultiBlocProvider"
+    },
+    {
+      "type": "text",
+      "value": "Place `BlocProvider` as high as possible but not higher than necessary. Using `MultiBlocProvider` at the root is fine for global blocs. For feature-specific blocs, create them lazily using `BlocProvider.value` or `BlocProvider` in the route."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ❌ Creating blocs unnecessarily for all routes\nMultiBlocProvider(\n  providers: [\n    BlocProvider(create: (_) => LoginBloc()),\n    BlocProvider(create: (_) => ProfileBloc()),\n    // These are created even if not used\n  ],\n  child: MyApp(),\n);\n\n// ✅ Lazy creation, only when accessed\nBlocProvider(\n  create: (_) => LoginBloc(),\n  lazy: true, // default\n  child: LoginScreen(),\n);\n\n// Using BlocProvider.value to share existing instances\nBlocProvider.value(\n  value: existingBloc,\n  child: SomeScreen(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Comparison: Techniques Impact"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Technique", "Impact on Performance", "When to Use"],
+        "rows": [
+          ["Equatable", "High – prevents unnecessary rebuilds", "Always use for all state classes"],
+          ["BlocSelector / context.select", "High – reduces widget rebuild scope", "Whenever a widget only depends on part of the state"],
+          ["Event Transformers (debounce/throttle)", "Medium-High – reduces event processing", "High-frequency events like search, button spam"],
+          ["Split large states into multiple blocs", "High – isolates rebuilds", "Large, complex UI with independent features"],
+          ["Offload heavy computations", "High – prevents UI jank", "CPU-intensive tasks like image processing, data parsing"],
+          ["Async* state emission optimization", "Low-Medium – avoids extra rebuilds", "When you have many intermediate states"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Always extend Equatable** for states and events to enable proper equality checks.",
+        "**Use `BlocSelector` or `context.select`** to listen only to needed state properties.",
+        "**Keep states immutable and small** – prefer nested blocs for independent features.",
+        "**Apply event transformers** for high-frequency events (search, infinite scroll).",
+        "**Move business logic to repositories** – keep BLoCs light and focused on orchestration.",
+        "**Profile your app** – use Flutter DevTools to identify rebuilds and CPU usage.",
+        "**Use `const` constructors** for state classes when possible.",
+        "**Avoid synchronous heavy work** – use `compute` or isolates."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not using Equatable** – Leads to unnecessary rebuilds when states are equal.",
+        "❌ **Using `BlocBuilder` at the root of a large page** – Rebuilds the entire page on any state change.",
+        "❌ **Creating blocs inside build methods** – Causes memory leaks and performance degradation.",
+        "❌ **Storing large lists in a single state and modifying them frequently** – Emitting new list instances causes rebuilds even if items didn't change.",
+        "❌ **Ignoring event transformers for search** – Causes a network request on every keystroke.",
+        "❌ **Not disposing blocs** – `BlocProvider` disposes automatically, but manually created blocs should be closed."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Optimizing BLoC performance is about being intentional with state granularity, using equality checks, selecting only what you need, and offloading heavy work. By following these best practices, you can build Flutter apps that are responsive, efficient, and maintainable. Remember to profile regularly and keep performance in mind during development, not as an afterthought."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Is Equatable mandatory for performance?",
+      "answer": "Technically no, but it's highly recommended. Without it, `BlocBuilder` and `BlocListener` will treat every new state instance as different, causing unnecessary rebuilds. Equatable fixes that with minimal overhead."
+    },
+    {
+      "question": "What's the difference between `BlocBuilder` and `BlocSelector`?",
+      "answer": "`BlocBuilder` rebuilds the entire widget whenever any part of the state changes. `BlocSelector` allows you to select a subset of the state and rebuilds only when that subset changes. Use `BlocSelector` for better performance."
+    },
+    {
+      "question": "How many blocs should I create?",
+      "answer": "There's no strict rule, but aim for one bloc per feature or per independent part of the UI. Avoid one giant bloc that manages everything. Separate concerns and keep blocs focused."
+    },
+    {
+      "question": "Can event transformers cause event loss?",
+      "answer": "Yes, `debounce` and `throttle` intentionally drop some events. This is by design to reduce workload. For critical actions like form submission, use a separate event type without a transformer."
+    },
+    {
+      "question": "How can I measure rebuilds in my app?",
+      "answer": "Use Flutter DevTools – open the Performance tab, record a profile, and look at the widget rebuild count. Also, you can add debug prints in build methods to see when they are called."
+    },
+    {
+      "question": "Does `BlocProvider` create blocs lazily?",
+      "answer": "Yes, by default `create` is called when the bloc is first accessed. You can set `lazy: false` to create it immediately, but lazy is preferred for performance."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'BLoC Performance Demo',\n      home: BlocProvider(\n        create: (_) => CounterBloc(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\n// ---------- State ----------\nclass CounterState extends Equatable {\n  final int value;\n  final bool isLoading;\n\n  const CounterState({this.value = 0, this.isLoading = false});\n\n  CounterState copyWith({int? value, bool? isLoading}) {\n    return CounterState(\n      value: value ?? this.value,\n      isLoading: isLoading ?? this.isLoading,\n    );\n  }\n\n  @override\n  List<Object?> get props => [value, isLoading];\n}\n\n// ---------- Events ----------\nabstract class CounterEvent extends Equatable {\n  const CounterEvent();\n  @override\n  List<Object?> get props => [];\n}\n\nclass Increment extends CounterEvent {}\nclass Decrement extends CounterEvent {}\nclass HeavyOperation extends CounterEvent {}\n\n// ---------- BLoC ----------\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(const CounterState()) {\n    on<Increment>(_onIncrement);\n    on<Decrement>(_onDecrement);\n    on<HeavyOperation>(_onHeavyOperation);\n  }\n\n  void _onIncrement(Increment event, Emitter<CounterState> emit) {\n    emit(state.copyWith(value: state.value + 1));\n  }\n\n  void _onDecrement(Decrement event, Emitter<CounterState> emit) {\n    emit(state.copyWith(value: state.value - 1));\n  }\n\n  Future<void> _onHeavyOperation(HeavyOperation event, Emitter<CounterState> emit) async {\n    emit(state.copyWith(isLoading: true));\n    // Simulate heavy computation (in a real app, offload to isolate)\n    await Future.delayed(Duration(seconds: 1));\n    // Simulate result\n    emit(state.copyWith(isLoading: false, value: state.value + 10));\n  }\n}\n\n// ---------- UI ----------\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    // Use BlocSelector to only listen to isLoading for the loading indicator\n    return Scaffold(\n      appBar: AppBar(title: Text('BLoC Performance')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            // This widget rebuilds only when isLoading changes\n            BlocSelector<CounterBloc, CounterState, bool>(\n              selector: (state) => state.isLoading,\n              builder: (context, isLoading) {\n                if (isLoading) {\n                  return CircularProgressIndicator();\n                }\n                return SizedBox.shrink();\n              },\n            ),\n            SizedBox(height: 20),\n            // This widget rebuilds only when value changes\n            BlocSelector<CounterBloc, CounterState, int>(\n              selector: (state) => state.value,\n              builder: (context, value) {\n                return Text(\n                  '$value',\n                  style: Theme.of(context).textTheme.headlineMedium,\n                );\n              },\n            ),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(Increment()),\n                  child: Icon(Icons.add),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(Decrement()),\n                  child: Icon(Icons.remove),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(HeavyOperation()),\n                  child: Text('Heavy'),\n                ),\n              ],\n            ),\n            SizedBox(height: 20),\n            Text(\n              'Note: Only the specific widgets rebuild on changes.\\nCheck console logs for rebuild count.',\n              textAlign: TextAlign.center,\n              style: TextStyle(fontSize: 12),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which package helps prevent unnecessary rebuilds by enabling proper state equality?",
+      "options": ["flutter_bloc", "equatable", "provider", "rxdart"],
+      "answer": 1
+    },
+    {
+      "question": "What widget should you use to listen to only a part of the BLoC state?",
+      "options": ["BlocBuilder", "BlocConsumer", "BlocSelector", "BlocProvider"],
+      "answer": 2
+    },
+    {
+      "question": "Which technique is best for handling rapid search input changes?",
+      "options": ["Throttle", "Debounce", "Concurrent processing", "Sequential processing"],
+      "answer": 1
+    },
+    {
+      "question": "What is a common performance problem when using BLoC?",
+      "options": [
+        "Using Equatable on states",
+        "Using BlocProvider at the root",
+        "Storing large states and rebuilding everything on any change",
+        "Using async* in event handlers"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-event-transformers",
+    "bloc-global-error-handler",
+    "flutter-performance-optimization"
+  ]
+}

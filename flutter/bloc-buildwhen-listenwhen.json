@@ -1,0 +1,201 @@
+{
+  "slug": "bloc-buildwhen-listenwhen",
+  "course": "Flutter",
+  "title": "BLoC buildWhen & listenWhen: Fine-Tuning UI Updates & Side Effects",
+  "meta": {
+    "title": "BLoC buildWhen & listenWhen – Control Rebuilds & Side Effects (2026)",
+    "description": "Master buildWhen and listenWhen in flutter_bloc to control when widgets rebuild and when side effects run. Optimize performance and prevent unnecessary UI updates.",
+    "keywords": [
+      "Flutter BLoC buildWhen",
+      "bloc listenWhen",
+      "bloc builder control",
+      "flutter_bloc performance",
+      "bloc rebuild optimization",
+      "side effects bloc",
+      "bloc conditional rebuild"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "In BLoC, `BlocBuilder` and `BlocListener` provide powerful ways to react to state changes. By default, `BlocBuilder` rebuilds its child on every state emission, and `BlocListener` executes its listener on every emission. This can lead to unnecessary rebuilds or side effects. The `buildWhen` and `listenWhen` parameters give you fine‑grained control to filter which state changes trigger rebuilds or side effects, significantly improving performance and user experience."
+    },
+    {
+      "type": "heading",
+      "value": "Understanding buildWhen"
+    },
+    {
+      "type": "text",
+      "value": "`buildWhen` is a predicate function that determines whether `BlocBuilder` should rebuild its child. It receives the previous state and the current state and returns a `bool`. If `true`, the builder runs; if `false`, it skips the rebuild."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocBuilder<CounterBloc, CounterState>(\n  buildWhen: (previous, current) {\n    // Only rebuild when the count changes, not when isLoading changes\n    return previous.count != current.count;\n  },\n  builder: (context, state) {\n    return Text('Count: ${state.count}');\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Understanding listenWhen"
+    },
+    {
+      "type": "text",
+      "value": "`listenWhen` works similarly for `BlocListener`. It decides whether the listener callback should be invoked. This is useful for side effects like showing a snackbar, navigating, or logging."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocListener<LoginBloc, LoginState>(\n  listenWhen: (previous, current) {\n    // Show snackbar only on error, not on other states\n    return current is LoginError && previous is! LoginError;\n  },\n  listener: (context, state) {\n    if (state is LoginError) {\n      ScaffoldMessenger.of(context).showSnackBar(\n        SnackBar(content: Text(state.message)),\n      );\n    }\n  },\n  child: ...,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Real‑World Example: User Profile Screen"
+    },
+    {
+      "type": "text",
+      "value": "Consider a profile screen that displays user details and also shows a loading indicator. You might want to rebuild the name widget only when the name changes, but show a snackbar only on error."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfilePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocProvider(\n      create: (_) => ProfileBloc()..add(LoadProfile()),\n      child: Scaffold(\n        appBar: AppBar(title: Text('Profile')),\n        body: Column(\n          children: [\n            // Rebuild only when the name changes\n            BlocBuilder<ProfileBloc, ProfileState>(\n              buildWhen: (previous, current) => previous.user.name != current.user.name,\n              builder: (context, state) => Text('Name: ${state.user.name}'),\n            ),\n            // Rebuild only when loading changes (for loading indicator)\n            BlocBuilder<ProfileBloc, ProfileState>(\n              buildWhen: (previous, current) => previous.isLoading != current.isLoading,\n              builder: (context, state) => state.isLoading\n                  ? CircularProgressIndicator()\n                  : Container(),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using BlocConsumer for Combined Control"
+    },
+    {
+      "type": "text",
+      "value": "`BlocConsumer` combines `BlocBuilder` and `BlocListener` in a single widget. You can provide separate `buildWhen` and `listenWhen` to independently control rebuilds and side effects."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocConsumer<LoginBloc, LoginState>(\n  listenWhen: (previous, current) {\n    // Side effect only on transition to error or success\n    return (current is LoginError && previous is! LoginError) ||\n           (current is LoginSuccess && previous is! LoginSuccess);\n  },\n  listener: (context, state) {\n    if (state is LoginError) {\n      showError(state.message);\n    } else if (state is LoginSuccess) {\n      navigateToHome();\n    }\n  },\n  buildWhen: (previous, current) {\n    // Rebuild UI only when loading status changes\n    return previous.isLoading != current.isLoading;\n  },\n  builder: (context, state) {\n    return state.isLoading ? CircularProgressIndicator() : LoginForm();\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced Patterns"
+    },
+    {
+      "type": "subheading",
+      "value": "Combining with Selectors"
+    },
+    {
+      "type": "text",
+      "value": "For even finer control, you can combine `buildWhen` with `context.select` (which listens to a single property). Both approaches achieve similar results; choose based on readability."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Using buildWhen\nBlocBuilder<CartBloc, CartState>(\n  buildWhen: (prev, curr) => prev.total != curr.total,\n  builder: (context, state) => Text('Total: ${state.total}'),\n);\n\n// Using context.select (alternative)\nfinal total = context.select((CartBloc bloc) => bloc.state.total);\nText('Total: $total');"
+    },
+    {
+      "type": "subheading",
+      "value": "Debouncing Listeners"
+    },
+    {
+      "type": "text",
+      "value": "You can also implement debouncing inside `listenWhen` to prevent repeated side effects (e.g., showing the same error multiple times). However, it's simpler to use `listenWhen` to filter duplicates."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocListener<NotificationBloc, NotificationState>(\n  listenWhen: (previous, current) {\n    // Only trigger when the error message is new\n    if (current is NotificationError) {\n      return previous is! NotificationError || previous.message != current.message;\n    }\n    return false;\n  },\n  listener: (context, state) {\n    if (state is NotificationError) {\n      showSnackbar(state.message);\n    }\n  },\n  child: ...,\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `buildWhen` to prevent unnecessary rebuilds** – Especially for widgets that depend only on part of the state.",
+        "**Use `listenWhen` to avoid duplicate side effects** – Show snackbars only once per error, navigate only on transition, etc.",
+        "**Keep predicates simple** – Complex logic inside `buildWhen` can be hard to maintain; extract to a method if needed.",
+        "**Combine with `Equatable`** – Makes state comparison easier and reduces errors.",
+        "**Consider `context.select` for simple cases** – It can be cleaner than a separate `buildWhen`.",
+        "**Test your filters** – Ensure `buildWhen` and `listenWhen` return the correct boolean in unit tests."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `buildWhen` that always returns `true`** – No benefit, adds clutter.\n✅ Use only when necessary.",
+        "❌ **Forgetting to handle initial state in `listenWhen`** – May cause side effects on first state.\n✅ Check `previous` for initial.",
+        "❌ **Over‑filtering** – Miss important updates.\n✅ Test thoroughly to ensure correct behavior.",
+        "❌ **Mutating state inside `buildWhen`** – Should be pure; no side effects.\n✅ Keep predicate read‑only."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "`buildWhen` and `listenWhen` are essential tools for optimizing BLoC‑powered Flutter apps. By selectively controlling rebuilds and side effects, you improve performance, reduce noise, and create a smoother user experience. Always consider which part of the state actually matters for each UI component and side effect."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `buildWhen` and `context.select`?",
+      "answer": "`buildWhen` is a predicate that receives previous and current state. `context.select` directly listens to a specific property. Both can achieve similar results; `context.select` is often less code for simple cases."
+    },
+    {
+      "question": "Can I use `buildWhen` with `BlocConsumer`?",
+      "answer": "Yes, `BlocConsumer` accepts both `buildWhen` and `listenWhen` separately."
+    },
+    {
+      "question": "How do I test `buildWhen`?",
+      "answer": "You can test it by verifying that the builder is called only when expected. However, since `buildWhen` is internal to the widget, you usually test by ensuring the UI updates correctly under different state sequences."
+    },
+    {
+      "question": "Does `buildWhen` affect performance?",
+      "answer": "Yes, positively. It reduces rebuilds, which improves performance. The predicate itself is very cheap."
+    },
+    {
+      "question": "Can I use `buildWhen` to ignore the first emission?",
+      "answer": "Yes, check `previous` state. For example, `buildWhen: (prev, curr) => prev != curr` but with initial state handling."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() => runApp(MyApp());\n\n// State\nclass CounterState extends Equatable {\n  final int count;\n  final bool isLoading;\n\n  const CounterState({required this.count, this.isLoading = false});\n\n  CounterState copyWith({int? count, bool? isLoading}) {\n    return CounterState(\n      count: count ?? this.count,\n      isLoading: isLoading ?? this.isLoading,\n    );\n  }\n\n  @override\n  List<Object?> get props => [count, isLoading];\n}\n\n// Events\nabstract class CounterEvent {}\nclass Increment extends CounterEvent {}\nclass StartLoading extends CounterEvent {}\nclass StopLoading extends CounterEvent {}\n\n// BLoC\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(const CounterState(count: 0)) {\n    on<Increment>((event, emit) {\n      emit(state.copyWith(count: state.count + 1));\n    });\n    on<StartLoading>((event, emit) {\n      emit(state.copyWith(isLoading: true));\n    });\n    on<StopLoading>((event, emit) {\n      emit(state.copyWith(isLoading: false));\n    });\n  }\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterBloc(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('buildWhen & listenWhen Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            // Rebuilds only when count changes (not on isLoading)\n            BlocBuilder<CounterBloc, CounterState>(\n              buildWhen: (previous, current) => previous.count != current.count,\n              builder: (context, state) => Text(\n                'Count: ${state.count}',\n                style: TextStyle(fontSize: 40),\n              ),\n            ),\n            const SizedBox(height: 20),\n            // Rebuilds only when isLoading changes\n            BlocBuilder<CounterBloc, CounterState>(\n              buildWhen: (previous, current) => previous.isLoading != current.isLoading,\n              builder: (context, state) => state.isLoading\n                  ? const CircularProgressIndicator()\n                  : const Text('Not loading'),\n            ),\n            const SizedBox(height: 20),\n            // Listener only shows snackbar on error (no error in this demo, but pattern shown)\n            BlocListener<CounterBloc, CounterState>(\n              listenWhen: (previous, current) {\n                // This demo doesn't have error state, but you'd listen to error transitions\n                return false;\n              },\n              listener: (context, state) {},\n              child: const SizedBox(),\n            ),\n            ElevatedButton(\n              onPressed: () => context.read<CounterBloc>().add(Increment()),\n              child: const Text('Increment'),\n            ),\n            ElevatedButton(\n              onPressed: () => context.read<CounterBloc>().add(StartLoading()),\n              child: const Text('Start Loading'),\n            ),\n            ElevatedButton(\n              onPressed: () => context.read<CounterBloc>().add(StopLoading()),\n              child: const Text('Stop Loading'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does `buildWhen` return to prevent a rebuild?",
+      "options": ["true", "false", "void", "null"],
+      "answer": 1
+    },
+    {
+      "question": "Which widget combines `BlocBuilder` and `BlocListener` with separate filters?",
+      "options": ["BlocConsumer", "BlocProvider", "BlocSelector", "MultiBlocListener"],
+      "answer": 0
+    },
+    {
+      "question": "What is the primary benefit of using `listenWhen`?",
+      "options": [
+        "It reduces rebuilds",
+        "It prevents side effects from running on irrelevant state changes",
+        "It improves testability",
+        "It automatically debounces events"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-rebuild-optimization",
+    "bloc-concurrency",
+    "bloc-testing"
+  ]
+}

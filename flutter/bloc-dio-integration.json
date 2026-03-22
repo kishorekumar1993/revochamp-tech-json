@@ -1,0 +1,228 @@
+{
+  "slug": "bloc-dio-integration",
+  "course": "Flutter",
+  "title": "BLoC with Dio: Robust API Integration & Error Handling",
+  "meta": {
+    "title": "BLoC with Dio – HTTP Client, Interceptors, Cancel Tokens & Error Handling (2026)",
+    "description": "Learn how to integrate Dio with BLoC for robust API calls. Master repository pattern, interceptors, cancel tokens, error handling, and testing for production-ready Flutter apps.",
+    "keywords": [
+      "Flutter BLoC Dio",
+      "bloc dio integration",
+      "dio interceptors",
+      "cancel token bloc",
+      "api repository pattern",
+      "dio error handling",
+      "bloc http client",
+      "flutter network layer"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Dio is a powerful HTTP client for Dart that supports interceptors, global configuration, FormData, and cancellation. When combined with BLoC, it forms a robust network layer for your Flutter apps. This guide covers how to integrate Dio with BLoC using the repository pattern, manage interceptors for authentication and logging, cancel in‑flight requests, handle errors gracefully, and test your network logic."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Dio with BLoC?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Interceptor Support** – Add headers, handle tokens, log requests globally.",
+        "**Request Cancellation** – Cancel ongoing requests (e.g., when user navigates away).",
+        "**FormData & File Uploads** – Easy multipart file uploads with progress.",
+        "**Flexible Configuration** – Base URL, timeouts, response interceptors.",
+        "**Error Handling** – Convert Dio errors to domain‑specific exceptions."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Dio"
+    },
+    {
+      "type": "text",
+      "value": "Add Dio and other dependencies to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  dio: ^5.4.0\n  flutter_bloc: ^8.1.5\n  equatable: ^2.0.5\n\n# For testing\ndev_dependencies:\n  mocktail: ^1.0.0\n  bloc_test: ^9.1.5"
+    },
+    {
+      "type": "text",
+      "value": "Create a Dio client with base configuration. It's often provided as a singleton or through dependency injection."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DioClient {\n  late final Dio _dio;\n\n  DioClient() {\n    _dio = Dio(BaseOptions(\n      baseUrl: 'https://api.example.com',\n      connectTimeout: const Duration(seconds: 30),\n      receiveTimeout: const Duration(seconds: 30),\n      headers: {\n        'Content-Type': 'application/json',\n      },\n    ));\n    _setupInterceptors();\n  }\n\n  void _setupInterceptors() {\n    _dio.interceptors.add(InterceptorsWrapper(\n      onRequest: (options, handler) {\n        // Add auth token if available\n        final token = AuthService.token;\n        if (token != null) {\n          options.headers['Authorization'] = 'Bearer $token';\n        }\n        return handler.next(options);\n      },\n      onResponse: (response, handler) => handler.next(response),\n      onError: (error, handler) {\n        // Global error handling (e.g., 401 -> logout)\n        if (error.response?.statusCode == 401) {\n          // Handle unauthorized\n        }\n        return handler.next(error);\n      },\n    ));\n\n    // Add logger interceptor in debug mode\n    if (kDebugMode) {\n      _dio.interceptors.add(LogInterceptor(\n        requestBody: true,\n        responseBody: true,\n      ));\n    }\n  }\n\n  Dio get dio => _dio;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Repository Pattern"
+    },
+    {
+      "type": "text",
+      "value": "The repository pattern separates data sources (network, cache) from business logic. Your BLoC interacts with the repository, which uses Dio to fetch data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostRepository {\n  final DioClient dioClient;\n  final CancelToken _cancelToken = CancelToken();\n\n  PostRepository(this.dioClient);\n\n  Future<List<Post>> fetchPosts() async {\n    try {\n      final response = await dioClient.dio.get('/posts', cancelToken: _cancelToken);\n      final List<dynamic> data = response.data;\n      return data.map((json) => Post.fromJson(json)).toList();\n    } on DioException catch (e) {\n      throw _handleError(e);\n    }\n  }\n\n  void cancelRequests() {\n    _cancelToken.cancel('Request cancelled by user');\n  }\n\n  Exception _handleError(DioException error) {\n    if (error.type == DioExceptionType.connectionTimeout ||\n        error.type == DioExceptionType.receiveTimeout) {\n      return NetworkException('Connection timeout');\n    } else if (error.type == DioExceptionType.cancel) {\n      return CancelException('Request cancelled');\n    } else if (error.response?.statusCode == 401) {\n      return AuthException('Unauthorized');\n    } else {\n      return ServerException(error.message ?? 'Unknown error');\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "BLoC with Repository"
+    },
+    {
+      "type": "text",
+      "value": "The BLoC uses the repository to perform network operations and emits states. Use `Equatable` for state equality."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// States\n@immutable\nabstract class PostsState extends Equatable {}\n\nclass PostsInitial extends PostsState {\n  @override\n  List<Object?> get props => [];\n}\n\nclass PostsLoading extends PostsState {\n  @override\n  List<Object?> get props => [];\n}\n\nclass PostsLoaded extends PostsState {\n  final List<Post> posts;\n  const PostsLoaded(this.posts);\n\n  @override\n  List<Object?> get props => [posts];\n}\n\nclass PostsError extends PostsState {\n  final String message;\n  const PostsError(this.message);\n\n  @override\n  List<Object?> get props => [message];\n}\n\n// Events\n@immutable\nabstract class PostsEvent extends Equatable {}\n\nclass FetchPosts extends PostsEvent {\n  @override\n  List<Object?> get props => [];\n}\n\nclass CancelFetch extends PostsEvent {\n  @override\n  List<Object?> get props => [];\n}\n\n// BLoC\nclass PostsBloc extends Bloc<PostsEvent, PostsState> {\n  final PostRepository repository;\n\n  PostsBloc(this.repository) : super(PostsInitial()) {\n    on<FetchPosts>(_onFetchPosts);\n    on<CancelFetch>(_onCancelFetch);\n  }\n\n  Future<void> _onFetchPosts(FetchPosts event, Emitter<PostsState> emit) async {\n    emit(PostsLoading());\n    try {\n      final posts = await repository.fetchPosts();\n      emit(PostsLoaded(posts));\n    } catch (e) {\n      emit(PostsError(e.toString()));\n    }\n  }\n\n  void _onCancelFetch(CancelFetch event, Emitter<PostsState> emit) {\n    repository.cancelRequests();\n    emit(PostsError('Request cancelled'));\n  }\n\n  @override\n  Future<void> close() {\n    repository.cancelRequests();\n    return super.close();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Request Cancellation"
+    },
+    {
+      "type": "text",
+      "value": "Cancelling requests is important when users navigate away or when multiple requests race. Use `CancelToken` in Dio. In the BLoC, you can cancel requests on `close` or when a new request arrives (restartable pattern)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchBloc extends Bloc<SearchEvent, SearchState> {\n  final SearchRepository repository;\n  CancelToken? _cancelToken;\n\n  SearchBloc(this.repository) : super(SearchInitial()) {\n    on<SearchQueryChanged>(\n      _onSearch,\n      transformer: restartable(), // cancel previous when new query arrives\n    );\n  }\n\n  Future<void> _onSearch(SearchQueryChanged event, Emitter<SearchState> emit) async {\n    // Cancel previous request\n    _cancelToken?.cancel('New search started');\n    _cancelToken = CancelToken();\n\n    emit(SearchLoading());\n    try {\n      final results = await repository.search(event.query, cancelToken: _cancelToken!);\n      emit(SearchSuccess(results));\n    } on DioException catch (e) {\n      if (CancelToken.isCancel(e)) {\n        // Ignore cancellation\n        return;\n      }\n      emit(SearchError(e.message ?? 'Search failed'));\n    }\n  }\n\n  @override\n  Future<void> close() {\n    _cancelToken?.cancel('Bloc closed');\n    return super.close();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced: Interceptors for Authentication"
+    },
+    {
+      "type": "text",
+      "value": "Dio interceptors can automatically refresh expired tokens. This example shows how to intercept 401 errors and retry after refreshing the token."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthInterceptor extends Interceptor {\n  final Dio _dio;\n  final RefreshTokenRepository _refreshRepo;\n  bool _isRefreshing = false;\n  final List<RequestOptions> _pendingRequests = [];\n\n  AuthInterceptor(this._dio, this._refreshRepo);\n\n  @override\n  void onError(DioException err, ErrorInterceptorHandler handler) async {\n    if (err.response?.statusCode == 401 && !_isRefreshing) {\n      _isRefreshing = true;\n      try {\n        final newToken = await _refreshRepo.refreshToken();\n        // Save new token\n        await AuthService.saveToken(newToken);\n        // Retry all pending requests\n        for (var request in _pendingRequests) {\n          request.headers['Authorization'] = 'Bearer $newToken';\n          _dio.fetch(request);\n        }\n        _pendingRequests.clear();\n        // Retry the original request\n        final opts = err.requestOptions;\n        opts.headers['Authorization'] = 'Bearer $newToken';\n        final response = await _dio.fetch(opts);\n        handler.resolve(response);\n      } catch (_) {\n        // Refresh failed, logout\n        handler.next(err);\n      } finally {\n        _isRefreshing = false;\n      }\n    } else {\n      handler.next(err);\n    }\n  }\n\n  @override\n  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {\n    // Add token from storage\n    final token = AuthService.token;\n    if (token != null) {\n      options.headers['Authorization'] = 'Bearer $token';\n    }\n    handler.next(options);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing BLoC with Mocked Dio"
+    },
+    {
+      "type": "text",
+      "value": "To test BLoCs that use Dio, you can mock the repository or use `MockClient` from `http_mock_adapter` (for Dio). Mocktail can be used to mock the repository."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MockPostRepository extends Mock implements PostRepository {}\n\nvoid main() {\n  late MockPostRepository mockRepository;\n  late PostsBloc bloc;\n\n  setUp(() {\n    mockRepository = MockPostRepository();\n    bloc = PostsBloc(mockRepository);\n  });\n\n  group('PostsBloc', () {\n    blocTest<PostsBloc, PostsState>(\n      'emits [PostsLoading, PostsLoaded] when fetch succeeds',\n      build: () => bloc,\n      setUp: () {\n        when(() => mockRepository.fetchPosts()).thenAnswer((_) async => [Post(id: 1, title: 'Test')]);\n      },\n      act: (bloc) => bloc.add(FetchPosts()),\n      expect: () => [\n        PostsLoading(),\n        PostsLoaded([Post(id: 1, title: 'Test')]),\n      ],\n    );\n\n    blocTest<PostsBloc, PostsState>(\n      'emits [PostsLoading, PostsError] when fetch fails',\n      build: () => bloc,\n      setUp: () {\n        when(() => mockRepository.fetchPosts()).thenThrow(ServerException('Network error'));\n      },\n      act: (bloc) => bloc.add(FetchPosts()),\n      expect: () => [\n        PostsLoading(),\n        PostsError('Network error'),\n      ],\n    );\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use a single Dio instance** – Share a configured Dio client via dependency injection (e.g., GetIt, Provider).",
+        "**Separate network logic with repositories** – Keep BLoC clean and testable.",
+        "**Use CancelToken** – Cancel requests when the BLoC is closed or when a new request overrides an old one.",
+        "**Handle errors early** – Convert Dio exceptions to domain‑specific exceptions in the repository.",
+        "**Use interceptors for cross‑cutting concerns** – Logging, authentication, token refresh.",
+        "**Test with mocks** – Avoid real network calls in unit tests; mock the repository or use an adapter.",
+        "**Set timeouts** – Prevent hanging requests with `connectTimeout` and `receiveTimeout`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not handling request cancellation** – Leads to memory leaks and unnecessary processing.\n✅ Cancel tokens in `close` and on new requests.",
+        "❌ **Creating multiple Dio instances** – Overhead and loss of shared configuration.\n✅ Use a singleton or service locator.",
+        "❌ **Ignoring error types** – Throwing raw DioException makes BLoC handling messy.\n✅ Map to custom exceptions.",
+        "❌ **Forgetting to set content‑type headers** – May cause server errors.\n✅ Set base headers in `BaseOptions`.",
+        "❌ **Not handling 401 globally** – Leads to scattered authentication logic.\n✅ Use an interceptor for token refresh."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Dio is a feature‑rich HTTP client that pairs excellently with BLoC. By organizing your network layer with repositories, using interceptors for cross‑cutting concerns, and managing request cancellation, you can build a robust, maintainable, and testable API integration. Following the patterns in this guide will ensure your BLoC remains focused on state management while Dio handles the complexities of HTTP communication."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should I use Dio or the http package with BLoC?",
+      "answer": "Dio is recommended for most production apps because of its interceptor support, cancel tokens, form data, and global configuration. The http package is simpler but lacks these advanced features."
+    },
+    {
+      "question": "How do I handle file uploads with Dio and BLoC?",
+      "answer": "Use `FormData` to build the request. In the repository, call `dio.post('/upload', data: formData)`. The BLoC can emit progress states using `onSendProgress` callback."
+    },
+    {
+      "question": "What's the best way to handle token refresh with Dio interceptors?",
+      "answer": "Implement a custom interceptor that catches 401 errors, refreshes the token, and retries the original request. Be careful to avoid infinite loops."
+    },
+    {
+      "question": "Can I use multiple CancelTokens for different requests?",
+      "answer": "Yes, create a new CancelToken per request or per BLoC. Cancel them when needed to avoid memory leaks."
+    },
+    {
+      "question": "How do I test Dio interceptors?",
+      "answer": "You can unit test interceptors by passing a mock `RequestInterceptorHandler` and `ErrorInterceptorHandler`. For integration, use `Dio` with a mocked HTTP client (e.g., `http_mock_adapter`)."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:dio/dio.dart';\n\nvoid main() => runApp(MyApp());\n\n// Simple Cubit that uses Dio directly (demo only)\nclass PostCubit extends Cubit<List<dynamic>> {\n  final Dio dio;\n  PostCubit(this.dio) : super([]);\n\n  Future<void> fetchPosts() async {\n    try {\n      final response = await dio.get('https://jsonplaceholder.typicode.com/posts');\n      emit(response.data);\n    } catch (e) {\n      emit([]);\n    }\n  }\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => PostCubit(Dio()),\n        child: PostPage(),\n      ),\n    );\n  }\n}\n\nclass PostPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final cubit = context.watch<PostCubit>();\n    return Scaffold(\n      appBar: AppBar(title: Text('Dio + BLoC Demo')),\n      body: Column(\n        children: [\n          ElevatedButton(\n            onPressed: () => context.read<PostCubit>().fetchPosts(),\n            child: Text('Fetch Posts'),\n          ),\n          Expanded(\n            child: ListView.builder(\n              itemCount: cubit.state.length,\n              itemBuilder: (_, i) => ListTile(\n                title: Text(cubit.state[i]['title']),\n              ),\n            ),\n          ),\n        ],\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the purpose of a CancelToken in Dio?",
+      "options": [
+        "To cancel ongoing HTTP requests",
+        "To authenticate requests",
+        "To log requests",
+        "To format request bodies"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Which pattern separates network logic from BLoC?",
+      "options": ["Singleton pattern", "Repository pattern", "Factory pattern", "Observer pattern"],
+      "answer": 1
+    },
+    {
+      "question": "What should you do inside a BLoC's `close` method regarding Dio?",
+      "options": [
+        "Call `dio.close()`",
+        "Cancel any active cancel tokens",
+        "Log out the user",
+        "Nothing, BLoC handles it automatically"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-offline-support",
+    "bloc-testing",
+    "bloc-dio-interceptors"
+  ]
+}

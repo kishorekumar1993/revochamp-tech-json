@@ -1,0 +1,224 @@
+{
+  "slug": "bloc-side-effects",
+  "course": "Flutter",
+  "title": "BLoC Side Effects: Navigation, Dialogs & One-Time Events",
+  "meta": {
+    "title": "BLoC Side Effects – Handle Navigation, Snackbars & One-Time Events (2026)",
+    "description": "Learn how to manage side effects like navigation, showing dialogs, and snackbars in BLoC. Master BlocListener, BlocConsumer, and separate concerns for clean UI logic.",
+    "keywords": [
+      "Flutter BLoC side effects",
+      "BlocListener",
+      "BlocConsumer",
+      "BLoC navigation",
+      "BLoC snackbar",
+      "one-time events BLoC",
+      "BLoC UI effects",
+      "flutter_bloc side effects"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Side Effects in BLoC?"
+    },
+    {
+      "type": "text",
+      "value": "In BLoC architecture, side effects are actions that should happen once in response to a state change, but are not part of the UI state itself. Examples include navigating to a new screen, showing a SnackBar or dialog, or playing a sound. Separating side effects from the UI rendering logic is crucial for maintainability, testability, and avoiding duplicate effects (like navigating twice)."
+    },
+    {
+      "type": "heading",
+      "value": "Why Separate Side Effects?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Single Responsibility** – BLoCs manage state; UI handles effects.",
+        "**Avoid Duplicates** – A single state change can trigger multiple rebuilds, which would cause multiple side effects if placed in `build` methods.",
+        "**Testability** – Side effects are easier to test when isolated.",
+        "**Predictability** – Effects happen exactly when you expect them, not on every rebuild.",
+        "**Clean Code** – Keeps UI widgets focused on rendering."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "BlocListener: Listening for One-Time Events"
+    },
+    {
+      "type": "text",
+      "value": "`BlocListener` is a widget that listens to state changes and executes a callback once per state change. It does not rebuild its child, making it perfect for side effects like navigation or showing dialogs."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocListener<AuthBloc, AuthState>(\n  listener: (context, state) {\n    if (state is AuthAuthenticated) {\n      Navigator.pushReplacementNamed(context, '/home');\n    } else if (state is AuthUnauthenticated) {\n      Navigator.pushReplacementNamed(context, '/login');\n    } else if (state is AuthError) {\n      ScaffoldMessenger.of(context).showSnackBar(\n        SnackBar(content: Text(state.message)),\n      );\n    }\n  },\n  child: Container(), // or your main content\n);"
+    },
+    {
+      "type": "heading",
+      "value": "BlocConsumer: Combine Builder and Listener"
+    },
+    {
+      "type": "text",
+      "value": "When you need both to rebuild the UI and listen for side effects, use `BlocConsumer`. It combines the builder of `BlocBuilder` and the listener of `BlocListener`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocConsumer<CartBloc, CartState>(\n  listener: (context, state) {\n    if (state is CartItemAdded) {\n      ScaffoldMessenger.of(context).showSnackBar(\n        SnackBar(content: Text('Item added to cart')),\n      );\n    }\n  },\n  builder: (context, state) {\n    if (state is CartLoading) {\n      return CircularProgressIndicator();\n    }\n    if (state is CartLoaded) {\n      return ListView.builder(...);\n    }\n    return Container();\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Conditional Listening with BlocListener"
+    },
+    {
+      "type": "text",
+      "value": "You can use `listenWhen` to conditionally trigger the listener based on the previous and current state. This prevents unnecessary effects."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocListener<AuthBloc, AuthState>(\n  listenWhen: (previous, current) {\n    // Only trigger when transitioning from not authenticated to authenticated\n    return previous is AuthUnauthenticated && current is AuthAuthenticated;\n  },\n  listener: (context, state) {\n    Navigator.pushReplacementNamed(context, '/home');\n  },\n  child: Container(),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Using BlocObserver for Global Side Effects"
+    },
+    {
+      "type": "text",
+      "value": "For global side effects like logging or analytics, you can use a custom `BlocObserver`. This intercepts all state changes and events across the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AnalyticsObserver extends BlocObserver {\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    super.onChange(bloc, change);\n    // Send analytics event for every state change\n    analytics.logEvent(\n      name: 'state_change',\n      parameters: {\n        'bloc': bloc.runtimeType.toString(),\n        'state': change.nextState.toString(),\n      },\n    );\n  }\n}\n\nvoid main() {\n  Bloc.observer = AnalyticsObserver();\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Navigation with BlocListener"
+    },
+    {
+      "type": "text",
+      "value": "Navigation is a common side effect. You can embed `BlocListener` at the root of your app to handle routing based on auth state, or inside a page to navigate after a successful action."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocListener<LoginBloc, LoginState>(\n      listener: (context, state) {\n        if (state is LoginSuccess) {\n          Navigator.pushReplacementNamed(context, '/home');\n        } else if (state is LoginFailure) {\n          ScaffoldMessenger.of(context).showSnackBar(\n            SnackBar(content: Text('Login failed: ${state.error}')),\n          );\n        }\n      },\n      child: LoginForm(),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Avoiding Duplicate Effects with State Classes"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to perform an effect only once, but the state might be emitted multiple times (e.g., loading -> success -> success again). To avoid duplicate effects, you can use distinct states or a one-time flag. One pattern is to use a `status` field and a separate `message` field, and only show the message once."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginState extends Equatable {\n  final LoginStatus status;\n  final String? errorMessage;\n  const LoginState({this.status = LoginStatus.initial, this.errorMessage});\n  \n  @override List<Object?> get props => [status, errorMessage];\n}\n\n// In BlocListener:\nlistener: (context, state) {\n  if (state.errorMessage != null) {\n    // Show snackbar only once; after showing, you might clear the error\n    ScaffoldMessenger.of(context).showSnackBar(\n      SnackBar(content: Text(state.errorMessage!)),\n    );\n    // Optionally, dispatch an event to clear the error\n    context.read<LoginBloc>().add(ClearError());\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `BlocListener` for side effects** – Keep effects separate from UI building.",
+        "**Use `listenWhen` to filter unnecessary calls** – Prevent duplicate effects.",
+        "**Place listeners high in the tree** – For global effects like auth navigation, place at root.",
+        "**Clear one-time messages after showing** – Avoid showing the same snackbar on rebuilds.",
+        "**Prefer navigation in listeners over event handlers** – BLoCs should not know about Flutter's navigation API.",
+        "**Test side effects separately** – Use `blocTest` to verify that the right states are emitted; UI tests can verify that the listener triggers correctly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling side effects directly in event handlers** – The BLoC becomes coupled to Flutter's UI utilities.",
+        "❌ **Using `BlocBuilder` to handle side effects** – The effect will run on every rebuild, causing duplicates.",
+        "❌ **Not using `listenWhen` for repeated states** – Causes duplicate navigation or snackbars.",
+        "❌ **Placing `BlocListener` inside a `BlocBuilder`** – The listener may be recreated on rebuilds; place it above.",
+        "❌ **Forgetting to handle error states** – Errors may not be shown without a listener.",
+        "❌ **Mutating state inside the listener** – Avoid emitting new states from the listener to prevent infinite loops."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Managing side effects in BLoC is straightforward with `BlocListener` and `BlocConsumer`. These widgets allow you to separate one-time actions from UI rendering, leading to cleaner, more predictable code. By following best practices, you can ensure that navigation, snackbars, and other effects happen exactly when intended."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use `BlocListener` without a child widget?",
+      "answer": "No, `BlocListener` requires a child. You can pass `SizedBox.shrink()` or `Container()` as a placeholder if you don't need to render anything."
+    },
+    {
+      "question": "What's the difference between `BlocListener` and `BlocBuilder`?",
+      "answer": "`BlocBuilder` rebuilds its child on every state change, while `BlocListener` only executes a callback and does not rebuild its child. Use them together when you need both."
+    },
+    {
+      "question": "How do I test that a navigation occurred from a BLoC state?",
+      "answer": "In widget tests, you can mock the `Navigator` and verify that `push` or `pushReplacement` was called. Alternatively, use `blocTest` to verify that the correct state was emitted, and rely on integration tests for full navigation flows."
+    },
+    {
+      "question": "Can I have multiple `BlocListener` widgets for the same bloc?",
+      "answer": "Yes, you can have multiple listeners. Each will be called when the state changes. This is useful for separating different concerns (e.g., one for navigation, one for analytics)."
+    },
+    {
+      "question": "How do I handle side effects that depend on the previous state?",
+      "answer": "Use `listenWhen` to compare `previous` and `current`. You can also store previous values in the state or use external variables."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      initialRoute: '/',\n      routes: {\n        '/': (context) => LoginPage(),\n        '/home': (context) => HomePage(),\n      },\n    );\n  }\n}\n\n// ---------- Login BLoC ----------\nclass LoginState extends Equatable {\n  final bool isLoading;\n  final String? errorMessage;\n  final bool success;\n\n  const LoginState({\n    this.isLoading = false,\n    this.errorMessage,\n    this.success = false,\n  });\n\n  LoginState copyWith({\n    bool? isLoading,\n    String? errorMessage,\n    bool? success,\n  }) {\n    return LoginState(\n      isLoading: isLoading ?? this.isLoading,\n      errorMessage: errorMessage ?? this.errorMessage,\n      success: success ?? this.success,\n    );\n  }\n\n  @override\n  List<Object?> get props => [isLoading, errorMessage, success];\n}\n\nabstract class LoginEvent extends Equatable {\n  const LoginEvent();\n  @override List<Object?> get props => [];\n}\n\nclass LoginSubmitted extends LoginEvent {\n  final String email;\n  final String password;\n  const LoginSubmitted(this.email, this.password);\n  @override List<Object?> get props => [email, password];\n}\n\nclass ClearError extends LoginEvent {}\n\nclass LoginBloc extends Bloc<LoginEvent, LoginState> {\n  LoginBloc() : super(const LoginState()) {\n    on<LoginSubmitted>(_onLoginSubmitted);\n    on<ClearError>((event, emit) => emit(state.copyWith(errorMessage: null)));\n  }\n\n  Future<void> _onLoginSubmitted(LoginSubmitted event, Emitter<LoginState> emit) async {\n    emit(state.copyWith(isLoading: true, errorMessage: null));\n    await Future.delayed(Duration(seconds: 1));\n    if (event.email == 'test@example.com' && event.password == 'password') {\n      emit(state.copyWith(isLoading: false, success: true, errorMessage: null));\n    } else {\n      emit(state.copyWith(\n        isLoading: false,\n        errorMessage: 'Invalid credentials',\n        success: false,\n      ));\n    }\n  }\n}\n\n// ---------- UI ----------\nclass LoginPage extends StatelessWidget {\n  final TextEditingController emailController = TextEditingController();\n  final TextEditingController passwordController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return BlocProvider(\n      create: (_) => LoginBloc(),\n      child: Scaffold(\n        appBar: AppBar(title: Text('Login Side Effects')),\n        body: BlocListener<LoginBloc, LoginState>(\n          listener: (context, state) {\n            if (state.success) {\n              Navigator.pushReplacementNamed(context, '/home');\n            }\n            if (state.errorMessage != null) {\n              ScaffoldMessenger.of(context).showSnackBar(\n                SnackBar(content: Text(state.errorMessage!)),\n              );\n              // Clear the error so it doesn't show again\n              context.read<LoginBloc>().add(ClearError());\n            }\n          },\n          child: BlocBuilder<LoginBloc, LoginState>(\n            builder: (context, state) {\n              return Padding(\n                padding: const EdgeInsets.all(16.0),\n                child: Column(\n                  mainAxisAlignment: MainAxisAlignment.center,\n                  children: [\n                    TextField(\n                      controller: emailController,\n                      decoration: InputDecoration(labelText: 'Email'),\n                    ),\n                    TextField(\n                      controller: passwordController,\n                      obscureText: true,\n                      decoration: InputDecoration(labelText: 'Password'),\n                    ),\n                    SizedBox(height: 20),\n                    if (state.isLoading)\n                      CircularProgressIndicator()\n                    else\n                      ElevatedButton(\n                        onPressed: () {\n                          context.read<LoginBloc>().add(LoginSubmitted(\n                            emailController.text,\n                            passwordController.text,\n                          ));\n                        },\n                        child: Text('Login'),\n                      ),\n                    SizedBox(height: 20),\n                    Text('Demo: test@example.com / password'),\n                  ],\n                ),\n              );\n            },\n          ),\n        ),\n      ),\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Home')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('You are logged in!'),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () => Navigator.pushReplacementNamed(context, '/'),\n              child: Text('Logout'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget should you use to perform side effects like navigation or showing snackbars in response to state changes?",
+      "options": ["BlocBuilder", "BlocListener", "BlocProvider", "BlocConsumer"],
+      "answer": 1
+    },
+    {
+      "question": "What parameter can you use to conditionally trigger the listener based on previous and current state?",
+      "options": ["condition", "listenWhen", "filter", "buildWhen"],
+      "answer": 1
+    },
+    {
+      "question": "Why should you avoid calling `Navigator.push` directly inside a BLoC's event handler?",
+      "options": [
+        "It's not allowed",
+        "It couples the BLoC to Flutter's navigation system",
+        "It causes memory leaks",
+        "It's slower"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of `BlocConsumer`?",
+      "options": [
+        "To consume the bloc and dispose it",
+        "To combine a builder (for UI) and a listener (for side effects)",
+        "To listen to multiple blocs",
+        "To create a new bloc"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-performance",
+    "bloc-logging",
+    "flutter-navigation-guide"
+  ]
+}

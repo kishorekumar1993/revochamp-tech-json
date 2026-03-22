@@ -1,0 +1,231 @@
+{
+  "slug": "bloc-error-handling",
+  "course": "Flutter",
+  "title": "BLoC Error Handling: Robust State Management with Proper Error Handling",
+  "meta": {
+    "title": "BLoC Error Handling – Best Practices, BlocObserver & Error States (2026)",
+    "description": "Learn how to handle errors effectively in BLoC. Master try/catch, custom error states, BlocObserver, error propagation, and robust error recovery strategies.",
+    "keywords": [
+      "Flutter BLoC error handling",
+      "bloc error handling",
+      "BlocObserver",
+      "error state bloc",
+      "flutter_bloc error handling",
+      "bloc try catch",
+      "handle errors in bloc",
+      "bloc error recovery"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Error handling is a critical part of any robust Flutter application. In BLoC, errors can occur in event handlers, during API calls, or from streams. Proper error handling ensures your app remains stable, provides meaningful feedback to users, and helps with debugging. This guide covers everything from basic try/catch to global error tracking with `BlocObserver`, and how to structure error states for a better user experience."
+    },
+    {
+      "type": "heading",
+      "value": "Why Error Handling Matters"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**User Experience** – Show friendly error messages instead of crashes.",
+        "**Stability** – Prevent unexpected state changes or app freezes.",
+        "**Debugging** – Log errors to analytics or crash reporting tools.",
+        "**Data Integrity** – Ensure that errors don’t corrupt your app state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Error Handling in Event Handlers"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to handle errors is to wrap your event handler logic in a `try/catch` block. Then emit an error state so the UI can react appropriately."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LoginBloc extends Bloc<LoginEvent, LoginState> {\n  final AuthRepository authRepository;\n\n  LoginBloc(this.authRepository) : super(LoginInitial()) {\n    on<LoginSubmitted>(_onLoginSubmitted);\n  }\n\n  Future<void> _onLoginSubmitted(LoginSubmitted event, Emitter<LoginState> emit) async {\n    emit(LoginLoading());\n    try {\n      final user = await authRepository.login(event.email, event.password);\n      emit(LoginSuccess(user));\n    } catch (e) {\n      emit(LoginFailure(e.toString()));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Defining Error States"
+    },
+    {
+      "type": "text",
+      "value": "Including error information in your state class allows the UI to display meaningful messages. You can also include fields like `errorCode` or `shouldRetry` for more complex scenarios."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@immutable\nclass LoginState extends Equatable {\n  final FormStatus status;\n  final String? errorMessage;\n  final User? user;\n\n  const LoginState({\n    this.status = FormStatus.initial,\n    this.errorMessage,\n    this.user,\n  });\n\n  LoginState copyWith({\n    FormStatus? status,\n    String? errorMessage,\n    User? user,\n  }) {\n    return LoginState(\n      status: status ?? this.status,\n      errorMessage: errorMessage ?? this.errorMessage,\n      user: user ?? this.user,\n    );\n  }\n\n  @override\n  List<Object?> get props => [status, errorMessage, user];\n}\n\nenum FormStatus { initial, loading, success, failure }\n\n// In the BLoC\nemit(state.copyWith(status: FormStatus.failure, errorMessage: e.toString()));"
+    },
+    {
+      "type": "heading",
+      "value": "Using onError in Bloc/Cubit"
+    },
+    {
+      "type": "text",
+      "value": "Both `Bloc` and `Cubit` provide an `onError` method that is called whenever an uncaught exception occurs inside an event handler. You can override it to log errors, send them to a reporting service, or show a snackbar."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyBloc extends Bloc<MyEvent, MyState> {\n  MyBloc() : super(MyState()) {\n    on<MyEvent>(_onEvent);\n  }\n\n  @override\n  void onError(Object error, StackTrace stackTrace) {\n    print('BLoC error: $error');\n    // Send to crash reporting service\n    // You can also emit a special error state here if needed\n    super.onError(error, stackTrace);\n  }\n\n  Future<void> _onEvent(MyEvent event, Emitter<MyState> emit) async {\n    // If an uncaught error occurs here, onError will catch it\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Global Error Handling with BlocObserver"
+    },
+    {
+      "type": "text",
+      "value": "`BlocObserver` lets you observe all BLoC events, transitions, and errors across your entire app. You can create a custom observer to log errors centrally."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MyBlocObserver extends BlocObserver {\n  @override\n  void onError(Bloc bloc, Object error, StackTrace stackTrace) {\n    print('Global error in ${bloc.runtimeType}: $error');\n    // Send to crash reporting\n    super.onError(bloc, error, stackTrace);\n  }\n}\n\nvoid main() {\n  Bloc.observer = MyBlocObserver();\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Errors in Streams"
+    },
+    {
+      "type": "text",
+      "value": "When listening to streams (e.g., using `emit.forEach`), you must handle errors to prevent the BLoC from crashing. Use the `onError` parameter or catch errors in the subscription."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<StartStream>((event, emit) async {\n  await emit.forEach(\n    someStream,\n    onData: (data) => StreamState.success(data),\n    onError: (error, stackTrace) => StreamState.error(error.toString()),\n  );\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Recovering from Errors"
+    },
+    {
+      "type": "text",
+      "value": "After an error, you may want to allow the user to retry or revert to a safe state. For example, you can add a `Retry` event to re-attempt the failed operation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DataBloc extends Bloc<DataEvent, DataState> {\n  DataBloc() : super(DataInitial()) {\n    on<LoadData>(_onLoadData);\n    on<RetryLoadData>(_onRetryLoadData);\n  }\n\n  Future<void> _onLoadData(LoadData event, Emitter<DataState> emit) async {\n    emit(DataLoading());\n    try {\n      final data = await api.fetchData();\n      emit(DataSuccess(data));\n    } catch (e) {\n      emit(DataError('Failed to load: $e'));\n    }\n  }\n\n  Future<void> _onRetryLoadData(RetryLoadData event, Emitter<DataState> emit) async {\n    // Reuse the load logic, optionally resetting state first\n    emit(DataLoading());\n    try {\n      final data = await api.fetchData();\n      emit(DataSuccess(data));\n    } catch (e) {\n      emit(DataError('Failed to load: $e'));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling in Services and Repositories"
+    },
+    {
+      "type": "text",
+      "value": "While your BLoC catches errors, it’s also important to handle them in the service layer. Convert raw exceptions into domain‑specific errors (e.g., `NetworkException`, `AuthException`) so your BLoC can respond appropriately."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthRepository {\n  Future<User> login(String email, String password) async {\n    try {\n      final response = await http.post(...);\n      if (response.statusCode == 200) {\n        return User.fromJson(response.body);\n      } else if (response.statusCode == 401) {\n        throw AuthException('Invalid credentials');\n      } else {\n        throw ServerException('Something went wrong');\n      }\n    } on SocketException {\n      throw NetworkException('No internet connection');\n    }\n  }\n}\n\n// In BLoC\ntry {\n  final user = await authRepository.login(...);\n  emit(LoginSuccess(user));\n} on AuthException catch (e) {\n  emit(LoginFailure(e.message));\n} on NetworkException catch (e) {\n  emit(LoginFailure(e.message));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Always handle errors** – Never leave a `try/catch` empty. Emit an error state or at least log the error.",
+        "**Use custom error states** – Include a message, error code, and possibly a retry callback.",
+        "**Leverage `BlocObserver`** – For global logging, analytics, and crash reporting.",
+        "**Don’t ignore `onError`** – Override it to catch unhandled exceptions in your BLoC.",
+        "**Convert low‑level errors to domain errors** – Makes your BLoC logic simpler and more testable.",
+        "**Provide retry mechanisms** – Allow users to recover from transient errors.",
+        "**Test error scenarios** – Write tests that simulate exceptions and verify state transitions."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Catching errors without emitting an error state** – UI stays in loading state forever.\n✅ Always emit an error state or revert to a safe state.",
+        "❌ **Swallowing errors silently** – Makes debugging impossible.\n✅ Log errors with `print` or send to analytics.",
+        "❌ **Using `onError` to emit states** – This can cause race conditions; prefer emitting from the handler itself.",
+        "❌ **Not handling errors in `emit.forEach`** – The BLoC will crash.\n✅ Always provide the `onError` parameter.",
+        "❌ **Overusing `catch (e)`** – Using a generic catch without checking error types can hide specific exceptions.\n✅ Catch specific exceptions when possible."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Effective error handling is essential for building reliable Flutter apps with BLoC. By combining try/catch, custom error states, `onError`, and `BlocObserver`, you can create a robust system that gracefully handles failures, provides meaningful feedback, and helps you diagnose issues quickly. Always design your BLoCs with error handling in mind from the start."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should I catch errors inside the event handler or rely on `onError`?",
+      "answer": "Use `try/catch` inside the handler when you need to emit specific error states. Use `onError` for logging and global handling of uncaught exceptions."
+    },
+    {
+      "question": "How do I handle errors when using `emit.forEach`?",
+      "answer": "Pass an `onError` callback to `emit.forEach`. It will catch errors from the stream and let you emit an error state."
+    },
+    {
+      "question": "Can I emit a state inside `onError`?",
+      "answer": "Technically yes, but it’s not recommended because the error may occur outside the normal event flow. Instead, handle errors within the handler itself."
+    },
+    {
+      "question": "How do I test error scenarios in a BLoC?",
+      "answer": "Use `blocTest` and mock your dependencies to throw exceptions. Then verify that the expected error state is emitted."
+    },
+    {
+      "question": "What’s the difference between `BlocObserver.onError` and `Bloc.onError`?",
+      "answer": "`BlocObserver.onError` is global and catches errors from all BLoCs. `Bloc.onError` is specific to a single BLoC and is called after the observer."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\nvoid main() => runApp(MyApp());\n\n// States\nabstract class LoginState {}\nclass LoginInitial extends LoginState {}\nclass LoginLoading extends LoginState {}\nclass LoginSuccess extends LoginState {}\nclass LoginFailure extends LoginState {\n  final String error;\n  LoginFailure(this.error);\n}\n\n// Events\nabstract class LoginEvent {}\nclass LoginSubmitted extends LoginEvent {\n  final String email;\n  final String password;\n  LoginSubmitted(this.email, this.password);\n}\n\n// Mock repository\nclass AuthRepository {\n  Future<void> login(String email, String password) async {\n    await Future.delayed(Duration(seconds: 2));\n    if (email == 'error@test.com') {\n      throw Exception('Invalid credentials');\n    }\n    // Success\n    return;\n  }\n}\n\n// BLoC\nclass LoginBloc extends Bloc<LoginEvent, LoginState> {\n  final AuthRepository authRepository;\n\n  LoginBloc(this.authRepository) : super(LoginInitial()) {\n    on<LoginSubmitted>(_onLoginSubmitted);\n  }\n\n  Future<void> _onLoginSubmitted(LoginSubmitted event, Emitter<LoginState> emit) async {\n    emit(LoginLoading());\n    try {\n      await authRepository.login(event.email, event.password);\n      emit(LoginSuccess());\n    } catch (e) {\n      emit(LoginFailure(e.toString()));\n    }\n  }\n}\n\n// UI\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => LoginBloc(AuthRepository()),\n        child: LoginPage(),\n      ),\n    );\n  }\n}\n\nclass LoginPage extends StatelessWidget {\n  final TextEditingController emailController = TextEditingController();\n  final TextEditingController passwordController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Error Handling Demo')),\n      body: Padding(\n        padding: EdgeInsets.all(16),\n        child: BlocConsumer<LoginBloc, LoginState>(\n          listener: (context, state) {\n            if (state is LoginSuccess) {\n              ScaffoldMessenger.of(context).showSnackBar(\n                SnackBar(content: Text('Login successful!')),\n              );\n            } else if (state is LoginFailure) {\n              ScaffoldMessenger.of(context).showSnackBar(\n                SnackBar(content: Text('Error: ${state.error}')),\n              );\n            }\n          },\n          builder: (context, state) {\n            if (state is LoginLoading) {\n              return Center(child: CircularProgressIndicator());\n            }\n            return Column(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                TextField(\n                  controller: emailController,\n                  decoration: InputDecoration(labelText: 'Email'),\n                ),\n                TextField(\n                  controller: passwordController,\n                  decoration: InputDecoration(labelText: 'Password'),\n                  obscureText: true,\n                ),\n                SizedBox(height: 20),\n                ElevatedButton(\n                  onPressed: () {\n                    context.read<LoginBloc>().add(\n                      LoginSubmitted(\n                        emailController.text,\n                        passwordController.text,\n                      ),\n                    );\n                  },\n                  child: Text('Login'),\n                ),\n                SizedBox(height: 20),\n                Text('Try with email: \"error@test.com\" to see error handling'),\n              ],\n            );\n          },\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "How should you handle an error that occurs inside an event handler?",
+      "options": [
+        "Ignore it and hope it doesn't crash",
+        "Use try/catch and emit an error state",
+        "Only log it to the console",
+        "Rethrow the exception"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of `BlocObserver`?",
+      "options": [
+        "To observe UI changes",
+        "To globally observe all BLoC events, transitions, and errors",
+        "To replace `BlocProvider`",
+        "To handle state serialization"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method in a BLoC is called when an uncaught exception occurs?",
+      "options": ["onException", "onError", "handleError", "catchError"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-concurrency",
+    "bloc-streams",
+    "flutter-error-handling"
+  ]
+}

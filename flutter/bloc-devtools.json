@@ -1,0 +1,231 @@
+{
+  "slug": "bloc-devtools",
+  "course": "Flutter",
+  "title": "BLoC DevTools: Debugging, Logging & Performance Profiling",
+  "meta": {
+    "title": "BLoC DevTools – Debugging & Performance with Flutter DevTools (2026)",
+    "description": "Learn how to debug, monitor, and profile BLoC applications using Flutter DevTools, BlocObserver, and logging techniques. Master event tracking, performance optimization, and memory leak detection.",
+    "keywords": [
+      "Flutter BLoC devtools",
+      "bloc debugging",
+      "BlocObserver",
+      "flutter devtools bloc",
+      "bloc performance profiling",
+      "debug bloc events",
+      "bloc logging",
+      "bloc memory leak"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Debugging state management is a critical part of building robust Flutter apps. BLoC provides powerful tools to inspect, log, and profile your state changes and event flows. This guide covers how to leverage **Flutter DevTools** with BLoC, use **BlocObserver** for global logging, and adopt best practices to identify performance bottlenecks, memory leaks, and unexpected behavior."
+    },
+    {
+      "type": "heading",
+      "value": "Why DevTools Matter for BLoC"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Event Visibility** – See exactly what events are dispatched and in what order.",
+        "**State Transitions** – Monitor how states evolve over time.",
+        "**Performance Insights** – Identify expensive event handlers or unnecessary rebuilds.",
+        "**Memory Leak Detection** – Ensure BLoCs and Cubits are disposed correctly.",
+        "**Debugging Confidence** – Understand the flow of data without adding print statements everywhere."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up BlocObserver"
+    },
+    {
+      "type": "text",
+      "value": "`BlocObserver` is the central entry point for all BLoC and Cubit events, transitions, and errors. By creating a custom observer, you can log everything to the console, send data to a debugging service, or even visualize it in DevTools."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\n\nclass SimpleBlocObserver extends BlocObserver {\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    print('${bloc.runtimeType} event: $event');\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    print('${bloc.runtimeType} transition: $transition');\n    super.onTransition(bloc, transition);\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    print('${bloc.runtimeType} error: $error');\n    super.onError(bloc, error, stackTrace);\n  }\n}\n\nvoid main() {\n  Bloc.observer = SimpleBlocObserver();\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "text",
+      "value": "For more advanced logging, you can integrate with logging packages like `logger` or `dart:developer` to send events to Flutter DevTools."
+    },
+    {
+      "type": "heading",
+      "value": "Using Flutter DevTools with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "Flutter DevTools provides a timeline, logging, and performance profiling. To see BLoC events in DevTools, you need to log them using `dart:developer`'s `log` method, which appears in the **Logging** tab."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:developer' as developer;\n\nclass DevToolsBlocObserver extends BlocObserver {\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    developer.log('$event', name: '${bloc.runtimeType}.event');\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    developer.log(\n      '${transition.currentState} -> ${transition.nextState}',\n      name: '${bloc.runtimeType}.transition',\n    );\n    super.onTransition(bloc, transition);\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "Now run your app with `flutter run` and open DevTools. In the **Logging** tab, you can filter by your `name` parameter to see all BLoC events and transitions in real time."
+    },
+    {
+      "type": "heading",
+      "value": "Advanced Debugging with BlocObserver"
+    },
+    {
+      "type": "text",
+      "value": "You can add more sophisticated instrumentation, such as measuring the time taken by each event or tracking memory usage."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TimedBlocObserver extends BlocObserver {\n  final Stopwatch _stopwatch = Stopwatch();\n\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    _stopwatch.reset();\n    _stopwatch.start();\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    _stopwatch.stop();\n    print('${bloc.runtimeType} processed ${transition.event} in ${_stopwatch.elapsedMilliseconds}ms');\n    super.onTransition(bloc, transition);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Profiling Performance"
+    },
+    {
+      "type": "text",
+      "value": "Flutter DevTools provides a **Performance** tab where you can record a timeline of your app’s activity. Use the `BlocObserver` to add timeline events so that BLoC operations appear in the timeline."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'dart:developer' as developer;\n\nclass PerformanceBlocObserver extends BlocObserver {\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    developer.Timeline.startSync('${bloc.runtimeType}.$event');\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    developer.Timeline.finishSync();\n    super.onTransition(bloc, transition);\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "Now in DevTools, go to **Performance**, record, and you’ll see BLoC events as asynchronous timeline segments, making it easy to spot long-running handlers."
+    },
+    {
+      "type": "heading",
+      "value": "Debugging State Rebuilds"
+    },
+    {
+      "type": "text",
+      "value": "Use DevTools’ **Widget Inspector** to see which widgets rebuild. Combine with `buildWhen` debugging by adding logs inside your `BlocBuilder`’s `buildWhen` to see why rebuilds happen."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocBuilder<MyBloc, MyState>(\n  buildWhen: (previous, current) {\n    final shouldRebuild = previous.value != current.value;\n    print('Rebuild? $shouldRebuild (${previous.value} vs ${current.value})');\n    return shouldRebuild;\n  },\n  builder: (context, state) => Text('${state.value}'),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Memory Leak Detection"
+    },
+    {
+      "type": "text",
+      "value": "BLoC controllers should be disposed when no longer needed. Use `BlocObserver` to track when BLoCs are created and closed, ensuring they aren’t lingering."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MemoryLeakObserver extends BlocObserver {\n  final _activeBlocs = <BlocBase>[];\n\n  @override\n  void onCreate(BlocBase bloc) {\n    _activeBlocs.add(bloc);\n    print('${bloc.runtimeType} created, active: ${_activeBlocs.length}');\n    super.onCreate(bloc);\n  }\n\n  @override\n  void onClose(BlocBase bloc) {\n    _activeBlocs.remove(bloc);\n    print('${bloc.runtimeType} closed, active: ${_activeBlocs.length}');\n    super.onClose(bloc);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use a custom BlocObserver** – Centralize logging and debugging.",
+        "**Log only in debug mode** – Avoid logging in production to reduce overhead.\n```dart\nif (kDebugMode) Bloc.observer = DebugBlocObserver();\n```",
+        "**Use `dart:developer` for DevTools integration** – Gain timeline and logging insights.",
+        "**Name your events and states clearly** – Good names make logs understandable.",
+        "**Add `buildWhen` logging when debugging rebuilds** – Understand why your UI rebuilds.",
+        "**Monitor active BLoCs** – Ensure they are closed properly.",
+        "**Profile with DevTools regularly** – Catch performance regressions early."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Leaving debug logs in production** – Can bloat app and expose internal details.\n✅ Wrap logging in `kDebugMode` or use a configurable logger.",
+        "❌ **Not disposing BLoCs** – Causes memory leaks and stale events.\n✅ Use `BlocProvider` and ensure `close` is called when the widget is removed.",
+        "❌ **Over-logging** – Excessive console output can hide important info.\n✅ Log only essential events or use filtering.",
+        "❌ **Ignoring DevTools warnings** – Many issues appear as warnings in DevTools; investigate them.",
+        "❌ **Not testing BlocObserver** – Observers are code; test them too."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "BLoC DevTools, combined with a custom `BlocObserver`, provides deep insight into your app’s state management. By integrating with Flutter DevTools, you can monitor events, profile performance, and detect memory leaks. Adopting these practices will make your development process faster and your apps more reliable."
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I see BLoC events in Flutter DevTools?",
+      "answer": "Use `dart:developer`'s `log` function inside a custom `BlocObserver` and then view the Logging tab in DevTools. You can filter by the `name` parameter you pass."
+    },
+    {
+      "question": "Can I use BlocObserver with Cubit?",
+      "answer": "Yes, `BlocObserver` works for both `Bloc` and `Cubit`. It observes events (for Bloc), transitions, and errors for both."
+    },
+    {
+      "question": "How do I avoid logging in production?",
+      "answer": "Conditionally set the observer only in debug mode: `if (kDebugMode) Bloc.observer = MyObserver();`. Also guard individual log statements with `if (kDebugMode)`."
+    },
+    {
+      "question": "What is the difference between `onEvent` and `onTransition`?",
+      "answer": "`onEvent` is called as soon as an event is added. `onTransition` is called when the state changes (i.e., after the event handler has emitted a new state)."
+    },
+    {
+      "question": "How do I profile BLoC performance?",
+      "answer": "Use the `dart:developer` timeline APIs inside `BlocObserver` to mark event processing. Then record a timeline in DevTools Performance tab to see durations."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\n// Simple BlocObserver to log to console\nclass ConsoleBlocObserver extends BlocObserver {\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    print('EVENT: ${bloc.runtimeType} -> $event');\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    print('TRANSITION: ${bloc.runtimeType} -> ${transition.currentState} -> ${transition.nextState}');\n    super.onTransition(bloc, transition);\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    print('ERROR: ${bloc.runtimeType} -> $error');\n    super.onError(bloc, error, stackTrace);\n  }\n}\n\nvoid main() {\n  Bloc.observer = ConsoleBlocObserver();\n  runApp(MyApp());\n}\n\nclass CounterCubit extends Cubit<int> {\n  CounterCubit() : super(0);\n  void increment() => emit(state + 1);\n  void decrement() => emit(state - 1);\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final cubit = context.watch<CounterCubit>();\n    return Scaffold(\n      appBar: AppBar(title: Text('BLoC DevTools Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Counter:', style: TextStyle(fontSize: 20)),\n            Text('${cubit.state}', style: TextStyle(fontSize: 40)),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: cubit.increment,\n                  child: Icon(Icons.add),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: cubit.decrement,\n                  child: Icon(Icons.remove),\n                ),\n              ],\n            ),\n            SizedBox(height: 20),\n            Text('Check console for logged events and transitions!'),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What class should you extend to globally observe BLoC events and transitions?",
+      "options": ["BlocObserver", "BlocListener", "BlocProvider", "BlocBuilder"],
+      "answer": 0
+    },
+    {
+      "question": "How do you log events to Flutter DevTools' Logging tab?",
+      "options": [
+        "Using print statements",
+        "Using debugPrint",
+        "Using developer.log",
+        "Using BlocObserver.onEvent only"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What is the purpose of onClose in a BLoC?",
+      "options": [
+        "To log when the BLoC is created",
+        "To cancel subscriptions and release resources",
+        "To handle errors",
+        "To emit final states"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-testing",
+    "bloc-concurrency",
+    "flutter-devtools"
+  ]
+}

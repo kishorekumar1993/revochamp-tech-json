@@ -1,0 +1,225 @@
+{
+  "slug": "bloc-rebuild-optimization",
+  "course": "Flutter",
+  "title": "BLoC Rebuild Optimization: Efficient State Management with Minimal Rebuilds",
+  "meta": {
+    "title": "BLoC Rebuild Optimization – Equatable, Selectors & Performance (2026)",
+    "description": "Master BLoC rebuild optimization techniques to build high-performance Flutter apps. Learn Equatable, context.select, BlocBuilder granularity, and advanced patterns to reduce unnecessary widget rebuilds.",
+    "keywords": [
+      "Flutter BLoC optimization",
+      "bloc rebuild performance",
+      "Equatable BLoC",
+      "context.select",
+      "BlocBuilder granularity",
+      "prevent rebuilds BLoC",
+      "flutter_bloc performance",
+      "selectors in BLoC"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "One of the key advantages of BLoC is its predictable state management. However, if not used carefully, it can lead to excessive widget rebuilds, hurting performance. This guide explores how to optimize rebuilds in BLoC by using Equatable for state comparison, `context.select` to listen only to specific parts of the state, controlling `BlocBuilder` granularity, and other advanced techniques to ensure your app stays fast and responsive."
+    },
+    {
+      "type": "heading",
+      "value": "Why Rebuild Optimization Matters"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Better Performance** – Avoid unnecessary widget rebuilds, especially in complex UIs.",
+        "**Smoother Animations** – Reduce jank by rebuilding only what’s needed.",
+        "**Efficient Resource Usage** – Less CPU/GPU work, longer battery life.",
+        "**Scalability** – Large apps with many BLoCs stay responsive."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Using Equatable for State Comparison"
+    },
+    {
+      "type": "text",
+      "value": "By default, `BlocBuilder` and `BlocListener` compare states using `==`. If you don't override `==` and `hashCode`, every new state is considered different, causing unnecessary rebuilds. `Equatable` simplifies this by automatically generating equality based on the properties you define."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@immutable\nclass CounterState extends Equatable {\n  final int count;\n  final bool isLoading;\n\n  const CounterState({required this.count, this.isLoading = false});\n\n  @override\n  List<Object?> get props => [count, isLoading];\n}\n\n// Now two states with the same count and isLoading are considered equal.\n// BlocBuilder will rebuild only when these properties change."
+    },
+    {
+      "type": "heading",
+      "value": "Granular BlocBuilder with context.select"
+    },
+    {
+      "type": "text",
+      "value": "`context.select` (from `flutter_bloc`) allows you to listen to only a specific part of the state. The widget will rebuild only when the selected value changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfilePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    // Rebuild only when the user's name changes\n    final name = context.select((ProfileBloc bloc) => bloc.state.user.name);\n    \n    return Text('Hello, $name');\n  }\n}\n\n// Instead of:\n// BlocBuilder<ProfileBloc, ProfileState>(\n//   builder: (context, state) => Text('Hello, ${state.user.name}'),\n// );\n// Which rebuilds on any state change."
+    },
+    {
+      "type": "heading",
+      "value": "BlocBuilder Granularity"
+    },
+    {
+      "type": "text",
+      "value": "Place `BlocBuilder` widgets as deep in the widget tree as possible. Instead of rebuilding the entire screen, rebuild only the part that depends on the state."
+    },
+{
+  "type": "code",
+  "language": "dart",
+  "value": "// ❌ Bad: Rebuilds entire screen on any state change\nBlocBuilder<CartBloc, CartState>(\n  builder: (context, state) => Scaffold(\n    appBar: AppBar(title: Text('Cart')),\n    body: Column(\n      children: [\n        Text('Total: \\${state.total}'),\n        ListView.builder(...),\n      ],\n    ),\n  ),\n);\n\n// ✅ Good: Isolate rebuild to only the price\nScaffold(\n  appBar: AppBar(title: Text('Cart')),\n  body: Column(\n    children: [\n      BlocBuilder<CartBloc, CartState>(\n        buildWhen: (previous, current) => previous.total != current.total,\n        builder: (context, state) => Text('Total: \\${state.total}'),\n      ),\n      ListView.builder(...),\n    ],\n  ),\n);"
+},    {
+      "type": "heading",
+      "value": "Using buildWhen to Control Rebuilds"
+    },
+    {
+      "type": "text",
+      "value": "`BlocBuilder` and `BlocListener` accept a `buildWhen` or `listenWhen` predicate that lets you decide whether to rebuild based on the old and new states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocBuilder<AuthBloc, AuthState>(\n  buildWhen: (previous, current) {\n    // Rebuild only when authentication status changes, not on user profile updates\n    return previous.isAuthenticated != current.isAuthenticated;\n  },\n  builder: (context, state) {\n    return state.isAuthenticated ? HomePage() : LoginPage();\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Memoizing Expensive Computations"
+    },
+    {
+      "type": "text",
+      "value": "If your UI derives data from the state (e.g., filtering a list), recompute it only when relevant parts of the state change. You can use `select` or memoization libraries like `flutter_bloc`'s `context.select` combined with cached values."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TodoList extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    // Only rebuild when the todos list changes\n    final todos = context.select((TodoBloc bloc) => bloc.state.todos);\n    \n    // Expensive filtering only happens when todos changes\n    final completedTodos = todos.where((t) => t.completed).toList();\n    \n    return ListView.builder(\n      itemCount: completedTodos.length,\n      itemBuilder: (_, i) => TodoTile(completedTodos[i]),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using BlocConsumer for Separated Build and Side Effects"
+    },
+    {
+      "type": "text",
+      "value": "`BlocConsumer` combines `BlocBuilder` and `BlocListener` but allows you to control rebuilds separately. You can set `buildWhen` for UI updates and `listenWhen` for side effects, preventing unnecessary rebuilds caused by side effect triggers."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "BlocConsumer<FormBloc, FormState>(\n  listenWhen: (previous, current) => previous.status != current.status,\n  listener: (context, state) {\n    if (state.status == FormStatus.success) {\n      ScaffoldMessenger.showSnackBar(...);\n    }\n  },\n  buildWhen: (previous, current) => previous.fields != current.fields,\n  builder: (context, state) {\n    return Form(...);\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Avoiding Unnecessary State Copies"
+    },
+    {
+      "type": "text",
+      "value": "Creating new state objects even when nothing changed can cause rebuilds. Ensure your state classes implement proper equality (Equatable) and only create new instances when data actually changes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ❌ Bad: Creates a new state even if count didn't change\nvoid incrementIfNeeded() {\n  if (someCondition) {\n    emit(CounterState(count: state.count + 1));\n  } else {\n    emit(CounterState(count: state.count)); // Unnecessary new state\n  }\n}\n\n// ✅ Good: Only emit when something actually changes\nvoid incrementIfNeeded() {\n  if (someCondition) {\n    emit(CounterState(count: state.count + 1));\n  }\n  // No else, no state emission\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use Equatable for all states** – Reduces unnecessary rebuilds and simplifies equality.",
+        "**Use `context.select` for fine-grained listening** – Rebuild only on relevant state changes.",
+        "**Keep `BlocBuilder` as deep as possible** – Rebuild only the parts that depend on state.",
+        "**Use `buildWhen` and `listenWhen`** – Avoid side effects and rebuilds for irrelevant changes.",
+        "**Avoid emitting identical states** – Check before emitting to prevent no‑op rebuilds.",
+        "**Memoize expensive UI computations** – Use `context.select` or caching to avoid recomputation.",
+        "**Profile your app** – Use Flutter DevTools to identify excessive rebuilds."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not using Equatable** – Causes rebuilds on every state change even if data is the same.\n✅ Always extend Equatable or override `==` and `hashCode`.",
+        "❌ **Placing `BlocBuilder` at the root of a screen** – Rebuilds the whole screen for minor changes.\n✅ Place it around the widgets that actually depend on state.",
+        "❌ **Creating new state objects unnecessarily** – Triggers rebuilds when nothing changed.\n✅ Emit only when state differs.",
+        "❌ **Ignoring `buildWhen`** – Leads to side effects running on every state change.\n✅ Use `buildWhen` to filter irrelevant updates.",
+        "❌ **Using `BlocConsumer` when not needed** – Adds unnecessary complexity.\n✅ Use `BlocBuilder` for simple UI, `BlocListener` for side effects, and `BlocConsumer` when you need both with separate filters."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Optimizing rebuilds is crucial for building high‑performance Flutter apps with BLoC. By leveraging Equatable, `context.select`, granular `BlocBuilder` placement, and selective rebuild controls, you can ensure your app remains fast and responsive. Always profile your app to identify bottlenecks and apply these techniques where they matter most."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `BlocBuilder` and `context.select`?",
+      "answer": "`BlocBuilder` listens to the entire state and rebuilds when any property changes (unless you provide `buildWhen`). `context.select` allows you to listen to a specific part of the state and rebuilds only when that part changes, without any additional boilerplate."
+    },
+    {
+      "question": "Do I always need Equatable for BLoC states?",
+      "answer": "It’s highly recommended. Without Equatable, each new state instance is considered different, causing unnecessary rebuilds even if the data is identical."
+    },
+    {
+      "question": "Can I use `context.select` with Cubit?",
+      "answer": "Yes, `context.select` works with any `StateStreamableSource`, including `Bloc` and `Cubit`."
+    },
+    {
+      "question": "How do I debug unnecessary rebuilds?",
+      "answer": "Use Flutter DevTools’ “Rebuild” tab to see which widgets are rebuilding. You can also use `debugPrint` inside `buildWhen` or `builder` to track rebuilds."
+    },
+    {
+      "question": "Is it okay to have many small `BlocBuilder`s?",
+      "answer": "Yes, it’s a best practice. Having many small, granular `BlocBuilder`s is more efficient than one large `BlocBuilder` that rebuilds a large subtree."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() => runApp(MyApp());\n\n// State\nclass CounterState extends Equatable {\n  final int count;\n  final bool isLoading;\n\n  const CounterState({required this.count, this.isLoading = false});\n\n  CounterState copyWith({int? count, bool? isLoading}) {\n    return CounterState(\n      count: count ?? this.count,\n      isLoading: isLoading ?? this.isLoading,\n    );\n  }\n\n  @override\n  List<Object?> get props => [count, isLoading];\n}\n\n// Events\nabstract class CounterEvent {}\nclass Increment extends CounterEvent {}\nclass Decrement extends CounterEvent {}\nclass StartLoading extends CounterEvent {}\nclass StopLoading extends CounterEvent {}\n\n// BLoC\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(const CounterState(count: 0)) {\n    on<Increment>((event, emit) {\n      emit(state.copyWith(count: state.count + 1));\n    });\n    on<Decrement>((event, emit) {\n      emit(state.copyWith(count: state.count - 1));\n    });\n    on<StartLoading>((event, emit) {\n      emit(state.copyWith(isLoading: true));\n    });\n    on<StopLoading>((event, emit) {\n      emit(state.copyWith(isLoading: false));\n    });\n  }\n}\n\n// UI\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterBloc(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    // This will rebuild only when count changes\n    final count = context.select((CounterBloc bloc) => bloc.state.count);\n    // This will rebuild only when isLoading changes\n    final isLoading = context.select((CounterBloc bloc) => bloc.state.isLoading);\n\n    return Scaffold(\n      appBar: AppBar(title: Text('Rebuild Optimization')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Count:', style: TextStyle(fontSize: 20)),\n            Text('$count', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),\n            SizedBox(height: 20),\n            if (isLoading) CircularProgressIndicator(),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(Increment()),\n                  child: Text('+'),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(Decrement()),\n                  child: Text('-'),\n                ),\n              ],\n            ),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () {\n                context.read<CounterBloc>().add(StartLoading());\n                Future.delayed(Duration(seconds: 2), () {\n                  context.read<CounterBloc>().add(StopLoading());\n                });\n              },\n              child: Text('Simulate Loading'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which package is commonly used to simplify state equality in BLoC?",
+      "options": ["bloc_concurrency", "equatable", "flutter_bloc", "rxdart"],
+      "answer": 1
+    },
+    {
+      "question": "What method allows you to listen to a specific part of the BLoC state without rebuilding on unrelated changes?",
+      "options": ["BlocBuilder", "context.select", "buildWhen", "BlocListener"],
+      "answer": 1
+    },
+    {
+      "question": "What is the main benefit of placing BlocBuilder as deep as possible in the widget tree?",
+      "options": [
+        "It improves code readability",
+        "It reduces the number of rebuilds",
+        "It simplifies state management",
+        "It makes testing easier"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-concurrency",
+    "bloc-error-handling",
+    "flutter-performance"
+  ]
+}

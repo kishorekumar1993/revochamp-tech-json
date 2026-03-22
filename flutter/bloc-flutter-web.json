@@ -1,0 +1,257 @@
+{
+  "slug": "bloc-flutter-web",
+  "course": "Flutter",
+  "title": "BLoC for Flutter Web: Responsive Apps & Web-Specific Patterns",
+  "meta": {
+    "title": "BLoC for Flutter Web – Responsive State Management & Web Optimizations (2026)",
+    "description": "Learn how to use BLoC in Flutter web applications. Master responsive layouts, web storage, code splitting, and performance optimization for the web platform.",
+    "keywords": [
+      "Flutter web BLoC",
+      "bloc flutter web",
+      "responsive bloc",
+      "web storage bloc",
+      "code splitting flutter web",
+      "flutter web state management",
+      "bloc web persistence",
+      "flutter web deployment"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Flutter web brings your Flutter apps to the browser, but the web platform introduces unique challenges: responsive layouts, persistent storage, code splitting, and SEO considerations. BLoC works seamlessly on the web, but you need to adapt some patterns to leverage web capabilities. This guide covers everything you need to know to build robust, performant Flutter web applications using BLoC."
+    },
+    {
+      "type": "heading",
+      "value": "BLoC Works Everywhere"
+    },
+    {
+      "type": "text",
+      "value": "BLoC is platform‑agnostic. The same BLoC classes you write for mobile will work on web without changes. However, certain features (like local storage, responsive design, and routing) require web‑specific implementations. This guide focuses on those differences."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Flutter Web with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "Enable web support in your Flutter project:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "flutter create --platforms=web my_app\ncd my_app\nflutter run -d chrome"
+    },
+    {
+      "type": "text",
+      "value": "Add `flutter_bloc` to `pubspec.yaml`. The rest of the BLoC setup is identical to mobile."
+    },
+    {
+      "type": "heading",
+      "value": "State Persistence on the Web"
+    },
+    {
+      "type": "text",
+      "value": "Unlike mobile, web browsers provide different storage mechanisms: `localStorage` (synchronous, up to ~5-10MB), `IndexedDB` (asynchronous, larger capacity), and `sessionStorage`. `hydrated_bloc` works on web out of the box using `localStorage` via `shared_preferences` or a custom adapter."
+    },
+    {
+      "type": "subheading",
+      "value": "Using hydrated_bloc on Web"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  // For web, hydrated_bloc will use localStorage automatically\n  final storage = await HydratedStorage.build(\n    storageDirectory: await getApplicationDocumentsDirectory(), // This works on web too\n  );\n  HydratedBloc.storage = storage;\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "text",
+      "value": "If you need `IndexedDB` for larger datasets, consider using `hive` with a custom backend or `sqflite` via `sqflite_common_ffi` (not recommended for web). For simple settings, `shared_preferences` (which uses `localStorage` on web) is sufficient."
+    },
+    {
+      "type": "heading",
+      "value": "Responsive UI with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "Web apps need to adapt to different screen sizes. Use BLoC to manage layout state (e.g., breakpoints, sidebars). A common pattern is to listen to `MediaQuery` and update a BLoC state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class LayoutBloc extends Bloc<LayoutEvent, LayoutState> {\n  LayoutBloc() : super(LayoutState.initial()) {\n    on<WindowResized>(_onWindowResized);\n  }\n\n  void _onWindowResized(WindowResized event, Emitter<LayoutState> emit) {\n    final width = event.width;\n    if (width >= 1200) {\n      emit(state.copyWith(breakpoint: Breakpoint.desktop));\n    } else if (width >= 800) {\n      emit(state.copyWith(breakpoint: Breakpoint.tablet));\n    } else {\n      emit(state.copyWith(breakpoint: Breakpoint.mobile));\n    }\n  }\n}\n\n// In the UI\nclass ResponsiveWidget extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocBuilder<LayoutBloc, LayoutState>(\n      builder: (context, state) {\n        switch (state.breakpoint) {\n          case Breakpoint.mobile:\n            return MobileLayout();\n          case Breakpoint.tablet:\n            return TabletLayout();\n          case Breakpoint.desktop:\n            return DesktopLayout();\n        }\n      },\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Code Splitting & Lazy Loading"
+    },
+    {
+      "type": "text",
+      "value": "For large web apps, you can split your code into chunks that load only when needed. Use Dart's `deferred` imports. BLoC can be integrated with this pattern by lazy‑registering BLoCs in the route."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// In your route definition\ncase '/dashboard':\n  return MaterialPageRoute(\n    builder: (_) => DeferredWidget(\n      futureFactory: () => loadDashboard(),\n      childFactory: (module) => module.DashboardPage(),\n    ),\n  );\n\n// dashboard.dart\nlibrary dashboard;\n\nimport 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\nFuture<void> loadDashboard() {\n  // Ensure BLoC registrations happen only once\n  return Future.value();\n}\n\nclass DashboardBloc extends Bloc<DashboardEvent, DashboardState> {\n  // ...\n}\n\nclass DashboardPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocProvider(\n      create: (_) => DashboardBloc(),\n      child: DashboardView(),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Navigation and Routing"
+    },
+    {
+      "type": "text",
+      "value": "Flutter web supports URL‑based navigation. Use `go_router` or `auto_route` with BLoC. The BLoC pattern remains unchanged; the router simply triggers events or provides initial arguments to BLoCs via `provider`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final router = GoRouter(\n  routes: [\n    GoRoute(\n      path: '/',\n      builder: (context, state) => HomePage(),\n      routes: [\n        GoRoute(\n          path: 'details/:id',\n          builder: (context, state) {\n            final id = state.params['id']!;\n            return BlocProvider(\n              create: (_) => DetailsBloc()..add(LoadDetails(id)),\n              child: DetailsPage(),\n            );\n          },\n        ),\n      ],\n    ),\n  ],\n);\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp.router(\n      routerConfig: router,\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Web-Specific Events"
+    },
+    {
+      "type": "text",
+      "value": "Web apps need to listen to scroll, resize, and visibility changes. You can use `dart:html` (carefully, with conditional imports) or Flutter's built‑in widgets. BLoC can react to these events."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ScrollBloc extends Bloc<ScrollEvent, ScrollState> {\n  ScrollBloc() : super(ScrollState.initial()) {\n    on<ScrollUpdated>(_onScrollUpdated);\n  }\n\n  void _onScrollUpdated(ScrollUpdated event, Emitter<ScrollState> emit) {\n    emit(state.copyWith(scrollY: event.scrollY));\n  }\n}\n\n// In a widget\nNotificationListener<ScrollNotification>(\n  onNotification: (notification) {\n    final scrollY = notification.metrics.pixels;\n    context.read<ScrollBloc>().add(ScrollUpdated(scrollY));\n    return false;\n  },\n  child: ListView(...),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "SEO Considerations"
+    },
+    {
+      "type": "text",
+      "value": "Flutter web apps are client‑rendered, which can impact SEO. BLoC doesn't directly affect SEO, but you should ensure your app can be indexed by using server‑side rendering (if needed) or dynamic metadata. For SEO‑critical content, consider using `flutter_html` or rendering key content on the server. You can still manage SEO tags (e.g., `<title>` and `<meta>`) using the `flutter_html` or the `flutter_inappwebview` for dynamic updates."
+    },
+    {
+      "type": "heading",
+      "value": "Performance Optimizations"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `const` constructors** – Reduces widget rebuilds.",
+        "**Lazy load BLoCs** – Use `BlocProvider` with `create` instead of instantiating all BLoCs at startup.",
+        "**Avoid heavy computations in event handlers** – Offload to isolates or use `compute`.",
+        "**Use `buildWhen`** – Prevent unnecessary rebuilds on the web.",
+        "**Minify and gzip** – When deploying, use `flutter build web --release` and serve compressed assets.",
+        "**Consider using `CanvasKit` or `HTML` renderer** – Choose based on your performance needs (CanvasKit for consistent rendering, HTML for smaller bundle)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Deployment"
+    },
+    {
+      "type": "text",
+      "value": "Build your web app with:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "flutter build web --release\n# Output in build/web/"
+    },
+    {
+      "type": "text",
+      "value": "Serve the files with any static server. For advanced hosting, you can integrate with Firebase Hosting, Netlify, or Vercel."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Write platform‑agnostic BLoCs** – Keep business logic separate from platform‑specific code.",
+        "**Use conditional imports for web‑only code** – Use `dart:html` only when necessary and guard with `kIsWeb`.",
+        "**Test on multiple browsers** – Chrome, Firefox, Safari, Edge.",
+        "**Monitor performance with Lighthouse** – Use DevTools Lighthouse tab to measure web vitals.",
+        "**Handle offline support** – Use service workers (via `flutter_web_plugins`) to cache assets, but BLoC can manage the state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `dart:io` on web** – Causes runtime errors.\n✅ Use conditional imports or package: `universal_io`.",
+        "❌ **Storing large data in `localStorage`** – Exceeds storage limits.\n✅ Use IndexedDB via `hive` or `sqflite_common_ffi`.",
+        "❌ **Not testing on slow networks** – Web apps may load slowly on 3G.\n✅ Optimize assets and use code splitting.",
+        "❌ **Ignoring responsive design** – App may look broken on desktop.\n✅ Use BLoC to manage breakpoints."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "BLoC is a powerful state management solution for Flutter web. By adapting your architecture to web‑specific concerns—responsive layouts, web storage, code splitting—you can build fast, maintainable web applications. Use the patterns and best practices in this guide to ensure your app runs smoothly across all browsers."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use the same BLoC code for mobile and web?",
+      "answer": "Yes, BLoC is platform‑agnostic. However, you may need to conditionally use platform‑specific features (e.g., `localStorage` vs `shared_preferences`)."
+    },
+    {
+      "question": "How do I store data persistently on the web?",
+      "answer": "Use `hydrated_bloc` which works with `localStorage` automatically. For larger data, consider using `hive` with a web adapter or IndexedDB."
+    },
+    {
+      "question": "Does Flutter web support `sqflite`?",
+      "answer": "Not directly. Use `sqflite_common_ffi` with `dart:html` or IndexedDB for web databases."
+    },
+    {
+      "question": "How do I implement URL‑based routing with BLoC?",
+      "answer": "Use `go_router` or `auto_route`. Pass route parameters to BLoCs via providers or events."
+    },
+    {
+      "question": "What renderer should I choose for my web app?",
+      "answer": "`CanvasKit` gives consistent rendering but larger bundle. `HTML` renderer has a smaller bundle but may have layout inconsistencies. Test both and choose based on your needs."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:hydrated_bloc/hydrated_bloc.dart';\nimport 'package:path_provider/path_provider.dart';\n\nvoid main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  final storage = await HydratedStorage.build(\n    storageDirectory: await getApplicationDocumentsDirectory(),\n  );\n  HydratedBloc.storage = storage;\n  runApp(MyApp());\n}\n\nclass CounterCubit extends HydratedCubit<int> {\n  CounterCubit() : super(0);\n  void increment() => emit(state + 1);\n  void decrement() => emit(state - 1);\n\n  @override\n  int fromJson(Map<String, dynamic> json) => json['value'] as int;\n\n  @override\n  Map<String, dynamic> toJson(int state) => {'value': state};\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'BLoC Web Demo',\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final cubit = context.watch<CounterCubit>();\n    return Scaffold(\n      appBar: AppBar(title: Text('BLoC on Web')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Counter:', style: TextStyle(fontSize: 20)),\n            Text('${cubit.state}', style: TextStyle(fontSize: 40)),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: cubit.increment,\n                  child: Icon(Icons.add),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: cubit.decrement,\n                  child: Icon(Icons.remove),\n                ),\n              ],\n            ),\n            SizedBox(height: 20),\n            Text('Refresh the page – counter persists!'),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which storage mechanism does hydrated_bloc use on the web by default?",
+      "options": ["IndexedDB", "localStorage", "sessionStorage", "SQLite"],
+      "answer": 1
+    },
+    {
+      "question": "What should you use to listen to window resize events in Flutter web?",
+      "options": ["dart:html", "MediaQuery.of(context)", "LayoutBuilder", "Both B and C"],
+      "answer": 3
+    },
+    {
+      "question": "How do you implement code splitting in Flutter web?",
+      "options": [
+        "Using `deferred` imports",
+        "Using `flutter packages pub run build_runner build`",
+        "Using `FlutterWebPlugin`",
+        "It's automatic"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-hydrated-bloc",
+    "bloc-devtools",
+    "flutter-web"
+  ]
+}

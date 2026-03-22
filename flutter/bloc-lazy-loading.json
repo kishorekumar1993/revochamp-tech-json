@@ -1,0 +1,244 @@
+{
+  "slug": "bloc-lazy-loading",
+  "course": "Flutter",
+  "title": "BLoC Lazy Loading: Implementing Pagination & Infinite Scroll",
+  "meta": {
+    "title": "BLoC Lazy Loading – Pagination & Infinite Scroll Best Practices (2026)",
+    "description": "Learn how to implement lazy loading and pagination in Flutter using the BLoC pattern. Master infinite scrolling, loading states, error handling, and performance optimization.",
+    "keywords": [
+      "Flutter BLoC lazy loading",
+      "pagination BLoC",
+      "infinite scroll Flutter",
+      "load more BLoC",
+      "BLoC pagination",
+      "lazy loading list",
+      "Flutter infinite list",
+      "BLoC offset pagination"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Lazy Loading with BLoC?"
+    },
+    {
+      "type": "text",
+      "value": "Lazy loading in BLoC refers to loading data incrementally as the user scrolls through a list, rather than loading all data at once. This pattern, often called pagination or infinite scroll, improves performance, reduces initial load times, and saves bandwidth. The BLoC pattern helps manage the complex state of loading, error, and pagination metadata (page number, offset, hasMore) in a clean and testable way."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Lazy Loading?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Performance** – Load only what the user needs, reducing memory usage.",
+        "**Faster Initial Load** – Display first page quickly, then load more on demand.",
+        "**Bandwidth Efficiency** – Fetch data in chunks, ideal for mobile networks.",
+        "**Better UX** – Smooth infinite scrolling without waiting for all data.",
+        "**Scalability** – Handle large datasets without overwhelming the UI."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Core Concepts"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Pagination Metadata** – Tracks current page, offset, limit, and whether more data exists.",
+        "**Loading States** – Distinguish between initial loading and loading more.",
+        "**Error Handling** – Allow retry for failed page loads.",
+        "**Throttling** – Prevent duplicate requests when scrolling triggers multiple events."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Dependencies"
+    },
+    {
+      "type": "text",
+      "value": "Add the required packages to `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter_bloc: ^8.1.5\n  equatable: ^2.0.5\n  rxdart: ^0.28.0\n  dio: ^5.4.0"
+    },
+    {
+      "type": "heading",
+      "value": "Defining State and Events"
+    },
+    {
+      "type": "text",
+      "value": "Create a state that holds the list of items, pagination metadata, and loading/error flags. Events will trigger initial load and subsequent page loads."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// State\nclass PostState extends Equatable {\n  final List<Post> posts;\n  final bool hasReachedMax;\n  final int page;\n  final PostStatus status;\n  final String? error;\n\n  const PostState({\n    this.posts = const [],\n    this.hasReachedMax = false,\n    this.page = 1,\n    this.status = PostStatus.initial,\n    this.error,\n  });\n\n  PostState copyWith({\n    List<Post>? posts,\n    bool? hasReachedMax,\n    int? page,\n    PostStatus? status,\n    String? error,\n  }) {\n    return PostState(\n      posts: posts ?? this.posts,\n      hasReachedMax: hasReachedMax ?? this.hasReachedMax,\n      page: page ?? this.page,\n      status: status ?? this.status,\n      error: error ?? this.error,\n    );\n  }\n\n  @override\n  List<Object?> get props => [posts, hasReachedMax, page, status, error];\n}\n\nenum PostStatus { initial, loading, success, failure, loadingMore }\n\n// Events\nabstract class PostEvent extends Equatable {\n  const PostEvent();\n\n  @override\n  List<Object?> get props => [];\n}\n\nclass FetchPosts extends PostEvent {\n  final bool isRefresh;\n  const FetchPosts({this.isRefresh = false});\n\n  @override\n  List<Object?> get props => [isRefresh];\n}\n\nclass FetchMorePosts extends PostEvent {}"
+    },
+    {
+      "type": "heading",
+      "value": "Implementing the BLoC with Throttling"
+    },
+    {
+      "type": "text",
+      "value": "Use a transformer to throttle the `FetchMorePosts` events. This prevents multiple rapid requests when the user scrolls fast. Also handle initial load and pagination logic."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostBloc extends Bloc<PostEvent, PostState> {\n  final PostRepository repository;\n\n  PostBloc({required this.repository}) : super(const PostState()) {\n    on<FetchPosts>(\n      _onFetchPosts,\n      transformer: throttle(), // Optional: debounce if needed\n    );\n    on<FetchMorePosts>(\n      _onFetchMorePosts,\n      transformer: throttle(),\n    );\n  }\n\n  Future<void> _onFetchPosts(FetchPosts event, Emitter<PostState> emit) async {\n    if (event.isRefresh) {\n      emit(state.copyWith(\n        status: PostStatus.loading,\n        posts: [],\n        page: 1,\n        hasReachedMax: false,\n      ));\n    } else if (state.status == PostStatus.initial) {\n      emit(state.copyWith(status: PostStatus.loading));\n    }\n\n    try {\n      final newPosts = await repository.fetchPosts(page: 1, limit: 20);\n      final hasReachedMax = newPosts.length < 20;\n      emit(state.copyWith(\n        posts: newPosts,\n        hasReachedMax: hasReachedMax,\n        page: 2,\n        status: PostStatus.success,\n        error: null,\n      ));\n    } catch (e) {\n      emit(state.copyWith(\n        status: PostStatus.failure,\n        error: e.toString(),\n      ));\n    }\n  }\n\n  Future<void> _onFetchMorePosts(FetchMorePosts event, Emitter<PostState> emit) async {\n    if (state.hasReachedMax || state.status == PostStatus.loadingMore) return;\n\n    emit(state.copyWith(status: PostStatus.loadingMore));\n    try {\n      final newPosts = await repository.fetchPosts(\n        page: state.page,\n        limit: 20,\n      );\n      final hasReachedMax = newPosts.length < 20;\n      emit(state.copyWith(\n        posts: List.of(state.posts)..addAll(newPosts),\n        hasReachedMax: hasReachedMax,\n        page: state.page + 1,\n        status: PostStatus.success,\n        error: null,\n      ));\n    } catch (e) {\n      emit(state.copyWith(\n        status: PostStatus.failure,\n        error: e.toString(),\n      ));\n    }\n  }\n}\n\n// Throttle transformer using RxDart\nEventTransformer<Event> throttle<Event>({Duration duration = const Duration(milliseconds: 500)}) {\n  return (events, mapper) => events.throttleTime(duration).flatMap(mapper);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Repository with Pagination"
+    },
+    {
+      "type": "text",
+      "value": "The repository abstracts the data source. It can fetch from an API, database, or both."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostRepository {\n  final Dio dio;\n\n  PostRepository(this.dio);\n\n  Future<List<Post>> fetchPosts({required int page, required int limit}) async {\n    final response = await dio.get('/posts', queryParameters: {\n      '_page': page,\n      '_limit': limit,\n    });\n    final List data = response.data;\n    return data.map((json) => Post.fromJson(json)).toList();\n  }\n}\n\nclass Post {\n  final int id;\n  final String title;\n  final String body;\n\n  Post({required this.id, required this.title, required this.body});\n\n  factory Post.fromJson(Map<String, dynamic> json) {\n    return Post(\n      id: json['id'],\n      title: json['title'],\n      body: json['body'],\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "UI with Infinite Scroll"
+    },
+    {
+      "type": "text",
+      "value": "Use `ListView.builder` with a `ScrollController` to detect when the user reaches the end. Dispatch `FetchMorePosts` when near the bottom."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostsPage extends StatefulWidget {\n  @override\n  _PostsPageState createState() => _PostsPageState();\n}\n\nclass _PostsPageState extends State<PostsPage> {\n  final ScrollController _scrollController = ScrollController();\n\n  @override\n  void initState() {\n    super.initState();\n    _scrollController.addListener(_onScroll);\n    context.read<PostBloc>().add(FetchPosts());\n  }\n\n  void _onScroll() {\n    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {\n      context.read<PostBloc>().add(FetchMorePosts());\n    }\n  }\n\n  @override\n  void dispose() {\n    _scrollController.dispose();\n    super.dispose();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Posts')),\n      body: BlocBuilder<PostBloc, PostState>(\n        builder: (context, state) {\n          switch (state.status) {\n            case PostStatus.failure:\n              return Center(child: Text('Error: ${state.error}'));\n            case PostStatus.success:\n              if (state.posts.isEmpty) {\n                return Center(child: Text('No posts'));\n              }\n              return ListView.builder(\n                controller: _scrollController,\n                itemCount: state.hasReachedMax ? state.posts.length : state.posts.length + 1,\n                itemBuilder: (_, index) {\n                  if (index >= state.posts.length) {\n                    return Center(child: CircularProgressIndicator());\n                  }\n                  return ListTile(\n                    title: Text(state.posts[index].title),\n                    subtitle: Text(state.posts[index].body),\n                  );\n                },\n              );\n            default:\n              return Center(child: CircularProgressIndicator());\n          }\n        },\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced: Cursor-Based Pagination"
+    },
+    {
+      "type": "text",
+      "value": "Some APIs use cursor-based pagination (e.g., GraphQL, REST with `next` token). Adapt the state to hold a `nextCursor` instead of a page number."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CursorState extends Equatable {\n  final List<Item> items;\n  final String? nextCursor;\n  final bool hasMore;\n  final CursorStatus status;\n\n  const CursorState({this.items = const [], this.nextCursor, this.hasMore = true, this.status = CursorStatus.initial});\n\n  // ... copyWith, props, etc.\n}\n\nclass FetchMoreCursor extends PostEvent {}\n\n// In BLoC\nFuture<void> _onFetchMoreCursor(FetchMoreCursor event, Emitter<CursorState> emit) async {\n  if (!state.hasMore || state.status == CursorStatus.loadingMore) return;\n  emit(state.copyWith(status: CursorStatus.loadingMore));\n  try {\n    final result = await repository.fetchItems(cursor: state.nextCursor);\n    emit(state.copyWith(\n      items: List.of(state.items)..addAll(result.items),\n      nextCursor: result.nextCursor,\n      hasMore: result.nextCursor != null,\n      status: CursorStatus.success,\n    ));\n  } catch (e) {\n    emit(state.copyWith(status: CursorStatus.failure, error: e.toString()));\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use throttling** – Prevent duplicate `FetchMore` events when the user scrolls quickly.",
+        "**Separate initial load from load more** – Use different events or a flag to differentiate states.",
+        "**Show loading indicators** – Provide visual feedback when loading more (e.g., a progress indicator at the bottom).",
+        "**Handle errors gracefully** – Allow retry by dispatching the event again or showing a retry button.",
+        "**Cache pages locally** – Consider storing fetched data in a local database to avoid re-fetching.",
+        "**Use `Equatable` for states** – Prevent unnecessary rebuilds.",
+        "**Avoid duplicate requests** – Check `hasReachedMax` and `status` before triggering new loads.",
+        "**Dispose controllers** – Always dispose `ScrollController` in `State.dispose`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not checking if already loading** – Leads to multiple simultaneous requests.",
+        "❌ **Forgetting to reset pagination on refresh** – After refresh, reset `page` and `hasReachedMax`.",
+        "❌ **Using `BlocBuilder` without optimization** – Rebuilds the entire list on each state change, causing flicker. Use `BlocSelector` for parts that change.",
+        "❌ **Not handling empty or `hasReachedMax` cases** – The UI may keep trying to load more.",
+        "❌ **Blocking the UI with heavy computations** – Offload parsing to isolates if needed.",
+        "❌ **Not using `const` for item widgets** – Improves performance for long lists."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Lazy loading with BLoC is a robust solution for handling paginated data. By separating concerns into events, states, and repositories, you can build performant infinite scroll lists with clear loading and error states. Remember to throttle events, manage pagination metadata carefully, and optimize UI rebuilds. This pattern scales well from simple lists to complex data grids."
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I reset the list when the user performs a pull-to-refresh?",
+      "answer": "Dispatch a `FetchPosts` event with `isRefresh: true`. In the event handler, reset the state (clear posts, reset page to 1, `hasReachedMax = false`) and fetch fresh data. Then merge with existing logic."
+    },
+    {
+      "question": "What if the API returns the total count?",
+      "answer": "You can store `totalCount` in the state and compute `hasReachedMax` based on whether the fetched items length equals the limit and the total items are less than or equal to the current count."
+    },
+    {
+      "question": "How can I implement optimistic updates with pagination?",
+      "answer": "For adding an item, you can update the state directly (add to the list) and then send a request. On failure, roll back. For paginated lists, you might need to adjust the total count and possibly reload."
+    },
+    {
+      "question": "Should I use `StreamBuilder` with BLoC?",
+      "answer": "`BlocBuilder` is preferred. It works directly with the bloc's state stream. No need to manually listen to streams."
+    },
+    {
+      "question": "How to test lazy loading BLoC?",
+      "answer": "Use `blocTest`. Simulate `FetchPosts` and `FetchMorePosts` events, verify state transitions, and ensure the `hasReachedMax` flag is set correctly."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\nimport 'package:rxdart/rxdart.dart';\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      title: 'BLoC Lazy Loading Demo',\n      home: BlocProvider(\n        create: (_) => PostBloc(repository: MockPostRepository()),\n        child: PostsPage(),\n      ),\n    );\n  }\n}\n\n// ---------- Models ----------\nclass Post {\n  final int id;\n  final String title;\n  final String body;\n\n  Post({required this.id, required this.title, required this.body});\n}\n\n// ---------- Repository ----------\nclass MockPostRepository {\n  Future<List<Post>> fetchPosts({required int page, required int limit}) async {\n    await Future.delayed(Duration(milliseconds: 500));\n    // Simulate paginated data\n    if (page > 3) return []; // No more data after page 3\n    final startId = (page - 1) * limit + 1;\n    final endId = startId + limit - 1;\n    return List.generate(\n      limit,\n      (index) => Post(\n        id: startId + index,\n        title: 'Post ${startId + index}',\n        body: 'This is the body of post ${startId + index}.',\n      ),\n    );\n  }\n}\n\n// ---------- State ----------\nenum PostStatus { initial, loading, success, failure, loadingMore }\n\nclass PostState extends Equatable {\n  final List<Post> posts;\n  final bool hasReachedMax;\n  final int page;\n  final PostStatus status;\n  final String? error;\n\n  const PostState({\n    this.posts = const [],\n    this.hasReachedMax = false,\n    this.page = 1,\n    this.status = PostStatus.initial,\n    this.error,\n  });\n\n  PostState copyWith({\n    List<Post>? posts,\n    bool? hasReachedMax,\n    int? page,\n    PostStatus? status,\n    String? error,\n  }) {\n    return PostState(\n      posts: posts ?? this.posts,\n      hasReachedMax: hasReachedMax ?? this.hasReachedMax,\n      page: page ?? this.page,\n      status: status ?? this.status,\n      error: error ?? this.error,\n    );\n  }\n\n  @override\n  List<Object?> get props => [posts, hasReachedMax, page, status, error];\n}\n\n// ---------- Events ----------\nabstract class PostEvent extends Equatable {\n  const PostEvent();\n  @override\n  List<Object?> get props => [];\n}\n\nclass FetchPosts extends PostEvent {\n  final bool isRefresh;\n  const FetchPosts({this.isRefresh = false});\n  @override\n  List<Object?> get props => [isRefresh];\n}\n\nclass FetchMorePosts extends PostEvent {}\n\n// ---------- BLoC ----------\nEventTransformer<Event> throttle<Event>({Duration duration = const Duration(milliseconds: 500)}) {\n  return (events, mapper) => events.throttleTime(duration).flatMap(mapper);\n}\n\nclass PostBloc extends Bloc<PostEvent, PostState> {\n  final MockPostRepository repository;\n\n  PostBloc({required this.repository}) : super(const PostState()) {\n    on<FetchPosts>(_onFetchPosts);\n    on<FetchMorePosts>(_onFetchMorePosts, transformer: throttle());\n  }\n\n  Future<void> _onFetchPosts(FetchPosts event, Emitter<PostState> emit) async {\n    if (event.isRefresh) {\n      emit(state.copyWith(\n        status: PostStatus.loading,\n        posts: [],\n        page: 1,\n        hasReachedMax: false,\n      ));\n    } else if (state.status == PostStatus.initial) {\n      emit(state.copyWith(status: PostStatus.loading));\n    }\n\n    try {\n      final newPosts = await repository.fetchPosts(page: 1, limit: 20);\n      final hasReachedMax = newPosts.length < 20;\n      emit(state.copyWith(\n        posts: newPosts,\n        hasReachedMax: hasReachedMax,\n        page: 2,\n        status: PostStatus.success,\n        error: null,\n      ));\n    } catch (e) {\n      emit(state.copyWith(\n        status: PostStatus.failure,\n        error: e.toString(),\n      ));\n    }\n  }\n\n  Future<void> _onFetchMorePosts(FetchMorePosts event, Emitter<PostState> emit) async {\n    if (state.hasReachedMax || state.status == PostStatus.loadingMore) return;\n\n    emit(state.copyWith(status: PostStatus.loadingMore));\n    try {\n      final newPosts = await repository.fetchPosts(\n        page: state.page,\n        limit: 20,\n      );\n      final hasReachedMax = newPosts.length < 20;\n      emit(state.copyWith(\n        posts: List.of(state.posts)..addAll(newPosts),\n        hasReachedMax: hasReachedMax,\n        page: state.page + 1,\n        status: PostStatus.success,\n        error: null,\n      ));\n    } catch (e) {\n      emit(state.copyWith(\n        status: PostStatus.failure,\n        error: e.toString(),\n      ));\n    }\n  }\n}\n\n// ---------- UI ----------\nclass PostsPage extends StatefulWidget {\n  @override\n  _PostsPageState createState() => _PostsPageState();\n}\n\nclass _PostsPageState extends State<PostsPage> {\n  final ScrollController _scrollController = ScrollController();\n\n  @override\n  void initState() {\n    super.initState();\n    _scrollController.addListener(_onScroll);\n    context.read<PostBloc>().add(FetchPosts());\n  }\n\n  void _onScroll() {\n    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {\n      context.read<PostBloc>().add(FetchMorePosts());\n    }\n  }\n\n  @override\n  void dispose() {\n    _scrollController.dispose();\n    super.dispose();\n  }\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Posts (Infinite Scroll)')),\n      body: BlocBuilder<PostBloc, PostState>(\n        builder: (context, state) {\n          switch (state.status) {\n            case PostStatus.failure:\n              return Center(child: Text('Error: ${state.error}'));\n            case PostStatus.success:\n              if (state.posts.isEmpty) {\n                return Center(child: Text('No posts'));\n              }\n              return ListView.builder(\n                controller: _scrollController,\n                itemCount: state.hasReachedMax ? state.posts.length : state.posts.length + 1,\n                itemBuilder: (_, index) {\n                  if (index >= state.posts.length) {\n                    return Padding(\n                      padding: const EdgeInsets.all(8.0),\n                      child: Center(child: CircularProgressIndicator()),\n                    );\n                  }\n                  return ListTile(\n                    title: Text(state.posts[index].title),\n                    subtitle: Text(state.posts[index].body),\n                  );\n                },\n              );\n            default:\n              return Center(child: CircularProgressIndicator());\n          }\n        },\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the primary purpose of lazy loading in a Flutter app?",
+      "options": [
+        "To load all data at once",
+        "To load data incrementally as needed",
+        "To reduce code complexity",
+        "To improve animations"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which transformer is commonly used to prevent duplicate `FetchMorePosts` events during fast scrolling?",
+      "options": ["debounce", "throttle", "sequential", "concurrent"],
+      "answer": 1
+    },
+    {
+      "question": "What should you check before dispatching a `FetchMorePosts` event to avoid duplicate requests?",
+      "options": [
+        "`state.hasReachedMax` and `state.status != PostStatus.loadingMore`",
+        "`state.posts.isEmpty`",
+        "`state.page > 1`",
+        "The scroll position"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "How do you reset pagination when the user performs a pull-to-refresh?",
+      "options": [
+        "Clear the list and set page back to 1, then fetch new data",
+        "Only fetch new data and append",
+        "Dispose the bloc and recreate",
+        "Ignore the refresh"
+      ],
+      "answer": 0
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-event-transformers",
+    "bloc-performance",
+    "flutter-infinite-scroll",
+    "flutter-pagination"
+  ]
+}

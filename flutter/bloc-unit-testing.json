@@ -1,0 +1,242 @@
+{
+  "slug": "bloc-unit-testing",
+  "course": "Flutter",
+  "title": "BLoC Unit Testing: Complete Guide to Testing BLoCs & Cubits",
+  "meta": {
+    "title": "BLoC Unit Testing – Test BLoCs & Cubits Like a Pro (2026)",
+    "description": "Master unit testing for BLoC and Cubit in Flutter. Learn to use bloc_test package, mock dependencies, test asynchronous state changes, handle errors, and ensure your state management works flawlessly.",
+    "keywords": [
+      "Flutter BLoC testing",
+      "bloc_test",
+      "unit test BLoC",
+      "Cubit testing",
+      "mock dependencies BLoC",
+      "test state management",
+      "flutter_bloc testing",
+      "bloc_test package"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BLoC Unit Testing?"
+    },
+    {
+      "type": "text",
+      "value": "BLoC unit testing involves writing automated tests for your BLoC and Cubit classes to verify that they correctly respond to events, manage state transitions, and handle errors. The `bloc_test` package provides a dedicated test helper that simplifies testing by reducing boilerplate and making state assertions straightforward. Proper testing ensures your business logic remains reliable as your app grows."
+    },
+    {
+      "type": "heading",
+      "value": "Why Test BLoCs?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Catch Bugs Early** – Verify state changes and edge cases before shipping.",
+        "**Refactor with Confidence** – Tests act as a safety net when you change internal logic.",
+        "**Document Expected Behavior** – Tests serve as living documentation.",
+        "**Improve Code Quality** – Forces you to write testable, modular code.",
+        "**Faster Development** – Reduces manual testing effort over time."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Testing Environment"
+    },
+    {
+      "type": "text",
+      "value": "Add the required dev dependencies to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dev_dependencies:\n  flutter_test:\n    sdk: flutter\n  bloc_test: ^9.1.5\n  mocktail: ^1.0.2\n  equatable: ^2.0.5"
+    },
+    {
+      "type": "heading",
+      "value": "Testing a Cubit"
+    },
+    {
+      "type": "text",
+      "value": "Cubits are simpler – they have synchronous or asynchronous methods that emit states. Use `blocTest` to test them easily."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:bloc_test/bloc_test.dart';\nimport 'package:flutter_test/flutter_test.dart';\nimport 'package:my_app/counter_cubit.dart';\n\nvoid main() {\n  group('CounterCubit', () {\n    blocTest<CounterCubit, int>(\n      'emits [1] when increment is called',\n      build: () => CounterCubit(),\n      act: (cubit) => cubit.increment(),\n      expect: () => [1],\n    );\n\n    blocTest<CounterCubit, int>(\n      'emits [-1] when decrement is called',\n      build: () => CounterCubit(),\n      act: (cubit) => cubit.decrement(),\n      expect: () => [-1],\n    );\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing a BLoC with Events"
+    },
+    {
+      "type": "text",
+      "value": "BLoCs use events; `blocTest` allows you to add multiple events and verify the emitted states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:bloc_test/bloc_test.dart';\nimport 'package:flutter_test/flutter_test.dart';\nimport 'package:my_app/counter_bloc.dart';\n\nvoid main() {\n  group('CounterBloc', () {\n    blocTest<CounterBloc, CounterState>(\n      'emits [Loading, Loaded] when LoadCounter event is added',\n      build: () => CounterBloc(repository: MockCounterRepository()),\n      act: (bloc) => bloc.add(LoadCounter()),\n      expect: () => [\n        CounterLoading(),\n        CounterLoaded(42), // assuming repository returns 42\n      ],\n    );\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Mocking Dependencies with Mocktail"
+    },
+    {
+      "type": "text",
+      "value": "Use `mocktail` to mock repositories or services. Create a mock class, set up stubs, and inject into your BLoC."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:mocktail/mocktail.dart';\n\nclass MockCounterRepository extends Mock implements CounterRepository {}\n\nvoid main() {\n  late MockCounterRepository mockRepository;\n\n  setUp(() {\n    mockRepository = MockCounterRepository();\n  });\n\n  group('CounterBloc', () {\n    blocTest<CounterBloc, CounterState>(\n      'emits [Loading, Loaded] when LoadCounter succeeds',\n      setUp: () {\n        when(() => mockRepository.fetchCount())\n            .thenAnswer((_) async => 42);\n      },\n      build: () => CounterBloc(repository: mockRepository),\n      act: (bloc) => bloc.add(LoadCounter()),\n      expect: () => [\n        CounterLoading(),\n        CounterLoaded(42),\n      ],\n    );\n\n    blocTest<CounterBloc, CounterState>(\n      'emits [Loading, Error] when LoadCounter fails',\n      setUp: () {\n        when(() => mockRepository.fetchCount())\n            .thenThrow(Exception('Network error'));\n      },\n      build: () => CounterBloc(repository: mockRepository),\n      act: (bloc) => bloc.add(LoadCounter()),\n      expect: () => [\n        CounterLoading(),\n        isA<CounterError>(),\n      ],\n    );\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Asynchronous Operations"
+    },
+    {
+      "type": "text",
+      "value": "Use `await` in `act` and `wait` parameter to handle delays. `blocTest` supports asynchronous act functions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "blocTest<AsyncBloc, AsyncState>(\n  'emits [Loading, Loaded] after delay',\n  build: () => AsyncBloc(),\n  act: (bloc) async => bloc.add(LoadData()),\n  wait: const Duration(milliseconds: 500),\n  expect: () => [\n    AsyncLoading(),\n    AsyncLoaded('data'),\n  ],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Testing State Equality"
+    },
+    {
+      "type": "text",
+      "value": "Always extend `Equatable` in your states and events to enable proper equality checks. This ensures `blocTest` correctly compares expected and actual states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterState extends Equatable {\n  final int value;\n  const CounterState(this.value);\n  @override\n  List<Object?> get props => [value];\n}\n\n// Without Equatable, you'd have to manually implement == and hashCode."
+    },
+    {
+      "type": "heading",
+      "value": "Testing Event Transformers"
+    },
+    {
+      "type": "text",
+      "value": "To test debounce or throttle, you may need to control time. Use `fake_async` package or simulate events with delays. For example, testing debounce:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:fake_async/fake_async.dart';\n\ntest('debounce only processes the last event', () {\n  fakeAsync((async) {\n    final bloc = SearchBloc();\n    bloc.add(SearchQueryChanged('a'));\n    bloc.add(SearchQueryChanged('ab'));\n    async.elapse(const Duration(milliseconds: 300));\n    // Only one state change expected after debounce\n    expect(bloc.state, SearchLoading()); // etc.\n    async.flushMicrotasks();\n  });\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Testing BLoC Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "You can also test that `onClose` cleans up resources, but it's often sufficient to test that the BLoC does not leak by verifying no errors after closing."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "test('closes stream without error', () {\n  final bloc = CounterBloc();\n  bloc.close();\n  // No exception\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `blocTest`** – It reduces boilerplate and provides a clean API for state verification.",
+        "**Mock dependencies** – Isolate the BLoC from real repositories using mocktail or mockito.",
+        "**Test happy paths and error paths** – Ensure both success and failure scenarios are covered.",
+        "**Use `isA` matcher** – When exact state details are not important, use `isA<StateType>()` to verify the type.",
+        "**Group tests logically** – Use `group` to organize related tests.",
+        "**Keep tests fast** – Avoid real network calls or database operations.",
+        "**Test state transitions** – Verify the sequence of states emitted, not just the final one.",
+        "**Test with `blocTest`’s `seed`** – Provide initial state if needed."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not using `Equatable`** – State comparisons fail, causing false positives.",
+        "❌ **Forgetting to mock dependencies** – Real network calls make tests flaky and slow.",
+        "❌ **Not waiting for async operations** – Use `wait` or `await` to let async work complete.",
+        "❌ **Testing implementation details** – Focus on state outputs, not internal method calls.",
+        "❌ **Ignoring event transformers** – Test that debounce/throttle works as expected (use fake_async).",
+        "❌ **Not cleaning up** – Always close the bloc in tests, or `blocTest` does it automatically."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Unit testing BLoCs and Cubits is essential for building reliable Flutter applications. With the `bloc_test` package and mocktail, you can write concise, readable tests that validate state transitions, error handling, and asynchronous behavior. By following best practices and avoiding common pitfalls, you’ll gain confidence in your state management code and reduce regression bugs."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `blocTest` and manually testing with `expect`?",
+      "answer": "`blocTest` handles the setup, event addition, state listening, and teardown automatically. It also provides convenient parameters like `act`, `expect`, `wait`, and `skip`. Manual testing requires more code and careful stream handling."
+    },
+    {
+      "question": "Can I use `blocTest` with Cubit?",
+      "answer": "Yes, `blocTest` works with any `BlocBase` (both BLoC and Cubit). Just specify the correct type parameters."
+    },
+    {
+      "question": "How do I test a BLoC that uses `HydratedBloc`?",
+      "answer": "You can mock the storage or use a temporary directory. For unit tests, it's easier to use `HydratedBloc.storage = null` and rely on in-memory state. For integration, you may need to set up a test storage directory."
+    },
+    {
+      "question": "How do I test events that trigger multiple state changes?",
+      "answer": "Simply list all expected states in the `expect` parameter in order. `blocTest` will compare the entire sequence."
+    },
+    {
+      "question": "Should I test every possible event combination?",
+      "answer": "Focus on critical paths and edge cases. Full coverage is ideal but prioritize scenarios that are likely to break or are complex."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\n// This example shows a simple CounterBloc and includes test examples in comments.\n// To run tests, you would normally use flutter test with bloc_test.\n\n// -------------------- BLoC Implementation --------------------\n// States\nclass CounterState extends Equatable {\n  final int value;\n  final bool isLoading;\n\n  const CounterState({this.value = 0, this.isLoading = false});\n\n  CounterState copyWith({int? value, bool? isLoading}) {\n    return CounterState(\n      value: value ?? this.value,\n      isLoading: isLoading ?? this.isLoading,\n    );\n  }\n\n  @override\n  List<Object?> get props => [value, isLoading];\n}\n\n// Events\nabstract class CounterEvent extends Equatable {\n  const CounterEvent();\n  @override\n  List<Object?> get props => [];\n}\n\nclass Increment extends CounterEvent {}\nclass Decrement extends CounterEvent {}\nclass Reset extends CounterEvent {}\nclass LoadCounter extends CounterEvent {}\n\n// Repository (mock in tests)\nclass CounterRepository {\n  Future<int> fetchCount() async {\n    // Simulate network delay\n    await Future.delayed(Duration(milliseconds: 300));\n    return 42;\n  }\n}\n\n// BLoC\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  final CounterRepository repository;\n\n  CounterBloc({required this.repository}) : super(const CounterState()) {\n    on<Increment>((event, emit) {\n      emit(state.copyWith(value: state.value + 1));\n    });\n    on<Decrement>((event, emit) {\n      emit(state.copyWith(value: state.value - 1));\n    });\n    on<Reset>((event, emit) {\n      emit(const CounterState());\n    });\n    on<LoadCounter>(_onLoadCounter);\n  }\n\n  Future<void> _onLoadCounter(LoadCounter event, Emitter<CounterState> emit) async {\n    emit(state.copyWith(isLoading: true));\n    try {\n      final value = await repository.fetchCount();\n      emit(state.copyWith(value: value, isLoading: false));\n    } catch (e) {\n      emit(state.copyWith(isLoading: false));\n      // You might also emit an error state\n    }\n  }\n}\n\n// -------------------- UI --------------------\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterBloc(repository: CounterRepository()),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Counter BLoC')),\n      body: BlocBuilder<CounterBloc, CounterState>(\n        builder: (context, state) {\n          return Center(\n            child: Column(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                if (state.isLoading)\n                  CircularProgressIndicator()\n                else\n                  Text('Value: ${state.value}', style: TextStyle(fontSize: 32)),\n                SizedBox(height: 20),\n                Row(\n                  mainAxisAlignment: MainAxisAlignment.center,\n                  children: [\n                    ElevatedButton(\n                      onPressed: () => context.read<CounterBloc>().add(Increment()),\n                      child: Icon(Icons.add),\n                    ),\n                    SizedBox(width: 20),\n                    ElevatedButton(\n                      onPressed: () => context.read<CounterBloc>().add(Decrement()),\n                      child: Icon(Icons.remove),\n                    ),\n                    SizedBox(width: 20),\n                    ElevatedButton(\n                      onPressed: () => context.read<CounterBloc>().add(Reset()),\n                      child: Text('Reset'),\n                    ),\n                    SizedBox(width: 20),\n                    ElevatedButton(\n                      onPressed: () => context.read<CounterBloc>().add(LoadCounter()),\n                      child: Text('Load'),\n                    ),\n                  ],\n                ),\n              ],\n            ),\n          );\n        },\n      ),\n    );\n  }\n}\n\n/*\n  -------------------- UNIT TESTS EXAMPLE --------------------\n  \n  // Add to test/counter_bloc_test.dart:\n  import 'package:bloc_test/bloc_test.dart';\n  import 'package:flutter_test/flutter_test.dart';\n  import 'package:mocktail/mocktail.dart';\n  import 'package:my_app/counter_bloc.dart';\n\n  class MockCounterRepository extends Mock implements CounterRepository {}\n\n  void main() {\n    group('CounterBloc', () {\n      late MockCounterRepository mockRepository;\n\n      setUp(() {\n        mockRepository = MockCounterRepository();\n      });\n\n      blocTest<CounterBloc, CounterState>(\n        'emits state with incremented value',\n        build: () => CounterBloc(repository: mockRepository),\n        act: (bloc) => bloc.add(Increment()),\n        expect: () => [\n          CounterState(value: 1),\n        ],\n      );\n\n      blocTest<CounterBloc, CounterState>(\n        'emits state with decremented value',\n        build: () => CounterBloc(repository: mockRepository),\n        act: (bloc) => bloc.add(Decrement()),\n        expect: () => [\n          CounterState(value: -1),\n        ],\n      );\n\n      blocTest<CounterBloc, CounterState>(\n        'emits loading and loaded states when LoadCounter succeeds',\n        setUp: () {\n          when(() => mockRepository.fetchCount()).thenAnswer((_) async => 42);\n        },\n        build: () => CounterBloc(repository: mockRepository),\n        act: (bloc) => bloc.add(LoadCounter()),\n        wait: const Duration(milliseconds: 500),\n        expect: () => [\n          CounterState(isLoading: true),\n          CounterState(value: 42, isLoading: false),\n        ],\n      );\n\n      blocTest<CounterBloc, CounterState>(\n        'handles LoadCounter error gracefully',\n        setUp: () {\n          when(() => mockRepository.fetchCount()).thenThrow(Exception('Network error'));\n        },\n        build: () => CounterBloc(repository: mockRepository),\n        act: (bloc) => bloc.add(LoadCounter()),\n        wait: const Duration(milliseconds: 500),\n        expect: () => [\n          CounterState(isLoading: true),\n          CounterState(isLoading: false),\n        ],\n      );\n    });\n  }\n*/\n"
+  },
+  "quiz": [
+    {
+      "question": "Which package provides the `blocTest` helper function?",
+      "options": ["flutter_test", "mocktail", "bloc_test", "bloc_testing"],
+      "answer": 2
+    },
+    {
+      "question": "What should you extend for your state classes to enable correct equality checks in tests?",
+      "options": ["Comparable", "Equatable", "Object", "BlocBase"],
+      "answer": 1
+    },
+    {
+      "question": "How do you simulate a delayed async operation in a test with `blocTest`?",
+      "options": ["Use `Future.delayed` in `act`", "Use the `wait` parameter", "Use `setTimeout`", "It's automatic"],
+      "answer": 1
+    },
+    {
+      "question": "What is the recommended way to mock dependencies in BLoC tests?",
+      "options": ["Use real implementations", "Use mocktail or mockito", "Create fake classes manually", "Use build_runner"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-performance",
+    "bloc-global-error-handler",
+    "flutter-testing-guide"
+  ]
+}

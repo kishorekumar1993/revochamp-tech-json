@@ -1,0 +1,218 @@
+{
+  "slug": "bloc-split-widgets",
+  "course": "Flutter",
+  "title": "BLoC Split Widgets: Optimizing Performance & Code Organization",
+  "meta": {
+    "title": "BLoC Split Widgets – Granular UI Components for Performance & Maintainability (2026)",
+    "description": "Learn how to split widgets in BLoC applications to reduce rebuilds, improve performance, and maintain clean architecture. Master BlocBuilder granularity, context.select, and widget decomposition.",
+    "keywords": [
+      "Flutter BLoC split widgets",
+      "bloc widget granularity",
+      "flutter bloc performance",
+      "blocbuilder rebuild optimization",
+      "context.select bloc",
+      "separate widgets bloc",
+      "bloc ui decomposition"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "In large Flutter applications using BLoC, it's common to have complex screens with multiple parts reacting to state changes. If not structured properly, a single `BlocBuilder` at the top level can cause entire screens to rebuild unnecessarily, hurting performance and making code harder to maintain. Splitting widgets—breaking down UI into smaller, focused components—is a key practice to leverage BLoC's reactivity efficiently. This guide covers strategies for splitting widgets, using `BlocBuilder` at the right granularity, `context.select`, and organizing your UI for optimal rebuilds and maintainability."
+    },
+    {
+      "type": "heading",
+      "value": "Why Split Widgets?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Performance** – Reduce rebuilds by limiting `BlocBuilder` to only the widgets that actually depend on state changes.",
+        "**Separation of Concerns** – Keep business logic in BLoC, UI rendering in widgets, and split widgets by responsibility.",
+        "**Testability** – Smaller widgets are easier to test in isolation.",
+        "**Reusability** – Granular components can be reused across different screens.",
+        "**Readability** – Avoid monolithic `build` methods; each widget has a clear purpose."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Strategy 1: Granular BlocBuilder Placement"
+    },
+    {
+      "type": "text",
+      "value": "Instead of placing a single `BlocBuilder` at the root of a screen, place it as close as possible to the UI that depends on the state. This isolates rebuilds to the smallest necessary subtree."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ❌ Bad: Entire screen rebuilds on any state change\n@override\nWidget build(BuildContext context) {\n  return BlocBuilder<ProfileBloc, ProfileState>(\n    builder: (context, state) {\n      return Scaffold(\n        appBar: AppBar(title: Text('Profile')),\n        body: Column(\n          children: [\n            Text('Name: ${state.name}'),\n            Text('Email: ${state.email}'),\n            // ... many other widgets\n          ],\n        ),\n      );\n    },\n  );\n}\n\n// ✅ Good: Only parts that need state rebuild\n@override\nWidget build(BuildContext context) {\n  return Scaffold(\n    appBar: AppBar(title: Text('Profile')), // Never rebuilds\n    body: Column(\n      children: [\n        BlocBuilder<ProfileBloc, ProfileState>(\n          buildWhen: (prev, curr) => prev.name != curr.name,\n          builder: (context, state) => Text('Name: ${state.name}'),\n        ),\n        BlocBuilder<ProfileBloc, ProfileState>(\n          buildWhen: (prev, curr) => prev.email != curr.email,\n          builder: (context, state) => Text('Email: ${state.email}'),\n        ),\n      ],\n    ),\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Strategy 2: Extract Widgets with Builders"
+    },
+    {
+      "type": "text",
+      "value": "For complex UI parts, extract them into separate widgets that internally use `BlocBuilder` or `context.select`. This keeps the main screen clean and allows independent testing."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfileName extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocBuilder<ProfileBloc, ProfileState>(\n      buildWhen: (prev, curr) => prev.name != curr.name,\n      builder: (context, state) => Text('Name: ${state.name}'),\n    );\n  }\n}\n\nclass ProfileEmail extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocBuilder<ProfileBloc, ProfileState>(\n      buildWhen: (prev, curr) => prev.email != curr.email,\n      builder: (context, state) => Text('Email: ${state.email}'),\n    );\n  }\n}\n\nclass ProfileScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Profile')),\n      body: Column(\n        children: [\n          ProfileName(),\n          ProfileEmail(),\n        ],\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Strategy 3: Using context.select"
+    },
+    {
+      "type": "text",
+      "value": "`context.select` allows you to listen to a specific part of the state without a `BlocBuilder`. The widget rebuilds only when the selected value changes. This is cleaner for simple selections."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProfileName extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final name = context.select((ProfileBloc bloc) => bloc.state.name);\n    return Text('Name: $name');\n  }\n}\n\nclass ProfileEmail extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final email = context.select((ProfileBloc bloc) => bloc.state.email);\n    return Text('Email: $email');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Strategy 4: Decompose by Responsibility"
+    },
+    {
+      "type": "text",
+      "value": "Split widgets not only by state dependencies but also by functional responsibility: header, list, form, buttons, etc. Each can have its own `BlocBuilder` and possibly its own child BLoC if needed."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TodoListScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: TodoListAppBar(),\n      body: TodoList(),\n      floatingActionButton: AddTodoButton(),\n    );\n  }\n}\n\nclass TodoList extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocBuilder<TodoBloc, TodoState>(\n      builder: (context, state) {\n        return ListView.builder(\n          itemCount: state.todos.length,\n          itemBuilder: (_, i) => TodoItem(todo: state.todos[i]),\n        );\n      },\n    );\n  }\n}\n\nclass TodoItem extends StatelessWidget {\n  final Todo todo;\n  const TodoItem({required this.todo});\n\n  @override\n  Widget build(BuildContext context) {\n    return ListTile(\n      title: Text(todo.title),\n      trailing: Checkbox(\n        value: todo.completed,\n        onChanged: (_) => context.read<TodoBloc>().add(ToggleTodo(todo.id)),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Strategy 5: Passing Bloc to Children"
+    },
+    {
+      "type": "text",
+      "value": "When splitting widgets, avoid passing the BLoC instance manually unless necessary. Use `context.read` or `context.watch` inside the child widget to access the BLoC. This keeps the widget tree clean and ensures the BLoC is properly scoped."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ✅ Good: Child accesses BLoC via context\nclass IncrementButton extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return ElevatedButton(\n      onPressed: () => context.read<CounterBloc>().add(Increment()),\n      child: Text('Increment'),\n    );\n  }\n}\n\n// ❌ Avoid: Passing bloc down manually (unless you have multiple blocs)\nclass IncrementButton extends StatelessWidget {\n  final CounterBloc bloc;\n  const IncrementButton(this.bloc);\n\n  @override\n  Widget build(BuildContext context) {\n    return ElevatedButton(\n      onPressed: () => bloc.add(Increment()),\n      child: Text('Increment'),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Strategy 6: Using BlocProvider.value for Deep Trees"
+    },
+    {
+      "type": "text",
+      "value": "If you have a deeply nested widget that needs access to the same BLoC, you can use `BlocProvider.value` to provide the existing instance to a subtree. This avoids passing the BLoC through constructors."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ParentScreen extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocProvider(\n      create: (_) => MyBloc(),\n      child: Scaffold(\n        body: Column(\n          children: [\n            ChildA(),\n            BlocProvider.value(\n              value: context.read<MyBloc>(),\n              child: DeeplyNestedWidget(),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Place `BlocBuilder` as deep as possible** – Rebuild only what needs to change.",
+        "**Use `buildWhen` or `context.select`** – Fine‑tune rebuilds even further.",
+        "**Extract reusable widgets** – Each widget should have a single responsibility.",
+        "**Prefer `context.read` for events, `context.select` for state** – Avoid `BlocBuilder` when a simple selector suffices.",
+        "**Name widgets descriptively** – `TodoList`, `TodoItem`, `AddTodoButton` make the structure clear.",
+        "**Avoid passing BLoC instances down** – Use `BlocProvider` and `context.read` to access them.",
+        "**Test widgets in isolation** – Mock the BLoC or use `BlocProvider.value` with a mock."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **One giant `BlocBuilder` at the top** – Rebuilds the whole screen on any change.\n✅ Split into smaller builders.",
+        "❌ **Passing BLoC instances through constructors** – Makes testing harder and clutters code.\n✅ Use `context.read` or `BlocProvider.of`.",
+        "❌ **Creating widgets inside `build` without extracting** – Can lead to unnecessary rebuilds and less readability.\n✅ Extract into separate widgets.",
+        "❌ **Over‑splitting** – Too many widgets can make navigation complex.\n✅ Balance granularity with simplicity.",
+        "❌ **Forgetting to use `const` constructors** – Missing out on performance optimization."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Splitting widgets in BLoC applications is essential for achieving high performance and maintainable code. By placing `BlocBuilder` at the right granularity, using `context.select`, and extracting focused widgets, you ensure that your UI reacts efficiently to state changes. These practices also improve code organization, making it easier to test and extend your app over time."
+    }
+  ],
+  "faq": [
+    {
+      "question": "When should I use `context.select` instead of `BlocBuilder`?",
+      "answer": "Use `context.select` when you need to listen to a single property and want minimal boilerplate. Use `BlocBuilder` when you need more control (e.g., `buildWhen`) or when you need the full state."
+    },
+    {
+      "question": "Can I split widgets that use the same BLoC across different files?",
+      "answer": "Yes, that's encouraged. Each widget can access the BLoC via `context.read` or `context.select` as long as the BLoC is provided higher up."
+    },
+    {
+      "question": "How many `BlocBuilder`s is too many?",
+      "answer": "There's no fixed limit; aim for as many as needed to isolate rebuilds. Each `BlocBuilder` that listens to different parts of the state is beneficial."
+    },
+    {
+      "question": "Should I use `const` constructors for split widgets?",
+      "answer": "Yes, whenever possible, use `const` constructors to avoid unnecessary rebuilds of stateless widgets."
+    },
+    {
+      "question": "How do I test a split widget that uses `context.read`?",
+      "answer": "Wrap it in `BlocProvider.value` with a mock BLoC inside your test. Use `blocTest` for the BLoC itself and widget tests for the UI."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\nvoid main() => runApp(MyApp());\n\n// Counter Cubit\nclass CounterCubit extends Cubit<int> {\n  CounterCubit() : super(0);\n  void increment() => emit(state + 1);\n}\n\n// Split widgets\nclass CounterDisplay extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final count = context.select((CounterCubit cubit) => cubit.state);\n    return Text('Count: $count', style: TextStyle(fontSize: 32));\n  }\n}\n\nclass IncrementButton extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return ElevatedButton(\n      onPressed: () => context.read<CounterCubit>().increment(),\n      child: Text('Increment'),\n    );\n  }\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: Scaffold(\n          appBar: AppBar(title: Text('Split Widgets Demo')),\n          body: Center(\n            child: Column(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                CounterDisplay(),\n                SizedBox(height: 20),\n                IncrementButton(),\n              ],\n            ),\n          ),\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What is the primary benefit of placing BlocBuilder as deep as possible?",
+      "options": [
+        "It improves code readability",
+        "It reduces unnecessary rebuilds",
+        "It makes testing easier",
+        "It allows using more widgets"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method allows listening to a specific part of the state without a BlocBuilder?",
+      "options": ["BlocProvider.of", "context.select", "BlocListener", "buildWhen"],
+      "answer": 1
+    },
+    {
+      "question": "How should a child widget access a BLoC that is provided higher up?",
+      "options": [
+        "Pass it through constructor",
+        "Use context.read or context.select",
+        "Create a new instance",
+        "Use GlobalKey"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-rebuild-optimization",
+    "bloc-buildwhen-listenwhen",
+    "flutter-performance"
+  ]
+}

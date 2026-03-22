@@ -1,0 +1,236 @@
+{
+  "slug": "bloc-hydrated-bloc",
+  "course": "Flutter",
+  "title": "Hydrated Bloc: Automatic State Persistence for BLoC & Cubit",
+  "meta": {
+    "title": "Hydrated Bloc – State Persistence for BLoC & Cubit (2026)",
+    "description": "Learn how to persist BLoC and Cubit state automatically with hydrated_bloc. Master serialization, storage configuration, and best practices for building offline-ready Flutter apps.",
+    "keywords": [
+      "Flutter hydrated_bloc",
+      "bloc state persistence",
+      "hydrated bloc tutorial",
+      "save bloc state",
+      "restore bloc state",
+      "flutter_bloc storage",
+      "Hive bloc persistence",
+      "offline-first bloc"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Hydrated Bloc?"
+    },
+    {
+      "type": "text",
+      "value": "Hydrated Bloc is an extension of `flutter_bloc` that automatically persists your BLoC and Cubit states to disk. When the app is closed and reopened, the state is restored exactly as it was, providing a seamless offline‑first experience. It uses Hive internally to store state efficiently and supports complex state serialization."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Hydrated Bloc?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Automatic Persistence** – No manual saving/loading code in your BLoCs.",
+        "**Offline Support** – State survives app restarts and is available immediately.",
+        "**Simple API** – Just extend `HydratedBloc` or `HydratedCubit` and override `fromJson`/`toJson`.",
+        "**Performance** – Uses Hive, a lightweight, fast key‑value store.",
+        "**Flexible Storage** – Configurable storage directory, supports custom Hive adapters."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Hydrated Bloc"
+    },
+    {
+      "type": "text",
+      "value": "Add the required dependencies to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter_bloc: ^8.1.5\n  hydrated_bloc: ^9.1.5\n  path_provider: ^2.1.3"
+    },
+    {
+      "type": "text",
+      "value": "Initialize `HydratedBloc` before running your app. You need to provide a storage directory, typically obtained from `path_provider`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  final storage = await HydratedStorage.build(\n    storageDirectory: await getApplicationDocumentsDirectory(),\n  );\n  HydratedBloc.storage = storage;\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Hydrated Cubit"
+    },
+    {
+      "type": "text",
+      "value": "Extend `HydratedCubit` instead of `Cubit`. Override `fromJson` and `toJson` to serialize/deserialize your state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterCubit extends HydratedCubit<int> {\n  CounterCubit() : super(0);\n\n  void increment() => emit(state + 1);\n  void decrement() => emit(state - 1);\n\n  @override\n  int fromJson(Map<String, dynamic> json) => json['value'] as int;\n\n  @override\n  Map<String, dynamic> toJson(int state) => {'value': state};\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Hydrated Bloc"
+    },
+    {
+      "type": "text",
+      "value": "Similarly, extend `HydratedBloc<Event, State>` and implement the same serialization methods."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TodoBloc extends HydratedBloc<TodoEvent, TodoState> {\n  TodoBloc() : super(const TodoState(todos: [])) {\n    on<AddTodo>(_onAddTodo);\n    on<RemoveTodo>(_onRemoveTodo);\n  }\n\n  void _onAddTodo(AddTodo event, Emitter<TodoState> emit) {\n    emit(state.copyWith(todos: [...state.todos, event.todo]));\n  }\n\n  void _onRemoveTodo(RemoveTodo event, Emitter<TodoState> emit) {\n    emit(state.copyWith(\n      todos: state.todos.where((t) => t.id != event.id).toList(),\n    ));\n  }\n\n  @override\n  TodoState fromJson(Map<String, dynamic> json) => TodoState.fromJson(json);\n\n  @override\n  Map<String, dynamic> toJson(TodoState state) => state.toJson();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Serializing Complex State"
+    },
+    {
+      "type": "text",
+      "value": "For states with custom objects, you need to convert them to JSON‑compatible maps. Use `Equatable` to simplify equality checks."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@immutable\nclass TodoState extends Equatable {\n  final List<Todo> todos;\n  final bool isLoading;\n  final String? error;\n\n  const TodoState({required this.todos, this.isLoading = false, this.error});\n\n  TodoState copyWith({List<Todo>? todos, bool? isLoading, String? error}) {\n    return TodoState(\n      todos: todos ?? this.todos,\n      isLoading: isLoading ?? this.isLoading,\n      error: error ?? this.error,\n    );\n  }\n\n  @override\n  List<Object?> get props => [todos, isLoading, error];\n\n  Map<String, dynamic> toJson() => {\n    'todos': todos.map((t) => t.toJson()).toList(),\n    'isLoading': isLoading,\n    'error': error,\n  };\n\n  factory TodoState.fromJson(Map<String, dynamic> json) {\n    return TodoState(\n      todos: (json['todos'] as List).map((t) => Todo.fromJson(t)).toList(),\n      isLoading: json['isLoading'] ?? false,\n      error: json['error'],\n    );\n  }\n}\n\nclass Todo {\n  final String id;\n  final String title;\n  final bool completed;\n\n  Todo({required this.id, required this.title, this.completed = false});\n\n  Map<String, dynamic> toJson() => {\n    'id': id,\n    'title': title,\n    'completed': completed,\n  };\n\n  factory Todo.fromJson(Map<String, dynamic> json) => Todo(\n    id: json['id'],\n    title: json['title'],\n    completed: json['completed'],\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Storage Configuration"
+    },
+    {
+      "type": "text",
+      "value": "You can customize storage behavior by providing your own `HydratedStorage` instance. For example, to use a different Hive box name or encryption."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final storage = await HydratedStorage.build(\n  storageDirectory: await getApplicationDocumentsDirectory(),\n  boxName: 'my_custom_box',\n  encryptionCipher: EncryptionCipher.aesEncrypt(key: myKey),\n);\nHydratedBloc.storage = storage;"
+    },
+    {
+      "type": "heading",
+      "value": "Clearing Persisted State"
+    },
+    {
+      "type": "text",
+      "value": "To reset the state, you can clear the storage or delete the specific box."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Clear entire storage\nHydratedBloc.storage.clear();\n\n// Or delete only your BLoC's state (if you know the key)\nHydratedBloc.storage.delete('CounterCubit');"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Hydrated Blocs"
+    },
+    {
+      "type": "text",
+      "value": "When testing, you can use a temporary storage directory to avoid polluting real storage."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "setUp(() async {\n  final storage = await HydratedStorage.build(\n    storageDirectory: Directory.systemTemp,\n  );\n  HydratedBloc.storage = storage;\n});\n\ntest('counter persists', () {\n  final cubit = CounterCubit();\n  cubit.increment();\n  expect(cubit.state, 1);\n  \n  // Create new cubit; state should be restored\n  final newCubit = CounterCubit();\n  expect(newCubit.state, 1);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `Equatable` for state classes** – Simplifies serialization and prevents unnecessary rebuilds.",
+        "**Keep states small** – Store only UI state; use a database for large datasets.",
+        "**Initialize storage early** – Always call `HydratedStorage.build` before `runApp`.",
+        "**Avoid storing sensitive data** – Hydrated Bloc stores data in plain text unless encrypted.",
+        "**Test serialization** – Write tests that verify `toJson` and `fromJson` work correctly.",
+        "**Use `copyWith` methods** – Makes state updates clean and immutable.",
+        "**Provide fallbacks** – In `fromJson`, handle missing keys gracefully."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to initialize storage** – Causes `StateError` when trying to save.\n✅ Initialize before `runApp`.",
+        "❌ **Storing large objects** – Slows down app startup and uses disk space.\n✅ Use a database for large data; keep hydrated state minimal.",
+        "❌ **Not handling null in `fromJson`** – Can throw exceptions when storage is empty.\n✅ Provide default values.",
+        "❌ **Mutating state objects** – Modifying state after emission can lead to inconsistencies.\n✅ Always create new immutable state objects.",
+        "❌ **Using same storage for multiple apps** – Conflicts can occur.\n✅ Use different storage directories per app."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Hydrated Bloc is an essential tool for building offline‑ready Flutter apps. With minimal code, you can persist any BLoC or Cubit state, ensuring a consistent user experience across sessions. Combine it with proper state design and testing to create robust, performant applications."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use Hydrated Bloc with both Bloc and Cubit?",
+      "answer": "Yes, both `HydratedBloc` and `HydratedCubit` are available."
+    },
+    {
+      "question": "What happens if I change my state class structure?",
+      "answer": "You need to handle versioning manually. Consider adding a version field to your state JSON and writing migration logic in `fromJson`."
+    },
+    {
+      "question": "Does Hydrated Bloc work on all platforms?",
+      "answer": "Yes, it uses `path_provider` to get platform‑specific storage directories and Hive for storage, which supports mobile, desktop, and web."
+    },
+    {
+      "question": "Can I encrypt the stored data?",
+      "answer": "Yes, by providing an `EncryptionCipher` when building `HydratedStorage`."
+    },
+    {
+      "question": "How do I clear state for a specific BLoC?",
+      "answer": "Call `clear()` on the storage with the BLoC's type name as the key, or override `onStorageReady` and delete the box."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:hydrated_bloc/hydrated_bloc.dart';\nimport 'package:path_provider/path_provider.dart';\n\nvoid main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  final storage = await HydratedStorage.build(\n    storageDirectory: await getApplicationDocumentsDirectory(),\n  );\n  HydratedBloc.storage = storage;\n  runApp(MyApp());\n}\n\nclass CounterCubit extends HydratedCubit<int> {\n  CounterCubit() : super(0);\n\n  void increment() => emit(state + 1);\n  void decrement() => emit(state - 1);\n\n  @override\n  int fromJson(Map<String, dynamic> json) => json['value'] as int;\n\n  @override\n  Map<String, dynamic> toJson(int state) => {'value': state};\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final cubit = context.watch<CounterCubit>();\n    return Scaffold(\n      appBar: AppBar(title: Text('Hydrated Bloc Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Counter value:', style: TextStyle(fontSize: 20)),\n            Text('${cubit.state}', style: TextStyle(fontSize: 40)),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: cubit.increment,\n                  child: Icon(Icons.add),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: cubit.decrement,\n                  child: Icon(Icons.remove),\n                ),\n              ],\n            ),\n            SizedBox(height: 20),\n            Text('Try closing and reopening the app – the counter persists!'),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which class should your Cubit extend to enable automatic state persistence?",
+      "options": ["Cubit", "HydratedCubit", "PersistedCubit", "StorageCubit"],
+      "answer": 1
+    },
+    {
+      "question": "What method must you override to convert your state to a JSON‑compatible map?",
+      "options": ["fromJson", "toJson", "serialize", "encode"],
+      "answer": 1
+    },
+    {
+      "question": "Where should you initialize HydratedBloc.storage?",
+      "options": [
+        "Inside the first BLoC",
+        "Inside the build method of MyApp",
+        "Before runApp",
+        "In a separate isolate"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-offline-support",
+    "bloc-rebuild-optimization",
+    "flutter-persistence"
+  ]
+}

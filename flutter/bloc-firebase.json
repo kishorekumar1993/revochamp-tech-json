@@ -1,0 +1,200 @@
+{
+  "slug": "bloc-firebase",
+  "course": "Flutter",
+  "title": "BLoC Firebase Integration: Authentication, Firestore & Realtime Updates",
+  "meta": {
+    "title": "BLoC Firebase – Authentication, Firestore & Real-time Sync (2026)",
+    "description": "Learn how to integrate Firebase services with BLoC architecture. Master Firebase Auth, Firestore streaming, offline persistence, and real-time updates using flutter_bloc patterns.",
+    "keywords": [
+      "Flutter BLoC Firebase",
+      "Firebase Auth BLoC",
+      "Firestore BLoC",
+      "realtime updates BLoC",
+      "Firebase offline persistence",
+      "flutter_bloc firebase",
+      "Firebase authentication state management",
+      "BLoC Firestore streaming"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BLoC Firebase Integration?"
+    },
+    {
+      "type": "text",
+      "value": "BLoC Firebase integration refers to using Firebase services (Authentication, Firestore, Cloud Storage, etc.) within the BLoC pattern for state management. By combining Firebase's powerful backend capabilities with BLoC's predictable state container, you can build reactive, real-time applications with clear separation of concerns. This approach handles authentication flows, real-time data synchronization, offline persistence, and complex error scenarios in a maintainable way."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Firebase with BLoC?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Real-time Updates** – Firestore streams map naturally to BLoC state emissions.",
+        "**Authentication** – Manage user session, sign-in, sign-out with clear events and states.",
+        "**Offline Support** – Firebase handles offline caching; BLoC manages the state while offline.",
+        "**Scalability** – BLoC keeps the code organized as Firebase features grow.",
+        "**Testability** – Separate Firebase logic into repositories that can be mocked.",
+        "**Seamless User Experience** – Combine loading states, error handling, and optimistic updates."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Firebase"
+    },
+    {
+      "type": "text",
+      "value": "Add the required dependencies to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter_bloc: ^8.1.5\n  equatable: ^2.0.5\n  firebase_core: ^2.24.2\n  firebase_auth: ^4.17.8\n  cloud_firestore: ^4.15.8\n\n# Follow official Firebase setup guide for your platform (iOS, Android, web)."
+    },
+    {
+      "type": "heading",
+      "value": "Firebase Authentication BLoC"
+    },
+    {
+      "type": "text",
+      "value": "Create a BLoC to manage authentication state. Use `FirebaseAuth` to listen to auth state changes and handle sign-in, sign-up, and sign-out."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// auth_state.dart\nenum AuthStatus { unknown, authenticated, unauthenticated }\n\nclass AuthState extends Equatable {\n  final AuthStatus status;\n  final User? user;\n  final String? error;\n\n  const AuthState({\n    this.status = AuthStatus.unknown,\n    this.user,\n    this.error,\n  });\n\n  AuthState copyWith({AuthStatus? status, User? user, String? error}) {\n    return AuthState(\n      status: status ?? this.status,\n      user: user ?? this.user,\n      error: error ?? this.error,\n    );\n  }\n\n  @override\n  List<Object?> get props => [status, user, error];\n}\n\n// auth_event.dart\nabstract class AuthEvent extends Equatable {\n  const AuthEvent();\n  @override\n  List<Object?> get props => [];\n}\n\nclass AppStarted extends AuthEvent {}\nclass SignInRequested extends AuthEvent {\n  final String email;\n  final String password;\n  const SignInRequested(this.email, this.password);\n}\nclass SignUpRequested extends AuthEvent {\n  final String email;\n  final String password;\n  const SignUpRequested(this.email, this.password);\n}\nclass SignOutRequested extends AuthEvent {}\nclass AuthStateChanged extends AuthEvent {\n  final User? user;\n  const AuthStateChanged(this.user);\n}\n\n// auth_bloc.dart\nimport 'package:firebase_auth/firebase_auth.dart';\n\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  final FirebaseAuth _auth = FirebaseAuth.instance;\n\n  AuthBloc() : super(const AuthState()) {\n    on<AppStarted>(_onAppStarted);\n    on<SignInRequested>(_onSignInRequested);\n    on<SignUpRequested>(_onSignUpRequested);\n    on<SignOutRequested>(_onSignOutRequested);\n    on<AuthStateChanged>(_onAuthStateChanged);\n\n    // Listen to Firebase auth state changes\n    _auth.authStateChanges().listen((user) {\n      add(AuthStateChanged(user));\n    });\n  }\n\n  void _onAppStarted(AppStarted event, Emitter<AuthState> emit) {\n    // Initial state will be set by authStateChanges\n  }\n\n  Future<void> _onSignInRequested(SignInRequested event, Emitter<AuthState> emit) async {\n    emit(state.copyWith(status: AuthStatus.unknown));\n    try {\n      await _auth.signInWithEmailAndPassword(\n        email: event.email,\n        password: event.password,\n      );\n    } on FirebaseAuthException catch (e) {\n      emit(state.copyWith(status: AuthStatus.unauthenticated, error: e.message));\n    }\n  }\n\n  Future<void> _onSignUpRequested(SignUpRequested event, Emitter<AuthState> emit) async {\n    emit(state.copyWith(status: AuthStatus.unknown));\n    try {\n      await _auth.createUserWithEmailAndPassword(\n        email: event.email,\n        password: event.password,\n      );\n    } on FirebaseAuthException catch (e) {\n      emit(state.copyWith(status: AuthStatus.unauthenticated, error: e.message));\n    }\n  }\n\n  Future<void> _onSignOutRequested(SignOutRequested event, Emitter<AuthState> emit) async {\n    await _auth.signOut();\n  }\n\n  void _onAuthStateChanged(AuthStateChanged event, Emitter<AuthState> emit) {\n    if (event.user != null) {\n      emit(state.copyWith(status: AuthStatus.authenticated, user: event.user, error: null));\n    } else {\n      emit(state.copyWith(status: AuthStatus.unauthenticated, user: null, error: null));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Firestore with BLoC – Real-time List"
+    },
+    {
+      "type": "text",
+      "value": "For Firestore, you can listen to a collection stream and map the snapshots to BLoC states. Use a repository to abstract Firebase logic."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// todo_repository.dart\nclass TodoRepository {\n  final FirebaseFirestore _firestore = FirebaseFirestore.instance;\n\n  Stream<List<Todo>> getTodos(String userId) {\n    return _firestore\n        .collection('users')\n        .doc(userId)\n        .collection('todos')\n        .snapshots()\n        .map((snapshot) => snapshot.docs.map((doc) => Todo.fromFirestore(doc)).toList());\n  }\n\n  Future<void> addTodo(String userId, Todo todo) async {\n    await _firestore\n        .collection('users')\n        .doc(userId)\n        .collection('todos')\n        .add(todo.toFirestore());\n  }\n}\n\n// todo_bloc.dart\nclass TodoBloc extends Bloc<TodoEvent, TodoState> {\n  final TodoRepository repository;\n  final String userId;\n  StreamSubscription<List<Todo>>? _subscription;\n\n  TodoBloc({required this.repository, required this.userId}) : super(TodoInitial()) {\n    on<LoadTodos>((event, emit) async* {\n      emit(TodoLoading());\n      _subscription = repository.getTodos(userId).listen(\n        (todos) => add(TodosUpdated(todos)),\n        onError: (error) => add(TodoErrorOccurred(error.toString())),\n      );\n    });\n    on<TodosUpdated>((event, emit) => emit(TodoLoaded(event.todos)));\n    on<TodoErrorOccurred>((event, emit) => emit(TodoError(event.message)));\n    on<AddTodo>((event, emit) async {\n      try {\n        await repository.addTodo(userId, event.todo);\n      } catch (e) {\n        add(TodoErrorOccurred(e.toString()));\n      }\n    });\n  }\n\n  @override\n  Future<void> close() {\n    _subscription?.cancel();\n    return super.close();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Offline Persistence"
+    },
+    {
+      "type": "text",
+      "value": "Firestore automatically caches data for offline use. Your BLoC will receive stream events even when offline, using cached data. You can check connectivity and show appropriate UI states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Enable offline persistence (optional, enabled by default)\nawait FirebaseFirestore.instance.enablePersistence();\n\n// In BLoC, you can check if the snapshot is from cache\n_snapshot.metadata.isFromCache // to show stale indicator"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use a Repository Pattern** – Abstract Firebase away from BLoCs for testability.",
+        "**Close Stream Subscriptions** – Always cancel streams in `close()` to avoid memory leaks.",
+        "**Handle Errors Gracefully** – Catch Firebase exceptions and emit error states.",
+        "**Leverage Firebase Auth State Stream** – Listen to auth changes and update BLoC accordingly.",
+        "**Use Equatable for States** – Prevents unnecessary rebuilds when state values haven't changed.",
+        "**Optimize Firestore Queries** – Use limit, orderBy, and where clauses to reduce data transfer.",
+        "**Consider Offline UI** – Show loading indicators and offline banners when network is lost."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not cancelling Firestore subscriptions** – Leads to memory leaks and unwanted state updates.",
+        "❌ **Storing large documents in state** – Keep state lightweight; Firestore documents can be large.",
+        "❌ **Calling `emit` after bloc is closed** – Use `isClosed` check if necessary.",
+        "❌ **Not handling FirebaseAuthException** – Generic catches hide important error details.",
+        "❌ **Exposing Firebase logic in UI** – Keep Firebase code in repositories or BLoCs.",
+        "❌ **Forgetting to initialize Firebase** – Call `Firebase.initializeApp()` before `runApp`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Integrating Firebase with BLoC gives you a robust architecture for real-time, offline-capable apps. By separating concerns into repositories and BLoCs, you can test business logic independently and build scalable features. With proper error handling and stream management, you'll create a seamless user experience."
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I test a BLoC that uses Firebase?",
+      "answer": "Mock the Firebase services using mocktail. Create a fake repository that returns controlled data or errors. Then test your BLoC using `blocTest` with these mocks."
+    },
+    {
+      "question": "Can I use BLoC with Firebase Realtime Database?",
+      "answer": "Yes, the approach is similar: use a repository that exposes a stream of data from the database, and let your BLoC listen to it."
+    },
+    {
+      "question": "How to handle authentication state persistence with BLoC?",
+      "answer": "Firebase Auth automatically persists the user session. Your `AuthBloc` listens to `authStateChanges()` and updates the state accordingly. No extra persistence needed."
+    },
+    {
+      "question": "What about pagination with Firestore?",
+      "answer": "Use query cursors and combine them with a BLoC that holds the last document. Emit new states as pages are loaded. Be careful to manage the stream properly."
+    },
+    {
+      "question": "How to handle Firestore security rules in development?",
+      "answer": "For testing, you can use the Firebase Emulator Suite. Your BLoC code remains unchanged; you just point to the emulator during development."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "// This is a demo of BLoC with Firebase concepts, using a mock repository to simulate Firebase.\n// In a real app, you'd replace the mock with actual Firebase services.\n\nimport 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\n// ---------- MOCK FIREBASE ----------\nclass MockFirebaseAuth {\n  static User? currentUser;\n\n  Future<User> signInWithEmailAndPassword(String email, String password) async {\n    await Future.delayed(Duration(seconds: 1));\n    if (email == 'test@example.com' && password == 'password') {\n      currentUser = User(email: email);\n      return currentUser!;\n    } else {\n      throw Exception('Invalid credentials');\n    }\n  }\n\n  Future<User> createUserWithEmailAndPassword(String email, String password) async {\n    await Future.delayed(Duration(seconds: 1));\n    currentUser = User(email: email);\n    return currentUser!;\n  }\n\n  Future<void> signOut() async {\n    await Future.delayed(Duration(milliseconds: 500));\n    currentUser = null;\n  }\n\n  Stream<User?> authStateChanges() async* {\n    yield currentUser;\n  }\n}\n\nclass User {\n  final String email;\n  User({required this.email});\n  @override\n  bool operator ==(Object other) => other is User && other.email == email;\n  @override\n  int get hashCode => email.hashCode;\n}\n\n// ---------- Auth BLoC ----------\nenum AuthStatus { unknown, authenticated, unauthenticated }\n\nclass AuthState extends Equatable {\n  final AuthStatus status;\n  final User? user;\n  final String? error;\n\n  const AuthState({this.status = AuthStatus.unknown, this.user, this.error});\n\n  AuthState copyWith({AuthStatus? status, User? user, String? error}) {\n    return AuthState(\n      status: status ?? this.status,\n      user: user ?? this.user,\n      error: error ?? this.error,\n    );\n  }\n\n  @override\n  List<Object?> get props => [status, user, error];\n}\n\nabstract class AuthEvent extends Equatable {\n  const AuthEvent();\n  @override\n  List<Object?> get props => [];\n}\n\nclass AppStarted extends AuthEvent {}\nclass SignInRequested extends AuthEvent {\n  final String email;\n  final String password;\n  const SignInRequested(this.email, this.password);\n}\nclass SignUpRequested extends AuthEvent {\n  final String email;\n  final String password;\n  const SignUpRequested(this.email, this.password);\n}\nclass SignOutRequested extends AuthEvent {}\nclass AuthStateChanged extends AuthEvent {\n  final User? user;\n  const AuthStateChanged(this.user);\n}\n\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  final MockFirebaseAuth _auth = MockFirebaseAuth();\n\n  AuthBloc() : super(const AuthState()) {\n    on<AppStarted>(_onAppStarted);\n    on<SignInRequested>(_onSignInRequested);\n    on<SignUpRequested>(_onSignUpRequested);\n    on<SignOutRequested>(_onSignOutRequested);\n    on<AuthStateChanged>(_onAuthStateChanged);\n\n    _auth.authStateChanges().listen((user) {\n      add(AuthStateChanged(user));\n    });\n  }\n\n  void _onAppStarted(AppStarted event, Emitter<AuthState> emit) {}\n\n  Future<void> _onSignInRequested(SignInRequested event, Emitter<AuthState> emit) async {\n    emit(state.copyWith(status: AuthStatus.unknown));\n    try {\n      await _auth.signInWithEmailAndPassword(event.email, event.password);\n    } catch (e) {\n      emit(state.copyWith(status: AuthStatus.unauthenticated, error: e.toString()));\n    }\n  }\n\n  Future<void> _onSignUpRequested(SignUpRequested event, Emitter<AuthState> emit) async {\n    emit(state.copyWith(status: AuthStatus.unknown));\n    try {\n      await _auth.createUserWithEmailAndPassword(event.email, event.password);\n    } catch (e) {\n      emit(state.copyWith(status: AuthStatus.unauthenticated, error: e.toString()));\n    }\n  }\n\n  Future<void> _onSignOutRequested(SignOutRequested event, Emitter<AuthState> emit) async {\n    await _auth.signOut();\n  }\n\n  void _onAuthStateChanged(AuthStateChanged event, Emitter<AuthState> emit) {\n    if (event.user != null) {\n      emit(state.copyWith(status: AuthStatus.authenticated, user: event.user, error: null));\n    } else {\n      emit(state.copyWith(status: AuthStatus.unauthenticated, user: null, error: null));\n    }\n  }\n}\n\n// ---------- UI ----------\nvoid main() {\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => AuthBloc()..add(AppStarted()),\n        child: AuthWrapper(),\n      ),\n    );\n  }\n}\n\nclass AuthWrapper extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocBuilder<AuthBloc, AuthState>(\n      builder: (context, state) {\n        if (state.status == AuthStatus.authenticated) {\n          return HomePage(user: state.user!);\n        } else if (state.status == AuthStatus.unauthenticated) {\n          return LoginPage();\n        } else {\n          return Scaffold(body: Center(child: CircularProgressIndicator()));\n        }\n      },\n    );\n  }\n}\n\nclass LoginPage extends StatefulWidget {\n  @override\n  _LoginPageState createState() => _LoginPageState();\n}\n\nclass _LoginPageState extends State<LoginPage> {\n  final _emailController = TextEditingController();\n  final _passwordController = TextEditingController();\n  bool _isLogin = true;\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Firebase Auth Demo')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            TextField(\n              controller: _emailController,\n              decoration: InputDecoration(labelText: 'Email'),\n            ),\n            TextField(\n              controller: _passwordController,\n              decoration: InputDecoration(labelText: 'Password'),\n              obscureText: true,\n            ),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () {\n                if (_isLogin) {\n                  context.read<AuthBloc>().add(SignInRequested(\n                    _emailController.text,\n                    _passwordController.text,\n                  ));\n                } else {\n                  context.read<AuthBloc>().add(SignUpRequested(\n                    _emailController.text,\n                    _passwordController.text,\n                  ));\n                }\n              },\n              child: Text(_isLogin ? 'Login' : 'Sign Up'),\n            ),\n            TextButton(\n              onPressed: () => setState(() => _isLogin = !_isLogin),\n              child: Text(_isLogin ? 'Create account' : 'Already have an account?'),\n            ),\n            if (context.watch<AuthBloc>().state.error != null)\n              Text(\n                'Error: ${context.watch<AuthBloc>().state.error}',\n                style: TextStyle(color: Colors.red),\n              ),\n            SizedBox(height: 20),\n            Text('Demo credentials: test@example.com / password', style: TextStyle(fontSize: 12)),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  final User user;\n  const HomePage({required this.user});\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(\n        title: Text('Welcome ${user.email}'),\n        actions: [\n          IconButton(\n            icon: Icon(Icons.logout),\n            onPressed: () => context.read<AuthBloc>().add(SignOutRequested()),\n          ),\n        ],\n      ),\n      body: Center(\n        child: Text('This is your dashboard.\\nFirestore integration would go here.',\n          textAlign: TextAlign.center),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What method of FirebaseAuth is used to listen to authentication state changes?",
+      "options": ["onAuthStateChanged", "authStateChanges()", "userChanges()", "idTokenChanges()"],
+      "answer": 1
+    },
+    {
+      "question": "How should you manage Firestore stream subscriptions in a BLoC to avoid memory leaks?",
+      "options": [
+        "Use a global variable",
+        "Cancel them in the close() method",
+        "Let them run forever",
+        "Use a StreamBuilder"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What pattern is recommended to abstract Firebase logic from BLoCs?",
+      "options": ["Repository pattern", "Singleton pattern", "Factory pattern", "Observer pattern"],
+      "answer": 0
+    },
+    {
+      "question": "How does Firestore handle offline persistence?",
+      "options": [
+        "It requires manual setup",
+        "It caches data automatically",
+        "It does not support offline",
+        "Only works on Android"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-logging",
+    "firebase-flutter-tutorial",
+    "bloc-performance"
+  ]
+}

@@ -1,0 +1,252 @@
+{
+  "slug": "bloc-logging",
+  "course": "Flutter",
+  "title": "BLoC Logging: Comprehensive Guide to Debugging & Monitoring",
+  "meta": {
+    "title": "BLoC Logging – Debug & Monitor State Changes, Events & Errors (2026)",
+    "description": "Learn how to implement effective logging in your BLoC architecture. Use BlocObserver to log events, state changes, and errors. Integrate with analytics, crash reporting, and debug tools.",
+    "keywords": [
+      "Flutter BLoC logging",
+      "BlocObserver logging",
+      "debug BLoC",
+      "log events and states",
+      "BLoC analytics",
+      "monitor BLoC",
+      "bloc logger",
+      "BLoC debugging"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BLoC Logging?"
+    },
+    {
+      "type": "text",
+      "value": "BLoC logging refers to the practice of recording events, state changes, and errors that occur within your BLoCs and Cubits. Using a custom `BlocObserver`, you can intercept every event dispatched, every state emitted, and any error thrown. This gives you deep visibility into your app's behavior, making debugging easier, helping you track user flows, and enabling integration with analytics and crash reporting tools."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Logging in BLoC?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Debugging** – Quickly identify what events led to a certain state.",
+        "**Audit Trails** – Understand user actions and system behavior.",
+        "**Performance Monitoring** – Track how often events are triggered.",
+        "**Crash Reporting** – Attach BLoC context to crash reports.",
+        "**Analytics** – Send meaningful user events to analytics platforms.",
+        "**Testing** – Verify that events and states flow as expected during development."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up a Basic BlocObserver"
+    },
+    {
+      "type": "text",
+      "value": "Create a class that extends `BlocObserver` and override the methods you want to log. Then set it as the global observer before running the app."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter_bloc/flutter_bloc.dart';\n\nclass SimpleBlocObserver extends BlocObserver {\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    super.onChange(bloc, change);\n    print('${bloc.runtimeType} - $change');\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    super.onError(bloc, error, stackTrace);\n    print('${bloc.runtimeType} ERROR: $error\\n$stackTrace');\n  }\n}\n\nvoid main() {\n  Bloc.observer = SimpleBlocObserver();\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced Logging with Logging Levels"
+    },
+    {
+      "type": "text",
+      "value": "For production, you may want to control verbosity. You can use a logging package like `logger` or create your own with levels (debug, info, warning, error)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:logger/logger.dart';\n\nclass AdvancedBlocObserver extends BlocObserver {\n  final Logger logger = Logger();\n\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    super.onChange(bloc, change);\n    logger.d('${bloc.runtimeType} - $change');\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    super.onTransition(bloc, transition);\n    logger.i('${bloc.runtimeType} - $transition');\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    super.onError(bloc, error, stackTrace);\n    logger.e('${bloc.runtimeType} ERROR: $error', error: error, stackTrace: stackTrace);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Logging Events with Custom Data"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want to add context (e.g., user ID, session ID) to every log. You can extend the observer to include such data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ContextualBlocObserver extends BlocObserver {\n  final String userId;\n\n  ContextualBlocObserver(this.userId);\n\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    super.onChange(bloc, change);\n    print('[$userId] ${bloc.runtimeType} - $change');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Integrating with Crash Reporting (Firebase Crashlytics)"
+    },
+    {
+      "type": "text",
+      "value": "You can send BLoC errors to crash reporting tools for analysis."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:firebase_crashlytics/firebase_crashlytics.dart';\n\nclass CrashlyticsBlocObserver extends BlocObserver {\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    super.onError(bloc, error, stackTrace);\n    FirebaseCrashlytics.instance.recordError(\n      error,\n      stackTrace,\n      reason: 'Error in ${bloc.runtimeType}',\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Logging Transitions vs Changes"
+    },
+    {
+      "type": "text",
+      "value": "`onChange` is called for every state change in any `BlocBase` (both BLoC and Cubit). `onTransition` is called only for BLoCs and provides the event that triggered the transition. Use `onTransition` when you need the event context."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@override\nvoid onTransition(Bloc bloc, Transition transition) {\n  super.onTransition(bloc, transition);\n  print('${bloc.runtimeType} Event: ${transition.event} | CurrentState: ${transition.currentState} | NextState: ${transition.nextState}');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Formatting Logs for Readability"
+    },
+    {
+      "type": "text",
+      "value": "To make logs easier to parse, use consistent formatting and colors. The `logger` package can output colored logs in the console."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final logger = Logger(\n  printer: PrettyPrinter(\n    methodCount: 0,\n    errorMethodCount: 5,\n    lineLength: 80,\n    colors: true,\n    printEmojis: true,\n  ),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Conditional Logging for Different Environments"
+    },
+    {
+      "type": "text",
+      "value": "You may want to enable verbose logging only in development. Use `kReleaseMode` to conditionally register observers."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter/foundation.dart';\n\nvoid main() {\n  if (kDebugMode) {\n    Bloc.observer = VerboseBlocObserver();\n  } else {\n    // In release, maybe only errors\n    Bloc.observer = ErrorOnlyBlocObserver();\n  }\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Logging to Files or Remote Services"
+    },
+    {
+      "type": "text",
+      "value": "For production monitoring, you can send logs to a remote service (e.g., Sentry, Datadog). Use an observer that asynchronously sends data."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class RemoteLoggingObserver extends BlocObserver {\n  final RemoteLoggingService loggingService;\n\n  RemoteLoggingObserver(this.loggingService);\n\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    super.onChange(bloc, change);\n    loggingService.log('${bloc.runtimeType} - $change');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use a single observer** – One global observer is enough; compose multiple handlers inside it if needed.",
+        "**Avoid heavy work in observers** – Logging should be fast and non‑blocking.",
+        "**Don’t log sensitive data** – Avoid logging passwords, tokens, or PII.",
+        "**Use log levels** – Differentiate between debug, info, warning, error.",
+        "**Attach context** – Include user ID, session, or feature flags in logs when possible.",
+        "**Format consistently** – Makes logs easier to search and parse.",
+        "**Test observer in isolation** – Ensure it doesn’t break the app if the logging service fails."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Logging inside event handlers** – Creates duplication and mixes concerns; use observer instead.",
+        "❌ **Forgetting to call super methods** – Breaks internal observer chain.",
+        "❌ **Logging excessively in production** – Can impact performance and fill storage.",
+        "❌ **Not sanitizing logs** – May expose sensitive information.",
+        "❌ **Using print() instead of a proper logger** – print is hard to control and disable.",
+        "❌ **Blocking the main thread with I/O** – If writing to disk or network, do it asynchronously."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "BLoC logging with a custom `BlocObserver` gives you unparalleled insight into your app's state management. Whether you're debugging locally or monitoring in production, logging helps you understand user flows, catch errors early, and improve overall app quality. By following best practices and integrating with modern logging and crash reporting tools, you can build robust, observable Flutter applications."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I have multiple BlocObservers?",
+      "answer": "No, only one observer can be set globally. However, you can create a composite observer that delegates to multiple handlers (e.g., one for printing, one for analytics)."
+    },
+    {
+      "question": "Will logging affect performance?",
+      "answer": "Minimally, if done correctly. Avoid heavy operations like synchronous file writes. Use asynchronous logging if necessary. In production, you can reduce verbosity."
+    },
+    {
+      "question": "How do I log Cubit changes?",
+      "answer": "`onChange` is called for both Cubit and BLoC state changes. Use that method to log state changes for Cubits."
+    },
+    {
+      "question": "Can I get the event that caused a state change in a Cubit?",
+      "answer": "No, Cubits don't have events. Use a BLoC if you need to log the triggering event."
+    },
+    {
+      "question": "How do I log only specific BLoCs?",
+      "answer": "In the observer, you can check `bloc.runtimeType` and filter. Or you can implement a conditional inside the method."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\n// ---------- Custom BlocObserver ----------\nclass SimpleBlocObserver extends BlocObserver {\n  @override\n  void onChange(BlocBase bloc, Change change) {\n    super.onChange(bloc, change);\n    // In a real app, use a proper logger\n    print('========================================');\n    print('${bloc.runtimeType} - CHANGE');\n    print('  currentState: ${change.currentState}');\n    print('  nextState: ${change.nextState}');\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    super.onTransition(bloc, transition);\n    print('${bloc.runtimeType} - TRANSITION');\n    print('  event: ${transition.event}');\n    print('  currentState: ${transition.currentState}');\n    print('  nextState: ${transition.nextState}');\n  }\n\n  @override\n  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {\n    super.onError(bloc, error, stackTrace);\n    print('${bloc.runtimeType} - ERROR: $error');\n  }\n}\n\n// ---------- Counter BLoC ----------\nclass CounterState extends Equatable {\n  final int value;\n  const CounterState(this.value);\n  @override\n  List<Object?> get props => [value];\n}\n\nabstract class CounterEvent extends Equatable {\n  const CounterEvent();\n  @override\n  List<Object?> get props => [];\n}\n\nclass Increment extends CounterEvent {}\nclass Decrement extends CounterEvent {}\nclass ThrowError extends CounterEvent {}\n\nclass CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(const CounterState(0)) {\n    on<Increment>((event, emit) => emit(CounterState(state.value + 1)));\n    on<Decrement>((event, emit) => emit(CounterState(state.value - 1)));\n    on<ThrowError>((event, emit) {\n      throw Exception('Simulated error from CounterBloc');\n    });\n  }\n}\n\n// ---------- App ----------\nvoid main() {\n  // Set the global observer\n  Bloc.observer = SimpleBlocObserver();\n  runApp(MyApp());\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterBloc(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('BLoC Logging Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            BlocBuilder<CounterBloc, CounterState>(\n              builder: (context, state) {\n                return Text('Count: ${state.value}', style: TextStyle(fontSize: 32));\n              },\n            ),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(Increment()),\n                  child: Text('+'),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(Decrement()),\n                  child: Text('-'),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterBloc>().add(ThrowError()),\n                  child: Text('Throw Error'),\n                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),\n                ),\n              ],\n            ),\n            SizedBox(height: 20),\n            Text('Check the console for logs!', style: TextStyle(fontSize: 12)),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which class should you extend to create a custom BLoC logger?",
+      "options": ["BlocLogger", "BlocObserver", "BlocListener", "BlocDelegate"],
+      "answer": 1
+    },
+    {
+      "question": "What method is called for every state change in both BLoCs and Cubits?",
+      "options": ["onTransition", "onChange", "onEvent", "onStateChanged"],
+      "answer": 1
+    },
+    {
+      "question": "How do you set the global observer?",
+      "options": [
+        "Bloc.observer = MyObserver()",
+        "BlocObserver.set(MyObserver())",
+        "MyObserver.register()",
+        "It's automatic"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "Why might you avoid logging in production?",
+      "options": [
+        "Logs are always harmful",
+        "Performance impact and sensitive data exposure",
+        "Flutter doesn't support logging in release",
+        "Observers don't work in release mode"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-global-error-handler",
+    "bloc-performance",
+    "flutter-logging",
+    "firebase-crashlytics-flutter"
+  ]
+}

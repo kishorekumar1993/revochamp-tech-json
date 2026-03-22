@@ -1,0 +1,233 @@
+{
+  "slug": "bloc-testing",
+  "course": "Flutter",
+  "title": "BLoC Testing: Write Robust Tests for Your BLoCs & Cubits",
+  "meta": {
+    "title": "BLoC Testing – Unit Tests, blocTest, Mocking & Best Practices (2026)",
+    "description": "Learn how to test BLoC and Cubit classes effectively using blocTest, mocktail, and dependency injection. Master testing event handlers, state transitions, and error scenarios.",
+    "keywords": [
+      "Flutter BLoC testing",
+      "blocTest",
+      "mocktail bloc",
+      "test bloc events",
+      "cubit testing",
+      "bloc unit tests",
+      "flutter_bloc test",
+      "bloc integration tests"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Testing is a critical part of building reliable Flutter applications. With the BLoC pattern, you can easily test your business logic in isolation without dealing with UI. This guide covers everything you need to know about testing BLoCs and Cubits – from simple unit tests to advanced scenarios using `blocTest`, mocking dependencies, and testing error handling."
+    },
+    {
+      "type": "heading",
+      "value": "Why Test BLoCs?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Isolated Logic** – BLoCs contain pure business logic, making them ideal for unit tests.",
+        "**Predictable State Transitions** – Given an event and initial state, the emitted states should be deterministic.",
+        "**Catch Bugs Early** – Ensure your state changes behave as expected before they reach the UI.",
+        "**Refactor with Confidence** – Tests give you safety when changing internal implementations.",
+        "**Documentation** – Tests serve as living documentation of how your BLoC should behave."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Testing Dependencies"
+    },
+    {
+      "type": "text",
+      "value": "Add the required packages to your `pubspec.yaml` dev dependencies:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dev_dependencies:\n  flutter_test:\n    sdk: flutter\n  bloc_test: ^9.1.5\n  mocktail: ^1.0.0\n  equatable: ^2.0.5"
+    },
+    {
+      "type": "heading",
+      "value": "Testing a Simple Cubit"
+    },
+    {
+      "type": "text",
+      "value": "Let's start with a simple counter Cubit. The `blocTest` function from `bloc_test` is the main tool for testing BLoCs and Cubits."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:bloc_test/bloc_test.dart';\nimport 'package:flutter_test/flutter_test.dart';\n\nclass CounterCubit extends Cubit<int> {\n  CounterCubit() : super(0);\n\n  void increment() => emit(state + 1);\n  void decrement() => emit(state - 1);\n}\n\nvoid main() {\n  group('CounterCubit', () {\n    blocTest<CounterCubit, int>(\n      'emits [1] when increment is called',\n      build: () => CounterCubit(),\n      act: (cubit) => cubit.increment(),\n      expect: () => [1],\n    );\n\n    blocTest<CounterCubit, int>(\n      'emits [-1] when decrement is called',\n      build: () => CounterCubit(),\n      act: (cubit) => cubit.decrement(),\n      expect: () => [-1],\n    );\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing a Bloc with Events"
+    },
+    {
+      "type": "text",
+      "value": "For BLoCs that use events, the pattern is similar. You provide events to `act` and expected states to `expect`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterBloc extends Bloc<CounterEvent, int> {\n  CounterBloc() : super(0) {\n    on<Increment>((event, emit) => emit(state + 1));\n    on<Decrement>((event, emit) => emit(state - 1));\n  }\n}\n\nvoid main() {\n  group('CounterBloc', () {\n    blocTest<CounterBloc, int>(\n      'emits [1] when Increment is added',\n      build: () => CounterBloc(),\n      act: (bloc) => bloc.add(Increment()),\n      expect: () => [1],\n    );\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing with Dependencies (Mocking)"
+    },
+    {
+      "type": "text",
+      "value": "Most real‑world BLoCs depend on repositories or services. Use `mocktail` to mock dependencies and control their behavior. The `build` function can create the BLoC with mocked dependencies."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class UserRepository {\n  Future<User> getUser(String id) async { ... }\n}\n\nclass UserBloc extends Bloc<UserEvent, UserState> {\n  final UserRepository repository;\n\n  UserBloc(this.repository) : super(UserInitial()) {\n    on<LoadUser>(_onLoadUser);\n  }\n\n  Future<void> _onLoadUser(LoadUser event, Emitter<UserState> emit) async {\n    emit(UserLoading());\n    try {\n      final user = await repository.getUser(event.id);\n      emit(UserLoaded(user));\n    } catch (e) {\n      emit(UserError(e.toString()));\n    }\n  }\n}\n\n// Test\nimport 'package:mocktail/mocktail.dart';\n\nclass MockUserRepository extends Mock implements UserRepository {}\n\nvoid main() {\n  late MockUserRepository mockRepository;\n\n  setUp(() {\n    mockRepository = MockUserRepository();\n  });\n\n  group('UserBloc', () {\n    blocTest<UserBloc, UserState>(\n      'emits [UserLoading, UserLoaded] when user is found',\n      build: () => UserBloc(mockRepository),\n      setUp: () {\n        when(() => mockRepository.getUser('123'))\n            .thenAnswer((_) async => User(id: '123', name: 'John'));\n      },\n      act: (bloc) => bloc.add(LoadUser('123')),\n      expect: () => [\n        UserLoading(),\n        UserLoaded(User(id: '123', name: 'John')),\n      ],\n    );\n\n    blocTest<UserBloc, UserState>(\n      'emits [UserLoading, UserError] when repository throws',\n      build: () => UserBloc(mockRepository),\n      setUp: () {\n        when(() => mockRepository.getUser('123'))\n            .thenThrow(Exception('Not found'));\n      },\n      act: (bloc) => bloc.add(LoadUser('123')),\n      expect: () => [\n        UserLoading(),\n        UserError('Exception: Not found'),\n      ],\n    );\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing State Equality with Equatable"
+    },
+    {
+      "type": "text",
+      "value": "Use `Equatable` in your state classes so that `blocTest` can correctly compare expected and actual states. Without proper equality, tests may fail even if the data is the same."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@immutable\nclass UserState extends Equatable {\n  final User? user;\n  final String? error;\n  final bool isLoading;\n\n  const UserState({this.user, this.error, this.isLoading = false});\n\n  @override\n  List<Object?> get props => [user, error, isLoading];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing with Streams and emit.forEach"
+    },
+    {
+      "type": "text",
+      "value": "If your BLoC uses `emit.forEach`, you can test it by providing a controlled stream. Use `StreamController` to emit values during the test."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TimerBloc extends Bloc<TimerEvent, TimerState> {\n  TimerBloc() : super(TimerInitial()) {\n    on<TimerStarted>(_onTimerStarted);\n  }\n\n  Future<void> _onTimerStarted(TimerStarted event, Emitter<TimerState> emit) async {\n    await emit.forEach(\n      _tickStream(event.duration),\n      onData: (duration) => TimerRunInProgress(duration),\n    );\n    emit(TimerRunComplete());\n  }\n\n  Stream<int> _tickStream(int duration) async* {\n    for (int i = duration; i >= 0; i--) {\n      await Future.delayed(Duration(seconds: 1));\n      yield i;\n    }\n  }\n}\n\n// Test\nblocTest<TimerBloc, TimerState>(\n  'emits progress and complete',\n  build: () => TimerBloc(),\n  act: (bloc) => bloc.add(TimerStarted(2)),\n  expect: () => [\n    TimerRunInProgress(2),\n    TimerRunInProgress(1),\n    TimerRunInProgress(0),\n    TimerRunComplete(),\n  ],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Testing BlocObserver"
+    },
+    {
+      "type": "text",
+      "value": "You can test custom `BlocObserver` by creating a test observer and verifying that methods are called."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TestObserver extends BlocObserver {\n  List<BlocEvent> events = [];\n  List<Transition> transitions = [];\n\n  @override\n  void onEvent(Bloc bloc, Object? event) {\n    events.add(BlocEvent(bloc.runtimeType, event));\n    super.onEvent(bloc, event);\n  }\n\n  @override\n  void onTransition(Bloc bloc, Transition transition) {\n    transitions.add(transition);\n    super.onTransition(bloc, transition);\n  }\n}\n\nvoid main() {\n  test('observer records events and transitions', () {\n    final observer = TestObserver();\n    Bloc.observer = observer;\n\n    final bloc = CounterBloc();\n    bloc.add(Increment());\n\n    expect(observer.events.length, 1);\n    expect(observer.transitions.length, 1);\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `blocTest`** – It provides a clean, declarative API for testing state emissions.",
+        "**Mock dependencies with `mocktail`** – Avoid using real network/database calls in unit tests.",
+        "**Use `Equatable` in states** – Simplifies equality comparisons in tests.",
+        "**Test error cases** – Ensure your BLoC handles exceptions and emits error states.",
+        "**Keep tests focused** – Test one scenario per `blocTest`.",
+        "**Use `setUp` and `tearDown`** – Reset mocks and observers between tests.",
+        "**Avoid `async` in `act`** – `blocTest` handles async automatically; just add events.",
+        "**Use `skip` to ignore initial state** – If you don't want to verify the starting state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not mocking dependencies** – Tests become slow and unreliable.\n✅ Always mock external services.",
+        "❌ **Using `expect` inside `act`** – Causes race conditions; use the `expect` parameter of `blocTest`.",
+        "❌ **Forgetting to register adapters for Hive** – Tests will fail when using real Hive.\n✅ Use in‑memory boxes or mock Hive.",
+        "❌ **Testing UI together with BLoC** – Should be separate; BLoC tests should be pure Dart tests (no `WidgetTester`).",
+        "❌ **Ignoring state equality** – Leads to false negatives.\n✅ Implement `==` or use Equatable."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Testing BLoCs is straightforward with the `bloc_test` package. By isolating business logic, mocking dependencies, and using `blocTest`, you can write comprehensive tests that verify state transitions, error handling, and edge cases. A well‑tested BLoC layer gives you confidence to refactor and add features without breaking existing functionality."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `blocTest` and manually testing with `Stream`?",
+      "answer": "`blocTest` handles subscription management, waiting for emissions, and timeouts automatically. It reduces boilerplate and is the recommended way to test BLoCs."
+    },
+    {
+      "question": "Can I test BLoCs that use `emit.forEach`?",
+      "answer": "Yes, `blocTest` works with any BLoC that emits states over time. The test will wait until all expected states are emitted or until a timeout."
+    },
+    {
+      "question": "How do I test a BLoC that uses `debounceTime` or other stream transformers?",
+      "answer": "You can use `blocTest` with `skip` to ignore intermediate states, or use `wait` to let the debounce complete. Alternatively, mock the time with `FakeAsync` for precise control."
+    },
+    {
+      "question": "Should I test BLoCs in integration tests?",
+      "answer": "Unit tests are sufficient for BLoC logic. Integration tests should verify that UI interacts correctly with the BLoC, but the BLoC itself can be unit tested separately."
+    },
+    {
+      "question": "How do I test a Cubit that has asynchronous operations?",
+      "answer": "`blocTest` works the same for Cubits. Use `act` to call the asynchronous method and `expect` to verify the emitted states."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\nvoid main() => runApp(MyApp());\n\nclass CounterCubit extends Cubit<int> {\n  CounterCubit() : super(0);\n  void increment() => emit(state + 1);\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final cubit = context.watch<CounterCubit>();\n    return Scaffold(\n      appBar: AppBar(title: Text('Counter')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Count:', style: TextStyle(fontSize: 20)),\n            Text('${cubit.state}', style: TextStyle(fontSize: 40)),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: cubit.increment,\n              child: Text('Increment'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which function is the primary tool for testing BLoCs in the bloc_test package?",
+      "options": ["testBloc", "blocTest", "BlocTester", "testState"],
+      "answer": 1
+    },
+    {
+      "question": "How do you mock dependencies in BLoC tests?",
+      "options": [
+        "Use real implementations",
+        "Use mocktail or Mockito",
+        "Use setState",
+        "Use Future.delayed"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Why is Equatable recommended for BLoC states?",
+      "options": [
+        "It improves performance",
+        "It simplifies state equality comparison",
+        "It adds encryption",
+        "It provides automatic JSON serialization"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-error-handling",
+    "bloc-concurrency",
+    "bloc-rebuild-optimization"
+  ]
+}

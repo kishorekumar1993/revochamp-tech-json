@@ -1,0 +1,240 @@
+{
+  "slug": "bloc-offline-support",
+  "course": "Flutter",
+  "title": "BLoC Offline Support: Building Offline-First Apps with Hydrated Bloc & Queue",
+  "meta": {
+    "title": "BLoC Offline Support – Hydrated Bloc, Offline Queue & Sync (2026)",
+    "description": "Learn how to add offline support to your BLoC apps using hydrated_bloc for state persistence and an offline queue to sync mutations when connectivity returns.",
+    "keywords": [
+      "Flutter offline support",
+      "BLoC offline",
+      "hydrated_bloc",
+      "offline-first Flutter",
+      "persist BLoC state",
+      "offline queue Flutter",
+      "flutter_bloc offline",
+      "BLoC sync",
+      "Flutter connectivity"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BLoC Offline Support?"
+    },
+    {
+      "type": "text",
+      "value": "Offline support in BLoC refers to the ability to persist your app’s state and queue user actions (like adding, editing, or deleting data) when the device is offline. Once connectivity is restored, the queued actions are automatically synchronized with your backend. This creates a seamless user experience regardless of network availability."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Offline Support?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Better User Experience** – Users can continue using the app even without internet.",
+        "**Data Integrity** – Changes are stored locally and synced later, preventing data loss.",
+        "**Performance** – Reduces unnecessary network calls by serving cached data first.",
+        "**Reliability** – Handles network interruptions gracefully.",
+        "**Offline‑First Architecture** – Builds apps that work everywhere, even in low‑connectivity areas."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Hydrated Bloc"
+    },
+    {
+      "type": "text",
+      "value": "`hydrated_bloc` is an extension of `flutter_bloc` that automatically persists your state to disk. Add the required dependencies:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter_bloc: ^8.1.5\n  hydrated_bloc: ^9.1.5\n  path_provider: ^2.1.3\n  equatable: ^2.0.5\n  connectivity_plus: ^5.0.0"
+    },
+    {
+      "type": "text",
+      "value": "Initialize `HydratedBloc` before running the app. You need to provide a storage directory, usually from `path_provider`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  final storage = await HydratedStorage.build(\n    storageDirectory: await getApplicationDocumentsDirectory(),\n  );\n  HydratedBloc.storage = storage;\n  runApp(MyApp());\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Making a Bloc Hydrated"
+    },
+    {
+      "type": "text",
+      "value": "To make a BLoC persist its state, extend `HydratedBloc` instead of `Bloc` and override `fromJson` and `toJson` to serialize your state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterBloc extends HydratedBloc<CounterEvent, int> {\n  CounterBloc() : super(0);\n\n  @override\n  Stream<int> mapEventToState(CounterEvent event) async* {\n    if (event is Increment) {\n      yield state + 1;\n    } else if (event is Decrement) {\n      yield state - 1;\n    }\n  }\n\n  @override\n  int fromJson(Map<String, dynamic> json) => json['value'] as int;\n\n  @override\n  Map<String, dynamic> toJson(int state) => {'value': state};\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Complex State"
+    },
+    {
+      "type": "text",
+      "value": "For more complex states, make sure all fields are serializable. Use `equatable` to simplify comparisons and serialization."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@immutable\nclass TodoState extends Equatable {\n  final List<Todo> todos;\n  final bool isLoading;\n  final String? error;\n\n  const TodoState({required this.todos, this.isLoading = false, this.error});\n\n  TodoState copyWith({List<Todo>? todos, bool? isLoading, String? error}) {\n    return TodoState(\n      todos: todos ?? this.todos,\n      isLoading: isLoading ?? this.isLoading,\n      error: error ?? this.error,\n    );\n  }\n\n  @override\n  List<Object?> get props => [todos, isLoading, error];\n\n  Map<String, dynamic> toJson() => {\n    'todos': todos.map((t) => t.toJson()).toList(),\n    'isLoading': isLoading,\n    'error': error,\n  };\n\n  factory TodoState.fromJson(Map<String, dynamic> json) {\n    return TodoState(\n      todos: (json['todos'] as List).map((t) => Todo.fromJson(t)).toList(),\n      isLoading: json['isLoading'] ?? false,\n      error: json['error'],\n    );\n  }\n}\n\nclass TodoBloc extends HydratedBloc<TodoEvent, TodoState> {\n  TodoBloc() : super(const TodoState(todos: []));\n\n  @override\n  TodoState fromJson(Map<String, dynamic> json) => TodoState.fromJson(json);\n\n  @override\n  Map<String, dynamic> toJson(TodoState state) => state.toJson();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Offline Queue Pattern"
+    },
+    {
+      "type": "text",
+      "value": "State persistence handles read operations. For mutations (POST, PUT, DELETE), you need a queue that stores pending operations when offline and replays them when online. Below is a simple queue implementation using `GetStorage` (or any persistent storage)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PendingOperation {\n  final String type; // e.g., 'ADD_TODO', 'DELETE_TODO'\n  final Map<String, dynamic> data;\n  final DateTime timestamp;\n\n  PendingOperation({required this.type, required this.data, required this.timestamp});\n\n  Map<String, dynamic> toJson() => {\n    'type': type,\n    'data': data,\n    'timestamp': timestamp.toIso8601String(),\n  };\n\n  factory PendingOperation.fromJson(Map<String, dynamic> json) => PendingOperation(\n    type: json['type'],\n    data: json['data'],\n    timestamp: DateTime.parse(json['timestamp']),\n  );\n}\n\nclass OfflineQueue {\n  final List<PendingOperation> _queue = [];\n  final storage = GetStorage(); // Or use Hive/SQLite\n\n  OfflineQueue() {\n    _load();\n  }\n\n  void add(PendingOperation operation) {\n    _queue.add(operation);\n    _save();\n  }\n\n  void remove(int index) {\n    _queue.removeAt(index);\n    _save();\n  }\n\n  List<PendingOperation> get operations => List.unmodifiable(_queue);\n\n  void _save() {\n    storage.write('offline_queue', _queue.map((op) => op.toJson()).toList());\n  }\n\n  void _load() {\n    final data = storage.read<List>('offline_queue');\n    if (data != null) {\n      _queue.addAll(data.map((e) => PendingOperation.fromJson(e)));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Syncing the Queue"
+    },
+    {
+      "type": "text",
+      "value": "Use a sync service that processes the queue when connectivity returns. It can be triggered by a connectivity listener."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SyncService {\n  final OfflineQueue queue;\n  final ApiClient api;\n\n  SyncService(this.queue, this.api);\n\n  Future<void> sync() async {\n    final operations = queue.operations;\n    for (int i = 0; i < operations.length; i++) {\n      final op = operations[i];\n      try {\n        switch (op.type) {\n          case 'ADD_TODO':\n            await api.addTodo(Todo.fromJson(op.data));\n            break;\n          case 'DELETE_TODO':\n            await api.deleteTodo(op.data['id']);\n            break;\n        }\n        queue.remove(i);\n        i--; // adjust index after removal\n      } catch (e) {\n        // Implement retry logic (e.g., exponential backoff)\n      }\n    }\n  }\n}\n\nclass ConnectivityService {\n  final Connectivity connectivity;\n  final SyncService syncService;\n\n  ConnectivityService(this.connectivity, this.syncService) {\n    connectivity.onConnectivityChanged.listen((result) {\n      if (result != ConnectivityResult.none) {\n        syncService.sync();\n      }\n    });\n  }\n}"
+    },
+    {
+      "type": "text",
+      "value": "In your BLoC, check connectivity before performing a mutation. If offline, queue the operation and update the state optimistically."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TodoBloc extends Bloc<TodoEvent, TodoState> {\n  final ApiClient api;\n  final OfflineQueue queue;\n  final Connectivity connectivity;\n\n  TodoBloc({required this.api, required this.queue, required this.connectivity}) : super(TodoState.initial());\n\n  @override\n  Stream<TodoState> mapEventToState(TodoEvent event) async* {\n    if (event is AddTodo) {\n      final isOnline = await connectivity.checkConnectivity() != ConnectivityResult.none;\n      if (isOnline) {\n        try {\n          final todo = await api.addTodo(event.todo);\n          yield state.copyWith(todos: [...state.todos, todo]);\n        } catch (e) {\n          yield state.copyWith(error: e.toString());\n        }\n      } else {\n        // Offline: queue and update optimistically\n        queue.add(PendingOperation(\n          type: 'ADD_TODO',\n          data: event.todo.toJson(),\n          timestamp: DateTime.now(),\n        ));\n        yield state.copyWith(todos: [...state.todos, event.todo]);\n      }\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Conflict Resolution"
+    },
+    {
+      "type": "text",
+      "value": "When syncing, conflicts may arise (e.g., an item was deleted remotely but edited offline). Common strategies include:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Last Write Wins** – Compare timestamps and keep the latest version.",
+        "**Manual Merge** – Show a conflict resolution UI for the user to decide.",
+        "**Accept Server State** – Overwrite local changes with the server version, then reapply queued operations if possible.",
+        "**Version Vectors** – Use vector clocks to track changes across multiple devices."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use `HydratedBloc` for UI state** – Keep large datasets in a separate local database.",
+        "**Separate queue from BLoC** – Offline queue management belongs in a dedicated service.",
+        "**Implement optimistic updates** – Update the UI immediately when offline, then sync later.",
+        "**Include timestamps** – Helps with ordering and conflict resolution.",
+        "**Test offline scenarios** – Simulate network changes using `flutter_offline` or connectivity mocks.",
+        "**Limit queue size** – Prevent unbounded growth by setting a maximum number of pending operations."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Storing large data in hydrated_bloc** – Performance issues.\n✅ Use SQLite/Hive for large collections; keep only UI state in hydrated_bloc.",
+        "❌ **Not handling sync errors** – Failed operations get stuck.\n✅ Implement retry logic with exponential backoff.",
+        "❌ **Forgetting to update state after sync** – UI may become inconsistent.\n✅ After successful sync, refresh the state from the server or re‑fetch data.",
+        "❌ **Missing `HydratedBloc` initialization** – Causes runtime errors.\n✅ Always set `HydratedBloc.storage` before `runApp`.",
+        "❌ **Ignoring race conditions during sync** – Concurrent syncs can cause duplicates.\n✅ Use a flag to prevent multiple syncs running simultaneously."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Offline support in BLoC apps is achievable by combining `hydrated_bloc` for state persistence with a custom queue for pending mutations. This approach gives users a seamless experience even without connectivity, and automatically syncs when the network returns. With careful conflict handling, you can build robust offline-first Flutter applications."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use HydratedBloc with multiple blocs?",
+      "answer": "Yes, each bloc can be hydrated independently. HydratedBloc uses a separate storage file per bloc automatically."
+    },
+    {
+      "question": "Is there a limit to how much state HydratedBloc can store?",
+      "answer": "It uses Hive under the hood, which has no strict limit, but large states may impact performance. Use it for UI state, not large datasets."
+    },
+    {
+      "question": "How do I clear persisted state?",
+      "answer": "Use `HydratedBloc.storage.clear()` or delete the storage directory. For individual blocs, you can also delete the specific file from the storage directory."
+    },
+    {
+      "question": "Can I use SQLite instead of HydratedBloc for offline storage?",
+      "answer": "Yes, for large data you can use SQLite with a separate repository, but HydratedBloc is convenient for UI state. You can combine both."
+    },
+    {
+      "question": "How do I handle file uploads offline?",
+      "answer": "Queue the file metadata and store the file locally (e.g., using `path_provider`). When online, upload the file and update the queue."
+    },
+    {
+      "question": "What about authentication tokens when offline?",
+      "answer": "Store tokens securely (e.g., flutter_secure_storage) and attach them when syncing; if the token expires, handle refresh in the sync service."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:hydrated_bloc/hydrated_bloc.dart';\nimport 'package:path_provider/path_provider.dart';\n\nvoid main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  final storage = await HydratedStorage.build(\n    storageDirectory: await getApplicationDocumentsDirectory(),\n  );\n  HydratedBloc.storage = storage;\n  runApp(MyApp());\n}\n\nclass CounterCubit extends HydratedCubit<int> {\n  CounterCubit() : super(0);\n\n  void increment() => emit(state + 1);\n  void decrement() => emit(state - 1);\n\n  @override\n  int fromJson(Map<String, dynamic> json) => json['value'] as int;\n\n  @override\n  Map<String, dynamic> toJson(int state) => {'value': state};\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final cubit = context.watch<CounterCubit>();\n    return Scaffold(\n      appBar: AppBar(title: Text('Hydrated Bloc Demo')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Counter value:', style: TextStyle(fontSize: 20)),\n            Text('${cubit.state}', style: TextStyle(fontSize: 40)),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: cubit.increment,\n                  child: Icon(Icons.add),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: cubit.decrement,\n                  child: Icon(Icons.remove),\n                ),\n              ],\n            ),\n            SizedBox(height: 20),\n            Text('Try closing and reopening the app – the counter persists!'),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which class should your BLoC extend to enable automatic state persistence?",
+      "options": ["Bloc", "Cubit", "HydratedBloc", "PersistedBloc"],
+      "answer": 2
+    },
+    {
+      "question": "What method must you override to deserialize your state in a hydrated BLoC?",
+      "options": ["fromJson", "toJson", "mapEventToState", "onTransition"],
+      "answer": 0
+    },
+    {
+      "question": "How do you handle mutations (like adding a todo) when the device is offline?",
+      "options": [
+        "Show an error and do nothing",
+        "Queue the operation and update state optimistically",
+        "Ignore the user action",
+        "Force the app to close"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "flutter-offline-first",
+    "hydrated-bloc-tutorial",
+    "flutter-connectivity"
+  ]
+}

@@ -1,0 +1,246 @@
+{
+  "slug": "bloc-freezed",
+  "course": "Flutter",
+  "title": "BLoC with Freezed: Immutable State & Union Types Made Easy",
+  "meta": {
+    "title": "BLoC with Freezed – Immutable State, Union Types & Code Generation (2026)",
+    "description": "Master using Freezed with BLoC for immutable states, union types, and automatic copyWith, equality, and JSON serialization. Reduce boilerplate and improve maintainability.",
+    "keywords": [
+      "Flutter BLoC freezed",
+      "freezed bloc",
+      "immutable state bloc",
+      "union types bloc",
+      "freezed json serialization",
+      "flutter_bloc freezed",
+      "code generation bloc",
+      "freezed copyWith"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "In BLoC, state classes should be immutable to ensure predictability and avoid unintended mutations. Writing immutable state classes manually leads to a lot of boilerplate: constructors, `copyWith`, `==`, `hashCode`, and serialization code. **Freezed** is a code generator that creates all of this for you, and it also supports **union types** (sum types), making it perfect for representing different states like `Loading`, `Success`, `Error`. This guide covers how to integrate Freezed with your BLoC architecture."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Freezed with BLoC?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Immutability** – Enforces immutable state by design.",
+        "**Automatic `copyWith`** – Update only specific fields without writing boilerplate.",
+        "**Value Equality** – Correct `==` and `hashCode` implementations for reliable state comparison.",
+        "**Union Types** – Model states as sealed classes (e.g., `LoadingState`, `DataState`, `ErrorState`).",
+        "**JSON Serialization** – Built‑in `toJson`/`fromJson` for persistence (e.g., with `hydrated_bloc`).",
+        "**Reduced Boilerplate** – Focus on what matters, not repetitive code."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Freezed"
+    },
+    {
+      "type": "text",
+      "value": "Add the required packages to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter_bloc: ^8.1.5\n  freezed_annotation: ^2.4.1\n  json_annotation: ^4.8.1\n\ndev_dependencies:\n  build_runner: ^2.4.6\n  freezed: ^2.4.5\n  json_serializable: ^6.7.1"
+    },
+    {
+      "type": "text",
+      "value": "After writing your state classes with `@freezed` annotation, run:\n```bash\nflutter pub run build_runner build\n```\nThis generates the required `.freezed.dart` and optionally `.g.dart` files for JSON serialization."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Immutable State with Freezed"
+    },
+    {
+      "type": "text",
+      "value": "Here's a simple state class for a counter. Notice the `@freezed` annotation and the factory constructor."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:freezed_annotation/freezed_annotation.dart';\n\npart 'counter_state.freezed.dart';\n\n@freezed\nclass CounterState with _$CounterState {\n  const factory CounterState({\n    required int count,\n    required bool isLoading,\n  }) = _CounterState;\n}"
+    },
+    {
+      "type": "text",
+      "value": "Freezed generates:\n- `copyWith` method for updating state immutably.\n- Overridden `==` and `hashCode`.\n- `toString` for debugging.\n\nUsing it in a BLoC:"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CounterBloc extends Bloc<CounterEvent, CounterState> {\n  CounterBloc() : super(const CounterState(count: 0, isLoading: false)) {\n    on<Increment>((event, emit) {\n      emit(state.copyWith(count: state.count + 1));\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Union Types (Sealed Classes)"
+    },
+    {
+      "type": "text",
+      "value": "Union types allow you to represent mutually exclusive states. For example, a typical data fetching state can be one of `initial`, `loading`, `success`, or `error`. Freezed makes this very clean."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:freezed_annotation/freezed_annotation.dart';\n\npart 'posts_state.freezed.dart';\n\n@freezed\nclass PostsState with _$PostsState {\n  const factory PostsState.initial() = _PostsInitial;\n  const factory PostsState.loading() = _PostsLoading;\n  const factory PostsState.success(List<Post> posts) = _PostsSuccess;\n  const factory PostsState.error(String message) = _PostsError;\n}"
+    },
+    {
+      "type": "text",
+      "value": "Freezed generates helper methods to check the state type (`isInitial`, `isLoading`, etc.) and to access data safely (`maybeMap`, `maybeWhen`)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PostsBloc extends Bloc<PostsEvent, PostsState> {\n  PostsBloc() : super(const PostsState.initial()) {\n    on<FetchPosts>(_onFetchPosts);\n  }\n\n  Future<void> _onFetchPosts(FetchPosts event, Emitter<PostsState> emit) async {\n    emit(const PostsState.loading());\n    try {\n      final posts = await api.fetchPosts();\n      emit(PostsState.success(posts));\n    } catch (e) {\n      emit(PostsState.error(e.toString()));\n    }\n  }\n}\n\n// In UI, you can use `when` or `map` to handle different states\nBlocBuilder<PostsBloc, PostsState>(\n  builder: (context, state) {\n    return state.when(\n      initial: () => const Center(child: Text('Press button')),\n      loading: () => const Center(child: CircularProgressIndicator()),\n      success: (posts) => ListView.builder(...),\n      error: (message) => Center(child: Text('Error: $message')),\n    );\n  },\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Adding JSON Serialization"
+    },
+    {
+      "type": "text",
+      "value": "Freezed integrates with `json_serializable` to generate `toJson` and `fromJson` methods. This is especially useful for `hydrated_bloc` to persist states."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:freezed_annotation/freezed_annotation.dart';\n\npart 'settings_state.freezed.dart';\npart 'settings_state.g.dart';\n\n@freezed\nclass SettingsState with _$SettingsState {\n  const factory SettingsState({\n    required ThemeMode themeMode,\n    required String language,\n  }) = _SettingsState;\n\n  factory SettingsState.fromJson(Map<String, dynamic> json) =>\n      _$SettingsStateFromJson(json);\n}\n\n// Then in your BLoC, extend HydratedBloc and use toJson/fromJson\nclass SettingsBloc extends HydratedBloc<SettingsEvent, SettingsState> {\n  SettingsBloc() : super(const SettingsState(themeMode: ThemeMode.system, language: 'en'));\n\n  @override\n  SettingsState? fromJson(Map<String, dynamic> json) => SettingsState.fromJson(json);\n\n  @override\n  Map<String, dynamic> toJson(SettingsState state) => state.toJson();\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced: Recursive & Generic States"
+    },
+    {
+      "type": "text",
+      "value": "Freezed supports recursive data structures and generics. For example, a tree structure or a generic state wrapper."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "@freezed\nclass TreeNode with _$TreeNode {\n  const factory TreeNode({\n    required String id,\n    required List<TreeNode> children,\n  }) = _TreeNode;\n}\n\n@freezed\nclass ApiState<T> with _$ApiState<T> {\n  const factory ApiState.initial() = _ApiInitial<T>;\n  const factory ApiState.loading() = _ApiLoading<T>;\n  const factory ApiState.success(T data) = _ApiSuccess<T>;\n  const factory ApiState.error(String message) = _ApiError<T>;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Freezed States"
+    },
+    {
+      "type": "text",
+      "value": "Because Freezed provides correct equality, testing becomes straightforward. You can compare expected and actual states directly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "blocTest<PostsBloc, PostsState>(\n  'emits [loading, success] when fetch succeeds',\n  build: () => PostsBloc(mockRepo),\n  setUp: () => when(() => mockRepo.fetchPosts()).thenAnswer((_) async => [Post(id: 1)]),\n  act: (bloc) => bloc.add(FetchPosts()),\n  expect: () => [\n    const PostsState.loading(),\n    const PostsState.success([Post(id: 1)]),\n  ],\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use union types for mutually exclusive states** – Models like `initial/loading/success/error` are a perfect fit.",
+        "**Keep states immutable** – Freezed enforces this; never mutate fields after creation.",
+        "**Leverage `copyWith`** – Use it to update only the fields that changed.",
+        "**Combine with `hydrated_bloc`** – Freezed’s JSON serialization makes persistence easy.",
+        "**Use `when` or `map` in UI** – This ensures you handle all possible state variants (exhaustiveness).",
+        "**Name constructors descriptively** – `initial`, `loading`, `success`, `error` improve readability."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to run build_runner** – Results in missing generated files.\n✅ Run `flutter pub run build_runner build --delete-conflicting-outputs` after changes.",
+        "❌ **Using mutable fields inside a Freezed class** – Defeats immutability.\n✅ Keep all fields final and use `copyWith` to create new instances.",
+        "❌ **Not using `@immutable`** – Freezed doesn’t add it automatically, but it’s good practice to add it.\n✅ Add `@immutable` annotation.",
+        "❌ **Ignoring union type exhaustiveness** – In `when`, you must handle all cases; this is a feature, not a bug.\n✅ Use `maybeWhen` if some cases can be ignored.",
+        "❌ **Using `@freezed` on classes that already have generics without proper configuration** – Can cause issues.\n✅ Read the Freezed documentation for advanced cases."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Freezed is a game‑changer for writing immutable, self‑documenting state classes in BLoC. It eliminates boilerplate, adds value equality, and enables union types that perfectly match the states of your BLoC. By integrating Freezed with `hydrated_bloc` and `json_serializable`, you can build robust, maintainable, and testable apps with minimal code."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Do I need to use Freezed for all BLoC states?",
+      "answer": "No, but it’s highly recommended because it enforces immutability and reduces boilerplate. For very simple states, you could use a plain class with Equatable, but Freezed scales better as your app grows."
+    },
+    {
+      "question": "Can I use Freezed with Cubit?",
+      "answer": "Yes, Freezed works exactly the same with Cubit. The state classes are independent of the state management approach."
+    },
+    {
+      "question": "How do I handle nested Freezed classes?",
+      "answer": "Freezed handles nested objects automatically if those objects also have `copyWith` and `==` (they can be Freezed classes themselves)."
+    },
+    {
+      "question": "What is the difference between `@freezed` and `@unfreezed`?",
+      "answer": "`@freezed` generates a sealed class with union types. `@unfreezed` generates a plain class with `copyWith`, `==`, etc., but without union types."
+    },
+    {
+      "question": "How do I migrate an existing BLoC state to Freezed?",
+      "answer": "Replace your state class with a Freezed‑annotated class, define all required factory constructors, and update your BLoC to use `copyWith` and union type checks. Then run build_runner to generate the code."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\n// Simple non-Freezed example for the interactive demo\nclass CounterCubit extends Cubit<int> {\n  CounterCubit() : super(0);\n  void increment() => emit(state + 1);\n}\n\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final cubit = context.watch<CounterCubit>();\n    return Scaffold(\n      appBar: AppBar(title: Text('Freezed Demo Preview')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Counter:', style: TextStyle(fontSize: 20)),\n            Text('${cubit.state}', style: TextStyle(fontSize: 40)),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: cubit.increment,\n              child: Text('Increment'),\n            ),\n            SizedBox(height: 20),\n            Text('Freezed helps write immutable states with less code'),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does Freezed generate for your state classes?",
+      "options": [
+        "copyWith, ==, hashCode, toString",
+        "Only copyWith",
+        "Only JSON serialization",
+        "Only union types"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "How do you represent a state that can be loading, success, or error using Freezed?",
+      "options": [
+        "With separate classes",
+        "With a single class and nullable fields",
+        "With union types (sealed classes)",
+        "With enums"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What command do you run to generate Freezed code?",
+      "options": [
+        "flutter run",
+        "flutter pub get",
+        "flutter pub run build_runner build",
+        "freezed generate"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-hydrated-bloc",
+    "bloc-testing",
+    "flutter-code-generation"
+  ]
+}

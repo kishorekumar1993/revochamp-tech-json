@@ -1,0 +1,213 @@
+{
+  "slug": "bloc-streams",
+  "course": "Flutter",
+  "title": "BLoC Streams: Real-Time Data Handling with Bloc & Stream",
+  "meta": {
+    "title": "BLoC Streams – Real-Time Data, WebSocket & Stream Subscriptions (2026)",
+    "description": "Learn how to handle real-time data with BLoC using streams, WebSockets, and StreamController. Master subscription management, error handling, and reactive patterns.",
+    "keywords": [
+      "Flutter BLoC streams",
+      "bloc stream subscription",
+      "real-time data Flutter",
+      "WebSocket with BLoC",
+      "stream controller bloc",
+      "emit.forEach",
+      "bloc listener stream",
+      "reactive programming Flutter"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What Are Streams in BLoC?"
+    },
+    {
+      "type": "text",
+      "value": "Streams are a core part of reactive programming in Dart. In the BLoC pattern, streams are used to handle asynchronous events and state updates. While BLoC already uses streams internally (events in, states out), you can also integrate external streams—like WebSockets, Firebase Realtime Database, or sensor data—into your BLoC to build real‑time features."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Streams with BLoC?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Real‑Time Updates** – React to data changes instantly (e.g., live scores, chat messages).",
+        "**Event‑Driven Architecture** – Handle continuous data flows elegantly.",
+        "**Decoupling** – Separate data sources from UI logic.",
+        "**Cancellation Support** – Manage subscriptions to avoid memory leaks.",
+        "**Composability** – Combine, transform, and filter streams using Dart’s stream operators."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Stream Integration in BLoC"
+    },
+    {
+      "type": "text",
+      "value": "The simplest way to integrate a stream into a BLoC is to listen to it inside the BLoC and emit states in response to stream events. You can do this using `emit.forEach` (introduced in `flutter_bloc` 8.0) or by manually managing a `StreamSubscription`."
+    },
+    {
+      "type": "subheading",
+      "value": "Using `emit.forEach`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class TimerBloc extends Bloc<TimerEvent, TimerState> {\n  TimerBloc() : super(TimerInitial()) {\n    on<TimerStarted>(_onTimerStarted);\n  }\n\n  Future<void> _onTimerStarted(TimerStarted event, Emitter<TimerState> emit) async {\n    await emit.forEach(\n      _getTimerStream(event.duration),\n      onData: (duration) => TimerRunInProgress(duration),\n      onError: (error, stackTrace) => TimerRunError(error.toString()),\n    );\n  }\n\n  Stream<int> _getTimerStream(int duration) async* {\n    for (int i = duration; i >= 0; i--) {\n      await Future.delayed(Duration(seconds: 1));\n      yield i;\n    }\n  }\n}"
+    },
+    {
+      "type": "subheading",
+      "value": "Using `StreamSubscription`"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ChatBloc extends Bloc<ChatEvent, ChatState> {\n  late final StreamSubscription _subscription;\n\n  ChatBloc({required Stream<Message> messageStream}) : super(ChatInitial()) {\n    _subscription = messageStream.listen(\n      (message) => add(MessageReceived(message)),\n      onError: (error) => add(ChatError(error.toString())),\n    );\n\n    on<MessageReceived>((event, emit) {\n      emit(state.copyWith(messages: [...state.messages, event.message]));\n    });\n  }\n\n  @override\n  Future<void> close() {\n    _subscription.cancel();\n    return super.close();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "WebSocket Integration with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "WebSockets provide a persistent connection for real‑time two‑way communication. Here’s how to integrate a WebSocket into a BLoC using `web_socket_channel`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:web_socket_channel/web_socket_channel.dart';\n\nclass WebSocketBloc extends Bloc<WebSocketEvent, WebSocketState> {\n  final WebSocketChannel _channel;\n  late final StreamSubscription _subscription;\n\n  WebSocketBloc({required String url}) : _channel = WebSocketChannel.connect(Uri.parse(url)), super(WebSocketInitial()) {\n    _subscription = _channel.stream.listen(\n      (data) => add(WebSocketDataReceived(data)),\n      onError: (error) => add(WebSocketError(error.toString())),\n    );\n\n    on<WebSocketDataReceived>((event, emit) {\n      emit(WebSocketDataLoaded(event.data));\n    });\n\n    on<WebSocketSendMessage>((event, emit) {\n      _channel.sink.add(event.message);\n    });\n  }\n\n  @override\n  Future<void> close() {\n    _subscription.cancel();\n    _channel.sink.close();\n    return super.close();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Combining Multiple Streams"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to listen to multiple streams and combine their latest values. You can use `Rx.combineLatest` from `rxdart` or `StreamZip` to merge streams and emit a combined state."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:rxdart/rxdart.dart';\n\nclass CombinedDataBloc extends Bloc<CombinedEvent, CombinedState> {\n  CombinedDataBloc({\n    required Stream<int> streamA,\n    required Stream<String> streamB,\n  }) : super(CombinedInitial()) {\n    final combinedStream = Rx.combineLatest2(\n      streamA,\n      streamB,\n      (int a, String b) => CombinedData(a, b),\n    );\n\n    await emit.forEach(\n      combinedStream,\n      onData: (data) => CombinedLoaded(data),\n      onError: (error) => CombinedError(error.toString()),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Stream Transformations with BLoC Events"
+    },
+    {
+      "type": "text",
+      "value": "You can also use streams to trigger events in your BLoC. For example, a search text field can be debounced and transformed before adding an event."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchBloc extends Bloc<SearchEvent, SearchState> {\n  SearchBloc() : super(SearchInitial()) {\n    on<SearchQueryChanged>(\n      _onSearchQueryChanged,\n      transformer: debounce(const Duration(milliseconds: 500)),\n    );\n  }\n\n  void _onSearchQueryChanged(SearchQueryChanged event, Emitter<SearchState> emit) async {\n    // Perform search\n  }\n\n  EventTransformer<SearchQueryChanged> debounce(Duration duration) {\n    return (events, mapper) => events.debounceTime(duration).flatMap(mapper);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling and Retry"
+    },
+    {
+      "type": "text",
+      "value": "Streams can fail; you must handle errors gracefully. Use `onError` in the subscription or `emit.forEach`’s `onError` callback. For retry logic, consider using `Stream.retry` from `rxdart` or manually re‑subscribing."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class RetryBloc extends Bloc<RetryEvent, RetryState> {\n  RetryBloc() : super(RetryInitial()) {\n    on<RetryRequested>((event, emit) async {\n      await emit.forEach(\n        _getDataStream().retryWhen((errors, stackTrace) => errors.delay(Duration(seconds: 2))),\n        onData: (data) => RetrySuccess(data),\n        onError: (error) => RetryFailed(error.toString()),\n      );\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Always cancel subscriptions** – Override `close()` and cancel any `StreamSubscription` to prevent memory leaks.",
+        "**Use `emit.forEach` when possible** – It automatically handles subscription management and cancellation.",
+        "**Avoid long‑running operations in BLoC constructors** – Move them to event handlers or use `on<...>` with async actions.",
+        "**Keep streams inside BLoC** – External data sources (like WebSockets) should be injected so the BLoC remains testable.",
+        "**Use `rxdart` for advanced transformations** – Debouncing, throttling, combining, and retrying become much easier.",
+        "**Test stream integration** – Mock the stream source and verify state emissions."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not canceling subscriptions** – Causes memory leaks and unexpected behavior.\n✅ Cancel in `close()`.",
+        "❌ **Using `listen` without error handling** – Unhandled errors crash the app.\n✅ Always provide `onError` callback.",
+        "❌ **Creating new streams inside BLoC without disposal** – If you create a `StreamController` inside the BLoC, close it in `close()`.",
+        "❌ **Blocking the BLoC with long‑running tasks** – Avoid awaiting inside the main event handler if it blocks other events. Use `emit.forEach` or isolate work.",
+        "❌ **Ignoring backpressure** – Rapid stream events can overwhelm the UI. Use debounce or throttle."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Integrating streams with BLoC allows you to build highly responsive, real‑time applications. Whether you're working with WebSockets, Firebase, or custom data streams, the BLoC pattern provides a clean way to manage state while ensuring subscriptions are properly handled. By leveraging `emit.forEach`, manual subscriptions, and rxdart operators, you can create robust, testable, and performant reactive Flutter apps."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between `emit.forEach` and manually listening to a stream?",
+      "answer": "`emit.forEach` automatically manages the subscription for you and cancels it when the BLoC is closed. Manual listening gives you more control but requires explicit cancellation in `close()`."
+    },
+    {
+      "question": "How do I handle a stream that might emit errors?",
+      "answer": "Use the `onError` parameter in `emit.forEach` or provide an `onError` callback when calling `listen`."
+    },
+    {
+      "question": "Can I use `StreamController` inside a BLoC?",
+      "answer": "Yes, but you must close it in `close()` to prevent memory leaks. Alternatively, use a `Stream` from an external source that you don't own."
+    },
+    {
+      "question": "How do I debounce a stream before triggering an event?",
+      "answer": "Use an `EventTransformer` with `debounceTime` from `rxdart`. Example: `on<SearchEvent>(..., transformer: (events, mapper) => events.debounceTime(Duration(milliseconds: 500)).flatMap(mapper));`"
+    },
+    {
+      "question": "Is it safe to use `BlocBuilder` with streams directly?",
+      "answer": "Yes, but you usually want the BLoC to convert stream data into states. Then `BlocBuilder` reacts to state changes, not the raw stream."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\nvoid main() => runApp(MyApp());\n\n// Events\nabstract class TimerEvent {}\nclass TimerStarted extends TimerEvent {\n  final int duration;\n  TimerStarted(this.duration);\n}\n\n// States\nabstract class TimerState {}\nclass TimerInitial extends TimerState {}\nclass TimerRunInProgress extends TimerState {\n  final int duration;\n  TimerRunInProgress(this.duration);\n}\nclass TimerRunComplete extends TimerState {}\n\n// BLoC\nclass TimerBloc extends Bloc<TimerEvent, TimerState> {\n  TimerBloc() : super(TimerInitial()) {\n    on<TimerStarted>(_onTimerStarted);\n  }\n\n  Future<void> _onTimerStarted(TimerStarted event, Emitter<TimerState> emit) async {\n    await emit.forEach(\n      _getTimerStream(event.duration),\n      onData: (duration) => TimerRunInProgress(duration),\n    );\n    emit(TimerRunComplete());\n  }\n\n  Stream<int> _getTimerStream(int duration) async* {\n    for (int i = duration; i >= 0; i--) {\n      await Future.delayed(Duration(seconds: 1));\n      yield i;\n    }\n  }\n}\n\n// UI\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => TimerBloc(),\n        child: TimerPage(),\n      ),\n    );\n  }\n}\n\nclass TimerPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('BLoC Stream Timer')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            BlocBuilder<TimerBloc, TimerState>(\n              builder: (context, state) {\n                if (state is TimerInitial) {\n                  return ElevatedButton(\n                    onPressed: () => context.read<TimerBloc>().add(TimerStarted(10)),\n                    child: Text('Start 10s Timer'),\n                  );\n                } else if (state is TimerRunInProgress) {\n                  return Text('Time left: ${state.duration}s', style: TextStyle(fontSize: 24));\n                } else if (state is TimerRunComplete) {\n                  return Text('Timer finished!', style: TextStyle(fontSize: 24));\n                }\n                return Container();\n              },\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method in flutter_bloc automatically manages a stream subscription and emits states?",
+      "options": ["emit.onData", "emit.forEach", "emit.map", "emit.fromStream"],
+      "answer": 1
+    },
+    {
+      "question": "What should you do in a BLoC's `close()` method when you manually created a `StreamSubscription`?",
+      "options": [
+        "Nothing – it auto‑cleans up",
+        "Call `dispose()` on the BLoC",
+        "Cancel the subscription",
+        "Re‑initialize the subscription"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which package is commonly used for advanced stream transformations like debouncing and combining?",
+      "options": ["bloc_concurrency", "rxdart", "async", "stream_transform"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "flutter-streams",
+    "rxdart-tutorial",
+    "websocket-flutter"
+  ]
+}

@@ -1,0 +1,232 @@
+{
+  "slug": "bloc-session-management",
+  "course": "Flutter",
+  "title": "BLoC Session Management: Authentication, Tokens & Persistent Sessions",
+  "meta": {
+    "title": "BLoC Session Management – Authentication & Persistent Sessions (2026)",
+    "description": "Learn how to manage user sessions in Flutter using BLoC pattern. Store tokens securely, auto-login, handle refresh tokens, and persist authentication state with hydrated_bloc.",
+    "keywords": [
+      "Flutter BLoC",
+      "session management",
+      "authentication bloc",
+      "persistent session",
+      "flutter_secure_storage",
+      "hydrated_bloc",
+      "refresh token",
+      "auto-login",
+      "BLoC auth"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Session Management in BLoC?"
+    },
+    {
+      "type": "text",
+      "value": "Session management in BLoC refers to handling user authentication state, tokens, and session lifecycle using the BLoC pattern. It involves storing authentication tokens securely, persisting the session across app restarts, managing token refresh, and providing a smooth login/logout experience. A well-implemented session management system ensures that users stay logged in until they explicitly log out or their session expires."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use BLoC for Session Management?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Centralized State** – Authentication state is managed in one place, accessible anywhere in the app.",
+        "**Persistence** – With `hydrated_bloc`, session state survives app restarts.",
+        "**Security** – Tokens can be stored in secure storage (e.g., `flutter_secure_storage`) and accessed only via the bloc.",
+        "**Predictable Flow** – Events like `Login`, `Logout`, `RefreshToken` lead to clear state transitions.",
+        "**Separation of Concerns** – UI does not directly handle tokens or API calls."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Dependencies"
+    },
+    {
+      "type": "text",
+      "value": "Add the necessary packages to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dependencies:\n  flutter_bloc: ^8.1.5\n  hydrated_bloc: ^9.1.5\n  flutter_secure_storage: ^9.2.2\n  equatable: ^2.0.5\n  dio: ^5.4.0\n  path_provider: ^2.1.3"
+    },
+    {
+      "type": "heading",
+      "value": "Defining Authentication State and Events"
+    },
+    {
+      "type": "text",
+      "value": "First, define the state that represents the authentication status. Use `Equatable` for value equality and prepare for JSON serialization if you plan to persist using `hydrated_bloc`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "part of 'auth_bloc.dart';\n\nenum AuthStatus { unknown, authenticated, unauthenticated }\n\nclass AuthState extends Equatable {\n  final AuthStatus status;\n  final String? userId;\n  final String? accessToken;\n  final String? refreshToken;\n\n  const AuthState({\n    this.status = AuthStatus.unknown,\n    this.userId,\n    this.accessToken,\n    this.refreshToken,\n  });\n\n  AuthState copyWith({\n    AuthStatus? status,\n    String? userId,\n    String? accessToken,\n    String? refreshToken,\n  }) {\n    return AuthState(\n      status: status ?? this.status,\n      userId: userId ?? this.userId,\n      accessToken: accessToken ?? this.accessToken,\n      refreshToken: refreshToken ?? this.refreshToken,\n    );\n  }\n\n  @override\n  List<Object?> get props => [status, userId, accessToken, refreshToken];\n\n  // JSON serialization for hydrated_bloc\n  Map<String, dynamic> toJson() => {\n    'status': status.index,\n    'userId': userId,\n    'accessToken': accessToken,\n    'refreshToken': refreshToken,\n  };\n\n  factory AuthState.fromJson(Map<String, dynamic> json) {\n    return AuthState(\n      status: AuthStatus.values[json['status'] as int],\n      userId: json['userId'] as String?,\n      accessToken: json['accessToken'] as String?,\n      refreshToken: json['refreshToken'] as String?,\n    );\n  }\n}\n\nabstract class AuthEvent extends Equatable {\n  const AuthEvent();\n\n  @override\n  List<Object?> get props => [];\n}\n\nclass AppStarted extends AuthEvent {}\n\nclass LoggedIn extends AuthEvent {\n  final String userId;\n  final String accessToken;\n  final String refreshToken;\n\n  const LoggedIn({required this.userId, required this.accessToken, required this.refreshToken});\n\n  @override\n  List<Object?> get props => [userId, accessToken, refreshToken];\n}\n\nclass LoggedOut extends AuthEvent {}\n\nclass TokenRefreshed extends AuthEvent {\n  final String newAccessToken;\n  final String newRefreshToken;\n\n  const TokenRefreshed(this.newAccessToken, this.newRefreshToken);\n\n  @override\n  List<Object?> get props => [newAccessToken, newRefreshToken];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Building a Hydrated Auth Bloc"
+    },
+    {
+      "type": "text",
+      "value": "The auth bloc will extend `HydratedBloc` to persist the session across app restarts. It will also use `flutter_secure_storage` to securely store tokens (though we can rely on the bloc's persisted state, we might also store tokens separately for API interceptor)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:flutter_secure_storage/flutter_secure_storage.dart';\n\nclass AuthBloc extends HydratedBloc<AuthEvent, AuthState> {\n  final FlutterSecureStorage secureStorage;\n  final AuthRepository authRepository;\n\n  AuthBloc({required this.secureStorage, required this.authRepository}) : super(const AuthState()) {\n    on<AppStarted>(_onAppStarted);\n    on<LoggedIn>(_onLoggedIn);\n    on<LoggedOut>(_onLoggedOut);\n    on<TokenRefreshed>(_onTokenRefreshed);\n  }\n\n  Future<void> _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {\n    // Check if we have a persisted state already from hydrated_bloc\n    // The state is automatically restored from storage.\n    // But we also need to verify if the token is still valid with the backend?\n    if (state.status == AuthStatus.authenticated && state.accessToken != null) {\n      // Optionally validate token with a ping to backend\n      final isValid = await authRepository.validateToken(state.accessToken!);\n      if (!isValid) {\n        // Try to refresh token if we have a refresh token\n        if (state.refreshToken != null) {\n          try {\n            final newTokens = await authRepository.refreshToken(state.refreshToken!);\n            add(TokenRefreshed(newTokens.accessToken, newTokens.refreshToken));\n          } catch (_) {\n            // Refresh failed, log out\n            add(LoggedOut());\n          }\n        } else {\n          add(LoggedOut());\n        }\n      } else {\n        emit(state.copyWith(status: AuthStatus.authenticated));\n      }\n    } else {\n      emit(state.copyWith(status: AuthStatus.unauthenticated));\n    }\n  }\n\n  Future<void> _onLoggedIn(LoggedIn event, Emitter<AuthState> emit) async {\n    await secureStorage.write(key: 'access_token', value: event.accessToken);\n    await secureStorage.write(key: 'refresh_token', value: event.refreshToken);\n    emit(state.copyWith(\n      status: AuthStatus.authenticated,\n      userId: event.userId,\n      accessToken: event.accessToken,\n      refreshToken: event.refreshToken,\n    ));\n  }\n\n  Future<void> _onLoggedOut(LoggedOut event, Emitter<AuthState> emit) async {\n    await secureStorage.delete(key: 'access_token');\n    await secureStorage.delete(key: 'refresh_token');\n    emit(const AuthState(status: AuthStatus.unauthenticated));\n  }\n\n  Future<void> _onTokenRefreshed(TokenRefreshed event, Emitter<AuthState> emit) async {\n    await secureStorage.write(key: 'access_token', value: event.newAccessToken);\n    await secureStorage.write(key: 'refresh_token', value: event.newRefreshToken);\n    emit(state.copyWith(\n      accessToken: event.newAccessToken,\n      refreshToken: event.newRefreshToken,\n    ));\n  }\n\n  @override\n  AuthState fromJson(Map<String, dynamic> json) {\n    return AuthState.fromJson(json);\n  }\n\n  @override\n  Map<String, dynamic> toJson(AuthState state) {\n    return state.toJson();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up the Bloc Provider and Initialization"
+    },
+    {
+      "type": "text",
+      "value": "Initialize `HydratedBloc` and provide the auth bloc to the widget tree. Also, start the app with `AppStarted` event."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  final storage = await HydratedStorage.build(\n    storageDirectory: await getApplicationDocumentsDirectory(),\n  );\n  HydratedBloc.storage = storage;\n\n  final secureStorage = FlutterSecureStorage();\n  final authRepository = AuthRepository(); // implement your own\n\n  runApp(MyApp(\n    authBloc: AuthBloc(secureStorage: secureStorage, authRepository: authRepository),\n  ));\n}\n\nclass MyApp extends StatelessWidget {\n  final AuthBloc authBloc;\n\n  const MyApp({required this.authBloc});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider.value(\n        value: authBloc..add(AppStarted()),\n        child: HomePage(),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Protecting Routes with BlocListener"
+    },
+    {
+      "type": "text",
+      "value": "Use `BlocListener` to listen to authentication state changes and redirect accordingly."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocListener<AuthBloc, AuthState>(\n      listener: (context, state) {\n        if (state.status == AuthStatus.unauthenticated) {\n          Navigator.pushReplacementNamed(context, '/login');\n        } else if (state.status == AuthStatus.authenticated) {\n          Navigator.pushReplacementNamed(context, '/dashboard');\n        }\n      },\n      child: Scaffold(\n        body: Center(child: CircularProgressIndicator()),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Token Refresh in API Interceptor"
+    },
+    {
+      "type": "text",
+      "value": "When using an HTTP client like Dio, you can add an interceptor that automatically refreshes the token when a 401 response is received. This interceptor can access the auth bloc or the secure storage to get the current tokens."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AuthInterceptor extends Interceptor {\n  final AuthBloc authBloc;\n  final Dio dio;\n\n  AuthInterceptor(this.authBloc, this.dio);\n\n  @override\n  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {\n    final token = authBloc.state.accessToken;\n    if (token != null) {\n      options.headers['Authorization'] = 'Bearer $token';\n    }\n    handler.next(options);\n  }\n\n  @override\n  void onError(DioError err, ErrorInterceptorHandler handler) async {\n    if (err.response?.statusCode == 401) {\n      // Attempt to refresh token\n      try {\n        final newTokens = await authBloc.authRepository.refreshToken(authBloc.state.refreshToken!);\n        authBloc.add(TokenRefreshed(newTokens.accessToken, newTokens.refreshToken));\n        // Retry the original request with new token\n        final opts = err.requestOptions;\n        opts.headers['Authorization'] = 'Bearer ${newTokens.accessToken}';\n        final response = await dio.fetch(opts);\n        return handler.resolve(response);\n      } catch (_) {\n        // Refresh failed, log out\n        authBloc.add(LoggedOut());\n        return handler.reject(err);\n      }\n    }\n    handler.next(err);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Store tokens securely** – Use `flutter_secure_storage` on mobile, or `shared_preferences` with encryption on web.",
+        "**Use `hydrated_bloc` for session state** – It automatically persists and restores the state across app launches.",
+        "**Validate tokens on app start** – Don't assume a persisted token is still valid; verify with a lightweight API call or check expiration.",
+        "**Implement token refresh gracefully** – Use an interceptor to handle 401 responses and retry requests.",
+        "**Clear sensitive data on logout** – Delete tokens from secure storage and reset bloc state.",
+        "**Separate authentication from other business logic** – Keep the auth bloc focused only on authentication events.",
+        "**Use `Equatable` for state comparisons** – Prevents unnecessary rebuilds.",
+        "**Test offline scenarios** – Ensure the app behaves correctly when no network is available during validation."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Storing tokens in plain text** – Use secure storage, never `SharedPreferences` for sensitive data.",
+        "❌ **Not handling token expiration** – Leads to failed requests and poor user experience.",
+        "❌ **Calling `BlocProvider.of<AuthBloc>(context)` inside build without checking existence** – Might throw if not provided.",
+        "❌ **Forgetting to add `AppStarted` event** – The app will not initialize the session correctly.",
+        "❌ **Using `HydratedBloc` without initializing storage** – Results in runtime errors.",
+        "❌ **Not handling concurrent refresh requests** – Multiple 401 responses could trigger multiple refresh attempts; use a flag to prevent duplicate refreshes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Session management with BLoC provides a robust and scalable way to handle authentication in Flutter apps. By combining `hydrated_bloc` for persistence, `flutter_secure_storage` for token security, and interceptors for automatic token refresh, you can create a seamless and secure user experience. This pattern keeps your code organized, testable, and maintainable."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should I store the entire user object in the auth state?",
+      "answer": "It depends. Storing minimal user data (like id, name, email) is fine, but for larger profiles, consider a separate bloc or repository to avoid bloating the auth state."
+    },
+    {
+      "question": "How do I handle logout from multiple devices?",
+      "answer": "Implement a push notification or web socket that triggers a `LoggedOut` event when the server invalidates the session. You can also periodically check token validity and force logout if the server returns an 'invalid token' error."
+    },
+    {
+      "question": "Can I use `hydrated_bloc` with `flutter_secure_storage` for tokens?",
+      "answer": "Yes, you can. The auth state stores tokens in memory, and you also write them to secure storage for API interceptors. This double storage is common."
+    },
+    {
+      "question": "What about biometric authentication?",
+      "answer": "You can extend your auth bloc to support biometrics by integrating `local_auth`. After biometric success, you can either store a special token or simply proceed with the existing session."
+    },
+    {
+      "question": "How do I test the auth bloc?",
+      "answer": "Use `bloc_test` package to test events and state transitions. Mock the repositories and secure storage to avoid side effects."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:hydrated_bloc/hydrated_bloc.dart';\nimport 'package:path_provider/path_provider.dart';\nimport 'package:flutter_secure_storage/flutter_secure_storage.dart';\n\n// --- Auth State & Events ---\npart of 'auth_bloc.dart';\n\nenum AuthStatus { unknown, authenticated, unauthenticated }\n\nclass AuthState extends Equatable {\n  final AuthStatus status;\n  final String? userId;\n  final String? accessToken;\n  final String? refreshToken;\n\n  const AuthState({\n    this.status = AuthStatus.unknown,\n    this.userId,\n    this.accessToken,\n    this.refreshToken,\n  });\n\n  AuthState copyWith({\n    AuthStatus? status,\n    String? userId,\n    String? accessToken,\n    String? refreshToken,\n  }) {\n    return AuthState(\n      status: status ?? this.status,\n      userId: userId ?? this.userId,\n      accessToken: accessToken ?? this.accessToken,\n      refreshToken: refreshToken ?? this.refreshToken,\n    );\n  }\n\n  @override\n  List<Object?> get props => [status, userId, accessToken, refreshToken];\n\n  Map<String, dynamic> toJson() => {\n    'status': status.index,\n    'userId': userId,\n    'accessToken': accessToken,\n    'refreshToken': refreshToken,\n  };\n\n  factory AuthState.fromJson(Map<String, dynamic> json) {\n    return AuthState(\n      status: AuthStatus.values[json['status'] as int],\n      userId: json['userId'] as String?,\n      accessToken: json['accessToken'] as String?,\n      refreshToken: json['refreshToken'] as String?,\n    );\n  }\n}\n\nabstract class AuthEvent extends Equatable {\n  const AuthEvent();\n\n  @override\n  List<Object?> get props => [];\n}\n\nclass AppStarted extends AuthEvent {}\n\nclass LoggedIn extends AuthEvent {\n  final String userId;\n  final String accessToken;\n  final String refreshToken;\n\n  const LoggedIn({required this.userId, required this.accessToken, required this.refreshToken});\n\n  @override\n  List<Object?> get props => [userId, accessToken, refreshToken];\n}\n\nclass LoggedOut extends AuthEvent {}\n\nclass TokenRefreshed extends AuthEvent {\n  final String newAccessToken;\n  final String newRefreshToken;\n\n  const TokenRefreshed(this.newAccessToken, this.newRefreshToken);\n\n  @override\n  List<Object?> get props => [newAccessToken, newRefreshToken];\n}\n\n// --- Auth Bloc ---\nclass AuthBloc extends HydratedBloc<AuthEvent, AuthState> {\n  final FlutterSecureStorage secureStorage;\n  final AuthRepository authRepository;\n\n  AuthBloc({required this.secureStorage, required this.authRepository}) : super(const AuthState()) {\n    on<AppStarted>(_onAppStarted);\n    on<LoggedIn>(_onLoggedIn);\n    on<LoggedOut>(_onLoggedOut);\n    on<TokenRefreshed>(_onTokenRefreshed);\n  }\n\n  Future<void> _onAppStarted(AppStarted event, Emitter<AuthState> emit) async {\n    if (state.status == AuthStatus.authenticated && state.accessToken != null) {\n      // For demo, we assume token is valid if we have it\n      emit(state.copyWith(status: AuthStatus.authenticated));\n    } else {\n      emit(state.copyWith(status: AuthStatus.unauthenticated));\n    }\n  }\n\n  Future<void> _onLoggedIn(LoggedIn event, Emitter<AuthState> emit) async {\n    await secureStorage.write(key: 'access_token', value: event.accessToken);\n    await secureStorage.write(key: 'refresh_token', value: event.refreshToken);\n    emit(state.copyWith(\n      status: AuthStatus.authenticated,\n      userId: event.userId,\n      accessToken: event.accessToken,\n      refreshToken: event.refreshToken,\n    ));\n  }\n\n  Future<void> _onLoggedOut(LoggedOut event, Emitter<AuthState> emit) async {\n    await secureStorage.delete(key: 'access_token');\n    await secureStorage.delete(key: 'refresh_token');\n    emit(const AuthState(status: AuthStatus.unauthenticated));\n  }\n\n  Future<void> _onTokenRefreshed(TokenRefreshed event, Emitter<AuthState> emit) async {\n    await secureStorage.write(key: 'access_token', value: event.newAccessToken);\n    await secureStorage.write(key: 'refresh_token', value: event.newRefreshToken);\n    emit(state.copyWith(\n      accessToken: event.newAccessToken,\n      refreshToken: event.newRefreshToken,\n    ));\n  }\n\n  @override\n  AuthState fromJson(Map<String, dynamic> json) => AuthState.fromJson(json);\n\n  @override\n  Map<String, dynamic> toJson(AuthState state) => state.toJson();\n}\n\n// Mock repository for demo\nclass AuthRepository {\n  Future<bool> login(String email, String password) async {\n    // Simulate API call\n    await Future.delayed(Duration(seconds: 1));\n    if (email == 'user@example.com' && password == 'password') {\n      return true;\n    }\n    return false;\n  }\n\n  Future<Map<String, String>> getTokens() async {\n    return {\n      'access_token': 'mock_access_token',\n      'refresh_token': 'mock_refresh_token',\n    };\n  }\n}\n\nvoid main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  final storage = await HydratedStorage.build(\n    storageDirectory: await getApplicationDocumentsDirectory(),\n  );\n  HydratedBloc.storage = storage;\n\n  final secureStorage = FlutterSecureStorage();\n  final authRepository = AuthRepository();\n\n  runApp(MyApp(\n    authBloc: AuthBloc(secureStorage: secureStorage, authRepository: authRepository),\n  ));\n}\n\nclass MyApp extends StatelessWidget {\n  final AuthBloc authBloc;\n\n  const MyApp({required this.authBloc});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider.value(\n        value: authBloc..add(AppStarted()),\n        child: HomePage(),\n      ),\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final authBloc = BlocProvider.of<AuthBloc>(context);\n    return BlocConsumer<AuthBloc, AuthState>(\n      listener: (context, state) {\n        if (state.status == AuthStatus.unauthenticated) {\n          ScaffoldMessenger.of(context).showSnackBar(\n            SnackBar(content: Text('Logged out!')),\n          );\n        } else if (state.status == AuthStatus.authenticated) {\n          ScaffoldMessenger.of(context).showSnackBar(\n            SnackBar(content: Text('Welcome ${state.userId}')),\n          );\n        }\n      },\n      builder: (context, state) {\n        if (state.status == AuthStatus.unknown) {\n          return Scaffold(body: Center(child: CircularProgressIndicator()));\n        } else if (state.status == AuthStatus.authenticated) {\n          return Scaffold(\n            appBar: AppBar(title: Text('Dashboard')),\n            body: Center(\n              child: Column(\n                mainAxisAlignment: MainAxisAlignment.center,\n                children: [\n                  Text('Logged in as user: ${state.userId}'),\n                  SizedBox(height: 20),\n                  ElevatedButton(\n                    onPressed: () => authBloc.add(LoggedOut()),\n                    child: Text('Logout'),\n                  ),\n                ],\n              ),\n            ),\n          );\n        } else {\n          return LoginPage();\n        }\n      },\n    );\n  }\n}\n\nclass LoginPage extends StatelessWidget {\n  final TextEditingController emailController = TextEditingController();\n  final TextEditingController passwordController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    final authBloc = BlocProvider.of<AuthBloc>(context);\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: Padding(\n        padding: EdgeInsets.all(16.0),\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            TextField(\n              controller: emailController,\n              decoration: InputDecoration(labelText: 'Email'),\n            ),\n            TextField(\n              controller: passwordController,\n              obscureText: true,\n              decoration: InputDecoration(labelText: 'Password'),\n            ),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: () async {\n                final success = await authBloc.authRepository.login(\n                  emailController.text,\n                  passwordController.text,\n                );\n                if (success) {\n                  final tokens = await authBloc.authRepository.getTokens();\n                  authBloc.add(LoggedIn(\n                    userId: emailController.text,\n                    accessToken: tokens['access_token']!,\n                    refreshToken: tokens['refresh_token']!,\n                  ));\n                } else {\n                  ScaffoldMessenger.of(context).showSnackBar(\n                    SnackBar(content: Text('Invalid credentials')),\n                  );\n                }\n              },\n              child: Text('Login'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\n// Required Equatable import\nimport 'package:equatable/equatable.dart';\n"
+  },
+  "quiz": [
+    {
+      "question": "Which package is recommended for storing sensitive tokens securely in Flutter?",
+      "options": ["shared_preferences", "flutter_secure_storage", "hydrated_bloc", "path_provider"],
+      "answer": 1
+    },
+    {
+      "question": "What should you do on app start to restore a user session?",
+      "options": [
+        "Show login screen immediately",
+        "Dispatch an AppStarted event and check persisted state",
+        "Clear all stored tokens",
+        "Wait for user interaction"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How can you automatically refresh an expired token when an API call fails with 401?",
+      "options": [
+        "Use a timer to refresh every 5 minutes",
+        "Implement an HTTP interceptor that handles 401 responses",
+        "Ask the user to log in again",
+        "Store the token in the database"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the main benefit of using HydratedBloc for session management?",
+      "options": [
+        "It automatically secures tokens",
+        "It persists the authentication state across app restarts",
+        "It reduces code size",
+        "It improves UI animations"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "flutter-authentication-flow",
+    "hydrated-bloc-tutorial",
+    "flutter-secure-storage"
+  ]
+}

@@ -1,0 +1,228 @@
+{
+  "slug": "bloc-stream-transform",
+  "course": "Flutter",
+  "title": "BLoC Stream Transform: Event Transformers & Reactive Streams",
+  "meta": {
+    "title": "BLoC Stream Transform – Event Transformers, Debounce & Throttle (2026)",
+    "description": "Master event transformers in BLoC to optimize user interactions. Learn debounce, throttle, distinct, and custom transformations using rxdart to improve performance and user experience.",
+    "keywords": [
+      "Flutter BLoC",
+      "event transformer",
+      "bloc stream transform",
+      "debounce bloc",
+      "throttle bloc",
+      "rxdart bloc",
+      "bloc transformer example",
+      "flutter_bloc transformers"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What Are Event Transformers in BLoC?"
+    },
+    {
+      "type": "text",
+      "value": "Event transformers are a powerful feature in `flutter_bloc` that allow you to modify the stream of events before they are processed by your BLoC. They give you control over how events are queued, delayed, filtered, or transformed – enabling advanced scenarios like debouncing search inputs, throttling button presses, or deduplicating events. Transformers are applied using the `transformer` parameter in the `on<Event>` method."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Event Transformers?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Improve Performance** – Prevent unnecessary expensive operations (e.g., API calls) by debouncing rapid events.",
+        "**Enhance User Experience** – Throttle fast button taps to avoid multiple submissions.",
+        "**Avoid Duplicate Work** – Ignore consecutive identical events with `distinct`.",
+        "**Control Concurrency** – Manage how overlapping events are handled (e.g., cancel previous, restart, or queue).",
+        "**Reduce Noise** – Filter out unwanted events before they reach your business logic."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Event Transformer"
+    },
+    {
+      "type": "text",
+      "value": "Every event handler in BLoC can accept a `transformer` parameter. By default, BLoC uses `sequential()` from `bloc_concurrency`, which processes events one at a time. You can override it with custom transformers from `rxdart` or your own implementation."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<SearchEvent>(\n  _onSearch,\n  transformer: (events, mapper) => events.debounceTime(Duration(milliseconds: 500)).flatMap(mapper),\n);"
+    },
+    {
+      "type": "text",
+      "value": "The transformer receives an `events` stream (the incoming events) and a `mapper` function that maps each event to a `Stream<State>`. Your transformer should return a `Stream<State>` that will be emitted to the BLoC."
+    },
+    {
+      "type": "heading",
+      "value": "Debouncing Search Inputs"
+    },
+    {
+      "type": "text",
+      "value": "Debouncing waits until the user pauses typing before triggering a search. This avoids making an API call on every keystroke."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SearchBloc extends Bloc<SearchEvent, SearchState> {\n  SearchBloc() : super(SearchInitial()) {\n    on<SearchQueryChanged>(\n      _onSearchQueryChanged,\n      transformer: debounce(const Duration(milliseconds: 500)),\n    );\n  }\n\n  void _onSearchQueryChanged(SearchQueryChanged event, Emitter<SearchState> emit) async {\n    emit(SearchLoading());\n    try {\n      final results = await searchApi(event.query);\n      emit(SearchSuccess(results));\n    } catch (e) {\n      emit(SearchError(e.toString()));\n    }\n  }\n\n  EventTransformer<SearchQueryChanged> debounce(Duration duration) {\n    return (events, mapper) => events.debounceTime(duration).flatMap(mapper);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Throttling Button Clicks"
+    },
+    {
+      "type": "text",
+      "value": "Throttling limits the rate at which events are processed, e.g., preventing multiple rapid button taps from submitting the same form multiple times."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FormBloc extends Bloc<FormEvent, FormState> {\n  FormBloc() : super(FormInitial()) {\n    on<SubmitPressed>(\n      _onSubmitPressed,\n      transformer: throttle(const Duration(seconds: 2)),\n    );\n  }\n\n  void _onSubmitPressed(SubmitPressed event, Emitter<FormState> emit) async {\n    emit(FormSubmitting());\n    try {\n      await submitForm();\n      emit(FormSuccess());\n    } catch (e) {\n      emit(FormError(e.toString()));\n    }\n  }\n\n  EventTransformer<T> throttle<T>(Duration duration) {\n    return (events, mapper) => events.throttleTime(duration).flatMap(mapper);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Distinct (Ignore Consecutive Duplicates)"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want to ignore events that are identical to the previous one, especially when the event carries the same data (e.g., same search query)."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {\n  SettingsBloc() : super(SettingsInitial()) {\n    on<ThemeChanged>(\n      _onThemeChanged,\n      transformer: distinct(),\n    );\n  }\n\n  void _onThemeChanged(ThemeChanged event, Emitter<SettingsState> emit) async {\n    // Only called if event.theme is different from the previous event's theme\n    emit(SettingsUpdated(theme: event.theme));\n  }\n\n  EventTransformer<T> distinct<T>() {\n    return (events, mapper) => events.distinct().flatMap(mapper);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Combining Transformers"
+    },
+    {
+      "type": "text",
+      "value": "You can compose multiple transformers. For example, debounce and then distinct to avoid searching for the same query after a pause."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "on<SearchQueryChanged>(\n  _onSearchQueryChanged,\n  transformer: (events, mapper) => events\n      .debounceTime(Duration(milliseconds: 500))\n      .distinct()\n      .flatMap(mapper),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Using `bloc_concurrency` for Advanced Concurrency"
+    },
+    {
+      "type": "text",
+      "value": "The `bloc_concurrency` package provides ready‑made transformers like `sequential`, `droppable`, `restartable`, and `concurrent`. These control how events are queued when a handler is already running."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:bloc_concurrency/bloc_concurrency.dart';\n\nclass MyBloc extends Bloc<MyEvent, MyState> {\n  MyBloc() : super(MyState()) {\n    on<MyEvent>(\n      _onEvent,\n      transformer: restartable(), // Drops previous and keeps latest\n    );\n  }\n\n  void _onEvent(MyEvent event, Emitter<MyState> emit) async {\n    // long operation\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Custom Event Transformers"
+    },
+    {
+      "type": "text",
+      "value": "You can build your own transformers by manipulating the event stream. For example, a transformer that ignores events after a certain count."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "EventTransformer<T> takeFirst<T>(int count) {\n  return (events, mapper) => events.take(count).flatMap(mapper);\n}\n\n// Usage\non<SomeEvent>(_onEvent, transformer: takeFirst(5));"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Define transformers as reusable functions** – Keep them outside the BLoC for easier testing and reuse.",
+        "**Use `bloc_concurrency` for concurrency control** – It’s battle‑tested and covers common patterns.",
+        "**Apply transformers only when needed** – Not every event needs transformation; simple events can use the default `sequential`.",
+        "**Keep transformers simple** – Complex stream logic can be extracted into helper functions.",
+        "**Test transformers separately** – Verify that your transformer behaves as expected using `rxdart`’s `TestStream`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Using `debounce` without canceling previous work** – If you have long‑running operations, a restartable transformer may be better.\n✅ Combine `debounce` with `restartable` to cancel previous requests.",
+        "❌ **Applying `distinct` without proper equality** – For custom events, implement `==` or use `Equatable` so distinct works correctly.",
+        "❌ **Forgetting to import `rxdart`** – Many transformers like `debounceTime` and `throttleTime` come from rxdart.",
+        "❌ **Over‑transforming** – Adding too many transformations can make the flow hard to debug.\n✅ Keep it minimal and documented."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Event transformers give you fine‑grained control over how events are processed in your BLoC. By using debounce, throttle, distinct, and concurrency controls, you can significantly improve app performance and user experience. Combining these transformers with `rxdart` and `bloc_concurrency` allows you to handle complex real‑world scenarios elegantly."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between debounce and throttle?",
+      "answer": "Debounce waits for a pause in events before processing the last one. Throttle processes the first event and then ignores subsequent ones for a period. Debounce is great for search inputs; throttle is ideal for rate‑limiting button taps."
+    },
+    {
+      "question": "Do I need to add rxdart to use event transformers?",
+      "answer": "Yes, most transformers like `debounceTime`, `throttleTime`, and `distinct` come from `rxdart`. You can also write custom transformers without rxdart using `StreamTransformer` but it’s more verbose."
+    },
+    {
+      "question": "How do I cancel a previous request when a new event arrives?",
+      "answer": "Use a `restartable` transformer from `bloc_concurrency`. It cancels the previous handler and starts a new one with the latest event."
+    },
+    {
+      "question": "Can I apply different transformers to different events in the same BLoC?",
+      "answer": "Yes, each `on<Event>` registration can have its own `transformer` parameter, allowing per‑event customization."
+    },
+    {
+      "question": "How do I test an event transformer?",
+      "answer": "You can test by feeding events into a `StreamController` and using `rxdart`’s `TestStream` to verify the output order and timing."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:rxdart/rxdart.dart';\n\nvoid main() => runApp(MyApp());\n\n// Events\nabstract class SearchEvent {}\nclass SearchQueryChanged extends SearchEvent {\n  final String query;\n  SearchQueryChanged(this.query);\n}\n\n// States\nabstract class SearchState {}\nclass SearchInitial extends SearchState {}\nclass SearchLoading extends SearchState {}\nclass SearchSuccess extends SearchState {\n  final List<String> results;\n  SearchSuccess(this.results);\n}\nclass SearchError extends SearchState {\n  final String message;\n  SearchError(this.message);\n}\n\n// BLoC with debounced transformer\nclass SearchBloc extends Bloc<SearchEvent, SearchState> {\n  SearchBloc() : super(SearchInitial()) {\n    on<SearchQueryChanged>(\n      _onSearchQueryChanged,\n      transformer: debounce(const Duration(milliseconds: 500)),\n    );\n  }\n\n  void _onSearchQueryChanged(SearchQueryChanged event, Emitter<SearchState> emit) async {\n    emit(SearchLoading());\n    // Simulate an API call\n    await Future.delayed(Duration(milliseconds: 300));\n    if (event.query.isEmpty) {\n      emit(SearchSuccess([]));\n    } else {\n      final results = List.generate(5, (i) => '${event.query} result $i');\n      emit(SearchSuccess(results));\n    }\n  }\n\n  EventTransformer<T> debounce<T>(Duration duration) {\n    return (events, mapper) => events.debounceTime(duration).flatMap(mapper);\n  }\n}\n\n// UI\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => SearchBloc(),\n        child: SearchPage(),\n      ),\n    );\n  }\n}\n\nclass SearchPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Debounced Search')),\n      body: Padding(\n        padding: EdgeInsets.all(16),\n        child: Column(\n          children: [\n            TextField(\n              decoration: InputDecoration(\n                labelText: 'Search',\n                border: OutlineInputBorder(),\n              ),\n              onChanged: (query) => context.read<SearchBloc>().add(SearchQueryChanged(query)),\n            ),\n            SizedBox(height: 20),\n            Expanded(\n              child: BlocBuilder<SearchBloc, SearchState>(\n                builder: (context, state) {\n                  if (state is SearchLoading) {\n                    return Center(child: CircularProgressIndicator());\n                  } else if (state is SearchSuccess) {\n                    if (state.results.isEmpty) {\n                      return Center(child: Text('No results'));\n                    }\n                    return ListView.builder(\n                      itemCount: state.results.length,\n                      itemBuilder: (_, i) => ListTile(title: Text(state.results[i])),\n                    );\n                  } else if (state is SearchError) {\n                    return Center(child: Text('Error: ${state.message}'));\n                  }\n                  return Container();\n                },\n              ),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which transformer would you use to wait for the user to stop typing before triggering a search?",
+      "options": ["throttle", "debounce", "distinct", "restartable"],
+      "answer": 1
+    },
+    {
+      "question": "What package provides the `debounceTime` and `throttleTime` operators used in event transformers?",
+      "options": ["async", "bloc", "rxdart", "stream_transform"],
+      "answer": 2
+    },
+    {
+      "question": "How do you apply a custom transformer to a specific event handler in a BLoC?",
+      "options": [
+        "By overriding the `transformEvents` method",
+        "By passing a `transformer` parameter to `on<Event>`",
+        "By wrapping the event in a `TransformedEvent`",
+        "By using a `StreamTransformer` globally"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-state-management",
+    "bloc-streams",
+    "rxdart-tutorial",
+    "bloc-concurrency"
+  ]
+}

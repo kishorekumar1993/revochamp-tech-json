@@ -1,0 +1,211 @@
+{
+  "slug": "bloc-navigation-guards",
+  "course": "Flutter",
+  "title": "BLoC Navigation Guards: Protect Routes with Authentication & Authorization",
+  "meta": {
+    "title": "BLoC Navigation Guards – Route Protection & Authorization (2026)",
+    "description": "Learn how to implement navigation guards with BLoC to protect routes based on authentication and roles. Master route redirection, role-based access control, and integration with Navigator 1.0 and GoRouter.",
+    "keywords": [
+      "Flutter BLoC navigation guards",
+      "route guards BLoC",
+      "authentication guard",
+      "authorization BLoC",
+      "protected routes Flutter",
+      "GoRouter BLoC",
+      "Navigator 2.0 BLoC",
+      "role-based access control Flutter"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Navigation Guards?"
+    },
+    {
+      "type": "text",
+      "value": "Navigation guards are mechanisms that control access to certain routes based on conditions like authentication status, user roles, or feature flags. They prevent unauthorized users from accessing protected screens and redirect them to login or permission-denied pages. In BLoC architecture, navigation guards are implemented by observing the auth state and conditionally navigating or using route observers to intercept navigation attempts."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use BLoC for Navigation Guards?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Centralized Auth State** – BLoC holds the single source of truth for authentication.",
+        "**Reactive Navigation** – Guards automatically respond to state changes (e.g., logout redirects to login).",
+        "**Separation of Concerns** – Navigation logic stays in the UI layer; BLoC only manages state.",
+        "**Testability** – Auth state changes can be tested independently of navigation.",
+        "**Consistency** – Ensure all routes are protected using the same auth state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setup: Authentication BLoC"
+    },
+    {
+      "type": "text",
+      "value": "First, create an authentication BLoC that manages the user's auth state. This will be the source for all navigation decisions."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// auth_state.dart\nenum AuthStatus { unknown, authenticated, unauthenticated }\n\nclass AuthState extends Equatable {\n  final AuthStatus status;\n  final User? user;\n  final String? error;\n\n  const AuthState({this.status = AuthStatus.unknown, this.user, this.error});\n\n  AuthState copyWith({AuthStatus? status, User? user, String? error}) {\n    return AuthState(\n      status: status ?? this.status,\n      user: user ?? this.user,\n      error: error ?? this.error,\n    );\n  }\n\n  @override\n  List<Object?> get props => [status, user, error];\n}\n\n// auth_event.dart\nabstract class AuthEvent extends Equatable { ... }\nclass AppStarted extends AuthEvent {}\nclass LoggedIn extends AuthEvent { final User user; ... }\nclass LoggedOut extends AuthEvent {}\n\n// auth_bloc.dart\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  AuthBloc() : super(const AuthState()) {\n    on<AppStarted>(_onAppStarted);\n    on<LoggedIn>(_onLoggedIn);\n    on<LoggedOut>(_onLoggedOut);\n  }\n  // ... implementation\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Navigation Guard with BlocListener (Imperative)"
+    },
+    {
+      "type": "text",
+      "value": "Place a `BlocListener` at the top of your widget tree to listen to auth state changes and redirect accordingly. This works with both Navigator 1.0 and 2.0."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class AppRouter extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocListener<AuthBloc, AuthState>(\n      listener: (context, state) {\n        if (state.status == AuthStatus.authenticated) {\n          // User is logged in, navigate to home if currently on login/splash\n          if (ModalRoute.of(context)?.settings.name == '/login') {\n            Navigator.pushReplacementNamed(context, '/home');\n          }\n        } else if (state.status == AuthStatus.unauthenticated) {\n          // User is logged out, navigate to login\n          Navigator.pushReplacementNamed(context, '/login');\n        }\n      },\n      child: MaterialApp(\n        initialRoute: '/splash',\n        routes: {\n          '/splash': (context) => SplashPage(),\n          '/login': (context) => LoginPage(),\n          '/home': (context) => HomePage(),\n          '/profile': (context) => ProfilePage(),\n        },\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Protecting Individual Routes"
+    },
+    {
+      "type": "text",
+      "value": "For individual routes that should be guarded, you can check the auth state before navigating or use a custom `RouteGuard` widget that wraps the route content."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ProtectedRoute extends StatelessWidget {\n  final Widget child;\n  const ProtectedRoute({required this.child});\n\n  @override\n  Widget build(BuildContext context) {\n    final authState = context.watch<AuthBloc>().state;\n    if (authState.status == AuthStatus.authenticated) {\n      return child;\n    } else {\n      // Redirect to login\n      WidgetsBinding.instance.addPostFrameCallback((_) {\n        Navigator.pushReplacementNamed(context, '/login');\n      });\n      return const Scaffold(body: Center(child: CircularProgressIndicator()));\n    }\n  }\n}\n\n// Usage in routes:\n'/profile': (context) => ProtectedRoute(child: ProfilePage()),"
+    },
+    {
+      "type": "heading",
+      "value": "Integration with GoRouter (Declarative Navigation)"
+    },
+    {
+      "type": "text",
+      "value": "GoRouter is a modern routing package that works seamlessly with BLoC. You can define a `redirect` function that reads the BLoC state and determines the appropriate route."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "import 'package:go_router/go_router.dart';\n\nfinal router = GoRouter(\n  initialLocation: '/',\n  redirect: (context, state) {\n    final authState = context.read<AuthBloc>().state;\n    final isLoggedIn = authState.status == AuthStatus.authenticated;\n    final isGoingToLogin = state.matchedLocation == '/login';\n\n    if (!isLoggedIn && !isGoingToLogin) {\n      return '/login';\n    }\n    if (isLoggedIn && isGoingToLogin) {\n      return '/';\n    }\n    return null;\n  },\n  routes: [\n    GoRoute(\n      path: '/',\n      builder: (context, state) => const HomePage(),\n    ),\n    GoRoute(\n      path: '/login',\n      builder: (context, state) => const LoginPage(),\n    ),\n    GoRoute(\n      path: '/profile',\n      builder: (context, state) => const ProfilePage(),\n    ),\n  ],\n);\n\n// In main:\nrunApp(BlocProvider(\n  create: (_) => AuthBloc()..add(AppStarted()),\n  child: MaterialApp.router(\n    routerConfig: router,\n  ),\n));"
+    },
+    {
+      "type": "heading",
+      "value": "Role-Based Guards (Authorization)"
+    },
+    {
+      "type": "text",
+      "value": "You can extend guards to check user roles. For example, only admin users can access an admin panel."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class RoleGuard extends StatelessWidget {\n  final List<String> allowedRoles;\n  final Widget child;\n  final Widget? forbiddenWidget;\n\n  const RoleGuard({\n    required this.allowedRoles,\n    required this.child,\n    this.forbiddenWidget,\n  });\n\n  @override\n  Widget build(BuildContext context) {\n    final authState = context.watch<AuthBloc>().state;\n    if (authState.status == AuthStatus.authenticated &&\n        allowedRoles.contains(authState.user?.role)) {\n      return child;\n    }\n    return forbiddenWidget ??\n        const Scaffold(\n          body: Center(child: Text('Access Denied')),\n        );\n  }\n}\n\n// Usage in GoRouter:\nGoRoute(\n  path: '/admin',\n  builder: (context, state) => RoleGuard(\n    allowedRoles: ['admin'],\n    child: AdminPage(),\n  ),\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use a single source of truth** – Auth state should be managed in a single BLoC (or multiple if needed) and accessed via providers.",
+        "**Redirect early** – In GoRouter, the `redirect` function runs before building any route, preventing flicker.",
+        "**Avoid side effects in builders** – Use `BlocListener` or `addPostFrameCallback` for navigation to avoid calling during build.",
+        "**Test guards** – Verify that unauthenticated users cannot access protected routes in widget tests.",
+        "**Combine with `hydrated_bloc`** – Persist auth state across app restarts to maintain login.",
+        "**Show loading states** – While checking auth, display a splash screen to prevent UI jumps."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling `Navigator.push` inside a `build` method** – This will run multiple times, causing navigation loops. Use `BlocListener` or a post-frame callback.",
+        "❌ **Not handling `unknown` auth state** – App may try to navigate before auth state is resolved, causing redirect loops.",
+        "❌ **Hardcoding routes in the BLoC** – BLoC should not know about navigation; keep navigation logic in the UI layer.",
+        "❌ **Forgetting to dispose of subscriptions** – If using a stream to listen to auth changes, ensure it's closed.",
+        "❌ **Not testing guard behavior** – Always write tests to ensure protected routes redirect correctly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Navigation guards are essential for securing your Flutter app. By combining BLoC's auth state with tools like `BlocListener` or GoRouter's `redirect`, you can implement robust authentication and authorization flows. These patterns keep your code maintainable and your app secure."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Can I use navigation guards with Navigator 2.0 without GoRouter?",
+      "answer": "Yes, you can implement a custom `RouterDelegate` that listens to the BLoC state and updates the route stack accordingly. However, GoRouter simplifies this greatly and is recommended."
+    },
+    {
+      "question": "How do I handle deep links that point to protected routes?",
+      "answer": "In GoRouter, the `redirect` function will also run for deep links, so you can redirect unauthenticated users to login and then redirect back after login. You'll need to preserve the original location."
+    },
+    {
+      "question": "Should I store the auth state in a global BLoC or use a provider?",
+      "answer": "A single `AuthBloc` at the top of the widget tree is typical. Use `BlocProvider` to make it available everywhere. For role-based guards, you can read the user from the same state."
+    },
+    {
+      "question": "How do I test navigation guards?",
+      "answer": "Use `blocTest` to verify that the correct states are emitted. For widget tests, use `tester.pumpWidget` with a mocked `AuthBloc` and verify that the expected route is shown after navigation."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\nvoid main() => runApp(MyApp());\n\n// ---------- Auth BLoC ----------\nenum AuthStatus { unknown, authenticated, unauthenticated }\n\nclass AuthState extends Equatable {\n  final AuthStatus status;\n  final String? userName;\n  final String? role;\n  final String? error;\n\n  const AuthState({\n    this.status = AuthStatus.unknown,\n    this.userName,\n    this.role,\n    this.error,\n  });\n\n  AuthState copyWith({\n    AuthStatus? status,\n    String? userName,\n    String? role,\n    String? error,\n  }) {\n    return AuthState(\n      status: status ?? this.status,\n      userName: userName ?? this.userName,\n      role: role ?? this.role,\n      error: error ?? this.error,\n    );\n  }\n\n  @override\n  List<Object?> get props => [status, userName, role, error];\n}\n\nabstract class AuthEvent extends Equatable {\n  const AuthEvent();\n  @override List<Object?> get props => [];\n}\n\nclass AppStarted extends AuthEvent {}\nclass LoginRequested extends AuthEvent {\n  final String username;\n  final String password;\n  const LoginRequested(this.username, this.password);\n}\nclass LogoutRequested extends AuthEvent {}\n\nclass AuthBloc extends Bloc<AuthEvent, AuthState> {\n  AuthBloc() : super(const AuthState()) {\n    on<AppStarted>(_onAppStarted);\n    on<LoginRequested>(_onLoginRequested);\n    on<LogoutRequested>(_onLogoutRequested);\n  }\n\n  void _onAppStarted(AppStarted event, Emitter<AuthState> emit) {\n    // Check for persisted auth (simulate)\n    emit(state.copyWith(status: AuthStatus.unauthenticated));\n  }\n\n  Future<void> _onLoginRequested(LoginRequested event, Emitter<AuthState> emit) async {\n    emit(state.copyWith(status: AuthStatus.unknown, error: null));\n    await Future.delayed(Duration(seconds: 1));\n    if (event.username == 'admin' && event.password == 'admin') {\n      emit(state.copyWith(\n        status: AuthStatus.authenticated,\n        userName: event.username,\n        role: 'admin',\n      ));\n    } else if (event.username == 'user' && event.password == 'user') {\n      emit(state.copyWith(\n        status: AuthStatus.authenticated,\n        userName: event.username,\n        role: 'user',\n      ));\n    } else {\n      emit(state.copyWith(\n        status: AuthStatus.unauthenticated,\n        error: 'Invalid credentials',\n      ));\n    }\n  }\n\n  void _onLogoutRequested(LogoutRequested event, Emitter<AuthState> emit) {\n    emit(const AuthState(status: AuthStatus.unauthenticated));\n  }\n}\n\n// ---------- Navigation Guard with BlocListener ----------\nclass AppRouter extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocListener<AuthBloc, AuthState>(\n      listener: (context, state) {\n        if (state.status == AuthStatus.unauthenticated) {\n          // Only navigate to login if not already there\n          final currentRoute = ModalRoute.of(context)?.settings.name;\n          if (currentRoute != '/login') {\n            Navigator.pushReplacementNamed(context, '/login');\n          }\n        } else if (state.status == AuthStatus.authenticated) {\n          final currentRoute = ModalRoute.of(context)?.settings.name;\n          if (currentRoute == '/login') {\n            Navigator.pushReplacementNamed(context, '/');\n          }\n        }\n      },\n      child: MaterialApp(\n        initialRoute: '/splash',\n        routes: {\n          '/splash': (context) => SplashPage(),\n          '/login': (context) => LoginPage(),\n          '/': (context) => HomePage(),\n          '/admin': (context) => AdminPage(),\n        },\n      ),\n    );\n  }\n}\n\n// ---------- UI Pages ----------\nclass SplashPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    // Simulate loading\n    Future.delayed(Duration(milliseconds: 500), () {\n      if (context.mounted) {\n        Navigator.pushReplacementNamed(context, '/login');\n      }\n    });\n    return Scaffold(body: Center(child: CircularProgressIndicator()));\n  }\n}\n\nclass LoginPage extends StatefulWidget {\n  @override\n  _LoginPageState createState() => _LoginPageState();\n}\n\nclass _LoginPageState extends State<LoginPage> {\n  final TextEditingController userController = TextEditingController();\n  final TextEditingController passController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Login')),\n      body: Padding(\n        padding: const EdgeInsets.all(16.0),\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            TextField(controller: userController, decoration: InputDecoration(labelText: 'Username')),\n            TextField(controller: passController, obscureText: true, decoration: InputDecoration(labelText: 'Password')),\n            SizedBox(height: 20),\n            BlocConsumer<AuthBloc, AuthState>(\n              listener: (context, state) {\n                if (state.error != null) {\n                  ScaffoldMessenger.of(context).showSnackBar(\n                    SnackBar(content: Text(state.error!)),\n                  );\n                }\n              },\n              builder: (context, state) {\n                if (state.status == AuthStatus.unknown) {\n                  return CircularProgressIndicator();\n                }\n                return ElevatedButton(\n                  onPressed: () {\n                    context.read<AuthBloc>().add(LoginRequested(\n                      userController.text,\n                      passController.text,\n                    ));\n                  },\n                  child: Text('Login'),\n                );\n              },\n            ),\n            SizedBox(height: 20),\n            Text('Demo: admin/admin or user/user'),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass HomePage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final authState = context.watch<AuthBloc>().state;\n    return Scaffold(\n      appBar: AppBar(\n        title: Text('Home'),\n        actions: [\n          IconButton(\n            icon: Icon(Icons.logout),\n            onPressed: () => context.read<AuthBloc>().add(LogoutRequested()),\n          ),\n        ],\n      ),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Welcome, ${authState.userName}!'),\n            Text('Role: ${authState.role}'),\n            SizedBox(height: 20),\n            if (authState.role == 'admin')\n              ElevatedButton(\n                onPressed: () => Navigator.pushNamed(context, '/admin'),\n                child: Text('Go to Admin Page'),\n              ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\nclass AdminPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final authState = context.watch<AuthBloc>().state;\n    if (authState.role != 'admin') {\n      return Scaffold(\n        body: Center(child: Text('Access Denied')),\n      );\n    }\n    return Scaffold(\n      appBar: AppBar(title: Text('Admin Panel')),\n      body: Center(child: Text('Secret admin content')),\n    );\n  }\n}\n\n// ---------- Main ----------\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocProvider(\n      create: (_) => AuthBloc()..add(AppStarted()),\n      child: AppRouter(),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which widget is best suited to listen to auth state changes and perform navigation?",
+      "options": ["BlocBuilder", "BlocListener", "BlocProvider", "BlocConsumer"],
+      "answer": 1
+    },
+    {
+      "question": "In GoRouter, how do you implement route guards based on auth state?",
+      "options": [
+        "Using a custom NavigatorObserver",
+        "Using the redirect parameter",
+        "Wrapping each route with a Guard widget",
+        "Using BlocBuilder inside the route builder"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Why should you avoid calling Navigator.push inside a build method?",
+      "options": [
+        "It's not supported",
+        "It can cause multiple navigations due to rebuilds",
+        "It's slower",
+        "It breaks animations"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How can you implement role-based access to a route?",
+      "options": [
+        "Store role in global variable",
+        "Check the user's role in the guard before showing the page",
+        "Use different BLoCs for each role",
+        "It's not possible"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-side-effects",
+    "bloc-initial-state",
+    "go-router-tutorial",
+    "flutter-authentication-flow"
+  ]
+}

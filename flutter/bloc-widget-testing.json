@@ -1,0 +1,231 @@
+{
+  "slug": "bloc-widget-testing",
+  "course": "Flutter",
+  "title": "BLoC Widget Testing: Testing Flutter UI with BLoC State Management",
+  "meta": {
+    "title": "BLoC Widget Testing – Integration & Widget Tests for BLoC-Powered UIs (2026)",
+    "description": "Learn how to test Flutter widgets that use BLoC for state management. Master widget testing with BlocProvider, mock dependencies, verify UI changes, and ensure your UI reacts correctly to state changes.",
+    "keywords": [
+      "Flutter widget testing",
+      "BLoC widget testing",
+      "test BLoC UI",
+      "BlocProvider testing",
+      "mock BLoC in tests",
+      "flutter_bloc testing",
+      "integration test BLoC",
+      "widget test state management"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BLoC Widget Testing?"
+    },
+    {
+      "type": "text",
+      "value": "BLoC widget testing refers to testing Flutter widgets that rely on BLoC for state management. Unlike unit tests that test BLoCs in isolation, widget tests verify the integration between the UI and the BLoC. You ensure that the widget correctly displays states, responds to user interactions, and updates when the BLoC emits new states. This level of testing is crucial for building reliable, production-ready apps."
+    },
+    {
+      "type": "heading",
+      "value": "Why Test Widgets with BLoC?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Verify UI Behavior** – Ensure the correct widgets appear based on state (loading, error, success).",
+        "**Test User Interactions** – Confirm that taps, scrolls, and inputs dispatch the right events.",
+        "**Catch Integration Bugs** – Detect mismatches between BLoC outputs and UI expectations.",
+        "**Improve Confidence** – Refactor UI safely knowing tests catch regressions.",
+        "**Document UI Flows** – Tests serve as executable specifications."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Testing Environment"
+    },
+    {
+      "type": "text",
+      "value": "Add the necessary dev dependencies to your `pubspec.yaml`:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dev_dependencies:\n  flutter_test:\n    sdk: flutter\n  bloc_test: ^9.1.5\n  mocktail: ^1.0.2\n  equatable: ^2.0.5"
+    },
+    {
+      "type": "heading",
+      "value": "Testing a Simple Counter Widget with Cubit"
+    },
+    {
+      "type": "text",
+      "value": "Start with a simple counter app using a Cubit. In widget tests, you provide the Cubit using `BlocProvider` and interact with the widget."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// counter_cubit.dart\nclass CounterCubit extends Cubit<int> {\n  CounterCubit() : super(0);\n  void increment() => emit(state + 1);\n}\n\n// counter_page.dart\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      body: Center(\n        child: BlocBuilder<CounterCubit, int>(\n          builder: (context, count) {\n            return Text('Count: $count');\n          },\n        ),\n      ),\n      floatingActionButton: FloatingActionButton(\n        onPressed: () => context.read<CounterCubit>().increment(),\n        child: Icon(Icons.add),\n      ),\n    );\n  }\n}"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// counter_page_test.dart\nimport 'package:flutter/material.dart';\nimport 'package:flutter_test/flutter_test.dart';\nimport 'package:bloc_test/bloc_test.dart';\nimport 'package:mocktail/mocktail.dart';\n\nclass MockCounterCubit extends MockCubit<int> implements CounterCubit {}\n\nvoid main() {\n  group('CounterPage', () {\n    late MockCounterCubit mockCubit;\n\n    setUp(() {\n      mockCubit = MockCounterCubit();\n    });\n\n    testWidgets('displays initial count from cubit', (tester) async {\n      when(() => mockCubit.state).thenReturn(5);\n\n      await tester.pumpWidget(\n        MaterialApp(\n          home: BlocProvider.value(\n            value: mockCubit,\n            child: CounterPage(),\n          ),\n        ),\n      );\n\n      expect(find.text('Count: 5'), findsOneWidget);\n    });\n\n    testWidgets('calls increment when button is pressed', (tester) async {\n      when(() => mockCubit.state).thenReturn(0);\n\n      await tester.pumpWidget(\n        MaterialApp(\n          home: BlocProvider.value(\n            value: mockCubit,\n            child: CounterPage(),\n          ),\n        ),\n      );\n\n      await tester.tap(find.byType(FloatingActionButton));\n      verify(() => mockCubit.increment()).called(1);\n    });\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Async BLoC with Multiple States"
+    },
+    {
+      "type": "text",
+      "value": "For BLoCs that emit multiple states (loading → success/error), you need to simulate the state changes in tests. Use `blocTest` to define the expected states, and in widget tests, you can manually emit states to the mock."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// posts_bloc.dart\nclass PostsBloc extends Bloc<PostsEvent, PostsState> {\n  final PostsRepository repository;\n  PostsBloc(this.repository) : super(PostsInitial());\n  // ...\n}\n\n// posts_page.dart\nclass PostsPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return BlocBuilder<PostsBloc, PostsState>(\n      builder: (context, state) {\n        if (state is PostsLoading) {\n          return Center(child: CircularProgressIndicator());\n        } else if (state is PostsSuccess) {\n          return ListView.builder(\n            itemCount: state.posts.length,\n            itemBuilder: (_, i) => ListTile(title: Text(state.posts[i].title)),\n          );\n        } else if (state is PostsError) {\n          return Center(child: Text('Error: ${state.message}'));\n        }\n        return Container();\n      },\n    );\n  }\n}"
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// posts_page_test.dart\nclass MockPostsBloc extends MockBloc<PostsEvent, PostsState> implements PostsBloc {}\n\nvoid main() {\n  late MockPostsBloc mockBloc;\n\n  setUp(() {\n    mockBloc = MockPostsBloc();\n  });\n\n  testWidgets('shows loading indicator initially', (tester) async {\n    when(() => mockBloc.state).thenReturn(PostsLoading());\n\n    await tester.pumpWidget(\n      MaterialApp(\n        home: BlocProvider.value(\n          value: mockBloc,\n          child: PostsPage(),\n        ),\n      ),\n    );\n\n    expect(find.byType(CircularProgressIndicator), findsOneWidget);\n  });\n\n  testWidgets('shows posts list on success', (tester) async {\n    final posts = [Post(id: 1, title: 'Post 1'), Post(id: 2, title: 'Post 2')];\n    when(() => mockBloc.state).thenReturn(PostsSuccess(posts));\n\n    await tester.pumpWidget(\n      MaterialApp(\n        home: BlocProvider.value(\n          value: mockBloc,\n          child: PostsPage(),\n        ),\n      ),\n    );\n\n    expect(find.text('Post 1'), findsOneWidget);\n    expect(find.text('Post 2'), findsOneWidget);\n  });\n\n  testWidgets('shows error message on failure', (tester) async {\n    when(() => mockBloc.state).thenReturn(PostsError('Something went wrong'));\n\n    await tester.pumpWidget(\n      MaterialApp(\n        home: BlocProvider.value(\n          value: mockBloc,\n          child: PostsPage(),\n        ),\n      ),\n    );\n\n    expect(find.text('Error: Something went wrong'), findsOneWidget);\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Widgets That Dispatch Events"
+    },
+    {
+      "type": "text",
+      "value": "To test user interactions that dispatch events, you can use `blocTest` to verify the events are added. In widget tests, you often use `tester.tap` and then verify that the event was added to the bloc."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "testWidgets('tapping add button dispatches AddTodo event', (tester) async {\n  final mockBloc = MockTodoBloc();\n  when(() => mockBloc.state).thenReturn(TodoInitial());\n\n  await tester.pumpWidget(\n    MaterialApp(\n      home: BlocProvider.value(\n        value: mockBloc,\n        child: TodoInputField(), // widget with TextField and add button\n      ),\n    ),\n  );\n\n  await tester.enterText(find.byType(TextField), 'Buy milk');\n  await tester.tap(find.byType(ElevatedButton));\n  await tester.pump();\n\n  verify(() => mockBloc.add(AddTodo('Buy milk'))).called(1);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Testing BLoC Dependencies with Real Implementations"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you want to test the full integration with real repositories, but using a real API is slow. You can use a fake repository that returns predefined data, allowing you to test the BLoC and UI together."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class FakePostRepository implements PostRepository {\n  @override\n  Future<List<Post>> fetchPosts() async {\n    return [Post(id: 1, title: 'Fake Post')];\n  }\n}\n\ntestWidgets('integration test with fake repository', (tester) async {\n  final bloc = PostsBloc(FakePostRepository());\n\n  await tester.pumpWidget(\n    MaterialApp(\n      home: BlocProvider.value(\n        value: bloc,\n        child: PostsPage(),\n      ),\n    ),\n  );\n\n  expect(find.byType(CircularProgressIndicator), findsOneWidget);\n  await tester.pumpAndSettle();\n  expect(find.text('Fake Post'), findsOneWidget);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Navigation with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "To test that a BLoC triggers navigation, you can use a `MockNavigatorObserver` or verify that the expected route was pushed. One approach is to wrap your app in a `MaterialApp` with a `NavigatorObserver` to capture pushes."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MockNavigatorObserver extends NavigatorObserver {\n  List<Route> pushedRoutes = [];\n\n  @override\n  void didPush(Route route, Route? previousRoute) {\n    pushedRoutes.add(route);\n    super.didPush(route, previousRoute);\n  }\n}\n\ntestWidgets('login success navigates to home', (tester) async {\n  final mockObserver = MockNavigatorObserver();\n  final mockBloc = MockAuthBloc();\n  when(() => mockBloc.state).thenReturn(Authenticated());\n\n  await tester.pumpWidget(\n    MaterialApp(\n      home: BlocProvider.value(\n        value: mockBloc,\n        child: LoginPage(),\n      ),\n      navigatorObservers: [mockObserver],\n    ),\n  );\n\n  await tester.tap(find.byKey(Key('login_button')));\n  await tester.pumpAndSettle();\n\n  expect(mockObserver.pushedRoutes.length, 1);\n  expect(find.byType(HomePage), findsOneWidget);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use mocktail for mocking BLoCs** – It works well with generics and sealed classes.",
+        "**Provide BLoC via `BlocProvider.value`** – This avoids creating a new instance in the test.",
+        "**Test all UI states** – Cover loading, empty, success, error, and edge cases.",
+        "**Use `pumpAndSettle`** – After dispatching events that cause multiple frame rebuilds, wait for animations to finish.",
+        "**Test user interactions** – Ensure events are dispatched correctly, not just UI appearance.",
+        "**Avoid over-mocking** – Sometimes a real, but controlled, BLoC with a fake repository is more realistic.",
+        "**Keep tests isolated** – Each test should have its own BLoC instance to avoid state leakage.",
+        "**Use `tester.pumpWidget` with a clean `MaterialApp`** – Provide necessary providers and themes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Not calling `pump` after state changes** – The widget tree needs to rebuild; use `pump()` or `pumpAndSettle()`.",
+        "❌ **Using real network calls** – Tests become slow and flaky; mock repositories or use fake data.",
+        "❌ **Forgetting to wrap with `MaterialApp`** – Widgets that depend on `Navigator` or `MediaQuery` will fail.",
+        "❌ **Not providing a `BlocProvider`** – Widgets using `BlocBuilder` will throw `ProviderNotFoundException`.",
+        "❌ **Mutating state across tests** – Use a new BLoC instance per test or reset mocks properly.",
+        "❌ **Testing implementation details** – Focus on observable behavior, not internal method calls unless necessary."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Widget testing with BLoC ensures that your UI correctly responds to state changes and user interactions. By combining `mocktail` for mocking, `bloc_test` for state verification, and Flutter’s widget testing framework, you can build a comprehensive test suite that covers both business logic and presentation layers. This leads to more robust, maintainable Flutter applications."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What's the difference between unit testing and widget testing BLoCs?",
+      "answer": "Unit tests test the BLoC in isolation (events, state transitions). Widget tests test the integration between the BLoC and the UI, verifying that the correct widgets are rendered based on state and that user interactions dispatch the right events."
+    },
+    {
+      "question": "How do I test a BLoC that uses `HydratedBloc` in widget tests?",
+      "answer": "You can mock the storage or use a temporary directory. For widget tests, it's easier to use a mock BLoC that doesn't rely on persistence, or provide a real but controlled storage (e.g., using `HydratedBloc.storage = null`)."
+    },
+    {
+      "question": "Can I use `blocTest` inside a widget test?",
+      "answer": "Yes, but it's more common to use `blocTest` for unit testing BLoCs. For widget tests, you typically use the standard widget testing API with mocked BLoCs. However, you can combine both if needed."
+    },
+    {
+      "question": "How do I test asynchronous UI updates like loading indicators?",
+      "answer": "Use `tester.pump()` after emitting states to let the widget tree rebuild. For animations, use `tester.pumpAndSettle()` to wait for all animations to complete."
+    },
+    {
+      "question": "What if my widget uses multiple BLoCs?",
+      "answer": "Provide all required BLoCs using `MultiBlocProvider` in the test. Mock each BLoC separately and set up their states as needed."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\n\n// This is a simple app with a CounterCubit. To run widget tests,\n// you would normally create a separate test file. This example\n// includes the widget code for demonstration.\n\n// -------------------- CUBIT --------------------\nclass CounterCubit extends Cubit<int> {\n  CounterCubit() : super(0);\n\n  void increment() => emit(state + 1);\n  void decrement() => emit(state - 1);\n  void reset() => emit(0);\n}\n\n// -------------------- WIDGET --------------------\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Counter Widget')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            BlocBuilder<CounterCubit, int>(\n              builder: (context, count) {\n                return Text(\n                  'Count: $count',\n                  style: TextStyle(fontSize: 32),\n                );\n              },\n            ),\n            SizedBox(height: 20),\n            Row(\n              mainAxisAlignment: MainAxisAlignment.center,\n              children: [\n                ElevatedButton(\n                  onPressed: () => context.read<CounterCubit>().increment(),\n                  child: Text('+'),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterCubit>().decrement(),\n                  child: Text('-'),\n                ),\n                SizedBox(width: 20),\n                ElevatedButton(\n                  onPressed: () => context.read<CounterCubit>().reset(),\n                  child: Text('Reset'),\n                ),\n              ],\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n\n// -------------------- APP --------------------\nvoid main() => runApp(MyApp());\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\n/*\n  -------------------- WIDGET TEST EXAMPLE --------------------\n  // test/counter_page_test.dart\n  import 'package:flutter/material.dart';\n  import 'package:flutter_test/flutter_test.dart';\n  import 'package:bloc_test/bloc_test.dart';\n  import 'package:mocktail/mocktail.dart';\n\n  class MockCounterCubit extends MockCubit<int> implements CounterCubit {}\n\n  void main() {\n    group('CounterPage', () {\n      late MockCounterCubit mockCubit;\n\n      setUp(() {\n        mockCubit = MockCounterCubit();\n      });\n\n      testWidgets('displays initial count', (tester) async {\n        when(() => mockCubit.state).thenReturn(5);\n\n        await tester.pumpWidget(\n          MaterialApp(\n            home: BlocProvider.value(\n              value: mockCubit,\n              child: CounterPage(),\n            ),\n          ),\n        );\n\n        expect(find.text('Count: 5'), findsOneWidget);\n      });\n\n      testWidgets('calls increment when + button is tapped', (tester) async {\n        when(() => mockCubit.state).thenReturn(0);\n\n        await tester.pumpWidget(\n          MaterialApp(\n            home: BlocProvider.value(\n              value: mockCubit,\n              child: CounterPage(),\n            ),\n          ),\n        );\n\n        await tester.tap(find.text('+'));\n        verify(() => mockCubit.increment()).called(1);\n      });\n\n      testWidgets('calls reset when Reset button is tapped', (tester) async {\n        when(() => mockCubit.state).thenReturn(10);\n\n        await tester.pumpWidget(\n          MaterialApp(\n            home: BlocProvider.value(\n              value: mockCubit,\n              child: CounterPage(),\n            ),\n          ),\n        );\n\n        await tester.tap(find.text('Reset'));\n        verify(() => mockCubit.reset()).called(1);\n      });\n    });\n  }\n*/\n"
+  },
+  "quiz": [
+    {
+      "question": "What is the correct way to provide a mock BLoC to a widget in a test?",
+      "options": [
+        "BlocProvider(create: (_) => mockBloc)",
+        "BlocProvider.value(value: mockBloc)",
+        "BlocProvider.of<MyBloc>(context)",
+        "BlocBuilder<MyBloc, MyState>(builder: ...)"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which method is used to trigger a widget rebuild after emitting a new state in a test?",
+      "options": ["tester.flush()", "tester.pump()", "tester.rebuild()", "tester.wait()"],
+      "answer": 1
+    },
+    {
+      "question": "What package is recommended for mocking BLoCs in widget tests?",
+      "options": ["mockito", "mocktail", "mock_bloc", "flutter_mock"],
+      "answer": 1
+    },
+    {
+      "question": "What should you use to verify that a specific event was added to a BLoC after a user interaction?",
+      "options": ["expect() on bloc.state", "verify() from mocktail", "await tester.pump()", "blocTest"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-unit-testing",
+    "bloc-performance",
+    "flutter-testing-guide",
+    "integration-testing"
+  ]
+}

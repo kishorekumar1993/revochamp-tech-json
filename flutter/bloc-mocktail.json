@@ -1,0 +1,252 @@
+{
+  "slug": "bloc-mocktail",
+  "course": "Flutter",
+  "title": "Mocktail: Mocking Dependencies for BLoC Testing",
+  "meta": {
+    "title": "Mocktail – Powerful Mocking for BLoC Unit Tests (2026)",
+    "description": "Learn how to use Mocktail to mock dependencies in BLoC tests. Master stubbing, verification, async mocking, and best practices for reliable unit testing.",
+    "keywords": [
+      "Flutter Mocktail",
+      "bloc mocktail",
+      "mocktail testing",
+      "mock dependencies bloc",
+      "flutter bloc unit tests",
+      "mocktail vs mockito",
+      "mocking in flutter"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "When testing BLoCs, you often need to isolate the business logic from external dependencies like repositories, API clients, or databases. Mocking allows you to replace real implementations with controlled test doubles. Mocktail is a modern, null‑safe mocking library for Dart that works seamlessly with Flutter and BLoC. This guide covers how to use Mocktail to create mocks, stub methods, verify interactions, and test asynchronous code."
+    },
+    {
+      "type": "heading",
+      "value": "Why Mocktail?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Null‑Safe** – Fully supports Dart's null safety.",
+        "**No Code Generation** – Unlike Mockito, Mocktail doesn't require running `build_runner`.",
+        "**Simple API** – Clean, expressive syntax.",
+        "**Works with Flutter** – Compatible with all Flutter and Dart projects.",
+        "**Integration with `bloc_test`** – Seamlessly used inside `blocTest`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up Mocktail"
+    },
+    {
+      "type": "text",
+      "value": "Add Mocktail to your `pubspec.yaml` dev dependencies:"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "dev_dependencies:\n  flutter_test:\n    sdk: flutter\n  bloc_test: ^9.1.5\n  mocktail: ^1.0.0"
+    },
+    {
+      "type": "heading",
+      "value": "Creating a Mock"
+    },
+    {
+      "type": "text",
+      "value": "To create a mock, extend `Mock` and implement the class you want to mock. You can do this inline or as a separate class."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class MockUserRepository extends Mock implements UserRepository {}\n\n// Or use Mocktail's `mock` function (recommended for one-off mocks)\nfinal mockRepository = mock<UserRepository>();"
+    },
+    {
+      "type": "heading",
+      "value": "Stubbing Methods"
+    },
+    {
+      "type": "text",
+      "value": "Use `when()` to define what a mocked method should return or do when called. Use `thenAnswer` for futures/streams, `thenReturn` for synchronous values."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final mockRepository = MockUserRepository();\n\n// Stub a synchronous method\nwhen(() => mockRepository.getUserId()).thenReturn('123');\n\n// Stub an asynchronous method that returns a Future\nwhen(() => mockRepository.fetchUser('123'))\n    .thenAnswer((_) async => User(id: '123', name: 'John'));\n\n// Stub a method that throws\nwhen(() => mockRepository.fetchUser('456'))\n    .thenThrow(Exception('User not found'));\n\n// Stub a method that returns a Stream\nwhen(() => mockRepository.userStream())\n    .thenAnswer((_) => Stream.value(User(id: '123', name: 'John')));"
+    },
+    {
+      "type": "heading",
+      "value": "Verifying Interactions"
+    },
+    {
+      "type": "text",
+      "value": "Use `verify()` to check that a method was called with specific arguments. You can also verify the number of calls or that it was never called."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Verify a method was called once\nverify(() => mockRepository.fetchUser('123')).called(1);\n\n// Verify it was never called\nverifyNever(() => mockRepository.fetchUser('456'));\n\n// Verify with any argument\nverify(() => mockRepository.fetchUser(any())).called(1);\n\n// Verify with argument that matches a predicate\nverify(() => mockRepository.fetchUser(argThat(startsWith('1')))).called(1);"
+    },
+    {
+      "type": "heading",
+      "value": "Testing BLoC with Mocktail and blocTest"
+    },
+    {
+      "type": "text",
+      "value": "Combine Mocktail with `blocTest` to test BLoCs that depend on mocked services. The mock is created in the `setUp` or directly in the `build` function."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class UserBloc extends Bloc<UserEvent, UserState> {\n  final UserRepository repository;\n  UserBloc(this.repository) : super(UserInitial()) {\n    on<LoadUser>(_onLoadUser);\n  }\n\n  Future<void> _onLoadUser(LoadUser event, Emitter<UserState> emit) async {\n    emit(UserLoading());\n    try {\n      final user = await repository.fetchUser(event.id);\n      emit(UserLoaded(user));\n    } catch (e) {\n      emit(UserError(e.toString()));\n    }\n  }\n}\n\n// Test\nvoid main() {\n  late MockUserRepository mockRepository;\n\n  setUp(() {\n    mockRepository = MockUserRepository();\n  });\n\n  group('UserBloc', () {\n    blocTest<UserBloc, UserState>(\n      'emits [UserLoading, UserLoaded] when user is found',\n      build: () => UserBloc(mockRepository),\n      setUp: () {\n        when(() => mockRepository.fetchUser('123'))\n            .thenAnswer((_) async => User(id: '123', name: 'John'));\n      },\n      act: (bloc) => bloc.add(LoadUser('123')),\n      expect: () => [\n        UserLoading(),\n        UserLoaded(User(id: '123', name: 'John')),\n      ],\n    );\n\n    blocTest<UserBloc, UserState>(\n      'emits [UserLoading, UserError] when repository throws',\n      build: () => UserBloc(mockRepository),\n      setUp: () {\n        when(() => mockRepository.fetchUser('123'))\n            .thenThrow(Exception('Not found'));\n      },\n      act: (bloc) => bloc.add(LoadUser('123')),\n      expect: () => [\n        UserLoading(),\n        UserError('Exception: Not found'),\n      ],\n    );\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Working with Async Streams"
+    },
+    {
+      "type": "text",
+      "value": "When your BLoC listens to a stream from a dependency (e.g., a WebSocket or database listener), you can provide a mock stream and control its emissions during the test."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class ChatBloc extends Bloc<ChatEvent, ChatState> {\n  final ChatService chatService;\n  late final StreamSubscription _subscription;\n\n  ChatBloc(this.chatService) : super(ChatInitial()) {\n    _subscription = chatService.messages.listen((msg) {\n      add(MessageReceived(msg));\n    });\n    on<MessageReceived>((event, emit) {\n      emit(ChatLoaded([...state.messages, event.message]));\n    });\n  }\n\n  @override\n  Future<void> close() {\n    _subscription.cancel();\n    return super.close();\n  }\n}\n\n// Test\nvoid main() {\n  late MockChatService mockChatService;\n  late StreamController<Message> streamController;\n\n  setUp(() {\n    mockChatService = MockChatService();\n    streamController = StreamController<Message>();\n    when(() => mockChatService.messages)\n        .thenAnswer((_) => streamController.stream);\n  });\n\n  blocTest<ChatBloc, ChatState>(\n    'emits loaded state with messages when stream emits',\n    build: () => ChatBloc(mockChatService),\n    act: (bloc) {\n      streamController.add(Message(text: 'Hello'));\n    },\n    expect: () => [\n      ChatLoaded([Message(text: 'Hello')]),\n    ],\n  );\n\n  tearDown(() {\n    streamController.close();\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Capturing Arguments"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to capture the arguments passed to a mocked method to verify them later. Use `captureAny` or a custom `ArgumentMatcher`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "final captured = <String>[];\nwhen(() => mockRepository.saveUser(captureAny())).thenAnswer((invocation) async {\n  captured.add(invocation.positionalArguments[0] as String);\n  return;\n});\n\n// After the act, verify captured arguments\nexpect(captured, ['expected-value']);"
+    },
+    {
+      "type": "heading",
+      "value": "Resetting Mocks"
+    },
+    {
+      "type": "text",
+      "value": "To reset a mock's interactions and stubs between tests, you can create a new instance in `setUp`. Mocktail doesn't have a built‑in reset method, but recreating the mock is the simplest approach."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "void main() {\n  late MockUserRepository mockRepository;\n\n  setUp(() {\n    mockRepository = MockUserRepository();\n    // Reset any global state\n    reset(mockRepository); // Mocktail provides reset for mocks created with `mock()`\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Mocking with Generic Types"
+    },
+    {
+      "type": "text",
+      "value": "Mocktail supports generic classes. Use `Mock` with the generic type or `mock<T>()`."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CacheService<T> {\n  Future<T?> get(String key);\n  Future<void> set(String key, T value);\n}\n\nclass MockCacheService<T> extends Mock implements CacheService<T> {}\n\nvoid main() {\n  final mockCache = MockCacheService<User>();\n  when(() => mockCache.get('user')).thenAnswer((_) async => User(name: 'John'));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Create mocks in `setUp`** – Ensures a fresh mock for each test.",
+        "**Use `any()` for arguments you don't care about** – Keeps stubs flexible.",
+        "**Verify only essential interactions** – Over‑verifying makes tests brittle.",
+        "**Use `argThat` with predicates** – For complex argument matching.",
+        "**Mock only dependencies, not the system under test** – Your BLoC should be the real instance.",
+        "**Combine with `blocTest`** – It handles subscriptions and emissions automatically.",
+        "**Keep mocks simple** – Avoid stubbing unnecessary methods."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Forgetting to stub a method** – The mock returns `null` by default, which may cause `Null` errors.\n✅ Always stub methods that will be called.",
+        "❌ **Using `thenReturn` with a Future** – Should use `thenAnswer` for async.\n✅ Use `thenAnswer` for futures and streams.",
+        "❌ **Not resetting mocks** – Stubs from previous tests can leak.\n✅ Create new mocks in `setUp` or use `reset()`.",
+        "❌ **Mixing Mocktail with Mockito** – They use different syntax and can conflict.\n✅ Stick to one mocking library.",
+        "❌ **Stubbing methods with `any()` but not matching the actual call** – Verify that the arguments match your stub."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Mocktail provides a clean, code‑generation‑free way to mock dependencies for BLoC testing. By combining it with `blocTest`, you can write fast, reliable unit tests that verify your BLoC's behavior in isolation. Mastering Mocktail will significantly improve your testing workflow and code quality."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between Mocktail and Mockito?",
+      "answer": "Mocktail is null‑safe and does not require code generation (no `build_runner`). Mockito relies on generated code. Mocktail's API is slightly different but generally simpler for most use cases."
+    },
+    {
+      "question": "Can I use Mocktail with `bloc_test`?",
+      "answer": "Yes, Mocktail integrates seamlessly with `blocTest`. You can create mocks in the `build` function or in `setUp` and use them inside the test."
+    },
+    {
+      "question": "How do I mock a method that returns a `Stream`?",
+      "answer": "Use `thenAnswer` with a function that returns a `Stream`. Example: `when(() => mock.stream()).thenAnswer((_) => Stream.value('data'))`."
+    },
+    {
+      "question": "Can I mock private classes?",
+      "answer": "Mocktail can only mock public classes because it requires implementing the class. For private classes, consider extracting an interface or making the class public for testing."
+    },
+    {
+      "question": "How do I verify a method was called with a specific number of times?",
+      "answer": "Use `called(n)` after `verify`. Example: `verify(() => mock.method()).called(2)`."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\nvoid main() => runApp(MyApp());\n\n// Simple BLoC without dependencies\nclass CounterCubit extends Cubit<int> {\n  CounterCubit() : super(0);\n  void increment() => emit(state + 1);\n}\n\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => CounterCubit(),\n        child: CounterPage(),\n      ),\n    );\n  }\n}\n\nclass CounterPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    final cubit = context.watch<CounterCubit>();\n    return Scaffold(\n      appBar: AppBar(title: Text('Counter')),\n      body: Center(\n        child: Column(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            Text('Count:', style: TextStyle(fontSize: 20)),\n            Text('${cubit.state}', style: TextStyle(fontSize: 40)),\n            SizedBox(height: 20),\n            ElevatedButton(\n              onPressed: cubit.increment,\n              child: Text('Increment'),\n            ),\n          ],\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which method is used to define what a mocked method should return?",
+      "options": ["when()", "stub()", "mock()", "then()"],
+      "answer": 0
+    },
+    {
+      "question": "How do you stub an asynchronous method that returns a Future?",
+      "options": ["thenReturn", "thenAnswer", "thenFuture", "thenAsync"],
+      "answer": 1
+    },
+    {
+      "question": "What advantage does Mocktail have over Mockito?",
+      "options": [
+        "It's faster",
+        "No code generation required",
+        "Better documentation",
+        "Supports more platforms"
+      ],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-testing",
+    "bloc-error-handling",
+    "bloc-state-management",
+    "flutter-unit-testing"
+  ]
+}

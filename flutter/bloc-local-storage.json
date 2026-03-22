@@ -1,0 +1,229 @@
+{
+  "slug": "bloc-local-storage",
+  "course": "Flutter",
+  "title": "BLoC Local Storage: Persisting Data with Hive, SharedPreferences & SQLite",
+  "meta": {
+    "title": "BLoC Local Storage – Hive, SharedPreferences & SQLite Integration (2026)",
+    "description": "Learn how to integrate local storage with BLoC using Hive, SharedPreferences, and SQLite. Master repository pattern, caching strategies, offline data access, and best practices.",
+    "keywords": [
+      "Flutter BLoC local storage",
+      "bloc hive integration",
+      "bloc shared preferences",
+      "local storage bloc",
+      "repository pattern bloc",
+      "caching bloc",
+      "offline data bloc",
+      "flutter bloc database"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Introduction"
+    },
+    {
+      "type": "text",
+      "value": "Local storage is essential for building responsive, offline‑capable Flutter apps. When combined with BLoC, it provides a clean separation between data sources and UI logic. This guide covers how to integrate popular local storage solutions—Hive, SharedPreferences, and SQLite—with BLoC using the repository pattern. You'll learn caching strategies, offline support, and best practices to keep your app fast and reliable."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Local Storage with BLoC?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Offline Access** – Serve cached data when the network is unavailable.",
+        "**Performance** – Reduce network calls by storing frequently used data locally.",
+        "**User Preferences** – Save settings, themes, and user sessions.",
+        "**Data Persistence** – Keep state across app restarts.",
+        "**Separation of Concerns** – Keep storage logic in repositories, not inside BLoCs."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Choosing the Right Storage"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Storage", "Use Case", "Key Features"],
+        "rows": [
+          ["SharedPreferences", "Simple key‑value, small data (settings, flags)", "Easy API, synchronous, no complex types"],
+          ["Hive", "Fast key‑value, complex objects, large datasets", "Type‑safe, no SQL, supports encryption"],
+          ["SQLite", "Relational data, complex queries, large collections", "Full SQL, migrations, ACID compliance"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Repository Pattern with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "The repository pattern acts as a single source of truth, abstracting data sources (local/remote). Your BLoC interacts only with the repository, which decides whether to fetch from cache or network."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class UserRepository {\n  final LocalDataSource localDataSource;\n  final RemoteDataSource remoteDataSource;\n\n  UserRepository(this.localDataSource, this.remoteDataSource);\n\n  Future<User> getUser(String id) async {\n    // Try local first\n    final localUser = await localDataSource.getUser(id);\n    if (localUser != null) return localUser;\n\n    // Fallback to network\n    final remoteUser = await remoteDataSource.getUser(id);\n    await localDataSource.saveUser(remoteUser);\n    return remoteUser;\n  }\n}\n\n// BLoC uses the repository\nclass UserBloc extends Bloc<UserEvent, UserState> {\n  final UserRepository repository;\n  UserBloc(this.repository) : super(UserInitial());\n\n  on<LoadUser>((event, emit) async {\n    emit(UserLoading());\n    try {\n      final user = await repository.getUser(event.id);\n      emit(UserLoaded(user));\n    } catch (e) {\n      emit(UserError(e.toString()));\n    }\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Integrating SharedPreferences with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "SharedPreferences is ideal for storing simple settings. Create a service that wraps SharedPreferences and inject it into your BLoC or repository."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class PreferencesService {\n  static const String _themeKey = 'theme_mode';\n  final SharedPreferences _prefs;\n\n  PreferencesService(this._prefs);\n\n  ThemeMode getThemeMode() {\n    final index = _prefs.getInt(_themeKey) ?? 0;\n    return ThemeMode.values[index];\n  }\n\n  Future<void> setThemeMode(ThemeMode mode) async {\n    await _prefs.setInt(_themeKey, mode.index);\n  }\n}\n\nclass SettingsBloc extends Bloc<SettingsEvent, SettingsState> {\n  final PreferencesService prefs;\n  SettingsBloc(this.prefs) : super(SettingsInitial()) {\n    on<LoadSettings>((event, emit) {\n      emit(SettingsLoaded(prefs.getThemeMode()));\n    });\n    on<ThemeChanged>((event, emit) async {\n      await prefs.setThemeMode(event.mode);\n      emit(SettingsLoaded(event.mode));\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Integrating Hive with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "Hive is a fast, NoSQL database perfect for storing complex objects. Define adapters and open boxes before using them."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// Define a Hive adapter\n@HiveType(typeId: 0)\nclass Todo extends HiveObject {\n  @HiveField(0)\n  String id;\n  \n  @HiveField(1)\n  String title;\n  \n  @HiveField(2)\n  bool completed;\n\n  Todo({required this.id, required this.title, this.completed = false});\n}\n\n// Initialize Hive in main\nvoid main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  await Hive.initFlutter();\n  Hive.registerAdapter(TodoAdapter());\n  await Hive.openBox<Todo>('todos');\n  runApp(MyApp());\n}\n\n// Repository using Hive\nclass TodoRepository {\n  final Box<Todo> todoBox;\n\n  TodoRepository(this.todoBox);\n\n  List<Todo> getTodos() => todoBox.values.toList();\n\n  Future<void> addTodo(Todo todo) async {\n    await todoBox.add(todo);\n  }\n\n  Future<void> deleteTodo(Todo todo) async {\n    await todo.delete();\n  }\n}\n\n// BLoC\nclass TodoBloc extends Bloc<TodoEvent, TodoState> {\n  final TodoRepository repository;\n  TodoBloc(this.repository) : super(TodoInitial()) {\n    on<LoadTodos>((event, emit) {\n      emit(TodoLoaded(repository.getTodos()));\n    });\n    on<AddTodo>((event, emit) async {\n      await repository.addTodo(event.todo);\n      emit(TodoLoaded(repository.getTodos()));\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Integrating SQLite with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "For relational data, SQLite is a solid choice. Use the `sqflite` package and create a database helper."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class DatabaseHelper {\n  static Database? _database;\n  static const String _dbName = 'app.db';\n  static const int _version = 1;\n\n  Future<Database> get database async {\n    if (_database != null) return _database!;\n    _database = await _initDatabase();\n    return _database!;\n  }\n\n  Future<Database> _initDatabase() async {\n    final path = await getDatabasesPath();\n    return openDatabase(\n      join(path, _dbName),\n      onCreate: (db, version) {\n        return db.execute(\n          'CREATE TABLE todos(id INTEGER PRIMARY KEY, title TEXT, completed INTEGER)',\n        );\n      },\n      version: _version,\n    );\n  }\n}\n\nclass TodoRepository {\n  final DatabaseHelper dbHelper;\n\n  TodoRepository(this.dbHelper);\n\n  Future<List<Todo>> getTodos() async {\n    final db = await dbHelper.database;\n    final List<Map<String, dynamic>> maps = await db.query('todos');\n    return maps.map((map) => Todo.fromMap(map)).toList();\n  }\n\n  Future<void> addTodo(Todo todo) async {\n    final db = await dbHelper.database;\n    await db.insert('todos', todo.toMap());\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Caching Strategies"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Cache‑First** – Always serve from cache; update cache from network in background.",
+        "**Network‑First** – Try network; fallback to cache if offline or error.",
+        "**Cache‑Then‑Network** – Show cached data immediately, then refresh from network.",
+        "**Time‑Based Expiry** – Invalidate cache after a certain duration."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class CacheService {\n  final Box<dynamic> cacheBox;\n  final Duration ttl;\n\n  CacheService(this.cacheBox, this.ttl);\n\n  Future<T?> get<T>(String key) async {\n    final entry = cacheBox.get(key);\n    if (entry == null) return null;\n    final timestamp = cacheBox.get('${key}_timestamp');\n    if (timestamp != null && DateTime.now().difference(DateTime.parse(timestamp)) > ttl) {\n      await cacheBox.delete(key);\n      return null;\n    }\n    return entry as T;\n  }\n\n  Future<void> set(String key, dynamic value) async {\n    await cacheBox.put(key, value);\n    await cacheBox.put('${key}_timestamp', DateTime.now().toIso8601String());\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Offline Data with BLoC"
+    },
+    {
+      "type": "text",
+      "value": "Combine local storage with an offline queue to handle mutations when offline. Store pending actions in a local database and sync when connectivity returns."
+    },
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "class OfflineQueue {\n  final Box<Map<String, dynamic>> queueBox;\n\n  OfflineQueue(this.queueBox);\n\n  void add(Map<String, dynamic> operation) {\n    final id = DateTime.now().millisecondsSinceEpoch.toString();\n    queueBox.put(id, operation);\n  }\n\n  List<Map<String, dynamic>> getAll() => queueBox.values.toList();\n\n  void remove(String id) => queueBox.delete(id);\n}\n\n// In BLoC\non<AddTodo>((event, emit) async {\n  if (await hasNetwork()) {\n    await api.addTodo(event.todo);\n    await localRepository.saveTodo(event.todo);\n    emit(TodoAdded(event.todo));\n  } else {\n    queue.add({'type': 'ADD_TODO', 'data': event.todo.toJson()});\n    await localRepository.saveTodo(event.todo); // Optimistic update\n    emit(TodoAdded(event.todo));\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use repository pattern** – Keep data source logic separate from BLoC.",
+        "**Initialize storage early** – Open databases and boxes before `runApp`.",
+        "**Handle errors gracefully** – Use try/catch and emit error states.",
+        "**Implement caching policies** – Use TTL, versioning, or manual invalidation.",
+        "**Test storage interactions** – Mock databases or use in‑memory implementations for unit tests.",
+        "**Consider encryption** – For sensitive data, use encrypted boxes (Hive) or encrypted SharedPreferences.",
+        "**Manage database migrations** – For SQLite, version the database and handle schema changes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Blocking the UI thread** – Using synchronous storage operations in the main thread.\n✅ Use async methods and await properly.",
+        "❌ **Not closing databases** – Can cause resource leaks.\n✅ Close boxes/connections when the app terminates or when no longer needed.",
+        "❌ **Storing too much data in SharedPreferences** – Causes performance issues.\n✅ Use Hive or SQLite for large datasets.",
+        "❌ **Forgetting to register adapters** – Hive adapters must be registered before opening boxes.\n✅ Register adapters in main.",
+        "❌ **Ignoring versioning** – Changing data models without migrations breaks existing storage.\n✅ Plan migrations or use serialization that tolerates changes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Integrating local storage with BLoC gives you the best of both worlds: reactive state management and persistent data. By using repositories to abstract storage, you can switch between Hive, SharedPreferences, or SQLite without affecting your BLoCs. Combine caching strategies and offline queues to build robust, offline‑first Flutter applications."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Should I use Hive or SharedPreferences for user settings?",
+      "answer": "SharedPreferences is simpler for small key‑value data. Hive is better if you need to store complex objects or want encryption."
+    },
+    {
+      "question": "How do I handle database migrations in SQLite?",
+      "answer": "Increment the database version and use the `onUpgrade` callback in `openDatabase`. Write migration scripts to alter tables."
+    },
+    {
+      "question": "Can I use both Hive and SQLite in the same app?",
+      "answer": "Yes, they serve different purposes. Use Hive for fast key‑value and SQLite for complex relational data."
+    },
+    {
+      "question": "How do I test a BLoC that uses local storage?",
+      "answer": "Mock the repository or use an in‑memory implementation of the storage (e.g., Hive’s `Hive.box` with a temporary directory)."
+    },
+    {
+      "question": "What’s the best way to cache API responses?",
+      "answer": "Use a repository that checks cache first, with a time‑to‑live policy. Store responses in Hive or SQLite with timestamps."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:shared_preferences/shared_preferences.dart';\n\nvoid main() async {\n  WidgetsFlutterBinding.ensureInitialized();\n  final prefs = await SharedPreferences.getInstance();\n  runApp(MyApp(prefs: prefs));\n}\n\nclass MyApp extends StatelessWidget {\n  final SharedPreferences prefs;\n  const MyApp({required this.prefs});\n\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => SettingsBloc(prefs),\n        child: SettingsPage(),\n      ),\n    );\n  }\n}\n\n// State\nclass SettingsState {\n  final bool isDarkMode;\n  SettingsState(this.isDarkMode);\n}\n\n// Events\nabstract class SettingsEvent {}\nclass ToggleTheme extends SettingsEvent {}\nclass LoadSettings extends SettingsEvent {}\n\n// BLoC\nclass SettingsBloc extends Bloc<SettingsEvent, SettingsState> {\n  final SharedPreferences prefs;\n  static const String _themeKey = 'is_dark_mode';\n\n  SettingsBloc(this.prefs) : super(SettingsState(prefs.getBool(_themeKey) ?? false)) {\n    on<LoadSettings>((event, emit) {\n      emit(SettingsState(prefs.getBool(_themeKey) ?? false));\n    });\n    on<ToggleTheme>((event, emit) async {\n      final newValue = !state.isDarkMode;\n      await prefs.setBool(_themeKey, newValue);\n      emit(SettingsState(newValue));\n    });\n  }\n}\n\n// UI\nclass SettingsPage extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(title: Text('Settings')),\n      body: Center(\n        child: BlocBuilder<SettingsBloc, SettingsState>(\n          builder: (context, state) {\n            return SwitchListTile(\n              title: Text('Dark Mode'),\n              value: state.isDarkMode,\n              onChanged: (_) => context.read<SettingsBloc>().add(ToggleTheme()),\n            );\n          },\n        ),\n      ),\n    );\n  }\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which pattern is recommended to separate data sources (local/remote) from BLoC?",
+      "options": ["Factory pattern", "Repository pattern", "Singleton pattern", "Observer pattern"],
+      "answer": 1
+    },
+    {
+      "question": "What is the best storage option for storing a list of custom objects with complex fields?",
+      "options": ["SharedPreferences", "Hive with adapters", "File storage", "FlutterSecureStorage"],
+      "answer": 1
+    },
+    {
+      "question": "Which caching strategy shows cached data immediately and then updates from the network?",
+      "options": ["Cache-first", "Network-first", "Cache-then-network", "Time-based expiry"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "flutter-bloc-introduction",
+    "bloc-offline-support",
+    "bloc-hydrated-bloc",
+    "flutter-persistence",
+    "bloc-state-management"
+  ]
+}
