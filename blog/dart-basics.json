@@ -1,0 +1,105 @@
+{
+  "slug": "dart-basics",
+  "title": "Dart Basics: A Quick Introduction",
+  "subtitle": "Get up to speed with the language behind Flutter.",
+  "author": "Alex Johnson",
+  "date": "2025-03-18",
+  "categories": ["Dart", "Programming"],
+  "tags": ["dart", "programming", "basics", "tutorial"],
+  "readTime": "6 min read",
+  "featuredImage": "https://example.com/images/dart-logo.png",
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Dart?"
+    },
+    {
+      "type": "text",
+      "value": "Dart is a client-optimized language for fast apps on any platform. It's the language used for Flutter and also runs on the server (via Dart VM) and web (compiled to JavaScript)."
+    },
+    {
+      "type": "heading",
+      "value": "Variables"
+    },
+    {
+      "type": "code",
+      "value": "// Type inference\nvar name = 'Dart';\n\n// Explicit typing\nString message = 'Hello, Dart!';\n\n// Dynamic type\ndynamic anything = 42;\n\n// Final and const\nfinal pi = 3.14;\nconst maxUsers = 100;",
+      "language": "dart"
+    },
+    {
+      "type": "heading",
+      "value": "Functions"
+    },
+    {
+      "type": "code",
+      "value": "// Normal function\nint add(int a, int b) {\n  return a + b;\n}\n\n// Arrow syntax\nint multiply(int a, int b) => a * b;\n\n// Optional parameters\nvoid greet(String name, [String? title]) {\n  print('Hello $title $name');\n}\n\n// Named parameters\nvoid createUser({required String name, int age = 0}) {\n  print('User: $name, age: $age');\n}",
+      "language": "dart"
+    },
+    {
+      "type": "heading",
+      "value": "Classes"
+    },
+    {
+      "type": "code",
+      "value": "class Person {\n  String name;\n  int age;\n\n  Person(this.name, this.age);\n\n  void sayHello() {\n    print('Hi, I am $name');\n  }\n}\n\nvoid main() {\n  var p = Person('Alice', 30);\n  p.sayHello();\n}",
+      "language": "dart"
+    },
+    {
+      "type": "heading",
+      "value": "Collections"
+    },
+    {
+      "type": "code",
+      "value": "// Lists\nvar list = [1, 2, 3];\nlist.add(4);\n\n// Maps\nvar map = {'key': 'value'};\nmap['newKey'] = 42;\n\n// Sets\nvar set = {1, 2, 3};\nset.add(3); // doesn't duplicate\n\n// Collection operators\nvar doubled = list.map((n) => n * 2).toList();\nvar evens = list.where((n) => n.isEven).toList();",
+      "language": "dart"
+    },
+    {
+      "type": "heading",
+      "value": "Null Safety"
+    },
+    {
+      "type": "text",
+      "value": "Dart has sound null safety. By default, variables cannot be null unless you explicitly mark them as nullable."
+    },
+    {
+      "type": "code",
+      "value": "int? nullableInt; // can be null\nint nonNullable = 5; // cannot be null\n\nvoid process(String? input) {\n  if (input != null) {\n    print(input.length); // safe\n  }\n  // or use ! (assert non-null) if you're sure\n  print(input!.length); // throws if null\n}",
+      "language": "dart"
+    },
+    {
+      "type": "heading",
+      "value": "Asynchronous Programming"
+    },
+    {
+      "type": "code",
+      "value": "Future<String> fetchData() async {\n  await Future.delayed(Duration(seconds: 2));\n  return 'Data loaded';\n}\n\nvoid main() async {\n  print('Start');\n  String result = await fetchData();\n  print(result);\n  print('End');\n}",
+      "language": "dart"
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Dart is an easy-to-learn language with modern features. It's a great foundation for building Flutter apps and beyond."
+    }
+  ],
+  "meta": {
+    "title": "Dart Basics: Learn the Language for Flutter Development",
+    "description": "A quick guide to Dart syntax, variables, functions, classes, null safety, and async programming. Perfect for Flutter beginners."
+  },
+  "faq": [
+    {
+      "question": "Is Dart similar to JavaScript?",
+      "answer": "Dart has some similarities but is statically typed and class-based. It's more structured."
+    },
+    {
+      "question": "Do I need to learn Dart before Flutter?",
+      "answer": "Yes, a basic understanding of Dart is recommended to build Flutter apps effectively."
+    }
+  ],
+  "related": [
+    "getting-started-with-flutter",
+    "flutter-state-management"
+  ]
+}
