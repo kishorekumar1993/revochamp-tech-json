@@ -3,15 +3,18 @@
   "course": "Flutter",
   "title": "Bloc Architecture: Scalable Project Structure for Flutter Apps",
   "meta": {
-    "title": "Bloc Architecture – Scalable Flutter Project Structure (2026)",
-    "description": "Learn how to organize Flutter apps using Bloc architecture. Folder structure, clean architecture layers, repository pattern, dependency injection, and best practices for maintainable code.",
+    "title": "Bloc Architecture – Complete Guide to Scalable Flutter Project Structure (2026)",
+    "description": "Learn Bloc architecture for Flutter: clean folder structure, layered design (presentation/business/data), repository pattern, dependency injection, and best practices. Build scalable, testable apps.",
     "keywords": [
       "Bloc architecture",
       "Flutter bloc folder structure",
       "clean architecture bloc",
       "bloc repository pattern",
       "flutter bloc best practices",
-      "scalable flutter app"
+      "scalable flutter app",
+      "flutter bloc tutorial",
+      "bloc architecture example",
+      "flutter clean architecture bloc example"
     ]
   },
   "level": "Intermediate",
@@ -22,7 +25,21 @@
   "content": [
     {
       "type": "text",
-      "value": "If your Flutter app is growing and becoming hard to manage, a proper architecture is essential. Bloc architecture helps you organize your project into scalable layers, making your code clean, testable, and easy to maintain."
+      "value": "📌 **Summary (Featured Snippet)** – Bloc architecture in Flutter is a structured approach that separates UI, business logic, and data layers, enabling scalable, maintainable, and testable applications. This guide covers folder structure, repository pattern, dependency injection, and a complete authentication example."
+    },
+    {
+      "type": "text",
+      "value": "🚀 **Quick Start** – If you just want a working folder structure and code example, jump to the **Implementation Example** section. For a full understanding of why and how to structure large Flutter apps, read the entire guide."
+    },
+    {
+      "type": "image",
+      "value": "bloc-architecture-layers.png",
+      "alt": "Bloc architecture layers diagram – presentation, business logic, data layers with unidirectional flow",
+      "caption": "Figure 1: The three layers of Bloc architecture – UI depends on Bloc, Bloc depends on repositories, repositories depend on data sources."
+    },
+    {
+      "type": "text",
+      "value": "If your Flutter app is growing and becoming hard to manage, a proper architecture is essential. **Bloc architecture** helps you organize your project into scalable layers, making your code clean, testable, and easy to maintain. Unlike a simple `setState` approach, this pattern ensures that adding new features won't turn your codebase into a nightmare."
     },
     {
       "type": "heading",
@@ -30,7 +47,7 @@
     },
     {
       "type": "text",
-      "value": "Bloc architecture refers to a structured way of organizing Flutter applications using the BLoC pattern (Business Logic Component). It goes beyond just using `flutter_bloc` – it defines how to separate concerns into distinct layers: **presentation**, **business logic**, and **data**. This leads to code that is testable, maintainable, and scalable, especially for large apps with multiple features."
+      "value": "Bloc architecture refers to a structured way of organizing Flutter applications using the BLoC pattern (Business Logic Component). It goes beyond just using `flutter_bloc` – it defines how to separate concerns into distinct layers: **presentation**, **business logic**, and **data**. This leads to code that is testable, maintainable, and scalable, especially for large apps with multiple features. For a refresher on BLoC basics, check out our <a href='/flutter/bloc-introduction'>Bloc introduction</a>."
     },
     {
       "type": "heading",
@@ -42,7 +59,7 @@
     },
     {
       "type": "text",
-      "value": "This unidirectional flow ensures that each component has a single responsibility and that data changes are predictable."
+      "value": "This unidirectional flow ensures that each component has a single responsibility and that data changes are predictable. It also makes debugging easier because state changes are traceable."
     },
     {
       "type": "heading",
@@ -59,7 +76,7 @@
     },
     {
       "type": "heading",
-      "value": "Real-World Example"
+      "value": "Real-World Use Cases"
     },
     {
       "type": "list",
@@ -67,7 +84,7 @@
         "**Insurance form submission with validation** – Handle complex multi‑step forms, validate fields, and submit to backend.",
         "**Login & authentication flow** – Manage loading, success, error states, and token storage.",
         "**Fetching dropdown data from APIs** – Load options from remote services with caching.",
-        "**Handling loading, success, and error UI states** – Centralised state management for consistent UX."
+        "**E‑commerce product catalog** – Filtering, sorting, pagination, and offline support."
       ]
     },
     {
@@ -76,18 +93,16 @@
     },
     {
       "type": "table",
-      "value": {
-        "headers": ["Layer", "Purpose", "Contains"],
-        "rows": [
-          ["Presentation", "UI and state consumption", "Pages, widgets, `BlocBuilder`, `BlocListener`"],
-          ["Business Logic", "Process events, transform data, emit states", "Bloc/Cubit, use cases (optional)"],
-          ["Data", "Fetch and persist data", "Repositories, data sources (API, local DB), models"]
-        ]
-      }
+      "headers": ["Layer", "Purpose", "Contains"],
+      "rows": [
+        ["Presentation", "UI and state consumption", "Pages, widgets, `BlocBuilder`, `BlocListener`"],
+        ["Business Logic", "Process events, transform data, emit states", "Bloc/Cubit, use cases (optional)"],
+        ["Data", "Fetch and persist data", "Repositories, data sources (API, local DB), models"]
+      ]
     },
     {
       "type": "text",
-      "value": "Dependencies flow inward: **Presentation → Business Logic → Data**. The UI knows about the bloc, the bloc knows about repositories, repositories know about data sources."
+      "value": "Dependencies flow inward: **Presentation → Business Logic → Data**. The UI knows about the bloc, the bloc knows about repositories, repositories know about data sources. This follows the dependency inversion principle."
     },
     {
       "type": "heading",
@@ -100,7 +115,7 @@
     },
     {
       "type": "note",
-      "value": "This structure is inspired by **Clean Architecture** but simplified for Flutter. For smaller apps, you can omit the domain layer and put repository interfaces directly in the data layer."
+      "value": "This structure is inspired by **Clean Architecture** but simplified for Flutter. For smaller apps, you can omit the domain layer and put repository interfaces directly in the data layer. For a full clean architecture comparison, see <a href='/flutter/clean-architecture'>Clean Architecture in Flutter</a>."
     },
     {
       "type": "heading",
@@ -188,7 +203,7 @@
     },
     {
       "type": "text",
-      "value": "You can inject dependencies using `BlocProvider` and a service locator like `get_it`. Here’s how to set up the dependencies for the authentication feature."
+      "value": "You can inject dependencies using `BlocProvider` and a service locator like `get_it`. Here’s how to set up the dependencies for the authentication feature. For more details, see <a href='/flutter/flutter-dependency-injection'>Flutter Dependency Injection</a>."
     },
     {
       "type": "code",
@@ -203,6 +218,18 @@
     {
       "type": "heading",
       "value": "Bloc Architecture vs Clean Architecture"
+    },
+    {
+      "type": "table",
+      "headers": ["Aspect", "Bloc Architecture (this guide)", "Clean Architecture"],
+      "rows": [
+        ["Layers", "Presentation – Business Logic – Data", "Presentation – Domain – Data (with use cases)"],
+        ["Repository interfaces", "Often inside data layer or domain", "Strictly in domain layer"],
+        ["Use cases", "Optional", "Mandatory for complex logic"],
+        ["Dependency rule", "UI → Bloc → Repository → Data source", "Inward only, no outer layer knows inner"],
+        ["Complexity", "Low to medium", "High"],
+        ["Best for", "Most Flutter apps", "Very large, long‑term projects"]
+      ]
     },
     {
       "type": "text",
@@ -223,7 +250,7 @@
     },
     {
       "type": "heading",
-      "value": "When Not to Use Bloc Architecture"
+      "value": "When NOT to Use Bloc Architecture"
     },
     {
       "type": "list",
@@ -268,7 +295,7 @@
     },
     {
       "type": "text",
-      "value": "Before diving into architecture, make sure you understand [Bloc basics](/flutter/bloc-introduction). Then explore [testing blocs](/flutter/bloc-testing) and [advanced patterns](/flutter/bloc-events)."
+      "value": "Before diving into architecture, make sure you understand <a href='/flutter/bloc-introduction'>Bloc basics</a>. Then explore <a href='/flutter/bloc-testing'>testing blocs</a> and <a href='/flutter/bloc-cubit'>Cubit vs Bloc</a>."
     },
     {
       "type": "heading",

@@ -3,8 +3,8 @@
   "course": "Flutter",
   "title": "BLoC API Integration: Fetch Data from REST APIs",
   "meta": {
-    "title": "BLoC API Integration – Fetch Data from REST APIs in Flutter (2026)",
-    "description": "Learn how to integrate REST APIs with BLoC in Flutter. Handle loading, success, error states, use Dio and http, implement pagination, and write testable code.",
+    "title": "Flutter BLoC API Integration – Complete Guide with Dio, Pagination & Error Handling (2026)",
+    "description": "Build Flutter apps using BLoC with REST APIs. Learn Dio integration, manage loading and error states, and implement pagination with clean architecture.",
     "keywords": [
       "bloc api integration",
       "flutter bloc http",
@@ -12,7 +12,11 @@
       "api call bloc",
       "bloc loading state",
       "bloc error handling",
-      "flutter bloc rest api"
+      "flutter bloc rest api",
+      "flutter rest api example",
+      "bloc api tutorial",
+      "flutter api state management",
+      "dio vs http flutter"
     ]
   },
   "level": "Intermediate",
@@ -23,7 +27,21 @@
   "content": [
     {
       "type": "text",
-      "value": "Integrating APIs is a common task in Flutter apps. When combined with BLoC, you get a clean, reactive way to manage network requests, handle loading states, and display errors. This guide covers everything from setting up `http` or `dio` to building a complete API‑driven feature with BLoC, including pagination and error handling."
+      "value": "🚀 **Quick Start (Copy‑Paste)** – If you just want a working BLoC API call right now, copy the complete code from the **Try Editor** at the bottom of this page. It includes a full example with `http`, `flutter_bloc`, and `Equatable`. For production apps, read the entire guide."
+    },
+    {
+      "type": "text",
+      "value": "📌 **Summary (Featured Snippet)** – BLoC API integration in Flutter helps manage REST API calls using a reactive pattern with loading, success, and error states, improving scalability and testability. This guide covers Dio, pagination, clean architecture, and production‑ready code."
+    },
+    {
+      "type": "image",
+      "value": "bloc-api-flow.png",
+      "alt": "Flutter BLoC API integration flow diagram – events trigger bloc, repository fetches data, states update UI",
+      "caption": "Figure 1: How BLoC handles API calls – from user action to UI update."
+    },
+    {
+      "type": "text",
+      "value": "In real-world Flutter apps, fetching data from APIs is unavoidable. Without proper state management, handling loading, errors, and pagination becomes messy. This guide shows how to use BLoC to build scalable, production-ready API integrations with clean architecture. Whether you need a simple **Flutter REST API example** or a full **BLoC API tutorial**, you'll find everything here."
     },
     {
       "type": "heading",
@@ -38,6 +56,10 @@
         "**Error handling** – Dedicated error states provide user feedback.",
         "**Loading indicators** – Built‑in loading states improve UX."
       ]
+    },
+    {
+      "type": "text",
+      "value": "For a deeper understanding of BLoC architecture, check our guide on <a href='/tech/flutter/bloc-clean-architecture'>BLoC Clean Architecture</a> and <a href='/tech/flutter/bloc-error-handling'>BLoC Error Handling</a>."
     },
     {
       "type": "heading",
@@ -104,7 +126,7 @@
     },
     {
       "type": "text",
-      "value": "The repository is responsible for fetching data from the API. It abstracts the data source and can be easily mocked in tests."
+      "value": "The repository is responsible for fetching data from the API. It abstracts the data source and can be easily mocked in tests. Learn more about the <a href='/tech/flutter/http-client'>Flutter HTTP client</a> and <a href='/tech/flutter/dio'>Dio setup</a>."
     },
     {
       "type": "code",
@@ -170,6 +192,26 @@
     },
     {
       "type": "heading",
+      "value": "http vs dio – Which One to Choose?"
+    },
+    {
+      "type": "table",
+      "headers": ["Feature", "http (built‑in)", "dio"],
+      "rows": [
+        ["Interceptors", "❌ Manual", "✅ Built‑in (logging, auth, retry)"],
+        ["Cancel requests", "❌ Not directly", "✅ Yes (CancelToken)"],
+        ["Form data / file upload", "⚠️ Verbose", "✅ Simple"],
+        ["Connection timeout", "✅ Manual", "✅ Built‑in"],
+        ["Response caching", "❌ No", "✅ With interceptor"],
+        ["Best for", "Small apps, simple APIs", "Large apps, complex networking"]
+      ]
+    },
+    {
+      "type": "text",
+      "value": "**Verdict:** Use `http` for quick prototypes or when you only need basic GET/POST. Switch to `dio` for production apps that need interceptors, cancel tokens, or advanced error handling."
+    },
+    {
+      "type": "heading",
       "value": "Pagination Example"
     },
     {
@@ -180,6 +222,46 @@
       "type": "code",
       "language": "dart",
       "value": "// State\nclass PostLoaded extends PostState {\n  final List<Post> posts;\n  final bool hasReachedMax;\n  const PostLoaded(this.posts, {this.hasReachedMax = false});\n\n  PostLoaded copyWith({List<Post>? posts, bool? hasReachedMax}) {\n    return PostLoaded(\n      posts ?? this.posts,\n      hasReachedMax: hasReachedMax ?? this.hasReachedMax,\n    );\n  }\n}\n\n// Event\nclass LoadMorePosts extends PostEvent {}\n\n// In Bloc\non<LoadMorePosts>(_onLoadMore);\n\nFuture<void> _onLoadMore(LoadMorePosts event, Emitter<PostState> emit) async {\n  final currentState = state;\n  if (currentState is PostLoaded && !currentState.hasReachedMax) {\n    final more = await repository.getPosts(page: currentState.posts.length ~/ 10 + 1);\n    if (more.isEmpty) {\n      emit(currentState.copyWith(hasReachedMax: true));\n    } else {\n      emit(PostLoaded(\n        List.of(currentState.posts)..addAll(more),\n      ));\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Social media feeds** – Endless scrolling with pagination and pull‑to‑refresh.",
+        "**E‑commerce product listings** – Filtering, sorting, and caching.",
+        "**Chat applications** – Real‑time message updates with WebSockets + BLoC.",
+        "**News aggregators** – Offline support and background sync."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "When NOT to Use BLoC"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Very small apps** (e.g., 2–3 screens with minimal state) – Use `setState` or a simple `ValueNotifier`.",
+        "❌ **One‑time API calls with no user interaction** – A `FutureBuilder` is enough.",
+        "❌ **Apps with no complex state transitions** – Don't over‑engineer.",
+        "✅ **When you need testability, predictability, and a clear separation of concerns** – That's where BLoC shines."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Performance Tips"
+    },
+    {
+      "type": "list",
+      "value": [
+        "⚡ **Cache API responses** – Use a local database (Hive, SQLite) to avoid redundant network calls.",
+        "⚡ **Avoid unnecessary rebuilds** – Always extend `Equatable` in states and events.",
+        "⚡ **Use `BlocBuilder` with `buildWhen`** – Rebuild only when specific properties change.",
+        "⚡ **Implement pagination wisely** – Load more only when the user scrolls near the bottom.",
+        "⚡ **Cancel pending requests** – When using Dio, cancel requests if the screen is disposed to avoid memory leaks."
+      ]
     },
     {
       "type": "heading",
@@ -217,13 +299,13 @@
     },
     {
       "type": "text",
-      "value": "Integrating APIs with BLoC gives you a clean, reactive architecture. By separating network logic into repositories and defining explicit states, you build apps that are robust, testable, and user‑friendly. Whether you use `http` or `dio`, the pattern remains the same: events trigger state changes, and the UI reacts accordingly."
+      "value": "Integrating APIs with BLoC gives you a clean, reactive architecture. By separating network logic into repositories and defining explicit states, you build apps that are robust, testable, and user‑friendly. Whether you use `http` or `dio`, the pattern remains the same: events trigger state changes, and the UI reacts accordingly. For more advanced topics, explore our <a href='/tech/flutter/bloc-clean-architecture'>BLoC Clean Architecture</a> and <a href='/tech/flutter/bloc-error-handling'>error handling</a> guides."
     }
   ],
   "faq": [
     {
       "question": "Should I use http or dio with BLoC?",
-      "answer": "Both work. `dio` offers more features like interceptors, cancel tokens, and form data, which are useful for larger apps. `http` is simpler and fine for basic needs."
+      "answer": "Both work. `dio` offers more features like interceptors, cancel tokens, and form data, which are useful for larger apps. `http` is simpler and fine for basic needs. See the comparison table above for details."
     },
     {
       "question": "How do I handle API token authentication?",
@@ -244,7 +326,7 @@
   ],
   "tryEditor": {
     "enabled": true,
-    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\nimport 'package:http/http.dart' as http;\nimport 'dart:convert';\n\nvoid main() => runApp(MyApp());\n\n// Models\nclass Post extends Equatable {\n  final int id;\n  final int userId;\n  final String title;\n  final String body;\n  const Post({required this.id, required this.userId, required this.title, required this.body});\n  factory Post.fromJson(Map<String, dynamic> json) => Post(\n    id: json['id'],\n    userId: json['userId'],\n    title: json['title'],\n    body: json['body'],\n  );\n  @override List<Object?> get props => [id, userId, title, body];\n}\n\n// Repository\nclass PostRepository {\n  final http.Client client;\n  PostRepository(this.client);\n  Future<List<Post>> getPosts() async {\n    final response = await client.get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));\n    if (response.statusCode == 200) {\n      final List<dynamic> jsonList = json.decode(response.body);\n      return jsonList.map((json) => Post.fromJson(json)).toList();\n    } else {\n      throw Exception('Failed to load posts');\n    }\n  }\n}\n\n// States\nabstract class PostState extends Equatable {\n  const PostState();\n  @override List<Object?> get props => [];\n}\nclass PostInitial extends PostState {}\nclass PostLoading extends PostState {}\nclass PostLoaded extends PostState {\n  final List<Post> posts;\n  const PostLoaded(this.posts);\n  @override List<Object?> get props => [posts];\n}\nclass PostError extends PostState {\n  final String message;\n  const PostError(this.message);\n  @override List<Object?> get props => [message];\n}\n\n// Events\nabstract class PostEvent extends Equatable {\n  const PostEvent();\n  @override List<Object?> get props => [];\n}\nclass FetchPosts extends PostEvent {}\n\n// Bloc\nclass PostBloc extends Bloc<PostEvent, PostState> {\n  final PostRepository repository;\n  PostBloc(this.repository) : super(PostInitial()) {\n    on<FetchPosts>(_onFetchPosts);\n  }\n  Future<void> _onFetchPosts(FetchPosts event, Emitter<PostState> emit) async {\n    emit(PostLoading());\n    try {\n      final posts = await repository.getPosts();\n      emit(PostLoaded(posts));\n    } catch (e) {\n      emit(PostError(e.toString()));\n    }\n  }\n}\n\n// UI\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => PostBloc(PostRepository(http.Client()))..add(FetchPosts()),\n        child: Scaffold(\n          appBar: AppBar(title: Text('Posts')),\n          body: BlocBuilder<PostBloc, PostState>(\n            builder: (context, state) {\n              if (state is PostLoading) {\n                return Center(child: CircularProgressIndicator());\n              }\n              if (state is PostLoaded) {\n                return ListView.builder(\n                  itemCount: state.posts.length,\n                  itemBuilder: (_, i) => ListTile(\n                    title: Text(state.posts[i].title),\n                    subtitle: Text(state.posts[i].body),\n                  ),\n                );\n              }\n              if (state is PostError) {\n                return Center(child: Text('Error: ${state.message}'));\n              }\n              return Center(child: Text('Press button'));\n            },\n          ),\n        ),\n      ),\n    );\n  }\n}"
+    "defaultCode": "import 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:equatable/equatable.dart';\nimport 'package:http/http.dart' as http;\nimport 'dart:convert';\n\nvoid main() => runApp(MyApp());\n\n// Models\nclass Post extends Equatable {\n  final int id;\n  final int userId;\n  final String title;\n  final String body;\n  const Post({required this.id, required this.userId, required this.title, required this.body});\n  factory Post.fromJson(Map<String, dynamic> json) => Post(\n    id: json['id'],\n    userId: json['userId'],\n    title: json['title'],\n    body: json['body'],\n  );\n  @override List<Object?> get props => [id, userId, title, body];\n}\n\n// Repository\nclass PostRepository {\n  final http.Client client;\n  PostRepository(this.client);\n  Future<List<Post>> getPosts() async {\n    final response = await client.get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));\n    if (response.statusCode == 200) {\n      final List<dynamic> jsonList = json.decode(response.body);\n      return jsonList.map((json) => Post.fromJson(json)).toList();\n    } else {\n      throw Exception('Failed to load posts');\n    }\n  }\n}\n\n// States\nabstract class PostState extends Equatable {\n  const PostState();\n  @override List<Object?> get props => [];\n}\nclass PostInitial extends PostState {}\nclass PostLoading extends PostState {}\nclass PostLoaded extends PostState {\n  final List<Post> posts;\n  const PostLoaded(this.posts);\n  @override List<Object?> get props => [posts];\n}\nclass PostError extends PostState {\n  final String message;\n  const PostError(this.message);\n  @override List<Object?> get props => [message];\n}\n\n// Events\nabstract class PostEvent extends Equatable {\n  const PostEvent();\n  @override List<Object?> get props => [];\n}\nclass FetchPosts extends PostEvent {}\n\n// Bloc\nclass PostBloc extends Bloc<PostEvent, PostState> {\n  final PostRepository repository;\n  PostBloc(this.repository) : super(PostInitial()) {\n    on<FetchPosts>(_onFetchPosts);\n  }\n  Future<void> _onFetchPosts(FetchPosts event, Emitter<PostState> emit) async {\n    emit(PostLoading());\n    try {\n      final posts = await repository.getPosts();\n      emit(PostLoaded(posts));\n    } catch (e) {\n      emit(PostError(e.toString()));\n    }\n  }\n}\n\n// UI\nclass MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: BlocProvider(\n        create: (_) => PostBloc(PostRepository(http.Client()))..add(FetchPosts()),\n        child: Scaffold(\n          appBar: AppBar(title: Text('Posts')),\n          body: BlocBuilder<PostBloc, PostState>(\n            builder: (context, state) {\n              if (state is PostLoading) {\n                return Center(child: CircularProgressIndicator());\n              }\n              if (state is PostLoaded) {\n                return ListView.builder(\n                  itemCount: state.posts.length,\n                  itemBuilder: (_, i) => ListTile(\n                    title: Text(state.posts[i].title),\n                    subtitle: Text(state.posts[i].body),\n                  ),\n                );\n              }\n              if (state is PostError) {\n                return Center(child: Text('Error: ${state.message}'));\n              }\n              return Center(child: Text('Press button to load'));\n            },\n          ),\n        ),\n      ),\n    );\n  }\n}"
   },
   "quiz": [
     {
