@@ -1,0 +1,174 @@
+{
+  "slug": "html-web-storage",
+  "course": "HTML",
+  "title": "HTML Web Storage: localStorage & sessionStorage",
+  "meta": {
+    "title": "HTML Web Storage – localStorage vs sessionStorage (2026)",
+    "description": "Learn how to store data in the browser using localStorage and sessionStorage with examples and best practices.",
+    "keywords": [
+      "html web storage",
+      "localStorage sessionStorage",
+      "browser storage html",
+      "html storage api",
+      "javascript localstorage",
+      "learn web storage"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Web Storage?"
+    },
+    {
+      "type": "text",
+      "value": "Web Storage allows websites to store data in the browser. It provides two main types: localStorage and sessionStorage."
+    },
+    {
+      "type": "heading",
+      "value": "Types of Web Storage"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Type", "Lifetime", "Storage Limit"],
+        "rows": [
+          ["localStorage", "Persistent (no expiration)", "~5MB"],
+          ["sessionStorage", "Until browser tab is closed", "~5MB"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Using localStorage"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// Store data\nlocalStorage.setItem('name', 'John');\n\n// Get data\nlet name = localStorage.getItem('name');\n\n// Remove data\nlocalStorage.removeItem('name');\n\n// Clear all\nlocalStorage.clear();"
+    },
+    {
+      "type": "heading",
+      "value": "Using sessionStorage"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// Store data\nsessionStorage.setItem('user', 'Alice');\n\n// Get data\nlet user = sessionStorage.getItem('user');"
+    },
+    {
+      "type": "heading",
+      "value": "Storing Objects"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "const user = { name: 'John', age: 25 };\n\n// Store\nlocalStorage.setItem('user', JSON.stringify(user));\n\n// Retrieve\nconst storedUser = JSON.parse(localStorage.getItem('user'));"
+    },
+    {
+      "type": "heading",
+      "value": "Web Storage vs Cookies"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Web Storage", "Cookies"],
+        "rows": [
+          ["Capacity", "Larger (~5MB)", "Small (~4KB)"],
+          ["Sent to Server", "No", "Yes"],
+          ["Expiration", "Manual", "Automatic"],
+          ["Security", "More secure", "Less secure"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Store user preferences**",
+        "**Save form data temporarily**",
+        "**Cache API responses**",
+        "**Maintain session data**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Do not store sensitive data**",
+        "**Use JSON for complex data**",
+        "**Clear unused data regularly**",
+        "**Handle storage limits properly**",
+        "**Use sessionStorage for temporary data**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Storing sensitive information like passwords**",
+        "**Not converting objects to JSON**",
+        "**Ignoring storage limits**",
+        "**Overusing localStorage for large data**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "HTML Web Storage provides a simple way to store data in the browser. It improves performance and user experience when used correctly."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is localStorage?",
+      "answer": "It stores data permanently in the browser until manually removed."
+    },
+    {
+      "question": "What is sessionStorage?",
+      "answer": "It stores data temporarily until the browser tab is closed."
+    },
+    {
+      "question": "Is Web Storage secure?",
+      "answer": "It is safer than cookies but should not store sensitive data."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "localStorage.setItem('name', 'John');\nconsole.log(localStorage.getItem('name'));"
+  },
+  "quiz": [
+    {
+      "question": "Which storage is permanent?",
+      "options": ["sessionStorage", "localStorage", "cookies", "cache"],
+      "answer": 1
+    },
+    {
+      "question": "Which storage clears on tab close?",
+      "options": ["localStorage", "sessionStorage", "cookies", "database"],
+      "answer": 1
+    },
+    {
+      "question": "How to store objects?",
+      "options": ["Directly", "JSON.stringify", "encode", "save()"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "javascript-basics",
+    "html-forms",
+    "html-cookies",
+    "web-performance",
+    "frontend-storage"
+  ]
+}
