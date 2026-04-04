@@ -1,0 +1,234 @@
+{
+  "slug": "css-best-practices",
+  "course": "CSS",
+  "title": "CSS Best Practices: Writing Maintainable CSS",
+  "meta": {
+    "title": "CSS Best Practices – Professional CSS Guidelines (2026)",
+    "description": "Master professional CSS best practices for maintainable, scalable, and performant stylesheets. Learn organization, naming conventions, performance optimization, and team collaboration.",
+    "keywords": [
+      "css best practices",
+      "css guidelines",
+      "maintainable css",
+      "css performance",
+      "professional css"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why CSS Best Practices Matter"
+    },
+    {
+      "type": "text",
+      "value": "CSS best practices ensure your stylesheets are maintainable, scalable, and performant. As projects grow, poorly organized CSS becomes a nightmare to maintain. Following established guidelines helps teams collaborate effectively and reduces technical debt."
+    },
+    {
+      "type": "heading",
+      "value": "1. Organization & File Structure"
+    },
+    {
+      "type": "code",
+      "language": "plaintext",
+      "value": "css/\n├── base/\n│   ├── reset.css        # Reset/normalize styles\n│   ├── typography.css   # Base typography\n│   └── variables.css    # CSS variables\n├── components/\n│   ├── button.css\n│   ├── card.css\n│   ├── modal.css\n│   └── form.css\n├── layouts/\n│   ├── header.css\n│   ├── footer.css\n│   ├── sidebar.css\n│   └── grid.css\n├── pages/\n│   ├── home.css\n│   ├── about.css\n│   └── contact.css\n├── utilities/\n│   ├── spacing.css      # Margin/padding utilities\n│   ├── typography.css   # Text utilities\n│   └── helpers.css      # Display, position, etc.\n└── main.css             # Imports all files"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* main.css - Import order matters */\n@import 'base/variables.css';\n@import 'base/reset.css';\n@import 'base/typography.css';\n\n@import 'layouts/grid.css';\n@import 'layouts/header.css';\n\n@import 'components/button.css';\n@import 'components/card.css';\n\n@import 'pages/home.css';\n\n@import 'utilities/spacing.css';\n@import 'utilities/helpers.css';"
+    },
+    {
+      "type": "heading",
+      "value": "2. Naming Conventions"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* ✅ Good: Semantic, descriptive names */\n.user-profile { }\n.product-card { }\n.main-navigation { }\n.submit-button { }\n\n/* ❌ Bad: Vague, unclear names */\n.box { }\n.red { }\n.div1 { }\n.style { }\n\n/* ✅ Good: BEM methodology for components */\n.card { }\n.card__title { }\n.card__description { }\n.card--featured { }\n\n/* ✅ Good: Utility classes (functional CSS) */\n.text-center { text-align: center; }\n.mt-2 { margin-top: 8px; }\n.hidden { display: none; }\n\n/* ✅ Good: JavaScript hooks (js- prefix) */\n.js-toggle-menu { }\n.js-submit-form { }\n/* Never style with .js-* classes */\n\n/* ✅ Good: State classes */\n.is-active { }\n.is-disabled { }\n.has-error { }\n.is-loading { }"
+    },
+    {
+      "type": "heading",
+      "value": "3. Selector Best Practices"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* ✅ Good: Low specificity, class-based */\n.button { }\n.card { }\n.nav-link { }\n\n/* ❌ Bad: High specificity, IDs */\n#main-content { }\n#sidebar .widget { }\n\n/* ✅ Good: Minimal nesting (2-3 levels max) */\n.card .card__title { } /* 2 levels */\n\n/* ❌ Bad: Deep nesting */\n.header .nav .nav-list .nav-item .nav-link { }\n\n/* ✅ Good: Avoiding type selectors for components */\n/* Instead of */\ndiv.card { }\n/* Use */\n.card { }\n\n/* ✅ Good: Specificity management */\n/* Low: classes, attributes */\n/* Medium: multiple classes */\n/* High: IDs (avoid) */\n/* Override: !important (rarely use) */\n\n/* ✅ Good: Meaningful selectors */\n[data-type=\"primary\"] { } /* Attribute selector */\n:focus { } /* Pseudo-class */\n::before { } /* Pseudo-element */"
+    },
+    {
+      "type": "heading",
+      "value": "4. Performance Optimization"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* ✅ Good: Use transforms and opacity for animations */\n.animated {\n  transition: transform 0.3s ease, opacity 0.3s ease;\n}\n\n/* ❌ Bad: Animating layout properties triggers reflows */\n.bad-animation {\n  transition: width 0.3s, height 0.3s, top 0.3s;\n}\n\n/* ✅ Good: GPU acceleration hint */\n.gpu-accelerated {\n  transform: translateZ(0);\n  will-change: transform;\n}\n\n/* ✅ Good: Critical CSS inline, non-critical lazy load */\n/* Inline above-the-fold styles in <head> */\n/* Load non-critical CSS with media=\"print\" then onload */\n\n/* ✅ Good: Avoid expensive properties */\n/* Expensive: box-shadow, border-radius, filter */\n/* Use sparingly on large areas */\n\n/* ✅ Good: Reduce reflows and repaints */\n/* Batch DOM changes, use class toggles */\n/* Avoid reading/writing layout properties interleaved */"
+    },
+    {
+      "type": "heading",
+      "value": "5. Maintainability"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* ✅ Good: CSS variables for theming */\n:root {\n  --primary-color: #3498db;\n  --spacing-unit: 8px;\n  --border-radius: 4px;\n}\n\n.button {\n  background: var(--primary-color);\n  padding: var(--spacing-unit);\n  border-radius: var(--border-radius);\n}\n\n/* ✅ Good: DRY principle */\n/* ❌ Bad: Repetitive values */\n.card-1 { background: #3498db; }\n.card-2 { background: #3498db; }\n.card-3 { background: #3498db; }\n\n/* ✅ Good: Reusable classes */\n.bg-primary { background: #3498db; }\n\n/* ✅ Good: Comments explaining WHY, not WHAT */\n/* ✅ Creates stacking context for z-index management */\n.modal {\n  position: relative;\n  z-index: 100;\n}\n\n/* ❌ Bad: Obvious comments */\n/* Set color to blue */\ncolor: blue;\n\n/* ✅ Good: Component documentation */\n/**\n * Button Component\n *\n * @markup\n * <button class=\"button button--primary\">Click</button>\n *\n * @modifiers\n * .button--primary - Primary action button\n * .button--secondary - Secondary action button\n * .button--large - Large size variant\n */\n.button { }"
+    },
+    {
+      "type": "heading",
+      "value": "6. Responsive Design"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* ✅ Good: Mobile-first approach */\n/* Base styles: mobile */\n.container {\n  width: 100%;\n  padding: 16px;\n}\n\n/* Tablet and up */\n@media (min-width: 768px) {\n  .container {\n    max-width: 720px;\n    margin: 0 auto;\n    padding: 24px;\n  }\n}\n\n/* Desktop and up */\n@media (min-width: 1024px) {\n  .container {\n    max-width: 960px;\n    padding: 32px;\n  }\n}\n\n/* ✅ Good: Consistent breakpoints system */\n:root {\n  --breakpoint-sm: 640px;\n  --breakpoint-md: 768px;\n  --breakpoint-lg: 1024px;\n  --breakpoint-xl: 1280px;\n}\n\n/* ❌ Bad: Desktop-first */\n.container { width: 960px; }\n@media (max-width: 768px) { .container { width: 100%; } }\n\n/* ✅ Good: Relative units over fixed */\n/* Use rem/em instead of px for better accessibility */\nbody { font-size: 16px; }\nh1 { font-size: 2rem; } /* 32px */\n.card { padding: 1.5rem; } /* 24px */"
+    },
+    {
+      "type": "heading",
+      "value": "7. Accessibility"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* ✅ Good: Focus indicators for keyboard navigation */\n:focus {\n  outline: 2px solid #3498db;\n  outline-offset: 2px;\n}\n\n/* ❌ Bad: Removing focus outline without replacement */\n:focus { outline: none; }\n\n/* ✅ Good: Custom focus for buttons */\n.button:focus-visible {\n  outline: 2px solid #3498db;\n  box-shadow: 0 0 0 4px rgba(52,152,219,0.2);\n}\n\n/* ✅ Good: Sufficient color contrast */\n/* Use tools like WebAIM to check contrast ratios */\n/* Minimum 4.5:1 for normal text, 3:1 for large text */\n.text-primary { color: #333; } /* On white background */\n.text-muted { color: #666; } /* Still readable */\n\n/* ✅ Good: Respect reduced motion */\n@media (prefers-reduced-motion: reduce) {\n  *,\n  *::before,\n  *::after {\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n    transition-duration: 0.01ms !important;\n  }\n}\n\n/* ✅ Good: Screen reader only class */\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border-width: 0;\n}\n\n/* ✅ Good: High contrast support */\n@meida (forced-colors: active) {\n  .button {\n    border: 2px solid ButtonText;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "8. Performance Metrics"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Metric", "Target", "Tools"],
+        "rows": [
+          ["CSS file size", "< 50KB (gzipped)", "Webpack Bundle Analyzer"],
+          ["Critical CSS", "< 14KB (above the fold)", "Critical, PurgeCSS"],
+          ["Specificity", "Average < 20", "Specificity Graph"],
+          ["Unused CSS", "< 10%", "Chrome Coverage Tool"],
+          ["Render-blocking", "Inline critical CSS", "Lighthouse"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "9. Linting & Formatting"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "/* .stylelintrc.json - Linting rules */\n{\n  \"extends\": [\"stylelint-config-standard\", \"stylelint-config-prettier\"],\n  \"rules\": {\n    \"selector-class-pattern\": \"^[a-z][a-zA-Z0-9-]+$\",\n    \"max-nesting-depth\": 3,\n    \"selector-max-id\": 0,\n    \"declaration-no-important\": true,\n    \"unit-allowed-list\": [\"px\", \"rem\", \"em\", \"%\", \"vh\", \"vw\", \"deg\"],\n    \"color-hex-length\": \"short\",\n    \"comment-empty-line-before\": \"always\"\n  }\n}\n\n/* Prettier configuration */\n{\n  \"trailingComma\": \"es5\",\n  \"tabWidth\": 2,\n  \"semi\": true,\n  \"singleQuote\": true\n}"
+    },
+    {
+      "type": "heading",
+      "value": "10. Testing CSS"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// Visual regression testing with Percy or Chromatic\n// Unit testing with Jest + CSS\nimport { render, screen } from '@testing-library/react';\nimport Button from './Button';\n\ntest('button has primary class', () => {\n  render(<Button variant=\"primary\" />);\n  const button = screen.getByRole('button');\n  expect(button).toHaveClass('button--primary');\n});\n\n// Snapshot testing for CSS\nimport style from './Button.css';\n\ntest('button styles match snapshot', () => {\n  expect(style).toMatchSnapshot();\n});"
+    },
+    {
+      "type": "heading",
+      "value": "11. Version Control"
+    },
+    {
+      "type": "code",
+      "language": "plaintext",
+      "value": "# .gitignore for CSS projects\nnode_modules/\ndist/\nbuild/\n*.log\n.DS_Store\n\n# Commit message examples\nfeat: add button component with primary variant\nfix: correct modal z-index layering issue\ndocs: update BEM naming guidelines\nperf: optimize critical CSS delivery\nrefactor: convert colors to CSS variables\nstyle: format with Prettier\ntest: add visual regression tests for cards"
+    },
+    {
+      "type": "heading",
+      "value": "12. Common Anti-Patterns to Avoid"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using !important excessively** – Creates specificity wars",
+        "**Overly specific selectors** – `body .main .content .card .title`",
+        "**Magic numbers** – `top: 37px;` (why 37?)",
+        "**Inline styles** – Hard to override, not maintainable",
+        "**Too many breakpoints** – Maintain 3-5 consistent breakpoints",
+        "**Not using CSS variables** – Hard to theme or update globally",
+        "**Copy-paste CSS** – Violates DRY principle",
+        "**Unprefixed vendor styles** – Use Autoprefixer",
+        "**Large monolithic files** – Break into components",
+        "**Over-nesting preprocessors** – `.parent { .child { .grandchild { } } }`"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "13. Build Tools & Optimization"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// PostCSS configuration\nmodule.exports = {\n  plugins: [\n    require('postcss-import'),\n    require('postcss-preset-env')({\n      stage: 2,\n      features: {\n        'nesting-rules': true,\n        'custom-media-queries': true\n      }\n    }),\n    require('autoprefixer'),\n    process.env.NODE_ENV === 'production' && require('cssnano')({\n      preset: 'default',\n    }),\n    process.env.NODE_ENV === 'production' && require('@fullhuman/postcss-purgecss')({\n      content: ['./src/**/*.html', './src/**/*.js'],\n      defaultExtractor: content => content.match(/[\\w-/:]+(?<!:)/g) || []\n    })\n  ]\n};\n\n// Webpack CSS optimization\nmodule.exports = {\n  module: {\n    rules: [\n      {\n        test: /\\.css$/,\n        use: [\n          'style-loader',\n          'css-loader',\n          'postcss-loader'\n        ]\n      }\n    ]\n  },\n  optimization: {\n    splitChunks: {\n      cacheGroups: {\n        styles: {\n          name: 'styles',\n          test: /\\.css$/,\n          chunks: 'all',\n          enforce: true\n        }\n      }\n    }\n  }\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "CSS best practices are essential for building maintainable, performant, and accessible websites. Focus on organization, naming conventions, performance optimization, and testing. Use tools like linters, preprocessors, and build systems to automate best practices. Remember that CSS is a living codebase – invest time in architecture early to prevent technical debt later."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What's the maximum nesting depth in CSS?",
+      "answer": "Aim for 2-3 levels maximum. Deeper nesting increases specificity and makes CSS harder to maintain."
+    },
+    {
+      "question": "Should I use ID selectors for styling?",
+      "answer": "No. IDs have high specificity and can't be reused. Use classes for styling, IDs for JavaScript hooks."
+    },
+    {
+      "question": "What's the best CSS methodology?",
+      "answer": "There's no single 'best' – BEM is popular for components, Atomic CSS for utilities. Choose based on project needs."
+    },
+    {
+      "question": "How do I reduce CSS bundle size?",
+      "answer": "Use PurgeCSS to remove unused styles, minify with cssnano, compress with gzip, and split critical CSS."
+    },
+    {
+      "question": "Should I use CSS-in-JS?",
+      "answer": "Depends on your stack. CSS-in-JS offers scoping and dynamic styles but adds runtime cost. Evaluate trade-offs."
+    }
+  ],
+  "tryEditor": {
+    "enabled": false,
+    "defaultCode": ""
+  },
+  "quiz": [
+    {
+      "question": "Which selector should be avoided for styling?",
+      "options": [".class", "#id", "[attribute]", "element"],
+      "answer": 1
+    },
+    {
+      "question": "What's the recommended maximum nesting depth?",
+      "options": ["1 level", "2-3 levels", "4-5 levels", "Unlimited"],
+      "answer": 1
+    },
+    {
+      "question": "Which property should you animate for best performance?",
+      "options": ["width", "transform", "margin", "top"],
+      "answer": 1
+    },
+    {
+      "question": "What's the prefix for JavaScript hooks?",
+      "options": ["js-", "data-", "hook-", "js_"],
+      "answer": 0
+    },
+    {
+      "question": "Which media feature respects user motion preferences?",
+      "options": ["@media (motion: reduce)", "@media (prefers-less-motion)", "@media (reduced-motion)", "@media (prefers-reduced-motion)"],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "css-bem-methodology",
+    "css-performance",
+    "css-architecture",
+    "css-accessibility",
+    "css-variables"
+  ]
+}

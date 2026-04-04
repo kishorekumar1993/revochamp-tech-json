@@ -1,0 +1,221 @@
+{
+  "slug": "css-shadow",
+  "course": "CSS",
+  "title": "CSS Shadows: Box Shadow & Text Shadow",
+  "meta": {
+    "title": "CSS Shadows – Box Shadow & Text Shadow Guide (2026)",
+    "description": "Master CSS shadows with box-shadow and text-shadow. Learn to create depth, glowing effects, neumorphism, and modern UI shadows.",
+    "keywords": [
+      "css shadow",
+      "box-shadow css",
+      "text-shadow css",
+      "neumorphism css",
+      "css drop shadow"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are CSS Shadows?"
+    },
+    {
+      "type": "text",
+      "value": "CSS shadows create depth and visual hierarchy by adding shadow effects to elements and text. They're essential for modern UI design, helping to create realistic depth, focus states, and decorative effects."
+    },
+    {
+      "type": "heading",
+      "value": "Box Shadow: Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* offset-x | offset-y | blur-radius | color */\n.box {\n  box-shadow: 5px 10px 15px rgba(0,0,0,0.2);\n}\n\n/* offset-x | offset-y | blur-radius | spread-radius | color */\n.box {\n  box-shadow: 2px 4px 8px 2px rgba(0,0,0,0.15);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Box Shadow Parameters"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Parameter", "Description", "Example"],
+        "rows": [
+          ["offset-x", "Horizontal shadow distance", "Positive = right, Negative = left"],
+          ["offset-y", "Vertical shadow distance", "Positive = down, Negative = up"],
+          ["blur-radius", "Fuzziness of the shadow", "0 = sharp, larger = softer"],
+          ["spread-radius", "Size expansion of shadow", "Positive = larger, Negative = smaller"],
+          ["color", "Shadow color", "rgba(), hsla(), or hex"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Box Shadow Examples"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Subtle elevation */\n.card {\n  box-shadow: 0 2px 4px rgba(0,0,0,0.1);\n}\n\n/* Medium elevation (common for cards) */\n.card:hover {\n  box-shadow: 0 8px 16px rgba(0,0,0,0.15);\n}\n\n/* Heavy elevation (modals) */\n.modal {\n  box-shadow: 0 20px 40px rgba(0,0,0,0.25);\n}\n\n/* Inner shadow (inset) */\n.input {\n  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);\n}\n\n/* No blur - hard shadow (flat design) */\n.hard-shadow {\n  box-shadow: 8px 8px 0 rgba(0,0,0,0.2);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Multiple Shadows"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Multiple shadows (comma-separated) */\n.glassmorphism {\n  box-shadow: \n    0 4px 6px -1px rgba(0,0,0,0.1),\n    0 2px 4px -1px rgba(0,0,0,0.06),\n    inset 0 1px 0 rgba(255,255,255,0.5);\n}\n\n/* Neon glow effect */\n.neon {\n  box-shadow: \n    0 0 5px #00f,\n    0 0 10px #00f,\n    0 0 20px #00f,\n    0 0 40px #0ff;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Text Shadow: Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* offset-x | offset-y | blur-radius | color */\n.text {\n  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);\n}\n\n/* Multiple text shadows */\n.text {\n  text-shadow: \n    1px 1px 0 #fff,\n    2px 2px 0 #ccc;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Text Shadow Examples"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Subtle depth */\n.light-text {\n  text-shadow: 0 1px 0 rgba(0,0,0,0.1);\n}\n\n/* Glow effect */\n.glow {\n  text-shadow: 0 0 5px rgba(0,255,0,0.5);\n}\n\n/* 3D retro effect */\n.retro {\n  color: #ffcc00;\n  text-shadow: \n    1px 1px 0 #b8860b,\n    2px 2px 0 #8b6508,\n    3px 3px 0 #4a3600;\n}\n\n/* Letterpress (inset text effect) */\n.letterpress {\n  color: #444;\n  text-shadow: 0 1px 0 #fff;\n}\n\n/* Long shadow */\n.long-shadow {\n  text-shadow: \n    1px 1px 0 #ccc,\n    2px 2px 0 #ccc,\n    3px 3px 0 #ccc,\n    4px 4px 0 #ccc;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Modern Shadow Patterns"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Neumorphism */\n.neumorph {\n  background: #e0e0e0;\n  box-shadow: \n    20px 20px 60px #bebebe,\n    -20px -20px 60px #ffffff;\n  border-radius: 50px;\n}\n\n/* Glassmorphism */\n.glass {\n  background: rgba(255, 255, 255, 0.25);\n  backdrop-filter: blur(10px);\n  box-shadow: 0 8px 32px rgba(0,0,0,0.1);\n  border: 1px solid rgba(255,255,255,0.18);\n}\n\n/* Floating animation with shadow */\n@keyframes float {\n  0% { transform: translateY(0px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }\n  50% { transform: translateY(-10px); box-shadow: 0 20px 30px rgba(0,0,0,0.15); }\n  100% { transform: translateY(0px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }\n}\n\n.floating-card {\n  animation: float 3s ease-in-out infinite;\n}\n\n/* Smooth shadow transition */\n.button {\n  transition: box-shadow 0.3s ease, transform 0.3s ease;\n}\n\n.button:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 10px 20px rgba(0,0,0,0.2);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "filter: drop-shadow()"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* drop-shadow follows element shape (including transparency) */\n.image-with-shadow {\n  filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.3));\n}\n\n/* Comparison: box-shadow vs drop-shadow */\n.box-shadow {\n  box-shadow: 5px 5px 10px rgba(0,0,0,0.3);\n  /* Shadow is rectangular */\n}\n\n.drop-shadow {\n  filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.3));\n  /* Shadow follows PNG transparency, text, or complex shapes */\n}\n\n/* Multiple drop shadows */\n.complex-shadow {\n  filter: \n    drop-shadow(2px 2px 4px rgba(0,0,0,0.3))\n    drop-shadow(-2px -2px 4px rgba(255,255,255,0.5));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Shadow Design System"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": ":root {\n  --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);\n  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);\n  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);\n  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);\n  --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);\n  --shadow-2xl: 0 25px 50px -12px rgba(0,0,0,0.25);\n  --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.06);\n}\n\n.card-sm { box-shadow: var(--shadow-sm); }\n.card-md { box-shadow: var(--shadow-md); }\n.card-lg { box-shadow: var(--shadow-lg); }\n.card-xl { box-shadow: var(--shadow-xl); }"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use rgba() or hsla() for shadows** – Opacity gives more natural depth",
+        "**Keep shadows subtle** – Less is more (avoid heavy black shadows)",
+        "**Consistent light source** – All shadows should suggest same light direction",
+        "**Animate shadows on hover** – Creates interactive depth feedback",
+        "**Use spread-radius sparingly** – Often makes shadows look unnatural",
+        "**Layer multiple shadows** – Creates more realistic depth"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using pure black (#000)** – Creates muddy, unnatural shadows (use dark color with opacity)",
+        "**Too much blur** – Makes elements look out of focus",
+        "**Inconsistent offsets** – Multiple shadows from different light sources",
+        "**Forgetting performance** – Animating box-shadow can be expensive (use transform instead)",
+        "**Over-neumorphism** – Low contrast makes UI inaccessible"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Accessibility Notes"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Ensure sufficient contrast when using shadows */\n/* Bad: Low contrast text with shadow */\n.bad {\n  color: #999;\n  text-shadow: 0 1px 0 #ddd; /* Still hard to read */\n}\n\n/* Good: Clear contrast with subtle shadow */\n.good {\n  color: #333;\n  text-shadow: 0 1px 0 rgba(255,255,255,0.5);\n}\n\n/* Respect reduced motion for animated shadows */\n@media (prefers-reduced-motion: reduce) {\n  .floating-card {\n    animation: none;\n    box-shadow: var(--shadow-md);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "CSS shadows are powerful tools for creating depth, hierarchy, and visual interest. Use box-shadow for elements, text-shadow for typography, and drop-shadow for irregular shapes. Modern UI patterns like neumorphism and glassmorphism rely heavily on creative shadow layering. Remember: subtle, consistent shadows with proper color choices create the most professional results."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What's the difference between box-shadow and drop-shadow?",
+      "answer": "box-shadow creates a rectangular shadow around the element's bounding box. drop-shadow (CSS filter) follows the actual shape of the element, including transparency in PNGs or irregular SVG paths."
+    },
+    {
+      "question": "How do I create an inner shadow?",
+      "answer": "Add the `inset` keyword to box-shadow: `box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);`"
+    },
+    {
+      "question": "Can I animate box-shadow?",
+      "answer": "Yes, but it's performance-heavy. For better performance, animate opacity or transform, or use a pseudo-element with opacity transition."
+    },
+    {
+      "question": "What's the best shadow color?",
+      "answer": "Use rgba(0,0,0,0.1-0.3) for dark shadows, or use a darker version of your background color (e.g., rgba(0,0,0,0.2) on white). Avoid pure black."
+    },
+    {
+      "question": "How many shadows can I add?",
+      "answer": "No hard limit, but each shadow affects performance. 2-4 shadows is typical for complex effects."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": ".card {\n  width: 200px;\n  padding: 30px;\n  background: white;\n  border-radius: 16px;\n  text-align: center;\n  font-family: system-ui;\n  transition: all 0.3s ease;\n  \n  /* Start with subtle shadow */\n  box-shadow: 0 4px 6px rgba(0,0,0,0.1);\n}\n\n.card:hover {\n  transform: translateY(-4px);\n  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1),\n              0 10px 10px -5px rgba(0,0,0,0.04);\n}\n\n.card h3 {\n  margin: 0 0 10px 0;\n  text-shadow: 0 1px 0 rgba(0,0,0,0.05);\n}\n\n.card p {\n  color: #666;\n  margin: 0;\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which parameter controls shadow softness?",
+      "options": ["spread-radius", "blur-radius", "offset-x", "opacity"],
+      "answer": 1
+    },
+    {
+      "question": "How do you create an inner shadow?",
+      "options": ["inner", "inside", "inset", "internal"],
+      "answer": 2
+    },
+    {
+      "question": "Which CSS property follows PNG transparency?",
+      "options": ["box-shadow", "text-shadow", "filter: drop-shadow()", "shadow"],
+      "answer": 2
+    },
+    {
+      "question": "What's the recommended shadow color for white backgrounds?",
+      "options": ["#000", "rgba(0,0,0,0.2)", "#fff", "rgba(255,0,0,0.5)"],
+      "answer": 1
+    },
+    {
+      "question": "Which creates a 3D retro text effect?",
+      "options": ["Single text-shadow", "Multiple layered text-shadows", "box-shadow", "drop-shadow"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "css-transitions",
+    "css-gradients",
+    "css-filters",
+    "modern-css",
+    "css-neumorphism"
+  ]
+}

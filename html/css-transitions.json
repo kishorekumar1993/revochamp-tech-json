@@ -1,0 +1,205 @@
+{
+  "slug": "css-transitions",
+  "course": "CSS",
+  "title": "CSS Transitions",
+  "meta": {
+    "title": "CSS Transitions – Smooth Animations Guide (2026)",
+    "description": "Learn how to use CSS transitions to create smooth, interactive animations for hover effects, state changes, and dynamic UI elements.",
+    "keywords": [
+      "css transitions",
+      "smooth animations css",
+      "transition property css",
+      "hover effects css",
+      "learn css transitions"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are CSS Transitions?"
+    },
+    {
+      "type": "text",
+      "value": "CSS transitions allow you to change property values smoothly over a specified duration. They are commonly used for hover effects, focus states, and interactive UI feedback without JavaScript."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "button {\n  background-color: blue;\n  transition: background-color 0.3s ease;\n}\n\nbutton:hover {\n  background-color: darkblue;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Transition Properties"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Property", "Description", "Example"],
+        "rows": [
+          ["transition-property", "Which CSS property to animate", "background-color, width, transform"],
+          ["transition-duration", "How long the transition takes", "0.5s, 300ms"],
+          ["transition-timing-function", "Speed curve of the transition", "ease, linear, ease-in-out"],
+          ["transition-delay", "Delay before transition starts", "0.2s"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Timing Functions"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": ".ease {\n  transition-timing-function: ease; /* slow start, fast middle, slow end */\n}\n\n.linear {\n  transition-timing-function: linear; /* constant speed */\n}\n\n.ease-in {\n  transition-timing-function: ease-in; /* slow start */\n}\n\n.ease-out {\n  transition-timing-function: ease-out; /* slow end */\n}\n\n.ease-in-out {\n  transition-timing-function: ease-in-out; /* slow both ends */\n}\n\n.custom {\n  transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Shorthand Syntax"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* property duration timing-function delay */\n.element {\n  transition: all 0.3s ease 0s;\n}\n\n/* multiple properties */\n.element {\n  transition: background 0.2s ease, transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Transition Examples"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Button hover scale */\n.button {\n  transition: transform 0.2s ease;\n}\n.button:hover {\n  transform: scale(1.05);\n}\n\n/* Opacity fade */\n.element {\n  opacity: 0;\n  transition: opacity 0.5s ease;\n}\n.element.visible {\n  opacity: 1;\n}\n\n/* Width expansion */\n.sidebar {\n  width: 60px;\n  transition: width 0.3s ease-in-out;\n}\n.sidebar:hover {\n  width: 200px;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Which Properties Can Be Animated?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Colors** – color, background-color, border-color",
+        "**Box Model** – width, height, margin, padding, border-width",
+        "**Positioning** – top, right, bottom, left",
+        "**Transforms** – scale, rotate, translate, skew",
+        "**Opacity & Visibility** – opacity, visibility",
+        "**Shadows & Filters** – box-shadow, text-shadow, filter"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Transition vs Animation"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Transition", "Animation"],
+        "rows": [
+          ["Trigger", "State change (hover, focus)", "Can run automatically"],
+          ["Iterations", "Once per state change", "Infinite possible"],
+          ["Keyframes", "No", "Yes (@keyframes)"],
+          ["Complexity", "Simple property changes", "Multi-step sequences"],
+          ["Use case", "Hover effects, interactive feedback", "Loaders, continuous motion"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Practical Card Example"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": ".card {\n  width: 250px;\n  padding: 20px;\n  background: white;\n  box-shadow: 0 2px 5px rgba(0,0,0,0.1);\n  transition: transform 0.3s ease, box-shadow 0.3s ease;\n}\n\n.card:hover {\n  transform: translateY(-8px);\n  box-shadow: 0 8px 20px rgba(0,0,0,0.15);\n}\n\n.card img {\n  transition: opacity 0.2s ease;\n}\n\n.card:hover img {\n  opacity: 0.9;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use transforms for position changes** – Better performance than animating top/left",
+        "**Prefer opacity over visibility** – Smoother and GPU-accelerated",
+        "**Keep durations short** – 0.2s–0.5s for most UI interactions",
+        "**Avoid animating layout properties** – width, height, margin trigger reflows",
+        "**Test on mobile devices** – Ensure 60fps performance"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Animating all properties** – Use `transition: all` sparingly (performance)",
+        "**Too long durations** – Annoying for users (avoid > 1s for UI)",
+        "**Inconsistent delays** – Creates disjointed experiences",
+        "**Forgetting to set initial state** – Transition needs start and end values"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "CSS transitions provide an easy way to add polish and interactivity to your websites. They improve user experience through subtle motion feedback and are widely supported across all modern browsers."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What is the difference between transition and animation?",
+      "answer": "Transitions are triggered by state changes (like hover), while animations can run automatically and support multi-step keyframes."
+    },
+    {
+      "question": "Can I transition from display: none?",
+      "answer": "No, display property cannot be transitioned. Use opacity and visibility instead for fade effects."
+    },
+    {
+      "question": "What's the best timing function for hover effects?",
+      "answer": "ease or ease-out are generally best for hover effects as they feel natural and responsive."
+    },
+    {
+      "question": "How do I transition multiple properties?",
+      "answer": "Use comma-separated transitions: transition: opacity 0.2s, transform 0.3s ease;"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": ".box {\n  width: 100px;\n  height: 100px;\n  background: steelblue;\n  transition: transform 0.3s ease, background 0.2s ease;\n}\n\n.box:hover {\n  transform: scale(1.1) rotate(5deg);\n  background: darkblue;\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which property defines how long a transition takes?",
+      "options": ["transition-delay", "transition-duration", "transition-timing", "transition-speed"],
+      "answer": 1
+    },
+    {
+      "question": "Which timing function has constant speed?",
+      "options": ["ease", "ease-in", "linear", "cubic-bezier"],
+      "answer": 2
+    },
+    {
+      "question": "Which property should you animate for better performance?",
+      "options": ["width", "margin", "transform", "font-size"],
+      "answer": 2
+    },
+    {
+      "question": "What is the shorthand order?",
+      "options": ["duration property delay timing", "property duration timing delay", "property timing duration delay", "delay property duration timing"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "css-animations",
+    "css-transforms",
+    "hover-effects",
+    "css-performance",
+    "interactive-css"
+  ]
+}

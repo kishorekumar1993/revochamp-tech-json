@@ -1,0 +1,261 @@
+{
+  "slug": "css-bem-methodology",
+  "course": "CSS",
+  "title": "BEM Methodology: Block-Element-Modifier",
+  "meta": {
+    "title": "BEM Methodology – Scalable CSS Architecture (2026)",
+    "description": "Master BEM (Block-Element-Modifier) methodology for maintainable, scalable CSS. Learn naming conventions, file structure, and best practices for team collaboration.",
+    "keywords": [
+      "bem methodology",
+      "bem css",
+      "block element modifier",
+      "css architecture",
+      "scalable css"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is BEM?"
+    },
+    {
+      "type": "text",
+      "value": "BEM (Block-Element-Modifier) is a popular CSS naming methodology that helps create scalable, maintainable, and reusable components. It provides a clear structure for class names, making it easier for teams to collaborate and understand the relationship between HTML and CSS."
+    },
+    {
+      "type": "heading",
+      "value": "Core Concepts"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Concept", "Syntax", "Description", "Example"],
+        "rows": [
+          ["Block", ".block", "Standalone component", ".card, .button, .header"],
+          ["Element", ".block__element", "Part of a block", ".card__title, .button__icon"],
+          ["Modifier", ".block--modifier or .block__element--modifier", "Variation or state", ".button--primary, .card__title--large"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Blocks: Independent Components"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Block: standalone component */\n.card { }\n.button { }\n.navbar { }\n.modal { }\n\n/* Bad: too specific, not reusable */\n.home-page .sidebar .card { }\n\n/* Good: reusable block */\n.card { }\n\n/* Block naming: use descriptive names */\n.user-profile { }\n.search-form { }\n.main-navigation { }"
+    },
+    {
+      "type": "heading",
+      "value": "Elements: Parts of Blocks"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Block */\n.card { }\n\n/* Elements (two underscores) */\n.card__title { }\n.card__image { }\n.card__description { }\n.card__button { }\n\n/* HTML structure */\n/*\n<div class=\"card\">\n  <img class=\"card__image\" src=\"...\">\n  <h2 class=\"card__title\">Title</h2>\n  <p class=\"card__description\">Description</p>\n  <button class=\"card__button\">Click</button>\n</div>\n*/\n\n/* Elements can't exist outside their block */\n/* Bad: element without block */\n.card__title { } /* This is fine as CSS, but HTML must have .card parent */\n\n/* Nested elements (avoid deep nesting) */\n/* Good: flat structure */\n.card__header { }\n.card__header-title { } /* Avoid this - too deep */\n\n/* Better: keep flat */\n.card__title { }\n.card__subtitle { }"
+    },
+    {
+      "type": "heading",
+      "value": "Modifiers: Variations & States"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Block modifiers (two hyphens) */\n.button { }\n.button--primary { }\n.button--secondary { }\n.button--large { }\n.button--disabled { }\n\n/* Element modifiers */\n.card__title { }\n.card__title--large { }\n.card__title--highlighted { }\n\n/* HTML usage */\n/*\n<button class=\"button button--primary button--large\">\n  Submit\n</button>\n\n<h2 class=\"card__title card__title--large\">\n  Large Title\n</h2>\n*/\n\n/* Boolean modifiers (presence indicates true) */\n.button--disabled { }\n.modal--visible { }\n\n/* Key-value modifiers */\n.button--size-small { }\n.button--size-large { }\n.theme--color-dark { }\n.theme--color-light { }"
+    },
+    {
+      "type": "heading",
+      "value": "Complete Example"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<!-- HTML Structure -->\n<article class=\"card card--featured\">\n  <img class=\"card__image\" src=\"image.jpg\" alt=\"Card image\">\n  <div class=\"card__content\">\n    <h2 class=\"card__title card__title--large\">\n      Featured Article\n    </h2>\n    <p class=\"card__description\">\n      This is an amazing article about BEM methodology.\n    </p>\n    <div class=\"card__footer\">\n      <button class=\"button button--primary button--small\">\n        Read More\n      </button>\n      <button class=\"button button--secondary button--small\">\n        Save\n      </button>\n    </div>\n  </div>\n</article>"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* CSS Styles */\n/* Card Block */\n.card {\n  background: white;\n  border-radius: 8px;\n  box-shadow: 0 2px 4px rgba(0,0,0,0.1);\n  overflow: hidden;\n}\n\n.card--featured {\n  border: 2px solid #ffd700;\n  box-shadow: 0 4px 8px rgba(0,0,0,0.15);\n}\n\n/* Card Elements */\n.card__image {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n}\n\n.card__content {\n  padding: 20px;\n}\n\n.card__title {\n  font-size: 18px;\n  margin: 0 0 10px 0;\n}\n\n.card__title--large {\n  font-size: 24px;\n}\n\n.card__description {\n  color: #666;\n  line-height: 1.5;\n  margin: 0 0 15px 0;\n}\n\n.card__footer {\n  display: flex;\n  gap: 10px;\n}\n\n/* Button Block (separate component) */\n.button {\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n  font-family: inherit;\n  padding: 10px 16px;\n  transition: all 0.3s ease;\n}\n\n.button--primary {\n  background: #3498db;\n  color: white;\n}\n\n.button--primary:hover {\n  background: #2980b9;\n}\n\n.button--secondary {\n  background: #95a5a6;\n  color: white;\n}\n\n.button--small {\n  padding: 6px 12px;\n  font-size: 14px;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "BEM with Preprocessors"
+    },
+    {
+      "type": "code",
+      "language": "scss",
+      "value": "/* SCSS with nesting (keeps BEM structure readable) */\n.card {\n  background: white;\n  border-radius: 8px;\n  \n  &--featured {\n    border: 2px solid gold;\n  }\n  \n  &__image {\n    width: 100%;\n    \n    &--rounded {\n      border-radius: 50%;\n    }\n  }\n  \n  &__title {\n    font-size: 18px;\n    \n    &--large {\n      font-size: 24px;\n    }\n  }\n  \n  &__description {\n    color: #666;\n  }\n  \n  &__footer {\n    display: flex;\n    gap: 10px;\n  }\n}\n\n/* Output CSS will have proper BEM names */\n/* .card, .card--featured, .card__image, etc. */"
+    },
+    {
+      "type": "heading",
+      "value": "Common Patterns"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Navigation component */\n.nav { }\n.nav__list { }\n.nav__item { }\n.nav__link { }\n.nav__link--active { }\n\n/* Form component */\n.form { }\n.form__group { }\n.form__label { }\n.form__input { }\n.form__input--error { }\n.form__error-message { }\n.form__actions { }\n\n/* Modal component */\n.modal { }\n.modal--open { }\n.modal__overlay { }\n.modal__container { }\n.modal__header { }\n.modal__title { }\n.modal__body { }\n.modal__footer { }\n.modal__close { }\n\n/* User avatar component */\n.avatar { }\n.avatar--small { }\n.avatar--medium { }\n.avatar--large { }\n.avatar__image { }\n.avatar__initials { }\n.avatar__status { }\n.avatar__status--online { }\n.avatar__status--offline { }"
+    },
+    {
+      "type": "heading",
+      "value": "BEM File Structure"
+    },
+    {
+      "type": "code",
+      "language": "plaintext",
+      "value": "css/\n├── components/\n│   ├── button.css\n│   ├── card.css\n│   ├── modal.css\n│   ├── navbar.css\n│   └── form.css\n├── layouts/\n│   ├── header.css\n│   ├── footer.css\n│   └── sidebar.css\n├── pages/\n│   ├── home.css\n│   ├── about.css\n│   └── contact.css\n└── main.css\n\n/* Example: components/button.css */\n.button { }\n.button--primary { }\n.button--secondary { }\n.button--large { }\n.button--small { }\n.button--disabled { }\n.button__icon { }\n.button__text { }"
+    },
+    {
+      "type": "heading",
+      "value": "Mixing Blocks"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<!-- Blocks can be mixed together -->\n<div class=\"card\">\n  <h2 class=\"card__title\">Title</h2>\n  <!-- Button block inside card block -->\n  <button class=\"button button--primary card__button\">\n    Click\n  </button>\n</div>\n\n<!-- Multiple blocks on same element -->\n<div class=\"card featured-card\">\n  <!-- Avoid: mixing BEM with utility classes carefully -->\n  <button class=\"button button--primary mt-2\">\n    Submit\n  </button>\n</div>\n\n<!-- Parent-child relationship through classes only -->\n<div class=\"search-form\">\n  <input class=\"search-form__input\" type=\"text\">\n  <button class=\"search-form__button\">Search</button>\n</div>"
+    },
+    {
+      "type": "heading",
+      "value": "BEM vs Other Methodologies"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Methodology", "Naming Pattern", "Pros", "Cons"],
+        "rows": [
+          ["BEM", ".block__element--modifier", "Explicit, self-documenting, modular", "Verbose class names"],
+          ["OOCSS", ".object .child", "Reusable objects, separation of structure/skin", "Less explicit relationships"],
+          ["SMACSS", ".l-header, .module", "Categorization, flexible", "Requires discipline"],
+          ["Atomic CSS", ".w-50, .bg-red", "Highly reusable, small CSS", "Tight coupling to HTML, maintenance"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use descriptive names** – `.user-card` not `.uc` or `.card1`",
+        "**Avoid deep nesting** – Keep elements flat (`.block__element` not `.block__element__subelement`)",
+        "**Use modifiers for variations** – Not separate blocks",
+        "**Combine with utility classes** – For spacing, typography utilities",
+        "**Be consistent** – Same naming rules across entire project",
+        "**Document your components** – Create a style guide/pattern library",
+        "**Use BEM with CSS-in-JS** – Maintains naming consistency",
+        "**Never use IDs for styling** – IDs break reusability and specificity"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Over-nesting elements** – `.card__header__title__icon` (too deep)",
+        "**Inconsistent naming** – Mixing `.card-title`, `.card__title`, `.CardTitle`",
+        "**Modifiers without base block** – Missing `.button` class when using `.button--primary`",
+        "**Styling based on parent context** – `.sidebar .card` (breaks encapsulation)",
+        "**Using elements outside blocks** – HTML structure must match BEM naming",
+        "**Overly generic names** – `.box`, `.container`, `.wrapper`"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Project Example"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<!-- Complete e-commerce product card -->\n<div class=\"product-card product-card--sale\">\n  <div class=\"product-card__badge\">\n    <span class=\"badge badge--sale\">Sale!</span>\n  </div>\n  \n  <img class=\"product-card__image\" src=\"product.jpg\" alt=\"Product\">\n  \n  <div class=\"product-card__content\">\n    <h3 class=\"product-card__title\">\n      <a href=\"/product\" class=\"product-card__link\">\n        Product Name\n      </a>\n    </h3>\n    \n    <div class=\"product-card__rating\">\n      <div class=\"rating rating--4-5\">\n        <span class=\"rating__stars\">★★★★☆</span>\n        <span class=\"rating__count\">(42 reviews)</span>\n      </div>\n    </div>\n    \n    <div class=\"product-card__pricing\">\n      <span class=\"product-card__price product-card__price--original\">$99.99</span>\n      <span class=\"product-card__price product-card__price--sale\">$79.99</span>\n    </div>\n    \n    <div class=\"product-card__actions\">\n      <button class=\"button button--primary button--full\">\n        Add to Cart\n      </button>\n      <button class=\"button button--secondary button--icon\">\n        <span class=\"button__icon\">❤️</span>\n      </button>\n    </div>\n  </div>\n</div>"
+    },
+    {
+      "type": "heading",
+      "value": "Tools & Automation"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// PostCSS plugin for BEM (postcss-bem)\n// .block {\n//   &__element { }\n//   &--modifier { }\n// }\n\n// BEM linters\n// stylelint-config-bem\n// .block {}\n\n// BEM generator tools\n// https://bembuilder.js.org/\n\n// VS Code extensions\n// \"BEM Helper\" - generates BEM class names\n// \"CSS BEM\" - autocomplete for BEM structure"
+    },
+    {
+      "type": "heading",
+      "value": "BEM with React/Vue Components"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// React component with BEM\nconst Card = ({ featured, title, description, children }) => {\n  const blockName = 'card';\n  const modifier = featured ? `${blockName}--featured` : '';\n  \n  return (\n    <div className={`${blockName} ${modifier}`}>\n      <h2 className={`${blockName}__title`}>{title}</h2>\n      <p className={`${blockName}__description`}>{description}</p>\n      <div className={`${blockName}__content`}>{children}</div>\n    </div>\n  );\n};\n\n// With CSS Modules and BEM\nimport styles from './Card.module.css';\n// styles = { card: 'card_xyz', card__title: 'card__title_abc' }\n\nconst Card = () => (\n  <div className={styles.card}>\n    <h2 className={styles['card__title']}>Title</h2>\n  </div>\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "BEM methodology provides a clear, scalable approach to CSS architecture. By using consistent naming patterns (Block__Element--Modifier), teams can build maintainable components that are reusable, self-documenting, and resistant to style conflicts. While class names become more verbose, the benefits of predictability and encapsulation far outweigh the costs for large-scale projects."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What does BEM stand for?",
+      "answer": "Block, Element, Modifier – a CSS naming methodology for creating reusable components."
+    },
+    {
+      "question": "Why use double underscores and hyphens?",
+      "answer": "Convention: __ for elements, -- for modifiers. This creates visual distinction and makes relationships clear."
+    },
+    {
+      "question": "Can I nest BEM elements?",
+      "answer": "Avoid deep nesting (like .block__element__subelement). Keep flat: .block__element and .block__subelement."
+    },
+    {
+      "question": "Does BEM work with CSS-in-JS?",
+      "answer": "Yes! BEM principles (encapsulation, naming patterns) apply well to CSS-in-JS solutions like styled-components."
+    },
+    {
+      "question": "Should I use BEM with utility frameworks like Tailwind?",
+      "answer": "They can coexist. Use BEM for component structure and Tailwind utilities for spacing, colors, etc. Or choose one primary approach."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "/* Try BEM naming! */\n.user-card {\n  background: white;\n  border-radius: 12px;\n  padding: 20px;\n  box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n  max-width: 300px;\n  font-family: system-ui;\n}\n\n.user-card--featured {\n  border: 2px solid #ffd700;\n  box-shadow: 0 4px 12px rgba(0,0,0,0.15);\n}\n\n.user-card__avatar {\n  width: 80px;\n  height: 80px;\n  border-radius: 50%;\n  margin-bottom: 15px;\n}\n\n.user-card__name {\n  font-size: 20px;\n  margin: 0 0 5px 0;\n}\n\n.user-card__name--large {\n  font-size: 24px;\n}\n\n.user-card__role {\n  color: #666;\n  margin: 0 0 15px 0;\n}\n\n.user-card__button {\n  background: #3498db;\n  color: white;\n  border: none;\n  padding: 8px 16px;\n  border-radius: 6px;\n  cursor: pointer;\n  transition: background 0.2s;\n}\n\n.user-card__button:hover {\n  background: #2980b9;\n}"
+  },
+  "quiz": [
+    {
+      "question": "What does BEM stand for?",
+      "options": ["Block, Element, Modifier", "Base, Element, Method", "Block, Extension, Modifier", "Basic, Extended, Modern"],
+      "answer": 0
+    },
+    {
+      "question": "Which syntax is correct for a BEM element?",
+      "options": [".block-element", ".block__element", ".block--element", ".block_element"],
+      "answer": 1
+    },
+    {
+      "question": "Which syntax is correct for a BEM modifier?",
+      "options": [".block__modifier", ".block--modifier", ".block_modifier", ".block-modifier"],
+      "answer": 1
+    },
+    {
+      "question": "Can an element exist without its block in HTML?",
+      "options": ["Yes, always", "No, never", "Only with modifiers", "Only for global elements"],
+      "answer": 1
+    },
+    {
+      "question": "Which is the recommended nesting depth for BEM elements?",
+      "options": ["Unlimited nesting", "Maximum 2 levels", "Keep flat (avoid deep nesting)", "Must have exactly 3 levels"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "css-architecture",
+    "scss-best-practices",
+    "css-modules",
+    "tailwind-css",
+    "component-based-css"
+  ]
+}

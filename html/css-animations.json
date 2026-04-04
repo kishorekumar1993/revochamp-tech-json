@@ -1,0 +1,247 @@
+{
+  "slug": "css-animations",
+  "course": "CSS",
+  "title": "CSS Animations",
+  "meta": {
+    "title": "CSS Animations – Keyframes & Dynamic Effects (2026)",
+    "description": "Master CSS animations with @keyframes, timing functions, and advanced properties. Learn to create looping, multi-step animations without JavaScript.",
+    "keywords": [
+      "css animations",
+      "keyframes css",
+      "css animation properties",
+      "infinite animation css",
+      "learn css animations"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are CSS Animations?"
+    },
+    {
+      "type": "text",
+      "value": "CSS animations allow you to create complex, multi-step animations using @keyframes. Unlike transitions which require triggers (like hover), animations can run automatically, loop infinitely, and have fine-grained control over each step of the animation sequence."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "@keyframes slideIn {\n  from {\n    transform: translateX(-100px);\n    opacity: 0;\n  }\n  to {\n    transform: translateX(0);\n    opacity: 1;\n  }\n}\n\n.element {\n  animation: slideIn 0.5s ease forwards;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Keyframes with Percentages"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "@keyframes bounce {\n  0% {\n    transform: translateY(0);\n  }\n  50% {\n    transform: translateY(-50px);\n  }\n  100% {\n    transform: translateY(0);\n  }\n}\n\n.ball {\n  animation: bounce 1s ease-in-out infinite;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Animation Properties"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Property", "Description", "Example"],
+        "rows": [
+          ["animation-name", "Name of the @keyframes rule", "bounce, fadeIn"],
+          ["animation-duration", "Length of one cycle", "0.5s, 2000ms"],
+          ["animation-timing-function", "Speed curve", "ease, linear, cubic-bezier()"],
+          ["animation-delay", "Delay before start", "0.2s, 1s"],
+          ["animation-iteration-count", "Number of cycles", "1, 3, infinite"],
+          ["animation-direction", "Play direction", "normal, reverse, alternate"],
+          ["animation-fill-mode", "Styles before/after", "none, forwards, backwards"],
+          ["animation-play-state", "Pause or play", "running, paused"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Shorthand Syntax"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* name duration timing-function delay iteration-count direction fill-mode */\n.element {\n  animation: bounce 1s ease 0.2s infinite alternate forwards;\n}\n\n/* Multiple animations */\n.element {\n  animation: \n    slideIn 0.5s ease forwards,\n    pulse 2s ease-in-out infinite 0.5s;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Animation Directions"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": ".normal {\n  animation-direction: normal; /* 0% → 100% */\n}\n\n.reverse {\n  animation-direction: reverse; /* 100% → 0% */\n}\n\n.alternate {\n  animation-direction: alternate; /* 0% → 100% → 0% */\n}\n\n.alternate-reverse {\n  animation-direction: alternate-reverse; /* 100% → 0% → 100% */\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Fill Modes Explained"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Value", "Before Animation", "After Animation"],
+        "rows": [
+          ["none", "No styles", "Reverts to original"],
+          ["forwards", "No styles", "Retains last keyframe"],
+          ["backwards", "First keyframe", "Reverts to original"],
+          ["both", "First keyframe", "Retains last keyframe"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Practical Examples"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Loading spinner */\n@keyframes spin {\n  to { transform: rotate(360deg); }\n}\n\n.spinner {\n  width: 40px;\n  height: 40px;\n  border: 4px solid #f3f3f3;\n  border-top-color: #3498db;\n  border-radius: 50%;\n  animation: spin 1s linear infinite;\n}\n\n/* Fade in sequence for list items */\n@keyframes fadeInUp {\n  from {\n    opacity: 0;\n    transform: translateY(20px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n\n.list-item {\n  opacity: 0;\n  animation: fadeInUp 0.4s ease forwards;\n}\n\n.list-item:nth-child(1) { animation-delay: 0s; }\n.list-item:nth-child(2) { animation-delay: 0.1s; }\n.list-item:nth-child(3) { animation-delay: 0.2s; }\n\n/* Pulsing notification badge */\n@keyframes pulse {\n  0% { transform: scale(1); opacity: 1; }\n  50% { transform: scale(1.2); opacity: 0.7; }\n  100% { transform: scale(1); opacity: 1; }\n}\n\n.badge {\n  animation: pulse 1.5s ease-in-out infinite;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Controlling Animation with JavaScript"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// Pause an animation\nconst element = document.querySelector('.element');\nelement.style.animationPlayState = 'paused';\n\n// Resume\nelement.style.animationPlayState = 'running';\n\n// Restart animation\nfunction restartAnimation(el) {\n  el.style.animation = 'none';\n  el.offsetHeight; // Force reflow\n  el.style.animation = null;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Animation Events"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "const element = document.querySelector('.element');\n\nelement.addEventListener('animationstart', () => {\n  console.log('Animation started');\n});\n\nelement.addEventListener('animationiteration', () => {\n  console.log('Animation repeated');\n});\n\nelement.addEventListener('animationend', () => {\n  console.log('Animation finished');\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Animate transforms and opacity** – These use compositor thread (GPU accelerated)",
+        "**Avoid animating layout properties** – width, height, margin, padding trigger reflows",
+        "**Use will-change property** – Hints browser to optimize: `will-change: transform;`",
+        "**Keep animations under 60fps** – Test with Chrome DevTools → Performance tab",
+        "**Respect prefers-reduced-motion** – Provide accessible alternatives"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Accessibility: Reduced Motion"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "@keyframes subtlePulse {\n  0% { opacity: 0.8; }\n  100% { opacity: 1; }\n}\n\n/* Full animation by default */\n.animated {\n  animation: bounce 1s ease infinite;\n}\n\n/* Respect user preferences */\n@media (prefers-reduced-motion: reduce) {\n  .animated {\n    animation: subtlePulse 2s ease infinite;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Animation vs Transition Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Transitions", "Animations"],
+        "rows": [
+          ["Trigger Required", "Yes (hover, focus, class change)", "No (can auto-start)"],
+          ["Keyframes", "Only start/end (from/to)", "Multiple steps (0% to 100%)"],
+          ["Looping", "No (single cycle)", "Yes (infinite)"],
+          ["Control", "Simple", "Fine-grained"],
+          ["Best For", "Interactive feedback", "Decorative/loading animations"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Animating too many properties** – Hurts performance",
+        "**Too long durations** – Frustrating for users (loading spinners excepted)",
+        "**Forgetting fill-mode** – Animations jump back to start without `forwards`",
+        "**Not testing on real devices** – Desktop smooth ≠ mobile smooth",
+        "**Ignoring accessibility** – Motion sensitivity is real"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "CSS animations bring websites to life with smooth, performant motion. They're perfect for loading indicators, entrance animations, attention-grabbing effects, and interactive storytelling. Combine with transforms and opacity for the best performance, and always respect reduced motion preferences."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What's the difference between animation and transition?",
+      "answer": "Transitions require a trigger (like hover) and only animate between two states. Animations can run automatically, loop infinitely, and have multiple keyframe steps."
+    },
+    {
+      "question": "How do I make an animation loop forever?",
+      "answer": "Set `animation-iteration-count: infinite;`"
+    },
+    {
+      "question": "Why does my animation jump back at the end?",
+      "answer": "You need `animation-fill-mode: forwards;` to retain the last keyframe styles."
+    },
+    {
+      "question": "Can I pause an animation on hover?",
+      "answer": "Yes: `.element:hover { animation-play-state: paused; }`"
+    },
+    {
+      "question": "What's the best way to restart a CSS animation?",
+      "answer": "Remove and re-add the animation using JavaScript, or toggle a class that triggers a reflow."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "@keyframes float {\n  0% { transform: translateY(0px); }\n  50% { transform: translateY(-20px); }\n  100% { transform: translateY(0px); }\n}\n\n@keyframes colorShift {\n  0% { background: #3498db; }\n  50% { background: #e74c3c; }\n  100% { background: #3498db; }\n}\n\n.box {\n  width: 100px;\n  height: 100px;\n  background: #3498db;\n  border-radius: 8px;\n  animation: \n    float 2s ease-in-out infinite,\n    colorShift 4s ease infinite;\n}\n\n.box:hover {\n  animation-play-state: paused;\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which @rule defines CSS animations?",
+      "options": ["@animation", "@keyframe", "@keyframes", "@animate"],
+      "answer": 2
+    },
+    {
+      "question": "How do you make an animation loop forever?",
+      "options": ["animation-loop: infinite", "animation-iteration-count: infinite", "animation-repeat: forever", "loop: infinite"],
+      "answer": 1
+    },
+    {
+      "question": "Which property keeps the final state after animation ends?",
+      "options": ["animation-keep", "animation-fill-mode: forwards", "animation-end-state: keep", "animation-retain"],
+      "answer": 1
+    },
+    {
+      "question": "Which properties are best for performance?",
+      "options": ["width and height", "margin and padding", "transform and opacity", "top and left"],
+      "answer": 2
+    },
+    {
+      "question": "Which media feature respects user motion preferences?",
+      "options": ["@media (motion: reduce)", "@media (prefers-less-motion)", "@media (reduced-motion)", "@media (prefers-reduced-motion)"],
+      "answer": 3
+    }
+  ],
+  "related": [
+    "css-transitions",
+    "css-transforms",
+    "css-performance",
+    "javascript-animations",
+    "web-animations-api"
+  ]
+}

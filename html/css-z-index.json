@@ -1,0 +1,179 @@
+{
+  "slug": "css-z-index",
+  "course": "CSS",
+  "title": "CSS Z-Index",
+  "meta": {
+    "title": "CSS Z-Index – Stacking Order & Layers (2026)",
+    "description": "Learn how to control stacking order of elements using z-index and understand stacking contexts in CSS.",
+    "keywords": [
+      "css z-index",
+      "stacking order css",
+      "z index not working",
+      "css layering",
+      "learn css z-index"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Z-Index?"
+    },
+    {
+      "type": "text",
+      "value": "The z-index property controls the vertical stacking order of positioned elements (which element appears on top)."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Example"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": ".box1 {\n  position: absolute;\n  z-index: 1;\n}\n\n.box2 {\n  position: absolute;\n  z-index: 2;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Higher Value = On Top"
+    },
+    {
+      "type": "text",
+      "value": "Elements with higher z-index values appear above elements with lower values."
+    },
+    {
+      "type": "heading",
+      "value": "Position Requirement"
+    },
+    {
+      "type": "text",
+      "value": "z-index works only on positioned elements (position: relative, absolute, fixed, sticky)."
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "div {\n  position: relative;\n  z-index: 10;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Default Stacking"
+    },
+    {
+      "type": "text",
+      "value": "Without z-index, elements stack based on their order in the HTML (later elements appear on top)."
+    },
+    {
+      "type": "heading",
+      "value": "Negative Z-Index"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "div {\n  position: relative;\n  z-index: -1;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Stacking Context"
+    },
+    {
+      "type": "text",
+      "value": "A stacking context is formed when an element has a position and z-index, isolating its children from other elements."
+    },
+    {
+      "type": "heading",
+      "value": "Example"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": ".parent {\n  position: relative;\n  z-index: 1;\n}\n\n.child {\n  position: absolute;\n  z-index: 999;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Modals and popups**",
+        "**Dropdown menus**",
+        "**Tooltips**",
+        "**Fixed headers and overlays**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use minimal z-index values**",
+        "**Maintain a z-index scale (e.g., 1–10–100)**",
+        "**Avoid excessive stacking levels**",
+        "**Understand stacking context before debugging**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using z-index without position**",
+        "**Confusion due to stacking context**",
+        "**Overusing large values (9999)**",
+        "**Unexpected overlap issues**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "CSS z-index controls element layering. Understanding positioning and stacking context is key to mastering it."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Why is z-index not working?",
+      "answer": "Because position is not set."
+    },
+    {
+      "question": "What is stacking context?",
+      "answer": "A layer grouping that controls child stacking."
+    },
+    {
+      "question": "Can z-index be negative?",
+      "answer": "Yes, to place elements behind others."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": ".box1 {\n  position: absolute;\n  z-index: 1;\n}\n\n.box2 {\n  position: absolute;\n  z-index: 2;\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which appears on top?",
+      "options": ["Lower z-index", "Higher z-index", "Equal z-index", "None"],
+      "answer": 1
+    },
+    {
+      "question": "z-index works with?",
+      "options": ["display", "position", "color", "margin"],
+      "answer": 1
+    },
+    {
+      "question": "Default stacking depends on?",
+      "options": ["z-index", "HTML order", "CSS order", "position"],
+      "answer": 1
+    }
+  ],
+  "related": [
+    "css-position",
+    "css-display",
+    "css-layout",
+    "css-flexbox",
+    "css-overflow"
+  ]
+}
