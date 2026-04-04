@@ -1,0 +1,239 @@
+{
+  "slug": "css-object-fit",
+  "course": "CSS",
+  "title": "CSS object-fit & object-position: Image Control Mastery",
+  "meta": {
+    "title": "CSS object-fit – Control Image Aspect Ratios (2026)",
+    "description": "Master CSS object-fit and object-position to control how images and videos fit within their containers. Perfect for responsive images, galleries, and consistent aspect ratios.",
+    "keywords": [
+      "css object-fit",
+      "object-fit cover",
+      "object-fit contain",
+      "css image sizing",
+      "responsive images css"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is object-fit?"
+    },
+    {
+      "type": "text",
+      "value": "object-fit is a CSS property that defines how an element (like `<img>` or `<video>`) should resize to fit its container. It solves the common problem of distorted images by controlling aspect ratio behavior, similar to background-size but for replaced elements."
+    },
+    {
+      "type": "heading",
+      "value": "object-fit Values"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Value", "Behavior", "Use Case", "Example"],
+        "rows": [
+          ["fill", "Stretches to fill container", "Not recommended (distorts)", "width: 100%; height: 100%;"],
+          ["contain", "Fits entirely inside container", "Product images, logos", "Preserves ratio, may have empty space"],
+          ["cover", "Fills container, crops if needed", "Hero images, thumbnails", "Preserves ratio, fills completely"],
+          ["none", "Original size, may overflow", "Pixel art, exact sizing", "No resizing"],
+          ["scale-down", "Smaller of none or contain", "Fallback option", "Shows smallest version"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Cover - most common for images */\n.image {\n  width: 100%;\n  height: 300px;\n  object-fit: cover;\n}\n\n/* Contain - shows entire image */\n.product-image {\n  width: 200px;\n  height: 200px;\n  object-fit: contain;\n}\n\n/* Fill - stretches (avoid unless intentional) */\n.banner {\n  width: 100%;\n  height: 400px;\n  object-fit: fill;\n}\n\n/* None - original size, may overflow */n  .avatar {\n  width: 100px;\n  height: 100px;\n  object-fit: none;\n  object-position: center;\n}\n\n/* Scale-down - intelligently chooses smallest */\n.responsive-img {\n  width: 100%;\n  height: auto;\n  object-fit: scale-down;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Visual Comparison"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<!-- All images have same container: 300x200px -->\n<div class=\"container\">\n  <!-- Original image: 600x400px (landscape) -->\n  \n  <!-- fill - stretched/distorted -->\n  <img src=\"image.jpg\" style=\"object-fit: fill;\">\n  \n  <!-- contain - whole image visible, letterboxed -->\n  <img src=\"image.jpg\" style=\"object-fit: contain;\">\n  \n  <!-- cover - fills container, crops edges -->\n  <img src=\"image.jpg\" style=\"object-fit: cover;\">\n  \n  <!-- none - original size, may overflow -->\n  <img src=\"image.jpg\" style=\"object-fit: none;\">\n</div>"
+    },
+    {
+      "type": "heading",
+      "value": "object-position: Positioning the Content"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Default position: center */\n.image {\n  object-fit: cover;\n  object-position: center; /* default */\n}\n\n/* Custom positioning (similar to background-position) */\n.image {\n  object-fit: cover;\n  object-position: top left;\n}\n\n/* Pixel values */\n.image {\n  object-fit: cover;\n  object-position: 20px 10px;\n}\n\n/* Percentage values */\n.image {\n  object-fit: cover;\n  object-position: 25% 75%;\n}\n\n/* Edge keywords */\n.image {\n  object-position: right top;\n  object-position: left bottom;\n  object-position: center right;\n}\n\n/* Combined values */\n.image {\n  object-position: 10% 20px;\n  object-position: right 10px top 20px;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Practical Examples"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* 1. Responsive Hero Image */\n.hero {\n  width: 100%;\n  height: 60vh;\n  overflow: hidden;\n}\n\n.hero img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center 30%; /* Focus on specific area */\n}\n\n/* 2. Product Gallery (uniform thumbnails) */\n.product-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));\n  gap: 20px;\n}\n\n.product-card img {\n  width: 100%;\n  height: 200px;\n  object-fit: contain;\n  background: #f5f5f5;\n}\n\n/* 3. Avatar / Profile Pictures */\n.avatar {\n  width: 80px;\n  height: 80px;\n  border-radius: 50%;\n  overflow: hidden;\n}\n\n.avatar img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  object-position: center;\n}\n\n/* 4. Card Images */\n.card {\n  width: 300px;\n  border-radius: 8px;\n  overflow: hidden;\n  box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n}\n\n.card img {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n  transition: transform 0.3s ease;\n}\n\n.card:hover img {\n  transform: scale(1.05);\n}\n\n/* 5. Logo Container (different aspect ratios) */\n.logo-container {\n  width: 150px;\n  height: 80px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.logo-container img {\n  max-width: 100%;\n  max-height: 100%;\n  object-fit: contain;\n}\n\n/* 6. Background-style image (alternative to background-image) */\n.bg-image {\n  position: relative;\n  height: 400px;\n  overflow: hidden;\n}\n\n.bg-image img {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  z-index: -1;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced object-position Techniques"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Focus on specific face in group photo */\n.team-photo {\n  width: 100%;\n  height: 300px;\n  object-fit: cover;\n  object-position: 65% 40%;\n}\n\n/* Responsive object-position */\n@media (max-width: 768px) {\n  .hero img {\n    object-position: 70% center; /* Different focus on mobile */\n  }\n}\n\n/* Animated object-position */\n.slideshow img {\n  object-fit: cover;\n  object-position: 0% center;\n  transition: object-position 1s ease;\n}\n\n.slideshow img:hover {\n  object-position: 100% center;\n}\n\n/* Using CSS variables */\n:root {\n  --focus-x: 50%;\n  --focus-y: 50%;\n}\n\n.dynamic-image {\n  object-fit: cover;\n  object-position: var(--focus-x) var(--focus-y);\n}\n\n/* With JavaScript control */\n/* Can update variables dynamically based on user interaction */"
+    },
+    {
+      "type": "heading",
+      "value": "object-fit for Videos"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Video background */\n.video-background {\n  position: relative;\n  width: 100%;\n  height: 100vh;\n  overflow: hidden;\n}\n\n.video-background video {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  z-index: -1;\n}\n\n/* Responsive video container */\n.video-container {\n  width: 100%;\n  max-width: 800px;\n  margin: 0 auto;\n}\n\n.video-container video {\n  width: 100%;\n  height: auto;\n  object-fit: contain;\n}\n\n/* Thumbnail preview */\n.video-thumbnail {\n  width: 320px;\n  height: 180px; /* 16:9 aspect ratio */\n  object-fit: cover;\n  cursor: pointer;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Browser Support & Fallbacks"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Feature detection */\n@supports (object-fit: cover) {\n  .image {\n    object-fit: cover;\n  }\n}\n\n/* Fallback for older browsers */\n.image-container {\n  width: 300px;\n  height: 200px;\n  overflow: hidden;\n  position: relative;\n}\n\n.image-container img {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  min-width: 100%;\n  min-height: 100%;\n  max-width: none;\n}\n\n/* Modern approach with object-fit */\n.image {\n  width: 100%;\n  height: 200px;\n  object-fit: cover;\n}\n\n/* Using background-image as fallback */\n.image-fallback {\n  background-size: cover;\n  background-position: center;\n  background-repeat: no-repeat;\n}\n\n.image-fallback img {\n  opacity: 0; /* Hide img, show background */\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Use Cases"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* 1. Social Media Feed (uniform post images) */\n.post-image {\n  width: 100%;\n  height: 400px;\n  object-fit: cover;\n}\n\n/* 2. E-commerce Product Grid */\n.product-image {\n  width: 100%;\n  height: 250px;\n  object-fit: contain;\n  background: white;\n  padding: 20px;\n}\n\n/* 3. User Gallery */\n.gallery-item {\n  aspect-ratio: 1 / 1; /* Square */\n  overflow: hidden;\n}\n\n.gallery-item img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n  transition: transform 0.3s;\n}\n\n.gallery-item:hover img {\n  transform: scale(1.1);\n}\n\n/* 4. Before/After Images */\n.comparison {\n  display: flex;\n  gap: 20px;\n}\n\n.comparison img {\n  width: 50%;\n  height: 300px;\n  object-fit: cover;\n  object-position: center;\n}\n\n/* 5. Mood Board / Pinterest Style */\n.masonry-grid img {\n  width: 100%;\n  height: auto;\n  object-fit: cover;\n  margin-bottom: 20px;\n  border-radius: 8px;\n}\n\n/* 6. Email Signature Logo */\n.signature-logo {\n  width: 120px;\n  height: 40px;\n  object-fit: contain;\n  object-position: left center;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Aspect Ratio Integration"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Modern approach: combining aspect-ratio with object-fit */\n.responsive-media {\n  aspect-ratio: 16 / 9;\n  width: 100%;\n}\n\n.responsive-media img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n/* Different aspect ratios for different devices */\n.hero-image {\n  aspect-ratio: 16 / 9;\n  width: 100%;\n}\n\n@media (min-width: 768px) {\n  .hero-image {\n    aspect-ratio: 21 / 9;\n  }\n}\n\n/* Fixed aspect ratio grid */\n.grid-square {\n  aspect-ratio: 1 / 1;\n  overflow: hidden;\n}\n\n.grid-square img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n\n/* Portrait orientation */\n.portrait-container {\n  aspect-ratio: 3 / 4;\n}\n\n/* Landscape orientation */\n.landscape-container {\n  aspect-ratio: 4 / 3;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Considerations"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use appropriate image sizes** – object-fit doesn't reduce file size, serve properly sized images",
+        "**Combine with srcset** – Responsive images + object-fit = perfect combination",
+        "**Avoid object-fit on animated GIFs** – Can cause performance issues",
+        "**Use will-change sparingly** – Only for frequently animated images",
+        "**Hardware acceleration** – object-fit is GPU accelerated in modern browsers",
+        "**Lazy loading** – Combine with loading=\"lazy\" for off-screen images"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use cover for hero images** – Ensures full bleed with no empty space",
+        "**Use contain for product photos** – Shows entire product without cropping",
+        "**Set explicit width/height** – Prevents layout shift (CLS)",
+        "**Add background color** – For contain or scale-down, shows during loading",
+        "**Combine with border-radius** – Works perfectly for rounded corners",
+        "**Test different aspect ratios** – Ensure important content isn't cropped",
+        "**Use object-position strategically** – Focus on the most important part",
+        "**Provide fallbacks** – For older browsers (IE doesn't support object-fit)"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Forgetting to set height** – object-fit needs explicit dimensions",
+        "**Using fill by default** – Distorts images, use cover or contain instead",
+        "**Not setting object-position** – Important parts may be cropped",
+        "**Assuming all images have same ratio** – Test with portrait and landscape",
+        "**Over-optimizing quality** – object-fit doesn't affect image quality, just display",
+        "**Not providing alt text** – Accessibility always matters"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "object-fit and object-position are essential tools for modern responsive design. They give you precise control over how images and videos behave within their containers, solving common layout issues with minimal CSS. Use cover for full-bleed images, contain for product displays, and object-position to focus on important content. With excellent browser support (except IE), these properties should be part of every frontend developer's toolkit."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What's the difference between object-fit and background-size?",
+      "answer": "object-fit works on replaced elements (img, video). background-size works on background images. Use object-fit for content images, background-size for decorative images."
+    },
+    {
+      "question": "Does object-fit work on all HTML elements?",
+      "answer": "It works on replaced elements: <img>, <video>, <canvas>, <svg>, <iframe>, and <embed>. It doesn't work on divs or other container elements."
+    },
+    {
+      "question": "Can I animate object-fit?",
+      "answer": "No, object-fit cannot be animated. But you can animate object-position or use transforms on the container."
+    },
+    {
+      "question": "What's the default value of object-fit?",
+      "answer": "fill - which is why images stretch by default when you set both width and height."
+    },
+    {
+      "question": "Does object-fit work in Internet Explorer?",
+      "answer": "No, IE doesn't support object-fit. Use polyfills or fallback techniques like background-image with background-size: cover."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": ".gallery {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n  max-width: 800px;\n  margin: 0 auto;\n  font-family: system-ui;\n}\n\n.gallery-item {\n  background: #f0f0f0;\n  border-radius: 12px;\n  overflow: hidden;\n  box-shadow: 0 2px 8px rgba(0,0,0,0.1);\n}\n\n.gallery-item img {\n  width: 100%;\n  height: 200px;\n  /* Try different values: cover, contain, fill, none, scale-down */\n  object-fit: cover;\n  /* Try different positions: center, top, bottom, 30% 70%, etc */\n  object-position: center;\n  transition: transform 0.3s ease;\n}\n\n.gallery-item:hover img {\n  transform: scale(1.05);\n}\n\n.gallery-item p {\n  padding: 12px;\n  margin: 0;\n  text-align: center;\n  font-size: 14px;\n  color: #666;\n}\n\nh2 {\n  text-align: center;\n  font-family: system-ui;\n  margin-bottom: 20px;\n}\n\n/* Try different aspect ratios and image sizes */\n/* The images will maintain their original aspect ratios */\n/* Notice how object-fit controls their behavior in the 200px height container */"
+  },
+  "quiz": [
+    {
+      "question": "Which object-fit value maintains aspect ratio and fills container completely?",
+      "options": ["fill", "contain", "cover", "none"],
+      "answer": 2
+    },
+    {
+      "question": "Which object-fit value may show empty space (letterboxing)?",
+      "options": ["fill", "contain", "cover", "scale-down"],
+      "answer": 1
+    },
+    {
+      "question": "Which property controls where the image is positioned within the container?",
+      "options": ["object-fit", "object-align", "object-position", "image-position"],
+      "answer": 2
+    },
+    {
+      "question": "What's required for object-fit to work properly?",
+      "options": ["Explicit width only", "Explicit height only", "Both width and height set", "Aspect ratio only"],
+      "answer": 2
+    },
+    {
+      "question": "Which value stretches the image ignoring aspect ratio?",
+      "options": ["cover", "contain", "fill", "stretch"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "css-background",
+    "css-aspect-ratio",
+    "responsive-images",
+    "css-flexbox",
+    "css-grid"
+  ]
+}

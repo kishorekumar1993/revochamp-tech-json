@@ -1,0 +1,226 @@
+{
+  "slug": "css-calc",
+  "course": "CSS",
+  "title": "CSS calc(): Dynamic Calculations Mastery",
+  "meta": {
+    "title": "CSS calc() – Dynamic Calculations Guide (2026)",
+    "description": "Master CSS calc() function for dynamic, responsive designs. Learn to mix units, perform calculations, and create fluid layouts without JavaScript.",
+    "keywords": [
+      "css calc",
+      "calc function css",
+      "dynamic css",
+      "responsive design css",
+      "css math functions"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is calc()?"
+    },
+    {
+      "type": "text",
+      "value": "The calc() CSS function lets you perform mathematical calculations to determine CSS property values. It can mix different units (%, px, em, vw, etc.) and works anywhere a numeric value is expected. This enables truly responsive designs that adapt dynamically without JavaScript."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Basic arithmetic */\n.element {\n  width: calc(100% - 20px);\n  height: calc(50vh + 100px);\n  font-size: calc(16px + 0.5vw);\n  margin: calc(10px + 2%);\n  padding: calc(1rem * 2);\n}\n\n/* With CSS variables */\n:root {\n  --sidebar-width: 250px;\n}\n\n.main-content {\n  width: calc(100% - var(--sidebar-width));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Supported Operators"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Operator", "Operation", "Example", "Notes"],
+        "rows": [
+          ["+", "Addition", "calc(10px + 20px)", "Spaces required around operator"],
+          ["-", "Subtraction", "calc(100% - 50px)", "Spaces required around operator"],
+          ["*", "Multiplication", "calc(2rem * 1.5)", "At least one number unitless"],
+          ["/", "Division", "calc(100% / 3)", "Right side must be unitless"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Mixing Different Units"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Percentage + fixed */\n.container {\n  width: calc(100% - 40px);\n  margin: 0 auto;\n}\n\n/* Viewport + fixed */\n.hero {\n  min-height: calc(100vh - 80px);\n}\n\n/* REM + viewport (responsive typography) */\nbody {\n  font-size: calc(1rem + 0.5vw);\n}\n\n/* EM + pixels */\n.card {\n  padding: calc(1em + 10px);\n}\n\n/* Complex mixing */\n.responsive-box {\n  width: calc(50% - (20px + 2vw));\n  margin: calc(10px + 1vh) calc(20px + 2%);\n}\n\n/* Grid calculations */\n.grid-item {\n  width: calc((100% / 3) - 20px);\n  margin: 10px;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Use Cases"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* 1. Fixed sidebar + fluid main content */\n.sidebar {\n  width: 250px;\n  float: left;\n}\n\n.main-content {\n  width: calc(100% - 250px);\n  float: left;\n}\n\n/* 2. Responsive typography with min/max */\n.heading {\n  font-size: calc(24px + (48 - 24) * ((100vw - 320px) / (1280 - 320)));\n  /* Grows from 24px to 48px between 320px and 1280px viewport */\n}\n\n/* 3. Centering with dynamic offsets */\n.modal {\n  position: absolute;\n  left: calc(50% - 150px);\n  top: calc(50% - 100px);\n  width: 300px;\n  height: 200px;\n}\n\n/* 4. Fluid spacing */\n.section {\n  padding: calc(20px + 5vh) calc(20px + 5vw);\n}\n\n/* 5. Dynamic font scaling */\nhtml {\n  font-size: calc(14px + 0.5vw);\n}\n\n/* 6. Aspect ratio boxes */\n.aspect-box {\n  width: 100%;\n  height: calc(100% * 9 / 16);\n}\n\n/* 7. Fullscreen minus header */\n.main {\n  min-height: calc(100vh - 80px);\n}\n\n/* 8. Equal columns with gaps */\n.grid {\n  display: flex;\n  gap: 20px;\n}\n\n.grid-item {\n  width: calc((100% - 40px) / 3); /* 3 columns, 2 gaps */\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced Techniques"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Nested calc() - not necessary, but works */\n.element {\n  width: calc(100% - calc(20px + 2vw));\n  /* Better as: */\n  width: calc(100% - 20px - 2vw);\n}\n\n/* Using calc() with CSS custom properties */\n:root {\n  --spacing: 20px;\n  --columns: 3;\n  --gap: 15px;\n}\n\n.grid {\n  display: grid;\n  grid-template-columns: repeat(var(--columns), calc((100% - (var(--columns) - 1) * var(--gap)) / var(--columns)));\n  gap: var(--gap);\n}\n\n/* Dynamic with media queries */\n.container {\n  width: calc(100% - 40px);\n}\n\n@media (min-width: 768px) {\n  .container {\n    width: calc(100% - 80px);\n  }\n}\n\n/* Color calculations (limited) */\n.element {\n  /* Can't do color math directly, but can with relative colors (modern) */\n  --opacity: 0.5;\n  background: rgba(0, 0, 255, calc(0.5 * var(--opacity)));\n}\n\n/* Chaining operations */\n.element {\n  width: calc((100% / 4) - (20px * 2) + 10px);\n}\n\n/* With clamp() for responsive ranges */\n.element {\n  font-size: clamp(16px, calc(14px + 1vw), 24px);\n  padding: clamp(10px, calc(5px + 2%), 30px);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Responsive Typography with calc()"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Fluid typography system */\n:root {\n  --min-width: 320px;\n  --max-width: 1280px;\n  --min-font: 16px;\n  --max-font: 24px;\n}\n\nbody {\n  font-size: calc(\n    var(--min-font) + \n    (var(--max-font) - var(--min-font)) * \n    ((100vw - var(--min-width)) / (var(--max-width) - var(--min-width)))\n  );\n}\n\n/* Simplified fluid type */\nh1 {\n  font-size: calc(32px + 2vw);\n}\n\nh2 {\n  font-size: calc(24px + 1.5vw);\n}\n\np {\n  font-size: calc(14px + 0.5vw);\n}\n\n/* Responsive line height */\ntext {\n  line-height: calc(1.2 + 0.5vw);\n}\n\n/* Modular scale with calc */\n:root {\n  --base: 16px;\n  --ratio: 1.25;\n}\n\nh1 {\n  font-size: calc(var(--base) * var(--ratio) * var(--ratio) * var(--ratio));\n}\n\nh2 {\n  font-size: calc(var(--base) * var(--ratio) * var(--ratio));\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Grid & Flexbox Layouts"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Responsive grid with calc */\n.grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(calc(250px - 20px), 1fr));\n  gap: 20px;\n}\n\n/* Exact column calculation */\n.grid-exact {\n  display: grid;\n  grid-template-columns: repeat(4, calc(25% - 15px));\n  gap: 20px;\n}\n\n/* Holy grail layout with calc */\n.header {\n  height: 80px;\n}\n\n.footer {\n  height: 60px;\n}\n\n.main {\n  min-height: calc(100vh - 140px);\n}\n\n/* Flexbox with calc */\n.flex-container {\n  display: flex;\n  gap: 20px;\n  flex-wrap: wrap;\n}\n\n.flex-item {\n  width: calc(33.333% - 13.333px); /* Account for gaps */\n}\n\n@media (max-width: 768px) {\n  .flex-item {\n    width: calc(50% - 10px);\n  }\n}\n\n/* Container queries with calc */\n@container (min-width: 500px) {\n  .card {\n    padding: calc(20px + 2cqw);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Spacing Systems"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Dynamic spacing scale */\n:root {\n  --space-unit: 8px;\n  --space-xs: calc(var(--space-unit) * 0.5);\n  --space-sm: calc(var(--space-unit) * 1);\n  --space-md: calc(var(--space-unit) * 2);\n  --space-lg: calc(var(--space-unit) * 3);\n  --space-xl: calc(var(--space-unit) * 4);\n  --space-2xl: calc(var(--space-unit) * 6);\n}\n\n/* Responsive spacing */\n.container {\n  padding: calc(20px + 2vw);\n}\n\n.section {\n  margin-bottom: calc(40px + 4vh);\n}\n\n/* Dynamic gap system */\n.flex-grid {\n  gap: max(10px, min(2vw, 30px));\n}\n\n/* Negative margins with calc */\n.container-full {\n  margin-left: calc(-50vw + 50%);\n  margin-right: calc(-50vw + 50%);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Performance & Best Practices"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* ✅ Good: Simple calculations */\n.element {\n  width: calc(100% - 20px);\n}\n\n/* ❌ Bad: Overly complex nested calc */\n.element {\n  width: calc(calc(100% - 20px) / 2 + calc(10px * 2));\n  /* Better: */\n  width: calc((100% - 20px) / 2 + 20px);\n}\n\n/* ✅ Good: Using CSS variables for repeated values */\n:root {\n  --container-padding: 20px;\n}\n\n.container {\n  width: calc(100% - var(--container-padding) * 2);\n}\n\n/* ❌ Bad: Unnecessary calc on static values */\n.element {\n  width: calc(100px + 50px); /* Just use 150px */\n}\n\n/* ✅ Good: Performance-friendly operations */\n.element {\n  /* Multiplication and division are fast */\n  width: calc(100% * 0.5);\n  \n  /* Addition/subtraction also fast */\n  margin: calc(10px + 2vw);\n}\n\n/* 🚀 Advanced: Will-change hint for animated calc */\n.animated {\n  will-change: width;\n  transition: width 0.3s ease;\n  width: calc(100% - 40px);\n}\n\n.animated:hover {\n  width: calc(100% - 80px);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Browser Support & Fallbacks"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Fallback for browsers without calc() support */\n.container {\n  width: 90%; /* Fallback */\n  width: calc(100% - 40px);\n}\n\n/* Using @supports for progressive enhancement */\n.element {\n  width: 100%; /* Fallback */\n}\n\n@supports (width: calc(100% - 20px)) {\n  .element {\n    width: calc(100% - 20px);\n  }\n}\n\n/* Complex fallback pattern */\n.grid {\n  display: flex;\n  flex-wrap: wrap;\n}\n\n.grid-item {\n  width: 30%; /* Fallback */\n  margin: 1.5%;\n}\n\n@supports (width: calc(50% - 10px)) {\n  .grid-item {\n    width: calc(33.333% - 20px);\n    margin: 10px;\n  }\n}\n\n/* IE specific (calc() works in IE9+, but with quirks) */\n/* IE doesn't support calc() inside @supports */"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes & Gotchas"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Missing spaces around + and -** – `calc(100%-20px)` is invalid (needs spaces)",
+        "**Multiplication with units on both sides** – `calc(10px * 20px)` is invalid",
+        "**Division with units on right side** – `calc(100% / 2px)` is invalid",
+        "**Not providing fallbacks** – Older browsers ignore calc() entirely",
+        "**Over-nesting** – Unnecessary calc() inside calc()",
+        "**Using calc() for static values** – Just calculate manually",
+        "**Forgetting parentheses** – Order of operations matters",
+        "**Using calc() in media queries** – Doesn't work in media query conditions"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Examples"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Dashboard layout */\n.dashboard {\n  display: grid;\n  grid-template-columns: 280px 1fr;\n  min-height: 100vh;\n}\n\n.sidebar {\n  background: #2c3e50;\n}\n\n.main-content {\n  width: calc(100% - 280px);\n  padding: calc(20px + 1vw);\n}\n\n/* Pricing cards */\n.pricing-grid {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(calc(250px - 20px), 1fr));\n  gap: 20px;\n}\n\n.pricing-card {\n  padding: calc(20px + 1vh);\n  border-radius: calc(8px + 0.5vw);\n}\n\n/* Hero section with dynamic height */\n.hero {\n  min-height: calc(100vh - 80px);\n  display: flex;\n  align-items: center;\n  padding: calc(40px + 5vh) calc(20px + 5vw);\n}\n\n.hero h1 {\n  font-size: calc(32px + 4vw);\n  margin-bottom: calc(20px + 2vh);\n}\n\n/* Form layout */\n.form-group {\n  margin-bottom: calc(15px + 1vh);\n}\n\ninput, select, textarea {\n  width: calc(100% - 24px);\n  padding: calc(10px + 0.5vh) calc(12px + 0.5vw);\n}\n\n/* Responsive iframe (e.g., YouTube embed) */\n.video-wrapper {\n  position: relative;\n  height: 0;\n  padding-bottom: calc(9 / 16 * 100%); /* 16:9 aspect ratio */\n}\n\n.video-wrapper iframe {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n}\n\n/* Sticky footer */\n.content {\n  min-height: calc(100vh - 200px);\n}\n\n/* Breadcrumb separator */\n.breadcrumb-item + .breadcrumb-item::before {\n  content: \"/\";\n  padding: 0 calc(5px + 0.5vw);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced: calc() with Trigonometric Functions"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "/* Modern CSS math functions (2024+) */\n:root {\n  --angle: 45deg;\n}\n\n.element {\n  /* sin, cos, tan, asin, acos, atan, atan2 */\n  transform: rotate(calc(sin(var(--angle)) * 1rad));\n  \n  /* exp, log, sqrt, pow */\n  width: calc(pow(2, 3) * 1%); /* 8% */\n  \n  /* hypot (distance formula) */\n  top: calc(hypot(30px, 40px)); /* 50px */\n  \n  /* round, mod, rem */\n  width: calc(round(1.5, 1)); /* 2 */\n}\n\n/* Animated angle with calc and sin/cos */\n@keyframes rotate {\n  to {\n    --angle: 360deg;\n  }\n}\n\n.circle {\n  --radius: 50px;\n  transform: translate(\n    calc(cos(var(--angle)) * var(--radius)),\n    calc(sin(var(--angle)) * var(--radius))\n  );\n  animation: rotate 2s linear infinite;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "calc() is an essential CSS function for modern, responsive web design. It enables dynamic layouts that adapt to different screen sizes, mixed units, and complex calculations without JavaScript. Combine with CSS variables, clamp(), min(), and max() for even more powerful responsive designs. Remember to provide fallbacks for older browsers and keep calculations readable for maintainability."
+    }
+  ],
+  "faq": [
+    {
+      "question": "Does calc() work in all modern browsers?",
+      "answer": "Yes, calc() is supported in all modern browsers including Chrome, Firefox, Safari, Edge. IE9+ supports it but with some limitations."
+    },
+    {
+      "question": "Do I need spaces around operators?",
+      "answer": "Yes for + and - operators. Spaces are optional for * and / but recommended for consistency."
+    },
+    {
+      "question": "Can I use calc() in media queries?",
+      "answer": "No, media queries don't support calc(). Use CSS variables or preprocessors instead."
+    },
+    {
+      "question": "Can calc() be animated?",
+      "answer": "Yes, properties using calc() can be animated if the resulting value is animatable."
+    },
+    {
+      "question": "What's the difference between calc() and CSS preprocessor math?",
+      "answer": "calc() is evaluated at runtime in the browser, allowing dynamic unit mixing. Preprocessor math is evaluated at compile time."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": ".demo {\n  /* Try different calc() examples */\n  width: calc(100% - 40px);\n  margin: 0 auto;\n  padding: calc(20px + 2vh);\n  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n  border-radius: calc(8px + 0.5vw);\n  color: white;\n  font-family: system-ui;\n  text-align: center;\n  transition: all 0.3s ease;\n}\n\n.demo:hover {\n  width: calc(100% - 80px);\n  padding: calc(30px + 3vh);\n}\n\n.responsive-text {\n  font-size: calc(16px + 1vw);\n  margin-bottom: calc(10px + 1vh);\n}\n\n.grid {\n  display: flex;\n  gap: 20px;\n  margin-top: 30px;\n  flex-wrap: wrap;\n}\n\n.grid-item {\n  background: rgba(255,255,255,0.2);\n  padding: 20px;\n  border-radius: 8px;\n  /* 3 columns with gap accounted for */\n  width: calc((100% - 40px) / 3);\n  text-align: center;\n  backdrop-filter: blur(10px);\n}\n\n@media (max-width: 768px) {\n  .grid-item {\n    width: calc((100% - 20px) / 2);\n  }\n}\n\n@media (max-width: 480px) {\n  .grid-item {\n    width: 100%;\n  }\n}\n\n.note {\n  margin-top: 30px;\n  font-size: 14px;\n  opacity: 0.9;\n}"
+  },
+  "quiz": [
+    {
+      "question": "Which calc() syntax is correct?",
+      "options": ["width: calc(100%-20px);", "width: calc(100% - 20px);", "width: calc(100% -20px);", "width: calc(100% - 20px)"],
+      "answer": 1
+    },
+    {
+      "question": "Which operation requires spaces around the operator?",
+      "options": ["Multiplication (*)", "Division (/)", "Addition (+) and Subtraction (-)", "All operators"],
+      "answer": 2
+    },
+    {
+      "question": "Can you mix percentages and pixels in calc()?",
+      "options": ["No, never", "Yes, always", "Only with addition/subtraction", "Only with multiplication"],
+      "answer": 1
+    },
+    {
+      "question": "Which is invalid?",
+      "options": ["calc(100% - 20px)", "calc(50% + 2vw)", "calc(10px * 20px)", "calc(100% / 2)"],
+      "answer": 2
+    },
+    {
+      "question": "Can calc() be used inside CSS variables?",
+      "options": ["No", "Yes, but only with static values", "Yes, and it's a powerful technique", "Only in Chrome"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "css-variables",
+    "css-clamp",
+    "css-responsive-design",
+    "css-grid",
+    "modern-css"
+  ]
+}
