@@ -1,0 +1,174 @@
+{
+  "slug": "vue-custom-directives",
+  "course": "Vue",
+  "title": "Vue Custom Directives",
+
+  "meta": {
+    "title": "Vue Custom Directives – Create Your Own Directives (2026)",
+    "description": "Learn how to create and use custom directives in Vue to extend DOM behavior with reusable logic.",
+    "keywords": [
+      "vue custom directives",
+      "vue directive example",
+      "vue v-focus",
+      "vue directive lifecycle",
+      "vue dom manipulation"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Custom Directives?"
+    },
+    {
+      "type": "text",
+      "value": "Custom directives in Vue allow you to define reusable behavior that can be applied directly to DOM elements."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Custom Directives?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Encapsulate DOM logic**",
+        "**Reuse behavior across components**",
+        "**Extend Vue functionality**",
+        "**Handle low-level DOM operations**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Example"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "app.directive('focus', {\n  mounted(el) {\n    el.focus();\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Usage in Template"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<input v-focus>"
+    },
+    {
+      "type": "heading",
+      "value": "Directive Hooks"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Hook", "Description"],
+        "rows": [
+          ["created", "Called before element is mounted"],
+          ["beforeMount", "Before element is inserted"],
+          ["mounted", "When element is inserted"],
+          ["updated", "When component updates"],
+          ["unmounted", "When element is removed"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "With Value"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "app.directive('color', {\n  mounted(el, binding) {\n    el.style.color = binding.value;\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Usage with Value"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<p v-color=\"'red'\">Hello</p>"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use directives only for DOM manipulation**",
+        "**Keep logic simple and reusable**",
+        "**Avoid business logic inside directives**",
+        "**Use components instead when possible**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using directives instead of components unnecessarily**",
+        "**Adding complex logic inside directives**",
+        "**Not cleaning up in unmounted hook**",
+        "**Misusing directive lifecycle hooks**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Custom directives are useful for extending Vue functionality and handling direct DOM operations efficiently."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a custom directive?",
+      "answer": "A reusable DOM behavior defined in Vue."
+    },
+    {
+      "question": "When to use directives?",
+      "answer": "For low-level DOM manipulation."
+    },
+    {
+      "question": "What is binding.value?",
+      "answer": "It contains the value passed to the directive."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "app.directive('focus', { mounted(el) { el.focus(); } });"
+  },
+
+  "quiz": [
+    {
+      "question": "Custom directives used for?",
+      "options": ["Routing", "DOM manipulation", "API calls", "Database"],
+      "answer": 1
+    },
+    {
+      "question": "Which hook runs after mount?",
+      "options": ["created", "mounted", "updated", "destroyed"],
+      "answer": 1
+    },
+    {
+      "question": "binding.value is?",
+      "options": ["Directive name", "Passed value", "Element", "Event"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "vue-directives",
+    "vue-template-syntax",
+    "vue-components",
+    "vue-v-bind",
+    "vue-v-on"
+  ]
+}

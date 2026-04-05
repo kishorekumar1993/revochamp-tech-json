@@ -1,0 +1,188 @@
+{
+  "slug": "vue-v-on",
+  "course": "Vue",
+  "title": "Vue v-on Directive",
+
+  "meta": {
+    "title": "Vue v-on – Event Handling in Vue (2026)",
+    "description": "Learn how to handle events in Vue using v-on, including click events, keyboard events, and event modifiers.",
+    "keywords": [
+      "vue v-on",
+      "vue event handling",
+      "vue click event",
+      "vue event modifiers",
+      "vue @click"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is v-on?"
+    },
+    {
+      "type": "text",
+      "value": "The v-on directive is used to listen to DOM events and execute methods when those events are triggered."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<button v-on:click=\"handleClick\">Click Me</button>"
+    },
+    {
+      "type": "heading",
+      "value": "Shorthand Syntax"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<button @click=\"handleClick\">Click Me</button>"
+    },
+    {
+      "type": "heading",
+      "value": "Inline Event Handling"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<button @click=\"count++\">Increment</button>\n<p>{{ count }}</p>"
+    },
+    {
+      "type": "heading",
+      "value": "Passing Arguments"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<button @click=\"greet('John')\">Greet</button>"
+    },
+    {
+      "type": "heading",
+      "value": "Event Object"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<button @click=\"handleClick($event)\">Click</button>"
+    },
+    {
+      "type": "heading",
+      "value": "Event Modifiers"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Modifier", "Description"],
+        "rows": [
+          [".stop", "Stops event propagation"],
+          [".prevent", "Prevents default action"],
+          [".once", "Runs only once"],
+          [".capture", "Uses capture mode"],
+          [".self", "Triggers only on element itself"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Modifiers Example"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<form @submit.prevent=\"submitForm\">\n  <button type=\"submit\">Submit</button>\n</form>"
+    },
+    {
+      "type": "heading",
+      "value": "Keyboard Events"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<input @keyup.enter=\"submit\">"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use shorthand @ for cleaner code**",
+        "**Keep logic inside methods**",
+        "**Use modifiers to simplify event handling**",
+        "**Avoid inline complex logic**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Writing complex logic inline**",
+        "**Not using event modifiers**",
+        "**Forgetting $event when needed**",
+        "**Mixing methods and inline logic incorrectly**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "The v-on directive is essential for handling user interactions in Vue. It provides a clean and efficient way to manage events."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is v-on?",
+      "answer": "It is used to handle DOM events in Vue."
+    },
+    {
+      "question": "What is shorthand for v-on?",
+      "answer": "The @ symbol."
+    },
+    {
+      "question": "What is .prevent?",
+      "answer": "It prevents default browser behavior."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "<button @click=\"count++\">Click</button>\n<p>{{ count }}</p>"
+  },
+
+  "quiz": [
+    {
+      "question": "v-on is used for?",
+      "options": ["Loop", "Condition", "Event", "Binding"],
+      "answer": 2
+    },
+    {
+      "question": "Shorthand of v-on?",
+      "options": ["#", "@", ":", "$"],
+      "answer": 1
+    },
+    {
+      "question": "Which prevents default action?",
+      "options": [".stop", ".prevent", ".once", ".self"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "vue-template-syntax",
+    "vue-data-binding",
+    "vue-v-model",
+    "vue-events",
+    "vue-methods"
+  ]
+}
