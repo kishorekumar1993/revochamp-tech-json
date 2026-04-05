@@ -1,0 +1,135 @@
+{
+  "slug": "angular-rxjs-operators",
+  "course": "Angular",
+  "title": "RxJS Operators – Transforming Data Streams",
+
+  "meta": {
+    "title": "Angular RxJS Operators Guide – Map, Filter & SwitchMap (2026)",
+    "description": "Master RxJS operators in Angular. Learn how to pipe, transform, and combine asynchronous data streams for high-performance reactive applications.",
+    "keywords": [
+      "rxjs operators",
+      "angular pipe",
+      "switchmap angular",
+      "map operator",
+      "filter operator",
+      "rxjs transformation",
+      "angular reactive programming"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are RxJS Operators?"
+    },
+    {
+      "type": "text",
+      "value": "Operators are the 'secret sauce' of RxJS. They are pure functions that allow you to transform, filter, and combine data emitted by an Observable. In an architectural context like your Revochamp project, operators allow you to treat complex asynchronous logic—like API calls and user keystrokes—as a pipeline. Instead of writing nested callbacks, you 'pipe' your data through a sequence of operators to get the exact output you need."
+    },
+    {
+      "type": "heading",
+      "value": "1. The .pipe() Method"
+    },
+    {
+      "type": "text",
+      "value": "Since RxJS 6+, operators are used inside the `.pipe()` method. This assembly-line approach makes the code readable and ensures that unused operators can be 'tree-shaken' out of your production bundle, keeping your Flutter-to-Web engine lightweight."
+    },
+    
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { map, filter } from 'rxjs/operators';\n\nprojectStream$.pipe(\n  filter(project => project.status === 'active'), // Only active projects\n  map(project => project.name.toUpperCase())       // Transform to uppercase\n).subscribe(name => console.log(name));"
+    },
+    {
+      "type": "heading",
+      "value": "2. Categories of Operators"
+    },
+    {
+      "type": "text",
+      "value": "As a Lead Developer, you should categorize operators by their behavior to choose the right tool for the task."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Transformation**: `map`, `pluck`, `scan` (Changing the data shape).",
+        "**Filtering**: `filter`, `take`, `debounceTime`, `distinctUntilChanged` (Selecting specific emissions).",
+        "**Flattening (Higher-Order)**: `switchMap`, `mergeMap`, `concatMap` (Handling nested Observables like API calls inside clicks).",
+        "**Utility**: `tap`, `delay`, `finalize` (Side effects and debugging)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "3. The 'Big Three' Flattening Operators"
+    },
+    {
+      "type": "text",
+      "value": "Choosing between these is often an interview question for Senior Roles. They decide how to handle a new request when a previous one is still pending."
+    },
+    
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Operator", "Behavior", "Best Use Case"],
+        "rows": [
+          ["switchMap", "Cancels the previous inner Observable", "Search boxes / Type-ahead"],
+          ["mergeMap", "Runs all inner Observables in parallel", "Parallel deletes or independent saves"],
+          ["concatMap", "Queues inner Observables to run in order", "Serial updates where order matters"],
+          ["exhaustMap", "Ignores new values until current one finishes", "Login buttons (prevent double-clicks)"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "4. Debugging with Tap"
+    },
+    {
+      "type": "text",
+      "value": "The `tap` operator is unique because it doesn't modify the stream. It's used for 'side effects' like logging or triggering a loading spinner without changing the data passing through the pipe."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a 'Pure' Operator?",
+      "answer": "All RxJS operators are pure functions. They do not modify the original Observable; instead, they return a new Observable that emits a transformed version of the source values."
+    },
+    {
+      "question": "Why use debounceTime?",
+      "answer": "It is essential for performance. If a user is typing in a search bar, you don't want to hit your Python API for every single letter. 'debounceTime(300)' waits for the user to stop typing for 300ms before sending the request."
+    },
+    {
+      "question": "Can I create my own operator?",
+      "answer": "Yes. A custom operator is just a function that takes an Observable and returns a new one. You can compose multiple existing operators into a single reusable function to keep your architecture DRY."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which operator would you use to cancel an ongoing API request if the user triggers a new one?",
+      "options": ["mergeMap", "switchMap", "concatMap", "tap"],
+      "answer": 1
+    },
+    {
+      "question": "Which operator is best for performing side effects like console logging without changing the stream data?",
+      "options": ["map", "filter", "tap", "scan"],
+      "answer": 2
+    },
+    {
+      "question": "Which operator allows you to wait for a specific amount of time after the last emission before passing the value?",
+      "options": ["delay", "debounceTime", "throttleTime", "timer"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-rxjs-observables",
+    "angular-http-client",
+    "angular-services-di",
+    "angular-observables",
+    "clean-architecture-frontend"
+  ]
+}

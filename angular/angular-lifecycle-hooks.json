@@ -1,0 +1,121 @@
+{
+  "slug": "angular-lifecycle-hooks",
+  "course": "Angular",
+  "title": "Angular Lifecycle Hooks – Managing Component Life",
+
+  "meta": {
+    "title": "Angular Lifecycle Hooks Guide – ngOnInit, ngOnChanges & ngOnDestroy (2026)",
+    "description": "Master the lifecycle of Angular components. Learn when and how to use ngOnInit, ngOnChanges, and ngOnDestroy to build high-performance, leak-free applications.",
+    "keywords": [
+      "angular lifecycle hooks",
+      "ngoninit vs constructor",
+      "ngonchanges",
+      "ngondestroy",
+      "angular component lifecycle",
+      "afterviewinit"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Understanding the Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "An Angular component has a lifecycle managed by the framework. From the moment it is instantiated to the moment it is destroyed, Angular provides 'hooks'—specific methods you can implement to tap into key moments. As a Technical Lead, mastering these hooks is essential for managing heavy resources like the Revochamp AI engine, ensuring you initialize data correctly and clean up memory to prevent leaks."
+    },
+    {
+      "type": "heading",
+      "value": "1. Common Lifecycle Hooks"
+    },
+    {
+      "type": "text",
+      "value": "While there are many hooks, a few are used in almost every professional component. You implement these by adding the corresponding interface to your class and defining the method."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**ngOnChanges()**: Responds when Angular sets or resets data-bound input properties (@Input). It receives a SimpleChanges object.",
+        "**ngOnInit()**: Called once after the first ngOnChanges. This is the best place to fetch data from your Python APIs.",
+        "**ngOnDestroy()**: Called just before Angular destroys the component. Use this to unsubscribe from Observables and stop timers."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Implementation Example"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { Component, OnInit, OnDestroy, Input, SimpleChanges, OnChanges } from '@angular/core';\nimport { Subscription } from 'rxjs';\n\n@Component({ ... })\nexport class ProjectEditorComponent implements OnInit, OnChanges, OnDestroy {\n  @Input() projectId!: string;\n  private sub!: Subscription;\n\n  ngOnChanges(changes: SimpleChanges) {\n    console.log('Project ID changed:', changes['projectId'].currentValue);\n  }\n\n  ngOnInit() {\n    console.log('Component initialized. Fetching project data...');\n    // this.sub = this.apiService.getData().subscribe();\n  }\n\n  ngOnDestroy() {\n    console.log('Cleaning up resources...');\n    if (this.sub) this.sub.unsubscribe();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. View & Content Hooks"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to interact with the DOM or child components. Hooks like `ngAfterViewInit` are triggered only after Angular has fully initialized the component's views and child views."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Hook", "Timing", "Best Use Case"],
+        "rows": [
+          ["ngOnChanges", "Before ngOnInit", "Reacting to @Input changes"],
+          ["ngOnInit", "After first OnChanges", "Initial API calls / logic setup"],
+          ["ngDoCheck", "Every change detection", "Custom change detection logic"],
+          ["ngAfterViewInit", "After view renders", "Accessing @ViewChild elements"],
+          ["ngOnDestroy", "Before destruction", "Unsubscribing / memory cleanup"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why use ngOnInit instead of the Constructor?",
+      "answer": "The constructor is a TypeScript feature for class instantiation, but Angular hasn't finished setting up the component (like @Input properties) yet. ngOnInit is an Angular-specific hook that ensures all inputs and DI services are ready for use."
+    },
+    {
+      "question": "When should I use ngOnDestroy?",
+      "answer": "Every time you use a manual '.subscribe()' in your TypeScript, you should unsubscribe in ngOnDestroy. This prevents memory leaks, especially in single-page applications where components are frequently created and removed."
+    },
+    {
+      "question": "What is the SimpleChanges object?",
+      "answer": "In ngOnChanges, Angular passes a SimpleChanges object that contains the previous and current value of every changed @Input property. This allows you to compare values and trigger logic only when specific inputs change."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which lifecycle hook is called first when a component is initialized with inputs?",
+      "options": ["ngOnInit", "ngOnChanges", "ngAfterViewInit", "ngDoCheck"],
+      "answer": 1
+    },
+    {
+      "question": "Where is the best place to perform a cleanup, such as unsubscribing from an Observable?",
+      "options": ["ngOnInit", "constructor", "ngOnDestroy", "ngAfterViewInit"],
+      "answer": 2
+    },
+    {
+      "question": "True or False: ngOnInit is called every time a component's input changes.",
+      "options": ["True", "False"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-components",
+    "angular-architecture",
+    "angular-data-binding",
+    "rxjs-observables-intro",
+    "clean-architecture-frontend"
+  ]
+}

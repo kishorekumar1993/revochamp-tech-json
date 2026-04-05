@@ -1,0 +1,131 @@
+{
+  "slug": "angular-template-driven-forms",
+  "course": "Angular",
+  "title": "Angular Template-Driven Forms – Simple & Declarative",
+
+  "meta": {
+    "title": "Angular Template-Driven Forms Guide – ngModel & NgForm (2026)",
+    "description": "Learn how to build forms using Angular's template-driven approach. Master ngModel for two-way data binding and handle simple form validation directly in HTML.",
+    "keywords": [
+      "angular template-driven forms",
+      "ngmodel angular",
+      "ngform directive",
+      "angular form validation",
+      "two-way data binding forms",
+      "simple forms angular"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Template-Driven Forms?"
+    },
+    {
+      "type": "text",
+      "value": "Template-driven forms rely on directives in the template (HTML) to create and manage the underlying form model. As an Engineering Manager, you might choose this approach for simple forms, such as a basic 'Contact Us' page or a quick search filter. It is heavily inspired by AngularJS (1.x) and uses **two-way data binding** to keep the component's variables in sync with the input fields."
+    },
+    {
+      "type": "heading",
+      "value": "1. The Role of ngModel"
+    },
+    {
+      "type": "text",
+      "value": "The `ngModel` directive is the star of template-driven forms. It creates a `FormControl` instance from a domain model and binds it to a form control element. This allows for 'Banana-in-a-box' syntax `[(ngModel)]` which ensures that if the user types in the box, the variable updates, and vice versa."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<input type=\"text\" name=\"projectName\" [(ngModel)]=\"project.name\" required>\n<p>Creating project: {{ project.name }}</p>"
+    },
+    {
+      "type": "heading",
+      "value": "2. Using the NgForm Directive"
+    },
+    {
+      "type": "text",
+      "value": "Angular automatically attaches the `NgForm` directive to any `<form>` tag. You can use a **Template Reference Variable** (like `#projectForm`) to export a reference to the `NgForm` instance, allowing you to check the overall validity of the form or reset it."
+    },
+    
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<form #projectForm=\"ngForm\" (ngSubmit)=\"onSubmit(projectForm)\">\n  <label>Project Title</label>\n  <input type=\"text\" name=\"title\" ngModel required #title=\"ngModel\">\n\n  <div *ngIf=\"title.invalid && title.touched\">\n    Title is required!\n  </div>\n\n  <button type=\"submit\" [disabled]=\"projectForm.invalid\">Save</button>\n</form>"
+    },
+    {
+      "type": "heading",
+      "value": "3. Validation in the Template"
+    },
+    {
+      "type": "text",
+      "value": "In this approach, validation is added using standard HTML attributes like `required`, `minlength`, and `pattern`. Angular recognizes these attributes and uses them to set the validation status of the associated `FormControl`."
+    },
+    {
+      "type": "heading",
+      "value": "Comparison: Template-Driven vs. Reactive"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Template-Driven", "Reactive"],
+        "rows": [
+          ["Logic Location", "Template (HTML)", "Component (TypeScript)"],
+          ["Data Binding", "Two-way (ngModel)", "One-way (Observable)"],
+          ["Testing", "Requires DOM (Integration)", "Logic only (Unit)"],
+          ["Complexity", "Best for simple forms", "Best for complex forms"],
+          ["Model Management", "Implicit / Asynchronous", "Explicit / Synchronous"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Which module do I need to import?",
+      "answer": "You must import the 'FormsModule' from '@angular/forms' in your NgModule or Standalone Component to enable ngModel and NgForm."
+    },
+    {
+      "question": "Why do I need the 'name' attribute?",
+      "answer": "When using [(ngModel)] inside a <form> tag, the 'name' attribute is mandatory. Angular uses this name to register the control with the parent NgForm instance."
+    },
+    {
+      "question": "Can I use custom validators here?",
+      "answer": "Yes, but it's more complex than in Reactive forms. You have to create a custom Directive that implements the 'Validator' interface and provide it using 'NG_VALIDATORS'."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which directive is used for two-way data binding in template-driven forms?",
+      "options": ["formControl", "ngBind", "ngModel", "formGroup"],
+      "answer": 2
+    },
+    {
+      "question": "In a template-driven form, where is the validation logic primarily defined?",
+      "options": [
+        "In the component's constructor",
+        "Directly in the HTML template using attributes",
+        "In a separate JSON configuration file",
+        "On the backend server"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the mandatory attribute when using ngModel inside a form tag?",
+      "options": ["id", "class", "name", "value"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-reactive-forms",
+    "angular-form-validation",
+    "angular-data-binding",
+    "angular-components",
+    "clean-architecture-frontend"
+  ]
+}

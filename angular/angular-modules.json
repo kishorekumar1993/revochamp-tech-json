@@ -1,0 +1,132 @@
+{
+  "slug": "angular-modules",
+  "course": "Angular",
+  "title": "Angular Modules – Organizing Your Application",
+
+  "meta": {
+    "title": "Angular NgModules Guide – Declarations, Imports & Exports (2026)",
+    "description": "Learn how to use NgModules to organize your Angular application. Master the root module, feature modules, and the transition to standalone components.",
+    "keywords": [
+      "angular modules",
+      "ngmodule decorator",
+      "root module",
+      "feature modules",
+      "angular declarations",
+      "angular imports exports"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is an NgModule?"
+    },
+    {
+      "type": "text",
+      "value": "An **NgModule** is a class decorated with `@NgModule` that serves as a container for a cohesive block of code. It describes how the parts of an application fit together. As a Technical Lead, you use modules to organize your app into functional units—separating core logic, shared UI components, and specific features like the Revochamp dashboard or editor. This modularity is key to maintainability and lazy loading."
+    },
+    {
+      "type": "heading",
+      "value": "1. The Anatomy of @NgModule"
+    },
+    {
+      "type": "text",
+      "value": "The `@NgModule` decorator takes a metadata object that tells Angular how to compile the module's components and how to link it with other modules."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**declarations**: The components, directives, and pipes that belong to *this* module.",
+        "**imports**: Other modules whose exported classes are needed by component templates declared in this module (e.g., CommonModule, ReactiveFormsModule).",
+        "**exports**: The subset of declarations that should be visible and usable in the templates of *other* modules.",
+        "**providers**: Creators of services that this module contributes to the global collection of services (Dependency Injection).",
+        "**bootstrap**: The main application view, called the root component, that hosts all other app views (only set in the Root Module)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Root vs. Feature Modules"
+    },
+    {
+      "type": "text",
+      "value": "Every Angular app has at least one **Root Module**, conventionally named `AppModule`. As your project scales, you break it down into **Feature Modules** to encapsulate related functionality."
+    },
+    
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { NgModule } from '@angular/core';\nimport { BrowserModule } from '@angular/platform-browser';\nimport { AppComponent } from './app.component';\n\n@NgModule({\n  declarations: [AppComponent],      // Local components\n  imports: [BrowserModule],          // Required modules\n  providers: [],                     // Services\n  bootstrap: [AppComponent]          // Starting point\n})\nexport class AppModule { }"
+    },
+    {
+      "type": "heading",
+      "value": "3. The Shift to Standalone Components"
+    },
+    {
+      "type": "text",
+      "value": "While NgModules were the only way to organize apps for years, modern Angular (v14+) introduced **Standalone Components**. These allow components to manage their own dependencies without being declared in a module. For a Flutter Architect, this feels much more like the self-contained nature of Widgets."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Module-Based", "Standalone-Based"],
+        "rows": [
+          ["Declaration", "Must be in an @NgModule", "Standalone: true in @Component"],
+          ["Dependency Management", "Handled by Module imports", "Handled in Component imports"],
+          ["Boilerplate", "Higher (Requires extra file)", "Lower (Self-contained)"],
+          ["Learning Curve", "Complex for beginners", "Simpler / More intuitive"],
+          ["Best For", "Legacy/Complex Enterprise", "Modern Standard / New projects"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the CommonModule?",
+      "answer": "CommonModule provides standard Angular directives like *ngIf and *ngFor. In a module-based app, you must import it into every feature module where you use those directives. In standalone components, you import it (or specific directives) directly into the component."
+    },
+    {
+      "question": "Why use 'exports' in a module?",
+      "answer": "By default, components in a module are 'private'. If you create a 'SharedModule' with a custom button component, you must put that component in 'exports' so that other modules importing 'SharedModule' can actually use the button in their templates."
+    },
+    {
+      "question": "Can I mix modules and standalone components?",
+      "answer": "Yes. Angular is designed for interoperability. You can import an NgModule into a Standalone Component's 'imports' array, and you can import a Standalone Component into an NgModule's 'imports' array."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which @NgModule property is used to list components that belong to that specific module?",
+      "options": ["imports", "exports", "declarations", "providers"],
+      "answer": 2
+    },
+    {
+      "question": "Which module must be imported in the Root Module to run an Angular app in the browser?",
+      "options": ["CommonModule", "FormsModule", "BrowserModule", "RouterModule"],
+      "answer": 2
+    },
+    {
+      "question": "What is the purpose of the 'bootstrap' property in a module?",
+      "options": [
+        "To load CSS libraries",
+        "To identify the main component that launches the app",
+        "To define the backend API URL",
+        "To register services"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-architecture",
+    "angular-components",
+    "angular-lazy-loading",
+    "standalone-components-guide",
+    "angular-project-structure"
+  ]
+}

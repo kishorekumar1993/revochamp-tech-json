@@ -1,0 +1,135 @@
+{
+  "slug": "angular-signals",
+  "course": "Angular",
+  "title": "Angular Signals – Modern Fine-Grained Reactivity",
+
+  "meta": {
+    "title": "Angular Signals Guide – Writable Signals, Computed & Effects (2026)",
+    "description": "Learn the future of Angular reactivity. Master Signals to build high-performance applications with fine-grained DOM updates and simpler state management.",
+    "keywords": [
+      "angular signals",
+      "writable signals",
+      "computed signals",
+      "angular effect",
+      "fine-grained reactivity",
+      "angular performance optimization",
+      "zoneless angular"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Signals?"
+    },
+    {
+      "type": "text",
+      "value": "A **Signal** is a wrapper around a value that notifies consumers when that value changes. Unlike RxJS Observables, which are streams of data that require subscriptions, Signals are synchronous and 'glitch-free'. As an Architect, you should view Signals as the primary way to manage local and shared state in modern Angular apps. They enable 'Zoneless' applications, where Angular no longer relies on Zone.js to detect changes, leading to massive performance gains and smaller bundle sizes."
+    },
+    {
+      "type": "heading",
+      "value": "1. The Three Core Primitives"
+    },
+    {
+      "type": "text",
+      "value": "There are three primary functions that make up the Signals API."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**signal()**: Creates a 'Writable Signal'. You can change its value directly using `.set()` or `.update()`.",
+        "**computed()**: Creates a read-only signal that derives its value from other signals. It is lazily evaluated and memoized (it only re-calculates if its dependencies change).",
+        "**effect()**: A function that runs whenever the signals it reads change. Use this for side effects like logging, manual DOM manipulation, or syncing with LocalStorage."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Basic Implementation"
+    },
+    {
+      "type": "text",
+      "value": "In your component, you define a signal and call it as a function in your template to read its current value. Angular automatically tracks this dependency."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { Component, signal, computed, effect } from '@angular/core';\n\n@Component({ ... })\nexport class ProjectCounterComponent {\n  // 1. Writable Signal\n  count = signal(0);\n\n  // 2. Computed Signal (auto-updates when count changes)\n  doubleCount = computed(() => this.count() * 2);\n\n  constructor() {\n    // 3. Effect for side effects\n    effect(() => {\n      console.log(`The current count is: ${this.count()}`);\n    });\n  }\n\n  increment() {\n    this.count.update(value => value + 1);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Signals vs. RxJS"
+    },
+    {
+      "type": "text",
+      "value": "As a Lead, it's important to know when to use which. Signals are for **State** (values over time), while RxJS is for **Events** and **Asynchronous Streams** (API calls, web sockets, complex timing)."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Signals", "RxJS Observables"],
+        "rows": [
+          ["Nature", "Synchronous / State", "Asynchronous / Streams"],
+          ["Consumer", "Functional call: count()", "Subscription: .subscribe()"],
+          ["Cleanup", "Automatic", "Manual (Unsubscribe)"],
+          ["Performance", "Fine-grained (targeted)", "Coarse-grained (Zone.js)"],
+          ["Best For", "Local state, derived values", "HTTP calls, Event logic"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Reactivity Evolution"
+    },
+    {
+      "type": "text",
+      "value": "Signals represent a shift from 'Push-based' (RxJS) to 'Producer-Consumer' based reactivity, reducing the complexity of the change detection cycle."
+    }
+    
+  ],
+
+  "faq": [
+    {
+      "question": "Do I need to unsubscribe from a Signal?",
+      "answer": "No. Signals do not use subscriptions in the RxJS sense. Angular automatically tracks where a signal is used and cleans up the dependency when the component is destroyed."
+    },
+    {
+      "question": "Can I use Signals with the HttpClient?",
+      "answer": "HttpClient still returns Observables. However, you can easily convert them using the 'toSignal()' utility. This allows you to fetch data asynchronously but treat it as a reactive signal in your UI logic."
+    },
+    {
+      "question": "Are Signals replacing NgRx?",
+      "answer": "Not exactly. NgRx has introduced '@ngrx/signals', a lightweight state management library built on top of Signals. You can use Signals for local component state and NgRx for complex global state."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which function is used to create a read-only signal that depends on the value of another signal?",
+      "options": ["signal()", "effect()", "computed()", "derive()"],
+      "answer": 2
+    },
+    {
+      "question": "What is the correct way to read the current value of a signal named 'total' in a template?",
+      "options": ["{{ total }}", "{{ total() }}", "{{ total.value }}", "{{ *total }}"],
+      "answer": 1
+    },
+    {
+      "question": "Which signal primitive should be used to sync a value with LocalStorage whenever it changes?",
+      "options": ["signal()", "computed()", "effect()", "patchValue()"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-state-management",
+    "angular-performance-tuning",
+    "angular-rxjs-observables",
+    "angular-components",
+    "clean-architecture-frontend"
+  ]
+}

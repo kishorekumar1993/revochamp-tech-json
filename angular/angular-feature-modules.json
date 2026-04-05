@@ -1,0 +1,144 @@
+{
+  "slug": "angular-feature-modules",
+  "course": "Angular",
+  "title": "Angular Feature Modules – Scaling Large Applications",
+
+  "meta": {
+    "title": "Angular Feature Modules Guide – Encapsulation & Organization (2026)",
+    "description": "Learn how to use Feature Modules to partition your Angular app into focused functional areas. Master domain, routed, and service modules for enterprise scale.",
+    "keywords": [
+      "angular feature modules",
+      "ngmodule organization",
+      "domain modules",
+      "routed feature modules",
+      "angular shared module",
+      "encapsulation angular"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Feature Module?"
+    },
+    {
+      "type": "text",
+      "value": "As your application grows, the Root Module (`AppModule`) can become a cluttered 'God Object' that is difficult to manage. A Feature Module is an `NgModule` that helps you partition the application into focused areas. As a Technical Lead, you use feature modules to group related components, directives, and pipes together. This creates clear boundaries between different domains of your app—like a 'User Dashboard' versus an 'Admin Panel'—and is the prerequisite for implementing Lazy Loading."
+    },
+    {
+      "type": "heading",
+      "value": "1. Types of Feature Modules"
+    },
+    {
+      "type": "text",
+      "value": "Not all modules serve the same purpose. In a professional architecture, we categorize modules based on their responsibilities."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**Domain Feature Modules**: Deliver a specific user experience (e.g., `EditorModule`). They contain components, private services, and models related to that feature.",
+        "**Routed Feature Modules**: Domain modules whose top-level components are the targets of router navigation (used with `loadChildren`).",
+        "**Service Modules**: Provide utility services (e.g., `CoreModule` for authentication or logging). They usually only contain 'providers' and no declarations.",
+        "**Widget/Shared Modules**: Contain reusable components (buttons, spinners) and pipes that are imported by many other feature modules."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Creating and Importing a Feature Module"
+    },
+    {
+      "type": "text",
+      "value": "When you create a feature module, you typically import `CommonModule` (which provides `*ngIf` and `*ngFor`) instead of `BrowserModule` (which belongs only in the root)."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Generate a feature module with its own routing\nng generate module features/dashboard --routing"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "@NgModule({\n  declarations: [DashboardComponent, SummaryWidgetComponent],\n  imports: [\n    CommonModule,\n    DashboardRoutingModule\n  ],\n  exports: [DashboardComponent] // Export only what other modules need to see\n})\nexport class DashboardModule { }"
+    },
+    {
+      "type": "heading",
+      "value": "3. The Shared Module Pattern"
+    },
+    {
+      "type": "text",
+      "value": "To avoid importing standard libraries (like Angular Material) into every single feature module, architects often create a `SharedModule`. This module imports and then **re-exports** common modules, making them available to any feature module that imports the `SharedModule`."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "@NgModule({\n  imports: [CommonModule, MatButtonModule, MatIconModule],\n  exports: [CommonModule, MatButtonModule, MatIconModule, CustomSpinnerComponent]\n})\nexport class SharedModule { }"
+    },
+    {
+      "type": "heading",
+      "value": "Module Communication Table"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Module Type", "Imports", "Exports", "Providers"],
+        "rows": [
+          ["Root (App)", "BrowserModule, FeatureModules", "None", "Global App Services"],
+          ["Feature", "CommonModule, SharedModule", "Main Feature Component", "Feature-specific Services"],
+          ["Shared", "CommonModule, UI Libraries", "UI Components & Directives", "Avoid (can cause duplicates)"],
+          ["Core", "CommonModule", "None", "Singleton App-wide Services"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Should I put services in a SharedModule?",
+      "answer": "Generally, no. If a SharedModule is imported by multiple lazy-loaded modules, and it contains providers, each module might get its own instance of the service. Keep services in a 'CoreModule' or use 'providedIn: root' to ensure they remain singletons."
+    },
+    {
+      "question": "Can one feature module import another?",
+      "answer": "Yes, but be careful of circular dependencies (Module A imports B, and B imports A). If two modules need the same component, that component should probably be moved to a 'SharedModule'."
+    },
+    {
+      "question": "Why use CommonModule instead of BrowserModule in feature modules?",
+      "answer": "BrowserModule contains the code to launch (bootstrap) the application in the browser. You only want that to happen once in the Root Module. Feature modules only need common directives, which are provided by CommonModule."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "What is the primary benefit of organizing an app into Feature Modules?",
+      "options": [
+        "It makes the CSS load faster",
+        "It allows for Lazy Loading and better code organization",
+        "It removes the need for TypeScript",
+        "It automatically connects to Firebase"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which module should be imported in a feature module to use directives like *ngIf?",
+      "options": ["BrowserModule", "CommonModule", "AppModule", "FormsModule"],
+      "answer": 1
+    },
+    {
+      "question": "In the Shared Module pattern, what must you do to a component so other modules can use it?",
+      "options": ["Declare it in 'providers'", "Add it to the 'exports' array", "Add it to the 'bootstrap' array", "Nothing, it is shared automatically"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-modules",
+    "angular-lazy-loading",
+    "angular-architecture",
+    "angular-project-structure",
+    "clean-architecture-frontend"
+  ]
+}

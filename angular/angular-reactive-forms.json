@@ -1,0 +1,138 @@
+{
+  "slug": "angular-reactive-forms",
+  "course": "Angular",
+  "title": "Angular Reactive Forms – Scalable & Testable Forms",
+
+  "meta": {
+    "title": "Angular Reactive Forms Guide – FormGroup, FormControl & FormBuilder (2026)",
+    "description": "Master Reactive Forms in Angular. Learn how to build complex, model-driven forms with synchronous access to data and robust unit testing capabilities.",
+    "keywords": [
+      "angular reactive forms",
+      "formgroup angular",
+      "formcontrol",
+      "formbuilder angular",
+      "model-driven forms",
+      "angular forms tutorial"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Reactive Forms?"
+    },
+    {
+      "type": "text",
+      "value": "Reactive forms provide a model-driven approach to handling form inputs whose values change over time. As a Technical Lead, you should prefer Reactive forms for enterprise-scale projects like Revochamp because they offer an explicit, immutable data model and are significantly easier to unit test. Unlike Template-driven forms, the logic is defined entirely in your TypeScript class, giving you full control over the form state."
+    },
+    {
+      "type": "heading",
+      "value": "1. The Building Blocks"
+    },
+    {
+      "type": "text",
+      "value": "There are three core classes you need to understand to master Reactive Forms."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**FormControl**: Tracks the value and validation status of an individual form control (like an input or checkbox).",
+        "**FormGroup**: Tracks the same values and status for a collection of form controls. If one control is invalid, the group is invalid.",
+        "**FormArray**: Tracks a collection of controls in an array format, useful for dynamic fields (e.g., adding multiple feature tags)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Implementation in TypeScript"
+    },
+    {
+      "type": "text",
+      "value": "To use Reactive Forms, you must first import the `ReactiveFormsModule` in your module or standalone component. Then, you initialize your form model in the class."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { FormGroup, FormControl, Validators } from '@angular/forms';\n\nexport class ProjectEditorComponent {\n  // Define the form model\n  projectForm = new FormGroup({\n    title: new FormControl('', Validators.required),\n    description: new FormControl(''),\n    config: new FormGroup({\n      platform: new FormControl('Flutter'),\n      isPublic: new FormControl(true)\n    })\n  });\n\n  onSubmit() {\n    console.warn(this.projectForm.value);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Binding to the Template"
+    },
+    {
+      "type": "text",
+      "value": "Once the model is defined in TypeScript, you bind it to the HTML using the `formGroup` and `formControlName` directives. This creates a bridge between your logic and the UI."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<form [formGroup]=\"projectForm\" (ngSubmit)=\"onSubmit()\">\n  <label for=\"title\">Project Title:</label>\n  <input id=\"title\" type=\"text\" formControlName=\"title\">\n\n  <div formGroupName=\"config\">\n    <label>Platform:</label>\n    <input type=\"text\" formControlName=\"platform\">\n  </div>\n\n  <button type=\"submit\" [disabled]=\"!projectForm.valid\">Save</button>\n</form>"
+    },
+    {
+      "type": "heading",
+      "value": "Data Flow in Reactive Forms"
+    },
+    {
+      "type": "text",
+      "value": "Reactive forms use an observable-based approach. Every change to the input is pushed to the form model, allowing you to react to changes instantly using the `valueChanges` observable."
+    },
+    
+    {
+      "type": "heading",
+      "value": "4. Using the FormBuilder"
+    },
+    {
+      "type": "text",
+      "value": "As your forms grow, manually creating `new FormControl()` instances becomes repetitive. The `FormBuilder` service is a syntactic sugar that makes creating complex groups and arrays much cleaner."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { FormBuilder } from '@angular/forms';\n\nconstructor(private fb: FormBuilder) {}\n\nthis.projectForm = this.fb.group({\n  title: ['', Validators.required],\n  description: [''],\n  features: this.fb.array([ this.fb.control('') ])\n});"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "When should I use FormArray?",
+      "answer": "Use FormArray when you need to manage a dynamic list of inputs. For example, in an AI prompt builder where a user can add an unlimited number of 'keywords' or 'variables', FormArray allows you to push new controls into the list at runtime."
+    },
+    {
+      "question": "How do I update form values programmatically?",
+      "answer": "You can use 'patchValue()' to update specific fields or 'setValue()' to update the entire form. 'patchValue' is more flexible as it allows you to omit fields you don't want to change."
+    },
+    {
+      "question": "Are Reactive Forms truly 'reactive'?",
+      "answer": "Yes. They are built on RxJS. You can subscribe to 'this.form.valueChanges' or 'this.form.statusChanges' to execute logic immediately whenever the user interacts with the form."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which directive is used to link an individual input to a control in a Reactive Form?",
+      "options": ["ngModel", "formControl", "formControlName", "name"],
+      "answer": 2
+    },
+    {
+      "question": "Which service provides a shorter, cleaner syntax for creating form groups and arrays?",
+      "options": ["FormService", "FormBuilder", "FormFactory", "FormModel"],
+      "answer": 1
+    },
+    {
+      "question": "Which Reactive Forms class is best suited for a dynamic list of controls?",
+      "options": ["FormControl", "FormGroup", "FormArray", "FormList"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-form-validation",
+    "angular-components",
+    "rxjs-observables-intro",
+    "angular-dependency-injection",
+    "clean-architecture-frontend"
+  ]
+}

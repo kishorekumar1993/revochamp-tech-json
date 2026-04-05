@@ -1,0 +1,149 @@
+{
+  "slug": "angular-best-practices",
+  "course": "Angular",
+  "title": "Angular Best Practices – Architecting for Scale",
+
+  "meta": {
+    "title": "Angular Best Practices Guide – Clean Code & Scalable Architecture (2026)",
+    "description": "Learn professional Angular standards. Master the LIFT principle, OnPush change detection, and clean architecture patterns for enterprise-grade applications.",
+    "keywords": [
+      "angular best practices",
+      "angular clean code",
+      "lift principle angular",
+      "angular folder structure",
+      "onpush performance",
+      "smart vs dumb components"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Professional Standard"
+    },
+    {
+      "type": "text",
+      "value": "Writing 'code that works' is easy; writing 'code that lasts' requires discipline. As an Engineering Manager, you should enforce a set of core principles across your team to ensure that the Revochamp platform remains agile. These practices focus on readability, maintainability, and minimizing the cost of future changes."
+    },
+    {
+      "type": "heading",
+      "value": "1. The LIFT Principle"
+    },
+    {
+      "type": "text",
+      "value": "The Angular team recommends the **LIFT** principle for organizing your project structure. If you can't find a file in under 5 seconds, your architecture is too complex."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**L**ocate code quickly: Keep a flat folder structure where possible.",
+        "**I**dentify at a glance: Use clear naming conventions (e.g., `project-list.component.ts`).",
+        "**F**lat structure as long as possible: Don't nest folders unless you have more than 7 files in a directory.",
+        "**T**ry to stay DRY: Avoid 'Repeat Yourself' by moving shared logic into services or pipes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Smart vs. Dumb Components"
+    },
+    {
+      "type": "text",
+      "value": "As an Architect, you should separate your UI into two distinct types of components. This 'Separation of Concerns' makes your application much easier to test and debug."
+    },
+    
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Smart (Container)", "Dumb (Presentational)"],
+        "rows": [
+          ["Responsibility", "Data fetching & Logic", "Displaying UI & Emitting events"],
+          ["Dependencies", "Services, Store, Router", "None (Only @Input and @Output)"],
+          ["Reusability", "Low (specific to a feature)", "High (generic UI widgets)"],
+          ["Change Detection", "Default / OnPush", "Always ChangeDetectionStrategy.OnPush"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "3. Performance: Immutability & OnPush"
+    },
+    {
+      "type": "text",
+      "value": "Never mutate data directly. Use the spread operator (`...`) to create new object references. This allows you to use `ChangeDetectionStrategy.OnPush` across your app, which prevents Angular from re-rendering components unless their specific data has actually changed. For a Flutter dev, this is the equivalent of an optimized `StatelessWidget` that only rebuilds when its properties change."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// AVOID: this.projects.push(newProject);\n\n// PREFER: Immutable update\nthis.projects = [...this.projects, newProject];"
+    },
+    {
+      "type": "heading",
+      "value": "4. Clean Code Checklist"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Small Functions**: Keep methods under 20 lines. If it's longer, it's doing too much.",
+        "**Unsubscribe**: Always use the `async` pipe or a `takeUntil` pattern to prevent memory leaks.",
+        "**Strong Typing**: Avoid using `any`. Define interfaces for every API response and data model.",
+        "**Logic-less Templates**: Keep logic in the TypeScript class. Templates should only handle display logic.",
+        "**Provide in Root**: Use `providedIn: 'root'` for services to enable tree-shaking by default."
+      ]
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Should I use Standalone Components for everything?",
+      "answer": "Yes. As of 2026, standalone components are the standard. They reduce boilerplate, make dependencies explicit, and make your application easier to 'tree-shake' for faster load times."
+    },
+    {
+      "question": "When should I use a Service vs. a Pipe?",
+      "answer": "Use a Service for data management and API calls. Use a Pipe for data transformation in the template (like formatting a date or currency). Pipes are 'pure' and memoized, making them more performant for simple UI transforms."
+    },
+    {
+      "question": "How do I handle 'Prop Drilling'?",
+      "answer": "If you are passing data through more than two levels of components, stop. Move that data into a shared Service with a Signal or a BehaviorSubject that the deeply nested child can inject directly."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which principle suggests that you should be able to find any file in your project in under 5 seconds?",
+      "options": ["DRY", "KISS", "LIFT", "SOLID"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary characteristic of a 'Dumb' (Presentational) component?",
+      "options": [
+        "It fetches data from the backend",
+        "It uses the Router to navigate",
+        "It communicates only via @Input() and @Output()",
+        "It manages the global state"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Why is 'Immutability' important in Angular?",
+      "options": [
+        "It makes the code shorter",
+        "It is required by the TypeScript compiler",
+        "It enables the use of OnPush change detection for better performance",
+        "It automatically saves data to the cloud"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-architecture",
+    "angular-performance-tuning",
+    "angular-testing-fundamentals",
+    "angular-signals",
+    "clean-architecture-frontend"
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "slug": "angular-observables",
+  "course": "Angular",
+  "title": "Angular Observables – Managing Asynchronous Data",
+
+  "meta": {
+    "title": "Angular Observables Guide – RxJS, Subscriptions & Streams (2026)",
+    "description": "Learn the core of reactive programming in Angular. Master Observables for HTTP requests, user events, and cross-component data sharing.",
+    "keywords": [
+      "angular observables",
+      "rxjs observables",
+      "subscribe angular",
+      "observable vs promise",
+      "angular data streams",
+      "reactive programming"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is an Observable?"
+    },
+    {
+      "type": "text",
+      "value": "An **Observable** is a declarative way to handle asynchronous messages in your application. Think of it as a 'stream' of data that can emit multiple values over time. As a Lead Developer, you'll encounter Observables everywhere in Angular: from the `HttpClient` that fetches your Flutter project data to the `Router` that tracks URL changes. Unlike a Promise, which executes immediately and returns a single value, an Observable is 'lazy' and doesn't start emitting data until someone subscribes to it."
+    },
+    {
+      "type": "heading",
+      "value": "1. The Observable Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "An Observable follows a specific path: it is created, a consumer subscribes to it, it emits values (or an error), and eventually, it completes."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**Next**: A notification that sends a value in the stream.",
+        "**Error**: A notification that the stream encountered an issue; no more values will be sent.",
+        "**Complete**: A notification that the stream has finished successfully."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Creating and Subscribing"
+    },
+    {
+      "type": "text",
+      "value": "To use the data from an Observable, you must use the `.subscribe()` method. This is common when calling services to populate your UI components."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { Observable } from 'rxjs';\n\n// 1. Define the Observable\nconst timeStream$ = new Observable(observer => {\n  setInterval(() => observer.next(new Date()), 1000);\n});\n\n// 2. Consume the Observable\nconst subscription = timeStream$.subscribe({\n  next: (val) => console.log('Current Time:', val),\n  error: (err) => console.error(err),\n  complete: () => console.log('Stream finished')\n});"
+    },
+    {
+      "type": "heading",
+      "value": "3. Unsubscribing: Preventing Memory Leaks"
+    },
+    {
+      "type": "text",
+      "value": "When a component is destroyed, any active subscriptions might continue to run in the background. For an Architect, managing these 'zombie' subscriptions is vital. Always store your subscription in a variable and call `.unsubscribe()` in the `ngOnDestroy` lifecycle hook, or use the `async` pipe in your HTML templates to let Angular handle it for you."
+    },
+    {
+      "type": "heading",
+      "value": "Observables vs. Promises"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Observable", "Promise"],
+        "rows": [
+          ["Values", "Multiple (Stream)", "Single"],
+          ["Execution", "Lazy (on subscribe)", "Eager (immediate)"],
+          ["Cancellation", "Supported via unsubscribe()", "Not supported natively"],
+          ["Operators", "Powerful (map, filter, etc.)", "Limited (then, catch)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What does the '$' suffix mean in variable names?",
+      "answer": "This is 'Finnish Notation.' It's a common naming convention among Angular developers to indicate that a variable is an Observable (e.g., projectData$). It helps distinguish streams from static values."
+    },
+    {
+      "question": "Are all Observables in Angular infinite?",
+      "answer": "No. Some, like HTTP requests, emit one value and then 'complete' immediately. Others, like form value changes or router events, stay open as long as the component or app is alive."
+    },
+    {
+      "question": "Can I convert an Observable to a Promise?",
+      "answer": "Yes, using 'firstValueFrom()' or 'lastValueFrom()' from RxJS. This is sometimes useful when integrating with third-party libraries that only support Promises, but you lose the power of streaming data."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which method must be called to start receiving data from an Observable?",
+      "options": ["connect()", "execute()", "subscribe()", "start()"],
+      "answer": 2
+    },
+    {
+      "question": "What happens if you don't unsubscribe from an infinite Observable in ngOnDestroy?",
+      "options": [
+        "The app crashes immediately",
+        "It causes a memory leak as the subscription stays active",
+        "Angular automatically deletes it",
+        "The CSS styles will stop working"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which notification indicates that an Observable will no longer emit any values?",
+      "options": ["next", "stop", "complete", "finish"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "rxjs-observables-intro",
+    "angular-http-client",
+    "angular-lifecycle-hooks",
+    "angular-services-di",
+    "clean-architecture-frontend"
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "slug": "angular-rxjs-observables",
+  "course": "Angular",
+  "title": "RxJS & Observables – Reactive Programming in Angular",
+
+  "meta": {
+    "title": "Angular RxJS Guide – Observables, Operators & Streams (2026)",
+    "description": "Master reactive programming with RxJS in Angular. Learn how to handle asynchronous data streams, use powerful operators, and manage subscriptions effectively.",
+    "keywords": [
+      "angular rxjs",
+      "rxjs observables",
+      "rxjs operators",
+      "angular async pipe",
+      "reactive programming",
+      "angular stream handling"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is RxJS?"
+    },
+    {
+      "type": "text",
+      "value": "RxJS (Reactive Extensions for JavaScript) is a library for reactive programming using **Observables**. In Angular, RxJS is not just an add-on; it is built into the core. As a Lead Engineer, you use RxJS to handle asynchronous tasks—like API responses, user inputs, and event handling—as continuous streams of data. This allows you to compose complex logic using simple, declarative functions called Operators."
+    },
+    {
+      "type": "heading",
+      "value": "1. Observables vs. Promises"
+    },
+    {
+      "type": "text",
+      "value": "While you might be familiar with Promises from standard JavaScript or Python's async/await, Observables are far more powerful for frontend development. An Observable can emit multiple values over time, can be cancelled, and provides a rich set of tools to transform the data before it reaches your component."
+    },
+    
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Promise", "Observable (RxJS)"],
+        "rows": [
+          ["Emission", "Single value", "Multiple values (Stream)"],
+          ["Execution", "Eager (Starts immediately)", "Lazy (Starts on subscribe)"],
+          ["Cancellable", "No", "Yes (Unsubscribe)"],
+          ["Operators", "Limited (then/catch)", "Extensive (map, filter, switchMap)"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "2. Common RxJS Operators"
+    },
+    {
+      "type": "text",
+      "value": "Operators are functions that allow you to manipulate the data stream. In your Revochamp engine, you might use `debounceTime` to wait for a user to stop typing before triggering an AI preview, or `switchMap` to cancel a previous API call if a new one is made."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { fromEvent, debounceTime, map, distinctUntilChanged, switchMap } from 'rxjs';\n\n// Search logic with RxJS\nthis.searchControl.valueChanges.pipe(\n  debounceTime(400),           // Wait 400ms after last keystroke\n  distinctUntilChanged(),      // Only if the value actually changed\n  switchMap(term => this.apiService.search(term)) // Cancel old, start new search\n).subscribe(results => this.results = results);"
+    },
+    {
+      "type": "heading",
+      "value": "3. The Async Pipe (The Pro Way)"
+    },
+    {
+      "type": "text",
+      "value": "The biggest risk with RxJS is **Memory Leaks** caused by forgetting to unsubscribe. The `async` pipe is the architect's best friend: it automatically subscribes to an Observable in the template and, most importantly, automatically unsubscribes when the component is destroyed."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<ul *ngIf=\"projects$ | async as projects\">\n  <li *ngFor=\"let p of projects\">{{ p.name }}</li>\n</ul>"
+    },
+    {
+      "type": "heading",
+      "value": "4. Subjects and BehaviorSubjects"
+    },
+    {
+      "type": "text",
+      "value": "A **Subject** is a special type of Observable that allows values to be multicasted to many Observers. A **BehaviorSubject** is particularly useful for state management (like tracking a 'Current Project') because it stores the *latest* value and emits it immediately to any new subscriber."
+    }
+    
+  ],
+
+  "faq": [
+    {
+      "question": "What happens if I don't unsubscribe?",
+      "answer": "If you manually subscribe in a component and don't unsubscribe in 'ngOnDestroy', the subscription stays active in the background even after the component is gone. This causes memory leaks and unexpected behavior if the stream continues to emit values."
+    },
+    {
+      "question": "What is 'Pipeable' syntax?",
+      "answer": "Since RxJS 6, operators are used inside the '.pipe()' method. This makes the library 'tree-shakable', meaning your final application bundle only includes the operators you actually used, keeping the app small and fast."
+    },
+    {
+      "question": "When should I use switchMap vs mergeMap?",
+      "answer": "Use 'switchMap' when you only care about the latest request (like a search box). Use 'mergeMap' when you want all requests to complete in parallel (like deleting multiple items at once)."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which RxJS operator is used to handle 'Lazy' execution and start a stream?",
+      "options": ["pipe()", "subscribe()", "map()", "tap()"],
+      "answer": 1
+    },
+    {
+      "question": "Which pipe automatically manages subscriptions and unsubscriptions in Angular templates?",
+      "options": ["json", "date", "async", "stream"],
+      "answer": 2
+    },
+    {
+      "question": "Which type of Subject is best for holding a 'current state' because it emits the last value to new subscribers?",
+      "options": ["Subject", "ReplaySubject", "BehaviorSubject", "AsyncSubject"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-http-client",
+    "angular-services-di",
+    "angular-lifecycle-hooks",
+    "angular-forms-basics",
+    "clean-architecture-frontend"
+  ]
+}

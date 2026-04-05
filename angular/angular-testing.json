@@ -1,0 +1,135 @@
+{
+  "slug": "angular-testing-fundamentals",
+  "course": "Angular",
+  "title": "Angular Testing – Ensuring Code Quality",
+
+  "meta": {
+    "title": "Angular Testing Guide – Unit Testing, Jasmine & TestBed (2026)",
+    "description": "Learn professional testing in Angular. Master Jasmine unit tests, mocking services, and component integration testing with the Angular TestBed.",
+    "keywords": [
+      "angular testing",
+      "jasmine angular",
+      "karma test runner",
+      "angular testbed",
+      "unit testing components",
+      "mocking services angular"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Angular Testing Philosophy"
+    },
+    {
+      "type": "text",
+      "value": "Testing in Angular is divided into two main categories: **Isolated Unit Tests** (testing a class or pipe in isolation) and **Integration Tests** (testing a component with its HTML template). As an Engineering Manager, you should enforce a healthy testing pyramid: many fast unit tests, fewer integration tests, and a handful of end-to-end (E2E) tests."
+    },
+    {
+      "type": "heading",
+      "value": "1. Testing Tools: Jasmine & Karma"
+    },
+    {
+      "type": "text",
+      "value": "By default, Angular uses **Jasmine** to write the tests. Jasmine provides functions like `describe` to group tests, `it` for individual test cases, and `expect` for assertions. **Karma** is the engine that opens a browser, runs your tests, and reports the results."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "describe('MathUtility', () => {\n  it('should add two numbers correctly', () => {\n    const result = add(2, 2);\n    expect(result).toBe(4);\n  });\n});"
+    },
+    {
+      "type": "heading",
+      "value": "2. The TestBed (Integration Testing)"
+    },
+    {
+      "type": "text",
+      "value": "The `TestBed` is the most important utility in Angular testing. It creates a dynamic 'testing module' where you can configure the components and services needed for a specific test. This allows you to test how a component interacts with its template and the DOM."
+    },
+    
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "beforeEach(async () => {\n  await TestBed.configureTestingModule({\n    imports: [ProjectComponent],\n    providers: [{ provide: ProjectService, useValue: mockService }]\n  }).compileComponents();\n\n  fixture = TestBed.createComponent(ProjectComponent);\n  component = fixture.componentInstance;\n  fixture.detectChanges(); // Trigger initial data binding\n});"
+    },
+    {
+      "type": "heading",
+      "value": "3. Mocking Dependencies"
+    },
+    {
+      "type": "text",
+      "value": "As an Architect, you never want your unit tests to make real API calls. We use **Mocks** or **Spies** to simulate service behavior. This ensures that tests are fast, reliable, and don't require a running backend."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "it('should display project title from service', () => {\n  const service = TestBed.inject(ProjectService);\n  spyOn(service, 'getProjectName').and.returnValue('Revochamp Pro');\n  \n  fixture.detectChanges();\n  const compiled = fixture.nativeElement;\n  expect(compiled.querySelector('h1').textContent).toContain('Revochamp Pro');\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Level Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Test Type", "Focus", "Speed", "Complexity"],
+        "rows": [
+          ["Unit Test", "Isolated logic (Pipes, Services)", "Instant", "Low"],
+          ["Component Test", "Class + Template interaction", "Fast", "Medium"],
+          ["Integration Test", "Multiple components/services", "Moderate", "High"],
+          ["End-to-End (E2E)", "Complete user workflows", "Slow", "Very High"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'fixture.detectChanges()'?",
+      "answer": "In a test environment, Angular's change detection doesn't run automatically. You must call 'fixture.detectChanges()' manually whenever you want Angular to update the component's template based on changes in the TypeScript class."
+    },
+    {
+      "question": "Should I use Jasmine or Jest?",
+      "answer": "While Jasmine is the default, many architects prefer **Jest** because it is faster and provides a better developer experience. Angular supports both, but switching to Jest requires a small configuration change in your project."
+    },
+    {
+      "question": "How do I test asynchronous code in Angular?",
+      "answer": "Angular provides utilities like 'fakeAsync' and 'tick', or 'waitForAsync'. These allow you to write asynchronous tests in a linear, synchronous-looking way, which is much easier to read and maintain."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which Angular utility is used to create a virtual module for testing components and services?",
+      "options": ["NgZone", "TestBed", "AppModule", "Injector"],
+      "answer": 1
+    },
+    {
+      "question": "In Jasmine, which function is used to create an individual test case?",
+      "options": ["describe()", "expect()", "it()", "test()"],
+      "answer": 2
+    },
+    {
+      "question": "Why do we use Mocks/Spies for services during unit testing?",
+      "options": [
+        "To make the code look more complex",
+        "To isolate the component and avoid making real network requests",
+        "To speed up the internet connection",
+        "Because Angular components cannot use real services"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-architecture",
+    "angular-components",
+    "angular-services-di",
+    "angular-lifecycle-hooks",
+    "clean-architecture-frontend"
+  ]
+}

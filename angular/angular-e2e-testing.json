@@ -1,0 +1,134 @@
+{
+  "slug": "angular-e2e-testing",
+  "course": "Angular",
+  "title": "Angular E2E Testing – Validating User Journeys",
+
+  "meta": {
+    "title": "Angular E2E Testing Guide – Cypress, Playwright & CI/CD (2026)",
+    "description": "Master End-to-End testing for Angular apps. Learn how to use Cypress and Playwright to automate browser interactions and ensure critical workflows never break.",
+    "keywords": [
+      "angular e2e testing",
+      "cypress angular",
+      "playwright testing",
+      "automated browser testing",
+      "angular testing strategy",
+      "protractor vs cypress"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is E2E Testing?"
+    },
+    {
+      "type": "text",
+      "value": "End-to-End (E2E) testing validates the entire software system along with its integration with external interfaces. As an Engineering Manager, you use E2E tests to ensure that the 'Happy Path' of your application—such as a user signing up, creating a Flutter project, and exporting code—works perfectly from start to finish. Because these tests run in a real browser, they catch issues that unit tests might miss, such as CSS overlaps, broken API integrations, or routing loops."
+    },
+    {
+      "type": "heading",
+      "value": "1. Modern E2E Tools"
+    },
+    {
+      "type": "text",
+      "value": "Angular no longer forces a single E2E tool. When you run `ng add`, you can choose from the leading industry frameworks. As an Architect, choosing the right tool depends on your team's needs for speed and cross-browser support."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Cypress**: Extremely popular for its 'Time Travel' debugging and easy setup. It runs inside the browser alongside your app.",
+        "**Playwright**: Created by Microsoft, it is known for being incredibly fast and having the best support for multiple browsers (Chromium, Firefox, WebKit) and mobile emulation.",
+        "**Puppeteer**: A lightweight library to control Chrome, often used for performance testing or generating PDFs."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Writing a Basic E2E Test (Cypress)"
+    },
+    {
+      "type": "text",
+      "value": "E2E tests use a 'Selector -> Action -> Assertion' pattern. You find an element, interact with it, and then check if the UI updated as expected."
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "describe('Project Creation Flow', () => {\n  it('should allow a user to create a new project', () => {\n    cy.visit('/dashboard');\n    \n    // Click the create button\n    cy.get('[data-cy=btn-new-project]').click();\n    \n    // Fill the form\n    cy.get('input[name=\"title\"]').type('My Flutter App');\n    cy.get('button[type=\"submit\"]').click();\n    \n    // Assert the result\n    cy.url().should('include', '/editor');\n    cy.get('h1').should('contain', 'My Flutter App');\n  });\n});"
+    },
+    {
+      "type": "heading",
+      "value": "3. The Testing Pyramid"
+    },
+    {
+      "type": "text",
+      "value": "E2E tests are slow and expensive to run. A professional testing strategy follows the 'Pyramid' model: write thousands of unit tests, hundreds of integration tests, and only a few dozen critical E2E tests."
+    },
+    
+    {
+      "type": "heading",
+      "value": "E2E Framework Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Cypress", "Playwright"],
+        "rows": [
+          ["Language", "JavaScript / TypeScript", "JS, TS, Python, Java, .NET"],
+          ["Execution", "Inside the browser", "Outside (via DevTools protocol)"],
+          ["Speed", "Moderate", "Very Fast (Parallel by default)"],
+          ["Browsers", "Chrome, Edge, Firefox", "Chromium, WebKit, Firefox"],
+          ["Best For", "Developer experience & Debugging", "Speed & Multi-browser coverage"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What happened to Protractor?",
+      "answer": "Protractor, the original Angular E2E tool, was deprecated by the Angular team in 2022. It relied on WebDriver, which struggled with modern asynchronous web apps. The community has almost entirely migrated to Cypress and Playwright."
+    },
+    {
+      "question": "How do I handle authentication in E2E tests?",
+      "answer": "Avoid logging in via the UI for every test. Instead, use a 'cy.request()' (in Cypress) to hit your login API, get the token, and set it in LocalStorage before the test starts. This saves minutes of test execution time."
+    },
+    {
+      "question": "Should I run E2E tests against Production?",
+      "answer": "Generally, no. E2E tests should run against a 'Staging' or 'QA' environment that mirrors production but uses a test database. Running against production risks corrupting real user data."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which E2E framework is currently the most popular for its 'Time Travel' debugging features?",
+      "options": ["Protractor", "Cypress", "Jasmine", "Karma"],
+      "answer": 1
+    },
+    {
+      "question": "In the testing pyramid, where do E2E tests sit?",
+      "options": [
+        "At the bottom (most frequent)",
+        "In the middle",
+        "At the top (least frequent but critical)",
+        "They are not part of the pyramid"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which tool developed by Microsoft is preferred for its high speed and cross-browser (WebKit/Firefox) support?",
+      "options": ["Playwright", "Selenium", "Mocha", "Enzyme"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "angular-testing-fundamentals",
+    "angular-architecture",
+    "angular-performance-tuning",
+    "angular-route-guards",
+    "clean-architecture-frontend"
+  ]
+}

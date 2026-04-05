@@ -1,0 +1,126 @@
+{
+  "slug": "angular-state-management",
+  "course": "Angular",
+  "title": "Angular State Management – Maintaining Data Flow",
+
+  "meta": {
+    "title": "Angular State Management Guide – Services, RxJS & NgRx (2026)",
+    "description": "Master state management in Angular. Learn when to use simple Services, BehaviorSubjects, or Redux-pattern libraries like NgRx for enterprise applications.",
+    "keywords": [
+      "angular state management",
+      "ngrx tutorial",
+      "behaviorsubject state",
+      "angular data flow",
+      "redux in angular",
+      "angular signal state"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is State Management?"
+    },
+    {
+      "type": "text",
+      "value": "State management is the process of managing the data that your application needs to function and ensuring that this data is synchronized across different components. As an Engineering Manager, you must decide on the right scale of state management: using a complex library for a small app is 'over-engineering', while using only local component variables for a platform like Revochamp leads to 'Prop Drilling' and inconsistent UI. Your goal is to create a 'Single Source of Truth'."
+    },
+    {
+      "type": "heading",
+      "value": "1. Level 1: Component State"
+    },
+    {
+      "type": "text",
+      "value": "This is data that only one component cares about, like whether a specific dropdown is open. It lives inside the component class and is managed via standard variables or Angular **Signals** (the modern, high-performance way to handle local reactivity)."
+    },
+    {
+      "type": "heading",
+      "value": "2. Level 2: Service-Based State (The Observable Pattern)"
+    },
+    {
+      "type": "text",
+      "value": "For many enterprise apps, a simple Service using a `BehaviorSubject` is sufficient. This allows multiple components to subscribe to the same data stream. When the service updates the data, every component using that service reflects the change immediately."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "@Injectable({ providedIn: 'root' })\nexport class ProjectStore {\n  // BehaviorSubject holds the current state\n  private _projects = new BehaviorSubject<Project[]>([]);\n  \n  // Expose as a read-only Observable\n  projects$ = this._projects.asObservable();\n\n  updateProjects(newList: Project[]) {\n    this._projects.next(newList);\n  }\n}"
+    },
+    
+    {
+      "type": "heading",
+      "value": "3. Level 3: Global State (NgRx / Redux)"
+    },
+    {
+      "type": "text",
+      "value": "For massive applications with complex data dependencies, libraries like **NgRx** implement the Redux pattern. This introduces a strict, unidirectional data flow consisting of Actions, Reducers, and Selectors. While it adds boilerplate, it provides unparalleled predictability and debugging tools like Time-Travel Debugging."
+    },
+    
+    {
+      "type": "heading",
+      "value": "State Management Strategy Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Strategy", "Best For", "Complexity", "Reactivity"],
+        "rows": [
+          ["Local Variables", "UI-only logic (toggles)", "Very Low", "Manual/Standard"],
+          ["Angular Signals", "Modern local state", "Low", "Automatic / Fine-grained"],
+          ["Service + RxJS", "Medium apps / Shared data", "Medium", "Stream-based"],
+          ["NgRx / NGXS", "Large-scale Enterprise", "High", "Unidirectional / Store"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'Prop Drilling'?",
+      "answer": "Prop drilling occurs when you have to pass data through multiple layers of components (Parent -> Child -> Grandchild) just to reach a component that actually needs it. Good state management eliminates this by allowing any component to 'inject' the data it needs directly from a store or service."
+    },
+    {
+      "question": "Should I use NgRx for everything?",
+      "answer": "No. The creator of Redux famously said, 'You might not need Redux.' If your state is simple and doesn't have complex interactions between different features, stick to Services and RxJS to keep your codebase maintainable."
+    },
+    {
+      "question": "What are Angular Signals in state management?",
+      "answer": "Signals (introduced in v16) are a new way to track state that tells Angular exactly which parts of the UI need to update. They are often more performant than RxJS for simple state because they don't require manual subscriptions or unsubscriptions."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which RxJS class is commonly used in services to hold the 'current' value of a state?",
+      "options": ["Subject", "BehaviorSubject", "Observable", "EventEmitter"],
+      "answer": 1
+    },
+    {
+      "question": "In the NgRx pattern, what is responsible for taking the current state and an action to produce a NEW state?",
+      "options": ["Effect", "Selector", "Reducer", "Store"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary benefit of 'Unidirectional Data Flow'?",
+      "options": [
+        "It makes the app run faster on mobile",
+        "It makes data changes predictable and easier to debug",
+        "It removes the need for HTML templates",
+        "It automatically saves data to LocalStorage"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-rxjs-observables",
+    "angular-services-di",
+    "angular-architecture",
+    "rxjs-operators",
+    "clean-architecture-frontend"
+  ]
+}

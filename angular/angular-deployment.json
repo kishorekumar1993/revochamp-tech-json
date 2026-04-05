@@ -1,0 +1,143 @@
+{
+  "slug": "angular-deployment-production",
+  "course": "Angular",
+  "title": "Angular Deployment – Shipping to Production",
+
+  "meta": {
+    "title": "Angular Deployment Guide – Build Optimization, CI/CD & SSR (2026)",
+    "description": "Learn professional deployment strategies for Angular. Master production builds, environment configurations, and modern hosting with Firebase and Vercel.",
+    "keywords": [
+      "angular deployment",
+      "angular production build",
+      "angular environment configuration",
+      "angular ci/cd pipeline",
+      "server side rendering",
+      "angular hosting"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Production Build Pipeline"
+    },
+    {
+      "type": "text",
+      "value": "Before shipping your code, you must transform your TypeScript and SCSS into a highly optimized bundle. Angular's CLI handles this through the `build` command. As an Architect, you should ensure that your production build uses 'Ahead-of-Time' (AOT) compilation, which converts your HTML and TypeScript into efficient JavaScript code before the browser downloads it, significantly reducing the initial load time."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Generate a production-ready build\nng build --configuration production"
+    },
+    {
+      "type": "heading",
+      "value": "1. Build Optimizations"
+    },
+    {
+      "type": "text",
+      "value": "A production build in Angular isn't just a copy; it undergoes several 'under-the-hood' transformations to ensure performance for enterprise-scale applications."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Tree Shaking**: Removing unused code (dead code) from the final bundle to keep it small.",
+        "**Minification**: Renaming variables and removing whitespace to reduce file size.",
+        "**Uglification**: Transforming code to make it harder for humans to read while keeping it executable.",
+        "**Cache Busting**: Appending a unique hash to filenames (e.g., `main.7a2b3c.js`) so browsers download the new version whenever you deploy an update."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Environment Management"
+    },
+    {
+      "type": "text",
+      "value": "You should never hardcode your Python API URLs in your services. Modern Angular uses an `environments/` folder or `fileReplacements` in `angular.json` to swap configuration files based on the target (Dev, Staging, Production)."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// src/environments/environment.prod.ts\nexport const environment = {\n  production: true,\n  apiUrl: 'https://api.revochamp.com/v1',\n  firebaseConfig: { ... }\n};"
+    },
+    {
+      "type": "heading",
+      "value": "3. Modern Hosting Strategies"
+    },
+    {
+      "type": "text",
+      "value": "For a Flutter-centric web engine, you have several high-performance options for hosting your Angular frontend."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Platform", "Best For", "Key Feature"],
+        "rows": [
+          ["Firebase Hosting", "Mobile-first & Flutter apps", "Global CDN & easy SSL"],
+          ["Vercel / Netlify", "Modern CI/CD workflows", "Atomic deploys & Preview URLs"],
+          ["AWS S3 + CloudFront", "High-scale Enterprise", "Deep control over infrastructure"],
+          ["Docker + Nginx", "Self-hosted / Private cloud", "Consistent containerized runtime"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "4. Server-Side Rendering (SSR)"
+    },
+    {
+      "type": "text",
+      "value": "If SEO and 'First Contentful Paint' are critical for your platform, you should use **Angular Universal** for SSR. This renders the initial page on the server (using Node.js) and sends the static HTML to the browser, making the site feel instant and easily crawlable by search engines."
+    }
+
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between JIT and AOT?",
+      "answer": "JIT (Just-in-Time) compiles your code in the browser at runtime, which is great for development. AOT (Ahead-of-Time) compiles it during the build process. AOT is mandatory for production because it catches template errors early and makes the app load much faster."
+    },
+    {
+      "question": "Why do I get 404 errors on page refresh after deployment?",
+      "answer": "This happens because Angular is a Single Page Application (SPA). The server (Nginx/Apache) doesn't know about Angular's internal routes. You must configure your server to redirect all 404s back to 'index.html', allowing Angular's router to take over."
+    },
+    {
+      "question": "How do I automate deployment?",
+      "answer": "Use GitHub Actions or GitLab CI. Create a workflow that runs 'npm install', 'ng test', and 'ng build', then uses a provider CLI (like 'firebase-tools') to push the files to your host automatically on every push to the main branch."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which Angular command is used to generate a production-ready build folder?",
+      "options": ["ng serve --prod", "ng build --configuration production", "ng start --output", "ng deploy"],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of 'Cache Busting' in a production build?",
+      "options": [
+        "To clear the user's browser history",
+        "To ensure users always download the latest version of your code",
+        "To make the server run faster",
+        "To encrypt sensitive user data"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which technology allows Angular to render the initial page on a server before sending it to the client?",
+      "options": ["Angular Signals", "Angular Modules", "Angular Universal (SSR)", "Angular Routing"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-performance-tuning",
+    "angular-architecture",
+    "angular-best-practices",
+    "angular-routing-basics",
+    "clean-architecture-frontend"
+  ]
+}

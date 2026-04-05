@@ -1,0 +1,144 @@
+{
+  "slug": "angular-form-validation",
+  "course": "Angular",
+  "title": "Angular Form Validation – Ensuring Data Integrity",
+
+  "meta": {
+    "title": "Angular Form Validation Guide – Reactive & Template-Driven (2026)",
+    "description": "Master form validation in Angular. Learn how to use built-in validators, create custom validation logic, and handle error messages in Reactive Forms.",
+    "keywords": [
+      "angular form validation",
+      "reactive forms validation",
+      "angular built-in validators",
+      "custom validator angular",
+      "formcontrol errors",
+      "formgroup validation"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Validation Matters"
+    },
+    {
+      "type": "text",
+      "value": "Validation is the process of checking user input for correctness before it is processed. As an Engineering Manager, you should prioritize **Reactive Forms** for enterprise applications. They offer an immutable data model, synchronous access to form state, and are significantly easier to unit test than their template-driven counterparts."
+    },
+    {
+      "type": "heading",
+      "value": "1. Built-in Validators"
+    },
+    {
+      "type": "text",
+      "value": "Angular provides a set of ready-to-use validator functions via the `Validators` class. These cover common scenarios like required fields, email formatting, and character length."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { FormControl, FormGroup, Validators } from '@angular/forms';\n\nthis.projectForm = new FormGroup({\n  projectName: new FormControl('', [\n    Validators.required,\n    Validators.minLength(5)\n  ]),\n  contactEmail: new FormControl('', [Validators.required, Validators.email])\n});"
+    },
+    {
+      "type": "heading",
+      "value": "2. Displaying Validation Errors"
+    },
+    {
+      "type": "text",
+      "value": "Angular keeps track of the state of every form control. You can use these states (`invalid`, `touched`, `dirty`) to show user-friendly error messages only when appropriate (e.g., after the user has interacted with the field)."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<form [formGroup]=\"projectForm\">\n  <input formControlName=\"projectName\">\n  \n  <div *ngIf=\"projectForm.get('projectName')?.invalid && projectForm.get('projectName')?.touched\">\n    <small *ngIf=\"projectForm.get('projectName')?.errors?.['required']\">Name is required.</small>\n    <small *ngIf=\"projectForm.get('projectName')?.errors?.['minlength']\">Must be at least 5 chars.</small>\n  </div>\n</form>"
+    },
+    {
+      "type": "heading",
+      "value": "Form Control State Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "Every control in an Angular form transitions through a series of states based on user interaction and validation results."
+    },
+    
+    {
+      "type": "heading",
+      "value": "3. Custom Validators"
+    },
+    {
+      "type": "text",
+      "value": "For unique business rules (like checking if a project name already exists in your Revochamp database), you can write custom validator functions. These are simple functions that return an error object if validation fails, or `null` if it passes."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { AbstractControl, ValidationErrors } from '@angular/forms';\n\nexport function forbiddenNameValidator(control: AbstractControl): ValidationErrors | null {\n  const forbidden = /admin/i.test(control.value);\n  return forbidden ? { 'forbiddenName': { value: control.value } } : null;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Validation Approach Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Template-Driven", "Reactive Forms"],
+        "rows": [
+          ["Setup", "Easy (Directly in HTML)", "More code (Defined in TS)"],
+          ["Validation", "Directives (Attributes)", "Functions (Validators class)"],
+          ["Testing", "Difficult (Requires DOM)", "Easy (Unit test logic only)"],
+          ["Scalability", "Low (Best for simple forms)", "High (Best for complex logic)"],
+          ["Data Model", "Implicit / Mutable", "Explicit / Immutable"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a 'Dirty' vs 'Touched' control?",
+      "answer": "A control is 'dirty' if the user has changed its value. It is 'touched' if the user has blurred (clicked out of) the input field. Usually, you check for both to avoid showing errors on a fresh, empty form."
+    },
+    {
+      "question": "Can I perform Asynchronous Validation?",
+      "answer": "Yes. Angular supports Async Validators that return a Promise or Observable. This is perfect for checking a username's availability against your backend API while the user is typing."
+    },
+    {
+      "question": "How do I validate the entire FormGroup at once?",
+      "answer": "You can apply a validator to the 'FormGroup' itself rather than individual controls. This is useful for cross-field validation, such as checking if 'Password' and 'Confirm Password' fields match."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which Angular form state indicates the user has clicked inside and then outside of a field?",
+      "options": ["Dirty", "Pristine", "Touched", "Valid"],
+      "answer": 2
+    },
+    {
+      "question": "In Reactive Forms, where are validators defined?",
+      "options": [
+        "In the HTML template as attributes",
+        "In the TypeScript class within the FormControl definition",
+        "In the global styles.css",
+        "In the backend database"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What does a custom validator return if the input is valid?",
+      "options": ["true", "false", "null", "{ 'valid': true }"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-forms-basics",
+    "angular-components",
+    "angular-services-di",
+    "clean-architecture-frontend",
+    "rxjs-observables-intro"
+  ]
+}

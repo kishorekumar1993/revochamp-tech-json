@@ -1,0 +1,137 @@
+{
+  "slug": "angular-ngrx-store",
+  "course": "Angular",
+  "title": "Angular NgRx – Enterprise State Management",
+
+  "meta": {
+    "title": "Angular NgRx Guide – Store, Actions, Reducers & Effects (2026)",
+    "description": "Master NgRx for Angular. Learn the Redux pattern, how to handle side effects, and how to build a scalable 'Single Source of Truth' for enterprise apps.",
+    "keywords": [
+      "angular ngrx",
+      "ngrx store",
+      "ngrx actions",
+      "ngrx reducers",
+      "ngrx effects",
+      "redux in angular",
+      "unidirectional data flow"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is NgRx?"
+    },
+    {
+      "type": "text",
+      "value": "NgRx is a group of libraries inspired by Redux that provides reactive state management for Angular applications. It centers around a 'Store'—a single, immutable database that lives in the browser's memory. As an Architect, you use NgRx when your application state becomes too complex for simple services, specifically when multiple disconnected parts of the UI need to stay in sync with the same data."
+    },
+    {
+      "type": "heading",
+      "value": "1. The Four Pillars of NgRx"
+    },
+    {
+      "type": "text",
+      "value": "To master NgRx, you must understand the four core building blocks that make up its lifecycle."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**Actions**: Unique events that happen in the app (e.g., '[Project Page] Load Projects'). They describe *what* happened, not how the state changes.",
+        "**Reducers**: Pure functions that listen for Actions. They take the current State and the Action to produce a **New State**. They never mutate the old state.",
+        "**Selectors**: Pure functions used to slice and transform specific pieces of state from the store for components to consume.",
+        "**Effects**: A side-effect model for RxJS. They listen for Actions, perform asynchronous tasks (like calling your Python API), and then dispatch a new Action with the result."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Implementation Example: Actions & Reducers"
+    },
+    {
+      "type": "text",
+      "value": "In modern NgRx (v15+), we use functional creators to reduce boilerplate. Here is how you would define the state for a Flutter project builder."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// 1. Define the Action\nexport const loadProjects = createAction('[Project List] Load');\n\n// 2. Define the State Shape\nexport interface ProjectState {\n  items: Project[];\n  loading: boolean;\n}\n\n// 3. Create the Reducer\nexport const projectReducer = createReducer(\n  initialState,\n  on(loadProjects, (state) => ({ ...state, loading: true })),\n  on(loadProjectsSuccess, (state, { projects }) => ({ \n    ...state, \n    items: projects, \n    loading: false \n  }))\n);"
+    },
+    {
+      "type": "heading",
+      "value": "3. Handling Side Effects"
+    },
+    {
+      "type": "text",
+      "value": "Effects isolate your components from external interactions. Instead of a component calling a service directly, the component dispatches an Action. The Effect catches that Action, calls the API, and returns a 'Success' Action which the Reducer then uses to update the UI."
+    },
+    
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "@Injectable()\nexport class ProjectEffects {\n  loadProjects$ = createEffect(() => this.actions$.pipe(\n    ofType(ProjectActions.loadProjects),\n    mergeMap(() => this.projectService.getAll().pipe(\n      map(projects => ProjectActions.loadProjectsSuccess({ projects })),\n      catchError(() => of(ProjectActions.loadProjectsFailure()))\n    ))\n  ));\n\n  constructor(private actions$: Actions, private projectService: ProjectService) {}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use NgRx? (The SHARI Principle)"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Factor", "Description", "Decision"],
+        "rows": [
+          ["Shared", "State is accessed by many components", "Use NgRx"],
+          ["Hydrated", "State is persisted and rehydrated (LocalStorage)", "Use NgRx"],
+          ["Available", "State is needed when re-entering a route", "Use NgRx"],
+          ["Retrieved", "State is retrieved with side effects (APIs)", "Use NgRx"],
+          ["Impacted", "State is impacted by actions from other sources", "Use NgRx"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Is NgRx overkill for my project?",
+      "answer": "If you are building a simple CRUD app with only a few screens, yes. If you are building a complex IDE-like tool like Revochamp with undo/redo features, complex data relations, and background AI processing, NgRx provides the necessary structure to keep it maintainable."
+    },
+    {
+      "question": "What is the 'Redux DevTools'?",
+      "answer": "It is a browser extension that allows you to see every Action dispatched in real-time, inspect the state at any point, and even 'jump back in time' to see how the UI looked before a specific action occurred."
+    },
+    {
+      "question": "What are 'Feature States' in NgRx?",
+      "answer": "Feature states allow you to split your global store into smaller, lazy-loaded pieces. When a user navigates to your 'Editor' route, the editor's specific state and reducers are added to the global store dynamically."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which part of the NgRx lifecycle is responsible for updating the state in the store?",
+      "options": ["Action", "Effect", "Reducer", "Selector"],
+      "answer": 2
+    },
+    {
+      "question": "True or False: Reducers are allowed to directly modify the existing state object.",
+      "options": ["True", "False"],
+      "answer": 1
+    },
+    {
+      "question": "Which NgRx building block is best suited for making HTTP calls to a backend?",
+      "options": ["Store", "Reducer", "Effect", "Selector"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-state-management",
+    "angular-rxjs-observables",
+    "angular-services-di",
+    "rxjs-operators",
+    "clean-architecture-frontend"
+  ]
+}

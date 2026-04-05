@@ -1,0 +1,130 @@
+{
+  "slug": "angular-view-encapsulation",
+  "course": "Angular",
+  "title": "Angular View Encapsulation – Scoping Your Styles",
+
+  "meta": {
+    "title": "Angular View Encapsulation Guide – Emulated, ShadowDom & None (2026)",
+    "description": "Learn how Angular manages CSS scoping. Master ViewEncapsulation to prevent style leakage and build modular, reusable UI components for enterprise apps.",
+    "keywords": [
+      "angular view encapsulation",
+      "emulated encapsulation",
+      "shadow dom angular",
+      "css scoping angular",
+      "angular style leakage",
+      "component styles"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is View Encapsulation?"
+    },
+    {
+      "type": "text",
+      "value": "In a large-scale project like Revochamp, managing CSS can become a nightmare if styles from one component leak into others. Angular solves this using **View Encapsulation**. It ensures that the styles defined in a component's CSS file are scoped specifically to that component's HTML, preventing global collisions. As an Architect, understanding these modes is crucial for building a consistent design system without side effects."
+    },
+    {
+      "type": "heading",
+      "value": "1. Three Encapsulation Modes"
+    },
+    {
+      "type": "text",
+      "value": "Angular provides three strategies for scoping styles, which you can set in the `@Component` decorator."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**Emulated (Default)**: Angular modifies the component's CSS selectors by adding unique attributes (like `_ngcontent-c1`) to elements. This simulates the behavior of Shadow DOM without requiring browser support for it.",
+        "**ShadowDom**: Uses the browser's native Shadow DOM API to encapsulate styles. This creates a hard boundary; global styles cannot penetrate, and component styles cannot leak out.",
+        "**None**: No encapsulation is applied. The component's styles are added to the document's head and behave like global CSS, affecting every element in the entire application."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Implementation Example"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { Component, ViewEncapsulation } from '@angular/core';\n\n@Component({\n  selector: 'app-custom-button',\n  template: `<button class=\"btn\">Click Me</button>`,\n  styles: [`.btn { background: blue; }`],\n  // Change the strategy here\n  encapsulation: ViewEncapsulation.Emulated \n})\nexport class CustomButtonComponent {}"
+    },
+    {
+      "type": "heading",
+      "value": "3. The :host and ::ng-deep Selectors"
+    },
+    {
+      "type": "text",
+      "value": "When using Emulated encapsulation, you sometimes need to style the component's 'outer shell' or force a style down into a child component (like a third-party library's internal classes)."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**:host**: Targets the host element of the component (e.g., `<app-custom-button>`).",
+        "**::ng-deep**: Completely disables encapsulation for a specific rule, allowing it to reach child elements. Use this sparingly as it can lead to maintenance issues."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Encapsulation Strategy Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Mode", "Mechanism", "Use Case"],
+        "rows": [
+          ["Emulated", "Attribute tagging (Simulated)", "Standard development (Best performance)"],
+          ["ShadowDom", "Web Components API (Native)", "Strict isolation / Shared library components"],
+          ["None", "Global Style Injection", "Overriding third-party CSS / Global themes"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Which mode is best for performance?",
+      "answer": "Emulated is generally the best for performance as it doesn't carry the overhead of creating Shadow roots for every component instance. It is the default for a reason."
+    },
+    {
+      "question": "Why is ::ng-deep marked as deprecated?",
+      "answer": "Angular developers have wanted to remove it to encourage better CSS practices, but because there isn't always a great alternative for styling third-party components, it remains supported and widely used in 2026."
+    },
+    {
+      "question": "Does 'None' encapsulation delete other styles?",
+      "answer": "No. It simply adds the component's styles to the global scope. However, because these styles are usually loaded later in the app lifecycle, they might override existing global styles due to CSS specificity."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "What is the default View Encapsulation mode in Angular?",
+      "options": ["Native", "ShadowDom", "Emulated", "None"],
+      "answer": 2
+    },
+    {
+      "question": "Which CSS selector targets the element that represents the component itself?",
+      "options": [":root", ":host", "::ng-deep", "::slotted"],
+      "answer": 1
+    },
+    {
+      "question": "Which encapsulation mode creates a true 'Shadow Root' using native browser APIs?",
+      "options": ["Emulated", "None", "ShadowDom", "Isolated"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-components",
+    "angular-architecture",
+    "angular-templates",
+    "clean-architecture-frontend",
+    "angular-project-structure"
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "slug": "angular-interceptors",
+  "course": "Angular",
+  "title": "Angular Interceptors – Global HTTP Middleware",
+
+  "meta": {
+    "title": "Angular HttpInterceptors Guide – Auth, Logging & Error Handling (2026)",
+    "description": "Learn how to use Angular Interceptors to manage global HTTP logic. Master functional interceptors for authentication, loading spinners, and centralized error handling.",
+    "keywords": [
+      "angular interceptors",
+      "httpinterceptorfn",
+      "angular auth interceptor",
+      "http request middleware",
+      "angular global error handling",
+      "cloning http requests"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Interceptors?"
+    },
+    {
+      "type": "text",
+      "value": "Interceptors are a powerful architectural tool in Angular that allow you to sit in the middle of the communication between your application and the backend server. As a Technical Lead, you can think of them as 'Middleware' for your HTTP requests and responses. They allow you to transform outgoing requests (like adding an Auth token) or process incoming responses (like handling 401 errors) in one centralized location rather than repeating logic in every service."
+    },
+    {
+      "type": "heading",
+      "value": "1. Functional Interceptors (Modern Standard)"
+    },
+    {
+      "type": "text",
+      "value": "In modern Angular (v15+), interceptors are written as simple functions (`HttpInterceptorFn`). This is more efficient and easier to test than the older class-based approach. Because HTTP requests are immutable, you must 'clone' a request if you wish to modify it before passing it to the next handler."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { HttpInterceptorFn } from '@angular/common/http';\n\nexport const authInterceptor: HttpInterceptorFn = (req, next) => {\n  const token = localStorage.getItem('token');\n\n  // Clone the request to add the new header\n  const authReq = req.clone({\n    setHeaders: {\n      Authorization: `Bearer ${token}`\n    }\n  });\n\n  // Pass the cloned request instead of the original\n  return next(authReq);\n};"
+    },
+    {
+      "type": "heading",
+      "value": "The Interceptor Pipeline"
+    },
+    {
+      "type": "text",
+      "value": "Interceptors form a chain. When you make a request, it passes through each interceptor in the order they were provided. When the response comes back from the server, it travels back through the same chain in reverse order."
+    },
+    {
+      "type": "heading",
+      "value": "2. Common Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Authentication**: Automatically attaching a JWT Bearer token to every API call.",
+        "**Logging**: Timing how long requests take to identify slow backend endpoints.",
+        "**Error Handling**: Catching 401 (Unauthorized) or 500 (Server Error) responses globally to redirect users or show alerts.",
+        "**Loading Spinners**: Incrementing a counter when a request starts and decrementing it when it finishes to show a global progress bar.",
+        "**Caching**: Checking if a response for a specific URL is already in memory before hitting the network."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "3. Registering Interceptors"
+    },
+    {
+      "type": "text",
+      "value": "Interceptors must be registered in your application configuration using the `withInterceptors` helper. This ensures that the Angular HttpClient knows to pipe every request through your custom functions."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { provideHttpClient, withInterceptors } from '@angular/common/http';\n\nexport const appConfig: ApplicationConfig = {\n  providers: [\n    provideHttpClient(\n      withInterceptors([loggingInterceptor, authInterceptor, errorInterceptor])\n    )\n  ]\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Interceptor Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Class-Based (Legacy)", "Functional (Modern)"],
+        "rows": [
+          ["Definition", "Class implementing HttpInterceptor", "HttpInterceptorFn"],
+          ["Registration", "HTTP_INTERCEPTORS multi-provider", "withInterceptors() array"],
+          ["Boilerplate", "High (Requires @Injectable)", "Low (Pure function)"],
+          ["DI Access", "Constructor injection", "Use the inject() function"],
+          ["Performance", "Standard", "Highly optimized / Tree-shakable"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why do I have to clone the request?",
+      "answer": "HttpRequest and HttpResponse objects in Angular are immutable to ensure they are thread-safe and to prevent side effects in a reactive stream. Cloning ensures that the original request remains untouched as it moves through the pipeline."
+    },
+    {
+      "question": "Can I skip an interceptor for a specific request?",
+      "answer": "Yes. You can use 'HttpContext' tokens to pass metadata with a request. Your interceptor can check for a specific token (e.g., 'BYPASS_AUTH') and simply return 'next(req)' without modifying it."
+    },
+    {
+      "question": "What is 'next' in the interceptor function?",
+      "answer": "'next' represents the next interceptor in the chain. If there are no more interceptors, it represents the final backend handler that actually performs the HTTP request."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which method is used to modify an outgoing HttpRequest in an interceptor?",
+      "options": ["req.update()", "req.clone()", "req.set()", "req.modify()"],
+      "answer": 1
+    },
+    {
+      "question": "What is the correct order of execution for interceptors during a response?",
+      "options": [
+        "The same order they were registered",
+        "The reverse order they were registered",
+        "Randomly",
+        "Only the first one registered executes"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which helper function is used to add functional interceptors to the provideHttpClient provider?",
+      "options": ["addInterceptors()", "useInterceptors()", "withInterceptors()", "injectInterceptors()"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-http-client",
+    "rxjs-observables-intro",
+    "angular-services-di",
+    "angular-authentication",
+    "clean-architecture-frontend"
+  ]
+}

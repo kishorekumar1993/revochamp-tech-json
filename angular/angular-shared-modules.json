@@ -1,0 +1,144 @@
+{
+  "slug": "angular-shared-modules",
+  "course": "Angular",
+  "title": "Angular Shared Modules – Reusable UI & Utilities",
+
+  "meta": {
+    "title": "Angular Shared Modules Guide – Reexporting & UI Libraries (2026)",
+    "description": "Learn the Shared Module pattern in Angular. Master how to organize reusable components, directives, and pipes to keep your feature modules lean and DRY.",
+    "keywords": [
+      "angular shared module",
+      "reexporting modules",
+      "angular ui components",
+      "commonmodule vs sharedmodule",
+      "angular project organization",
+      "reusable pipes"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Shared Module Pattern"
+    },
+    {
+      "type": "text",
+      "value": "In a complex application like Revochamp, many feature modules need the same set of tools: standard buttons, loading spinners, custom date pipes, or third-party UI libraries like Angular Material. Instead of importing these into every single feature module, we create a **Shared Module**. As a Technical Lead, you use this pattern to maintain a 'Single Source of Truth' for your UI components and ensure consistency across the entire platform."
+    },
+    {
+      "type": "heading",
+      "value": "1. Imports vs. Exports"
+    },
+    {
+      "type": "text",
+      "value": "The unique characteristic of a Shared Module is that it **exports** what it imports. When a feature module imports the `SharedModule`, it automatically gains access to everything in the `exports` array, even if those items weren't declared locally in the Shared Module."
+    },
+    
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { NgModule } from '@angular/core';\nimport { CommonModule } from '@angular/common';\nimport { MatButtonModule } from '@angular/material/button';\nimport { CustomSpinnerComponent } from './spinner.component';\n\n@NgModule({\n  declarations: [CustomSpinnerComponent],\n  imports: [\n    CommonModule, \n    MatButtonModule\n  ],\n  exports: [\n    CommonModule,         // Re-exporting for convenience\n    MatButtonModule,      // Re-exporting UI library\n    CustomSpinnerComponent // Re-exporting local UI component\n  ]\n})\nexport class SharedModule { }"
+    },
+    {
+      "type": "heading",
+      "value": "2. What Belongs in SharedModule?"
+    },
+    {
+      "type": "text",
+      "value": "A well-architected Shared Module should only contain 'dumb' or 'presentational' items that don't rely on application state. If a component is highly specific to a business workflow, it belongs in a Feature Module, not Shared."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Reusable Components**: Custom buttons, input wrappers, modal headers, and cards.",
+        "**Directives**: Tooltips, hover effects, or input masks.",
+        "**Pipes**: Currency formatters, date transformers, or string truncators.",
+        "**Third-party Modules**: Angular Material, FontAwesome, or NgCharts."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "3. The 'No Providers' Rule"
+    },
+    {
+      "type": "text",
+      "value": "As an Architect, it is critical to **avoid putting services in the providers array of a Shared Module**. If a Shared Module with providers is imported by multiple lazy-loaded modules, each lazy module will get its own separate instance of the service, breaking the singleton pattern. Services should live in a `CoreModule` or use `providedIn: 'root'`."
+    },
+    {
+      "type": "heading",
+      "value": "Module Roles Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Shared Module", "Core Module", "Feature Module"],
+        "rows": [
+          ["Components", "Reusable / UI only", "None (usually)", "Domain specific"],
+          ["Services", "Avoid (No providers)", "Global Singletons", "Feature specific"],
+          ["Imported by", "Multiple Feature Modules", "Root Module only", "Root (Eager) or Router (Lazy)"],
+          ["Goal", "DRY UI & Utilities", "App-wide Infrastructure", "Business Logic / Workflow"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Does SharedModule make the app bundle larger?",
+      "answer": "No. Modern build tools use tree-shaking to ensure only the code you actually use is included. However, keep the SharedModule focused; if it becomes too large, consider splitting it into 'SharedUiModule', 'SharedPipesModule', etc."
+    },
+    {
+      "question": "Can I import SharedModule into the Root Module?",
+      "answer": "Yes, but you usually don't need to. The Root Module usually only needs the shell components. Feature modules are the primary consumers of SharedModule."
+    },
+    {
+      "question": "What is the difference between CommonModule and SharedModule?",
+      "answer": "CommonModule is an Angular-provided module with core directives (*ngIf, *ngFor). SharedModule is a custom module you create to group CommonModule and your own reusable assets together for easier importing."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "What is the primary purpose of the 'exports' array in a Shared Module?",
+      "options": [
+        "To hide components from other modules",
+        "To make imported modules and local components available to other modules",
+        "To define backend API endpoints",
+        "To register global services"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Why should you avoid putting 'providers' in a Shared Module that is lazy-loaded?",
+      "options": [
+        "It causes a compilation error",
+        "It prevents the app from starting",
+        "It creates multiple instances of a service instead of a singleton",
+        "It makes the CSS stop working"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which of these is the most appropriate item to put in a Shared Module?",
+      "options": [
+        "A login service with user credentials",
+        "The main admin dashboard layout",
+        "A reusable 'PrimaryButton' component",
+        "App routing configuration"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-modules",
+    "angular-feature-modules",
+    "angular-components",
+    "angular-pipes",
+    "clean-architecture-frontend"
+  ]
+}

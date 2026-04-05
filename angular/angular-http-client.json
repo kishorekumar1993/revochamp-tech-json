@@ -1,0 +1,139 @@
+{
+  "slug": "angular-http-client",
+  "course": "Angular",
+  "title": "Angular HttpClient – Communicating with APIs",
+
+  "meta": {
+    "title": "Angular HttpClient Guide – RxJS, Interceptors & REST APIs (2026)",
+    "description": "Learn how to connect your Angular frontend to backend APIs using HttpClient. Master strongly-typed requests, RxJS Observables, and HttpInterceptors.",
+    "keywords": [
+      "angular httpclient",
+      "angular rest api",
+      "rxjs observables angular",
+      "angular httpinterceptor",
+      "provideHttpClient",
+      "angular fetch data"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the HttpClient?"
+    },
+    {
+      "type": "text",
+      "value": "In modern web applications, the frontend rarely exists in isolation. It needs to communicate with backend microservices, databases, and third-party APIs. Angular provides the `HttpClient` service, a powerful and robust API for making HTTP requests. Unlike the standard browser `fetch` API, Angular's `HttpClient` is built entirely around **RxJS Observables**, allowing for advanced features like request cancellation, retries, and data transformation streams."
+    },
+    {
+      "type": "heading",
+      "value": "1. Setup and Configuration"
+    },
+    {
+      "type": "text",
+      "value": "In modern Angular (v15+), you configure the HTTP client at the application level using the `provideHttpClient()` function in your main configuration file, rather than importing the older `HttpClientModule`."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { ApplicationConfig } from '@angular/core';\nimport { provideHttpClient, withInterceptors } from '@angular/common/http';\n\nexport const appConfig: ApplicationConfig = {\n  providers: [\n    provideHttpClient(withInterceptors([authInterceptor]))\n  ]\n};"
+    },
+    {
+      "type": "heading",
+      "value": "2. Making Strongly-Typed Requests"
+    },
+    {
+      "type": "text",
+      "value": "As a best practice, you should always define TypeScript interfaces for your expected API responses. You can pass these interfaces as Generics to the `HttpClient` methods to ensure type safety throughout your application."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { Injectable } from '@angular/core';\nimport { HttpClient } from '@angular/common/http';\nimport { Observable } from 'rxjs';\n\nexport interface Project {\n  id: string;\n  name: string;\n  status: string;\n}\n\n@Injectable({ providedIn: 'root' })\nexport class ProjectService {\n  private apiUrl = 'https://api.example.com/v1/projects';\n\n  constructor(private http: HttpClient) {}\n\n  // GET Request\n  getProjects(): Observable<Project[]> {\n    return this.http.get<Project[]>(this.apiUrl);\n  }\n\n  // POST Request\n  createProject(project: Partial<Project>): Observable<Project> {\n    return this.http.post<Project>(this.apiUrl, project);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. HttpInterceptors (Enterprise Standard)"
+    },
+    {
+      "type": "text",
+      "value": "Interceptors are one of the most powerful architectural features in Angular. They sit between your application and the network, allowing you to inspect and modify outgoing requests (e.g., adding Authorization headers) and incoming responses (e.g., global error handling) without cluttering your component or service logic."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { HttpInterceptorFn } from '@angular/common/http';\n\n// A functional interceptor to attach JWT tokens\nexport const authInterceptor: HttpInterceptorFn = (req, next) => {\n  const authToken = localStorage.getItem('access_token');\n  \n  if (authToken) {\n    // Requests are immutable, so we must clone it to modify headers\n    const clonedRequest = req.clone({\n      setHeaders: { Authorization: `Bearer ${authToken}` }\n    });\n    return next(clonedRequest);\n  }\n  \n  return next(req);\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Common HTTP Methods Summary"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Method", "Typical Use Case", "Idempotent"],
+        "rows": [
+          ["GET", "Retrieve data from the server", "Yes"],
+          ["POST", "Create a new record/resource", "No"],
+          ["PUT", "Update an entire existing resource", "Yes"],
+          ["PATCH", "Partially update an existing resource", "No"],
+          ["DELETE", "Remove a resource from the server", "Yes"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why does my HTTP request not fire?",
+      "answer": "Observables returned by HttpClient are 'cold'. This means the actual network request is not sent until you explicitly `.subscribe()` to the Observable in your component or use the `async` pipe in your template."
+    },
+    {
+      "question": "How do I handle API errors?",
+      "answer": "You should use the `catchError` RxJS operator within the `pipe()` method of your request. This allows you to log the error, return a fallback value, or throw a user-friendly error message before it reaches the component."
+    },
+    {
+      "question": "What is the difference between HttpClient and the browser's Fetch API?",
+      "answer": "While Fetch uses Promises (which execute immediately and cannot be easily cancelled), HttpClient uses Observables. This provides advanced capabilities like request cancellation, easy retries, and seamless integration with Angular's testing utilities."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which function is used to configure the HttpClient in a modern Angular application's configuration file?",
+      "options": ["importHttpClient()", "provideHttpClient()", "setupHttp()", "HttpClientModule()"],
+      "answer": 1
+    },
+    {
+      "question": "What must you do to an Observable returned by HttpClient to actually execute the network request?",
+      "options": [
+        "Call the .execute() method",
+        "Wrap it in a Promise",
+        "Subscribe to it",
+        "Import the HttpModule"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which feature allows you to globally modify outgoing HTTP requests, such as attaching an authentication token?",
+      "options": ["HttpRouter", "HttpGuard", "HttpInterceptor", "HttpModifier"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "rxjs-observables-intro",
+    "angular-services-di",
+    "angular-architecture",
+    "angular-authentication",
+    "clean-architecture-frontend"
+  ]
+}

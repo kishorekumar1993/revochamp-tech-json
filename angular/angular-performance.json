@@ -1,0 +1,131 @@
+{
+  "slug": "angular-performance-tuning",
+  "course": "Angular",
+  "title": "Angular Performance – Building High-Speed Apps",
+
+  "meta": {
+    "title": "Angular Performance Guide – OnPush, Signals & Lazy Loading (2026)",
+    "description": "Learn professional performance optimization for Angular. Master ChangeDetectionStrategy.OnPush, trackBy, and the transition to Zoneless applications.",
+    "keywords": [
+      "angular performance",
+      "onpush change detection",
+      "angular trackby",
+      "angular signals performance",
+      "zoneless angular",
+      "bundle optimization"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Performance Mindset"
+    },
+    {
+      "type": "text",
+      "value": "In Angular, performance bottlenecks usually fall into two categories: **Load Time** (how big is the JavaScript?) and **Runtime** (how often is the UI re-rendering?). As an Architect, your goal is to minimize the work the browser has to do. By 2026, the industry standard has moved toward 'Zoneless' architectures and 'Fine-grained Reactivity' to eliminate unnecessary computation."
+    },
+    {
+      "type": "heading",
+      "value": "1. Optimizing Change Detection with OnPush"
+    },
+    {
+      "type": "text",
+      "value": "By default, Angular uses the 'CheckAlways' strategy, meaning it checks every component for changes whenever *any* event occurs. By switching to `ChangeDetectionStrategy.OnPush`, you tell Angular to only check a component if its `@Input()` references change or an event originates from within it. This significantly reduces the CPU load in large component trees."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { Component, ChangeDetectionStrategy } from '@angular/core';\n\n@Component({\n  selector: 'app-project-chart',\n  templateUrl: './project-chart.component.html',\n  // Optimized Strategy\n  changeDetection: ChangeDetectionStrategy.OnPush\n})\nexport class ProjectChartComponent {\n  @Input() data!: any[];\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. High-Performance Lists with trackBy"
+    },
+    {
+      "type": "text",
+      "value": "When using `*ngFor` to render a list of items (like your generated Flutter widgets), Angular's default behavior is to destroy and re-create every DOM element if the array reference changes. By providing a `trackBy` function, you tell Angular how to uniquely identify items, so it only updates the elements that actually changed."
+    },
+    
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "trackById(index: number, item: Project): string {\n  return item.id; // Only re-render if the ID changes\n}\n\n// In Template\n<li *ngFor=\"let project of projects; trackBy: trackById\">{{ project.name }}</li>"
+    },
+    {
+      "type": "heading",
+      "value": "3. The Shift to Zoneless (Signals)"
+    },
+    {
+      "type": "text",
+      "value": "Historically, Angular relied on `Zone.js` to intercept asynchronous events and trigger change detection. Modern Angular applications use **Signals** to achieve fine-grained reactivity. This allows Angular to know *exactly* which DOM node needs to change, completely bypassing the need for a global change detection sweep. This is the ultimate optimization for 2026."
+    },
+    {
+      "type": "heading",
+      "value": "Optimization Checklist"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Technique", "Target Metric", "Impact"],
+        "rows": [
+          ["Lazy Loading", "Initial Load Time (LCP)", "High - Reduces bundle size"],
+          ["OnPush Strategy", "Runtime CPU Usage", "Medium - Fewer CD cycles"],
+          ["trackBy Function", "DOM Interaction / Jank", "High - Smoother lists"],
+          ["Pure Pipes", "Execution frequency", "Medium - Memoizes results"],
+          ["Signals", "Total Reactivity", "Critical - Enables Zoneless apps"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'Tree Shaking'?",
+      "answer": "Tree shaking is a build-step process that removes unused code from your final JavaScript bundle. To keep your Revochamp app small, ensure you use 'providedIn: root' for services and keep your imports clean so the compiler can shake off the 'dead leaves'."
+    },
+    {
+      "question": "Does OnPush break my app?",
+      "answer": "It can if you mutate objects directly (e.g., 'list.push(item)'). OnPush expects 'Immutability.' You must return a new object or array reference (e.g., 'this.list = [...this.list, item]') for Angular to detect the change."
+    },
+    {
+      "question": "How do I measure Angular performance?",
+      "answer": "Use the 'Angular DevTools' Chrome extension to profile change detection cycles. Also, use the browser's Lighthouse tool to measure 'Total Blocking Time' (TBT) and 'Largest Contentful Paint' (LCP)."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which Change Detection strategy only checks a component when its inputs change or an event fires from within?",
+      "options": ["Default", "AlwaysCheck", "OnPush", "Manual"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary purpose of the 'trackBy' function in an *ngFor loop?",
+      "options": [
+        "To sort the list alphabetically",
+        "To uniquely identify items and prevent unnecessary DOM re-creation",
+        "To filter out hidden items",
+        "To automatically save the list to a database"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which new feature allows Angular to run without Zone.js for better performance?",
+      "options": ["Directives", "Modules", "Signals", "Decorators"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-signals",
+    "angular-lazy-loading",
+    "angular-lifecycle-hooks",
+    "angular-architecture",
+    "clean-architecture-frontend"
+  ]
+}

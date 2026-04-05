@@ -1,0 +1,130 @@
+{
+  "slug": "angular-error-handling",
+  "course": "Angular",
+  "title": "Angular Error Handling – Building Resilient Apps",
+
+  "meta": {
+    "title": "Angular Error Handling Guide – Global ErrorHandler & CatchError (2026)",
+    "description": "Learn professional error handling in Angular. Master global ErrorHandlers, RxJS catchError for APIs, and user-friendly error boundaries.",
+    "keywords": [
+      "angular error handling",
+      "global errorhandler",
+      "rxjs catcherror",
+      "angular try catch",
+      "http error interceptor",
+      "error tracking"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Importance of Error Resilience"
+    },
+    {
+      "type": "text",
+      "value": "In an enterprise environment, an unhandled exception can break the entire user experience. As a Technical Lead, your goal is to ensure that when things go wrong—whether it's a 500 Server Error from your Python backend or a runtime null pointer—the application fails gracefully. Angular provides multiple layers of defense, from local RxJS operators to a global 'Catch-All' mechanism."
+    },
+    {
+      "type": "heading",
+      "value": "1. Handling API Errors with RxJS"
+    },
+    {
+      "type": "text",
+      "value": "Since Angular's `HttpClient` returns Observables, we use the `catchError` operator to intercept failed network requests. This allows you to log the specific error and return a fallback value or a user-friendly message to the component."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { catchError, throwError } from 'rxjs';\n\ngetProjects() {\n  return this.http.get<Project[]>(this.apiUrl).pipe(\n    catchError(error => {\n      console.error('API Error:', error);\n      // Return a user-friendly error message\n      return throwError(() => new Error('Could not load projects. Please try again later.'));\n    })\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Global ErrorHandler (The Safety Net)"
+    },
+    {
+      "type": "text",
+      "value": "Angular provides a default `ErrorHandler` class that logs errors to the browser console. For professional apps like Revochamp, you should override this to send errors to a logging service (like Sentry) or show a global 'Something went wrong' UI notification."
+    },
+    
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { ErrorHandler, Injectable } from '@angular/core';\n\n@Injectable()\nexport class GlobalErrorHandler implements ErrorHandler {\n  handleError(error: any): void {\n    const message = error.message ? error.message : error.toString();\n    \n    // 1. Log to external monitoring service\n    console.error('Global Error Captured:', message);\n\n    // 2. Optionally redirect to an error page\n    // window.location.href = '/error';\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Centralized HTTP Error Interceptor"
+    },
+    {
+      "type": "text",
+      "value": "Instead of adding `catchError` to every single service, you can use a functional interceptor to handle common HTTP status codes (like 401 Unauthorized or 403 Forbidden) in one place."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "export const errorInterceptor: HttpInterceptorFn = (req, next) => {\n  return next(req).pipe(\n    catchError((error: HttpErrorResponse) => {\n      if (error.status === 401) {\n        // Logic to logout or refresh token\n      }\n      return throwError(() => error);\n    })\n  );\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Error Handling Strategy Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Strategy", "Level", "Best Use Case"],
+        "rows": [
+          ["Try-Catch", "Local / Method", "Synchronous logic (JSON parsing, Math)"],
+          ["catchError Operator", "Service / API", "Network failures & data transformation"],
+          ["HttpInterceptor", "Global Network", "Auth failures (401), Server timeouts"],
+          ["Global ErrorHandler", "App-wide", "Unexpected runtime crashes & tracking"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Should I use try-catch with HttpClient?",
+      "answer": "No. HttpClient is asynchronous and uses Observables. A try-catch block will not catch errors from an Observable stream. You must use the 'catchError' operator within the '.pipe()' method."
+    },
+    {
+      "question": "How do I show an error message to the user?",
+      "answer": "The best practice is to have the service 'throw' the error. The component then subscribes to the service and uses the 'error' callback of the '.subscribe()' method to set a local 'errorMessage' variable displayed in the HTML template."
+    },
+    {
+      "question": "What is HttpErrorResponse?",
+      "answer": "It is a specialized class in Angular that provides detailed information about a failed HTTP request, including the status code (e.g., 404), the status text, and the error body returned by the server."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which RxJS operator is used to handle errors in an Observable stream?",
+      "options": ["map", "filter", "catchError", "tap"],
+      "answer": 2
+    },
+    {
+      "question": "Which interface do you implement to create a custom global error handler?",
+      "options": ["ErrorListener", "ErrorHandler", "HttpInterceptor", "AppErrorHandler"],
+      "answer": 1
+    },
+    {
+      "question": "Which HTTP status code typically indicates that a user is unauthorized and might need a redirect?",
+      "options": ["404", "500", "401", "200"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-http-client",
+    "angular-interceptors",
+    "rxjs-observables-intro",
+    "angular-services-di",
+    "clean-architecture-frontend"
+  ]
+}
