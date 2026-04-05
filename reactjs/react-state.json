@@ -1,0 +1,207 @@
+{
+  "slug": "react-state",
+  "course": "React",
+  "title": "React State Management – useState, useReducer & More",
+
+  "meta": {
+    "title": "React State Management – Complete Guide (2026)",
+    "description": "Master state management in React. Learn useState, useReducer, Context API, and advanced patterns for managing application state effectively.",
+    "keywords": [
+      "react state",
+      "react useState",
+      "react useReducer",
+      "react context",
+      "state management react"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is State in React?"
+    },
+    {
+      "type": "text",
+      "value": "State is data that changes over time and affects what gets rendered on the screen. Unlike props which are passed from parent to child, state is internal to a component and can be updated using setter functions."
+    },
+    {
+      "type": "heading",
+      "value": "useState – Local State"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState } from 'react';\n\nfunction Counter() {\n  // Basic state\n  const [count, setCount] = useState(0);\n\n  // State with initializer function (for expensive computations)\n  const [expensive, setExpensive] = useState(() => {\n    return computeExpensiveValue();\n  });\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>Increment</button>\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "State with Objects"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "function UserProfile() {\n  const [user, setUser] = useState({\n    name: 'John',\n    age: 25,\n    email: 'john@example.com'\n  });\n\n  // Updating object state (must create new object)\n  const updateName = (newName) => {\n    setUser({ ...user, name: newName });\n  };\n\n  const updateAge = (newAge) => {\n    setUser(prev => ({ ...prev, age: newAge }));\n  };\n\n  return (\n    <div>\n      <input value={user.name} onChange={(e) => updateName(e.target.value)} />\n      <input value={user.age} onChange={(e) => updateAge(Number(e.target.value))} />\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "State with Arrays"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "function TodoList() {\n  const [todos, setTodos] = useState([]);\n\n  // Add item\n  const addTodo = (text) => {\n    setTodos([...todos, { id: Date.now(), text, completed: false }]);\n  };\n\n  // Remove item\n  const removeTodo = (id) => {\n    setTodos(todos.filter(todo => todo.id !== id));\n  };\n\n  // Update item\n  const toggleTodo = (id) => {\n    setTodos(todos.map(todo =>\n      todo.id === id ? { ...todo, completed: !todo.completed } : todo\n    ));\n  };\n\n  // Update using functional update\n  const updateWithPrev = () => {\n    setTodos(prevTodos => [...prevTodos, newTodo]);\n  };\n\n  return (\n    <ul>\n      {todos.map(todo => (\n        <li key={todo.id}>\n          <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>\n            {todo.text}\n          </span>\n          <button onClick={() => toggleTodo(todo.id)}>Toggle</button>\n          <button onClick={() => removeTodo(todo.id)}>Delete</button>\n        </li>\n      ))}\n    </ul>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "useReducer – Complex State Logic"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useReducer } from 'react';\n\n// Reducer function\nconst counterReducer = (state, action) => {\n  switch (action.type) {\n    case 'INCREMENT':\n      return { count: state.count + 1 };\n    case 'DECREMENT':\n      return { count: state.count - 1 };\n    case 'RESET':\n      return { count: 0 };\n    case 'SET':\n      return { count: action.payload };\n    default:\n      return state;\n  }\n};\n\nfunction Counter() {\n  const [state, dispatch] = useReducer(counterReducer, { count: 0 });\n\n  return (\n    <div>\n      <p>Count: {state.count}</p>\n      <button onClick={() => dispatch({ type: 'INCREMENT' })}>+</button>\n      <button onClick={() => dispatch({ type: 'DECREMENT' })}>-</button>\n      <button onClick={() => dispatch({ type: 'RESET' })}>Reset</button>\n      <button onClick={() => dispatch({ type: 'SET', payload: 10 })}>Set to 10</button>\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Complex useReducer Example"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Todo reducer\nconst todoReducer = (state, action) => {\n  switch (action.type) {\n    case 'ADD_TODO':\n      return [...state, { id: Date.now(), text: action.payload, completed: false }];\n    \n    case 'TOGGLE_TODO':\n      return state.map(todo =>\n        todo.id === action.payload ? { ...todo, completed: !todo.completed } : todo\n      );\n    \n    case 'DELETE_TODO':\n      return state.filter(todo => todo.id !== action.payload);\n    \n    case 'EDIT_TODO':\n      return state.map(todo =>\n        todo.id === action.payload.id ? { ...todo, text: action.payload.text } : todo\n      );\n    \n    case 'CLEAR_COMPLETED':\n      return state.filter(todo => !todo.completed);\n    \n    default:\n      return state;\n  }\n};\n\nfunction TodoApp() {\n  const [todos, dispatch] = useReducer(todoReducer, []);\n  const [input, setInput] = useState('');\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    if (input.trim()) {\n      dispatch({ type: 'ADD_TODO', payload: input });\n      setInput('');\n    }\n  };\n\n  return (\n    <div>\n      <form onSubmit={handleSubmit}>\n        <input value={input} onChange={(e) => setInput(e.target.value)} />\n        <button type=\"submit\">Add</button>\n      </form>\n      <ul>\n        {todos.map(todo => (\n          <li key={todo.id}>\n            <input\n              type=\"checkbox\"\n              checked={todo.completed}\n              onChange={() => dispatch({ type: 'TOGGLE_TODO', payload: todo.id })}\n            />\n            {todo.text}\n            <button onClick={() => dispatch({ type: 'DELETE_TODO', payload: todo.id })}>\n              Delete\n            </button>\n          </li>\n        ))}\n      </ul>\n      <button onClick={() => dispatch({ type: 'CLEAR_COMPLETED' })}>\n        Clear Completed\n      </button>\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Context API – Global State"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { createContext, useContext, useState } from 'react';\n\n// Create context\nconst ThemeContext = createContext();\n\n// Provider component\nfunction ThemeProvider({ children }) {\n  const [theme, setTheme] = useState('light');\n\n  const toggleTheme = () => {\n    setTheme(prev => prev === 'light' ? 'dark' : 'light');\n  };\n\n  return (\n    <ThemeContext.Provider value={{ theme, toggleTheme }}>\n      {children}\n    </ThemeContext.Provider>\n  );\n}\n\n// Custom hook for consuming context\nfunction useTheme() {\n  const context = useContext(ThemeContext);\n  if (!context) {\n    throw new Error('useTheme must be used within ThemeProvider');\n  }\n  return context;\n}\n\n// Child component\nfunction ThemedButton() {\n  const { theme, toggleTheme } = useTheme();\n  return (\n    <button onClick={toggleTheme} style={{\n      background: theme === 'light' ? '#fff' : '#333',\n      color: theme === 'light' ? '#333' : '#fff'\n    }}>\n      Current theme: {theme}\n    </button>\n  );\n}\n\n// App wrapper\nfunction App() {\n  return (\n    <ThemeProvider>\n      <ThemedButton />\n    </ThemeProvider>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "State Lifting"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Shared state lifted to parent\nfunction ParentComponent() {\n  const [sharedState, setSharedState] = useState('');\n\n  return (\n    <div>\n      <ChildA setSharedState={setSharedState} />\n      <ChildB sharedState={sharedState} />\n    </div>\n  );\n}\n\nfunction ChildA({ setSharedState }) {\n  return (\n    <input onChange={(e) => setSharedState(e.target.value)} />\n  );\n}\n\nfunction ChildB({ sharedState }) {\n  return (\n    <p>Shared state value: {sharedState}</p>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "State Management Libraries Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Solution", "Best For", "Complexity", "Bundle Size"],
+        "rows": [
+          ["useState", "Simple local state", "Low", "0 KB (built-in)"],
+          ["useReducer", "Complex local state logic", "Low", "0 KB (built-in)"],
+          ["Context API", "Global state (low frequency)", "Low", "0 KB (built-in)"],
+          ["Redux", "Large apps with complex state", "High", "~12 KB"],
+          ["Zustand", "Simple global state", "Medium", "~3 KB"],
+          ["Jotai", "Atomic state management", "Medium", "~3 KB"],
+          ["Recoil", "React-specific state", "Medium", "~15 KB"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "State Update Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Never mutate state directly** – Always use setter functions",
+        "**Use functional updates** when new state depends on previous state",
+        "**Batch related state** into a single object when updates are related",
+        "**Keep state minimal** – Derive values when possible",
+        "**Lift state up** when multiple components need access",
+        "**Use useReducer** for complex state transitions",
+        "**Memoize selectors** with useMemo to prevent unnecessary recalculations"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Pitfalls"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// ❌ Wrong - Direct mutation\nconst [user, setUser] = useState({ name: 'John' });\nuser.name = 'Jane'; // Mutates directly\nsetUser(user); // Won't trigger re-render\n\n// ✅ Correct - Create new object\nsetUser({ ...user, name: 'Jane' });\n\n// ❌ Wrong - Stale closure\nfor (let i = 0; i < 5; i++) {\n  setTimeout(() => setCount(count + 1), 1000); // Uses stale count\n}\n\n// ✅ Correct - Functional update\nfor (let i = 0; i < 5; i++) {\n  setTimeout(() => setCount(prev => prev + 1), 1000);\n}\n\n// ❌ Wrong - Using index as key\n{todos.map((todo, index) => <li key={index}>{todo.text}</li>)}\n\n// ✅ Correct - Using stable id\n{todos.map(todo => <li key={todo.id}>{todo.text}</li>)}"
+    },
+    {
+      "type": "heading",
+      "value": "Derived State"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "function ShoppingCart({ items }) {\n  // Derived state - computed from props/state\n  const totalPrice = items.reduce((sum, item) => sum + item.price * item.quantity, 0);\n  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);\n  const hasItems = items.length > 0;\n  \n  // Only store what's necessary\n  const [discountCode, setDiscountCode] = useState('');\n  \n  // Expensive derived values should be memoized\n  const discountedPrice = useMemo(() => {\n    return applyDiscount(totalPrice, discountCode);\n  }, [totalPrice, discountCode]);\n  \n  return (\n    <div>\n      <p>Items: {itemCount}</p>\n      <p>Total: ${totalPrice}</p>\n      <p>Discounted: ${discountedPrice}</p>\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "React provides multiple tools for state management. Start with useState for local state, useReducer for complex logic, and Context API for global state. For large applications, consider dedicated state management libraries like Zustand or Redux."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "useState vs useReducer?",
+      "answer": "useState is simpler for independent values; useReducer is better for complex state logic with multiple sub-values."
+    },
+    {
+      "question": "When to use Context API?",
+      "answer": "For global state that doesn't change frequently, like theme, user auth, or language settings."
+    },
+    {
+      "question": "Why not mutate state directly?",
+      "answer": "React relies on immutable updates to detect changes and trigger re-renders."
+    },
+    {
+      "question": "What is state lifting?",
+      "answer": "Moving shared state to the closest common ancestor component."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import { useState, useReducer } from 'react';\n\n// Try different state management approaches\n\n// 1. Simple useState\nfunction SimpleCounter() {\n  const [count, setCount] = useState(0);\n  return (\n    <div>\n      <h3>Simple Counter</h3>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>+1</button>\n    </div>\n  );\n}\n\n// 2. useReducer for complex logic\nconst reducer = (state, action) => {\n  switch (action.type) {\n    case 'increment': return { count: state.count + 1 };\n    case 'decrement': return { count: state.count - 1 };\n    case 'reset': return { count: 0 };\n    default: return state;\n  }\n};\n\nfunction ReducerCounter() {\n  const [state, dispatch] = useReducer(reducer, { count: 0 });\n  return (\n    <div>\n      <h3>Reducer Counter</h3>\n      <p>Count: {state.count}</p>\n      <button onClick={() => dispatch({ type: 'increment' })}>+</button>\n      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>\n      <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>\n    </div>\n  );\n}\n\n// 3. Object state\nfunction FormState() {\n  const [form, setForm] = useState({ name: '', email: '' });\n  \n  const updateField = (field, value) => {\n    setForm(prev => ({ ...prev, [field]: value }));\n  };\n  \n  return (\n    <div>\n      <h3>Form State</h3>\n      <input \n        placeholder=\"Name\"\n        value={form.name}\n        onChange={(e) => updateField('name', e.target.value)}\n      />\n      <input \n        placeholder=\"Email\"\n        value={form.email}\n        onChange={(e) => updateField('email', e.target.value)}\n      />\n      <p>Name: {form.name}</p>\n      <p>Email: {form.email}</p>\n    </div>\n  );\n}\n\n// Main app\nexport default function App() {\n  return (\n    <div>\n      <SimpleCounter />\n      <hr />\n      <ReducerCounter />\n      <hr />\n      <FormState />\n    </div>\n  );\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "How do you correctly update object state?",
+      "options": ["object.property = newValue", "setState({ ...object, property: newValue })", "setState(object)", "object = newObject"],
+      "answer": 1
+    },
+    {
+      "question": "Which hook is best for complex state logic?",
+      "options": ["useState", "useEffect", "useReducer", "useContext"],
+      "answer": 2
+    },
+    {
+      "question": "What is the purpose of functional updates?",
+      "options": ["Better performance", "Avoid stale closures", "Type safety", "Async operations"],
+      "answer": 1
+    },
+    {
+      "question": "When should you lift state up?",
+      "options": ["Always", "Never", "When multiple components need same state", "Only for class components"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-introduction",
+    "react-hooks",
+    "react-context",
+    "react-forms",
+    "react-performance"
+  ]
+}

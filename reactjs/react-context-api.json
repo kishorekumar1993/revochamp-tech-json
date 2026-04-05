@@ -1,0 +1,138 @@
+{
+  "slug": "react-context-api",
+  "course": "React",
+  "title": "React Context API – Managing Global State & Prop Drilling",
+
+  "meta": {
+    "title": "React Context API Guide – Professional State Sharing (2026)",
+    "description": "Learn how to use the React Context API to eliminate prop drilling. Master createContext, Providers, and the useContext hook for themes, auth, and global settings.",
+    "keywords": [
+      "react context api",
+      "usecontext hook",
+      "prop drilling react",
+      "createcontext",
+      "react global state"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the Context API?"
+    },
+    {
+      "type": "text",
+      "value": "The Context API is a built-in React feature that allows you to share data (state, functions, or objects) across the entire component tree without having to pass props down manually through every level. This solves the common problem known as 'prop drilling'."
+    },
+    {
+      "type": "heading",
+      "value": "The Three Pillars of Context"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**createContext**: Defines the 'shape' of the data and provides a default value.",
+        "**Provider**: A component that wraps a section of your app and 'broadcasts' the data to all its descendants.",
+        "**useContext**: A hook used by any child component to 'tune in' and consume the data."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Implementation"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { createContext, useContext, useState } from 'react';\n\n// 1. Create the Context\nconst ThemeContext = createContext('light');\n\nfunction App() {\n  const [theme, setTheme] = useState('dark');\n\n  return (\n    // 2. Provide the value\n    <ThemeContext.Provider value={theme}>\n      <Toolbar />\n    </ThemeContext.Provider>\n  );\n}\n\nfunction Toolbar() {\n  // No props passed here!\n  return <ThemedButton />;\n}\n\nfunction ThemedButton() {\n  // 3. Consume the value\n  const theme = useContext(ThemeContext);\n  return <button className={theme}>I am {theme} mode</button>;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Context"
+    },
+    {
+      "type": "text",
+      "value": "Context is best suited for data that is considered 'global' or 'broadcast' to many components. Overusing it for localized state can make components harder to reuse."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Recommended Use", "Avoid If..."],
+        "rows": [
+          ["Theming (Light/Dark mode)", "The data is only used by two adjacent components"],
+          ["User Authentication / Permissions", "The data changes multiple times per second (performance)"],
+          ["Localization (Language settings)", "You want to keep a component highly generic/reusable"],
+          ["Preferred UI Settings", "A simple prop-pass suffices"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Performance & Memoization"
+    },
+    {
+      "type": "text",
+      "value": "Every time the `value` prop of a Provider changes, all components calling `useContext` for that specific context will re-render. To prevent unnecessary renders, always memoize the provider value if it's an object."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "const value = useMemo(() => ({ user, login, logout }), [user]);\n\nreturn (\n  <AuthContext.Provider value={value}>\n    {children}\n  </AuthContext.Provider>\n);"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Is Context API a replacement for Redux?",
+      "answer": "Not exactly. Context is a dependency injection tool for avoiding prop drilling. Redux/Zustand are state management libraries with devtools, middleware, and optimized selection logic."
+    },
+    {
+      "question": "Can I have multiple Providers?",
+      "answer": "Yes! It is a best practice to split contexts (e.g., ThemeProvider, AuthProvider) rather than having one giant global context object."
+    },
+    {
+      "question": "What is the default value in createContext for?",
+      "answer": "The default value is only used if a component tries to consume a context but is NOT wrapped inside a matching Provider."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { createContext, useContext, useState } from 'react';\n\n// Create Context\nconst UserContext = createContext();\n\n// A Nested Child\nconst UserProfile = () => {\n  const { user, logout } = useContext(UserContext);\n  return (\n    <div style={{ border: '1px solid #ccc', padding: '10px' }}>\n      <p>Welcome, <strong>{user.name}</strong>!</p>\n      <button onClick={logout}>Logout</button>\n    </div>\n  );\n};\n\n// Main App Component\nexport default function App() {\n  const [user, setUser] = useState(null);\n\n  const login = () => setUser({ name: 'Kishore Kumar' });\n  const logout = () => setUser(null);\n\n  return (\n    <UserContext.Provider value={{ user, logout }}>\n      <div style={{ padding: '20px' }}>\n        <h3>Context API Auth Demo</h3>\n        {user ? (\n          <UserProfile />\n        ) : (\n          <button onClick={login}>Login as Kishore</button>\n        )}\n      </div>\n    </UserContext.Provider>\n  );\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "Which hook is used to consume a context value?",
+      "options": ["useProvider", "useContext", "useReducer", "useState"],
+      "answer": 1
+    },
+    {
+      "question": "What is 'prop drilling'?",
+      "options": [
+        "Optimizing props for faster rendering",
+        "Passing props through components that don't need them",
+        "A method to delete unused props",
+        "The process of validating prop types"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Where should the Provider typically be placed?",
+      "options": [
+        "Inside the component that needs the data",
+        "In a separate CSS file",
+        "High up in the component tree (like App.js)",
+        "Inside the node_modules folder"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-state-management",
+    "react-use-reducer",
+    "react-hooks-intro",
+    "react-performance-optimization",
+    "react-props-v-context"
+  ]
+}

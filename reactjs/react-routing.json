@@ -1,0 +1,128 @@
+{
+  "slug": "react-routing",
+  "course": "React",
+  "title": "React Routing – Navigating Single Page Applications",
+
+  "meta": {
+    "title": "React Router Guide – Declarative Routing for SPAs (2026)",
+    "description": "Master navigation in React. Learn how to use React Router to create dynamic routes, handle URL parameters, protected routes, and nested layouts.",
+    "keywords": [
+      "react router",
+      "react navigation",
+      "single page application",
+      "dynamic routing",
+      "react router dom",
+      "nested routes"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Client-Side Routing?"
+    },
+    {
+      "type": "text",
+      "value": "In a Single Page Application (SPA), the browser doesn't request a new HTML document from the server every time a user clicks a link. Instead, React Router intercepts the URL change and updates the UI components dynamically. This results in a faster, app-like experience without full page reloads."
+    },
+    {
+      "type": "heading",
+      "value": "Core Components of React Router"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**BrowserRouter**: The parent component that stores the current location and navigates using the browser's history API.",
+        "**Routes & Route**: The configuration where you define which component should render for a specific path.",
+        "**Link & NavLink**: Components used to navigate between routes (replaces the standard `<a>` tag).",
+        "**Navigate**: A component used for programmatically redirecting users."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Route Setup"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <nav>\n        <Link to=\"/\">Home</Link>\n        <Link to=\"/about\">About</Link>\n      </nav>\n\n      <Routes>\n        <Route path=\"/\" element={<Home />} />\n        <Route path=\"/about\" element={<About />} />\n        <Route path=\"*\" element={<NotFound />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Dynamic Routing & URL Parameters"
+    },
+    {
+      "type": "text",
+      "value": "Often you need to render the same component for different IDs (e.g., a User Profile). You can use 'colon' syntax to define a parameter and the `useParams` hook to retrieve it."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useParams } from 'react-router-dom';\n\n// Definition: <Route path=\"/user/:id\" element={<UserProfile />} />\n\nfunction UserProfile() {\n  const { id } = useParams();\n  return <h2>Viewing Profile for User ID: {id}</h2>;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Nested Routes & Outlets"
+    },
+    {
+      "type": "text",
+      "value": "Nested routing allows you to swap out only a sub-section of your UI while keeping a parent layout (like a sidebar) consistent. Use the `<Outlet />` component to tell the parent where to render the child route."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "function DashboardLayout() {\n  return (\n    <div className=\"dashboard\">\n      <Sidebar />\n      <div className=\"content\">\n        <Outlet /> {/* Child routes render here */}\n      </div>\n    </div>\n  );\n}\n\n// Config:\n// <Route path=\"/dashboard\" element={<DashboardLayout />}>\n//   <Route path=\"stats\" element={<Stats />} />\n//   <Route path=\"settings\" element={<Settings />} />\n// </Route>"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Link vs NavLink?",
+      "answer": "Link is for basic navigation. NavLink is a special version that knows if it is 'active', allowing you to style the current page link easily."
+    },
+    {
+      "question": "How to navigate programmatically?",
+      "answer": "Use the `useNavigate` hook. Example: `const navigate = useNavigate(); navigate('/home');`."
+    },
+    {
+      "question": "What is a Protected Route?",
+      "answer": "It's a custom component that checks for authentication before rendering a route, redirecting to login if the user isn't authorized."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React from 'react';\nimport { BrowserRouter, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom';\n\nconst Home = () => <h3>Home Page</h3>;\nconst About = () => <h3>About Page</h3>;\nconst User = () => {\n  const { name } = useParams();\n  return <h3>Hello, {name}!</h3>;\n};\n\nexport default function App() {\n  return (\n    <BrowserRouter>\n      <div style={{ padding: '20px' }}>\n        <nav style={{ marginBottom: '20px' }}>\n          <Link to=\"/\" style={{ marginRight: '10px' }}>Home</Link>\n          <Link to=\"/about\" style={{ marginRight: '10px' }}>About</Link>\n          <Link to=\"/user/Kishore\">Profile</Link>\n        </nav>\n\n        <div style={{ border: '1px solid #ccc', padding: '10px' }}>\n          <Routes>\n            <Route path=\"/\" element={<Home />} />\n            <Route path=\"/about\" element={<About />} />\n            <Route path=\"/user/:name\" element={<User />} />\n          </Routes>\n        </div>\n      </div>\n    </BrowserRouter>\n  );\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "Which hook is used to access dynamic URL segments like /product/:id?",
+      "options": ["useLocation", "useParams", "useNavigate", "useRoute"],
+      "answer": 1
+    },
+    {
+      "question": "Which component acts as a placeholder for nested child routes?",
+      "options": ["<Switch />", "<Placeholder />", "<Outlet />", "<Frame />"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary advantage of SPAs and client-side routing?",
+      "options": [
+        "Better SEO for all search engines",
+        "No need for a backend server",
+        "Faster transitions without full page refreshes",
+        "Smaller JavaScript bundles"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-hooks-intro",
+    "react-nested-layouts",
+    "react-authentication",
+    "react-query-navigation",
+    "react-lazy-loading"
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "slug": "react-dynamic-routing",
+  "course": "React",
+  "title": "React Dynamic Routing – Handling Variable URLs",
+
+  "meta": {
+    "title": "Mastering Dynamic Routing in React – URL Parameters & Query Strings (2026)",
+    "description": "Learn how to build flexible navigation with Dynamic Routing. Master useParams, useSearchParams, and pattern matching for profiles, products, and search results.",
+    "keywords": [
+      "react dynamic routing",
+      "useparams hook",
+      "usesearchparams",
+      "url parameters react",
+      "query strings react router",
+      "dynamic segments"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Dynamic Routing?"
+    },
+    {
+      "type": "text",
+      "value": "Dynamic routing allows you to define a single route path that can match multiple URLs based on a pattern. Instead of creating a separate route for every user or product, you use placeholders (params) to capture values from the URL and use them to fetch specific data."
+    },
+    {
+      "type": "heading",
+      "value": "URL Parameters (useParams)"
+    },
+    {
+      "type": "text",
+      "value": "To define a dynamic segment, you prefix the path part with a colon `:`. React Router will then capture whatever value is in that position and make it available via the `useParams` hook."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// 1. Define the Route in App.js\n<Route path=\"/product/:productId\" element={<ProductDetail />} />\n\n// 2. Access the ID in the Component\nimport { useParams } from 'react-router-dom';\n\nfunction ProductDetail() {\n  const { productId } = useParams();\n  \n  // Use productId to fetch data from an API\n  return <h2>Showing details for product # {productId}</h2>;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Query Strings (useSearchParams)"
+    },
+    {
+      "type": "text",
+      "value": "Query strings are the key-value pairs at the end of a URL (e.g., `/search?query=react&sort=asc`). Unlike path params, these are optional and handled via the `useSearchParams` hook, which works similarly to `useState`."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useSearchParams } from 'react-router-dom';\n\nfunction SearchPage() {\n  const [searchParams, setSearchParams] = useSearchParams();\n  const query = searchParams.get('query');\n\n  return (\n    <div>\n      <h3>Searching for: {query}</h3>\n      <button onClick={() => setSearchParams({ query: 'flutter' })}>\n        Search Flutter instead\n      </button>\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Use Cases for Dynamic Routing"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**User Profiles**: `/profile/:username` matches `/profile/kishore` and `/profile/john`.",
+        "**E-commerce**: `/category/:cid/product/:pid` for deeply nested resource matching.",
+        "**Pagination**: `/blog/page/:pageNumber` for clean, shareable list views.",
+        "**Filtering**: Using query strings for sort order, price ranges, and search filters."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Comparison: Params vs. Search Query"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "URL Parameters (:id)", "Search Params (?q=)"],
+        "rows": [
+          ["Requirement", "Required for the route to match", "Optional/Flexible"],
+          ["Structure", "Part of the path (/user/123)", "Appended at end (?id=123)"],
+          ["Best For", "Identifying a specific resource", "Filtering, sorting, searching"],
+          ["Hook", "useParams()", "useSearchParams()"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What happens if a user visits /product/ without an ID?",
+      "answer": "If the route is defined as /product/:id, it will NOT match. You would need to define a separate route for /product or use optional parameters if supported by your router version."
+    },
+    {
+      "question": "Can I have multiple dynamic segments?",
+      "answer": "Yes. You can define routes like /authors/:authorId/posts/:postId and destructure both from useParams."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React from 'react';\nimport { BrowserRouter, Routes, Route, Link, useParams, useSearchParams } from 'react-router-dom';\n\nconst Product = () => {\n  const { id } = useParams();\n  return <div style={{color: 'blue'}}>📦 Loading Product ID: {id}</div>;\n};\n\nconst Search = () => {\n  const [search] = useSearchParams();\n  const term = search.get('term');\n  return <div>🔍 Filtered by: {term || 'Nothing yet'}</div>;\n};\n\nexport default function App() {\n  return (\n    <BrowserRouter>\n      <div style={{ padding: '20px' }}>\n        <h4>Dynamic Navigation</h4>\n        <ul style={{ display: 'flex', gap: '10px', listStyle: 'none', padding: 0 }}>\n          <li><Link to=\"/product/101\">Laptop</Link></li>\n          <li><Link to=\"/product/202\">Phone</Link></li>\n          <li><Link to=\"/search?term=react\">Search React</Link></li>\n        </ul>\n        \n        <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '10px' }}>\n          <Routes>\n            <Route path=\"/product/:id\" element={<Product />} />\n            <Route path=\"/search\" element={<Search />} />\n          </Routes>\n        </div>\n      </div>\n    </BrowserRouter>\n  );\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "Which character is used in a route path to define a dynamic parameter?",
+      "options": ["?", "#", ":", "*"],
+      "answer": 2
+    },
+    {
+      "question": "How do you access the value of a dynamic segment in your component?",
+      "options": ["props.match", "useParams()", "useLocation()", "window.location"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-routing",
+    "react-navigation-guards",
+    "react-nested-routes",
+    "react-location-hook",
+    "react-data-fetching"
+  ]
+}

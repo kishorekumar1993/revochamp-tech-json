@@ -1,0 +1,127 @@
+{
+  "slug": "react-lazy-loading",
+  "course": "React",
+  "title": "React Lazy Loading – Optimizing Bundle Size",
+
+  "meta": {
+    "title": "React Lazy Loading & Code Splitting Guide (2026)",
+    "description": "Learn how to use React.lazy and Suspense to implement code splitting. Reduce initial load time by loading components only when they are needed.",
+    "keywords": [
+      "react lazy loading",
+      "react.lazy",
+      "react suspense",
+      "code splitting",
+      "performance optimization",
+      "dynamic import"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Lazy Loading?"
+    },
+    {
+      "type": "text",
+      "value": "By default, React bundles your entire application into one large JavaScript file. As your app grows, this file becomes heavy, leading to slow initial load times. Lazy loading (or code splitting) allows you to break your app into smaller chunks and load them only when the user actually navigates to that part of the application."
+    },
+    {
+      "type": "heading",
+      "value": "Using React.lazy and Suspense"
+    },
+    {
+      "type": "text",
+      "value": "The `React.lazy` function lets you render a dynamic import as a regular component. It must be rendered inside a `<Suspense>` component, which allows you to show a fallback UI (like a loading spinner) while the lazy component is being fetched."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import React, { Suspense } from 'react';\n\n// 1. Define the lazy component\nconst HeavyChart = React.lazy(() => import('./HeavyChart'));\n\nfunction App() {\n  return (\n    <div>\n      <h1>My Dashboard</h1>\n      {/* 2. Wrap in Suspense with a fallback */}\n      <Suspense fallback={<div>Loading Chart...</div>}>\n        <HeavyChart />\n      </Suspense>\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Route-Based Code Splitting"
+    },
+    {
+      "type": "text",
+      "value": "The most common place to implement lazy loading is at the route level. This ensures that users only download the code for the page they are currently visiting."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';\nimport React, { Suspense, lazy } from 'react';\n\nconst Home = lazy(() => import('./routes/Home'));\nconst Settings = lazy(() => import('./routes/Settings'));\n\nfunction App() {\n  return (\n    <Router>\n      <Suspense fallback={<LoadingSpinner />}>\n        <Routes>\n          <Route path=\"/\" element={<Home />} />\n          <Route path=\"/settings\" element={<Settings />} />\n        </Routes>\n      </Suspense>\n    </Router>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Lazy Loading"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Routes**: Every major page in your app should likely be lazy-loaded.",
+        "**Heavy Libraries**: Components that use large libraries like D3.js, Three.js, or complex editors.",
+        "**Modals and Dialogs**: Components that only appear after a user interaction (like clicking a 'Help' button).",
+        "**Conditional Content**: Sections of a page that are hidden behind tabs or accordions."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Error Boundaries with Lazy Loading"
+    },
+    {
+      "type": "text",
+      "value": "If a network error occurs while fetching a lazy component (e.g., the user loses internet), the app will crash unless you wrap the Suspense block in an **Error Boundary**. This allows you to show a 'Network Error' UI instead of a blank screen."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Can I lazy load named exports?",
+      "answer": "React.lazy currently only supports default exports. If the module you want to import uses named exports, you must create an intermediate module that re-exports it as a default."
+    },
+    {
+      "question": "Does lazy loading affect SEO?",
+      "answer": "Modern search engine crawlers can handle JavaScript and wait for lazy content, but for critical content, Server-Side Rendering (SSR) with frameworks like Next.js is generally preferred."
+    },
+    {
+      "question": "What is 'Preloading'?",
+      "answer": "Preloading is a technique where you start loading a lazy component slightly before it's needed (e.g., when a user hovers over a link) to make the transition feel instant."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useState, Suspense, lazy } from 'react';\n\n// Simulate a slow-loading component\nconst LazyComponent = lazy(() => {\n  return new Promise(resolve => {\n    setTimeout(() => resolve(import('./ProfileCard')), 2000);\n  });\n});\n\n// Inline Mock of ProfileCard for demo purposes\nconst ProfileCard = () => (\n  <div style={{ border: '2px solid #007bff', padding: '15px', borderRadius: '8px' }}>\n    <h4>Kishore Kumar S</h4>\n    <p>Flutter Architect & Engineering Manager</p>\n  </div>\n);\n\nexport default function LazyDemo() {\n  const [show, setShow] = useState(false);\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h3>Lazy Loading Demo</h3>\n      <button onClick={() => setShow(true)} disabled={show}>\n        {show ? 'Loaded' : 'Load Profile (2s Delay)'}\n      </button>\n      \n      <div style={{ marginTop: '20px' }}>\n        {show && (\n          <Suspense fallback={<p>⏳ Downloading component chunk...</p>}>\n             <ProfileCard />\n          </Suspense>\n        )}\n      </div>\n    </div>\n  );\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "Which component is required to wrap a React.lazy component?",
+      "options": ["<ErrorBoundary />", "<Loading />", "<Suspense />", "<Provider />"],
+      "answer": 2
+    },
+    {
+      "question": "What prop does the Suspense component require to show a loading state?",
+      "options": ["loading", "placeholder", "fallback", "spinner"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary benefit of code splitting?",
+      "options": [
+        "Makes the code harder to steal",
+        "Reduces the initial load time of the application",
+        "Eliminates the need for CSS",
+        "Automatically fixes syntax errors"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-performance",
+    "react-routing",
+    "react-suspense-basics",
+    "react-error-boundaries",
+    "react-dynamic-import"
+  ]
+}

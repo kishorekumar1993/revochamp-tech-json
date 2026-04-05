@@ -1,0 +1,121 @@
+{
+  "slug": "react-redux-toolkit",
+  "course": "React",
+  "title": "Redux Toolkit (RTK) – The Modern Standard",
+
+  "meta": {
+    "title": "Mastering Redux Toolkit – Slices, Store & Async Thunks (2026)",
+    "description": "Deep dive into Redux Toolkit. Learn how to use createSlice, configureStore, and createAsyncThunk to build scalable and maintainable React applications.",
+    "keywords": [
+      "redux toolkit",
+      "rtk query",
+      "createasyncthunk",
+      "createslice",
+      "redux store configuration",
+      "immer js react"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Redux Toolkit?"
+    },
+    {
+      "type": "text",
+      "value": "Redux Toolkit (RTK) was created to solve three common complaints about Redux: 'Configuring a store is too complicated', 'I have to add a lot of packages to get Redux to do anything useful', and 'Redux requires too much boilerplate code'. RTK is now the official, recommended way to write Redux logic."
+    },
+    {
+      "type": "heading",
+      "value": "The Anatomy of a Slice"
+    },
+    {
+      "type": "text",
+      "value": "A 'Slice' is the collection of Redux reducer logic and actions for a single feature in your app. It uses Immer internally, which allows you to write 'mutative' code that is safely converted into immutable updates."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { createSlice } from '@reduxjs/toolkit';\n\nconst cartSlice = createSlice({\n  name: 'cart',\n  initialState: { items: [], total: 0 },\n  reducers: {\n    addItem: (state, action) => {\n      // Immer allows this 'push' safely!\n      state.items.push(action.payload);\n      state.total += action.payload.price;\n    },\n    removeItem: (state, action) => {\n      state.items = state.items.filter(item => item.id !== action.payload);\n    }\n  }\n});\n\nexport const { addItem, removeItem } = cartSlice.actions;\nexport default cartSlice.reducer;"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Async Logic with createAsyncThunk"
+    },
+    {
+      "type": "text",
+      "value": "For API calls, RTK provides `createAsyncThunk`. It generates promise lifecycle action types (pending, fulfilled, and rejected) which you can handle in the `extraReducers` field of your slice."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';\n\nexport const fetchUsers = createAsyncThunk('users/fetchAll', async () => {\n  const response = await fetch('https://api.example.com/users');\n  return response.json();\n});\n\nconst userSlice = createSlice({\n  name: 'users',\n  initialState: { data: [], status: 'idle' },\n  extraReducers: (builder) => {\n    builder\n      .addCase(fetchUsers.pending, (state) => {\n        state.status = 'loading';\n      })\n      .addCase(fetchUsers.fulfilled, (state, action) => {\n        state.status = 'succeeded';\n        state.data = action.payload;\n      });\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "RTK Query: The Future of Data Fetching"
+    },
+    {
+      "type": "text",
+      "value": "RTK Query is an optional addon included in the Redux Toolkit package. It is a powerful data fetching and caching tool designed to simplify loading data in a web application, eliminating the need to hand-write fetch logic or manage loading states manually."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Standard RTK", "RTK Query"],
+        "rows": [
+          ["Data Management", "Manual (Slices/Thunks)", "Automated (Hooks)"],
+          ["Caching", "Manual implementation", "Automatic based on endpoints"],
+          ["Loading States", "Manual (extraReducers)", "Provided automatically (isLoading)"],
+          ["Boilerplate", "Moderate", "Minimal"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Can I use RTK with existing 'Vanilla' Redux?",
+      "answer": "Yes. RTK is fully compatible with existing reducers and actions. You can migrate your store to `configureStore` and move logic to slices one piece at a time."
+    },
+    {
+      "question": "Does RTK replace Redux DevTools?",
+      "answer": "No, it integrates with them perfectly. `configureStore` automatically enables the Redux DevTools extension for you."
+    },
+    {
+      "question": "What is Immer?",
+      "answer": "Immer is a library that RTK uses to allow you to write code that looks like you're mutating state (e.g., state.push()), but it creates a brand new immutable state object under the hood."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React from 'react';\nimport { Provider, useSelector, useDispatch } from 'react-redux';\nimport { configureStore, createSlice } from '@reduxjs/toolkit';\n\n// 1. Create Slice\nconst todoSlice = createSlice({\n  name: 'todos',\n  initialState: { list: [] },\n  reducers: {\n    addTodo: (state, action) => {\n      state.list.push(action.payload);\n    }\n  }\n});\n\n// 2. Configure Store\nconst store = configureStore({ reducer: { todos: todoSlice.reducer } });\nconst { addTodo } = todoSlice.actions;\n\n// 3. UI Component\nfunction TodoApp() {\n  const todos = useSelector(state => state.todos.list);\n  const dispatch = useDispatch();\n\n  const handleAdd = () => {\n    const text = prompt('Enter Task:');\n    if (text) dispatch(addTodo(text));\n  };\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h3>RTK Todo List</h3>\n      <button onClick={handleAdd}>Add Item</button>\n      <ul>\n        {todos.map((todo, i) => <li key={i}>{todo}</li>)}\n      </ul>\n    </div>\n  );\n}\n\nexport default function App() {\n  return (\n    <Provider store={store}>\n      <TodoApp />\n    </Provider>\n  );\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "Which RTK function is used to set up the Redux Store with middleware and DevTools?",
+      "options": ["createStore", "configureStore", "setupStore", "initStore"],
+      "answer": 1
+    },
+    {
+      "question": "What library does RTK use to allow 'mutative' logic in reducers?",
+      "options": ["Axios", "Zod", "Immer", "Lodash"],
+      "answer": 2
+    },
+    {
+      "question": "Where do you handle createAsyncThunk actions in a slice?",
+      "options": ["reducers", "extraReducers", "initialState", "actions"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-redux-intro",
+    "react-context-api",
+    "react-state-management",
+    "rtk-query-basics",
+    "react-performance"
+  ]
+}

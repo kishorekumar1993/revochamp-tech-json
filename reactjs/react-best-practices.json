@@ -1,0 +1,136 @@
+{
+  "slug": "react-best-practices",
+  "course": "React",
+  "title": "React Best Practices – Writing Clean & Scalable Code",
+
+  "meta": {
+    "title": "Professional React Best Practices – Clean Code & Patterns (2026)",
+    "description": "Master the industry standards for React development. Learn about component composition, custom hooks, performance patterns, and maintainable project structures.",
+    "keywords": [
+      "react best practices",
+      "clean code react",
+      "react component patterns",
+      "react optimization",
+      "react security"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Philosophy of Clean React"
+    },
+    {
+      "type": "text",
+      "value": "Writing React code that works is easy; writing React code that is maintainable, testable, and performant in a team environment is the real challenge. In 2026, best practices revolve around functional programming, declarative UI, and strict separation of concerns."
+    },
+    {
+      "type": "heading",
+      "value": "1. Component Composition & Small Components"
+    },
+    {
+      "type": "text",
+      "value": "Avoid 'God Components'—huge files that handle everything. Break UI into small, reusable pieces. If a component exceeds 150 lines or handles more than one responsibility, it's time to split it."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Single Responsibility**: One component should do one thing (e.g., a Button, a UserCard, or a Form).",
+        "**Composition over Inheritance**: Use the `children` prop to create flexible layouts instead of complex prop configurations.",
+        "**Extract Logic**: Move complex business logic out of JSX and into Custom Hooks."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. State Management Principles"
+    },
+    {
+      "type": "text",
+      "value": "Mismanaged state is the #1 cause of bugs and performance issues. Keep state as local as possible and only lift it up when absolutely necessary."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// ❌ Bad: Keeping everything in global state\nconst { tempInputValue } = useSelector(state => state.ui);\n\n// ✅ Good: Keep UI-only state local to the component\nconst [tempValue, setTempValue] = useState('');"
+    },
+    {
+      "type": "heading",
+      "value": "3. The Power of Custom Hooks"
+    },
+    {
+      "type": "text",
+      "value": "Custom hooks are the best way to share logic between components. If you find yourself writing the same `useEffect` or `useState` logic in two places, abstract it."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// useWindowSize.js\nexport function useWindowSize() {\n  const [size, setSize] = useState(window.innerWidth);\n  useEffect(() => {\n    const handleResize = () => setSize(window.innerWidth);\n    window.addEventListener('resize', handleResize);\n    return () => window.removeEventListener('resize', handleResize);\n  }, []);\n  return size;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Defensive Coding & Security"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Optional Chaining**: Use `user?.profile?.name` to avoid 'cannot read property of undefined' crashes.",
+        "**Prop Types / TypeScript**: Always define the shape of your props to catch bugs at compile-time.",
+        "**Sanitize Data**: Never use `dangerouslySetInnerHTML` with unsanitized user input to prevent XSS attacks."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practice Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Area", "Old Way (Avoid)", "Modern Way (2026)"],
+        "rows": [
+          ["Logic", "Mixed in Component body", "Abstracted into Custom Hooks"],
+          ["API Calls", "Inside every component", "Centralized services + React Query"],
+          ["Styling", "Global CSS files", "Tailwind CSS or CSS Modules"],
+          ["Props", "Deep Prop Drilling", "Context API or State Libraries"],
+          ["Updates", "Direct State Mutation", "Functional updates: `set(c => c + 1)`"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Is it okay to use 'index' as a key in a list?",
+      "answer": "Only if the list is static and never changes. If you add, remove, or sort items, using the index will cause rendering bugs. Always use a unique ID from your data."
+    },
+    {
+      "question": "Should I use functional components exclusively?",
+      "answer": "Yes, unless you need an Error Boundary, which currently requires a Class Component. Functional components with Hooks are the modern standard."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useState, useEffect } from 'react';\n\n// BEST PRACTICE: Separate Logic into a Custom Hook\nfunction useCounter(initial = 0) {\n  const [count, setCount] = useState(initial);\n  const increment = () => setCount(prev => prev + 1);\n  const decrement = () => setCount(prev => prev - 1);\n  return { count, increment, decrement };\n}\n\n// BEST PRACTICE: Descriptive, Small Component\nconst CounterDisplay = ({ value }) => (\n  <h2 style={{ color: value < 0 ? 'red' : 'green' }}>\n    Value: {value}\n  </h2>\n);\n\nexport default function BestPracticesApp() {\n  const { count, increment, decrement } = useCounter(10);\n\n  return (\n    <div style={{ padding: '20px', textAlign: 'center' }}>\n      <h3>Clean Code Demo</h3>\n      <CounterDisplay value={count} />\n      <button onClick={decrement}>-</button>\n      <button onClick={increment} style={{ marginLeft: '10px' }}>+</button>\n      <p>Logic is separated, UI is composed!</p>\n    </div>\n  );\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "What is the primary benefit of 'Composition' in React?",
+      "options": ["It makes the code run faster", "It allows components to be more flexible and reusable by nesting", "It replaces the need for state", "It hides the source code"],
+      "answer": 1
+    },
+    {
+      "question": "Why should you use functional updates like 'setCount(c => c + 1)'?",
+      "options": ["It is less code to write", "It ensures you are working with the most current state value", "It prevents the component from rendering", "It is required by TypeScript"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-hooks-intro",
+    "react-performance",
+    "react-state-management",
+    "react-clean-architecture",
+    "react-testing"
+  ]
+}

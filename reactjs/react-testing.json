@@ -1,0 +1,140 @@
+{
+  "slug": "react-testing",
+  "course": "React",
+  "title": "React Testing – Vitest & React Testing Library",
+
+  "meta": {
+    "title": "Professional React Testing Guide – RTL & Vitest (2026)",
+    "description": "Master React testing. Learn the philosophy of testing components like a user, mocking APIs, and ensuring robust UI with Vitest and React Testing Library.",
+    "keywords": [
+      "react testing library",
+      "vitest react",
+      "component testing",
+      "mocking api react",
+      "unit testing react",
+      "integration testing"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Philosophy of React Testing"
+    },
+    {
+      "type": "text",
+      "value": "In modern React development, we follow the principle: 'The more your tests resemble the way your software is used, the more confidence they can give you.' Instead of testing internal implementation details (like state values), we test the outcomes that the user sees and interacts with."
+    },
+    {
+      "type": "heading",
+      "value": "The Testing Stack (2026)"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Vitest**: A blazing fast unit test framework powered by Vite. It is the modern replacement for Jest.",
+        "**React Testing Library (RTL)**: Provides utilities to work with React components in a way that encourages good testing practices.",
+        "**Mock Service Worker (MSW)**: The gold standard for mocking API calls by intercepting requests at the network level.",
+        "**Playwright**: Used for End-to-End (E2E) testing to simulate full user flows in real browsers."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Writing Your First Component Test"
+    },
+    {
+      "type": "text",
+      "value": "A standard test follows the **AAA Pattern**: Arrange (set up the component), Act (simulate user interaction), and Assert (verify the outcome)."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { render, screen, fireEvent } from '@testing-library/react';\nimport { describe, it, expect } from 'vitest';\nimport Counter from './Counter';\n\ndescribe('Counter Component', () => {\n  it('increments the count when the button is clicked', () => {\n    // Arrange\n    render(<Counter />);\n    const button = screen.getByRole('button', { name: /increment/i });\n\n    // Act\n    fireEvent.click(button);\n\n    // Assert\n    expect(screen.getByText('Count: 1')).toBeInTheDocument();\n  });\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Async Logic & API Mocks"
+    },
+    {
+      "type": "text",
+      "value": "When testing components that fetch data, use `findBy` queries (which return promises and retry until the element appears) instead of `getBy`."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Testing a user list that loads from an API\nit('renders a list of users', async () => {\n  render(<UserList />);\n  \n  // findBy queries wait for the element to appear (default 1000ms)\n  const userItem = await screen.findByText('Kishore Kumar');\n  expect(userItem).toBeInTheDocument();\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Strategy Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Test Type", "Tool", "Scope", "Speed"],
+        "rows": [
+          ["Unit", "Vitest", "Individual functions/hooks", "Instant"],
+          ["Integration", "RTL + Vitest", "Groups of components working together", "Fast"],
+          ["E2E", "Playwright", "Full app in a real browser", "Slow"],
+          ["Static", "ESLint / TS", "Syntax and type checking", "Real-time"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why use 'screen.getByRole' instead of 'container.querySelector'?",
+      "answer": "getByRole tests for accessibility. If a user can't find a button because it lacks a label or role, your test should fail. querySelector tests implementation, which can break if you change a class name."
+    },
+    {
+      "question": "What is 'Snapshot Testing'?",
+      "answer": "It records the rendered output of a component and compares it to future versions. It's useful for catching unexpected UI changes but can be brittle if overused."
+    },
+    {
+      "question": "How do I test hooks directly?",
+      "answer": "Use `renderHook` from `@testing-library/react`. It allows you to call the hook and assert its return values without building a dummy component."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useState } from 'react';\n\n// Imagine we are testing this Toggle component\nfunction Toggle() {\n  const [isOn, setIsOn] = useState(false);\n  return (\n    <div>\n      <p>Status: {isOn ? 'Active' : 'Inactive'}</p>\n      <button onClick={() => setIsOn(!isOn)}>\n        Toggle State\n      </button>\n    </div>\n  );\n}\n\n// This is how a Vitest + RTL test would look like:\n/*\n  test('toggles status on click', () => {\n    render(<Toggle />);\n    const button = screen.getByText('Toggle State');\n    fireEvent.click(button);\n    expect(screen.getByText('Status: Active')).toBeInTheDocument();\n  });\n*/\n\nexport default Toggle;"
+  },
+
+  "quiz": [
+    {
+      "question": "Which Testing Library query should you use for elements that aren't immediately in the DOM?",
+      "options": ["getBy", "queryBy", "findBy", "selectBy"],
+      "answer": 2
+    },
+    {
+      "question": "What does the 'AAA' acronym stand for in testing?",
+      "options": [
+        "Action, Assertion, Application",
+        "Arrange, Act, Assert",
+        "Always Apply Access",
+        "Analysis, Architecture, Action"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the main advantage of Vitest over Jest in a Vite project?",
+      "options": [
+        "It supports more languages",
+        "It uses the same configuration and transform logic as Vite, making it faster",
+        "It doesn't require any code",
+        "It can only test CSS"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-vitest-setup",
+    "react-integration-testing",
+    "react-msw-mocking",
+    "react-playwright-e2e",
+    "react-testing-hooks"
+  ]
+}

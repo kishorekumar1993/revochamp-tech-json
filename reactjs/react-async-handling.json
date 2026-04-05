@@ -1,0 +1,131 @@
+{
+  "slug": "react-async-handling",
+  "course": "React",
+  "title": "React Async Handling – Managing Promises & Side Effects",
+
+  "meta": {
+    "title": "Mastering Async Logic in React – Promises, Async/Await & Suspense (2026)",
+    "description": "Learn the best practices for handling asynchronous operations in React. Master race conditions, AbortController, Suspense, and the 'use' hook.",
+    "keywords": [
+      "react async handling",
+      "promises in react",
+      "async await react",
+      "react race conditions",
+      "abortcontroller react",
+      "react suspense"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Asynchronous Patterns in React"
+    },
+    {
+      "type": "text",
+      "value": "Asynchronous operations (API calls, timers, or image loading) don't resolve instantly. In React, handling these requires careful state management to ensure the UI stays synchronized with the current status of the operation (Pending, Resolved, or Rejected)."
+    },
+    {
+      "type": "heading",
+      "value": "The Race Condition Problem"
+    },
+    {
+      "type": "text",
+      "value": "A common bug occurs when a user triggers multiple async requests (e.g., clicking 'Next Page' rapidly). If the second request finishes before the first, the first request's older data might eventually overwrite the newer data when it finally resolves. This is known as a race condition."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "useEffect(() => {\n  let active = true;\n\n  const fetchData = async () => {\n    const result = await api.getData(id);\n    if (active) {\n      setData(result);\n    }\n  };\n\n  fetchData();\n  return () => { active = false; }; // Cleanup prevents stale state updates\n}, [id]);"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Cleanup with AbortController"
+    },
+    {
+      "type": "text",
+      "value": "The modern way to cancel an ongoing fetch request is using the `AbortController`. This actually stops the browser from continuing the network request, saving bandwidth and resources."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "useEffect(() => {\n  const controller = new AbortController();\n\n  fetch(url, { signal: controller.signal })\n    .then(res => res.json())\n    .then(data => setData(data))\n    .catch(err => {\n      if (err.name === 'AbortError') console.log('Fetch aborted');\n      else console.error(err);\n    });\n\n  return () => controller.abort();\n}, [url]);"
+    },
+    {
+      "type": "heading",
+      "value": "The Future: React Suspense & the 'use' Hook"
+    },
+    {
+      "type": "text",
+      "value": "In 2026, React encourages using `Suspense` to handle loading states declaratively. Instead of manual `isLoading` booleans, you can wrap components in a `Suspense` boundary and use the `use` hook to read a promise directly in render."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { use, Suspense } from 'react';\n\nfunction DataComponent({ promise }) {\n  const data = use(promise); // Suspends until promise resolves\n  return <div>{data.message}</div>;\n}\n\n// Usage\n<Suspense fallback={<Spinner />}>\n  <DataComponent promise={apiPromise} />\n</Suspense>"
+    },
+    {
+      "type": "heading",
+      "value": "Async Strategy Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Method", "Complexity", "Best For"],
+        "rows": [
+          ["useEffect + fetch", "Moderate", "Simple, one-off side effects"],
+          ["Custom Async Hooks", "Higher", "Reusable logic across components"],
+          ["React Query / SWR", "Low (Once setup)", "Heavy data-driven applications"],
+          ["Suspense + 'use'", "Modern/Low", "Declarative loading & Server Components"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why can't I make the useEffect callback async?",
+      "answer": "React expects the useEffect cleanup function (or nothing) to be returned. Async functions return a Promise, which would confuse React's cleanup mechanism."
+    },
+    {
+      "question": "How do I handle parallel async calls?",
+      "answer": "Use `Promise.all([p1, p2])` or `Promise.allSettled()` to wait for multiple requests simultaneously without creating a waterfall delay."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useState, useEffect } from 'react';\n\nfunction AsyncDemo() {\n  const [id, setId] = useState(1);\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(false);\n\n  useEffect(() => {\n    let isMounted = true;\n    setLoading(true);\n\n    fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)\n      .then(res => res.json())\n      .then(json => {\n        if (isMounted) {\n          setData(json);\n          setLoading(false);\n        }\n      });\n\n    return () => { isMounted = false; };\n  }, [id]);\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h3>Async Race Condition Protection</h3>\n      <button onClick={() => setId(id + 1)}>Next Post ({id})</button>\n      \n      <div style={{ marginTop: '20px', opacity: loading ? 0.5 : 1 }}>\n        {loading ? <p>Fetching...</p> : (\n          <pre>{JSON.stringify(data, null, 2)}</pre>\n        )}\n      </div>\n    </div>\n  );\n}\n\nexport default AsyncDemo;"
+  },
+
+  "quiz": [
+    {
+      "question": "What is the primary purpose of an AbortController in React?",
+      "options": [
+        "To delete the component state",
+        "To cancel a network request to prevent side effects on unmounted components",
+        "To speed up the API response",
+        "To force a component to re-render"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How does a race condition occur in React?",
+      "options": [
+        "When two components render at the same exact millisecond",
+        "When an older async request resolves after a newer one and overwrites the state",
+        "When the browser runs out of memory",
+        "When using multiple useState hooks"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-api-calls",
+    "react-use-effect",
+    "react-suspense-basics",
+    "react-performance-optimization",
+    "react-error-boundaries"
+  ]
+}

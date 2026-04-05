@@ -1,0 +1,132 @@
+{
+  "slug": "react-api-calls",
+  "course": "React",
+  "title": "React API Calls – Fetching & Managing Remote Data",
+
+  "meta": {
+    "title": "React API Integration Guide – Fetch, Axios & Async Patterns (2026)",
+    "description": "Learn how to fetch data from APIs in React. Master the Fetch API, Axios, handling loading/error states, and using useEffect for side effects.",
+    "keywords": [
+      "react fetch api",
+      "axios react",
+      "async await react",
+      "api integration react",
+      "react loading state",
+      "react error handling"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Data Fetching in React"
+    },
+    {
+      "type": "text",
+      "value": "In modern web apps, components often need to display data from a server. In React, API calls are considered 'side effects' because they interact with the outside world. These are typically handled inside the `useEffect` hook to ensure they run at the correct point in the component lifecycle."
+    },
+    {
+      "type": "heading",
+      "value": "The Fetch API vs. Axios"
+    },
+    {
+      "type": "text",
+      "value": "You have two primary choices for making HTTP requests: the native browser `fetch()` API or the popular third-party library `Axios`."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Fetch API", "Axios"],
+        "rows": [
+          ["Installation", "Built-in (No install)", "Requires `npm install axios`"],
+          ["JSON Parsing", "Manual (`res.json()`)", "Automatic"],
+          ["Error Handling", "Manual (check `res.ok`)", "Automatic for 4xx/5xx status"],
+          ["Interceptors", "No", "Yes (Great for Auth tokens)"],
+          ["Timeout Support", "Manual (AbortController)", "Simple config property"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Handling Loading & Error States"
+    },
+    {
+      "type": "text",
+      "value": "A professional API implementation must handle three distinct states: Loading (the request is in flight), Error (the request failed), and Data (the request succeeded)."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState, useEffect } from 'react';\n\nfunction UserList() {\n  const [users, setUsers] = useState([]);\n  const [isLoading, setIsLoading] = useState(true);\n  const [error, setError] = useState(null);\n\n  useEffect(() => {\n    const fetchUsers = async () => {\n      try {\n        const response = await fetch('https://jsonplaceholder.typicode.com/users');\n        if (!response.ok) throw new Error('Failed to fetch data');\n        const data = await response.json();\n        setUsers(data);\n      } catch (err) {\n        setError(err.message);\n      } finally {\n        setIsLoading(false);\n      }\n    };\n\n    fetchUsers();\n  }, []);\n\n  if (isLoading) return <p>Loading users...</p>;\n  if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;\n\n  return (\n    <ul>\n      {users.map(user => <li key={user.id}>{user.name}</li>)}\n    </ul>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Cleanup after yourself**: Use an `AbortController` to cancel requests if the component unmounts before the request finishes.",
+        "**Abstract your API logic**: Move fetch calls to a separate `services/` folder to keep components clean.",
+        "**Avoid 'Waterfall' fetches**: If two API calls don't depend on each other, use `Promise.all()` to fetch them in parallel.",
+        "**Consider a library**: For complex apps, use **TanStack Query** (React Query) to handle caching, re-fetching, and background updates automatically."
+      ]
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why do I see my API call running twice?",
+      "answer": "This usually happens in React Strict Mode during development. React intentionally mounts, unmounts, and re-mounts components to help you find side-effect bugs."
+    },
+    {
+      "question": "How do I send a POST request with Fetch?",
+      "answer": "Pass an options object as the second argument to fetch with `method: 'POST'`, `headers`, and `body: JSON.stringify(data)`."
+    },
+    {
+      "question": "What is an Interceptor in Axios?",
+      "answer": "It's a function that runs before a request is sent (e.g., to add an Auth token) or after a response is received (e.g., to handle 401 errors globally)."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useState, useEffect } from 'react';\n\nexport default function GitHubProfile() {\n  const [profile, setProfile] = useState(null);\n  const [loading, setLoading] = useState(false);\n\n  const fetchProfile = async (username) => {\n    setLoading(true);\n    try {\n      const res = await fetch(`https://api.github.com/users/${username}`);\n      const data = await res.json();\n      setProfile(data);\n    } catch (err) {\n      alert('Error fetching user');\n    } finally {\n      setLoading(false);\n    }\n  };\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h3>GitHub User Finder</h3>\n      <button onClick={() => fetchProfile('kishorekumar-s')}>\n        Load My Profile\n      </button>\n      \n      {loading && <p>Searching...</p>}\n      \n      {profile && (\n        <div style={{ marginTop: '20px' }}>\n          <img src={profile.avatar_url} width=\"100\" style={{ borderRadius: '50%' }} />\n          <h4>{profile.name || profile.login}</h4>\n          <p>{profile.bio}</p>\n          <p>Public Repos: {profile.public_repos}</p>\n        </div>\n      )}\n    </div>\n  );\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "Which hook is most appropriate for initiating an API call on component load?",
+      "options": ["useState", "useMemo", "useEffect", "useCallback"],
+      "answer": 2
+    },
+    {
+      "question": "What happens if you forget to add an empty dependency array [] to a fetch useEffect?",
+      "options": [
+        "The code won't compile",
+        "The API call runs only once",
+        "The API call runs on every single render (Infinite loop potential)",
+        "The browser will block the request"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What is the main benefit of using Axios over the native Fetch API?",
+      "options": [
+        "It is 10x faster",
+        "It works without JavaScript",
+        "It automatically transforms JSON data and handles errors more gracefully",
+        "It is made by the React team"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-use-effect",
+    "react-loading-patterns",
+    "react-query-intro",
+    "react-async-await",
+    "react-error-boundaries"
+  ]
+}

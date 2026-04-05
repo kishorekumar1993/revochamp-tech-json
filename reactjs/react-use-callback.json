@@ -1,0 +1,138 @@
+{
+  "slug": "react-use-callback",
+  "course": "React",
+  "title": "React useCallback Hook – Memoizing Functions",
+
+  "meta": {
+    "title": "React useCallback Hook – Complete Guide to Function Memoization (2026)",
+    "description": "Master the useCallback hook in React. Learn how to prevent unnecessary child re-renders by memoizing function instances and maintaining referential integrity.",
+    "keywords": [
+      "react usecallback",
+      "usecallback hook",
+      "function memoization react",
+      "react performance",
+      "referential integrity react"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is useCallback?"
+    },
+    {
+      "type": "text",
+      "value": "The `useCallback` hook is a React hook that returns a memoized version of a callback function. It only changes if one of the dependencies has changed. This is useful when passing callbacks to optimized child components that rely on reference equality to prevent unnecessary renders."
+    },
+    {
+      "type": "heading",
+      "value": "The Problem: Referential Equality"
+    },
+    {
+      "type": "text",
+      "value": "In JavaScript, a function defined inside a component is recreated on every render. Even if the function logic is identical, the memory reference changes. If you pass this function as a prop to a child component wrapped in `React.memo`, that child will re-render every time because it sees a 'new' prop."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState, useCallback } from 'react';\nimport ChildComponent from './ChildComponent';\n\nfunction Parent() {\n  const [count, setCount] = useState(0);\n  const [text, setText] = useState('');\n\n  // ❌ Without useCallback: recreated on every render\n  // const handleClick = () => { console.log('Clicked'); };\n\n  // ✅ With useCallback: memoized until dependencies change\n  const handleClick = useCallback(() => {\n    console.log('Button clicked! Count is:', count);\n  }, [count]); // Only recreate if count changes\n\n  return (\n    <>\n      <input value={text} onChange={(e) => setText(e.target.value)} />\n      <ChildComponent onClick={handleClick} />\n      <button onClick={() => setCount(count + 1)}>Increment</button>\n    </>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use useCallback"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Passing callbacks to optimized child components** (using `React.memo`).",
+        "**When the function is a dependency** for other hooks like `useEffect`.",
+        "**Preventing 'Effect' loops**: If a function is defined in the body and used in `useEffect`, it will trigger the effect on every render unless memoized.",
+        "**Custom Hooks**: When returning functions from custom hooks so consumers can safely use them in their own dependency arrays."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "useCallback vs. useMemo"
+    },
+    {
+      "type": "text",
+      "value": "While both hooks are for memoization, they serve different purposes:"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Hook", "Returns", "Primary Use Case"],
+        "rows": [
+          ["useCallback", "The function itself (memoized)", "Preventing function recreation for props/deps"],
+          ["useMemo", "The result of a function (memoized value)", "Expensive calculations or object/array stability"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistake: Over-optimization"
+    },
+    {
+      "type": "text",
+      "value": "Don't wrap every function in `useCallback`. It has its own cost (memory for the dependency array and the hook call itself). If a component is cheap to re-render, or if you aren't passing the function to a `React.memo` component, the overhead of `useCallback` might be greater than the benefit."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Always include all dependencies** used inside the function in the dependency array.",
+        "**Use functional updates** (e.g., `setCount(c => c + 1)`) to reduce the number of dependencies required.",
+        "**Pair with React.memo**: `useCallback` is mostly useless unless the child component receiving the prop is also memoized."
+      ]
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why is my child component still re-rendering?",
+      "answer": "Ensure the child is wrapped in `React.memo(Component)`. If it isn't, it will re-render whenever the parent does, regardless of `useCallback`."
+    },
+    {
+      "question": "Can I use useCallback without a dependency array?",
+      "answer": "No. Without an array, it will recreate the function on every render, defeating the purpose. Use `[]` for a function that never changes."
+    },
+    {
+      "question": "Does useCallback make my function run faster?",
+      "answer": "No, it actually adds a tiny bit of overhead. Its purpose is to skip re-renders of *other* components or prevent unnecessary effect triggers."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useState, useCallback } from 'react';\n\n// A memoized child component\nconst ExpensiveList = React.memo(({ onItemClick }) => {\n  console.log('--- Child Rendering ---');\n  const items = [1, 2, 3, 4, 5];\n  return (\n    <ul>\n      {items.map(i => (\n        <li key={i} onClick={() => onItemClick(i)} style={{ cursor: 'pointer' }}>\n          Item {i} (Click me)\n        </li>\n      ))}\n    </ul>\n  );\n});\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  const [input, setInput] = useState('');\n\n  // Try removing 'useCallback' and wrapping only the arrow function.\n  // You'll notice the Child renders on every keystroke in the input!\n  const handleItemClick = useCallback((id) => {\n    alert('Clicked item ' + id);\n  }, []);\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h2>useCallback & React.memo</h2>\n      <p>Count: {count} <button onClick={() => setCount(c => c + 1)}>+</button></p>\n      \n      <input \n        placeholder=\"Type to re-render parent...\" \n        value={input} \n        onChange={e => setInput(e.target.value)} \n      />\n      \n      <p>Open the console. Notice the child doesn't re-render when you type, thanks to useCallback!</p>\n      <ExpensiveList onItemClick={handleItemClick} />\n    </div>\n  );\n}\n\nexport default App;"
+  },
+
+  "quiz": [
+    {
+      "question": "What does useCallback return?",
+      "options": ["A boolean value", "The result of the callback function", "A memoized version of the function itself", "A promise"],
+      "answer": 2
+    },
+    {
+      "question": "When is useCallback most effective?",
+      "options": ["When the function contains a loop", "When passing props to a component wrapped in React.memo", "To make API calls faster", "To replace useState"],
+      "answer": 1
+    },
+    {
+      "question": "If you use a variable inside useCallback but leave it out of the dependency array, what happens?",
+      "options": ["The code crashes", "The function uses the 'stale' value from the first render", "React automatically adds it for you", "The function updates every time anyway"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-use-memo",
+    "react-memo",
+    "react-hooks-intro",
+    "react-re-renders",
+    "react-use-effect"
+  ]
+}

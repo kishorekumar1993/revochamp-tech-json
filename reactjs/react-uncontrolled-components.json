@@ -1,0 +1,139 @@
+{
+  "slug": "react-uncontrolled-components",
+  "course": "React",
+  "title": "Uncontrolled Components – Letting the DOM Handle State",
+
+  "meta": {
+    "title": "React Uncontrolled Components Guide – Using Refs & DefaultValues (2026)",
+    "description": "Learn how to use uncontrolled components in React. Discover when to use refs instead of state, handling file uploads, and integrating with non-React code.",
+    "keywords": [
+      "uncontrolled components",
+      "react refs",
+      "useref hook",
+      "defaultvalue react",
+      "react form handling"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Uncontrolled Components?"
+    },
+    {
+      "type": "text",
+      "value": "In an uncontrolled component, the form data is handled by the DOM itself, rather than by a React component's state. Instead of writing an event handler for every state update, you use a **ref** to pull the values from the DOM when you need them (e.g., when the form is submitted)."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Implementation with useRef"
+    },
+    {
+      "type": "text",
+      "value": "To create an uncontrolled component, you use the `useRef` hook to create a reference to the DOM element and access its `.value` property directly."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useRef } from 'react';\n\nfunction UncontrolledInput() {\n  const inputRef = useRef(null);\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    alert('Input Value: ' + inputRef.current.value);\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <label>Name:</label>\n      <input type=\"text\" ref={inputRef} />\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Initial Values (defaultValue)"
+    },
+    {
+      "type": "text",
+      "value": "In the React rendering lifecycle, the `value` attribute on form elements overrides the value in the DOM. With uncontrolled components, you often want React to specify the initial value, but leave subsequent updates uncontrolled. For this, use `defaultValue` instead of `value`."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "/* For text/select inputs */\n<input type=\"text\" defaultValue=\"Kishore\" />\n\n/* For checkboxes/radios */\n<input type=\"checkbox\" defaultChecked={true} />"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Uncontrolled Components"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**File Inputs**: The `<input type=\"file\">` is always uncontrolled in React because its value is read-only from a script perspective.",
+        "**Simple Forms**: When you don't need instant validation or custom UI feedback while the user types.",
+        "**Non-React Integration**: When integrating with third-party DOM libraries (like jQuery plugins) that manage their own internal state.",
+        "**Performance**: In extremely large forms where state updates on every keystroke might cause lag (though `useMemo` or React Hook Form are usually better solutions here)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Controlled vs. Uncontrolled"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Controlled", "Uncontrolled"],
+        "rows": [
+          ["Source of Truth", "React State", "DOM"],
+          ["Value Access", "Immediate (on change)", "On demand (via ref)"],
+          ["Instant Validation", "Easy", "Difficult"],
+          ["Boilerplate", "Higher", "Lower"],
+          ["File Upload Support", "No", "Yes"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "The Special Case: File Inputs"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "function FileUpload() {\n  const fileInput = useRef(null);\n\n  const handleUpload = (e) => {\n    e.preventDefault();\n    const file = fileInput.current.files[0];\n    console.log('Selected file:', file.name);\n  };\n\n  return (\n    <form onSubmit={handleUpload}>\n      <input type=\"file\" ref={fileInput} />\n      <button type=\"submit\">Upload</button>\n    </form>\n  );\n}"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Can I use both in the same form?",
+      "answer": "Yes, it is common to have a controlled text input for validation while having an uncontrolled file input for uploads."
+    },
+    {
+      "question": "Is it 'bad' to use uncontrolled components?",
+      "answer": "Not at all. While controlled components are the 'React way,' uncontrolled components are perfectly valid for simple use cases or specific constraints like file inputs."
+    },
+    {
+      "question": "How do I clear an uncontrolled input?",
+      "answer": "You must manually manipulate the DOM: `inputRef.current.value = ''`."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useRef } from 'react';\n\nfunction FastForm() {\n  const nameRef = useRef(null);\n  const emailRef = useRef(null);\n\n  const handleSubmit = (event) => {\n    event.preventDefault();\n    const data = {\n      name: nameRef.current.value,\n      email: emailRef.current.value,\n    };\n    console.log('Form Submitted (Uncontrolled):', data);\n    alert(`Submitted! Check the console.`);\n  };\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h2>Uncontrolled Form</h2>\n      <p>Notice how there are no state updates while you type.</p>\n      <form onSubmit={handleSubmit}>\n        <div style={{ marginBottom: '10px' }}>\n          <label>Name: </label>\n          <input \n            type=\"text\" \n            ref={nameRef} \n            defaultValue=\"Guest User\" \n          />\n        </div>\n        <div style={{ marginBottom: '10px' }}>\n          <label>Email: </label>\n          <input \n            type=\"email\" \n            ref={emailRef} \n            placeholder=\"example@mail.com\" \n          />\n        </div>\n        <button type=\"submit\">Log Data</button>\n      </form>\n    </div>\n  );\n}\n\nexport default FastForm;"
+  },
+
+  "quiz": [
+    {
+      "question": "Which prop is used to set the initial value of an uncontrolled input?",
+      "options": ["value", "initialValue", "defaultValue", "startValue"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary tool used to access uncontrolled input values?",
+      "options": ["useState", "useRef", "useContext", "useEffect"],
+      "answer": 1
+    },
+    {
+      "question": "Which type of input is ALWAYS uncontrolled in React?",
+      "options": ["checkbox", "password", "file", "number"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-forms",
+    "react-use-ref",
+    "react-hooks-intro",
+    "react-dom-elements",
+    "react-hook-form"
+  ]
+}

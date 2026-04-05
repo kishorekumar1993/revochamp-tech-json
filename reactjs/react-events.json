@@ -1,0 +1,201 @@
+{
+  "slug": "react-events",
+  "course": "React",
+  "title": "React Events – Handling User Interactions",
+
+  "meta": {
+    "title": "React Events – Complete Guide to Event Handling (2026)",
+    "description": "Master event handling in React. Learn synthetic events, common event handlers, event pooling, and best practices for user interactions.",
+    "keywords": [
+      "react events",
+      "react event handling",
+      "react synthetic events",
+      "react onclick",
+      "react forms"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Synthetic Events?"
+    },
+    {
+      "type": "text",
+      "value": "React uses Synthetic Events – a cross-browser wrapper around native browser events. Synthetic events provide a consistent API across all browsers and improve performance through event pooling (in React 16 and earlier)."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Event Handling"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "function ButtonClick() {\n  // Basic event handler\n  const handleClick = () => {\n    console.log('Button clicked!');\n  };\n\n  return <button onClick={handleClick}>Click Me</button>;\n}\n\n// Inline event handler\nfunction InlineHandler() {\n  return (\n    <button onClick={() => console.log('Clicked!')}>\n      Click Me\n    </button>\n  );\n}\n\n// With event parameter\nfunction EventParam() {\n  const handleClick = (event) => {\n    console.log('Event type:', event.type);\n    console.log('Target:', event.target);\n    console.log('Current target:', event.currentTarget);\n  };\n\n  return <button onClick={handleClick}>Click Me</button>;\n}\n\n// Passing additional arguments\nfunction WithArgs() {\n  const handleClick = (message, event) => {\n    console.log(message, event);\n  };\n\n  return (\n    <button onClick={(e) => handleClick('Hello!', e)}>\n      Click Me\n    </button>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Event Types"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "function EventTypes() {\n  // Mouse events\n  const handleClick = (e) => console.log('Click', e.clientX, e.clientY);\n  const handleDoubleClick = (e) => console.log('Double click');\n  const handleMouseEnter = (e) => console.log('Mouse entered');\n  const handleMouseLeave = (e) => console.log('Mouse left');\n  const handleMouseMove = (e) => console.log('Mouse moving', e.clientX, e.clientY);\n  const handleContextMenu = (e) => {\n    e.preventDefault();\n    console.log('Right click prevented');\n  };\n\n  // Keyboard events\n  const handleKeyDown = (e) => {\n    console.log('Key down:', e.key, e.code, e.ctrlKey);\n    if (e.key === 'Enter') {\n      console.log('Enter pressed');\n    }\n  };\n  const handleKeyUp = (e) => console.log('Key up:', e.key);\n  const handleKeyPress = (e) => console.log('Key press:', e.key);\n\n  // Form events\n  const handleChange = (e) => console.log('Value changed:', e.target.value);\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    console.log('Form submitted');\n  };\n  const handleFocus = (e) => console.log('Input focused');\n  const handleBlur = (e) => console.log('Input blurred');\n  const handleInput = (e) => console.log('Input event:', e.target.value);\n\n  // Clipboard events\n  const handleCopy = (e) => {\n    console.log('Copied!');\n    e.clipboardData.setData('text/plain', 'Custom copy text');\n    e.preventDefault();\n  };\n  const handlePaste = (e) => console.log('Pasted:', e.clipboardData.getData('text'));\n\n  // Focus events\n  const handleFocusIn = (e) => console.log('Focus in');\n  const handleFocusOut = (e) => console.log('Focus out');\n\n  return (\n    <div>\n      <button onClick={handleClick}>Click</button>\n      <button onDoubleClick={handleDoubleClick}>Double Click</button>\n      <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>\n        Hover me\n      </div>\n      <input onKeyDown={handleKeyDown} placeholder=\"Press any key\" />\n      <form onSubmit={handleSubmit}>\n        <input onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur} />\n        <button type=\"submit\">Submit</button>\n      </form>\n      <div onCopy={handleCopy}>Copy this text</div>\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Event Pooling (React 16 and earlier)"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// In React 16 and earlier, SyntheticEvents are pooled\n// Event properties are nullified after the handler runs\n\n// ❌ Problem in React 16 - async access\nfunction ProblemHandler() {\n  const handleClick = (event) => {\n    setTimeout(() => {\n      console.log(event.type); // null - event has been pooled\n    }, 100);\n  };\n  return <button onClick={handleClick}>Click</button>;\n}\n\n// ✅ Solution 1: Call persist()\nfunction PersistHandler() {\n  const handleClick = (event) => {\n    event.persist(); // Removes event from pool\n    setTimeout(() => {\n      console.log(event.type); // Works!\n    }, 100);\n  };\n  return <button onClick={handleClick}>Click</button>;\n}\n\n// ✅ Solution 2: Extract needed properties\nfunction ExtractHandler() {\n  const handleClick = (event) => {\n    const { type, target } = event;\n    setTimeout(() => {\n      console.log(type, target); // Works with primitives\n    }, 100);\n  };\n  return <button onClick={handleClick}>Click</button>;\n}\n\n// Note: React 17+ removed event pooling\n// Events are not pooled in React 17 and later"
+    },
+    {
+      "type": "heading",
+      "value": "Preventing Default Behavior"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "function FormWithPrevention() {\n  // Prevent form submission\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    console.log('Form submitted but page did not reload');\n  };\n\n  // Prevent link navigation\n  const handleLinkClick = (e) => {\n    e.preventDefault();\n    console.log('Link clicked but navigation prevented');\n  };\n\n  // Prevent context menu\n  const handleContextMenu = (e) => {\n    e.preventDefault();\n    console.log('Right-click menu prevented');\n  };\n\n  return (\n    <div>\n      <form onSubmit={handleSubmit}>\n        <input type=\"text\" />\n        <button type=\"submit\">Submit</button>\n      </form>\n      \n      <a href=\"https://example.com\" onClick={handleLinkClick}>\n        Prevented Link\n      </a>\n      \n      <div onContextMenu={handleContextMenu}>\n        Right-click here (menu prevented)\n      </div>\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Event Propagation"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "function EventPropagation() {\n  // Stop propagation\n  const handleInnerClick = (e) => {\n    e.stopPropagation();\n    console.log('Inner clicked - propagation stopped');\n  };\n\n  const handleOuterClick = () => {\n    console.log('Outer clicked');\n  };\n\n  // Stop immediate propagation\n  const handleFirstButton = (e) => {\n    e.stopImmediatePropagation();\n    console.log('First handler - stops others');\n  };\n\n  const handleSecondButton = () => {\n    console.log('Second handler - will not run');\n  };\n\n  return (\n    <div>\n      {/* Bubbling example */}\n      <div onClick={handleOuterClick} style={{ padding: '20px', background: '#f0f0f0' }}>\n        <button onClick={handleInnerClick}>Click me (stops propagation)</button>\n      </div>\n\n      {/* Multiple handlers on same element */}\n      <button onClick={handleFirstButton} onClickCapture={handleSecondButton}>\n        Click me\n      </button>\n    </div>\n  );\n}\n\n// Capture phase (useCapture equivalent)\nfunction CapturePhase() {\n  const handleParentCapture = () => {\n    console.log('Parent capture phase');\n  };\n\n  const handleParentBubble = () => {\n    console.log('Parent bubble phase');\n  };\n\n  const handleChildClick = () => {\n    console.log('Child clicked');\n  };\n\n  return (\n    <div\n      onClickCapture={handleParentCapture}  // Capture phase\n      onClick={handleParentBubble}          // Bubble phase\n    >\n      <button onClick={handleChildClick}>Click me</button>\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Event Patterns"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Debouncing events\nfunction SearchInput() {\n  const [query, setQuery] = useState('');\n  const [results, setResults] = useState([]);\n\n  useEffect(() => {\n    const debounceTimer = setTimeout(() => {\n      if (query) {\n        searchAPI(query).then(setResults);\n      }\n    }, 500);\n\n    return () => clearTimeout(debounceTimer);\n  }, [query]);\n\n  return (\n    <input\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Search...\"\n    />\n  );\n}\n\n// Throttling events\nfunction ScrollTracker() {\n  const [scrollPos, setScrollPos] = useState(0);\n\n  useEffect(() => {\n    let ticking = false;\n    \n    const handleScroll = () => {\n      if (!ticking) {\n        requestAnimationFrame(() => {\n          setScrollPos(window.scrollY);\n          ticking = false;\n        });\n        ticking = true;\n      }\n    };\n\n    window.addEventListener('scroll', handleScroll);\n    return () => window.removeEventListener('scroll', handleScroll);\n  }, []);\n\n  return <div>Scroll position: {scrollPos}</div>;\n}\n\n// Keyboard shortcuts\nfunction KeyboardShortcuts() {\n  useEffect(() => {\n    const handleKeyPress = (e) => {\n      // Ctrl/Cmd + S to save\n      if ((e.ctrlKey || e.metaKey) && e.key === 's') {\n        e.preventDefault();\n        console.log('Save shortcut triggered');\n      }\n      \n      // Escape to close\n      if (e.key === 'Escape') {\n        console.log('Close modal');\n      }\n      \n      // Arrow keys\n      if (e.key === 'ArrowUp') {\n        console.log('Navigate up');\n      }\n      if (e.key === 'ArrowDown') {\n        console.log('Navigate down');\n      }\n    };\n\n    window.addEventListener('keydown', handleKeyPress);\n    return () => window.removeEventListener('keydown', handleKeyPress);\n  }, []);\n\n  return <div>Try pressing Ctrl+S or Escape</div>;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Event Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use arrow functions or bind in constructor** – Preserve `this` context",
+        "**Extract event handlers** – Avoid inline functions in render for performance",
+        "**Use useCallback for memoized handlers** – Prevent unnecessary re-renders",
+        "**Prevent default when needed** – Especially for forms and links",
+        "**Stop propagation carefully** – Can break event flow in complex UIs",
+        "**Use event pooling awareness** – For React 16 and earlier",
+        "**Handle keyboard accessibility** – Support Enter, Space, Escape keys",
+        "**Debounce expensive handlers** – Search inputs, scroll events",
+        "**Remove event listeners** – In useEffect cleanup functions",
+        "**Use TypeScript for event typing** – Better developer experience"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "TypeScript Event Types"
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "import { ChangeEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';\n\nfunction TypedEvents() {\n  // Mouse event\n  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {\n    console.log(e.clientX, e.clientY);\n  };\n\n  // Change event\n  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {\n    console.log(e.target.value);\n  };\n\n  // Keyboard event\n  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {\n    if (e.key === 'Enter') {\n      console.log('Enter pressed');\n    }\n  };\n\n  // Form event\n  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {\n    e.preventDefault();\n    console.log('Form submitted');\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input\n        onChange={handleChange}\n        onKeyDown={handleKeyDown}\n        placeholder=\"Type something...\"\n      />\n      <button onClick={handleClick}>Submit</button>\n    </form>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// ❌ Wrong: Calling function instead of passing reference\n<button onClick={handleClick()}>Click</button> // Executes on render\n\n// ✅ Correct: Pass reference\n<button onClick={handleClick}>Click</button>\n\n// ❌ Wrong: Missing binding in class components\nclass MyComponent extends Component {\n  handleClick() {\n    console.log(this); // undefined\n  }\n  render() {\n    return <button onClick={this.handleClick}>Click</button>;\n  }\n}\n\n// ✅ Correct: Bind in constructor or use arrow function\nclass MyComponent extends Component {\n  constructor(props) {\n    super(props);\n    this.handleClick = this.handleClick.bind(this);\n  }\n  // OR use class property arrow function\n  handleClick = () => {\n    console.log(this); // works\n  }\n}\n\n// ❌ Wrong: Forgetting to prevent default\nconst handleSubmit = (e) => {\n  // Missing e.preventDefault()\n  console.log('Form submitted');\n};\n\n// ✅ Correct\nconst handleSubmit = (e) => {\n  e.preventDefault();\n  console.log('Form submitted');\n};\n\n// ❌ Wrong: Using event asynchronously without persist (React 16)\nconst handleClick = (e) => {\n  setTimeout(() => {\n    console.log(e.target); // null in React 16\n  }, 100);\n};\n\n// ✅ Correct: Extract values or call persist()\nconst handleClick = (e) => {\n  const target = e.target;\n  setTimeout(() => {\n    console.log(target); // Works\n  }, 100);\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Event Reference Table"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Category", "Events", "Use Case"],
+        "rows": [
+          ["Mouse", "onClick, onDoubleClick, onMouseEnter, onMouseLeave, onMouseMove, onContextMenu", "User clicks, hovers, right-clicks"],
+          ["Keyboard", "onKeyDown, onKeyUp, onKeyPress", "Keyboard input, shortcuts"],
+          ["Form", "onChange, onSubmit, onFocus, onBlur, onInput", "Form inputs, validation"],
+          ["Clipboard", "onCopy, onCut, onPaste", "Copy/paste operations"],
+          ["Focus", "onFocus, onBlur, onFocusIn, onFocusOut", "Input focus tracking"],
+          ["Touch", "onTouchStart, onTouchEnd, onTouchMove", "Mobile touch events"],
+          ["Drag", "onDragStart, onDragEnd, onDragOver, onDrop", "Drag and drop"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "React events provide a consistent, cross-browser interface for handling user interactions. Understanding synthetic events, event pooling, propagation, and common patterns is crucial for building interactive applications. Always use proper event handling patterns and consider performance implications."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What are synthetic events?",
+      "answer": "React's cross-browser wrapper around native browser events with consistent API."
+    },
+    {
+      "question": "Do React events work the same across browsers?",
+      "answer": "Yes, React normalizes events to work identically across all browsers."
+    },
+    {
+      "question": "What is event pooling?",
+      "answer": "A performance optimization in React 16 where event objects are reused and nullified."
+    },
+    {
+      "question": "How to pass extra data to event handlers?",
+      "answer": "Use arrow functions: onClick={(e) => handleClick(data, e)}"
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import { useState } from 'react';\n\nfunction EventDemo() {\n  const [clicks, setClicks] = useState([]);\n  const [keyLog, setKeyLog] = useState([]);\n  const [formData, setFormData] = useState({ name: '', email: '' });\n\n  // Mouse events\n  const handleClick = (e, buttonName) => {\n    const newClick = {\n      button: buttonName,\n      time: new Date().toLocaleTimeString(),\n      x: e.clientX,\n      y: e.clientY\n    };\n    setClicks([newClick, ...clicks]);\n  };\n\n  // Keyboard events\n  const handleKeyDown = (e) => {\n    setKeyLog([`Key pressed: ${e.key}`, ...keyLog].slice(0, 5));\n    \n    if (e.key === 'Enter') {\n      alert('Enter key pressed!');\n    }\n  };\n\n  // Form events\n  const handleChange = (e) => {\n    setFormData({\n      ...formData,\n      [e.target.name]: e.target.value\n    });\n  };\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    alert(`Submitted: ${formData.name}, ${formData.email}`);\n  };\n\n  // Mouse enter/leave\n  const [isHovering, setIsHovering] = useState(false);\n\n  return (\n    <div style={{ padding: '20px', fontFamily: 'Arial' }}>\n      <h1>React Events Demo</h1>\n\n      {/* Mouse Events */}\n      <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>\n        <h2>Mouse Events</h2>\n        <button onClick={(e) => handleClick(e, 'Left')}>Left Click</button>\n        <button onContextMenu={(e) => {\n          e.preventDefault();\n          handleClick(e, 'Right');\n        }}>Right Click</button>\n        <button onDoubleClick={(e) => handleClick(e, 'Double')}>Double Click</button>\n        \n        <div\n          onMouseEnter={() => setIsHovering(true)}\n          onMouseLeave={() => setIsHovering(false)}\n          style={{\n            marginTop: '10px',\n            padding: '10px',\n            background: isHovering ? '#e0e0e0' : '#f5f5f5',\n            textAlign: 'center',\n            transition: 'background 0.3s'\n          }}\n        >\n          {isHovering ? 'Mouse is over me!' : 'Hover over me'}\n        </div>\n        \n        {clicks.length > 0 && (\n          <div style={{ marginTop: '10px' }}>\n            <strong>Click Log:</strong>\n            <ul>\n              {clicks.map((click, idx) => (\n                <li key={idx}>\n                  {click.button} click at {click.time} (X: {click.x}, Y: {click.y})\n                </li>\n              ))}\n            </ul>\n          </div>\n        )}\n      </div>\n\n      {/* Keyboard Events */}\n      <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>\n        <h2>Keyboard Events</h2>\n        <input\n          type=\"text\"\n          onKeyDown={handleKeyDown}\n          placeholder=\"Press any key...\"\n          style={{ width: '100%', padding: '8px', marginBottom: '10px' }}\n        />\n        {keyLog.length > 0 && (\n          <div>\n            <strong>Key Log:</strong>\n            <ul>\n              {keyLog.map((log, idx) => (\n                <li key={idx}>{log}</li>\n              ))}\n            </ul>\n          </div>\n        )}\n      </div>\n\n      {/* Form Events */}\n      <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>\n        <h2>Form Events</h2>\n        <form onSubmit={handleSubmit}>\n          <div style={{ marginBottom: '10px' }}>\n            <label>Name: </label>\n            <input\n              type=\"text\"\n              name=\"name\"\n              value={formData.name}\n              onChange={handleChange}\n              onFocus={() => console.log('Name focused')}\n              onBlur={() => console.log('Name blurred')}\n            />\n          </div>\n          <div style={{ marginBottom: '10px' }}>\n            <label>Email: </label>\n            <input\n              type=\"email\"\n              name=\"email\"\n              value={formData.email}\n              onChange={handleChange}\n            />\n          </div>\n          <button type=\"submit\">Submit</button>\n        </form>\n        <div style={{ marginTop: '10px' }}>\n          <strong>Form Data:</strong> {JSON.stringify(formData)}\n        </div>\n      </div>\n\n      {/* Tips */}\n      <div style={{ padding: '15px', background: '#f0f7ff', borderRadius: '8px' }}>\n        <h3>💡 Tips:</h3>\n        <ul>\n          <li>Try clicking with left, right, or double-click</li>\n          <li>Hover over the gray box</li>\n          <li>Press keys in the input field (try Enter!)</li>\n          <li>Submit the form (page won't reload)</li>\n        </ul>\n      </div>\n    </div>\n  );\n}\n\nexport default EventDemo;"
+  },
+
+  "quiz": [
+    {
+      "question": "What is React's event system called?",
+      "options": ["Native Events", "DOM Events", "Synthetic Events", "Virtual Events"],
+      "answer": 2
+    },
+    {
+      "question": "How do you prevent default behavior in React?",
+      "options": ["return false", "event.preventDefault()", "event.stop()", "preventDefault()"],
+      "answer": 1
+    },
+    {
+      "question": "What method stops event bubbling?",
+      "options": ["event.stopBubble()", "event.stopPropagation()", "event.cancelBubble()", "event.halt()"],
+      "answer": 1
+    },
+    {
+      "question": "What is event pooling?",
+      "options": ["Collecting events", "Reusing event objects", "Queuing events", "Batching events"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-introduction",
+    "react-components",
+    "react-forms",
+    "react-state",
+    "react-jsx"
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "slug": "react-components",
+  "course": "React",
+  "title": "React Components – Building Reusable UI Pieces",
+
+  "meta": {
+    "title": "React Components – Complete Guide to Component Patterns (2026)",
+    "description": "Master React components - functional, class, pure, and higher-order components. Learn component patterns, composition, and reusability.",
+    "keywords": [
+      "react components",
+      "functional components",
+      "class components",
+      "higher-order components",
+      "react composition"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are React Components?"
+    },
+    {
+      "type": "text",
+      "value": "Components are the building blocks of React applications. They encapsulate UI logic and rendering, making code reusable and maintainable. Components accept inputs called props and return React elements describing what should appear on screen."
+    },
+    {
+      "type": "heading",
+      "value": "Functional Components"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Simple functional component\nfunction Welcome({ name }) {\n  return <h1>Hello, {name}!</h1>;\n}\n\n// Arrow function syntax\nconst Welcome = ({ name }) => <h1>Hello, {name}!</h1>;\n\n// With multiple elements and logic\nfunction UserCard({ user }) {\n  const [isExpanded, setIsExpanded] = useState(false);\n  \n  return (\n    <div className=\"card\">\n      <h3>{user.name}</h3>\n      <button onClick={() => setIsExpanded(!isExpanded)}>\n        {isExpanded ? 'Show less' : 'Show more'}\n      </button>\n      {isExpanded && (\n        <div>\n          <p>Email: {user.email}</p>\n          <p>Age: {user.age}</p>\n        </div>\n      )}\n    </div>\n  );\n}\n\nexport default Welcome;"
+    },
+    {
+      "type": "heading",
+      "value": "Class Components"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { Component } from 'react';\n\n// Basic class component\nclass Welcome extends Component {\n  render() {\n    return <h1>Hello, {this.props.name}!</h1>;\n  }\n}\n\n// Class component with state and lifecycle\nclass Counter extends Component {\n  constructor(props) {\n    super(props);\n    this.state = { count: 0 };\n  }\n\n  componentDidMount() {\n    console.log('Component mounted');\n  }\n\n  componentDidUpdate(prevProps, prevState) {\n    if (prevState.count !== this.state.count) {\n      console.log(`Count changed to ${this.state.count}`);\n    }\n  }\n\n  componentWillUnmount() {\n    console.log('Component unmounted');\n  }\n\n  increment = () => {\n    this.setState({ count: this.state.count + 1 });\n  };\n\n  render() {\n    return (\n      <div>\n        <p>Count: {this.state.count}</p>\n        <button onClick={this.increment}>Increment</button>\n      </div>\n    );\n  }\n}\n\n// Class component with props validation\nclass Button extends Component {\n  static defaultProps = {\n    variant: 'primary',\n    disabled: false\n  };\n\n  static propTypes = {\n    label: PropTypes.string.isRequired,\n    onClick: PropTypes.func.isRequired,\n    variant: PropTypes.oneOf(['primary', 'secondary', 'danger'])\n  };\n\n  render() {\n    const { label, onClick, variant, disabled } = this.props;\n    return (\n      <button onClick={onClick} disabled={disabled} className={`btn btn-${variant}`}>\n        {label}\n      </button>\n    );\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Functional vs Class Components"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Functional", "Class"],
+        "rows": [
+          ["State", "useState hook", "this.state"],
+          ["Lifecycle", "useEffect hook", "componentDidMount, etc."],
+          ["Code complexity", "Simple and concise", "More verbose"],
+          ["Performance", "Slightly better", "Slightly slower"],
+          "Learning curve", "Easier", "Steeper",
+          ["Current trend", "✅ Recommended", "Legacy (still valid)"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Component Composition"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Container component\nfunction Container({ children, className }) {\n  return <div className={`container ${className}`}>{children}</div>;\n}\n\n// Specialized components\nfunction Header({ title, subtitle }) {\n  return (\n    <header>\n      <h1>{title}</h1>\n      {subtitle && <p>{subtitle}</p>}\n    </header>\n  );\n}\n\nfunction Content({ children }) {\n  return <main>{children}</main>;\n}\n\nfunction Footer({ year, company }) {\n  return <footer>&copy; {year} {company}</footer>;\n}\n\n// Composed page component\nfunction Page({ title, subtitle, children, year = 2024, company = 'MyCompany' }) {\n  return (\n    <Container>\n      <Header title={title} subtitle={subtitle} />\n      <Content>{children}</Content>\n      <Footer year={year} company={company} />\n    </Container>\n  );\n}\n\n// Usage\nfunction App() {\n  return (\n    <Page title=\"Welcome\" subtitle=\"This is our app\">\n      <p>Main content goes here</p>\n      <button>Click me</button>\n    </Page>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Pure Components & React.memo"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import React, { PureComponent, memo } from 'react';\n\n// Class PureComponent - shallow comparison\nclass UserCard extends PureComponent {\n  render() {\n    console.log('Rendering UserCard');\n    return <div>{this.props.user.name}</div>;\n  }\n}\n\n// Functional memo component\nconst UserCardMemo = memo(function UserCard({ user }) {\n  console.log('Rendering UserCardMemo');\n  return <div>{user.name}</div>;\n});\n\n// Custom comparison function\nconst UserCardCustom = memo(\n  ({ user, onUpdate }) => {\n    return <div onClick={() => onUpdate(user.id)}>{user.name}</div>;\n  },\n  (prevProps, nextProps) => {\n    // Return true if props are equal (skip re-render)\n    return prevProps.user.id === nextProps.user.id;\n  }\n);\n\n// Example showing re-render prevention\nfunction App() {\n  const [count, setCount] = useState(0);\n  const user = { id: 1, name: 'John' };\n\n  return (\n    <div>\n      <button onClick={() => setCount(count + 1)}>Count: {count}</button>\n      <UserCard user={user} /> {/* Re-renders every time */}\n      <UserCardMemo user={user} /> {/* Only re-renders if user changes */}\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Higher-Order Components (HOC)"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// HOC for adding loading functionality\nfunction withLoading(Component) {\n  return function WithLoading({ isLoading, ...props }) {\n    if (isLoading) {\n      return <div>Loading...</div>;\n    }\n    return <Component {...props} />;\n  };\n}\n\n// Usage\nfunction UserList({ users }) {\n  return (\n    <ul>\n      {users.map(user => <li key={user.id}>{user.name}</li>)}\n    </ul>\n  );\n}\n\nconst UserListWithLoading = withLoading(UserList);\n\n// HOC for authentication\nfunction withAuth(Component) {\n  return function WithAuth(props) {\n    const [isAuthenticated, setIsAuthenticated] = useState(false);\n\n    useEffect(() => {\n      checkAuth().then(setIsAuthenticated);\n    }, []);\n\n    if (!isAuthenticated) {\n      return <LoginPage />;\n    }\n\n    return <Component {...props} />;\n  };\n}\n\n// HOC for logging\nfunction withLogging(Component) {\n  return class WithLogging extends React.Component {\n    componentDidMount() {\n      console.log(`Component ${Component.name} mounted`);\n    }\n\n    componentWillUnmount() {\n      console.log(`Component ${Component.name} unmounted`);\n    }\n\n    render() {\n      return <Component {...this.props} />;\n    }\n  };\n}\n\n// Compose multiple HOCs\nconst EnhancedComponent = withAuth(withLoading(withLogging(UserList)));"
+    },
+    {
+      "type": "heading",
+      "value": "Render Props Component"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Component that provides data via render prop\nclass MouseTracker extends Component {\n  state = { x: 0, y: 0 };\n\n  handleMouseMove = (e) => {\n    this.setState({ x: e.clientX, y: e.clientY });\n  };\n\n  render() {\n    return (\n      <div onMouseMove={this.handleMouseMove}>\n        {this.props.render(this.state)}\n      </div>\n    );\n  }\n}\n\n// Usage\nfunction App() {\n  return (\n    <MouseTracker\n      render={({ x, y }) => (\n        <p>Mouse position: {x}, {y}</p>\n      )}\n    />\n  );\n}\n\n// Using children as function\nfunction DataProvider({ url, children }) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    fetch(url)\n      .then(res => res.json())\n      .then(data => {\n        setData(data);\n        setLoading(false);\n      });\n  }, [url]);\n\n  return children({ data, loading });\n}\n\n// Usage\n<DataProvider url=\"/api/users\">\n  {({ data, loading }) => (\n    loading ? <Spinner /> : <UserList users={data} />\n  )}\n</DataProvider>"
+    },
+    {
+      "type": "heading",
+      "value": "Compound Components"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { createContext, useContext, useState } from 'react';\n\n// Context for sharing state\nconst TabsContext = createContext();\n\nfunction Tabs({ children, defaultIndex = 0 }) {\n  const [activeIndex, setActiveIndex] = useState(defaultIndex);\n\n  return (\n    <TabsContext.Provider value={{ activeIndex, setActiveIndex }}>\n      <div className=\"tabs\">{children}</div>\n    </TabsContext.Provider>\n  );\n}\n\nfunction TabList({ children }) {\n  return <div className=\"tab-list\">{children}</div>;\n}\n\nfunction Tab({ index, children }) {\n  const { activeIndex, setActiveIndex } = useContext(TabsContext);\n  const isActive = activeIndex === index;\n\n  return (\n    <button\n      className={`tab ${isActive ? 'active' : ''}`}\n      onClick={() => setActiveIndex(index)}\n    >\n      {children}\n    </button>\n  );\n}\n\nfunction TabPanels({ children }) {\n  const { activeIndex } = useContext(TabsContext);\n  return <div className=\"tab-panels\">{children[activeIndex]}</div>;\n}\n\nfunction TabPanel({ children }) {\n  return <div className=\"tab-panel\">{children}</div>;\n}\n\n// Usage - declarative compound components\nfunction App() {\n  return (\n    <Tabs defaultIndex={0}>\n      <TabList>\n        <Tab index={0}>Tab 1</Tab>\n        <Tab index={1}>Tab 2</Tab>\n        <Tab index={2}>Tab 3</Tab>\n      </TabList>\n      <TabPanels>\n        <TabPanel>Content for Tab 1</TabPanel>\n        <TabPanel>Content for Tab 2</TabPanel>\n        <TabPanel>Content for Tab 3</TabPanel>\n      </TabPanels>\n    </Tabs>\n  );\n}\n\n// Tabs component can also be used with dot notation\nTabs.List = TabList;\nTabs.Tab = Tab;\nTabs.Panels = TabPanels;\nTabs.Panel = TabPanel;"
+    },
+    {
+      "type": "heading",
+      "value": "Controlled vs Uncontrolled Components"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Controlled component - state managed by parent\nfunction ControlledInput({ value, onChange }) {\n  return <input value={value} onChange={onChange} />;\n}\n\n// Uncontrolled component - internal state\nfunction UncontrolledInput() {\n  const [value, setValue] = useState('');\n  return <input value={value} onChange={(e) => setValue(e.target.value)} />;\n}\n\n// Using ref for uncontrolled\nfunction UncontrolledRefInput() {\n  const inputRef = useRef();\n\n  const handleSubmit = () => {\n    alert(inputRef.current.value);\n  };\n\n  return (\n    <div>\n      <input ref={inputRef} defaultValue=\"Initial value\" />\n      <button onClick={handleSubmit}>Submit</button>\n    </div>\n  );\n}\n\n// Comparison\nfunction App() {\n  const [controlledValue, setControlledValue] = useState('');\n\n  return (\n    <div>\n      <h3>Controlled (parent state)</h3>\n      <ControlledInput value={controlledValue} onChange={(e) => setControlledValue(e.target.value)} />\n      <p>Value: {controlledValue}</p>\n\n      <h3>Uncontrolled (internal state)</h3>\n      <UncontrolledInput />\n\n      <h3>Uncontrolled with ref</h3>\n      <UncontrolledRefInput />\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Component Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Single responsibility** – Each component should do one thing well",
+        "**Keep components small** – Aim for < 200 lines per component",
+        "**Use meaningful names** – Component names should describe what they do",
+        "**Props should be minimal** – Only pass what the component needs",
+        "**Use composition over inheritance** – React has a powerful composition model",
+        "**Extract reusable logic** – Use custom hooks instead of HOCs",
+        "**Memoize when necessary** – Use React.memo for expensive components",
+        "**Keep components pure** – Same props should produce same output",
+        "**Colocate related files** – Keep styles, tests with components",
+        "**Document components** – Use PropTypes, TypeScript, or comments"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Component Patterns"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Pattern", "Use Case", "Example"],
+        "rows": [
+          ["Container/Presentational", "Separate logic from UI", "useFetch hook + Display component"],
+          ["Compound Components", "Related components that work together", "Tabs, Accordion, Menu"],
+          ["Render Props", "Share code between components", "Mouse tracker, Data fetcher"],
+          ["Higher-Order Components", "Cross-cutting concerns", "Authentication, Logging"],
+          ["Controlled Components", "Form inputs with parent state", "Input, Select, Checkbox"],
+          ["Custom Hooks", "Reusable stateful logic", "useFetch, useLocalStorage"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "React components are powerful building blocks for UI development. Start with functional components and hooks for new projects. Use composition to build complex UIs from simple pieces. Choose patterns like HOCs, render props, or custom hooks based on your specific needs."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Functional vs class components?",
+      "answer": "Functional components with hooks are recommended for new code. Class components are legacy but still work."
+    },
+    {
+      "question": "What is React.memo?",
+      "answer": "A higher-order component that memoizes functional components to prevent unnecessary re-renders."
+    },
+    {
+      "question": "What is a higher-order component?",
+      "answer": "A function that takes a component and returns a new component with enhanced functionality."
+    },
+    {
+      "question": "When to use custom hooks vs HOCs?",
+      "answer": "Custom hooks are simpler for sharing logic; HOCs are better for augmenting components with additional UI."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import { useState } from 'react';\n\n// Simple functional component\nfunction Button({ onClick, children, variant = 'primary' }) {\n  const styles = {\n    primary: { backgroundColor: '#007bff', color: 'white' },\n    secondary: { backgroundColor: '#6c757d', color: 'white' },\n    danger: { backgroundColor: '#dc3545', color: 'white' }\n  };\n\n  return (\n    <button\n      onClick={onClick}\n      style={{ ...styles[variant], padding: '10px 20px', margin: '5px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}\n    >\n      {children}\n    </button>\n  );\n}\n\n// Component composition example\nfunction Card({ title, children }) {\n  return (\n    <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '1rem', margin: '1rem' }}>\n      <h3>{title}</h3>\n      <div>{children}</div>\n    </div>\n  );\n}\n\n// Compound components pattern\nfunction Toggle({ children }) {\n  const [isOn, setIsOn] = useState(false);\n\n  return (\n    <div>\n      {children({ isOn, toggle: () => setIsOn(!isOn) })}\n    </div>\n  );\n}\n\n// Main app using composition\nfunction App() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div>\n      <h1>React Components Demo</h1>\n      \n      <Card title=\"Button Examples\">\n        <Button onClick={() => alert('Primary clicked!')}>Primary Button</Button>\n        <Button onClick={() => alert('Secondary clicked!')} variant=\"secondary\">Secondary Button</Button>\n        <Button onClick={() => alert('Danger clicked!')} variant=\"danger\">Danger Button</Button>\n      </Card>\n\n      <Card title=\"Counter\">\n        <p>Count: {count}</p>\n        <Button onClick={() => setCount(count + 1)}>Increment</Button>\n        <Button onClick={() => setCount(count - 1)} variant=\"secondary\">Decrement</Button>\n        <Button onClick={() => setCount(0)} variant=\"danger\">Reset</Button>\n      </Card>\n\n      <Card title=\"Toggle Example (Render Props)\">\n        <Toggle>\n          {({ isOn, toggle }) => (\n            <div>\n              <p>The switch is {isOn ? 'ON' : 'OFF'}</p>\n              <Button onClick={toggle} variant={isOn ? 'danger' : 'primary'}>\n                {isOn ? 'Turn Off' : 'Turn On'}\n              </Button>\n            </div>\n          )}\n        </Toggle>\n      </Card>\n    </div>\n  );\n}\n\nexport default App;"
+  },
+
+  "quiz": [
+    {
+      "question": "Which component type is recommended for new React code?",
+      "options": ["Class components", "Functional components with hooks", "Pure components", "Factory components"],
+      "answer": 1
+    },
+    {
+      "question": "What is React.memo used for?",
+      "options": ["Styling components", "Memoizing values", "Preventing re-renders", "Creating refs"],
+      "answer": 2
+    },
+    {
+      "question": "What is a higher-order component?",
+      "options": ["A component that renders other components", "A function that returns a component", "A component with state", "A component with lifecycle methods"],
+      "answer": 1
+    },
+    {
+      "question": "Which pattern is best for related components that share state?",
+      "options": ["Render props", "Higher-order components", "Compound components", "Controlled components"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-introduction",
+    "react-props",
+    "react-state",
+    "react-hooks",
+    "react-patterns"
+  ]
+}

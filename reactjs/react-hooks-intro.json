@@ -1,0 +1,363 @@
+{
+  "slug": "react-hooks-intro",
+  "course": "React",
+  "title": "React Hooks – Complete Introduction to Modern React (2026)",
+  "meta": {
+    "title": "React Hooks – Complete Guide to useState, useEffect, useContext & More (2026)",
+    "description": "Master React Hooks - useState, useEffect, useContext, useReducer, and custom hooks. Learn to build modern React applications with functional components.",
+    "keywords": [
+      "react hooks",
+      "usestate",
+      "useeffect",
+      "usecontext",
+      "usereducer",
+      "custom hooks",
+      "react functional components"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are React Hooks?"
+    },
+    {
+      "type": "text",
+      "value": "React Hooks are functions that let you use state and other React features in functional components. Introduced in React 16.8 (2019), hooks revolutionized how we write React components by eliminating the need for class components for stateful logic. Hooks allow you to reuse stateful logic across components without changing your component hierarchy."
+    },
+    {
+      "type": "heading",
+      "value": "Why Hooks?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Simplify component logic** – Write cleaner, more readable components",
+        "**Reuse stateful logic** – Share logic across components without HOCs or render props",
+        "**Better code organization** – Group related logic together",
+        "**Reduce bundle size** – Functional components are smaller than classes",
+        "**Easier to learn** – No need to understand 'this', binding, or classes",
+        "**Better performance** – Less overhead than class components",
+        "**Future-proof** – Hooks are the future of React development"
+      ]
+    },
+    {
+           "type": "heading",
+      "value": "Rules of Hooks"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// ✅ CORRECT: Hooks called at top level\nfunction Component() {\n  const [count, setCount] = useState(0);\n  const [user, setUser] = useState(null);\n  \n  useEffect(() => {\n    // Effect logic\n  }, []);\n  \n  return <div>{count}</div>;\n}\n\n// ❌ WRONG: Hook called conditionally\nfunction Component() {\n  if (condition) {\n    const [count, setCount] = useState(0); // DON'T DO THIS!\n  }\n}\n\n// ❌ WRONG: Hook called after early return\nfunction Component() {\n  if (error) return null;\n  const [count, setCount] = useState(0); // DON'T DO THIS!\n}\n\n// ❌ WRONG: Hook in nested function\nfunction Component() {\n  function handleClick() {\n    const [count, setCount] = useState(0); // DON'T DO THIS!\n  }\n}\n\n// ✅ CORRECT: Custom hook following rules\nfunction useCustomHook() {\n  const [data, setData] = useState(null);\n  useEffect(() => {\n    // Effect logic\n  }, []);\n  return data;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "useState – Managing Component State"
+    },
+    {
+      "type": "text",
+      "value": "useState is the most basic hook for adding state to functional components. It returns an array with two elements: the current state value and a function to update it."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState } from 'react';\n\n// Basic counter example\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>Increment</button>\n      <button onClick={() => setCount(count - 1)}>Decrement</button>\n    </div>\n  );\n}\n\n// Multiple state variables\nfunction UserProfile() {\n  const [name, setName] = useState('');\n  const [age, setAge] = useState(0);\n  const [email, setEmail] = useState('');\n  \n  return (\n    <div>\n      <input value={name} onChange={(e) => setName(e.target.value)} />\n      <input type=\"number\" value={age} onChange={(e) => setAge(e.target.value)} />\n      <input value={email} onChange={(e) => setEmail(e.target.value)} />\n    </div>\n  );\n}\n\n// Using object state\nfunction Form() {\n  const [form, setForm] = useState({ username: '', password: '', remember: false });\n  \n  const handleChange = (e) => {\n    const { name, value, type, checked } = e.target;\n    setForm(prev => ({\n      ...prev,\n      [name]: type === 'checkbox' ? checked : value\n    }));\n  };\n  \n  return (\n    <form>\n      <input name=\"username\" value={form.username} onChange={handleChange} />\n      <input name=\"password\" type=\"password\" value={form.password} onChange={handleChange} />\n      <input name=\"remember\" type=\"checkbox\" checked={form.remember} onChange={handleChange} />\n    </form>\n  );\n}\n\n// Functional updates (when new state depends on previous)\nfunction CounterWithDelay() {\n  const [count, setCount] = useState(0);\n  \n  const incrementLater = () => {\n    setTimeout(() => {\n      setCount(prevCount => prevCount + 1); // ✅ Uses previous value\n      // setCount(count + 1); // ❌ Would use stale value\n    }, 1000);\n  };\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={incrementLater}>Increment after 1 second</button>\n    </div>\n  );\n}\n\n// Lazy initialization (for expensive computations)\nfunction ExpensiveComponent() {\n  const [state, setState] = useState(() => {\n    const initialValue = expensiveComputation();\n    return initialValue;\n  });\n  \n  return <div>{state}</div>;\n}\n\n// useState with arrays\nfunction TodoList() {\n  const [todos, setTodos] = useState([]);\n  const [input, setInput] = useState('');\n  \n  const addTodo = () => {\n    setTodos(prev => [...prev, { id: Date.now(), text: input, completed: false }]);\n    setInput('');\n  };\n  \n  const toggleTodo = (id) => {\n    setTodos(prev => prev.map(todo => \n      todo.id === id ? { ...todo, completed: !todo.completed } : todo\n    ));\n  };\n  \n  const removeTodo = (id) => {\n    setTodos(prev => prev.filter(todo => todo.id !== id));\n  };\n  \n  return (\n    <div>\n      <input value={input} onChange={(e) => setInput(e.target.value)} />\n      <button onClick={addTodo}>Add Todo</button>\n      <ul>\n        {todos.map(todo => (\n          <li key={todo.id}>\n            <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>\n              {todo.text}\n            </span>\n            <button onClick={() => toggleTodo(todo.id)}>Toggle</button>\n            <button onClick={() => removeTodo(todo.id)}>Delete</button>\n          </li>\n        ))}\n      </ul>\n    </div>\n  );\n}\n\nexport { Counter, UserProfile, Form, CounterWithDelay, TodoList };"
+    },
+    {
+      "type": "heading",
+      "value": "useEffect – Handling Side Effects"
+    },
+    {
+      "type": "text",
+      "value": "useEffect lets you perform side effects in functional components. It replaces lifecycle methods (componentDidMount, componentDidUpdate, componentWillUnmount) from class components."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState, useEffect } from 'react';\n\n// Basic effect - runs after every render\nfunction BasicEffect() {\n  const [count, setCount] = useState(0);\n  \n  useEffect(() => {\n    document.title = `You clicked ${count} times`;\n  }); // No dependency array - runs after every render\n  \n  return <button onClick={() => setCount(count + 1)}>Click me</button>;\n}\n\n// Empty dependency array - runs only once (componentDidMount)\nfunction DataFetcher() {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  \n  useEffect(() => {\n    fetch('https://api.example.com/data')\n      .then(res => res.json())\n      .then(data => {\n        setData(data);\n        setLoading(false);\n      });\n  }, []); // Empty array = run once\n  \n  if (loading) return <div>Loading...</div>;\n  return <div>{JSON.stringify(data)}</div>;\n}\n\n// With dependencies - runs when dependencies change\nfunction UserProfile({ userId }) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n  \n  useEffect(() => {\n    setLoading(true);\n    fetch(`https://api.example.com/users/${userId}`)\n      .then(res => res.json())\n      .then(user => {\n        setUser(user);\n        setLoading(false);\n      });\n  }, [userId]); // Re-run when userId changes\n  \n  if (loading) return <div>Loading user...</div>;\n  return <div>{user?.name}</div>;\n}\n\n// Cleanup effect (componentWillUnmount)\nfunction Timer() {\n  const [seconds, setSeconds] = useState(0);\n  \n  useEffect(() => {\n    const interval = setInterval(() => {\n      setSeconds(prev => prev + 1);\n    }, 1000);\n    \n    // Cleanup function - runs before component unmounts\n    return () => {\n      clearInterval(interval);\n    };\n  }, []); // Empty array = setup once, cleanup on unmount\n  \n  return <div>Timer: {seconds} seconds</div>;\n}\n\n// Effect with cleanup and dependencies\nfunction ChatRoom({ roomId }) {\n  const [messages, setMessages] = useState([]);\n  \n  useEffect(() => {\n    const connection = createConnection(roomId);\n    connection.connect();\n    connection.on('message', (msg) => {\n      setMessages(prev => [...prev, msg]);\n    });\n    \n    // Cleanup on unmount or before re-run\n    return () => {\n      connection.disconnect();\n    };\n  }, [roomId]); // Re-run when roomId changes\n  \n  return <div>{messages.length} messages</div>;\n}\n\n// Multiple effects - each for different purposes\nfunction ComplexComponent() {\n  const [count, setCount] = useState(0);\n  const [windowWidth, setWindowWidth] = useState(window.innerWidth);\n  \n  // Effect 1: Update document title\n  useEffect(() => {\n    document.title = `Count: ${count}`;\n  }, [count]);\n  \n  // Effect 2: Track window resize\n  useEffect(() => {\n    const handleResize = () => setWindowWidth(window.innerWidth);\n    window.addEventListener('resize', handleResize);\n    \n    return () => window.removeEventListener('resize', handleResize);\n  }, []); // Empty array = run once\n  \n  // Effect 3: Log count changes\n  useEffect(() => {\n    console.log(`Count changed to ${count}`);\n  }, [count]);\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <p>Window width: {windowWidth}</p>\n      <button onClick={() => setCount(count + 1)}>Increment</button>\n    </div>\n  );\n}\n\n// Avoiding infinite loops\nfunction AvoidInfiniteLoop() {\n  const [data, setData] = useState([]);\n  const [filter, setFilter] = useState('');\n  \n  // ❌ This would cause infinite loop\n  // useEffect(() => {\n  //   setData(fetchData(filter)); // Updates state -> re-run effect\n  // }, [data, filter]); // data changes -> effect runs again\n  \n  // ✅ Correct way\n  useEffect(() => {\n    fetchData(filter).then(setData);\n  }, [filter]); // Only re-run when filter changes\n  \n  return <div>{/* render data */}</div>;\n}\n\n// Conditional effects\nfunction ConditionalEffect({ userId }) {\n  const [user, setUser] = useState(null);\n  \n  useEffect(() => {\n    if (!userId) return; // Skip if no userId\n    \n    let isMounted = true; // Flag to prevent state updates after unmount\n    \n    fetchUser(userId).then(user => {\n      if (isMounted) {\n        setUser(user);\n      }\n    });\n    \n    return () => {\n      isMounted = false; // Cleanup\n    };\n  }, [userId]);\n  \n  return <div>{user?.name}</div>;\n}\n\nexport { BasicEffect, DataFetcher, UserProfile, Timer, ChatRoom, ComplexComponent };"
+    },
+    {
+      "type": "heading",
+      "value": "useContext – Managing Global State"
+    },
+    {
+      "type": "text",
+      "value": "useContext provides a way to pass data through the component tree without prop drilling. It works with React's Context API."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { createContext, useContext, useState } from 'react';\n\n// 1. Create context\nconst ThemeContext = createContext();\nconst UserContext = createContext();\nconst LanguageContext = createContext();\n\n// 2. Provider component\nfunction ThemeProvider({ children }) {\n  const [theme, setTheme] = useState('light');\n  \n  const toggleTheme = () => {\n    setTheme(prev => prev === 'light' ? 'dark' : 'light');\n  };\n  \n  return (\n    <ThemeContext.Provider value={{ theme, toggleTheme }}>\n      {children}\n    </ThemeContext.Provider>\n  );\n}\n\n// 3. Custom hook for consuming context\nfunction useTheme() {\n  const context = useContext(ThemeContext);\n  if (!context) {\n    throw new Error('useTheme must be used within ThemeProvider');\n  }\n  return context;\n}\n\n// 4. Components consuming context\nfunction ThemedButton() {\n  const { theme, toggleTheme } = useTheme();\n  \n  const styles = {\n    light: { backgroundColor: '#fff', color: '#000', border: '1px solid #ccc' },\n    dark: { backgroundColor: '#333', color: '#fff', border: '1px solid #666' }\n  };\n  \n  return (\n    <button style={styles[theme]} onClick={toggleTheme}>\n      Current theme: {theme}\n    </button>\n  );\n}\n\nfunction ThemedPanel() {\n  const { theme } = useTheme();\n  \n  const styles = {\n    light: { backgroundColor: '#f5f5f5', color: '#000', padding: '20px' },\n    dark: { backgroundColor: '#222', color: '#fff', padding: '20px' }\n  };\n  \n  return <div style={styles[theme]}>This panel uses the {theme} theme</div>;\n}\n\n// Multiple contexts\nfunction UserProvider({ children }) {\n  const [user, setUser] = useState(null);\n  \n  return (\n    <UserContext.Provider value={{ user, setUser }}>\n      {children}\n    </UserContext.Provider>\n  );\n}\n\nfunction LanguageProvider({ children }) {\n  const [language, setLanguage] = useState('en');\n  \n  const translations = {\n    en: { greeting: 'Hello', button: 'Click me' },\n    es: { greeting: 'Hola', button: 'Haz clic' },\n    fr: { greeting: 'Bonjour', button: 'Cliquez' }\n  };\n  \n  return (\n    <LanguageContext.Provider value={{ language, setLanguage, t: translations[language] }}>\n      {children}\n    </LanguageContext.Provider>\n  );\n}\n\nfunction useUser() {\n  return useContext(UserContext);\n}\n\nfunction useLanguage() {\n  return useContext(LanguageContext);\n}\n\nfunction Profile() {\n  const { user } = useUser();\n  const { t } = useLanguage();\n  \n  if (!user) return <div>Please log in</div>;\n  \n  return (\n    <div>\n      <p>{t.greeting}, {user.name}!</p>\n    </div>\n  );\n}\n\nfunction LanguageSelector() {\n  const { language, setLanguage } = useLanguage();\n  \n  return (\n    <select value={language} onChange={(e) => setLanguage(e.target.value)}>\n      <option value=\"en\">English</option>\n      <option value=\"es\">Español</option>\n      <option value=\"fr\">Français</option>\n    </select>\n  );\n}\n\n// App with multiple providers\nfunction App() {\n  return (\n    <ThemeProvider>\n      <UserProvider>\n        <LanguageProvider>\n          <div>\n            <LanguageSelector />\n            <ThemedButton />\n            <ThemedPanel />\n            <Profile />\n          </div>\n        </LanguageProvider>\n      </UserProvider>\n    </ThemeProvider>\n  );\n}\n\n// Context with reducer pattern\nconst TodoContext = createContext();\n\nfunction todoReducer(state, action) {\n  switch (action.type) {\n    case 'ADD_TODO':\n      return [...state, { id: Date.now(), text: action.payload, completed: false }];\n    case 'TOGGLE_TODO':\n      return state.map(todo =>\n        todo.id === action.payload ? { ...todo, completed: !todo.completed } : todo\n      );\n    case 'DELETE_TODO':\n      return state.filter(todo => todo.id !== action.payload);\n    default:\n      return state;\n  }\n}\n\nfunction TodoProvider({ children }) {\n  const [todos, dispatch] = useReducer(todoReducer, []);\n  \n  return (\n    <TodoContext.Provider value={{ todos, dispatch }}>\n      {children}\n    </TodoContext.Provider>\n  );\n}\n\nfunction useTodos() {\n  return useContext(TodoContext);\n}\n\nfunction TodoList() {\n  const { todos, dispatch } = useTodos();\n  \n  return (\n    <ul>\n      {todos.map(todo => (\n        <li key={todo.id}>\n          <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>\n            {todo.text}\n          </span>\n          <button onClick={() => dispatch({ type: 'TOGGLE_TODO', payload: todo.id })}>\n            Toggle\n          </button>\n          <button onClick={() => dispatch({ type: 'DELETE_TODO', payload: todo.id })}>\n            Delete\n          </button>\n        </li>\n      ))}\n    </ul>\n  );\n}\n\nexport { \n  ThemeProvider, useTheme, ThemedButton, ThemedPanel,\n  UserProvider, LanguageProvider, useUser, useLanguage,\n  Profile, LanguageSelector, TodoProvider, useTodos, TodoList,\n  App\n};"
+    },
+    {
+      "type": "heading",
+      "value": "useReducer – Complex State Logic"
+    },
+    {
+      "type": "text",
+      "value": "useReducer is an alternative to useState for complex state logic that involves multiple sub-values or when the next state depends on the previous state."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useReducer, useCallback } from 'react';\n\n// Basic counter reducer\nfunction counterReducer(state, action) {\n  switch (action.type) {\n    case 'INCREMENT':\n      return { count: state.count + 1 };\n    case 'DECREMENT':\n      return { count: state.count - 1 };\n    case 'RESET':\n      return { count: 0 };\n    case 'SET':\n      return { count: action.payload };\n    default:\n      return state;\n  }\n}\n\nfunction Counter() {\n  const [state, dispatch] = useReducer(counterReducer, { count: 0 });\n  \n  return (\n    <div>\n      <p>Count: {state.count}</p>\n      <button onClick={() => dispatch({ type: 'INCREMENT' })}>+</button>\n      <button onClick={() => dispatch({ type: 'DECREMENT' })}>-</button>\n      <button onClick={() => dispatch({ type: 'RESET' })}>Reset</button>\n      <button onClick={() => dispatch({ type: 'SET', payload: 10 })}>Set to 10</button>\n    </div>\n  );\n}\n\n// Complex todo reducer\nconst todoReducer = (state, action) => {\n  switch (action.type) {\n    case 'ADD_TODO':\n      return {\n        ...state,\n        todos: [...state.todos, {\n          id: Date.now(),\n          text: action.payload,\n          completed: false,\n          createdAt: new Date()\n        }]\n      };\n    \n    case 'TOGGLE_TODO':\n      return {\n        ...state,\n        todos: state.todos.map(todo =>\n          todo.id === action.payload\n            ? { ...todo, completed: !todo.completed }\n            : todo\n        )\n      };\n    \n    case 'DELETE_TODO':\n      return {\n        ...state,\n        todos: state.todos.filter(todo => todo.id !== action.payload)\n      };\n    \n    case 'EDIT_TODO':\n      return {\n        ...state,\n        todos: state.todos.map(todo =>\n          todo.id === action.payload.id\n            ? { ...todo, text: action.payload.text }\n            : todo\n        )\n      };\n    \n    case 'CLEAR_COMPLETED':\n      return {\n        ...state,\n        todos: state.todos.filter(todo => !todo.completed)\n      };\n    \n    case 'SET_FILTER':\n      return {\n        ...state,\n        filter: action.payload\n      };\n    \n    default:\n      return state;\n  }\n};\n\nfunction TodoApp() {\n  const [state, dispatch] = useReducer(todoReducer, {\n    todos: [],\n    filter: 'all'\n  });\n  \n  const [input, setInput] = useState('');\n  \n  const filteredTodos = state.todos.filter(todo => {\n    if (state.filter === 'active') return !todo.completed;\n    if (state.filter === 'completed') return todo.completed;\n    return true;\n  });\n  \n  const addTodo = () => {\n    if (input.trim()) {\n      dispatch({ type: 'ADD_TODO', payload: input });\n      setInput('');\n    }\n  };\n  \n  return (\n    <div>\n      <input value={input} onChange={(e) => setInput(e.target.value)} />\n      <button onClick={addTodo}>Add Todo</button>\n      \n      <div>\n        <button onClick={() => dispatch({ type: 'SET_FILTER', payload: 'all' })}>All</button>\n        <button onClick={() => dispatch({ type: 'SET_FILTER', payload: 'active' })}>Active</button>\n        <button onClick={() => dispatch({ type: 'SET_FILTER', payload: 'completed' })}>Completed</button>\n        <button onClick={() => dispatch({ type: 'CLEAR_COMPLETED' })}>Clear Completed</button>\n      </div>\n      \n      <ul>\n        {filteredTodos.map(todo => (\n          <li key={todo.id}>\n            <input\n              type=\"checkbox\"\n              checked={todo.completed}\n              onChange={() => dispatch({ type: 'TOGGLE_TODO', payload: todo.id })}\n            />\n            <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>\n              {todo.text}\n            </span>\n            <button onClick={() => dispatch({ type: 'DELETE_TODO', payload: todo.id })}>\n              Delete\n            </button>\n          </li>\n        ))}\n      </ul>\n      \n      <p>{state.todos.filter(t => !t.completed).length} items left</p>\n    </div>\n  );\n}\n\n// Form reducer example\nconst formReducer = (state, action) => {\n  switch (action.type) {\n    case 'CHANGE':\n      return {\n        ...state,\n        [action.field]: action.value,\n        errors: {\n          ...state.errors,\n          [action.field]: validateField(action.field, action.value)\n        }\n      };\n    case 'TOUCH':\n      return {\n        ...state,\n        touched: { ...state.touched, [action.field]: true }\n      };\n    case 'SUBMIT':\n      return {\n        ...state,\n        isSubmitting: true\n      };\n    case 'SUCCESS':\n      return {\n        ...state,\n        isSubmitting: false,\n        submitted: true\n      };\n    case 'ERROR':\n      return {\n        ...state,\n        isSubmitting: false,\n        submitError: action.error\n      };\n    case 'RESET':\n      return action.initialState;\n    default:\n      return state;\n  }\n};\n\nfunction validateField(field, value) {\n  switch (field) {\n    case 'email':\n      return !value ? 'Email is required' :\n             !/\\S+@\\S+\\.\\S+/.test(value) ? 'Invalid email' : '';\n    case 'password':\n      return !value ? 'Password is required' :\n             value.length < 6 ? 'Password must be at least 6 characters' : '';\n    default:\n      return '';\n  }\n}\n\nfunction LoginForm() {\n  const initialState = {\n    email: '',\n    password: '',\n    errors: { email: '', password: '' },\n    touched: {},\n    isSubmitting: false,\n    submitted: false,\n    submitError: ''\n  };\n  \n  const [state, dispatch] = useReducer(formReducer, initialState);\n  \n  const handleChange = (field, value) => {\n    dispatch({ type: 'CHANGE', field, value });\n  };\n  \n  const handleBlur = (field) => {\n    dispatch({ type: 'TOUCH', field });\n  };\n  \n  const handleSubmit = async (e) => {\n    e.preventDefault();\n    dispatch({ type: 'SUBMIT' });\n    \n    try {\n      await login(state.email, state.password);\n      dispatch({ type: 'SUCCESS' });\n    } catch (error) {\n      dispatch({ type: 'ERROR', error: error.message });\n    }\n  };\n  \n  if (state.submitted) {\n    return <div>Login successful!</div>;\n  }\n  \n  return (\n    <form onSubmit={handleSubmit}>\n      <div>\n        <input\n          type=\"email\"\n          value={state.email}\n          onChange={(e) => handleChange('email', e.target.value)}\n          onBlur={() => handleBlur('email')}\n          placeholder=\"Email\"\n        />\n        {state.touched.email && state.errors.email && \n          <span style={{ color: 'red' }}>{state.errors.email}</span>}\n      </div>\n      \n      <div>\n        <input\n          type=\"password\"\n          value={state.password}\n          onChange={(e) => handleChange('password', e.target.value)}\n          onBlur={() => handleBlur('password')}\n          placeholder=\"Password\"\n        />\n        {state.touched.password && state.errors.password && \n          <span style={{ color: 'red' }}>{state.errors.password}</span>}\n      </div>\n      \n      {state.submitError && <div style={{ color: 'red' }}>{state.submitError}</div>}\n      \n      <button type=\"submit\" disabled={state.isSubmitting}>\n        {state.isSubmitting ? 'Logging in...' : 'Login'}\n      </button>\n    </form>\n  );\n}\n\n// useState vs useReducer comparison\nfunction CounterWithUseState() {\n  const [count, setCount] = useState(0);\n  return <button onClick={() => setCount(count + 1)}>{count}</button>;\n}\n\nfunction CounterWithUseReducer() {\n  const [state, dispatch] = useReducer(\n    (state, action) => ({ count: state.count + action }),\n    { count: 0 }\n  );\n  return <button onClick={() => dispatch(1)}>{state.count}</button>;\n}\n\nexport { Counter, TodoApp, LoginForm, CounterWithUseState, CounterWithUseReducer };"
+    },
+    {
+      "type": "heading",
+      "value": "useCallback & useMemo – Performance Optimization"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState, useCallback, useMemo, memo } from 'react';\n\n// useCallback - memoizes functions\nfunction ParentComponent() {\n  const [count, setCount] = useState(0);\n  const [text, setText] = useState('');\n  \n  // Without useCallback - function recreated on every render\n  const handleClickBad = () => {\n    console.log('Button clicked');\n  };\n  \n  // With useCallback - function is memoized\n  const handleClickGood = useCallback(() => {\n    console.log('Button clicked');\n  }, []); // Empty deps = function never changes\n  \n  // With dependencies\n  const handleIncrement = useCallback(() => {\n    setCount(c => c + 1);\n  }, []); // setCount is stable, so empty deps is fine\n  \n  const handleLogCount = useCallback(() => {\n    console.log(`Current count: ${count}`);\n  }, [count]); // Recreate when count changes\n  \n  return (\n    <div>\n      <button onClick={handleIncrement}>Count: {count}</button>\n      <ChildComponent onClick={handleClickGood} /> {/* Won't re-render unnecessarily */}\n      <input value={text} onChange={(e) => setText(e.target.value)} />\n    </div>\n  );\n}\n\nconst ChildComponent = memo(({ onClick }) => {\n  console.log('ChildComponent rendered');\n  return <button onClick={onClick}>Click me</button>;\n});\n\n// useMemo - memoizes computed values\nfunction ExpensiveComponent({ items, filterText }) {\n  const [count, setCount] = useState(0);\n  \n  // Without useMemo - recalculates on every render\n  const filteredItemsBad = items.filter(item => \n    item.name.toLowerCase().includes(filterText.toLowerCase())\n  );\n  \n  // With useMemo - only recalculates when dependencies change\n  const filteredItemsGood = useMemo(() => {\n    console.log('Filtering items...');\n    return items.filter(item => \n      item.name.toLowerCase().includes(filterText.toLowerCase())\n    );\n  }, [items, filterText]);\n  \n  // Another expensive calculation\n  const statistics = useMemo(() => {\n    console.log('Calculating statistics...');\n    const total = items.reduce((sum, item) => sum + item.value, 0);\n    const average = total / items.length;\n    const max = Math.max(...items.map(item => item.value));\n    const min = Math.min(...items.map(item => item.value));\n    return { total, average, max, min };\n  }, [items]);\n  \n  return (\n    <div>\n      <button onClick={() => setCount(count + 1)}>Re-render count: {count}</button>\n      <div>\n        <h3>Statistics</h3>\n        <p>Total: {statistics.total}</p>\n        <p>Average: {statistics.average}</p>\n        <p>Max: {statistics.max}</p>\n        <p>Min: {statistics.min}</p>\n      </div>\n      <ul>\n        {filteredItemsGood.map(item => (\n          <li key={item.id}>{item.name}: {item.value}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}\n\n// Real-world example: Search with debouncing\nfunction SearchComponent() {\n  const [query, setQuery] = useState('');\n  const [results, setResults] = useState([]);\n  const [loading, setLoading] = useState(false);\n  \n  // Memoize search function\n  const searchAPI = useCallback(async (searchQuery) => {\n    if (!searchQuery) return [];\n    setLoading(true);\n    const response = await fetch(`/api/search?q=${searchQuery}`);\n    const data = await response.json();\n    setLoading(false);\n    return data;\n  }, []);\n  \n  // Debounced search\n  const debouncedSearch = useMemo(() => {\n    let timeoutId;\n    return (value) => {\n      clearTimeout(timeoutId);\n      timeoutId = setTimeout(async () => {\n        const results = await searchAPI(value);\n        setResults(results);\n      }, 300);\n    };\n  }, [searchAPI]);\n  \n  const handleChange = (e) => {\n    const value = e.target.value;\n    setQuery(value);\n    debouncedSearch(value);\n  };\n  \n  return (\n    <div>\n      <input value={query} onChange={handleChange} placeholder=\"Search...\" />\n      {loading && <div>Loading...</div>}\n      <ul>\n        {results.map(result => (\n          <li key={result.id}>{result.title}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}\n\n// When to use useCallback vs useMemo\nfunction ComparisonExample() {\n  const [data, setData] = useState([]);\n  \n  // useCallback: memoizes the FUNCTION itself\n  const processData = useCallback((item) => {\n    return item * 2;\n  }, []);\n  \n  // useMemo: memoizes the RESULT of the function\n  const processedData = useMemo(() => {\n    return data.map(processData);\n  }, [data, processData]);\n  \n  // Don't over-optimize!\n  // ❌ Unnecessary useMemo\n  const simpleValue = useMemo(() => 42, []); // Just use const simpleValue = 42;\n  \n  // ❌ Unnecessary useCallback\n  const simpleFunction = useCallback(() => {\n    console.log('hello');\n  }, []); // Just define the function normally\n  \n  // ✅ Use when:\n  // 1. Function is passed to memoized child components\n  // 2. Function is a dependency of useEffect\n  // 3. Function is expensive to create (rare)\n  \n  return <div>{/* ... */}</div>;\n}\n\nexport { ParentComponent, ExpensiveComponent, SearchComponent };"
+    },
+    {
+      "type": "heading",
+      "value": "useRef – Accessing DOM and Persistent Values"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useRef, useState, useEffect } from 'react';\n\n// Accessing DOM elements\nfunction TextInputWithFocus() {\n  const inputRef = useRef(null);\n  \n  const focusInput = () => {\n    inputRef.current.focus();\n  };\n  \n  return (\n    <div>\n      <input ref={inputRef} type=\"text\" />\n      <button onClick={focusInput}>Focus Input</button>\n    </div>\n  );\n}\n\n// Measuring DOM elements\nfunction MeasureExample() {\n  const [height, setHeight] = useState(0);\n  const divRef = useRef(null);\n  \n  useEffect(() => {\n    if (divRef.current) {\n      setHeight(divRef.current.clientHeight);\n    }\n  }, []); // Run once after mount\n  \n  return (\n    <div>\n      <div ref={divRef} style={{ padding: '20px', background: '#f0f0f0' }}>\n        <h3>Measurable content</h3>\n        <p>This div's height is being measured</p>\n      </div>\n      <p>Div height: {height}px</p>\n    </div>\n  );\n}\n\n// Storing mutable values (doesn't trigger re-render)\nfunction TimerWithRef() {\n  const [count, setCount] = useState(0);\n  const intervalRef = useRef(null);\n  \n  const startTimer = () => {\n    if (intervalRef.current) return;\n    intervalRef.current = setInterval(() => {\n      setCount(c => c + 1);\n    }, 1000);\n  };\n  \n  const stopTimer = () => {\n    if (intervalRef.current) {\n      clearInterval(intervalRef.current);\n      intervalRef.current = null;\n    }\n  };\n  \n  useEffect(() => {\n    return () => stopTimer(); // Cleanup on unmount\n  }, []);\n  \n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={startTimer}>Start</button>\n      <button onClick={stopTimer}>Stop</button>\n    </div>\n  );\n}\n\n// Keeping previous values\nfunction usePrevious(value) {\n  const ref = useRef();\n  \n  useEffect(() => {\n    ref.current = value;\n  }, [value]);\n  \n  return ref.current;\n}\n\nfunction CounterWithPrevious() {\n  const [count, setCount] = useState(0);\n  const prevCount = usePrevious(count);\n  \n  return (\n    <div>\n      <p>Now: {count}, before: {prevCount}</p>\n      <button onClick={() => setCount(count + 1)}>Increment</button>\n    </div>\n  );\n}\n\n// Storing instance variables (like this in class components)\nfunction FormWithRefs() {\n  const [formData, setFormData] = useState({ name: '', email: '' });\n  const submitCountRef = useRef(0);\n  const startTimeRef = useRef(Date.now());\n  \n  const handleSubmit = (e) => {\n    e.preventDefault();\n    submitCountRef.current++;\n    console.log(`Submit count: ${submitCountRef.current}`);\n    console.log(`Time on page: ${Date.now() - startTimeRef.current}ms`);\n  };\n  \n  return (\n    <form onSubmit={handleSubmit}>\n      <input\n        value={formData.name}\n        onChange={(e) => setFormData({ ...formData, name: e.target.value })}\n      />\n      <input\n        value={formData.email}\n        onChange={(e) => setFormData({ ...formData, email: e.target.value })}\n      />\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}\n\n// Combining refs (forwarding refs)\nconst FancyInput = React.forwardRef((props, ref) => {\n  const inputRef = useRef();\n  \n  // Expose multiple methods via ref\n  useImperativeHandle(ref, () => ({\n    focus: () => inputRef.current.focus(),\n    blur: () => inputRef.current.blur(),\n    setValue: (value) => { inputRef.current.value = value; },\n    getValue: () => inputRef.current.value\n  }));\n  \n  return <input ref={inputRef} {...props} />;\n});\n\nfunction ParentWithFancyInput() {\n  const fancyInputRef = useRef();\n  \n  return (\n    <div>\n      <FancyInput ref={fancyInputRef} placeholder=\"Type here...\" />\n      <button onClick={() => fancyInputRef.current.focus()}>Focus</button>\n      <button onClick={() => fancyInputRef.current.setValue('Hello!')}>Set Value</button>\n      <button onClick={() => alert(fancyInputRef.current.getValue())}>Get Value</button>\n    </div>\n  );\n}\n\n// useRef vs useState comparison\nfunction Comparison() {\n  const [stateCount, setStateCount] = useState(0);\n  const refCount = useRef(0);\n  \n  const incrementState = () => {\n    setStateCount(stateCount + 1); // Triggers re-render\n  };\n  \n  const incrementRef = () => {\n    refCount.current++; // Does NOT trigger re-render\n    console.log(`Ref value: ${refCount.current}`);\n  };\n  \n  return (\n    <div>\n      <p>State: {stateCount} (re-renders on change)</p>\n      <p>Ref: {refCount.current} (no re-render)</p>\n      <button onClick={incrementState}>Update State</button>\n      <button onClick={incrementRef}>Update Ref</button>\n    </div>\n  );\n}\n\nexport { \n  TextInputWithFocus, MeasureExample, TimerWithRef, \n  CounterWithPrevious, FormWithRefs, ParentWithFancyInput,\n  Comparison\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Custom Hooks – Reusing Logic"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState, useEffect, useCallback, useRef } from 'react';\n\n// Hook for fetching data\nfunction useFetch(url, options = {}) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState(null);\n  \n  useEffect(() => {\n    const abortController = new AbortController();\n    \n    const fetchData = async () => {\n      try {\n        setLoading(true);\n        const response = await fetch(url, {\n          ...options,\n          signal: abortController.signal\n        });\n        \n        if (!response.ok) {\n          throw new Error(`HTTP error! status: ${response.status}`);\n        }\n        \n        const result = await response.json();\n        setData(result);\n        setError(null);\n      } catch (err) {\n        if (err.name !== 'AbortError') {\n          setError(err.message);\n        }\n      } finally {\n        setLoading(false);\n      }\n    };\n    \n    fetchData();\n    \n    return () => abortController.abort();\n  }, [url, JSON.stringify(options)]);\n  \n  return { data, loading, error };\n}\n\n// Usage\nfunction UserProfile({ userId }) {\n  const { data: user, loading, error } = useFetch(`/api/users/${userId}`);\n  \n  if (loading) return <div>Loading...</div>;\n  if (error) return <div>Error: {error}</div>;\n  return <div>{user?.name}</div>;\n}\n\n// Hook for local storage\nfunction useLocalStorage(key, initialValue) {\n  const [storedValue, setStoredValue] = useState(() => {\n    try {\n      const item = window.localStorage.getItem(key);\n      return item ? JSON.parse(item) : initialValue;\n    } catch (error) {\n      console.log(error);\n      return initialValue;\n    }\n  });\n  \n  const setValue = (value) => {\n    try {\n      const valueToStore = value instanceof Function ? value(storedValue) : value;\n      setStoredValue(valueToStore);\n      window.localStorage.setItem(key, JSON.stringify(valueToStore));\n    } catch (error) {\n      console.log(error);\n    }\n  };\n  \n  return [storedValue, setValue];\n}\n\n// Usage\nfunction ThemeToggle() {\n  const [theme, setTheme] = useLocalStorage('theme', 'light');\n  \n  return (\n    <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>\n      Current theme: {theme}\n    </button>\n  );\n}\n\n// Hook for window size\nfunction useWindowSize() {\n  const [windowSize, setWindowSize] = useState({\n    width: window.innerWidth,\n    height: window.innerHeight\n  });\n  \n  useEffect(() => {\n    const handleResize = () => {\n      setWindowSize({\n        width: window.innerWidth,\n        height: window.innerHeight\n      });\n    };\n    \n    window.addEventListener('resize', handleResize);\n    handleResize(); // Call immediately\n    \n    return () => window.removeEventListener('resize', handleResize);\n  }, []);\n  \n  return windowSize;\n}\n\n// Hook for media query\nfunction useMediaQuery(query) {\n  const [matches, setMatches] = useState(false);\n  \n  useEffect(() => {\n    const media = window.matchMedia(query);\n    if (media.matches !== matches) {\n      setMatches(media.matches);\n    }\n    \n    const listener = (e) => setMatches(e.matches);\n    media.addEventListener('change', listener);\n    \n    return () => media.removeEventListener('change', listener);\n  }, [query, matches]);\n  \n  return matches;\n}\n\n// Hook for click outside\nfunction useClickOutside(ref, handler) {\n  useEffect(() => {\n    const listener = (event) => {\n      if (!ref.current || ref.current.contains(event.target)) {\n        return;\n      }\n      handler(event);\n    };\n    \n    document.addEventListener('mousedown', listener);\n    document.addEventListener('touchstart', listener);\n    \n    return () => {\n      document.removeEventListener('mousedown', listener);\n      document.removeEventListener('touchstart', listener);\n    };\n  }, [ref, handler]);\n}\n\n// Hook for debouncing\nfunction useDebounce(value, delay) {\n  const [debouncedValue, setDebouncedValue] = useState(value);\n  \n  useEffect(() => {\n    const handler = setTimeout(() => {\n      setDebouncedValue(value);\n    }, delay);\n    \n    return () => clearTimeout(handler);\n  }, [value, delay]);\n  \n  return debouncedValue;\n}\n\n// Hook for previous value\nfunction usePrevious(value) {\n  const ref = useRef();\n  \n  useEffect(() => {\n    ref.current = value;\n  }, [value]);\n  \n  return ref.current;\n}\n\n// Hook for toggle\nfunction useToggle(initialValue = false) {\n  const [value, setValue] = useState(initialValue);\n  const toggle = useCallback(() => setValue(v => !v), []);\n  const setTrue = useCallback(() => setValue(true), []);\n  const setFalse = useCallback(() => setValue(false), []);\n  \n  return { value, toggle, setTrue, setFalse };\n}\n\n// Hook for counter\nfunction useCounter(initialValue = 0, step = 1) {\n  const [count, setCount] = useState(initialValue);\n  \n  const increment = useCallback(() => setCount(c => c + step), [step]);\n  const decrement = useCallback(() => setCount(c => c - step), [step]);\n  const reset = useCallback(() => setCount(initialValue), [initialValue]);\n  const set = useCallback((value) => setCount(value), []);\n  \n  return { count, increment, decrement, reset, set };\n}\n\n// Hook for form handling\nfunction useForm(initialValues, validate) {\n  const [values, setValues] = useState(initialValues);\n  const [errors, setErrors] = useState({});\n  const [touched, setTouched] = useState({});\n  \n  const handleChange = (e) => {\n    const { name, value, type, checked } = e.target;\n    const newValue = type === 'checkbox' ? checked : value;\n    \n    setValues(prev => ({ ...prev, [name]: newValue }));\n    \n    if (validate) {\n      const error = validate(name, newValue);\n      setErrors(prev => ({ ...prev, [name]: error }));\n    }\n  };\n  \n  const handleBlur = (e) => {\n    const { name } = e.target;\n    setTouched(prev => ({ ...prev, [name]: true }));\n  };\n  \n  const handleSubmit = (callback) => (e) => {\n    e.preventDefault();\n    \n    // Validate all fields\n    if (validate) {\n      const newErrors = {};\n      Object.keys(values).forEach(key => {\n        const error = validate(key, values[key]);\n        if (error) newErrors[key] = error;\n      });\n      \n      setErrors(newErrors);\n      setTouched(Object.keys(values).reduce((acc, key) => ({ ...acc, [key]: true }), {}));\n      \n      if (Object.keys(newErrors).length === 0) {\n        callback(values);\n      }\n    } else {\n      callback(values);\n    }\n  };\n  \n  const reset = () => {\n    setValues(initialValues);\n    setErrors({});\n    setTouched({});\n  };\n  \n  return {\n    values,\n    errors,\n    touched,\n    handleChange,\n    handleBlur,\n    handleSubmit,\n    reset\n  };\n}\n\n// Complete example using multiple custom hooks\nfunction SearchWithHooks() {\n  const [searchTerm, setSearchTerm] = useState('');\n  const debouncedSearchTerm = useDebounce(searchTerm, 500);\n  const { data: results, loading } = useFetch(\n    debouncedSearchTerm ? `/api/search?q=${debouncedSearchTerm}` : null\n  );\n  const isMobile = useMediaQuery('(max-width: 768px)');\n  \n  return (\n    <div>\n      <input\n        type=\"text\"\n        placeholder=\"Search...\"\n        value={searchTerm}\n        onChange={(e) => setSearchTerm(e.target.value)}\n        style={{ width: isMobile ? '100%' : '300px' }}\n      />\n      {loading && <div>Searching...</div>}\n      {results && (\n        <ul>\n          {results.map(result => (\n            <li key={result.id}>{result.title}</li>\n          ))}\n        </ul>\n      )}\n    </div>\n  );\n}\n\nexport {\n  useFetch, useLocalStorage, useWindowSize, useMediaQuery,\n  useClickOutside, useDebounce, usePrevious, useToggle,\n  useCounter, useForm, SearchWithHooks\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Additional Built-in Hooks"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { \n  useImperativeHandle, \n  useLayoutEffect, \n  useDebugValue,\n  useId,\n  useTransition,\n  useDeferredValue,\n  useSyncExternalStore\n} from 'react';\n\n// useId - Generate unique IDs for accessibility\nfunction FormFields() {\n  const id = useId();\n  const emailId = `${id}-email`;\n  const passwordId = `${id}-password`;\n  \n  return (\n    <div>\n      <label htmlFor={emailId}>Email:</label>\n      <input id={emailId} type=\"email\" />\n      \n      <label htmlFor={passwordId}>Password:</label>\n      <input id={passwordId} type=\"password\" />\n    </div>\n  );\n}\n\n// useTransition - Mark updates as non-urgent\nfunction TabContainer() {\n  const [tab, setTab] = useState('home');\n  const [isPending, startTransition] = useTransition();\n  \n  const handleTabChange = (newTab) => {\n    startTransition(() => {\n      setTab(newTab);\n    });\n  };\n  \n  return (\n    <div>\n      <button onClick={() => handleTabChange('home')}>Home</button>\n      <button onClick={() => handleTabChange('profile')}>Profile</button>\n      {isPending && <div>Loading...</div>}\n      <SlowComponent tab={tab} />\n    </div>\n  );\n}\n\n// useDeferredValue - Defer updating a value\nfunction SearchResults({ query }) {\n  const deferredQuery = useDeferredValue(query);\n  const isStale = query !== deferredQuery;\n  \n  return (\n    <div style={{ opacity: isStale ? 0.5 : 1 }}>\n      <ExpensiveSearchResults query={deferredQuery} />\n    </div>\n  );\n}\n\n// useLayoutEffect - Runs synchronously after DOM mutations\nfunction MeasureElement() {\n  const [height, setHeight] = useState(0);\n  const ref = useRef();\n  \n  useLayoutEffect(() => {\n    // Runs before browser paints\n    setHeight(ref.current.clientHeight);\n  }, []);\n  \n  return (\n    <div ref={ref}>\n      <p>Height: {height}px</p>\n    </div>\n  );\n}\n\n// useDebugValue - Label custom hooks in React DevTools\nfunction useFriendStatus(friendID) {\n  const [isOnline, setIsOnline] = useState(null);\n  \n  useDebugValue(isOnline ? 'Online' : 'Offline');\n  useDebugValue(friendID, id => `Friend ${id}`);\n  \n  // ... hook logic\n  return isOnline;\n}\n\n// useSyncExternalStore - Subscribe to external stores\nfunction useOnlineStatus() {\n  const isOnline = useSyncExternalStore(\n    (callback) => {\n      window.addEventListener('online', callback);\n      window.addEventListener('offline', callback);\n      return () => {\n        window.removeEventListener('online', callback);\n        window.removeEventListener('offline', callback);\n      };\n    },\n    () => navigator.onLine,\n    () => true // Server snapshot\n  );\n  \n  return isOnline;\n}\n\nexport { FormFields, TabContainer, SearchResults, MeasureElement, useFriendStatus, useOnlineStatus };"
+    },
+    {
+      "type": "heading",
+      "value": "Hooks Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Follow the Rules of Hooks** – Only call hooks at the top level, only call hooks from React functions",
+        "**Use ESLint Plugin** – eslint-plugin-react-hooks helps enforce rules and best practices",
+        "**Keep hooks focused** – Each hook should have a single responsibility",
+        "**Extract custom hooks** – Reuse logic by creating custom hooks instead of duplicating code",
+        "**Name custom hooks with 'use' prefix** – This helps identify hooks and enables linting rules",
+        "**Minimize useEffect dependencies** – Only include variables that the effect actually uses",
+        "**Clean up effects** – Always return cleanup functions from useEffect to prevent memory leaks",
+        "**Avoid infinite loops** – Be careful with state updates in useEffect that cause re-runs",
+        "**Use functional updates** – When new state depends on previous state, use the functional form",
+        "**Memoize expensive operations** – Use useMemo and useCallback appropriately",
+        "**Don't over-optimize** – Not everything needs memoization; measure performance first",
+        "**Keep components pure** – Avoid side effects in render phase",
+        "**Use useReducer for complex state** – When state logic is complex, useReducer is more maintainable",
+        "**Lift state when needed** – Share state by lifting it to common ancestors",
+        "**Use Context for global state** – For truly global state (theme, user), useContext is great",
+        "**Test hooks** – Use React Hooks Testing Library to test custom hooks",
+        "**Document custom hooks** – Add JSDoc comments to explain parameters and return values",
+        "**Version hooks** – When sharing hooks, use semantic versioning",
+        "**Avoid large dependency arrays** – Break effects into smaller, focused effects",
+        "**Use useRef for mutable values** – When you need to persist values without causing re-renders"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Hook Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "❌ **Calling hooks conditionally** – Hooks must be called in the same order every render",
+        "❌ **Missing dependencies in useEffect** – Always include all variables used in the effect",
+        "❌ **Creating infinite loops** – Updating state that's a dependency of the same effect",
+        "❌ **Not cleaning up effects** – Forgetting to clear intervals, subscriptions, or event listeners",
+        "❌ **Overusing useState** – Using multiple useState calls when an object would be cleaner",
+        "❌ **Directly mutating state** – Always use the state setter function",
+        "❌ **Stale closures** – Using state values that are outdated in callbacks or effects",
+        "❌ **Not using functional updates** – When new state depends on previous state",
+        "❌ **Premature optimization** – Using useMemo/useCallback everywhere unnecessarily",
+        "❌ **Using useRef for state that should trigger re-renders** – useRef changes don't cause re-renders",
+        "❌ **Setting state in useEffect without conditions** – Can cause unnecessary re-renders",
+        "❌ **Not handling loading/error states** – Always consider async operations",
+        "❌ **Prop drilling with hooks** – Using hooks to pass data through many levels instead of Context",
+        "❌ **Creating new objects in dependencies** – Object literals break dependency comparison",
+        "❌ **Calling hooks in event handlers** – Hooks can only be called during render",
+        "❌ **Ignoring abort controllers** – Forgetting to cancel fetch requests on unmount",
+        "❌ **Using useEffect for derived state** – Computed values don't need useEffect",
+        "❌ **Not extracting custom hooks** – Duplicating hook logic across components"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Hooks Comparison Table"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Hook", "Purpose", "Use Case", "Class Equivalent"],
+        "rows": [
+          ["useState", "Local state management", "Simple values, counters, toggles", "this.state & this.setState"],
+          ["useEffect", "Side effects", "Data fetching, subscriptions, DOM updates", "componentDidMount, componentDidUpdate, componentWillUnmount"],
+          ["useContext", "Global state", "Theme, user, language preferences", "Context.Consumer"],
+          ["useReducer", "Complex state logic", "Forms, todo lists, state machines", "this.state with complex updates"],
+          ["useCallback", "Memoize functions", "Preventing unnecessary re-renders", "Class methods with binding"],
+          ["useMemo", "Memoize values", "Expensive calculations", "Manual memoization"],
+          ["useRef", "Mutable references", "DOM access, instance variables", "createRef, instance properties"],
+          ["useImperativeHandle", "Custom ref methods", "Exposing specific methods", "Forwarding refs"],
+          ["useLayoutEffect", "Synchronous effects", "DOM measurements, mutations", "componentDidMount/Update (sync)"],
+          ["useDebugValue", "DevTools labeling", "Custom hook debugging", "N/A"],
+          ["useId", "Unique IDs", "Accessibility, form labels", "Manual ID generation"],
+          ["useTransition", "Non-urgent updates", "Deferred UI updates", "N/A"],
+          ["useDeferredValue", "Defer value updates", "Optimistic UI, search", "N/A"],
+          ["useSyncExternalStore", "External store subscription", "Third-party stores", "N/A"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Migration from Class to Hooks"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Class component\nclass ClassCounter extends React.Component {\n  state = { count: 0 };\n  \n  componentDidMount() {\n    console.log('Mounted');\n  }\n  \n  componentDidUpdate(prevProps, prevState) {\n    if (prevState.count !== this.state.count) {\n      console.log('Count changed');\n    }\n  }\n  \n  componentWillUnmount() {\n    console.log('Unmounted');\n  }\n  \n  increment = () => {\n    this.setState({ count: this.state.count + 1 });\n  };\n  \n  render() {\n    return <button onClick={this.increment}>{this.state.count}</button>;\n  }\n}\n\n// Same functionality with hooks\nfunction FunctionalCounter() {\n  const [count, setCount] = useState(0);\n  \n  useEffect(() => {\n    console.log('Mounted');\n    return () => console.log('Unmounted');\n  }, []);\n  \n  useEffect(() => {\n    console.log('Count changed');\n  }, [count]);\n  \n  return <button onClick={() => setCount(c => c + 1)}>{count}</button>;\n}\n\n// Class with multiple lifecycle methods\nclass ClassDataFetcher extends React.Component {\n  state = { data: null, loading: true, error: null };\n  \n  componentDidMount() {\n    this.fetchData();\n  }\n  \n  componentDidUpdate(prevProps) {\n    if (prevProps.userId !== this.props.userId) {\n      this.fetchData();\n    }\n  }\n  \n  fetchData = async () => {\n    try {\n      this.setState({ loading: true });\n      const response = await fetch(`/api/users/${this.props.userId}`);\n      const data = await response.json();\n      this.setState({ data, loading: false });\n    } catch (error) {\n      this.setState({ error, loading: false });\n    }\n  };\n  \n  render() {\n    // ... render logic\n  }\n}\n\n// Same with hooks\nfunction FunctionalDataFetcher({ userId }) {\n  const [state, setState] = useState({\n    data: null,\n    loading: true,\n    error: null\n  });\n  \n  useEffect(() => {\n    let isMounted = true;\n    \n    const fetchData = async () => {\n      try {\n        setState(prev => ({ ...prev, loading: true }));\n        const response = await fetch(`/api/users/${userId}`);\n        const data = await response.json();\n        if (isMounted) {\n          setState({ data, loading: false, error: null });\n        }\n      } catch (error) {\n        if (isMounted) {\n          setState({ data: null, loading: false, error });\n        }\n      }\n    };\n    \n    fetchData();\n    \n    return () => { isMounted = false; };\n  }, [userId]);\n  \n  // ... render logic\n}\n\nexport { ClassCounter, FunctionalCounter, ClassDataFetcher, FunctionalDataFetcher };"
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "React Hooks have revolutionized how we write React applications by enabling functional components to have state and lifecycle features. They provide a more direct API to React concepts you already know: props, state, context, refs, and lifecycle. Hooks make code more reusable, composable, and easier to understand. Start with useState and useEffect, then gradually incorporate other hooks as needed. Remember to follow the Rules of Hooks and extract custom hooks when you find yourself duplicating logic. With hooks, you can build modern, performant React applications with cleaner and more maintainable code."
+    }
+  ],
+  "faq": [
+    {
+      "question": "What are React Hooks and why were they introduced?",
+      "answer": "React Hooks are functions that let you use state and other React features in functional components. They were introduced to solve problems like wrapper hell, complex components, and confusing classes. Hooks make it easier to reuse stateful logic, organize code by related functionality, and learn React without mastering classes."
+    },
+    {
+      "question": "What are the Rules of Hooks?",
+      "answer": "Two main rules: 1) Only call hooks at the top level of your component or custom hook (not inside loops, conditions, or nested functions). 2) Only call hooks from React function components or custom hooks (not from regular JavaScript functions). The ESLint plugin eslint-plugin-react-hooks helps enforce these rules."
+    },
+    {
+      "question": "What's the difference between useEffect and useLayoutEffect?",
+      "answer": "useEffect runs asynchronously after the browser paints, so it doesn't block visual updates. useLayoutEffect runs synchronously after DOM mutations but before the browser paints, which is useful for measuring DOM elements but can block rendering. Prefer useEffect unless you need to measure or mutate DOM before painting."
+    },
+    {
+      "question": "When should I use useReducer instead of useState?",
+      "answer": "Use useReducer when you have complex state logic with multiple sub-values, when the next state depends on the previous state, or when you're managing state objects that have multiple transitions. useReducer also helps keep related state logic together and is easier to test."
+    },
+    {
+      "question": "How do I prevent infinite loops with useEffect?",
+      "answer": "Infinite loops happen when useEffect updates state that's in its dependency array. To prevent them: 1) Ensure dependency arrays include only needed variables, 2) Use functional updates when new state depends on previous state, 3) Move non-dependencies outside the effect, 4) Use useCallback for functions passed as dependencies."
+    },
+    {
+      "question": "What's the difference between useCallback and useMemo?",
+      "answer": "useCallback memoizes the function itself, returning the same function instance across renders unless dependencies change. useMemo memoizes the result of calling a function, returning the same computed value across renders unless dependencies change. Use useCallback for functions passed to memoized children, useMemo for expensive calculations."
+    },
+    {
+      "question": "When should I use useRef instead of useState?",
+      "answer": "Use useRef when you need to store mutable values that shouldn't cause re-renders when changed, like interval IDs, previous values, or DOM references. Use useState when changes should trigger re-renders and update the UI. Changing useRef.current doesn't cause re-renders."
+    },
+    {
+      "question": "How do I create a custom hook?",
+      "answer": "Create a function that starts with 'use' and calls other hooks inside it. Custom hooks let you extract component logic into reusable functions. They can accept parameters and return any values. Example: function useWindowSize() { const [size, setSize] = useState({width: window.innerWidth}); useEffect(() => { const handler = () => setSize({width: window.innerWidth}); window.addEventListener('resize', handler); return () => window.removeEventListener('resize', handler); }, []); return size; }"
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import { useState, useEffect, useCallback, useMemo } from 'react';\n\n// Counter component using useState\nfunction Counter() {\n  const [count, setCount] = useState(0);\n  const [step, setStep] = useState(1);\n  \n  return (\n    <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', margin: '10px' }}>\n      <h3>useState Example</h3>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + step)}>+{step}</button>\n      <button onClick={() => setCount(count - step)}>-{step}</button>\n      <button onClick={() => setCount(0)}>Reset</button>\n      <div style={{ marginTop: '10px' }}>\n        <label>Step: </label>\n        <input \n          type=\"number\" \n          value={step} \n          onChange={(e) => setStep(Number(e.target.value))}\n          style={{ marginLeft: '10px', padding: '5px' }}\n        />\n      </div>\n    </div>\n  );\n}\n\n// Data fetching with useEffect\nfunction DataFetcher() {\n  const [userId, setUserId] = useState(1);\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(false);\n  \n  useEffect(() => {\n    const fetchUser = async () => {\n      setLoading(true);\n      try {\n        const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`);\n        const data = await response.json();\n        setUser(data);\n      } catch (error) {\n        console.error('Error fetching user:', error);\n      } finally {\n        setLoading(false);\n      }\n    };\n    \n    fetchUser();\n  }, [userId]);\n  \n  return (\n    <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', margin: '10px' }}>\n      <h3>useEffect Example - Data Fetching</h3>\n      <div>\n        <button onClick={() => setUserId(1)}>User 1</button>\n        <button onClick={() => setUserId(2)}>User 2</button>\n        <button onClick={() => setUserId(3)}>User 3</button>\n      </div>\n      {loading && <p>Loading...</p>}\n      {user && (\n        <div style={{ marginTop: '10px' }}>\n          <h4>{user.name}</h4>\n          <p>Email: {user.email}</p>\n          <p>Phone: {user.phone}</p>\n        </div>\n      )}\n    </div>\n  );\n}\n\n// Performance optimization with useMemo and useCallback\nfunction TodoList() {\n  const [todos, setTodos] = useState([\n    { id: 1, text: 'Learn React Hooks', completed: false },\n    { id: 2, text: 'Build a project', completed: false },\n    { id: 3, text: 'Master React', completed: false }\n  ]);\n  const [filter, setFilter] = useState('all');\n  const [newTodo, setNewTodo] = useState('');\n  \n  // Memoize filtered todos\n  const filteredTodos = useMemo(() => {\n    console.log('Filtering todos...');\n    switch(filter) {\n      case 'active':\n        return todos.filter(todo => !todo.completed);\n      case 'completed':\n        return todos.filter(todo => todo.completed);\n      default:\n        return todos;\n    }\n  }, [todos, filter]);\n  \n  // Memoize callbacks\n  const addTodo = useCallback(() => {\n    if (newTodo.trim()) {\n      setTodos(prev => [...prev, {\n        id: Date.now(),\n        text: newTodo,\n        completed: false\n      }]);\n      setNewTodo('');\n    }\n  }, [newTodo]);\n  \n  const toggleTodo = useCallback((id) => {\n    setTodos(prev => prev.map(todo =>\n      todo.id === id ? { ...todo, completed: !todo.completed } : todo\n    ));\n  }, []);\n  \n  const deleteTodo = useCallback((id) => {\n    setTodos(prev => prev.filter(todo => todo.id !== id));\n  }, []);\n  \n  const stats = useMemo(() => {\n    const total = todos.length;\n    const completed = todos.filter(t => t.completed).length;\n    const active = total - completed;\n    return { total, completed, active };\n  }, [todos]);\n  \n  return (\n    <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', margin: '10px' }}>\n      <h3>useMemo & useCallback Example - Todo List</h3>\n      \n      <div style={{ marginBottom: '10px' }}>\n        <input\n          value={newTodo}\n          onChange={(e) => setNewTodo(e.target.value)}\n          placeholder=\"Add new todo...\"\n          style={{ padding: '5px', marginRight: '10px' }}\n        />\n        <button onClick={addTodo}>Add Todo</button>\n      </div>\n      \n      <div style={{ marginBottom: '10px' }}>\n        <button onClick={() => setFilter('all')}>All</button>\n        <button onClick={() => setFilter('active')}>Active</button>\n        <button onClick={() => setFilter('completed')}>Completed</button>\n      </div>\n      \n      <div style={{ marginBottom: '10px' }}>\n        <p>Stats: Total: {stats.total} | Active: {stats.active} | Completed: {stats.completed}</p>\n      </div>\n      \n      <ul>\n        {filteredTodos.map(todo => (\n          <li key={todo.id} style={{ marginBottom: '5px' }}>\n            <span\n              style={{\n                textDecoration: todo.completed ? 'line-through' : 'none',\n                cursor: 'pointer',\n                marginRight: '10px'\n              }}\n              onClick={() => toggleTodo(todo.id)}\n            >\n              {todo.text}\n            </span>\n            <button onClick={() => deleteTodo(todo.id)}>Delete</button>\n          </li>\n        ))}\n      </ul>\n      \n      {filteredTodos.length === 0 && <p>No todos found</p>}\n    </div>\n  );\n}\n\n// Custom hook example\nfunction useWindowSize() {\n  const [size, setSize] = useState({\n    width: window.innerWidth,\n    height: window.innerHeight\n  });\n  \n  useEffect(() => {\n    const handleResize = () => {\n      setSize({\n        width: window.innerWidth,\n        height: window.innerHeight\n      });\n    };\n    \n    window.addEventListener('resize', handleResize);\n    return () => window.removeEventListener('resize', handleResize);\n  }, []);\n  \n  return size;\n}\n\nfunction ResponsiveComponent() {\n  const { width, height } = useWindowSize();\n  \n  return (\n    <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', margin: '10px' }}>\n      <h3>Custom Hook Example - useWindowSize</h3>\n      <p>Window width: {width}px</p>\n      <p>Window height: {height}px</p>\n      <p>Breakpoint: {width < 768 ? 'Mobile' : width < 1024 ? 'Tablet' : 'Desktop'}</p>\n    </div>\n  );\n}\n\n// Main App\nfunction App() {\n  return (\n    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>\n      <h1>React Hooks Interactive Demo</h1>\n      <p>Explore different React Hooks with these interactive examples:</p>\n      \n      <Counter />\n      <DataFetcher />\n      <TodoList />\n      <ResponsiveComponent />\n      \n      <div style={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px', margin: '10px', background: '#f9f9f9' }}>\n        <h3>Key Takeaways:</h3>\n        <ul>\n          <li>✅ useState manages local state</li>\n          <li>✅ useEffect handles side effects</li>\n          <li>✅ useMemo memoizes expensive calculations</li>\n          <li>✅ useCallback memoizes functions</li>\n          <li>✅ Custom hooks reuse logic across components</li>\n        </ul>\n      </div>\n    </div>\n  );\n}\n\nexport default App;"
+  },
+  "quiz": [
+    {
+      "question": "What is the correct way to declare state using useState?",
+      "options": [
+        "const state = useState(0);",
+        "const [state, setState] = useState(0);",
+        "this.state = useState(0);",
+        "useState(0);"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which hook is used for side effects like data fetching?",
+      "options": ["useState", "useContext", "useEffect", "useReducer"],
+      "answer": 2
+    },
+    {
+      "question": "How do you prevent useEffect from running on every render?",
+      "options": [
+        "Return false from useEffect",
+        "Use an empty dependency array []",
+        "Call useEffect only once",
+        "Use useMemo instead"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What hook would you use to memoize an expensive calculation?",
+      "options": ["useCallback", "useMemo", "useEffect", "useRef"],
+      "answer": 1
+    },
+    {
+      "question": "Which hook allows you to access DOM elements directly?",
+      "options": ["useDom", "useElement", "useRef", "useLayoutEffect"],
+      "answer": 2
+    },
+    {
+      "question": "What are the Rules of Hooks?",
+      "options": [
+        "Only call hooks from React functions and at the top level",
+        "Hooks can be called conditionally",
+        "Hooks can only be used in class components",
+        "Hooks must return a value"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "When should you use useReducer instead of useState?",
+      "options": [
+        "For all state management",
+        "For complex state logic with multiple sub-values",
+        "Only for forms",
+        "Never, useState is always better"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the difference between useEffect and useLayoutEffect?",
+      "options": [
+        "No difference, they're identical",
+        "useEffect runs after paint, useLayoutEffect runs before paint",
+        "useLayoutEffect runs after paint, useEffect runs before paint",
+        "useEffect is for class components only"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What hook would you use to access previous state or props?",
+      "options": ["usePrevious", "useRef", "useState", "useCallback"],
+      "answer": 1
+    },
+    {
+      "question": "What prefix should custom hooks start with?",
+      "options": ["hook", "custom", "use", "react"],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "react-components",
+    "react-state-management",
+    "react-performance",
+    "react-patterns",
+    "react-context",
+    "custom-hooks"
+  ]
+}

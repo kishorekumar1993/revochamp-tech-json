@@ -1,0 +1,143 @@
+{
+  "slug": "react-lifecycle",
+  "course": "React",
+  "title": "React Component Lifecycle – Mounting, Updating & Unmounting",
+
+  "meta": {
+    "title": "React Lifecycle Guide – Mastering the Component Journey (2026)",
+    "description": "Understand the three phases of the React component lifecycle: Mounting, Updating, and Unmounting. Learn how to use lifecycle methods and the useEffect hook.",
+    "keywords": [
+      "react lifecycle",
+      "componentdidmount",
+      "componentdidupdate",
+      "componentwillunmount",
+      "useeffect lifecycle",
+      "react hooks"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Component Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "Every React component goes through a lifecycle of three phases: Mounting (creation), Updating (growth), and Unmounting (deletion). In modern React, we primarily manage these phases using the `useEffect` hook in functional components."
+    },
+    {
+      "type": "heading",
+      "value": "1. Mounting Phase (Birth)"
+    },
+    {
+      "type": "text",
+      "value": "This happens when a component is created and inserted into the DOM. In Class components, `componentDidMount` is used here. In Functional components, it's represented by a `useEffect` with an empty dependency array."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "useEffect(() => {\n  console.log('Component Mounted');\n  // Good for: API calls, subscriptions, timers\n}, []);"
+    },
+    {
+      "type": "heading",
+      "value": "2. Updating Phase (Growth)"
+    },
+    {
+      "type": "text",
+      "value": "Updating occurs when a component's state or props change. React re-renders the component to reflect these changes. You can trigger logic specifically when certain values change by adding them to the dependency array."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "useEffect(() => {\n  console.log('Component Updated because [data] changed');\n}, [data]); // Runs on mount + whenever 'data' changes"
+    },
+    {
+      "type": "heading",
+      "value": "3. Unmounting Phase (Death)"
+    },
+    {
+      "type": "text",
+      "value": "This is the final phase when a component is removed from the DOM. It is critical for cleanup to prevent memory leaks, such as clearing intervals or unsubscribing from services."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "useEffect(() => {\n  const timer = setInterval(() => console.log('Tick'), 1000);\n\n  // The Cleanup Function (Unmounting logic)\n  return () => {\n    clearInterval(timer);\n    console.log('Component Unmounted & Timer Cleared');\n  };\n}, []);"
+    },
+    {
+      "type": "heading",
+      "value": "Lifecycle Comparison: Class vs. Functional"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Lifecycle Event", "Class Method", "Functional Hook (useEffect)"],
+        "rows": [
+          ["Mount", "componentDidMount", "useEffect(() => {}, [])"],
+          ["Update", "componentDidUpdate", "useEffect(() => {}, [deps])"],
+          ["Unmount", "componentWillUnmount", "return () => { /* cleanup */ }"],
+          ["Should Update?", "shouldComponentUpdate", "React.memo()"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Avoid side effects in render**: Never update state directly in the function body.",
+        "**Always clean up**: Cancel API requests or subscriptions in the return function of useEffect.",
+        "**Dependency Array Accuracy**: Ensure all variables used inside useEffect are listed in the dependency array.",
+        "**Use multiple Effects**: Break up unrelated logic into separate `useEffect` calls for better readability."
+      ]
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Does useEffect run on every render?",
+      "answer": "If you don't provide a dependency array, yes. If you provide an empty array `[]`, it runs only once on mount."
+    },
+    {
+      "question": "What is the 'Cleanup Function'?",
+      "answer": "It's the function returned by `useEffect`. It runs before the component unmounts and before the effect re-runs to clean up previous logic."
+    },
+    {
+      "question": "Can I use async functions directly in useEffect?",
+      "answer": "No. You must define an async function inside the effect and call it, because `useEffect` expects a cleanup function or nothing as a return value, not a Promise."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useState, useEffect } from 'react';\n\nfunction LifecycleDemo() {\n  const [count, setCount] = useState(0);\n  const [showChild, setShowChild] = useState(true);\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h2>Lifecycle Demo</h2>\n      <button onClick={() => setShowChild(!showChild)}>\n        {showChild ? 'Unmount Child' : 'Mount Child'}\n      </button>\n      <button onClick={() => setCount(c => c + 1)}>Update Parent (Count: {count})</button>\n      \n      <hr />\n      {showChild && <Child count={count} />}\n    </div>\n  );\n}\n\nfunction Child({ count }) {\n  useEffect(() => {\n    console.log('👶 Child: I have arrived (Mounted)');\n\n    return () => {\n      console.log('💀 Child: Goodbye world (Unmounted)');\n    };\n  }, []);\n\n  useEffect(() => {\n    console.log('🔄 Child: Prop updated to', count);\n  }, [count]);\n\n  return (\n    <div style={{ background: '#f0f0f0', padding: '10px' }}>\n      <h3>I am the Child Component</h3>\n      <p>Parent count: {count}</p>\n      <p>Check the console to see lifecycle logs!</p>\n    </div>\n  );\n}\n\nexport default LifecycleDemo;"
+  },
+
+  "quiz": [
+    {
+      "question": "Which hook is used to handle lifecycle events in functional components?",
+      "options": ["useState", "useContext", "useEffect", "useReducer"],
+      "answer": 2
+    },
+    {
+      "question": "How do you run an effect only once on mount?",
+      "options": ["Pass no dependency array", "Pass an empty dependency array []", "Pass [null]", "Use useOnce hook"],
+      "answer": 1
+    },
+    {
+      "question": "When does the cleanup function in useEffect run?",
+      "options": ["Only when the page reloads", "Right after the component mounts", "Before unmounting and before re-running the effect", "Every second"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-hooks-intro",
+    "react-use-effect",
+    "react-state",
+    "react-re-renders",
+    "react-memo"
+  ]
+}

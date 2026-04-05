@@ -1,0 +1,215 @@
+{
+  "slug": "react-props",
+  "course": "React",
+  "title": "React Props – Component Communication",
+
+  "meta": {
+    "title": "React Props – Complete Guide to Passing Data (2026)",
+    "description": "Master React props for component communication. Learn prop types, default props, children prop, prop drilling, and best practices.",
+    "keywords": [
+      "react props",
+      "react component props",
+      "props drilling",
+      "react prop types",
+      "react children"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Props?"
+    },
+    {
+      "type": "text",
+      "value": "Props (short for properties) are read-only data passed from parent to child components. They allow components to be dynamic and reusable. Props are immutable – components cannot modify their own props."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Props Usage"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Parent component passing props\nfunction App() {\n  return (\n    <div>\n      <Greeting name=\"Alice\" age={25} />\n      <Greeting name=\"Bob\" age={30} isAdmin={true} />\n    </div>\n  );\n}\n\n// Child component receiving props\nfunction Greeting(props) {\n  return (\n    <div>\n      <h1>Hello, {props.name}!</h1>\n      <p>Age: {props.age}</p>\n      {props.isAdmin && <span>Admin User</span>}\n    </div>\n  );\n}\n\n// Destructuring props\nfunction Greeting({ name, age, isAdmin = false }) {\n  return (\n    <div>\n      <h1>Hello, {name}!</h1>\n      <p>Age: {age}</p>\n      {isAdmin && <span>Admin User</span>}\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Prop Types (Type Checking)"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// With PropTypes library\nimport PropTypes from 'prop-types';\n\nfunction UserCard({ name, age, email, status, hobbies, address }) {\n  return (\n    <div>\n      <h2>{name}</h2>\n      <p>Age: {age}</p>\n      <p>Email: {email}</p>\n      <p>Status: {status}</p>\n      <p>Hobbies: {hobbies.join(', ')}</p>\n      <p>Address: {address.street}, {address.city}</p>\n    </div>\n  );\n}\n\nUserCard.propTypes = {\n  name: PropTypes.string.isRequired,\n  age: PropTypes.number,\n  email: PropTypes.string.isRequired,\n  status: PropTypes.oneOf(['active', 'inactive', 'pending']),\n  hobbies: PropTypes.arrayOf(PropTypes.string),\n  address: PropTypes.shape({\n    street: PropTypes.string,\n    city: PropTypes.string,\n    zip: PropTypes.number\n  })\n};\n\nUserCard.defaultProps = {\n  age: 18,\n  status: 'active',\n  hobbies: []\n};"
+    },
+    {
+      "type": "heading",
+      "value": "TypeScript with Props"
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// TypeScript interface for props\ninterface ButtonProps {\n  label: string;\n  onClick: () => void;\n  variant?: 'primary' | 'secondary' | 'danger';\n  disabled?: boolean;\n  children?: React.ReactNode;\n}\n\n// Functional component with typed props\nfunction Button({ label, onClick, variant = 'primary', disabled = false }: ButtonProps) {\n  const baseStyles = 'px-4 py-2 rounded';\n  const variantStyles = {\n    primary: 'bg-blue-500 text-white',\n    secondary: 'bg-gray-500 text-white',\n    danger: 'bg-red-500 text-white'\n  };\n\n  return (\n    <button\n      onClick={onClick}\n      disabled={disabled}\n      className={`${baseStyles} ${variantStyles[variant]}`}\n    >\n      {label}\n    </button>\n  );\n}\n\n// Usage\nfunction App() {\n  return (\n    <div>\n      <Button label=\"Click Me\" onClick={() => console.log('clicked')} />\n      <Button label=\"Delete\" variant=\"danger\" onClick={() => console.log('deleted')} />\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Children Prop"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Container component using children\nfunction Card({ title, children }) {\n  return (\n    <div className=\"card\">\n      <div className=\"card-header\">\n        <h3>{title}</h3>\n      </div>\n      <div className=\"card-body\">\n        {children}\n      </div>\n    </div>\n  );\n}\n\n// Usage with nested content\nfunction App() {\n  return (\n    <Card title=\"Welcome\">\n      <p>This is the card content</p>\n      <button>Click me</button>\n    </Card>\n  );\n}\n\n// Multiple children patterns\nfunction Layout({ header, sidebar, content }) {\n  return (\n    <div>\n      <header>{header}</header>\n      <div className=\"container\">\n        <aside>{sidebar}</aside>\n        <main>{content}</main>\n      </div>\n    </div>\n  );\n}\n\n// Usage\n<Layout\n  header={<Header />}\n  sidebar={<Sidebar />}\n  content={<MainContent />}\n/>"
+    },
+    {
+      "type": "heading",
+      "value": "Render Props Pattern"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Component that accepts a render function as prop\nfunction MouseTracker({ render }) {\n  const [position, setPosition] = useState({ x: 0, y: 0 });\n\n  const handleMouseMove = (e) => {\n    setPosition({ x: e.clientX, y: e.clientY });\n  };\n\n  return (\n    <div onMouseMove={handleMouseMove}>\n      {render(position)}\n    </div>\n  );\n}\n\n// Usage\nfunction App() {\n  return (\n    <MouseTracker\n      render={({ x, y }) => (\n        <p>Mouse position: {x}, {y}</p>\n      )}\n    />\n  );\n}\n\n// Or using children as function\nfunction DataFetcher({ url, children }) {\n  const [data, setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    fetch(url)\n      .then(res => res.json())\n      .then(data => {\n        setData(data);\n        setLoading(false);\n      });\n  }, [url]);\n\n  return children({ data, loading });\n}\n\n// Usage\n<DataFetcher url=\"/api/users\">\n  {({ data, loading }) => (\n    loading ? <p>Loading...</p> : <UserList users={data} />\n  )}\n</DataFetcher>"
+    },
+    {
+      "type": "heading",
+      "value": "Props Drilling and Solutions"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// ❌ Props Drilling - Passing through many levels\nfunction App() {\n  const [user, setUser] = useState({ name: 'John' });\n  return <GrandParent user={user} />;\n}\n\nfunction GrandParent({ user }) {\n  return <Parent user={user} />;\n}\n\nfunction Parent({ user }) {\n  return <Child user={user} />;\n}\n\nfunction Child({ user }) {\n  return <p>{user.name}</p>; // Finally used here\n}\n\n// ✅ Solution 1: Context API\nconst UserContext = createContext();\n\nfunction App() {\n  const [user, setUser] = useState({ name: 'John' });\n  return (\n    <UserContext.Provider value={user}>\n      <GrandParent />\n    </UserContext.Provider>\n  );\n}\n\nfunction GrandParent() { return <Parent />; }\nfunction Parent() { return <Child />; }\nfunction Child() {\n  const user = useContext(UserContext);\n  return <p>{user.name}</p>;\n}\n\n// ✅ Solution 2: Component Composition\nfunction App() {\n  const [user, setUser] = useState({ name: 'John' });\n  return <Layout user={user} />;\n}\n\nfunction Layout({ user }) {\n  return (\n    <div>\n      <Sidebar />\n      <Content user={user} /> {/* Only pass where needed */}\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Spreading Props"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Spread props (use with caution)\nfunction Button({ type, children, ...rest }) {\n  return (\n    <button type={type} {...rest}>\n      {children}\n    </button>\n  );\n}\n\n// Usage\n<Button type=\"submit\" onClick={() => {}} disabled={false} className=\"btn\">\n  Submit\n</Button>\n\n// Rest parameters for separating specific props\nfunction Input({ label, error, ...inputProps }) {\n  return (\n    <div>\n      <label>{label}</label>\n      <input {...inputProps} />\n      {error && <span className=\"error\">{error}</span>}\n    </div>\n  );\n}\n\n// Usage\n<Input\n  label=\"Email\"\n  type=\"email\"\n  placeholder=\"Enter email\"\n  value={email}\n  onChange={handleChange}\n  error={emailError}\n/>"
+    },
+    {
+      "type": "heading",
+      "value": "Common Props Patterns"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Pattern", "Description", "Example"],
+        "rows": [
+          ["Default Props", "Fallback values", "variant = 'primary'"],
+          ["Required Props", "Must be provided", "name: string.isRequired"],
+          ["Optional Props", "May be omitted", "age?: number"],
+          ["Children Prop", "Nested content", "children: ReactNode"],
+          ["Render Props", "Function as child", "render={(data) => ...}"],
+          ["Component Composition", "Pass components", "header={<Header />}"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Props Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep props few** – Aim for 3-5 props per component",
+        "**Use destructuring** – Cleaner component code",
+        "**Provide default values** – For optional props",
+        "**Type your props** – TypeScript or PropTypes",
+        "**Avoid spreading unknown props** – Can cause unexpected behavior",
+        "**Use meaningful names** – Props should be self-documenting",
+        "**Don't mutate props** – Props are read-only",
+        "**Use children for composition** – More flexible than multiple props"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// ❌ Mutating props\nfunction BadComponent({ user }) {\n  user.name = 'New Name'; // DON'T DO THIS!\n  return <p>{user.name}</p>;\n}\n\n// ✅ Props are read-only\nfunction GoodComponent({ user, onUpdate }) {\n  const handleUpdate = () => {\n    onUpdate({ ...user, name: 'New Name' });\n  };\n  return <p>{user.name}</p>;\n}\n\n// ❌ Passing unnecessary props\nfunction Parent() {\n  const [data, setData] = useState({ a: 1, b: 2, c: 3 });\n  return <Child a={data.a} b={data.b} c={data.c} />; // Too many\n}\n\n// ✅ Pass only what's needed\nfunction Parent() {\n  const [data, setData] = useState({ a: 1, b: 2, c: 3 });\n  return <Child data={data} />; // Or pass specific needed props\n}\n\n// ❌ Not using default props\nfunction Button({ size = 'medium', variant }) { // Good default\n  return <button className={`btn-${size} btn-${variant}`}>Click</button>;\n}\n\n// ❌ Boolean props without clear meaning\n<Button active={true} disabled={false} loading={false} />\n\n// ✅ Better boolean props\n<Button isActive highlight={false} isLoading={false} />"
+    },
+    {
+      "type": "heading",
+      "value": "Props vs State"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Aspect", "Props", "State"],
+        "rows": [
+          ["Mutability", "Immutable (read-only)", "Mutable (via setter)"],
+          ["Ownership", "Parent component", "Component itself"],
+          ["Purpose", "Pass data/behavior", "Track changes"],
+          ["Changes trigger re-render?", "Yes (if parent changes)", "Yes"],
+          ["Default values", "Can have defaults", "Initial values"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Props are essential for React component communication. They make components reusable and predictable. Use TypeScript or PropTypes for type safety, children for composition, and lift state up when needed. Avoid prop drilling by using Context or component composition."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Can props be changed?",
+      "answer": "No, props are read-only. Components cannot modify their own props."
+    },
+    {
+      "question": "Props vs state?",
+      "answer": "Props are passed from parent and immutable; state is internal and mutable."
+    },
+    {
+      "question": "What is prop drilling?",
+      "answer": "Passing props through multiple intermediate components that don't need them."
+    },
+    {
+      "question": "How to set default props?",
+      "answer": "Use destructuring default values: function Button({ size = 'medium' })"
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import { useState } from 'react';\n\n// Define prop types with defaults\nfunction ProductCard({ name, price, image, onBuy, discount = 0 }) {\n  const discountedPrice = price * (1 - discount / 100);\n  \n  return (\n    <div style={{ border: '1px solid #ddd', padding: '1rem', borderRadius: '8px' }}>\n      <img src={image} alt={name} style={{ width: '100%', height: 'auto' }} />\n      <h3>{name}</h3>\n      <p>Original: ${price}</p>\n      {discount > 0 && <p style={{ color: 'green' }}>Discounted: ${discountedPrice.toFixed(2)} ({discount}% off)</p>}\n      <button onClick={() => onBuy({ name, price: discountedPrice })}>Buy Now</button>\n    </div>\n  );\n}\n\n// Component using children prop\nfunction ProductGrid({ children, title }) {\n  return (\n    <div>\n      <h2>{title}</h2>\n      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>\n        {children}\n      </div>\n    </div>\n  );\n}\n\n// Main app\nfunction App() {\n  const [cart, setCart] = useState([]);\n  \n  const addToCart = (product) => {\n    setCart([...cart, product]);\n    alert(`Added ${product.name} to cart!`);\n  };\n  \n  return (\n    <div>\n      <h1>Product Store</h1>\n      <ProductGrid title=\"Featured Products\">\n        <ProductCard\n          name=\"Laptop\"\n          price={999}\n          image=\"https://via.placeholder.com/150\"\n          onBuy={addToCart}\n          discount={10}\n        />\n        <ProductCard\n          name=\"Mouse\"\n          price={29}\n          image=\"https://via.placeholder.com/150\"\n          onBuy={addToCart}\n        />\n        <ProductCard\n          name=\"Keyboard\"\n          price={79}\n          image=\"https://via.placeholder.com/150\"\n          onBuy={addToCart}\n          discount={15}\n        />\n      </ProductGrid>\n      \n      <div style={{ marginTop: '2rem' }}>\n        <h3>Shopping Cart ({cart.length} items)</h3>\n        <ul>\n          {cart.map((item, idx) => (\n            <li key={idx}>{item.name} - ${item.price.toFixed(2)}</li>\n          ))}\n        </ul>\n      </div>\n    </div>\n  );\n}\n\nexport default App;"
+  },
+
+  "quiz": [
+    {
+      "question": "Are props mutable?",
+      "options": ["Yes", "No", "Only in class components", "Only with hooks"],
+      "answer": 1
+    },
+    {
+      "question": "How do you access children passed to a component?",
+      "options": ["this.children", "props.children", "props.child", "this.props.child"],
+      "answer": 1
+    },
+    {
+      "question": "What is prop drilling?",
+      "options": ["Passing props down multiple levels", "Mutating props", "Creating new props", "Deleting props"],
+      "answer": 0
+    },
+    {
+      "question": "How to set a default value for a prop?",
+      "options": ["prop.default = value", "defaultProps", "destructuring: { prop = value }", "Both B and C"],
+      "answer": 3
+    }
+  ],
+
+  "related": [
+    "react-introduction",
+    "react-state",
+    "react-context",
+    "react-typescript",
+    "react-components"
+  ]
+}

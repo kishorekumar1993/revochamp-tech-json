@@ -1,0 +1,170 @@
+{
+  "slug": "react-use-memo",
+  "course": "React",
+  "title": "React useMemo Hook – Optimizing Performance",
+  "meta": {
+    "title": "React useMemo Hook – Performance Optimization Guide (2026)",
+    "description": "Learn how to use the useMemo hook in React to memoize expensive calculations, prevent unnecessary re-renders, and optimize your application's performance.",
+    "keywords": [
+      "react usememo",
+      "usememo hook",
+      "react performance optimization",
+      "memoization in react",
+      "react hooks"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is useMemo?"
+    },
+    {
+      "type": "text",
+      "value": "The `useMemo` hook is a built-in React hook that lets you cache the result of a calculation between re-renders. It is primarily used for performance optimization by ensuring that expensive logic only runs when its dependencies change."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useMemo } from 'react';\n\nconst cachedValue = useMemo(() => {\n  // 1. Calculate something expensive here\n  return computeExpensiveValue(a, b);\n}, [a, b]); // 2. Only re-run if 'a' or 'b' change"
+    },
+    {
+      "type": "heading",
+      "value": "Expensive Calculation Example"
+    },
+    {
+      "type": "text",
+      "value": "Without `useMemo`, every time a component re-renders (even due to unrelated state changes), all logic inside the component body runs again. In the example below, filtering a large list is wrapped in `useMemo` to prevent lag when typing in an unrelated input field."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState, useMemo } from 'react';\n\nfunction TodoList({ todos, tab }) {\n  const [theme, setTheme] = useState('light');\n\n  // This calculation is cached!\n  const visibleTodos = useMemo(() => {\n    console.log('Filtering todos...');\n    return todos.filter(todo => todo.tab === tab);\n  }, [todos, tab]); \n\n  return (\n    <div className={theme}>\n      <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>\n        Toggle Theme\n      </button>\n      <ul>\n        {visibleTodos.map(todo => (\n          <li key={todo.id}>{todo.text}</li>\n        ))}\n      </ul>\n    </div>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use useMemo"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Expensive Calculations**: When a function takes significant time to execute (e.g., processing thousands of data points).",
+        "**Referential Integrity**: When passing objects or arrays as props to a memoized child component (`React.memo`) to prevent unnecessary renders.",
+        "**Dependency for other Hooks**: When an object or array is a dependency for `useEffect` or another `useMemo`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Comparison: useMemo vs useCallback"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": [
+          "Feature",
+          "useMemo",
+          "useCallback"
+        ],
+        "rows": [
+          [
+            "Returns",
+            "The result of the function (Value)",
+            "The function itself"
+          ],
+          [
+            "Purpose",
+            "Cache a calculated value",
+            "Cache a function definition"
+          ],
+          [
+            "Usage",
+            "const val = useMemo(() => compute(), [d])",
+            "const fn = useCallback(() => compute(), [d])"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Common Pitfalls"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// ❌ Wrong: Using useMemo for everything\n// This adds overhead without performance gains\nconst name = useMemo(() => \"John\", []); \n\n// ✅ Correct: Only use for heavy logic\nconst sortedData = useMemo(() => [...data].sort(), [data]);\n\n// ❌ Wrong: Side effects inside useMemo\nuseMemo(() => {\n  console.log('I should be in useEffect!');\n  window.localStorage.setItem('key', value);\n}, [value]);"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Measure first**: Only optimize if you notice performance issues.",
+        "**Keep it pure**: The function inside `useMemo` should not have side effects.",
+        "**Verify dependencies**: Ensure all variables used inside the function are in the dependency array.",
+        "**Readability**: Don't sacrifice clean code for micro-optimizations that don't impact the user."
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "Does useMemo run on every render?",
+      "answer": "No. It only runs the function during the initial render and subsequently only when one of the dependencies in the array has changed."
+    },
+    {
+      "question": "Can I use useMemo for data fetching?",
+      "answer": "No. Data fetching is a side effect and should be handled in a `useEffect` hook or using a library like TanStack Query."
+    },
+    {
+      "question": "Is useMemo guaranteed to stay in memory?",
+      "answer": "Not strictly. React may occasionally discard the cache and recompute the value to free up resources, though this is rare."
+    }
+  ],
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useState, useMemo } from 'react';\n\nconst ExpensiveCalculation = () => {\n  const [count, setCount] = useState(0);\n  const [otherState, setOtherState] = useState(0);\n\n  // Simulating a heavy calculation\n  const expensiveValue = useMemo(() => {\n    console.log('Calculating...');\n    let num = 0;\n    for (let i = 0; i < 1000000000; i++) {\n      num += 1;\n    }\n    return count * 2;\n  }, [count]);\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h2>useMemo Demo</h2>\n      <p>Expensive Value (2 * {count}): {expensiveValue}</p>\n      \n      <button onClick={() => setCount(c => c + 1)}>\n        Increment Count (Slows because of logic)\n      </button>\n      \n      <div style={{ marginTop: '10px' }}>\n        <button onClick={() => setOtherState(s => s + 1)}>\n          Update Other State (Fast! No re-calculation)\n        </button>\n        <p>Other State: {otherState}</p>\n      </div>\n    </div>\n  );\n};\n\nexport default ExpensiveCalculation;"
+  },
+  "quiz": [
+    {
+      "question": "What is the primary purpose of useMemo?",
+      "options": [
+        "To synchronize state with localStorage",
+        "To cache a function definition",
+        "To cache the result of an expensive calculation",
+        "To create a persistent ref"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "When does the function inside useMemo re-run?",
+      "options": [
+        "Every time the component re-renders",
+        "Only when dependencies change",
+        "Only on mount",
+        "When the browser window is resized"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What happens if you leave the dependency array empty []?",
+      "options": [
+        "It re-runs on every render",
+        "It throws a syntax error",
+        "It runs only once on mount",
+        "It never runs"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "react-hooks",
+    "react-use-callback",
+    "react-memo",
+    "react-performance",
+    "react-use-effect"
+  ]
+}

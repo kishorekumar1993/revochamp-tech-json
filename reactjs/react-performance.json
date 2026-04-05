@@ -1,0 +1,147 @@
+{
+  "slug": "react-performance",
+  "course": "React",
+  "title": "React Performance – Optimization Techniques & Bottlenecks",
+
+  "meta": {
+    "title": "React Performance Guide – Optimizing Renders & Virtualization (2026)",
+    "description": "Master React performance optimization. Learn how to diagnose re-renders, use React.memo, useMemo, useCallback, and implement windowing for large datasets.",
+    "keywords": [
+      "react performance",
+      "prevent re-renders",
+      "react.memo",
+      "react profiling",
+      "virtualization react",
+      "code splitting"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Understanding the Render Cycle"
+    },
+    {
+      "type": "text",
+      "value": "React is fast, but unnecessary re-renders can slow down your application. A re-render happens when a component's state or props change. Performance optimization in React is primarily about ensuring that components only re-render when absolutely necessary."
+    },
+    {
+      "type": "heading",
+      "value": "1. Memoization with React.memo"
+    },
+    {
+      "type": "text",
+      "value": "By default, when a parent component re-renders, all its children re-render too. Wrapping a child component in `React.memo` tells React to skip rendering the component if its props haven't changed (using shallow comparison)."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import React from 'react';\n\nconst ExpensiveChild = React.memo(({ data }) => {\n  console.log('Rendering expensive child...');\n  return <div>{data}</div>;\n});"
+    },
+    {
+      "type": "heading",
+      "value": "2. Stabilizing References: useCallback & useMemo"
+    },
+    {
+      "type": "text",
+      "value": "If you pass a function or an object as a prop to a memoized component, `React.memo` will fail because functions and objects are recreated on every render (new memory reference). Use `useCallback` for functions and `useMemo` for objects/arrays to keep references stable."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// Stabilizing a function\nconst handleClick = useCallback(() => {\n  doSomething(id);\n}, [id]);\n\n// Stabilizing a computed object\nconst settings = useMemo(() => ({\n  theme: isDark ? 'dark' : 'light',\n  fontSize: '16px'\n}), [isDark]);"
+    },
+    {
+      "type": "heading",
+      "value": "3. Windowing & Virtualization"
+    },
+    {
+      "type": "text",
+      "value": "Rendering 10,000 DOM nodes at once will crash most browsers. 'Windowing' (or Virtualization) is a technique where you only render the items currently visible in the viewport. As the user scrolls, nodes are recycled."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**React-window**: A lightweight library for rendering large lists and tabular data.",
+        "**React-virtualized**: A more feature-heavy alternative for complex grid layouts.",
+        "**Performance Gain**: Reduces initial load time and memory usage by 90% in large lists."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "4. Transition API (useTransition)"
+    },
+    {
+      "type": "text",
+      "value": "Introduced in React 18, the `useTransition` hook allows you to mark state updates as 'non-urgent'. This keeps the UI responsive (e.g., typing in an input) while a heavy update (e.g., filtering a list) happens in the background."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "const [isPending, startTransition] = useTransition();\n\nconst handleChange = (e) => {\n  setInputValue(e.target.value); // Urgent: Update input\n  \n  startTransition(() => {\n    setSearchQuery(e.target.value); // Non-urgent: Update list\n  });\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Optimization Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Technique", "Problem Solved", "When to use"],
+        "rows": [
+          ["React.memo", "Unnecessary child re-renders", "Pure components with stable props"],
+          ["useCallback", "Changing function references", "Passing functions to memoized children"],
+          ["Lazy Loading", "Large bundle size / slow initial load", "Routes or heavy components"],
+          ["Virtualization", "DOM bloat from large lists", "Lists/Grids with >100 items"],
+          ["useDeferredValue", "UI lag during state updates", "Filtering or heavy visual computations"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Should I use useMemo everywhere?",
+      "answer": "No. Memoization has its own cost (memory and comparison logic). Use it only for truly expensive calculations or to maintain referential integrity for memoized children."
+    },
+    {
+      "question": "How do I find performance bottlenecks?",
+      "answer": "Use the 'Profiler' tab in React DevTools. It records why each component rendered and how long it took."
+    },
+    {
+      "question": "What is 'Code Splitting'?",
+      "answer": "Using React.lazy and Suspense to load parts of your application only when they are needed, reducing the size of the initial JavaScript bundle."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useState, useMemo } from 'react';\n\nexport default function PerformanceDemo() {\n  const [count, setCount] = useState(0);\n  const [text, setText] = useState('');\n\n  // This heavy calculation only re-runs if 'count' changes\n  // Typing in the input won't trigger this logic!\n  const expensiveValue = useMemo(() => {\n    console.log('Running expensive logic...');\n    let sum = 0;\n    for (let i = 0; i < 1000000; i++) sum += i;\n    return sum + count;\n  }, [count]);\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h3>Performance Optimization</h3>\n      <p>Expensive Result: {expensiveValue}</p>\n      <button onClick={() => setCount(c => c + 1)}>Increment Count (Slow Update)</button>\n      \n      <div style={{ marginTop: '20px' }}>\n        <input \n          placeholder=\"Type here (Fast Update)...\" \n          value={text} \n          onChange={e => setText(e.target.value)} \n        />\n        <p>You typed: {text}</p>\n      </div>\n    </div>\n  );\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "Which tool helps identify which components are re-rendering unnecessarily?",
+      "options": ["Redux DevTools", "Chrome Network Tab", "React DevTools Profiler", "Lighthouse"],
+      "answer": 2
+    },
+    {
+      "question": "What is the result of wrapping a component in React.memo?",
+      "options": [
+        "It makes the component invisible",
+        "It prevents the component from re-rendering if its props are the same",
+        "It automatically fetches data for the component",
+        "It converts the component to a class component"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-use-memo",
+    "react-use-callback",
+    "react-memo",
+    "react-code-splitting",
+    "react-windowing"
+  ]
+}

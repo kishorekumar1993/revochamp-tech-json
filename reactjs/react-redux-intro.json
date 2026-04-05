@@ -1,0 +1,143 @@
+{
+  "slug": "react-redux-intro",
+  "course": "React",
+  "title": "Introduction to Redux – Predictable State Management",
+
+  "meta": {
+    "title": "Redux for Beginners – Understanding the Global Store (2026)",
+    "description": "Master the fundamentals of Redux. Learn about Actions, Reducers, the Store, and how to use Redux Toolkit (RTK) for efficient state management in React apps.",
+    "keywords": [
+      "react redux",
+      "redux toolkit",
+      "redux store",
+      "reducers",
+      "actions",
+      "dispatch"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Redux?"
+    },
+    {
+      "type": "text",
+      "value": "Redux is a pattern and library for managing and updating application state, using events called 'actions.' It serves as a centralized store for state that needs to be used across your entire application, with rules ensuring that the state can only be updated in a predictable fashion."
+    },
+    {
+      "type": "heading",
+      "value": "The Three Core Principles"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Single Source of Truth**: The global state of your application is stored in an object tree within a single store.",
+        "**State is Read-Only**: The only way to change the state is to emit an action, an object describing what happened.",
+        "**Changes are made with Pure Functions**: To specify how the state tree is transformed by actions, you write pure reducers."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Redux Data Flow"
+    },
+    {
+      "type": "text",
+      "value": "Redux uses a 'one-way data flow' app structure. An event triggers an **Action**, which is **Dispatched** to the **Store**. The Store runs the **Reducer** to calculate the new state, and the UI updates to reflect the change."
+    },
+    {
+      "type": "heading",
+      "value": "Redux Toolkit (RTK) – The Modern Way"
+    },
+    {
+      "type": "text",
+      "value": "In 2026, we no longer write 'vanilla' Redux. We use Redux Toolkit (RTK), which simplifies the process by handling the boilerplate and allowing us to write 'mutating' logic that is actually turned into safe, immutable updates using Immer."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { createSlice, configureStore } from '@reduxjs/toolkit';\n\n// 1. Create a Slice (Logic & State together)\nconst counterSlice = createSlice({\n  name: 'counter',\n  initialState: { value: 0 },\n  reducers: {\n    increment: (state) => {\n      state.value += 1; // Look like mutation, but RTK handles it safely!\n    },\n    decrement: (state) => {\n      state.value -= 1;\n    }\n  }\n});\n\n// 2. Export Actions and Store\nexport const { increment, decrement } = counterSlice.actions;\nexport const store = configureStore({\n  reducer: { counter: counterSlice.reducer }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Connecting React to Redux"
+    },
+    {
+      "type": "text",
+      "value": "To use Redux in your React components, you use two primary hooks: `useSelector` to read data from the store, and `useDispatch` to send actions to the store."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useSelector, useDispatch } from 'react-redux';\nimport { increment } from './counterSlice';\n\nfunction Counter() {\n  const count = useSelector((state) => state.counter.value);\n  const dispatch = useDispatch();\n\n  return (\n    <button onClick={() => dispatch(increment())}>\n      Count is: {count}\n    </button>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Redux vs. Context API"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Context API", "Redux Toolkit"],
+        "rows": [
+          ["Purpose", "Dependency Injection", "State Management"],
+          ["Performance", "Re-renders all consumers", "Selective re-renders (Selectors)"],
+          ["Debugging", "Basic (React DevTools)", "Powerful (Redux DevTools)"],
+          ["Boilerplate", "Very Low", "Moderate"],
+          ["Middlewares", "No native support", "Excellent (Thunk, Saga)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "When should I use Redux?",
+      "answer": "Use Redux when you have large amounts of application state that are needed in many places in the app, the app state is updated frequently, or the logic to update that state is complex."
+    },
+    {
+      "question": "What is a Reducer?",
+      "answer": "A reducer is a pure function that takes the current state and an action, and returns the next state: (state, action) => newState."
+    },
+    {
+      "question": "What are Redux DevTools?",
+      "answer": "It's a browser extension that lets you track when, where, why, and how your application's state changed, with features like 'time-travel debugging'."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React from 'react';\nimport { Provider, useSelector, useDispatch } from 'react-redux';\nimport { configureStore, createSlice } from '@reduxjs/toolkit';\n\n// Step 1: Create Slice\nconst themeSlice = createSlice({\n  name: 'theme',\n  initialState: { isDark: false },\n  reducers: {\n    toggleTheme: (state) => { state.isDark = !state.isDark; }\n  }\n});\n\n// Step 2: Configure Store\nconst store = configureStore({ reducer: { theme: themeSlice.reducer } });\nconst { toggleTheme } = themeSlice.actions;\n\n// Step 3: UI Component\nfunction ThemeSwitcher() {\n  const isDark = useSelector(state => state.theme.isDark);\n  const dispatch = useDispatch();\n\n  return (\n    <div style={{ \n      background: isDark ? '#333' : '#fff', \n      color: isDark ? '#fff' : '#000', \n      padding: '20px' \n    }}>\n      <h3>Redux Theme Demo</h3>\n      <button onClick={() => dispatch(toggleTheme())}>\n        Switch to {isDark ? 'Light' : 'Dark'} Mode\n      </button>\n    </div>\n  );\n}\n\nexport default function App() {\n  return (\n    <Provider store={store}>\n      <ThemeSwitcher />\n    </Provider>\n  );\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "What is the function of a 'Dispatch' in Redux?",
+      "options": [
+        "To delete the state",
+        "To send an action to the store",
+        "To render the component",
+        "To fetch data from an API"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which Redux Toolkit function is used to create both actions and reducers at once?",
+      "options": ["createReducer", "createAction", "createSlice", "configureStore"],
+      "answer": 2
+    },
+    {
+      "question": "Which hook is used to access data from the Redux store?",
+      "options": ["useStore", "useDispatch", "useSelector", "useState"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-context-api",
+    "react-state-management",
+    "redux-thunk-async",
+    "react-performance",
+    "react-hooks-intro"
+  ]
+}

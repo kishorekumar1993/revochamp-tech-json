@@ -1,0 +1,128 @@
+{
+  "slug": "react-folder-structure",
+  "course": "React",
+  "title": "React Folder Structure – Organizing Scalable Applications",
+
+  "meta": {
+    "title": "React Project Structure Guide – Best Practices for 2026",
+    "description": "Learn how to organize your React project for scalability. Explore feature-based vs. type-based structures, barrel exports, and clean architecture patterns.",
+    "keywords": [
+      "react folder structure",
+      "react project organization",
+      "feature-based structure",
+      "clean architecture react",
+      "react best practices"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Folder Structure Matters"
+    },
+    {
+      "type": "text",
+      "value": "In the early stages of a project, any structure works. However, as your application grows to hundreds of components and hooks, a poor structure leads to 'import hell' and difficulty in locating logic. A great structure makes the codebase self-documenting and easier for teams to collaborate on."
+    },
+    {
+      "type": "heading",
+      "value": "1. Feature-Based Structure (Recommended)"
+    },
+    {
+      "type": "text",
+      "value": "The modern standard (2026) is to group files by feature rather than file type. Instead of having one giant `components` folder, you group everything related to a specific domain (like 'Auth' or 'Dashboard') together."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "src/\n├── components/      # Shared UI (Button, Input, Modal)\n├── features/        # Feature-specific modules\n│   ├── auth/        \n│   │   ├── components/  # LoginForm, RegisterForm\n│   │   ├── hooks/       # useAuth, useLogin\n│   │   ├── services/    # authApi.js\n│   │   └── types/       # user.ts (if using TS)\n│   └── payments/    \n├── hooks/           # Global reusable hooks\n├── layouts/         # Page wrappers (AdminLayout, AuthLayout)\n├── services/        # Global API clients (Axios instance)\n└── utils/           # Helper functions (formatDate, validation)"
+    },
+    {
+      "type": "heading",
+      "value": "2. The 'Barrel' Export Pattern"
+    },
+    {
+      "type": "text",
+      "value": "To keep your imports clean, use `index.js` (or `index.ts`) files in each folder. This allows you to import from the folder name rather than the specific file."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// ❌ Messy Import\nimport { Button } from '../../components/Button/Button';\nimport { Input } from '../../components/Input/Input';\n\n// ✅ Clean Barrel Import (via components/index.js)\nimport { Button, Input } from '@/components';"
+    },
+    {
+      "type": "heading",
+      "value": "3. Common Organization Patterns"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Pattern", "Description", "Best For"],
+        "rows": [
+          ["Type-Based", "Folders like /components, /hooks, /store", "Small projects (<10 pages)"],
+          ["Feature-Based", "Folders like /features/cart, /features/user", "Medium to Large Enterprise apps"],
+          ["Atomic Design", "Atoms, Molecules, Organisms, Templates", "Design-system focused projects"],
+          ["Clean Architecture", "Layers: Domain, Infrastructure, Application", "Complex apps with heavy business logic"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use Absolute Paths**: Configure `@/` to point to `src/` to avoid `../../../../` nesting issues.",
+        "**Keep components close to where they are used**: If a component is only used by `Profile`, keep it inside the `Profile` folder.",
+        "**Naming Conventions**: Use PascalCase for components (`UserProfile.jsx`) and camelCase for hooks and utils (`useAuth.js`).",
+        "**Avoid Deep Nesting**: Try not to go more than 3-4 levels deep. If it's getting too deep, flatten the structure."
+      ]
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Where should I put my CSS/Styles?",
+      "answer": "If using CSS Modules or Styled Components, keep the style file in the same folder as the component. For Tailwind, the classes stay inside the JSX."
+    },
+    {
+      "question": "Should 'pages' and 'features' be separate?",
+      "answer": "Yes. 'Pages' should be thin wrappers that pull in 'Features'. This makes the features easily testable and portable."
+    },
+    {
+      "question": "What is the '@' symbol in imports?",
+      "answer": "It is a path alias configured in Vite or Webpack that maps to the 'src' directory, making imports shorter and more readable."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which folder structure is generally preferred for large-scale React apps in 2026?",
+      "options": ["Flat structure", "Type-based structure", "Feature-based structure", "Alphabetical structure"],
+      "answer": 2
+    },
+    {
+      "question": "What is a 'Barrel' file in React organization?",
+      "options": [
+        "A file that stores heavy images",
+        "An index file that re-exports multiple files from a single directory",
+        "A backup of the source code",
+        "A configuration file for the database"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-best-practices",
+    "react-clean-architecture",
+    "react-components-advanced",
+    "react-hooks-organization",
+    "react-performance"
+  ]
+}

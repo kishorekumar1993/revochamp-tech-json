@@ -1,0 +1,122 @@
+{
+  "slug": "react-error-boundaries",
+  "course": "React",
+  "title": "React Error Boundaries – Graceful Error Handling",
+
+  "meta": {
+    "title": "React Error Boundaries Guide – Preventing App Crashes (2026)",
+    "description": "Learn how to use Error Boundaries in React to catch JavaScript errors in child components and display a fallback UI instead of crashing the entire app.",
+    "keywords": [
+      "react error boundary",
+      "getderivedstatefromerror",
+      "componentdidcatch",
+      "react crash recovery",
+      "fallback ui react"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is an Error Boundary?"
+    },
+    {
+      "type": "text",
+      "value": "In the past, a JavaScript error inside a component would corrupt React’s internal state and cause the entire application to vanish (the 'White Screen of Death'). Error Boundaries are special components that catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI instead of the crashed component tree."
+    },
+    {
+      "type": "heading",
+      "value": "The Catch: Class Components Only"
+    },
+    {
+      "type": "text",
+      "value": "As of 2026, Error Boundaries must still be written as **Class Components**. There is no functional hook equivalent (like `useError`) because the lifecycle methods `getDerivedStateFromError` and `componentDidCatch` are unique to classes. Most developers write one 'Global' boundary and several 'Feature' boundaries."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import React from 'react';\n\nclass ErrorBoundary extends React.Component {\n  constructor(props) {\n    super(props);\n    this.state = { hasError: false };\n  }\n\n  // 1. Update state so the next render shows the fallback UI\n  static getDerivedStateFromError(error) {\n    return { hasError: true };\n  }\n\n  // 2. Log the error to a service like Sentry or LogRocket\n  componentDidCatch(error, errorInfo) {\n    console.error('Logging to service:', error, errorInfo);\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return this.props.fallback || <h1>Something went wrong.</h1>;\n    }\n\n    return this.props.children; \n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "What Error Boundaries Do NOT Catch"
+    },
+    {
+      "type": "text",
+      "value": "Error Boundaries are powerful but they are not a universal 'try-catch'. They specifically catch errors during **rendering**, in **lifecycle methods**, and in **constructors** of the whole tree below them."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Event handlers**: (e.g., `onClick` errors). Use regular try/catch blocks here.",
+        "**Asynchronous code**: (e.g., `setTimeout` or `requestAnimationFrame` callbacks).",
+        "**Server-side rendering**.",
+        "**Errors thrown in the boundary itself** (rather than its children)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Strategy: Granular Boundaries"
+    },
+    {
+      "type": "text",
+      "value": "Don't just wrap your `App` in one boundary. Wrap individual heavy features (like a Dashboard Chart or a Search Sidebar) so that if one fails, the rest of the application remains interactive."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "<Layout>\n  <Header />\n  <ErrorBoundary fallback={<p>Sidebar failed to load.</p>}>\n    <Sidebar />\n  </ErrorBoundary>\n  <MainContent />\n</Layout>"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why use Error Boundaries instead of try/catch?",
+      "answer": "try/catch is imperative and only works for code blocks. Error Boundaries are declarative and work for the entire component tree's rendering phase."
+    },
+    {
+      "question": "Is there a library to make this easier?",
+      "answer": "Yes, 'react-error-boundary' is the industry standard. It provides a functional wrapper and a 'reset' capability to let users 'Try Again'."
+    },
+    {
+      "question": "Does it catch API errors?",
+      "answer": "Only if the API error causes a crash during rendering. Usually, you handle API errors with state (e.g., `setError(true)`) and display an error message manually."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useState } from 'react';\n\n// A component that crashes when it gets to 5\nconst BuggyCounter = () => {\n  const [counter, setCounter] = useState(0);\n\n  if (counter === 5) {\n    throw new Error('I crashed!');\n  }\n\n  return (\n    <button onClick={() => setCounter(c => c + 1)}>\n      Click to reach 5: {counter}\n    </button>\n  );\n};\n\nclass SimpleErrorBoundary extends React.Component {\n  state = { hasError: false };\n\n  static getDerivedStateFromError() {\n    return { hasError: true };\n  }\n\n  render() {\n    if (this.state.hasError) {\n      return (\n        <div style={{ color: 'red', padding: '10px', border: '1px solid red' }}>\n          <h4>⚠️ This section crashed.</h4>\n          <button onClick={() => this.setState({ hasError: false })}>\n            Reset & Try Again\n          </button>\n        </div>\n      );\n    }\n    return this.props.children;\n  }\n}\n\nexport default function App() {\n  return (\n    <div style={{ padding: '20px' }}>\n      <h3>Error Boundary Demo</h3>\n      <p>The boundary protects the rest of the app.</p>\n      <SimpleErrorBoundary>\n        <BuggyCounter />\n      </SimpleErrorBoundary>\n      <p style={{ marginTop: '20px' }}>I am outside the boundary and still working!</p>\n    </div>\n  );\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "Which lifecycle method is used to render a fallback UI after an error?",
+      "options": ["componentDidCatch", "getDerivedStateFromError", "shouldComponentUpdate", "componentWillUnmount"],
+      "answer": 1
+    },
+    {
+      "question": "Can Error Boundaries catch errors in an onClick handler?",
+      "options": ["Yes, always", "Only in development", "No, you must use try/catch in handlers", "Only if using React 18+"],
+      "answer": 2
+    },
+    {
+      "question": "What happens if a component crashes and there is NO error boundary?",
+      "options": [
+        "React shows a warning but keeps running",
+        "The component just disappears",
+        "The entire React component tree is unmounted (White Screen)",
+        "The browser reloads the page"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-lifecycle",
+    "react-api-calls",
+    "react-suspense-basics",
+    "react-performance",
+    "react-best-practices"
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "slug": "react-controlled-components",
+  "course": "React",
+  "title": "Controlled Components – Managing Form State in React",
+
+  "meta": {
+    "title": "React Controlled Components Guide – Single Source of Truth (2026)",
+    "description": "Master controlled components in React. Learn how to sync form inputs with component state for instant validation, conditional UI, and predictable data flow.",
+    "keywords": [
+      "controlled components",
+      "react state forms",
+      "onchange handler",
+      "react form value",
+      "react input binding"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The 'Single Source of Truth' Pattern"
+    },
+    {
+      "type": "text",
+      "value": "In a controlled component, the form data is handled by a React component. The alternative is uncontrolled components, where form data is handled by the DOM itself. In a controlled component, the input's current value is always driven by the React state, making the state the 'single source of truth'."
+    },
+    {
+      "type": "heading",
+      "value": "How Controlled Components Work"
+    },
+    {
+      "type": "text",
+      "value": "Every state mutation has an associated handler function. When a user types into an input, an event is triggered, the handler updates the state, and the component re-renders with the new value."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState } from 'react';\n\nfunction NameForm() {\n  const [name, setName] = useState('');\n\n  const handleChange = (e) => {\n    // Intercept and transform if needed\n    setName(e.target.value.toUpperCase());\n  };\n\n  return (\n    <input \n      type=\"text\" \n      value={name} \n      onChange={handleChange} \n    />\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Controlled Components?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Instant Validation**: You can check if an input is valid on every keystroke and show error messages immediately.",
+        "**Conditional UI**: Disable the 'Submit' button or show/hide fields based on the current value of another input.",
+        "**Input Formatting**: Automatically format inputs (like credit card numbers or phone numbers) as the user types.",
+        "**Predictability**: Since the state holds the data, the UI and the data are always in sync."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Handling Multiple Inputs"
+    },
+    {
+      "type": "text",
+      "value": "Instead of creating separate handlers for every field, you can use a single change handler by leveraging the `name` attribute of the HTML elements."
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "const [formData, setFormData] = useState({\n  username: '',\n  email: ''\n});\n\nconst handleInputChange = (e) => {\n  const { name, value } = e.target;\n  setFormData({\n    ...formData,\n    [name]: value // Computed property name\n  });\n};"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Is it slow to re-render on every keystroke?",
+      "answer": "For most standard forms, React's reconciliation is fast enough that users won't notice. For massive forms (100+ inputs), you might consider optimization or an uncontrolled approach."
+    },
+    {
+      "question": "What happens if I provide a 'value' prop without 'onChange'?",
+      "answer": "The input will become read-only in the browser because React is forcing the value to match the state, but there is no mechanism to update that state."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import React, { useState } from 'react';\n\nfunction LivePreview() {\n  const [text, setText] = useState('');\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h3>Controlled Input Demo</h3>\n      <input \n        type=\"text\" \n        value={text} \n        onChange={(e) => setText(e.target.value)} \n        placeholder=\"Type something...\"\n        style={{ padding: '8px', width: '200px' }}\n      />\n      <div style={{ marginTop: '20px', color: '#666' }}>\n        <strong>Live Preview:</strong> {text || '(empty)'}\n      </div>\n      {text.length > 10 && (\n        <p style={{ color: 'red' }}>Warning: Text is getting long!</p>\n      )}\n    </div>\n  );\n}\n\nexport default LivePreview;"
+  },
+
+  "quiz": [
+    {
+      "question": "In a controlled component, what is the 'single source of truth'?",
+      "options": ["The DOM", "The Browser Cache", "React State", "The URL parameters"],
+      "answer": 2
+    },
+    {
+      "question": "Which prop is required to link an input's display to React state?",
+      "options": ["name", "id", "value", "ref"],
+      "answer": 2
+    },
+    {
+      "question": "How do you handle updates in a controlled component?",
+      "options": ["Through the onSubmit event only", "Using the onChange event handler", "Using a direct DOM query", "React handles it automatically without code"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-forms",
+    "react-uncontrolled-components",
+    "react-state-management",
+    "react-events-handling",
+    "react-hook-form"
+  ]
+}

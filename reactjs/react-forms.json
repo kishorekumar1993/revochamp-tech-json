@@ -1,0 +1,180 @@
+{
+  "slug": "react-forms",
+  "course": "React",
+  "title": "React Forms – Handling Form Inputs & Validation",
+
+  "meta": {
+    "title": "React Forms – Complete Guide to Form Handling (2026)",
+    "description": "Master forms in React. Learn controlled vs uncontrolled components, form validation, custom hooks, and best practices for handling user input.",
+    "keywords": [
+      "react forms",
+      "react form validation",
+      "controlled components",
+      "react hook form",
+      "react form handling"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Forms in React"
+    },
+    {
+      "type": "text",
+      "value": "React forms handle user input through component state. There are two main approaches: controlled components (React state controls input value) and uncontrolled components (DOM handles input state with refs)."
+    },
+    {
+      "type": "heading",
+      "value": "Controlled Components"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState } from 'react';\n\nfunction ControlledForm() {\n  const [formData, setFormData] = useState({\n    username: '',\n    email: '',\n    age: '',\n    gender: '',\n    interests: [],\n    bio: ''\n  });\n\n  const handleChange = (e) => {\n    const { name, value, type, checked } = e.target;\n    \n    if (type === 'checkbox') {\n      // Handle checkboxes\n      if (checked) {\n        setFormData({\n          ...formData,\n          interests: [...formData.interests, value]\n        });\n      } else {\n        setFormData({\n          ...formData,\n          interests: formData.interests.filter(item => item !== value)\n        });\n      }\n    } else {\n      // Handle text inputs\n      setFormData({\n        ...formData,\n        [name]: value\n      });\n    }\n  };\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    console.log('Form submitted:', formData);\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input\n        type=\"text\"\n        name=\"username\"\n        value={formData.username}\n        onChange={handleChange}\n        placeholder=\"Username\"\n      />\n      \n      <input\n        type=\"email\"\n        name=\"email\"\n        value={formData.email}\n        onChange={handleChange}\n        placeholder=\"Email\"\n      />\n      \n      <input\n        type=\"number\"\n        name=\"age\"\n        value={formData.age}\n        onChange={handleChange}\n        placeholder=\"Age\"\n      />\n      \n      <select name=\"gender\" value={formData.gender} onChange={handleChange}>\n        <option value=\"\">Select Gender</option>\n        <option value=\"male\">Male</option>\n        <option value=\"female\">Female</option>\n        <option value=\"other\">Other</option>\n      </select>\n      \n      <label>\n        <input\n          type=\"checkbox\"\n          value=\"coding\"\n          checked={formData.interests.includes('coding')}\n          onChange={handleChange}\n        />\n        Coding\n      </label>\n      \n      <textarea\n        name=\"bio\"\n        value={formData.bio}\n        onChange={handleChange}\n        placeholder=\"Tell us about yourself\"\n      />\n      \n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Uncontrolled Components"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useRef } from 'react';\n\nfunction UncontrolledForm() {\n  const usernameRef = useRef(null);\n  const emailRef = useRef(null);\n  const genderRef = useRef(null);\n  const bioRef = useRef(null);\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    const formData = {\n      username: usernameRef.current.value,\n      email: emailRef.current.value,\n      gender: genderRef.current.value,\n      bio: bioRef.current.value\n    };\n    console.log('Form data:', formData);\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <input type=\"text\" ref={usernameRef} defaultValue=\"\" placeholder=\"Username\" />\n      <input type=\"email\" ref={emailRef} defaultValue=\"\" placeholder=\"Email\" />\n      <select ref={genderRef} defaultValue=\"\">\n        <option value=\"\">Select Gender</option>\n        <option value=\"male\">Male</option>\n        <option value=\"female\">Female</option>\n      </select>\n      <textarea ref={bioRef} defaultValue=\"\" placeholder=\"Bio\" />\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}\n\n// Using defaultValue for initial values\nfunction DefaultValueForm() {\n  return (\n    <form>\n      <input type=\"text\" defaultValue=\"Initial value\" />\n      <input type=\"checkbox\" defaultChecked={true} />\n      <select defaultValue=\"male\">\n        <option value=\"male\">Male</option>\n        <option value=\"female\">Female</option>\n      </select>\n    </form>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Form Validation"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState } from 'react';\n\nfunction ValidatedForm() {\n  const [formData, setFormData] = useState({\n    username: '',\n    email: '',\n    password: '',\n    confirmPassword: ''\n  });\n  \n  const [errors, setErrors] = useState({});\n  const [touched, setTouched] = useState({});\n\n  const validateField = (name, value) => {\n    switch (name) {\n      case 'username':\n        if (!value) return 'Username is required';\n        if (value.length < 3) return 'Username must be at least 3 characters';\n        return '';\n      \n      case 'email':\n        if (!value) return 'Email is required';\n        const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n        if (!emailRegex.test(value)) return 'Invalid email format';\n        return '';\n      \n      case 'password':\n        if (!value) return 'Password is required';\n        if (value.length < 6) return 'Password must be at least 6 characters';\n        if (!/[A-Z]/.test(value)) return 'Password must contain at least one uppercase letter';\n        if (!/[0-9]/.test(value)) return 'Password must contain at least one number';\n        return '';\n      \n      case 'confirmPassword':\n        if (!value) return 'Please confirm your password';\n        if (value !== formData.password) return 'Passwords do not match';\n        return '';\n      \n      default:\n        return '';\n    }\n  };\n\n  const handleChange = (e) => {\n    const { name, value } = e.target;\n    setFormData({ ...formData, [name]: value });\n    \n    // Validate on change if field has been touched\n    if (touched[name]) {\n      const error = validateField(name, value);\n      setErrors({ ...errors, [name]: error });\n    }\n  };\n\n  const handleBlur = (e) => {\n    const { name, value } = e.target;\n    setTouched({ ...touched, [name]: true });\n    const error = validateField(name, value);\n    setErrors({ ...errors, [name]: error });\n  };\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    \n    // Validate all fields\n    const newErrors = {};\n    let isValid = true;\n    \n    Object.keys(formData).forEach(field => {\n      const error = validateField(field, formData[field]);\n      if (error) {\n        newErrors[field] = error;\n        isValid = false;\n      }\n    });\n    \n    setErrors(newErrors);\n    \n    if (isValid) {\n      console.log('Form submitted:', formData);\n      alert('Form submitted successfully!');\n    }\n  };\n\n  return (\n    <form onSubmit={handleSubmit}>\n      <div>\n        <label>Username:</label>\n        <input\n          type=\"text\"\n          name=\"username\"\n          value={formData.username}\n          onChange={handleChange}\n          onBlur={handleBlur}\n          className={errors.username && touched.username ? 'error' : ''}\n        />\n        {touched.username && errors.username && (\n          <span style={{ color: 'red' }}>{errors.username}</span>\n        )}\n      </div>\n\n      <div>\n        <label>Email:</label>\n        <input\n          type=\"email\"\n          name=\"email\"\n          value={formData.email}\n          onChange={handleChange}\n          onBlur={handleBlur}\n          className={errors.email && touched.email ? 'error' : ''}\n        />\n        {touched.email && errors.email && (\n          <span style={{ color: 'red' }}>{errors.email}</span>\n        )}\n      </div>\n\n      <div>\n        <label>Password:</label>\n        <input\n          type=\"password\"\n          name=\"password\"\n          value={formData.password}\n          onChange={handleChange}\n          onBlur={handleBlur}\n          className={errors.password && touched.password ? 'error' : ''}\n        />\n        {touched.password && errors.password && (\n          <span style={{ color: 'red' }}>{errors.password}</span>\n        )}\n      </div>\n\n      <div>\n        <label>Confirm Password:</label>\n        <input\n          type=\"password\"\n          name=\"confirmPassword\"\n          value={formData.confirmPassword}\n          onChange={handleChange}\n          onBlur={handleBlur}\n          className={errors.confirmPassword && touched.confirmPassword ? 'error' : ''}\n        />\n        {touched.confirmPassword && errors.confirmPassword && (\n          <span style={{ color: 'red' }}>{errors.confirmPassword}</span>\n        )}\n      </div>\n\n      <button type=\"submit\">Submit</button>\n    </form>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Custom Form Hook"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useState, useCallback } from 'react';\n\nfunction useForm(initialValues, validate) {\n  const [values, setValues] = useState(initialValues);\n  const [errors, setErrors] = useState({});\n  const [touched, setTouched] = useState({});\n  const [isSubmitting, setIsSubmitting] = useState(false);\n\n  const handleChange = useCallback((e) => {\n    const { name, value, type, checked } = e.target;\n    const newValue = type === 'checkbox' ? checked : value;\n    \n    setValues(prev => ({ ...prev, [name]: newValue }));\n    \n    if (touched[name] && validate) {\n      const error = validate(name, newValue, values);\n      setErrors(prev => ({ ...prev, [name]: error }));\n    }\n  }, [touched, values, validate]);\n\n  const handleBlur = useCallback((e) => {\n    const { name, value } = e.target;\n    setTouched(prev => ({ ...prev, [name]: true }));\n    \n    if (validate) {\n      const error = validate(name, value, values);\n      setErrors(prev => ({ ...prev, [name]: error }));\n    }\n  }, [values, validate]);\n\n  const handleSubmit = useCallback((onSubmit) => async (e) => {\n    e.preventDefault();\n    setIsSubmitting(true);\n    \n    // Validate all fields\n    if (validate) {\n      const newErrors = {};\n      let isValid = true;\n      \n      Object.keys(values).forEach(field => {\n        const error = validate(field, values[field], values);\n        if (error) {\n          newErrors[field] = error;\n          isValid = false;\n        }\n      });\n      \n      setErrors(newErrors);\n      \n      if (isValid) {\n        await onSubmit(values);\n      }\n    } else {\n      await onSubmit(values);\n    }\n    \n    setIsSubmitting(false);\n  }, [values, validate]);\n\n  const resetForm = useCallback(() => {\n    setValues(initialValues);\n    setErrors({});\n    setTouched({});\n  }, [initialValues]);\n\n  return {\n    values,\n    errors,\n    touched,\n    isSubmitting,\n    handleChange,\n    handleBlur,\n    handleSubmit,\n    resetForm,\n    setValues\n  };\n}\n\n// Usage\nfunction LoginForm() {\n  const validate = (name, value, values) => {\n    if (name === 'email') {\n      if (!value) return 'Email is required';\n      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value)) return 'Invalid email';\n    }\n    if (name === 'password') {\n      if (!value) return 'Password is required';\n      if (value.length < 6) return 'Password must be at least 6 characters';\n    }\n    return '';\n  };\n\n  const {\n    values,\n    errors,\n    touched,\n    handleChange,\n    handleBlur,\n    handleSubmit\n  } = useForm({ email: '', password: '' }, validate);\n\n  const onSubmit = async (data) => {\n    console.log('Login data:', data);\n    // API call here\n  };\n\n  return (\n    <form onSubmit={handleSubmit(onSubmit)}>\n      <div>\n        <input\n          name=\"email\"\n          value={values.email}\n          onChange={handleChange}\n          onBlur={handleBlur}\n          placeholder=\"Email\"\n        />\n        {touched.email && errors.email && <span>{errors.email}</span>}\n      </div>\n      <div>\n        <input\n          name=\"password\"\n          type=\"password\"\n          value={values.password}\n          onChange={handleChange}\n          onBlur={handleBlur}\n          placeholder=\"Password\"\n        />\n        {touched.password && errors.password && <span>{errors.password}</span>}\n      </div>\n      <button type=\"submit\">Login</button>\n    </form>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "React Hook Form (Recommended Library)"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "import { useForm } from 'react-hook-form';\n\nfunction ReactHookFormExample() {\n  const {\n    register,\n    handleSubmit,\n    formState: { errors, isSubmitting },\n    reset\n  } = useForm({\n    defaultValues: {\n      username: '',\n      email: '',\n      age: 18\n    }\n  });\n\n  const onSubmit = async (data) => {\n    console.log(data);\n    await new Promise(resolve => setTimeout(resolve, 1000));\n    reset();\n  };\n\n  return (\n    <form onSubmit={handleSubmit(onSubmit)}>\n      <div>\n        <input\n          {...register('username', {\n            required: 'Username is required',\n            minLength: {\n              value: 3,\n              message: 'Username must be at least 3 characters'\n            }\n          })}\n          placeholder=\"Username\"\n        />\n        {errors.username && (\n          <span>{errors.username.message}</span>\n        )}\n      </div>\n\n      <div>\n        <input\n          {...register('email', {\n            required: 'Email is required',\n            pattern: {\n              value: /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/,\n              message: 'Invalid email format'\n            }\n          })}\n          placeholder=\"Email\"\n        />\n        {errors.email && <span>{errors.email.message}</span>}\n      </div>\n\n      <div>\n        <input\n          type=\"number\"\n          {...register('age', {\n            min: { value: 18, message: 'Must be at least 18' },\n            max: { value: 100, message: 'Must be at most 100' }\n          })}\n          placeholder=\"Age\"\n        />\n        {errors.age && <span>{errors.age.message}</span>}\n      </div>\n\n      <button type=\"submit\" disabled={isSubmitting}>\n        {isSubmitting ? 'Submitting...' : 'Submit'}\n      </button>\n    </form>\n  );\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Form Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use controlled components** for most forms (easier validation and state management)",
+        "**Implement validation** on both client and server side",
+        "**Show validation errors** inline, after field blur or on submit",
+        "**Disable submit button** during submission to prevent duplicates",
+        "**Provide clear error messages** that explain how to fix the issue",
+        "**Use form libraries** like React Hook Form or Formik for complex forms",
+        "**Handle accessibility** with proper labels and ARIA attributes",
+        "**Reset form after successful submission** to clear inputs",
+        "**Save form state** to localStorage for long forms",
+        "**Use TypeScript** for better type safety with form data"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Form Libraries Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Library", "Bundle Size", "Performance", "Features", "Learning Curve"],
+        "rows": [
+          ["React Hook Form", "~9KB", "Excellent", "Uncontrolled by default, minimal re-renders", "Low"],
+          ["Formik", "~12KB", "Good", "Full-featured, controlled", "Low"],
+          ["React Final Form", "~8KB", "Good", "Subscription-based, performant", "Medium"],
+          ["React Forms (native)", "0KB", "Good", "Basic, requires custom code", "Low"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "code",
+      "language": "jsx",
+      "value": "// ❌ Wrong: Not handling form submission\n<form>\n  <input />\n  <button type=\"submit\">Submit</button>\n</form>\n\n// ✅ Correct: Handle submit and prevent default\n<form onSubmit={handleSubmit}>\n  <input />\n  <button type=\"submit\">Submit</button>\n</form>\n\n// ❌ Wrong: Not providing name attributes\n<input value={username} onChange={handleChange} />\n\n// ✅ Correct: Include name attribute\n<input name=\"username\" value={username} onChange={handleChange} />\n\n// ❌ Wrong: Mutating state directly\nconst handleChange = (e) => {\n  formData[e.target.name] = e.target.value; // Direct mutation\n  setFormData(formData);\n};\n\n// ✅ Correct: Create new object\nconst handleChange = (e) => {\n  setFormData({ ...formData, [e.target.name]: e.target.value });\n};\n\n// ❌ Wrong: Not resetting form after submit\nconst handleSubmit = async (data) => {\n  await submitData(data);\n  // Form still has old data\n};\n\n// ✅ Correct: Reset after submission\nconst handleSubmit = async (data) => {\n  await submitData(data);\n  resetForm();\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Forms are a critical part of most React applications. Controlled components give you full control over form state and validation. For complex forms, consider using libraries like React Hook Form for better performance and developer experience. Always implement proper validation, error handling, and accessibility."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Controlled vs uncontrolled components?",
+      "answer": "Controlled: React state controls input value. Uncontrolled: DOM handles value with refs."
+    },
+    {
+      "question": "When to use React Hook Form?",
+      "answer": "For complex forms, better performance, and less boilerplate code."
+    },
+    {
+      "question": "How to validate forms?",
+      "answer": "Client-side validation with custom logic or libraries like Yup, Zod."
+    },
+    {
+      "question": "How to handle file uploads?",
+      "answer": "Use uncontrolled input with type='file' and FormData API."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import { useState } from 'react';\n\nfunction RegistrationForm() {\n  const [formData, setFormData] = useState({\n    fullName: '',\n    email: '',\n    password: '',\n    confirmPassword: '',\n    role: 'user',\n    newsletter: false\n  });\n  \n  const [errors, setErrors] = useState({});\n  const [submitted, setSubmitted] = useState(false);\n\n  const validateForm = () => {\n    const newErrors = {};\n    \n    if (!formData.fullName.trim()) {\n      newErrors.fullName = 'Full name is required';\n    } else if (formData.fullName.length < 2) {\n      newErrors.fullName = 'Name must be at least 2 characters';\n    }\n    \n    if (!formData.email) {\n      newErrors.email = 'Email is required';\n    } else if (!/\\S+@\\S+\\.\\S+/.test(formData.email)) {\n      newErrors.email = 'Email is invalid';\n    }\n    \n    if (!formData.password) {\n      newErrors.password = 'Password is required';\n    } else if (formData.password.length < 6) {\n      newErrors.password = 'Password must be at least 6 characters';\n    }\n    \n    if (formData.password !== formData.confirmPassword) {\n      newErrors.confirmPassword = 'Passwords do not match';\n    }\n    \n    setErrors(newErrors);\n    return Object.keys(newErrors).length === 0;\n  };\n\n  const handleChange = (e) => {\n    const { name, value, type, checked } = e.target;\n    setFormData({\n      ...formData,\n      [name]: type === 'checkbox' ? checked : value\n    });\n    // Clear error for this field when user starts typing\n    if (errors[name]) {\n      setErrors({ ...errors, [name]: '' });\n    }\n  };\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    if (validateForm()) {\n      console.log('Form submitted:', formData);\n      setSubmitted(true);\n      // Reset form after 3 seconds\n      setTimeout(() => {\n        setFormData({\n          fullName: '',\n          email: '',\n          password: '',\n          confirmPassword: '',\n          role: 'user',\n          newsletter: false\n        });\n        setSubmitted(false);\n      }, 3000);\n    }\n  };\n\n  if (submitted) {\n    return (\n      <div style={{ textAlign: 'center', padding: '40px' }}>\n        <h2>🎉 Registration Successful!</h2>\n        <p>Welcome, {formData.fullName}!</p>\n        <p>Check your email at {formData.email} for confirmation.</p>\n      </div>\n    );\n  }\n\n  return (\n    <form onSubmit={handleSubmit} style={{ maxWidth: '500px', margin: '0 auto' }}>\n      <h2>Register</h2>\n      \n      <div style={{ marginBottom: '15px' }}>\n        <label>Full Name *</label>\n        <input\n          type=\"text\"\n          name=\"fullName\"\n          value={formData.fullName}\n          onChange={handleChange}\n          style={{\n            width: '100%',\n            padding: '8px',\n            border: errors.fullName ? '1px solid red' : '1px solid #ddd',\n            borderRadius: '4px'\n          }}\n        />\n        {errors.fullName && <span style={{ color: 'red', fontSize: '14px' }}>{errors.fullName}</span>}\n      </div>\n\n      <div style={{ marginBottom: '15px' }}>\n        <label>Email *</label>\n        <input\n          type=\"email\"\n          name=\"email\"\n          value={formData.email}\n          onChange={handleChange}\n          style={{\n            width: '100%',\n            padding: '8px',\n            border: errors.email ? '1px solid red' : '1px solid #ddd',\n            borderRadius: '4px'\n          }}\n        />\n        {errors.email && <span style={{ color: 'red', fontSize: '14px' }}>{errors.email}</span>}\n      </div>\n\n      <div style={{ marginBottom: '15px' }}>\n        <label>Password *</label>\n        <input\n          type=\"password\"\n          name=\"password\"\n          value={formData.password}\n          onChange={handleChange}\n          style={{\n            width: '100%',\n            padding: '8px',\n            border: errors.password ? '1px solid red' : '1px solid #ddd',\n            borderRadius: '4px'\n          }}\n        />\n        {errors.password && <span style={{ color: 'red', fontSize: '14px' }}>{errors.password}</span>}\n      </div>\n\n      <div style={{ marginBottom: '15px' }}>\n        <label>Confirm Password *</label>\n        <input\n          type=\"password\"\n          name=\"confirmPassword\"\n          value={formData.confirmPassword}\n          onChange={handleChange}\n          style={{\n            width: '100%',\n            padding: '8px',\n            border: errors.confirmPassword ? '1px solid red' : '1px solid #ddd',\n            borderRadius: '4px'\n          }}\n        />\n        {errors.confirmPassword && <span style={{ color: 'red', fontSize: '14px' }}>{errors.confirmPassword}</span>}\n      </div>\n\n      <div style={{ marginBottom: '15px' }}>\n        <label>Role</label>\n        <select\n          name=\"role\"\n          value={formData.role}\n          onChange={handleChange}\n          style={{ width: '100%', padding: '8px' }}\n        >\n          <option value=\"user\">User</option>\n          <option value=\"admin\">Admin</option>\n          <option value=\"moderator\">Moderator</option>\n        </select>\n      </div>\n\n      <div style={{ marginBottom: '20px' }}>\n        <label>\n          <input\n            type=\"checkbox\"\n            name=\"newsletter\"\n            checked={formData.newsletter}\n            onChange={handleChange}\n          />\n          Subscribe to newsletter\n        </label>\n      </div>\n\n      <button\n        type=\"submit\"\n        style={{\n          width: '100%',\n          padding: '10px',\n          backgroundColor: '#007bff',\n          color: 'white',\n          border: 'none',\n          borderRadius: '4px',\n          cursor: 'pointer'\n        }}\n      >\n        Register\n      </button>\n    </form>\n  );\n}\n\nexport default RegistrationForm;"
+  },
+
+  "quiz": [
+    {
+      "question": "What is a controlled component?",
+      "options": ["Component with internal state", "Component controlled by parent via props", "Component where form data is handled by React state", "Component with refs"],
+      "answer": 2
+    },
+    {
+      "question": "How do you access form values in uncontrolled components?",
+      "options": ["State", "Props", "Refs", "Context"],
+      "answer": 2
+    },
+    {
+      "question": "Which library is recommended for complex forms?",
+      "options": ["Redux Form", "React Hook Form", "React Router", "Axios"],
+      "answer": 1
+    },
+    {
+      "question": "How to prevent form submission page reload?",
+      "options": ["return false", "event.stopPropagation()", "event.preventDefault()", "event.stopReload()"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-introduction",
+    "react-state",
+    "react-events",
+    "react-hooks",
+    "react-validation"
+  ]
+}
