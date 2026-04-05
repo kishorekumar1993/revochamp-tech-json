@@ -1,0 +1,183 @@
+{
+  "slug": "web-code-splitting",
+  "course": "Web Performance",
+  "title": "Code Splitting in Web",
+
+  "meta": {
+    "title": "Code Splitting – Improve Load Time & Performance (2026)",
+    "description": "Learn code splitting techniques to reduce bundle size, load resources efficiently, and improve web performance.",
+    "keywords": [
+      "code splitting",
+      "web performance code splitting",
+      "lazy loading javascript modules",
+      "reduce bundle size",
+      "dynamic imports javascript",
+      "frontend optimization"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Code Splitting?"
+    },
+    {
+      "type": "text",
+      "value": "Code splitting is a technique that breaks large JavaScript bundles into smaller chunks. These chunks are loaded only when needed, reducing initial load time."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Code Splitting?"
+    },
+    {
+      "type": "text",
+      "value": "Loading a large bundle at once can slow down your website. Code splitting improves performance by loading only the required code for each page or feature."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Example (Dynamic Import)"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "import('./module.js').then(module => {\n  module.loadFeature();\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Route-Based Code Splitting"
+    },
+    {
+      "type": "text",
+      "value": "Load different JavaScript files for different routes instead of loading everything at once."
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "const Home = () => import('./Home.js');\nconst About = () => import('./About.js');"
+    },
+    {
+      "type": "heading",
+      "value": "Component-Based Splitting"
+    },
+    {
+      "type": "text",
+      "value": "Load components only when they are needed instead of bundling them all together."
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "const LazyComponent = React.lazy(() => import('./MyComponent'));"
+    },
+    {
+      "type": "heading",
+      "value": "Benefits of Code Splitting"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Faster initial page load**",
+        "**Reduced bundle size**",
+        "**Better caching efficiency**",
+        "**Improved user experience**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Code Splitting"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Large applications with many features**",
+        "**Multiple routes/pages**",
+        "**Heavy third-party libraries**",
+        "**Dynamic content loading**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Split code at route level**",
+        "**Avoid too many small chunks**",
+        "**Use caching effectively**",
+        "**Combine with lazy loading**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Over-splitting code into too many chunks**",
+        "**Not handling loading states**",
+        "**Ignoring caching strategies**",
+        "**Breaking dependencies incorrectly**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Code splitting is a powerful optimization technique that reduces load time and improves performance. It ensures users load only what they need, making applications faster and more efficient."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is code splitting?",
+      "answer": "It is the process of splitting large code bundles into smaller chunks loaded on demand."
+    },
+    {
+      "question": "Does code splitting improve performance?",
+      "answer": "Yes, it reduces initial load time and improves efficiency."
+    },
+    {
+      "question": "What is dynamic import?",
+      "answer": "A JavaScript feature to load modules asynchronously."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import('./module.js').then(m => m.run());"
+  },
+
+  "quiz": [
+    {
+      "question": "What does code splitting reduce?",
+      "options": ["Images", "Bundle size", "CSS", "HTML"],
+      "answer": 1
+    },
+    {
+      "question": "Which feature enables code splitting?",
+      "options": ["import()", "require()", "fetch()", "setTimeout()"],
+      "answer": 0
+    },
+    {
+      "question": "When should you use code splitting?",
+      "options": [
+        "Small apps",
+        "Static pages",
+        "Large applications",
+        "Only CSS files"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "web-performance-introduction",
+    "web-loading-strategies",
+    "web-lazy-loading",
+    "javascript-performance",
+    "cdn-introduction"
+  ]
+}

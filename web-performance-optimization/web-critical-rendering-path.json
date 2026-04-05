@@ -1,0 +1,192 @@
+{
+  "slug": "web-critical-rendering-path",
+  "course": "Web Performance",
+  "title": "Critical Rendering Path",
+
+  "meta": {
+    "title": "Critical Rendering Path – How Browsers Render Pages (2026)",
+    "description": "Learn how the Critical Rendering Path works, including DOM, CSSOM, render tree, and how to optimize page rendering performance.",
+    "keywords": [
+      "critical rendering path",
+      "how browser renders page",
+      "dom cssom render tree",
+      "web performance rendering",
+      "optimize rendering path",
+      "frontend performance"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Critical Rendering Path?"
+    },
+    {
+      "type": "text",
+      "value": "The Critical Rendering Path (CRP) is the sequence of steps the browser takes to convert HTML, CSS, and JavaScript into pixels on the screen."
+    },
+    {
+      "type": "heading",
+      "value": "Why Critical Rendering Path Matters"
+    },
+    {
+      "type": "text",
+      "value": "Optimizing the critical rendering path improves page load speed, reduces render-blocking, and enhances user experience."
+    },
+    {
+      "type": "heading",
+      "value": "Steps in Critical Rendering Path"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Step", "Description"],
+        "rows": [
+          ["DOM", "Parse HTML to create Document Object Model"],
+          ["CSSOM", "Parse CSS to create CSS Object Model"],
+          ["Render Tree", "Combine DOM and CSSOM"],
+          ["Layout", "Calculate positions and sizes"],
+          ["Paint", "Render pixels on screen"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "DOM Construction"
+    },
+    {
+      "type": "text",
+      "value": "The browser parses HTML and builds the DOM tree representing the page structure."
+    },
+    {
+      "type": "heading",
+      "value": "CSSOM Construction"
+    },
+    {
+      "type": "text",
+      "value": "The browser parses CSS and builds the CSSOM, which defines styles for each element."
+    },
+    {
+      "type": "heading",
+      "value": "Render Tree"
+    },
+    {
+      "type": "text",
+      "value": "The render tree combines DOM and CSSOM to determine what should be displayed on the screen."
+    },
+    {
+      "type": "heading",
+      "value": "Layout and Paint"
+    },
+    {
+      "type": "text",
+      "value": "Layout calculates element positions, and paint converts them into pixels on the screen."
+    },
+    {
+      "type": "heading",
+      "value": "Blocking Resources"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**CSS blocks rendering until loaded**",
+        "**JavaScript can block DOM parsing**",
+        "**Large resources delay rendering**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Optimization Techniques"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Minimize render-blocking CSS**",
+        "**Use async or defer for JavaScript**",
+        "**Inline critical CSS**",
+        "**Reduce DOM complexity**",
+        "**Optimize resource loading order**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Prioritize above-the-fold content**",
+        "**Reduce number of HTTP requests**",
+        "**Use efficient CSS selectors**",
+        "**Optimize images and assets**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Blocking rendering with large CSS files**",
+        "**Using synchronous JavaScript**",
+        "**Too many DOM elements**",
+        "**Ignoring performance testing tools**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Understanding the Critical Rendering Path is essential for optimizing web performance. Efficient rendering ensures faster load times and better user experience."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is CRP?",
+      "answer": "It is the process of converting HTML, CSS, and JS into pixels."
+    },
+    {
+      "question": "What blocks rendering?",
+      "answer": "CSS and synchronous JavaScript."
+    },
+    {
+      "question": "How to optimize CRP?",
+      "answer": "Reduce blocking resources and prioritize critical content."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "<link rel=\"preload\" href=\"style.css\" as=\"style\">\n<script src=\"script.js\" defer></script>"
+  },
+
+  "quiz": [
+    {
+      "question": "What is first step in CRP?",
+      "options": ["Paint", "Layout", "DOM", "CSS"],
+      "answer": 2
+    },
+    {
+      "question": "What blocks rendering?",
+      "options": ["Images", "CSS", "Text", "Links"],
+      "answer": 1
+    },
+    {
+      "question": "What combines DOM and CSSOM?",
+      "options": ["Layout", "Render Tree", "Paint", "Script"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "web-performance-introduction",
+    "web-core-web-vitals",
+    "web-loading-strategies",
+    "web-css-optimization",
+    "web-js-optimization"
+  ]
+}

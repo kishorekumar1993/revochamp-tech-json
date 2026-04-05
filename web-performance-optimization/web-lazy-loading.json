@@ -1,0 +1,196 @@
+{
+  "slug": "web-lazy-loading",
+  "course": "Web Performance",
+  "title": "Lazy Loading in Web",
+
+  "meta": {
+    "title": "Lazy Loading – Improve Website Speed & Performance (2026)",
+    "description": "Learn lazy loading techniques for images, videos, and scripts to improve website performance and reduce load time.",
+    "keywords": [
+      "lazy loading",
+      "web lazy loading",
+      "image lazy loading",
+      "improve page speed",
+      "lazy loading javascript",
+      "performance optimization"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Lazy Loading?"
+    },
+    {
+      "type": "text",
+      "value": "Lazy loading is a technique where non-critical resources are loaded only when they are needed, such as when they appear in the user's viewport."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Lazy Loading?"
+    },
+    {
+      "type": "text",
+      "value": "Lazy loading reduces initial page load time, saves bandwidth, and improves performance, especially for pages with many images or heavy content."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Example"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<img src=\"image.jpg\" loading=\"lazy\" alt=\"Lazy Image\">"
+    },
+    {
+      "type": "heading",
+      "value": "Lazy Loading Images"
+    },
+    {
+      "type": "text",
+      "value": "Modern browsers support native lazy loading using the loading=\"lazy\" attribute."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<img src=\"photo.webp\" loading=\"lazy\" alt=\"Example\">"
+    },
+    {
+      "type": "heading",
+      "value": "Lazy Loading with JavaScript"
+    },
+    {
+      "type": "text",
+      "value": "You can use Intersection Observer API to implement custom lazy loading."
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "const images = document.querySelectorAll('img');\n\nconst observer = new IntersectionObserver((entries, observer) => {\n  entries.forEach(entry => {\n    if (entry.isIntersecting) {\n      const img = entry.target;\n      img.src = img.dataset.src;\n      observer.unobserve(img);\n    }\n  });\n});\n\nimages.forEach(img => observer.observe(img));"
+    },
+    {
+      "type": "heading",
+      "value": "Lazy Loading Videos"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<video controls preload=\"none\">\n  <source src=\"video.mp4\" type=\"video/mp4\">\n</video>"
+    },
+    {
+      "type": "heading",
+      "value": "Benefits of Lazy Loading"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Faster initial page load**",
+        "**Reduced bandwidth usage**",
+        "**Better user experience**",
+        "**Improved SEO performance**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "When Not to Use Lazy Loading"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**For above-the-fold content**",
+        "**For critical UI elements**",
+        "**For important hero images**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use native lazy loading where possible**",
+        "**Provide placeholder or skeleton UI**",
+        "**Combine with image optimization (WebP)**",
+        "**Avoid lazy loading critical resources**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Lazy loading everything including critical content**",
+        "**Not providing fallback for unsupported browsers**",
+        "**Using heavy JavaScript unnecessarily**",
+        "**Forgetting alt attributes for images**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Lazy loading is a powerful technique to improve web performance. When used correctly, it enhances speed, reduces resource usage, and improves user experience."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is lazy loading?",
+      "answer": "It loads resources only when they are needed."
+    },
+    {
+      "question": "Does lazy loading improve SEO?",
+      "answer": "Yes, it improves page speed which helps SEO."
+    },
+    {
+      "question": "Can I lazy load videos?",
+      "answer": "Yes, using preload=\"none\" or JavaScript."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "<img src=\"image.jpg\" loading=\"lazy\" alt=\"Example\">"
+  },
+
+  "quiz": [
+    {
+      "question": "What does lazy loading do?",
+      "options": [
+        "Loads everything immediately",
+        "Loads resources when needed",
+        "Blocks rendering",
+        "Reduces images"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which attribute enables lazy loading?",
+      "options": ["async", "defer", "loading", "lazy"],
+      "answer": 2
+    },
+    {
+      "question": "Which API is used for custom lazy loading?",
+      "options": [
+        "Fetch API",
+        "Intersection Observer",
+        "DOM API",
+        "Storage API"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "web-performance-introduction",
+    "web-core-web-vitals",
+    "web-loading-strategies",
+    "image-optimization",
+    "javascript-performance"
+  ]
+}

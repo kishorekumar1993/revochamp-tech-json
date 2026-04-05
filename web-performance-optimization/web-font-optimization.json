@@ -1,0 +1,175 @@
+{
+  "slug": "web-font-optimization",
+  "course": "Web Performance",
+  "title": "Font Optimization in Web",
+
+  "meta": {
+    "title": "Font Optimization – Improve Load Speed & Performance (2026)",
+    "description": "Learn how to optimize web fonts using modern formats, preload, font-display, and reduce render-blocking to improve performance.",
+    "keywords": [
+      "font optimization",
+      "web font optimization",
+      "optimize fonts css",
+      "font loading performance",
+      "woff2 fonts",
+      "font display swap"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Font Optimization?"
+    },
+    {
+      "type": "text",
+      "value": "Font optimization is the process of improving how fonts are loaded and rendered on a webpage to reduce load time and avoid rendering delays."
+    },
+    {
+      "type": "heading",
+      "value": "Why Font Optimization Matters"
+    },
+    {
+      "type": "text",
+      "value": "Fonts can block text rendering and slow down page load. Optimizing fonts improves performance, user experience, and Core Web Vitals."
+    },
+    {
+      "type": "heading",
+      "value": "Modern Font Formats"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Format", "Description"],
+        "rows": [
+          ["WOFF", "Web Open Font Format"],
+          ["WOFF2", "Better compression and performance"],
+          ["TTF", "TrueType Font (larger size)"],
+          ["OTF", "OpenType Font"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Basic Example"
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "@font-face {\n  font-family: 'CustomFont';\n  src: url('font.woff2') format('woff2');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using font-display"
+    },
+    {
+      "type": "text",
+      "value": "The font-display property controls how fonts are rendered while loading."
+    },
+    {
+      "type": "code",
+      "language": "css",
+      "value": "@font-face {\n  font-family: 'CustomFont';\n  src: url('font.woff2') format('woff2');\n  font-display: swap;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Preloading Fonts"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<link rel=\"preload\" href=\"font.woff2\" as=\"font\" type=\"font/woff2\" crossorigin>"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use WOFF2 format for better compression**",
+        "**Use font-display: swap to avoid invisible text**",
+        "**Preload critical fonts**",
+        "**Limit number of font families and weights**",
+        "**Use system fonts where possible**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using too many font files**",
+        "**Not using font-display property**",
+        "**Loading fonts that are not used**",
+        "**Using large font formats like TTF unnecessarily**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Font optimization plays a key role in improving web performance. Using modern formats, proper loading strategies, and minimizing font usage ensures faster and smoother user experience."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the best font format?",
+      "answer": "WOFF2 is the best for performance and compression."
+    },
+    {
+      "question": "What does font-display do?",
+      "answer": "It controls how fonts are displayed while loading."
+    },
+    {
+      "question": "Why preload fonts?",
+      "answer": "To load critical fonts early and avoid delays."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "@font-face {\n  font-family: 'CustomFont';\n  src: url('font.woff2') format('woff2');\n  font-display: swap;\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "Which font format is best for performance?",
+      "options": ["TTF", "OTF", "WOFF2", "SVG"],
+      "answer": 2
+    },
+    {
+      "question": "What does font-display: swap do?",
+      "options": [
+        "Blocks text",
+        "Shows fallback text",
+        "Removes fonts",
+        "Loads images"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Why limit font usage?",
+      "options": [
+        "Improve design",
+        "Reduce load time",
+        "Add styles",
+        "Increase size"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "web-performance-introduction",
+    "web-loading-strategies",
+    "web-preloading-prefetching",
+    "web-image-optimization",
+    "web-core-web-vitals"
+  ]
+}
