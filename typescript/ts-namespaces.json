@@ -1,0 +1,172 @@
+{
+  "slug": "ts-namespaces",
+  "course": "TypeScript",
+  "title": "TypeScript Namespaces",
+
+  "meta": {
+    "title": "TypeScript Namespaces – Organize Code (2026)",
+    "description": "Learn how to use namespaces in TypeScript to organize code and avoid naming conflicts.",
+    "keywords": [
+      "typescript namespaces",
+      "ts namespace example",
+      "ts internal modules",
+      "typescript code organization",
+      "ts namespace usage"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Namespaces?"
+    },
+    {
+      "type": "text",
+      "value": "Namespaces are a way to organize code into logical groups and prevent naming conflicts in TypeScript."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "namespace Utils {\n  export function greet() {\n    console.log('Hello');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Namespace"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "Utils.greet();"
+    },
+    {
+      "type": "heading",
+      "value": "Nested Namespaces"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "namespace App {\n  export namespace Utils {\n    export const version = '1.0';\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Alias Namespace"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import U = App.Utils;\nconsole.log(U.version);"
+    },
+    {
+      "type": "heading",
+      "value": "Namespace vs Module"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Namespace", "Module"],
+        "rows": [
+          ["Usage", "Internal organization", "File-based"],
+          ["Modern Usage", "Less used", "Preferred"],
+          ["Scope", "Global", "Scoped per file"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "When to Use"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Small projects**",
+        "**Legacy codebases**",
+        "**Avoid naming conflicts**",
+        "**Group related logic**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Prefer modules over namespaces in modern apps**",
+        "**Use namespaces for internal grouping**",
+        "**Keep namespaces simple**",
+        "**Avoid deep nesting**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using namespaces instead of modules unnecessarily**",
+        "**Over-nesting namespaces**",
+        "**Not exporting members properly**",
+        "**Mixing namespaces with modules incorrectly**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Namespaces help organize code and avoid naming conflicts, but modern TypeScript development prefers modules."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is namespace?",
+      "answer": "A way to group code logically."
+    },
+    {
+      "question": "Are namespaces used today?",
+      "answer": "Mostly replaced by modules."
+    },
+    {
+      "question": "Why use namespace?",
+      "answer": "To avoid naming conflicts."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "namespace A { export const x = 10; }\nA.x;"
+  },
+
+  "quiz": [
+    {
+      "question": "Namespace used for?",
+      "options": ["Styling", "Organization", "Routing", "API"],
+      "answer": 1
+    },
+    {
+      "question": "Modern alternative?",
+      "options": ["Classes", "Modules", "Enums", "Functions"],
+      "answer": 1
+    },
+    {
+      "question": "Namespace scope?",
+      "options": ["Local", "Global", "Private", "Protected"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ts-modules",
+    "ts-classes",
+    "ts-functions",
+    "ts-interfaces",
+    "ts-setup"
+  ]
+}

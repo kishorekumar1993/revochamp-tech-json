@@ -1,0 +1,180 @@
+{
+  "slug": "ts-utility-types",
+  "course": "TypeScript",
+  "title": "TypeScript Utility Types",
+
+  "meta": {
+    "title": "TypeScript Utility Types – Built-in Helpers (2026)",
+    "description": "Learn about TypeScript utility types like Partial, Required, Readonly, Pick, Omit, and Record to simplify type transformations.",
+    "keywords": [
+      "typescript utility types",
+      "ts partial required readonly",
+      "ts pick omit record",
+      "typescript helpers",
+      "ts type transformations"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Utility Types?"
+    },
+    {
+      "type": "text",
+      "value": "Utility types are built-in TypeScript helpers that transform existing types into new types."
+    },
+    {
+      "type": "heading",
+      "value": "Partial"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "interface User {\n  name: string;\n  age: number;\n}\n\nconst user: Partial<User> = { name: 'John' };"
+    },
+    {
+      "type": "heading",
+      "value": "Required"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "const user: Required<User> = {\n  name: 'John',\n  age: 30\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Readonly"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "const user: Readonly<User> = {\n  name: 'John',\n  age: 30\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Pick"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type UserName = Pick<User, 'name'>;"
+    },
+    {
+      "type": "heading",
+      "value": "Omit"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type UserWithoutAge = Omit<User, 'age'>;"
+    },
+    {
+      "type": "heading",
+      "value": "Record"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type Roles = Record<string, string>;"
+    },
+    {
+      "type": "heading",
+      "value": "Utility Types Summary"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Type", "Purpose"],
+        "rows": [
+          ["Partial", "Make properties optional"],
+          ["Required", "Make all properties required"],
+          ["Readonly", "Make properties immutable"],
+          ["Pick", "Select specific properties"],
+          ["Omit", "Remove properties"],
+          ["Record", "Create object types"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use utility types for transformations**",
+        "**Avoid rewriting types manually**",
+        "**Combine utility types when needed**",
+        "**Keep types readable**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Overusing utility types**",
+        "**Making types too complex**",
+        "**Not understanding transformations**",
+        "**Using wrong utility type**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Utility types simplify TypeScript development by providing powerful tools for transforming and reusing types efficiently."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What are utility types?",
+      "answer": "Built-in helpers for transforming types."
+    },
+    {
+      "question": "What does Partial do?",
+      "answer": "Makes all properties optional."
+    },
+    {
+      "question": "What is Pick?",
+      "answer": "Selects specific properties."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "type User = { name: string; age: number };\ntype U = Partial<User>;"
+  },
+
+  "quiz": [
+    {
+      "question": "Partial means?",
+      "options": ["Required", "Optional", "Readonly", "Pick"],
+      "answer": 1
+    },
+    {
+      "question": "Omit does?",
+      "options": ["Add", "Remove", "Copy", "Update"],
+      "answer": 1
+    },
+    {
+      "question": "Readonly means?",
+      "options": ["Editable", "Immutable", "Optional", "Dynamic"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ts-types",
+    "ts-type-alias",
+    "ts-interfaces",
+    "ts-generics",
+    "ts-functions"
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "slug": "ts-mapped-types",
+  "course": "TypeScript",
+  "title": "TypeScript Mapped Types",
+
+  "meta": {
+    "title": "TypeScript Mapped Types – Transform Types (2026)",
+    "description": "Learn how to use mapped types in TypeScript to transform existing types by iterating over properties.",
+    "keywords": [
+      "typescript mapped types",
+      "ts map types",
+      "ts keyof mapped",
+      "typescript type transformation",
+      "ts advanced types"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Mapped Types?"
+    },
+    {
+      "type": "text",
+      "value": "Mapped types allow you to create new types by transforming properties of an existing type using iteration."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type User = {\n  name: string;\n  age: number;\n};\n\ntype ReadonlyUser = {\n  [K in keyof User]: User[K];\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Using Modifiers"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type PartialUser = {\n  [K in keyof User]?: User[K];\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Readonly Mapped Type"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type ReadonlyUser = {\n  readonly [K in keyof User]: User[K];\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Remove Modifiers"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type Mutable<T> = {\n  -readonly [K in keyof T]: T[K];\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Mapped Types with Generics"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type Nullable<T> = {\n  [K in keyof T]: T[K] | null;\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Relation with Utility Types"
+    },
+    {
+      "type": "text",
+      "value": "Utility types like Partial, Required, and Readonly are built using mapped types."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use mapped types for transformations**",
+        "**Combine with generics for flexibility**",
+        "**Keep types readable**",
+        "**Reuse existing types effectively**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Overcomplicating mapped types**",
+        "**Not understanding keyof usage**",
+        "**Ignoring readability**",
+        "**Using mapped types unnecessarily**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Mapped types provide powerful capabilities to transform and reuse types efficiently in TypeScript."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is mapped type?",
+      "answer": "A type created by transforming another type."
+    },
+    {
+      "question": "What is keyof?",
+      "answer": "It gets keys of a type."
+    },
+    {
+      "question": "Used for?",
+      "answer": "Type transformations."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "type User = { name: string };\ntype U = { [K in keyof User]: User[K] };"
+  },
+
+  "quiz": [
+    {
+      "question": "Mapped types use?",
+      "options": ["Loop", "keyof", "if", "class"],
+      "answer": 1
+    },
+    {
+      "question": "keyof returns?",
+      "options": ["Values", "Keys", "Types", "Functions"],
+      "answer": 1
+    },
+    {
+      "question": "Readonly modifier?",
+      "options": ["+", "-", "readonly", "?"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "ts-utility-types",
+    "ts-generics",
+    "ts-types",
+    "ts-type-alias",
+    "ts-interfaces"
+  ]
+}

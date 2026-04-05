@@ -1,0 +1,169 @@
+{
+  "slug": "ts-events",
+  "course": "TypeScript",
+  "title": "TypeScript Events",
+
+  "meta": {
+    "title": "TypeScript Events – Handle Events Safely (2026)",
+    "description": "Learn how to handle events in TypeScript with proper typing, event listeners, and different event types.",
+    "keywords": [
+      "typescript events",
+      "ts event handling",
+      "ts addEventListener",
+      "typescript dom events",
+      "ts event types"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Events?"
+    },
+    {
+      "type": "text",
+      "value": "Events are actions or occurrences that happen in the browser, such as clicks, inputs, or keyboard actions."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Event Handling"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "const btn = document.querySelector('button') as HTMLButtonElement;\n\nbtn.addEventListener('click', () => {\n  console.log('Clicked');\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Typed Event"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "btn.addEventListener('click', (e: MouseEvent) => {\n  console.log(e.clientX);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Input Event"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "const input = document.querySelector('input') as HTMLInputElement;\n\ninput.addEventListener('input', (e: Event) => {\n  console.log(input.value);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Keyboard Event"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "document.addEventListener('keydown', (e: KeyboardEvent) => {\n  console.log(e.key);\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Event Types"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Event", "Type"],
+        "rows": [
+          ["click", "MouseEvent"],
+          ["input", "Event"],
+          ["keydown", "KeyboardEvent"],
+          ["submit", "SubmitEvent"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Prevent Default"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "form.addEventListener('submit', (e: SubmitEvent) => {\n  e.preventDefault();\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use proper event types**",
+        "**Avoid using any**",
+        "**Handle null elements**",
+        "**Use type assertions carefully**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Not typing events properly**",
+        "**Ignoring null checks**",
+        "**Using wrong event types**",
+        "**Overusing any type**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "TypeScript events provide strong typing for browser interactions, improving safety and developer experience."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is event?",
+      "answer": "User or system action."
+    },
+    {
+      "question": "Mouse event type?",
+      "answer": "MouseEvent."
+    },
+    {
+      "question": "Prevent default?",
+      "answer": "Stops default behavior."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "document.addEventListener('click', (e: MouseEvent) => console.log(e.clientX));"
+  },
+
+  "quiz": [
+    {
+      "question": "Click event type?",
+      "options": ["Event", "MouseEvent", "KeyboardEvent", "SubmitEvent"],
+      "answer": 1
+    },
+    {
+      "question": "Keyboard event?",
+      "options": ["MouseEvent", "Event", "KeyboardEvent", "InputEvent"],
+      "answer": 2
+    },
+    {
+      "question": "Prevent default method?",
+      "options": ["stop()", "preventDefault()", "cancel()", "end()"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ts-dom",
+    "ts-functions",
+    "ts-types",
+    "ts-variables",
+    "ts-modules"
+  ]
+}

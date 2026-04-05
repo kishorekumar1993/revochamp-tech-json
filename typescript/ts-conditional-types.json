@@ -1,0 +1,153 @@
+{
+  "slug": "ts-conditional-types",
+  "course": "TypeScript",
+  "title": "TypeScript Conditional Types",
+
+  "meta": {
+    "title": "TypeScript Conditional Types – Dynamic Typing (2026)",
+    "description": "Learn how to use conditional types in TypeScript to create dynamic types using conditions and infer keyword.",
+    "keywords": [
+      "typescript conditional types",
+      "ts extends infer",
+      "ts dynamic types",
+      "typescript advanced types",
+      "ts type conditions"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Conditional Types?"
+    },
+    {
+      "type": "text",
+      "value": "Conditional types allow you to define types based on conditions using the extends keyword, similar to if-else logic."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type IsString<T> = T extends string ? true : false;"
+    },
+    {
+      "type": "heading",
+      "value": "Example Usage"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type A = IsString<string>; // true\ntype B = IsString<number>; // false"
+    },
+    {
+      "type": "heading",
+      "value": "Using infer Keyword"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;"
+    },
+    {
+      "type": "heading",
+      "value": "Conditional with Union"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type ToArray<T> = T extends any ? T[] : never;"
+    },
+    {
+      "type": "heading",
+      "value": "Nested Conditions"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type TypeName<T> =\n  T extends string ? 'string' :\n  T extends number ? 'number' :\n  'other';"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use conditional types for dynamic typing**",
+        "**Keep conditions simple**",
+        "**Use infer for extracting types**",
+        "**Avoid overly complex nested conditions**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Overcomplicating conditional logic**",
+        "**Misusing infer keyword**",
+        "**Ignoring readability**",
+        "**Incorrect type conditions**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Conditional types provide powerful flexibility in TypeScript, enabling dynamic and reusable type logic."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is conditional type?",
+      "answer": "A type based on condition."
+    },
+    {
+      "question": "Keyword used?",
+      "answer": "extends."
+    },
+    {
+      "question": "What is infer?",
+      "answer": "Extracts types dynamically."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "type IsString<T> = T extends string ? true : false;"
+  },
+
+  "quiz": [
+    {
+      "question": "Conditional uses?",
+      "options": ["if", "extends", "switch", "case"],
+      "answer": 1
+    },
+    {
+      "question": "infer used for?",
+      "options": ["Assign", "Extract", "Delete", "Create"],
+      "answer": 1
+    },
+    {
+      "question": "Condition returns?",
+      "options": ["Value", "Type", "Function", "Object"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ts-mapped-types",
+    "ts-generics",
+    "ts-utility-types",
+    "ts-types",
+    "ts-type-alias"
+  ]
+}

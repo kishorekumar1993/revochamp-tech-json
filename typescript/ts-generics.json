@@ -1,0 +1,162 @@
+{
+  "slug": "ts-generics",
+  "course": "TypeScript",
+  "title": "TypeScript Generics",
+
+  "meta": {
+    "title": "TypeScript Generics – Reusable Types (2026)",
+    "description": "Learn how to use generics in TypeScript to create reusable and flexible components, functions, and classes.",
+    "keywords": [
+      "typescript generics",
+      "ts generic functions",
+      "ts reusable types",
+      "typescript generics example",
+      "ts generic classes"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Generics?"
+    },
+    {
+      "type": "text",
+      "value": "Generics allow you to create reusable components that work with multiple data types while maintaining type safety."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Generic Function"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "function identity<T>(value: T): T {\n  return value;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Using Generics"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "identity<string>('Hello');\nidentity<number>(10);"
+    },
+    {
+      "type": "heading",
+      "value": "Generic Interface"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "interface Box<T> {\n  value: T;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Generic Class"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "class DataStore<T> {\n  data: T[] = [];\n\n  add(item: T) {\n    this.data.push(item);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Generic Constraints"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "function printLength<T extends { length: number }>(item: T) {\n  console.log(item.length);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Multiple Generics"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "function pair<K, V>(key: K, value: V) {\n  return { key, value };\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use generics for reusable logic**",
+        "**Keep generic names meaningful (T, K, V)**",
+        "**Use constraints when needed**",
+        "**Avoid overusing generics**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using generics unnecessarily**",
+        "**Not defining constraints**",
+        "**Complex generic definitions**",
+        "**Ignoring type safety benefits**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Generics make TypeScript code more reusable, flexible, and type-safe, especially in large applications."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is generic?",
+      "answer": "Reusable type with flexibility."
+    },
+    {
+      "question": "Why use generics?",
+      "answer": "To write reusable and type-safe code."
+    },
+    {
+      "question": "What is constraint?",
+      "answer": "Limiting generic types."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "function identity<T>(val: T): T { return val; }"
+  },
+
+  "quiz": [
+    {
+      "question": "Generic symbol?",
+      "options": ["<>", "{}", "[]", "()"],
+      "answer": 0
+    },
+    {
+      "question": "Generic used for?",
+      "options": ["Styling", "Reuse", "Routing", "API"],
+      "answer": 1
+    },
+    {
+      "question": "Constraint keyword?",
+      "options": ["extends", "implements", "type", "class"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "ts-types",
+    "ts-functions",
+    "ts-interfaces",
+    "ts-type-alias",
+    "ts-classes"
+  ]
+}

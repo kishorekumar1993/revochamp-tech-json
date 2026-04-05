@@ -1,0 +1,177 @@
+{
+  "slug": "ts-interfaces-vs-types",
+  "course": "TypeScript",
+  "title": "TypeScript Interfaces vs Types",
+
+  "meta": {
+    "title": "TypeScript Interfaces vs Types – Key Differences (2026)",
+    "description": "Learn the differences between interfaces and type aliases in TypeScript, when to use each, and best practices.",
+    "keywords": [
+      "typescript interfaces vs types",
+      "ts interface vs type",
+      "typescript type alias vs interface",
+      "ts differences interface type",
+      "typescript comparison"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Interfaces and Types?"
+    },
+    {
+      "type": "text",
+      "value": "Interfaces and type aliases are both used to define the shape of data in TypeScript, but they have differences in flexibility and usage."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Examples"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "interface User {\n  name: string;\n}\n\ntype UserType = {\n  name: string;\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Key Differences"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Interface", "Type"],
+        "rows": [
+          ["Extendable", "Yes", "Yes"],
+          ["Union Types", "No", "Yes"],
+          ["Primitive Types", "No", "Yes"],
+          ["Declaration Merging", "Yes", "No"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Extending Interfaces"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "interface A { name: string; }\ninterface B extends A { age: number; }"
+    },
+    {
+      "type": "heading",
+      "value": "Extending Types"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type A = { name: string };\ntype B = A & { age: number };"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Interface"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Defining object structures**",
+        "**Working with classes**",
+        "**Extending multiple interfaces**",
+        "**Declaration merging support**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "When to Use Type"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Union and intersection types**",
+        "**Primitive type aliases**",
+        "**Function types**",
+        "**Complex type compositions**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use interface for object structures**",
+        "**Use type for unions and primitives**",
+        "**Keep definitions simple**",
+        "**Be consistent across project**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using interface for unions**",
+        "**Overcomplicating type aliases**",
+        "**Mixing both unnecessarily**",
+        "**Ignoring project consistency**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Interfaces and types serve similar purposes but are used differently depending on the use case. Choosing the right one improves code clarity and maintainability."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Interface vs type?",
+      "answer": "Interface for structure, type for flexibility."
+    },
+    {
+      "question": "Which supports unions?",
+      "answer": "Type alias."
+    },
+    {
+      "question": "Which supports merging?",
+      "answer": "Interface."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "type ID = string | number;\ninterface User { name: string; }"
+  },
+
+  "quiz": [
+    {
+      "question": "Union supported?",
+      "options": ["Interface", "Type", "Both", "None"],
+      "answer": 1
+    },
+    {
+      "question": "Merging supported?",
+      "options": ["Type", "Interface", "Both", "None"],
+      "answer": 1
+    },
+    {
+      "question": "Primitive alias?",
+      "options": ["Interface", "Type", "Class", "Enum"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ts-interfaces",
+    "ts-type-alias",
+    "ts-union-intersection",
+    "ts-types",
+    "ts-functions"
+  ]
+}

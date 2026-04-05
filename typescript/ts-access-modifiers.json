@@ -1,0 +1,167 @@
+{
+  "slug": "ts-access-modifiers",
+  "course": "TypeScript",
+  "title": "TypeScript Access Modifiers",
+
+  "meta": {
+    "title": "TypeScript Access Modifiers – public, private, protected (2026)",
+    "description": "Learn how to use access modifiers in TypeScript to control visibility of class properties and methods.",
+    "keywords": [
+      "typescript access modifiers",
+      "ts public private protected",
+      "ts encapsulation",
+      "typescript class visibility",
+      "ts modifiers example"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Access Modifiers?"
+    },
+    {
+      "type": "text",
+      "value": "Access modifiers control the visibility and accessibility of class properties and methods in TypeScript."
+    },
+    {
+      "type": "heading",
+      "value": "Types of Modifiers"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Modifier", "Access Level"],
+        "rows": [
+          ["public", "Accessible everywhere"],
+          ["private", "Accessible only within class"],
+          ["protected", "Accessible within class and subclasses"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Public Example"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "class User {\n  public name: string = 'John';\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Private Example"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "class User {\n  private age: number = 30;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Protected Example"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "class Person {\n  protected id: number = 1;\n}\n\nclass Employee extends Person {\n  getId() {\n    return this.id;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Constructor Shortcut"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "class User {\n  constructor(public name: string, private age: number) {}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Encapsulation"
+    },
+    {
+      "type": "text",
+      "value": "Access modifiers help achieve encapsulation by hiding internal implementation details and exposing only necessary data."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use private for sensitive data**",
+        "**Use protected for inheritance scenarios**",
+        "**Keep public API minimal**",
+        "**Use constructor shorthand for cleaner code**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Overusing public properties**",
+        "**Not using private when needed**",
+        "**Confusing protected with private**",
+        "**Exposing internal logic unnecessarily**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Access modifiers improve code security and maintainability by controlling visibility within TypeScript classes."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is public?",
+      "answer": "Accessible everywhere."
+    },
+    {
+      "question": "What is private?",
+      "answer": "Accessible only inside class."
+    },
+    {
+      "question": "What is protected?",
+      "answer": "Accessible in class and subclasses."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class User { constructor(private age: number) {} }"
+  },
+
+  "quiz": [
+    {
+      "question": "Private means?",
+      "options": ["Global", "Class only", "Subclass", "Public"],
+      "answer": 1
+    },
+    {
+      "question": "Protected access?",
+      "options": ["Everywhere", "Only class", "Class + subclass", "None"],
+      "answer": 2
+    },
+    {
+      "question": "Default modifier?",
+      "options": ["private", "protected", "public", "none"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "ts-classes",
+    "ts-interfaces",
+    "ts-types",
+    "ts-type-alias",
+    "ts-functions"
+  ]
+}

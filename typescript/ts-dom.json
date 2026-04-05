@@ -1,0 +1,162 @@
+{
+  "slug": "ts-dom",
+  "course": "TypeScript",
+  "title": "TypeScript DOM Manipulation",
+
+  "meta": {
+    "title": "TypeScript DOM – Access & Manipulate Elements (2026)",
+    "description": "Learn how to work with the DOM in TypeScript including selecting elements, event handling, and type assertions.",
+    "keywords": [
+      "typescript dom",
+      "ts document queryselector",
+      "ts event handling",
+      "typescript dom manipulation",
+      "ts html elements"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is DOM in TypeScript?"
+    },
+    {
+      "type": "text",
+      "value": "TypeScript provides type definitions for DOM APIs, allowing safe interaction with HTML elements."
+    },
+    {
+      "type": "heading",
+      "value": "Selecting Elements"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "const el = document.getElementById('app');"
+    },
+    {
+      "type": "heading",
+      "value": "Type Assertion"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "const input = document.getElementById('name') as HTMLInputElement;\ninput.value = 'Hello';"
+    },
+    {
+      "type": "heading",
+      "value": "querySelector"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "const btn = document.querySelector('button') as HTMLButtonElement;"
+    },
+    {
+      "type": "heading",
+      "value": "Event Handling"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "btn.addEventListener('click', (e: MouseEvent) => {\n  console.log('Clicked');\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Null Safety"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "const el = document.getElementById('app');\nif (el) {\n  el.textContent = 'Hello';\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Working with Forms"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "const form = document.querySelector('form') as HTMLFormElement;\nform.addEventListener('submit', (e) => {\n  e.preventDefault();\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use type assertions for elements**",
+        "**Handle null values properly**",
+        "**Use correct event types**",
+        "**Avoid unsafe DOM access**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Ignoring null checks**",
+        "**Incorrect type casting**",
+        "**Using any for elements**",
+        "**Not specifying event types**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "TypeScript DOM support ensures safer and more reliable interaction with web page elements."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is DOM?",
+      "answer": "Document Object Model."
+    },
+    {
+      "question": "Why type assertion?",
+      "answer": "To specify element type."
+    },
+    {
+      "question": "How to handle null?",
+      "answer": "Check before use."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "const el = document.getElementById('app') as HTMLElement;"
+  },
+
+  "quiz": [
+    {
+      "question": "DOM used for?",
+      "options": ["Styling", "HTML manipulation", "Routing", "API"],
+      "answer": 1
+    },
+    {
+      "question": "Type assertion syntax?",
+      "options": ["as", "is", ":", "="],
+      "answer": 0
+    },
+    {
+      "question": "Event type?",
+      "options": ["MouseEvent", "String", "Number", "Array"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "ts-functions",
+    "ts-types",
+    "ts-variables",
+    "ts-events",
+    "ts-modules"
+  ]
+}
