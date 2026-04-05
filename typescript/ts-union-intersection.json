@@ -1,0 +1,167 @@
+{
+  "slug": "ts-union-intersection",
+  "course": "TypeScript",
+  "title": "TypeScript Union & Intersection Types",
+
+  "meta": {
+    "title": "TypeScript Union & Intersection Types (2026)",
+    "description": "Learn how to use union and intersection types in TypeScript to combine multiple types and create flexible data structures.",
+    "keywords": [
+      "typescript union types",
+      "typescript intersection types",
+      "ts union vs intersection",
+      "ts multiple types",
+      "typescript advanced types"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Union Types?"
+    },
+    {
+      "type": "text",
+      "value": "Union types allow a variable to hold multiple possible types using the '|' operator."
+    },
+    {
+      "type": "heading",
+      "value": "Union Example"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "let id: string | number;\nid = 101;\nid = 'ABC';"
+    },
+    {
+      "type": "heading",
+      "value": "What are Intersection Types?"
+    },
+    {
+      "type": "text",
+      "value": "Intersection types combine multiple types into one using the '&' operator, requiring all properties."
+    },
+    {
+      "type": "heading",
+      "value": "Intersection Example"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type A = { name: string };\ntype B = { age: number };\n\ntype Person = A & B;"
+    },
+    {
+      "type": "heading",
+      "value": "Union vs Intersection"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Union (|)", "Intersection (&)"],
+        "rows": [
+          ["Meaning", "Either type", "Both types"],
+          ["Flexibility", "High", "Strict"],
+          ["Use Case", "Multiple options", "Combine structures"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Practical Example"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "function printId(id: string | number) {\n  console.log(id);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Type Narrowing"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "function printId(id: string | number) {\n  if (typeof id === 'string') {\n    console.log(id.toUpperCase());\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use union for flexible inputs**",
+        "**Use intersection for combining types**",
+        "**Apply type narrowing for unions**",
+        "**Keep types readable**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Confusing union with intersection**",
+        "**Not using type narrowing**",
+        "**Overcomplicating type combinations**",
+        "**Ignoring type conflicts in intersections**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Union and intersection types provide flexibility and structure in TypeScript, enabling powerful type combinations."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is union type?",
+      "answer": "Allows multiple possible types."
+    },
+    {
+      "question": "What is intersection?",
+      "answer": "Combines multiple types into one."
+    },
+    {
+      "question": "Symbol for union?",
+      "answer": "| symbol."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "let id: string | number = 10;"
+  },
+
+  "quiz": [
+    {
+      "question": "Union symbol?",
+      "options": ["&", "|", ":", "="],
+      "answer": 1
+    },
+    {
+      "question": "Intersection symbol?",
+      "options": ["|", "&", "#", "*"],
+      "answer": 1
+    },
+    {
+      "question": "Union means?",
+      "options": ["Both", "Either", "None", "Only one"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ts-types",
+    "ts-type-alias",
+    "ts-interfaces",
+    "ts-functions",
+    "ts-type-inference"
+  ]
+}

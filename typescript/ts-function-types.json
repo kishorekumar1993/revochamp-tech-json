@@ -1,0 +1,162 @@
+{
+  "slug": "ts-function-types",
+  "course": "TypeScript",
+  "title": "TypeScript Function Types",
+
+  "meta": {
+    "title": "TypeScript Function Types – Signatures & Typing (2026)",
+    "description": "Learn how to define function types in TypeScript using type aliases, interfaces, and function signatures.",
+    "keywords": [
+      "typescript function types",
+      "ts function signature",
+      "ts function typing",
+      "typescript callbacks",
+      "ts function alias"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Function Types?"
+    },
+    {
+      "type": "text",
+      "value": "Function types define the structure of a function, including its parameters and return type."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Function Type"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "let add: (a: number, b: number) => number;\n\nadd = (x, y) => x + y;"
+    },
+    {
+      "type": "heading",
+      "value": "Using Type Alias"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type AddFn = (a: number, b: number) => number;\n\nconst sum: AddFn = (a, b) => a + b;"
+    },
+    {
+      "type": "heading",
+      "value": "Using Interface"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "interface MultiplyFn {\n  (a: number, b: number): number;\n}\n\nconst multiply: MultiplyFn = (a, b) => a * b;"
+    },
+    {
+      "type": "heading",
+      "value": "Callback Function Types"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "function process(fn: (value: number) => number) {\n  return fn(10);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Optional Parameters"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type Greet = (name?: string) => string;"
+    },
+    {
+      "type": "heading",
+      "value": "Void Function Type"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "type LogFn = (msg: string) => void;"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use type aliases for reusable function types**",
+        "**Use interfaces for complex definitions**",
+        "**Define clear parameter and return types**",
+        "**Avoid using any in function types**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Not defining return types**",
+        "**Incorrect parameter order**",
+        "**Overusing any type**",
+        "**Ignoring function signature consistency**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Function types in TypeScript ensure consistency and safety when working with functions, especially in large applications."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a function type?",
+      "answer": "It defines parameters and return type of a function."
+    },
+    {
+      "question": "Type vs Interface?",
+      "answer": "Both can define function types."
+    },
+    {
+      "question": "Why use function types?",
+      "answer": "To ensure consistency and type safety."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "type Add = (a: number, b: number) => number;\nconst add: Add = (a, b) => a + b;"
+  },
+
+  "quiz": [
+    {
+      "question": "Function type defines?",
+      "options": ["HTML", "Structure", "Style", "API"],
+      "answer": 1
+    },
+    {
+      "question": "Alias keyword?",
+      "options": ["interface", "type", "class", "function"],
+      "answer": 1
+    },
+    {
+      "question": "Return type arrow?",
+      "options": ["=>", "->", "::", ":"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "ts-functions",
+    "ts-types",
+    "ts-interfaces",
+    "ts-type-inference",
+    "ts-classes"
+  ]
+}

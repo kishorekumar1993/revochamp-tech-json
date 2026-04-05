@@ -1,0 +1,170 @@
+{
+  "slug": "ts-rest-params",
+  "course": "TypeScript",
+  "title": "TypeScript Rest Parameters",
+
+  "meta": {
+    "title": "TypeScript Rest Parameters – Handle Multiple Arguments (2026)",
+    "description": "Learn how to use rest parameters in TypeScript to handle variable number of function arguments safely.",
+    "keywords": [
+      "typescript rest parameters",
+      "ts rest operator",
+      "ts function arguments",
+      "typescript spread rest",
+      "ts variable arguments"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Rest Parameters?"
+    },
+    {
+      "type": "text",
+      "value": "Rest parameters allow a function to accept an indefinite number of arguments as an array."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "function sum(...numbers: number[]): number {\n  return numbers.reduce((a, b) => a + b, 0);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Calling Function"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "sum(1, 2, 3, 4);"
+    },
+    {
+      "type": "heading",
+      "value": "With Other Parameters"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "function greet(message: string, ...names: string[]) {\n  return names.map(n => `${message} ${n}`);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Rest vs Spread"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Rest", "Spread"],
+        "rows": [
+          ["Usage", "Function parameters", "Function calls"],
+          ["Purpose", "Collect arguments", "Expand elements"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Spread Example"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "let nums = [1, 2, 3];\nsum(...nums);"
+    },
+    {
+      "type": "heading",
+      "value": "Rules"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Only one rest parameter allowed**",
+        "**Must be the last parameter**",
+        "**Always treated as an array**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use rest for flexible arguments**",
+        "**Define proper array types**",
+        "**Keep function logic simple**",
+        "**Avoid overusing rest parameters**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Placing rest parameter incorrectly**",
+        "**Using multiple rest parameters**",
+        "**Ignoring type definitions**",
+        "**Confusing rest with spread**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Rest parameters provide flexibility in handling multiple arguments in TypeScript functions while maintaining type safety."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is rest parameter?",
+      "answer": "It collects multiple arguments into an array."
+    },
+    {
+      "question": "Where to place rest?",
+      "answer": "At the end of parameters."
+    },
+    {
+      "question": "Difference from spread?",
+      "answer": "Rest collects, spread expands."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "function sum(...nums: number[]) {\n  return nums.reduce((a, b) => a + b);\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "Rest symbol?",
+      "options": ["...", "??", "&&", "||"],
+      "answer": 0
+    },
+    {
+      "question": "Rest used in?",
+      "options": ["Call", "Parameters", "Loop", "Object"],
+      "answer": 1
+    },
+    {
+      "question": "Rest must be?",
+      "options": ["First", "Last", "Middle", "Any"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ts-functions",
+    "ts-function-types",
+    "ts-optional-default",
+    "ts-types",
+    "ts-syntax"
+  ]
+}
