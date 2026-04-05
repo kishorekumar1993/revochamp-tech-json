@@ -1,0 +1,143 @@
+{
+  "slug": "angular-project-structure",
+  "course": "Angular",
+  "title": "Angular Project Structure – Organizing for Scale",
+
+  "meta": {
+    "title": "Angular Folder Structure Guide – Modules, Components & Assets (2026)",
+    "description": "Understand the professional layout of an Angular project. Learn where to place components, services, and configuration files for maintainable enterprise apps.",
+    "keywords": [
+      "angular folder structure",
+      "angular project layout",
+      "src app folder",
+      "angular workspace",
+      "angular configuration files",
+      "organizing angular projects"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Anatomy of an Angular Workspace"
+    },
+    {
+      "type": "text",
+      "value": "As a Technical Lead, you know that project architecture is the foundation of scalability. When you run `ng new`, Angular generates a strictly defined workspace. Following this standard structure allows multiple developers to collaborate seamlessly, as every file has a predictable home. In a clean architecture approach, we separate our core logic from our UI and our configuration."
+    },
+    {
+      "type": "heading",
+      "value": "1. Root Configuration Files"
+    },
+    {
+      "type": "text",
+      "value": "The root of your project contains configuration files that govern the entire workspace, from build settings to dependency management."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**angular.json**: The CLI configuration. It defines how your app is built, served, and tested.",
+        "**package.json**: Manages your NPM dependencies and scripts (like `npm start`).",
+        "**tsconfig.json**: Configures the TypeScript compiler options for the project.",
+        "**src/**: The heart of the application where all source code lives."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. The 'src' Folder"
+    },
+    {
+      "type": "text",
+      "value": "Inside `src`, you find the files that actually get compiled into your web application. This is where the 'magic' happens."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Folder/File", "Description"],
+        "rows": [
+          ["app/", "Contains the components, services, and modules of your application."],
+          ["assets/", "Stores static files like images, icons, and global configuration JSONs."],
+          ["environments/", "Holds environment-specific variables (e.g., API URLs for Dev vs Prod)."],
+          ["index.html", "The main HTML page served to users; Angular injects your app here."],
+          ["main.ts", "The entry point for the application that bootstraps the root module."],
+          ["styles.scss", "Global CSS/SCSS styles applied to the entire application."]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "3. The 'app' Folder Structure"
+    },
+    {
+      "type": "text",
+      "value": "Inside `src/app`, a common professional pattern is to group files by feature or type. For a complex tool like Revochamp, you might see subfolders like `core/` (for singleton services), `shared/` (for reusable UI components), and `features/` (for specific app modules)."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "src/app/\n├── core/               # Singleton services (Auth, API)\n├── shared/             # Reusable components/pipes\n├── features/           # Feature modules (Dashboard, Editor)\n│   └── editor/\n│       ├── editor.component.ts\n│       ├── editor.component.html\n│       └── editor.component.scss\n├── app-routing.module.ts\n├── app.component.ts\n└── app.module.ts"
+    },
+    {
+      "type": "heading",
+      "value": "File Naming Conventions"
+    },
+    {
+      "type": "text",
+      "value": "Angular uses a specific naming convention: `name.type.extension`. For example, a component for user profiles would be named `user-profile.component.ts`. This makes it immediately obvious what each file does without opening it."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the 'app.module.ts' file?",
+      "answer": "This is the Root Module. It tells Angular how to assemble the application by declaring which components belong to it and which external modules (like HttpClientModule) it needs."
+    },
+    {
+      "question": "Should I keep CSS inside the component file?",
+      "answer": "While Angular allows 'inline' styles, as an architect, I recommend using separate '.scss' files. It keeps your logic (TS) and design (CSS) clean and separated, following the Single Responsibility Principle."
+    },
+    {
+      "question": "Where should I put my Gemini API keys?",
+      "answer": "Never put keys in source code. Store them in 'src/environments/environment.prod.ts' for production or use a backend proxy so your keys are never exposed to the frontend browser."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which folder is intended for static files like images and icons?",
+      "options": ["src/app", "src/assets", "src/environments", "src/styles"],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of the 'angular.json' file?",
+      "options": [
+        "To store user login data",
+        "To configure the Angular CLI build and serve settings",
+        "To write HTML templates",
+        "To manage database connections"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the standard entry point for an Angular application?",
+      "options": ["app.module.ts", "index.html", "main.ts", "styles.css"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-setup",
+    "angular-components",
+    "angular-modules",
+    "clean-architecture-frontend",
+    "angular-cli-commands"
+  ]
+}

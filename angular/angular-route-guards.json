@@ -1,0 +1,148 @@
+{
+  "slug": "angular-route-guards",
+  "course": "Angular",
+  "title": "Angular Route Guards – Securing Navigation",
+
+  "meta": {
+    "title": "Angular Route Guards Guide – CanActivate, CanDeactivate & Functional Guards (2026)",
+    "description": "Learn how to protect your Angular routes. Master functional route guards to handle authentication, authorization, and unsaved changes.",
+    "keywords": [
+      "angular route guards",
+      "canactivate angular",
+      "candeactivate",
+      "functional guards angular",
+      "angular auth guard",
+      "protecting routes"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Route Guards?"
+    },
+    {
+      "type": "text",
+      "value": "Route guards are interfaces (or functions) that tell the Angular Router whether it should allow navigation to a requested route. As an Architect, you use guards to enforce business rules at the navigation level. For example, your Revochamp 'Admin' panel should only be accessible to users with an 'Admin' role, and the 'Editor' should warn users if they try to leave with unsaved code."
+    },
+    {
+      "type": "heading",
+      "value": "1. Types of Route Guards"
+    },
+    {
+      "type": "text",
+      "value": "Angular provides several types of guards, each triggered at a different point in the routing lifecycle."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**CanActivate**: Determines if a user can visit a route (e.g., Is the user logged in?).",
+        "**CanActivateChild**: Determines if a user can visit the child routes of a protected parent.",
+        "**CanDeactivate**: Determines if a user can leave a route (e.g., 'Warning: Unsaved Changes').",
+        "**CanMatch**: Determines if a route can be matched at all (useful for choosing between two different components for the same path based on a flag)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Implementing Functional Guards"
+    },
+    {
+      "type": "text",
+      "value": "In modern Angular (v15+), functional guards are the preferred standard over class-based guards. They are easier to write, test, and compose using Dependency Injection."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// auth.guard.ts\nimport { inject } from '@angular/core';\nimport { Router } from '@angular/router';\nimport { AuthService } from './auth.service';\n\nexport const authGuard = () => {\n  const authService = inject(AuthService);\n  const router = inject(Router);\n\n  if (authService.isLoggedIn()) {\n    return true;\n  }\n\n  // Redirect to login if not authenticated\n  return router.parseUrl('/login');\n};"
+    },
+    {
+      "type": "heading",
+      "value": "3. Registering Guards in Routes"
+    },
+    {
+      "type": "text",
+      "value": "You apply guards directly to your route configuration. You can provide an array of multiple guards; all must return `true` for navigation to proceed."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// app.routes.ts\nexport const routes: Routes = [\n  {\n    path: 'admin',\n    loadComponent: () => import('./admin/admin.component'),\n    canActivate: [authGuard] // Guard applied here\n  }\n];"
+    },
+    {
+      "type": "heading",
+      "value": "Guard Execution Flow"
+    },
+    {
+      "type": "text",
+      "value": "The router checks guards in a specific sequence before the component is even instantiated."
+    },
+ 
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Guard Type", "Primary Use Case", "Return Value"],
+        "rows": [
+          ["CanActivate", "Authentication / Login check", "boolean | UrlTree"],
+          ["CanDeactivate", "Prevent accidental data loss", "boolean | Promise<boolean>"],
+          ["CanMatch", "Feature flagging / Role-based routing", "boolean"],
+          ["CanActivateChild", "Protecting sub-menus/dashboards", "boolean"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Can a guard return an Observable?",
+      "answer": "Yes. Guards can return a boolean, a UrlTree, a Promise, or an Observable. This is perfect for checking auth status against a backend API or a Firebase session."
+    },
+    {
+      "question": "What is a UrlTree return?",
+      "answer": "Instead of just returning 'false' (which cancels navigation), you can return a 'UrlTree' created by the router. This tells Angular to cancel the current navigation and immediately redirect the user to a different route (like /login)."
+    },
+    {
+      "question": "Should I use Guards for Authorization?",
+      "answer": "Guards are great for UI-level security, but as a Lead, remember: Never rely on frontend guards alone. Always verify permissions on your Python/FastAPI backend, as frontend code can be bypassed by a determined user."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which guard type is used to prevent a user from accidentally navigating away from a form with unsaved changes?",
+      "options": ["CanActivate", "CanDeactivate", "CanMatch", "CanLoad"],
+      "answer": 1
+    },
+    {
+      "question": "What happens if a route guard returns 'false'?",
+      "options": [
+        "The user is redirected to home",
+        "The application crashes",
+        "The navigation is cancelled and the user stays on the current page",
+        "The route is loaded but hidden"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What is the benefit of functional guards over class-based guards?",
+      "options": [
+        "They run faster in the browser",
+        "They require less boilerplate and are easier to use with the 'inject()' function",
+        "They are the only way to use the Router",
+        "They don't require TypeScript"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-routing-basics",
+    "angular-authentication",
+    "angular-dependency-injection",
+    "angular-lazy-loading",
+    "clean-architecture-frontend"
+  ]
+}

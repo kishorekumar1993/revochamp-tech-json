@@ -1,0 +1,144 @@
+{
+  "slug": "angular-routing-basics",
+  "course": "Angular",
+  "title": "Angular Routing – Navigation & URL Management",
+
+  "meta": {
+    "title": "Angular Routing Guide – Routes, RouterLink & Navigation (2026)",
+    "description": "Master the Angular Router. Learn how to define routes, use RouterLink for navigation, and handle dynamic parameters for enterprise web apps.",
+    "keywords": [
+      "angular routing",
+      "angular routerlink",
+      "router-outlet",
+      "dynamic routes angular",
+      "spa navigation",
+      "activatedroute"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the Angular Router?"
+    },
+    {
+      "type": "text",
+      "value": "The Angular Router is a powerful library that enables navigation from one view to the next as users perform tasks. It interprets browser URLs as instructions to change the view. Instead of the browser requesting a new page from the server, the Router swaps out components within the current page, maintaining the 'Single Page' experience."
+    },
+    {
+      "type": "heading",
+      "value": "1. Defining Your Route Configuration"
+    },
+    {
+      "type": "text",
+      "value": "Routes are defined as an array of objects. Each route typically has a `path` (the URL segment) and a `component` (the view to display). As an architect, you should define a 'Wildcard' route at the end to handle 404 - Not Found scenarios."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// app.routes.ts\nimport { Routes } from '@angular/router';\nimport { HomeComponent } from './home.component';\nimport { ProjectDetailComponent } from './project-detail.component';\n\nexport const routes: Routes = [\n  { path: 'home', component: HomeComponent },\n  { path: 'project/:id', component: ProjectDetailComponent }, // Dynamic parameter\n  { path: '', redirectTo: '/home', pathMatch: 'full' },       // Default route\n  { path: '**', component: PageNotFoundComponent }           // Wildcard (404)\n];"
+    },
+    {
+      "type": "heading",
+      "value": "2. The Router-Outlet and RouterLink"
+    },
+    {
+      "type": "text",
+      "value": "To display the routed components, you must place the `<router-outlet>` directive in your main HTML. This acts as a placeholder where the Router will 'plug in' the component for the current route. To navigate, use the `routerLink` directive instead of standard `href` to avoid full page reloads."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<nav>\n  <a routerLink=\"/home\" routerLinkActive=\"active-link\">Home</a>\n  <a [routerLink]=\"['/project', 123]\">Revochamp Project</a>\n</nav>\n\n\n<main>\n  <router-outlet></router-outlet>\n</main>"
+    },
+    {
+      "type": "heading",
+      "value": "Navigation Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "Understanding the navigation lifecycle is key for debugging. The Router follows a strict sequence: it recognizes the URL, applies redirects, runs guards (security), resolves data, and finally activates the component."
+    },
+
+    {
+      "type": "heading",
+      "value": "3. Accessing Route Parameters"
+    },
+    {
+      "type": "text",
+      "value": "For dynamic routes like `/project/:id`, the component needs to know which ID was passed. You use the `ActivatedRoute` service to subscribe to these parameters. This is essential for a Lead Developer building data-driven dashboards."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { ActivatedRoute } from '@angular/router';\n\n@Component({ ... })\nexport class ProjectDetailComponent implements OnInit {\n  constructor(private route: ActivatedRoute) {}\n\n  ngOnInit() {\n    // Subscribe to changes in the 'id' parameter\n    this.route.paramMap.subscribe(params => {\n      const id = params.get('id');\n      console.log('Loading project:', id);\n    });\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Routing Features Summary"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Syntax/Directive", "Purpose"],
+        "rows": [
+          ["Navigation Placeholder", "<router-outlet>", "Where the routed view appears"],
+          ["Nav Link", "routerLink", "User-facing links (prevents reload)"],
+          ["Active State", "routerLinkActive", "CSS class for the current route"],
+          ["Dynamic Params", ":id", "Passing variables through the URL"],
+          ["Redirect", "redirectTo", "Sending users from one path to another"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between 'pathMatch: full' and 'prefix'?",
+      "answer": "With 'full', the path must match the URL exactly. With 'prefix' (the default), the router matches the URL if it *starts* with the path. You should almost always use 'full' for the empty string path to avoid matching everything."
+    },
+    {
+      "question": "Can I navigate programmatically?",
+      "answer": "Yes. Inject the 'Router' service into your class and use 'this.router.navigate(['/home'])'. This is useful for redirecting after a successful login or form submission."
+    },
+    {
+      "question": "Why is my application scrolling to the top on navigation?",
+      "answer": "This is standard behavior in SPAs. You can configure the router to 'scrollPositionRestoration' to either 'enabled' or 'disabled' inside your app configuration to manage how the scroll is handled during navigation."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which directive is used as a placeholder for the currently routed component?",
+      "options": ["<ng-container>", "<router-link>", "<router-outlet>", "<app-root>"],
+      "answer": 2
+    },
+    {
+      "question": "Which service allows you to retrieve parameters from the current URL?",
+      "options": ["Router", "ActivatedRoute", "UrlSegment", "HttpParams"],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of the wildcard route '**'?",
+      "options": [
+        "It speeds up navigation",
+        "It matches any URL that hasn't been defined, usually for a 404 page",
+        "It allows for sub-domain routing",
+        "It acts as a prefix for all other routes"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-lazy-loading",
+    "angular-route-guards",
+    "angular-components",
+    "angular-architecture",
+    "clean-architecture-frontend"
+  ]
+}

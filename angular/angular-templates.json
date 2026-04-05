@@ -1,0 +1,148 @@
+{
+  "slug": "angular-templates",
+  "course": "Angular",
+  "title": "Angular Templates – Designing the View",
+
+  "meta": {
+    "title": "Angular Templates Guide – HTML, Data Binding & Template Variables (2026)",
+    "description": "Learn how to build dynamic user interfaces with Angular Templates. Master the syntax for data binding, template reference variables, and built-in directives.",
+    "keywords": [
+      "angular templates",
+      "angular html syntax",
+      "template reference variables",
+      "angular data binding",
+      "angular directives",
+      "view engine"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is an Angular Template?"
+    },
+    {
+      "type": "text",
+      "value": "In Angular, a template is a form of HTML that tells Angular how to render a component. It looks like regular HTML, but it contains special syntax (directives, data binding, and pipes) that allows it to respond to data changes in your TypeScript class. As a Technical Lead, you can think of the template as the 'Blueprint' for the UI that Angular's rendering engine (Ivy) transforms into a live DOM."
+    },
+    {
+      "type": "heading",
+      "value": "1. Template Syntax & Data Binding"
+    },
+    {
+      "type": "text",
+      "value": "The power of Angular templates lies in their ability to sync with the component class. This is achieved through different types of binding syntax."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Interpolation `{{ }}`**: Embeds dynamic text into the HTML.",
+        "**Property Binding `[ ]`**: Sets values for element properties or component inputs.",
+        "**Event Binding `( )`**: Listens for user actions and triggers class methods."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<h2>Project: {{ projectName }}</h2>\n\n\n<button [disabled]=\"isProcessing\">Submit</button>\n\n\n<button (click)=\"refreshData()\">Refresh</button>"
+    },
+    {
+      "type": "heading",
+      "value": "2. Template Reference Variables"
+    },
+    {
+      "type": "text",
+      "value": "Template reference variables (using the `#` prefix) allow you to access a DOM element or a component instance directly within the template. This is incredibly useful for passing values between elements without involving the TypeScript class for simple UI logic."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<input #userName type=\"text\" placeholder=\"Enter Name\">\n\n\n<button (click)=\"greet(userName.value)\">Log In</button>"
+    },
+    {
+      "type": "heading",
+      "value": "3. Directives in Templates"
+    },
+    {
+      "type": "text",
+      "value": "Directives are 'markers' that tell Angular to add behavior to a DOM element. Structural directives (prefixed with `*`) can change the DOM layout by adding or removing elements."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<div *ngIf=\"isLoggedIn; else loginPrompt\">\n  <p>Welcome back!</p>\n</div>\n\n\n<ul>\n  <li *ngFor=\"let tech of techStack\">{{ tech }}</li>\n</ul>\n\n<ng-template #loginPrompt>\n  <p>Please log in to continue.</p>\n</ng-template>"
+    },
+    {
+      "type": "heading",
+      "value": "Template Logic Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Syntax", "Usage"],
+        "rows": [
+          ["Interpolation", "{{ data }}", "Display text/numbers"],
+          ["Property Binding", "[property]=\"val\"", "Set DOM properties"],
+          ["Event Binding", "(click)=\"fn()\"", "Handle user input"],
+          ["Two-Way Binding", "[(ngModel)]=\"val\"", "Sync form inputs"],
+          ["Reference Var", "#myVar", "Access element directly"],
+          ["Structural Dir", "*ngIf / *ngFor", "Modify DOM structure"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Can I use JavaScript logic in templates?",
+      "answer": "Only basic expressions are allowed (like simple math or ternary operators). Complex logic should always stay in the TypeScript class to keep the template readable and maintainable."
+    },
+    {
+      "question": "What is <ng-template>?",
+      "answer": "It is an Angular element that holds HTML but doesn't render it by default. It is typically used as a 'placeholder' for structural directives like *ngIf (for the 'else' block) or *ngFor."
+    },
+    {
+      "question": "Is it better to use Inline or External templates?",
+      "answer": "As an architect, I recommend external '.html' files for most components. It separates concerns and makes it easier for designers to work on the UI without touching the logic."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which symbol is used to define a template reference variable?",
+      "options": ["*", "[ ]", "#", "{{ }}"],
+      "answer": 2
+    },
+    {
+      "question": "What happens to the HTML inside an <ng-template> tag by default?",
+      "options": [
+        "It is rendered immediately",
+        "It is rendered but hidden with CSS",
+        "It is not rendered until triggered by a directive",
+        "It causes a compilation error"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which directive would you use to repeat a component for every item in an array?",
+      "options": ["*ngIf", "*ngRepeat", "*ngFor", "[ngFor]"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-components",
+    "angular-directives",
+    "angular-data-binding",
+    "angular-pipes",
+    "typescript-introduction"
+  ]
+}

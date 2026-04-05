@@ -1,0 +1,133 @@
+{
+  "slug": "angular-dependency-injection",
+  "course": "Angular",
+  "title": "Angular Dependency Injection – Modular Architecture",
+
+  "meta": {
+    "title": "Angular DI Guide – Injectors, Providers & Hierarchical Injection (2026)",
+    "description": "Master the core of Angular's architecture. Learn how Dependency Injection works, how to use @Injectable, and how to manage service hierarchies.",
+    "keywords": [
+      "angular dependency injection",
+      "angular di tutorial",
+      "injectable decorator",
+      "hierarchical injection",
+      "angular singleton service",
+      "singleton vs transient"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Dependency Injection?"
+    },
+    {
+      "type": "text",
+      "value": "Dependency Injection is a coding pattern in which a class receives its dependencies from an external provider rather than creating them internally. In Angular, this means your components don't need to know how to instantiate a service or manage its lifecycle; they simply 'ask' for it in their constructor. This promotes the 'Inversion of Control' (IoC) principle, making your code cleaner and easier to test."
+    },
+    {
+      "type": "heading",
+      "value": "1. The @Injectable Decorator"
+    },
+    {
+      "type": "text",
+      "value": "To make a class available for injection, you must use the `@Injectable()` decorator. This tells Angular that this class can be managed by the DI system. The `providedIn: 'root'` property ensures the service is a singleton and allows for tree-shaking (removing the code if it's never used)."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "@Injectable({\n  providedIn: 'root'\n})\nexport class FlutterApiService {\n  // Logic to communicate with your Python backend\n  getTemplates() {\n    return ['Dashboard', 'Login', 'Settings'];\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. The DI Hierarchy"
+    },
+    {
+      "type": "text",
+      "value": "Angular uses a hierarchical DI system. When a component requests a dependency, Angular first looks at the component's own providers, then its parent's, and so on, until it reaches the root. This allows you to have global singletons or 'sandboxed' service instances that only live within a specific feature module."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "3. Using Dependencies in Components"
+    },
+    {
+      "type": "text",
+      "value": "In Angular, you 'inject' a dependency by declaring it as a parameter in the class constructor. Angular's Injector looks at the type of the parameter and provides the correct instance."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "@Component({ ... })\nexport class BuilderComponent {\n  // The 'private' keyword automatically creates a property and assigns the instance\n  constructor(private apiService: FlutterApiService) {}\n\n  load() {\n    const data = this.apiService.getTemplates();\n    console.log(data);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "DI Building Blocks Summary"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Term", "Responsibility"],
+        "rows": [
+          ["Dependency", "The object/service that a class needs to function."],
+          ["Provider", "The instruction on how to create/obtain the dependency."],
+          ["Injector", "The mechanism that finds or creates the dependency."],
+          ["@Injectable", "The decorator that makes a class 'available' for DI."]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why use DI instead of just importing the class?",
+      "answer": "Importing a class only gives you the type. DI gives you the instance. More importantly, DI allows you to swap that instance (e.g., using a MockApiService during tests) without changing any code in your component."
+    },
+    {
+      "question": "What is a Singleton in Angular?",
+      "answer": "When a service is provided in 'root', Angular creates one single instance for the entire application. Every component that injects that service will share the exact same instance and data."
+    },
+    {
+      "question": "Can I inject things that aren't classes?",
+      "answer": "Yes. You can use 'InjectionTokens' to inject strings, configurations, or interfaces. This is common for providing API environment URLs or secret keys."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Where do you typically declare that a component needs a specific service?",
+      "options": ["In the @Component metadata", "In the class constructor", "In the ngOnInit method", "In the app.module.ts only"],
+      "answer": 1
+    },
+    {
+      "question": "What does 'providedIn: root' achieve in a service?",
+      "options": [
+        "It makes the service local to one component",
+        "It makes the service a singleton and enables tree-shaking",
+        "It prevents the service from being used in other modules",
+        "It automatically connects the service to a database"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which decorator must be present on a class for it to be part of the DI system?",
+      "options": ["@Component", "@Directive", "@Injectable", "@Module"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-providers",
+    "angular-services-di",
+    "angular-architecture",
+    "angular-modules",
+    "clean-architecture-frontend"
+  ]
+}

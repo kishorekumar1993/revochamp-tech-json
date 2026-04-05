@@ -1,0 +1,154 @@
+{
+  "slug": "angular-data-binding",
+  "course": "Angular",
+  "title": "Angular Data Binding – Connecting Logic and UI",
+
+  "meta": {
+    "title": "Angular Data Binding Guide – Interpolation, Property & Two-Way Binding (2026)",
+    "description": "Learn the four types of data binding in Angular. Master how to sync data between your TypeScript components and HTML templates efficiently.",
+    "keywords": [
+      "angular data binding",
+      "interpolation angular",
+      "property binding",
+      "event binding",
+      "two-way data binding",
+      "ngmodel angular"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Data Binding?"
+    },
+    {
+      "type": "text",
+      "value": "Data binding is a core feature of Angular that coordinates the communication between a component's TypeScript class (the logic) and its HTML template (the view). As a Technical Lead, you know that efficient data flow is the backbone of a responsive UI. Angular provides four distinct types of binding, categorized by the direction of data flow."
+    },
+    {
+      "type": "heading",
+      "value": "1. From Source to View (One-Way)"
+    },
+    {
+      "type": "text",
+      "value": "This type of binding pushes data from the TypeScript class into the HTML template. It is used to display dynamic content or set element properties."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Interpolation `{{ value }}`**: Used to render text content within HTML tags.",
+        "**Property Binding `[property]=\"value\"`**: Used to set the property of an element or a directive (e.g., [disabled], [src], [hidden])."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<h1>Welcome, {{ userName }}!</h1>\n\n\n<img [src]=\"profileImageUrl\">\n<button [disabled]=\"!isFormValid\">Submit</button>"
+    },
+    {
+      "type": "heading",
+      "value": "2. From View to Source (One-Way)"
+    },
+    {
+      "type": "text",
+      "value": "This binding handles user interactions, such as clicks, keystrokes, and mouse movements, by calling methods in your TypeScript class."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Event Binding `(event)=\"method()\"`**: Listens for specific DOM events and triggers logic in the component."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<button (click)=\"onSave()\">Save Project</button>\n<input (input)=\"onTyping($event)\">"
+    },
+    {
+      "type": "heading",
+      "value": "3. Two-Way Binding"
+    },
+    {
+      "type": "text",
+      "value": "Two-way binding allows for a continuous synchronization of data between the view and the source. If the user changes a value in an input field, the TypeScript variable updates; if the variable is updated via logic, the input field reflects the change."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**Two-Way Binding `[(ngModel)]=\"value\"`**: Commonly used in forms. It combines property binding and event binding syntax (the 'banana in a box')."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<input [(ngModel)]=\"projectName\">\n<p>Editing: {{ projectName }}</p>"
+    },
+    {
+      "type": "heading",
+      "value": "Data Binding Summary"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Type", "Syntax", "Direction"],
+        "rows": [
+          ["Interpolation", "{{ expression }}", "Component to View"],
+          ["Property Binding", "[property]=\"value\"", "Component to View"],
+          ["Event Binding", "(event)=\"handler()\"", "View to Component"],
+          ["Two-Way Binding", "[(ngModel)]=\"property\"", "Both Ways"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the 'Banana in a box' syntax?",
+      "answer": "It refers to the [( )] syntax used for two-way data binding. An easy way to remember the order of brackets is 'the banana (parentheses) goes inside the box (square brackets)'."
+    },
+    {
+      "question": "Why use [property] instead of {{ }} for attributes?",
+      "answer": "Interpolation always converts the value to a string. Property binding [ ] allows you to pass non-string values like booleans or objects directly to elements or components."
+    },
+    {
+      "question": "Does ngModel require a specific module?",
+      "answer": "Yes. To use [(ngModel)], you must import 'FormsModule' from '@angular/forms' into your Angular Module (or standalone component)."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which syntax is used for property binding in Angular?",
+      "options": ["{{ property }}", "(property)", "[property]", "[(property)]"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary use case for Event Binding?",
+      "options": [
+        "Displaying a variable in the UI",
+        "Handling user interactions like button clicks",
+        "Passing an object to a child component",
+        "Formatting a date"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which directive is commonly used for Two-Way Data Binding in forms?",
+      "options": ["ngClass", "ngIf", "ngModel", "ngFor"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-components",
+    "angular-directives",
+    "angular-forms-basics",
+    "angular-architecture",
+    "typescript-introduction"
+  ]
+}

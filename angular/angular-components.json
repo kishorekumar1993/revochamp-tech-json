@@ -1,0 +1,149 @@
+{
+  "slug": "angular-components",
+  "course": "Angular",
+  "title": "Angular Components – The Building Blocks of UI",
+
+  "meta": {
+    "title": "Angular Components Guide – Metadata, Templates & Lifecycle (2026)",
+    "description": "Learn the core unit of Angular applications. Master component decorators, data binding, and how to structure reusable UI elements for enterprise apps.",
+    "keywords": [
+      "angular components",
+      "component decorator",
+      "angular lifecycle hooks",
+      "input output angular",
+      "reusable components",
+      "angular ui blocks"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Component?"
+    },
+    {
+      "type": "text",
+      "value": "In Angular, a **Component** is the most fundamental building block of the user interface. It is a self-contained unit that controls a patch of the screen called a 'view'. As an Architect, you should view components as encapsulated modules that combine logic, layout, and styles. This separation ensures that your code remains testable and scalable, similar to the widget-based architecture in Flutter."
+    },
+    {
+      "type": "heading",
+      "value": "1. The Three Parts of a Component"
+    },
+    {
+      "type": "text",
+      "value": "Every Angular component consists of three distinct parts that work together to define its behavior and appearance."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**The Component Class**: A TypeScript class that handles data and logic (e.g., fetching project details).",
+        "**The HTML Template**: Defines the visual structure of the component.",
+        "**The CSS Styles**: Defines the private styles scoped specifically to that component."
+      ]
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "2. The @Component Decorator"
+    },
+    {
+      "type": "text",
+      "value": "The `@Component` decorator is a function that identifies the class immediately below it as an Angular component. It provides the **Metadata** that tells Angular where to find the template and styles, and what selector to use in HTML."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { Component } from '@angular/core';\n\n@Component({\n  selector: 'app-project-card',           // How to use it: <app-project-card></app-project-card>\n  templateUrl: './project-card.component.html',\n  styleUrls: ['./project-card.component.scss']\n})\nexport class ProjectCardComponent {\n  projectName: string = 'Revochamp';\n  isFeatured: boolean = true;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Component Communication: Input and Output"
+    },
+    {
+      "type": "text",
+      "value": "To build a truly modular system, components must talk to each other. We use the `@Input()` decorator to pass data from a parent to a child, and the `@Output()` decorator with an `EventEmitter` to send data back up."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// Inside Child Component\n@Input() title: string = '';\n@Output() onAction = new EventEmitter<void>();\n\n// Inside Parent Template\n<app-project-card \n  [title]=\"'Flutter Engine'\"\n  (onAction)=\"handleUpdate()\">\n</app-project-card>"
+    },
+    {
+      "type": "heading",
+      "value": "4. Component Lifecycle Hooks"
+    },
+    {
+      "type": "text",
+      "value": "Angular manages the life of a component from creation to destruction. You can 'tap into' specific moments in this lifecycle using **Lifecycle Hooks**. For a Lead Developer, `ngOnInit` is the most common place to initialize data or call APIs."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Hook", "Timing", "Best For"],
+        "rows": [
+          ["ngOnChanges", "Before ngOnInit", "Responding to @Input() data changes"],
+          ["ngOnInit", "After first check", "Initializing component data / API calls"],
+          ["ngAfterViewInit", "After view renders", "Accessing child DOM elements or ViewChild"],
+          ["ngOnDestroy", "Just before removal", "Cleaning up subscriptions & timers"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a 'Selector' in a component?",
+      "answer": "A selector is the CSS tag name you assign to your component. When Angular finds this tag in your HTML (e.g., <app-header>), it knows to render the component's template at that location."
+    },
+    {
+      "question": "What are 'Standalone Components'?",
+      "answer": "In modern Angular (v14+), standalone components allow you to build components without needing to declare them in an NgModule. This reduces boilerplate and is the current industry standard for new projects."
+    },
+    {
+      "question": "Can I use external libraries inside a component?",
+      "answer": "Yes. You can import any TypeScript/JavaScript library into your component class. For example, you could import the Gemini API client directly into a component to handle AI generation logic."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which decorator is used to pass data from a Parent component to a Child component?",
+      "options": ["@Output()", "@Injectable()", "@Input()", "@ViewChild()"],
+      "answer": 2
+    },
+    {
+      "question": "Where is the best place to perform an initial API call in an Angular component?",
+      "options": ["The constructor", "ngOnInit", "ngOnDestroy", "index.html"],
+      "answer": 1
+    },
+    {
+      "question": "What does the 'templateUrl' property in the @Component decorator do?",
+      "options": [
+        "It defines the CSS styles for the component",
+        "It sets the URL for the external API",
+        "It points to the HTML file that defines the component's view",
+        "It registers the component in the root module"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-architecture",
+    "angular-templates",
+    "angular-data-binding",
+    "angular-directives",
+    "angular-services-di"
+  ]
+}

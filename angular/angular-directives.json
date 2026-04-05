@@ -1,0 +1,141 @@
+{
+  "slug": "angular-directives",
+  "course": "Angular",
+  "title": "Angular Directives – Extending HTML Power",
+
+  "meta": {
+    "title": "Angular Directives Guide – Component, Structural & Attribute Directives (2026)",
+    "description": "Learn how to use Angular directives to manage DOM structure and appearance. Master *ngIf, *ngFor, ngClass, and ngStyle for dynamic web applications.",
+    "keywords": [
+      "angular directives",
+      "structural directives",
+      "attribute directives",
+      "ngif angular",
+      "ngfor angular",
+      "ngclass",
+      "custom directives"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Directives?"
+    },
+    {
+      "type": "text",
+      "value": "Directives are classes that add new behavior to elements in your templates. As a Technical Lead, you can think of them as 'instructions' for the DOM. While components are directives with templates, many directives are used to manipulate the appearance or layout of existing elements. Angular uses them to make static HTML dynamic and responsive to your application state."
+    },
+    {
+      "type": "heading",
+      "value": "1. Three Types of Directives"
+    },
+    {
+      "type": "text",
+      "value": "Angular categorizes directives based on how they affect the DOM. Understanding these categories is essential for maintaining a clean architecture."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Components**: Directives with a template. This is the most common type.",
+        "**Attribute Directives**: Change the appearance or behavior of an element, component, or another directive (e.g., `ngClass`, `ngStyle`).",
+        "**Structural Directives**: Change the DOM layout by adding and removing DOM elements (e.g., `*ngIf`, `*ngFor`)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Structural Directives (The Asterisk Syntax)"
+    },
+    {
+      "type": "text",
+      "value": "Structural directives are easy to recognize because of the asterisk (`*`) prefix. They shape or reshape the DOM's structure, typically by adding, removing, or manipulating elements."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<div *ngIf=\"isProjectActive\">\n  <p>Revochamp Engine is Running...</p>\n</div>\n\n\n<li *ngFor=\"let feature of features; let i = index\">\n  {{ i + 1 }}. {{ feature }}\n</li>"
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "3. Attribute Directives"
+    },
+    {
+      "type": "text",
+      "value": "Attribute directives look like regular HTML attributes. They are used to dynamically change the CSS classes or styles applied to an element based on the component's state."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<div [ngClass]=\"{'active-theme': isDark, 'legacy-ui': !isModern}\">\n  Themed Content\n</div>\n\n\n<div [ngStyle]=\"{'color': statusColor, 'font-size.px': fontSize}\">\n  Status Message\n</div>"
+    },
+    {
+      "type": "heading",
+      "value": "Directive Comparison Table"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Type", "Prefix", "Purpose", "Common Examples"],
+        "rows": [
+          ["Structural", "*", "Adds/Removes elements from DOM", "*ngIf, *ngFor, *ngSwitch"],
+          ["Attribute", "[]", "Modifies look or behavior", "ngClass, ngStyle, ngModel"],
+          ["Custom", "Varies", "Developer-defined behavior", "appHighlight, appTooltip"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why do structural directives use an asterisk (*)?",
+      "answer": "The asterisk is 'syntactic sugar' for a more complex attribute. Angular internally translates '*ngIf' into an <ng-template> element wrapped around the host element, which keeps the template cleaner for developers."
+    },
+    {
+      "question": "Can I use *ngIf and *ngFor on the same element?",
+      "answer": "No. Angular allows only one structural directive per element. To use both, you should wrap the element in an <ng-container> or a <div> and apply one directive to the wrapper."
+    },
+    {
+      "question": "What is <ng-container>?",
+      "answer": "It is a logical container that does not render in the final DOM. It is perfect for hosting structural directives without adding extra unnecessary <div> tags to your layout."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which prefix is used to identify a structural directive in Angular templates?",
+      "options": ["#", "[]", "*", "()"],
+      "answer": 2
+    },
+    {
+      "question": "Which attribute directive would you use to conditionally apply multiple CSS classes at once?",
+      "options": ["ngStyle", "ngBase", "ngClass", "ngRepeat"],
+      "answer": 2
+    },
+    {
+      "question": "What happens to the DOM when an *ngIf expression evaluates to false?",
+      "options": [
+        "The element is hidden with 'display: none'",
+        "The element is removed entirely from the DOM",
+        "The element becomes transparent",
+        "The element is moved to the bottom of the page"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-templates",
+    "angular-components",
+    "angular-data-binding",
+    "angular-pipes",
+    "clean-architecture-frontend"
+  ]
+}

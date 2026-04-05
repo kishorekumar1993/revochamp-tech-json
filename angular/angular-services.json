@@ -1,0 +1,138 @@
+{
+  "slug": "angular-services",
+  "course": "Angular",
+  "title": "Angular Services – Sharing Logic & Data",
+
+  "meta": {
+    "title": "Angular Services Guide – @Injectable, Data Fetching & State (2026)",
+    "description": "Learn how to build and use services in Angular. Master the @Injectable decorator, dependency injection, and how to share data across components.",
+    "keywords": [
+      "angular services",
+      "injectable decorator",
+      "angular data sharing",
+      "angular api calls",
+      "singleton service",
+      "angular dependency injection"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Service?"
+    },
+    {
+      "type": "text",
+      "value": "A service is a class with a narrow, well-defined purpose. While components are responsible for the 'View', services are responsible for the 'Logic'. Common use cases include fetching data from a server, validating user input, or logging messages to a console. As an Engineering Manager, you should enforce using services to prevent 'Fat Components' and to make your business logic reusable across your entire application."
+    },
+    {
+      "type": "heading",
+      "value": "1. Creating a Service"
+    },
+    {
+      "type": "text",
+      "value": "You use the Angular CLI to generate a service. It creates a TypeScript class decorated with `@Injectable`. The `providedIn: 'root'` metadata is the modern standard, making the service a singleton available everywhere."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "ng generate service core/project-api"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "import { Injectable } from '@angular/core';\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class ProjectApiService {\n  private projects = ['Revochamp', 'Flutter Engine', 'AI Designer'];\n\n  getProjects() {\n    return this.projects;\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Injecting and Using a Service"
+    },
+    {
+      "type": "text",
+      "value": "To use a service, you 'inject' it into a component's constructor. Angular's Dependency Injection (DI) system handles the instantiation, ensuring the component receives the correct instance of the service."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "@Component({ ... })\nexport class DashboardComponent implements OnInit {\n  projectList: string[] = [];\n\n  // Injecting the service\n  constructor(private apiService: ProjectApiService) {}\n\n  ngOnInit() {\n    // Calling the service method\n    this.projectList = this.apiService.getProjects();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "The Component-Service Relationship"
+    },
+    {
+      "type": "text",
+      "value": "Services act as the data providers, while components act as the data consumers. This decoupling allows you to test your logic independently of the UI."
+    },
+    
+    {
+      "type": "heading",
+      "value": "3. Singletons vs. Multiple Instances"
+    },
+    {
+      "type": "text",
+      "value": "By default, services provided in 'root' are singletons—one instance exists for the entire app. However, if you provide a service inside a specific component's `providers` array, Angular creates a new, private instance just for that component and its children."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Scope", "Declaration", "Behavior"],
+        "rows": [
+          ["Application", "providedIn: 'root'", "One instance shared by all (Singleton)"],
+          ["Module", "@NgModule({ providers: [...] })", "One instance shared by all in that module"],
+          ["Component", "@Component({ providers: [...] })", "New instance for every component created"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "When should I create a service?",
+      "answer": "Whenever you have logic that isn't specific to a single view. If two components need to access the same data or perform the same calculation, it belongs in a service."
+    },
+    {
+      "question": "Can a service inject another service?",
+      "answer": "Yes. Services can have their own dependencies. For example, a 'DataService' might inject the 'HttpClient' service to make web requests."
+    },
+    {
+      "question": "Is @Injectable() required for all services?",
+      "answer": "Yes. It provides the metadata that allows Angular to inject dependencies into the service's constructor. Even if the service has no dependencies now, it's a best practice to always include it."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which decorator is used to define an Angular service?",
+      "options": ["@Component", "@Module", "@Injectable", "@Service"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary benefit of a Singleton service in Angular?",
+      "options": [
+        "It makes the UI render faster",
+        "It allows multiple components to share the same instance and data",
+        "It prevents the use of TypeScript",
+        "It automatically generates HTML templates"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Where do you typically inject a service in a component class?",
+      "options": ["In the ngOnInit method", "In the component decorator", "In the class constructor", "In the HTML template"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-dependency-injection",
+    "angular-providers",
+    "angular-architecture",
+    "angular-components",
+    "clean-architecture-frontend"
+  ]
+}

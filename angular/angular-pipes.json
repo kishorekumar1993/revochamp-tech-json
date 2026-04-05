@@ -1,0 +1,145 @@
+{
+  "slug": "angular-pipes",
+  "course": "Angular",
+  "title": "Angular Pipes – Transforming Template Data",
+
+  "meta": {
+    "title": "Angular Pipes Guide – Built-in Pipes, Custom Pipes & Chaining (2026)",
+    "description": "Learn how to use Angular pipes to transform data directly in your HTML templates. Master DatePipe, CurrencyPipe, and how to build custom transformation logic.",
+    "keywords": [
+      "angular pipes",
+      "datepipe angular",
+      "currencypipe",
+      "async pipe",
+      "custom pipes angular",
+      "pure vs impure pipes"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Pipes?"
+    },
+    {
+      "type": "text",
+      "value": "Pipes are simple functions designed to accept an input value and transform it into a desired output for display in the UI. As a Technical Lead, you should use pipes to keep your component logic clean; instead of formatting a date or currency in your TypeScript class, you do it directly in the template. This follows the principle of separating 'Data' from 'Presentation'."
+    },
+    {
+      "type": "heading",
+      "value": "1. Using Built-in Pipes"
+    },
+    {
+      "type": "text",
+      "value": "Angular comes with several built-in pipes for common data transformations. You use the 'pipe' operator (`|`) followed by the pipe name and any optional parameters (separated by colons)."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<p>{{ projectName | uppercase }}</p>\n\n\n<p>{{ today | date:'mediumDate' }}</p>\n\n\n<p>{{ price | currency:'INR' }}</p>\n\n\n<p>{{ longDescription | slice:0:20 }}...</p>"
+    },
+    {
+      "type": "heading",
+      "value": "2. Chaining Pipes"
+    },
+    {
+      "type": "text",
+      "value": "You can chain multiple pipes together to perform complex transformations in a single line. The output of the first pipe becomes the input for the next."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<p>{{ today | date:'mediumDate' | uppercase }}</p>"
+    },
+    {
+      "type": "heading",
+      "value": "The Data Transformation Flow"
+    },
+    {
+      "type": "text",
+      "value": "Pipes act as a middleman between your raw data and the final rendered view."
+    },
+    
+    {
+      "type": "heading",
+      "value": "3. The Async Pipe (Architect's Favorite)"
+    },
+    {
+      "type": "text",
+      "value": "For high-performance applications like Revochamp, the `async` pipe is essential. It automatically subscribes to an **Observable** or **Promise** and returns the latest value it has emitted. Most importantly, it automatically unsubscribes when the component is destroyed to prevent memory leaks."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<div *ngIf=\"project$ | async as project\">\n  <h1>{{ project.name }}</h1>\n</div>"
+    },
+    {
+      "type": "heading",
+      "value": "Common Pipes Reference"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Pipe", "Purpose", "Example Output"],
+        "rows": [
+          ["DatePipe", "Formats date objects/strings", "Apr 5, 2026"],
+          ["UpperCasePipe", "Converts text to uppercase", "REVOCHAMP"],
+          ["CurrencyPipe", "Formats numbers as currency", "$100.00"],
+          ["DecimalPipe", "Formats numbers with decimals", "1,234.56"],
+          ["JsonPipe", "Converts object to JSON string", "{ \"id\": 1 }"],
+          ["AsyncPipe", "Handles Observables/Promises", "(Stream value)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a 'Pure' Pipe?",
+      "answer": "By default, pipes are 'pure'. This means Angular only executes the pipe when it detects a change to the input value (by reference). This makes them highly performant as they don't run on every change detection cycle."
+    },
+    {
+      "question": "Can I create a custom pipe?",
+      "answer": "Absolutely. You can use 'ng generate pipe my-pipe'. A custom pipe is a class decorated with '@Pipe' that implements the 'PipeTransform' interface and its 'transform()' method."
+    },
+    {
+      "question": "How do I pass multiple parameters to a pipe?",
+      "answer": "You separate them with colons. For example: '{{ val | slice:start:end }}'. Each colon adds a new argument to the transform function."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which operator is used to apply a pipe in an Angular template?",
+      "options": [".", ":", "|", "!"],
+      "answer": 2
+    },
+    {
+      "question": "Which pipe is used to handle Observables without manual subscriptions?",
+      "options": ["json", "observable", "async", "stream"],
+      "answer": 2
+    },
+    {
+      "question": "What happens when you chain pipes like '{{ val | pipeA | pipeB }}'?",
+      "options": [
+        "Only pipeB is applied",
+        "Both are applied simultaneously",
+        "The output of pipeA is passed as input to pipeB",
+        "It results in a syntax error"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-templates",
+    "angular-data-binding",
+    "angular-directives",
+    "rxjs-observables-intro",
+    "clean-architecture-frontend"
+  ]
+}

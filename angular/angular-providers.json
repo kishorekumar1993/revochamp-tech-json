@@ -1,0 +1,143 @@
+{
+  "slug": "angular-providers",
+  "course": "Angular",
+  "title": "Angular Providers – Managing Dependency Injection",
+
+  "meta": {
+    "title": "Angular Providers Guide – useClass, useValue & provideIn (2026)",
+    "description": "Learn how to configure providers in Angular. Master the different types of provider recipes including useClass, useValue, and useFactory for professional DI.",
+    "keywords": [
+      "angular providers",
+      "dependency injection angular",
+      "provideIn root",
+      "useClass angular",
+      "useValue",
+      "useFactory angular",
+      "angular service configuration"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Provider?"
+    },
+    {
+      "type": "text",
+      "value": "A provider is an instruction to the Dependency Injection system on how to obtain a value for a dependency. Most of the time, you provide a service class, and Angular creates a singleton instance. However, as an architect, you might need to provide a constant value, a different class based on a condition, or a factory function to handle complex initialization logic."
+    },
+    {
+      "type": "heading",
+      "value": "1. The 'providedIn' Property"
+    },
+    {
+      "type": "text",
+      "value": "Modern Angular recommends providing services directly in the `@Injectable` decorator using the `providedIn` property. Using `'root'` makes the service a singleton available application-wide and enables 'tree-shaking', meaning the service is only included in the final bundle if it is actually used."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "@Injectable({\n  providedIn: 'root' // Singleton, tree-shakable\n})\nexport class AnalyticsService {\n  log(msg: string) { console.log('Analytics:', msg); }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Provider Recipes"
+    },
+    {
+      "type": "text",
+      "value": "When you need more control, you define providers in an `NgModule` or a `Component`. This is where you can swap implementations—perfect for your Revochamp engine when switching between a real AI API and a local mock."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**useClass**: Provides a specific class for an injection token.",
+        "**useValue**: Provides a simple fixed value (like a configuration object).",
+        "**useExisting**: Maps one token to another existing token (alias).",
+        "**useFactory**: Uses a function to dynamically create the dependency."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "providers: [\n  // Standard: { provide: Logger, useClass: Logger }\n  Logger, \n\n  // Swapping for a Mock for testing\n  { provide: ApiService, useClass: MockApiService },\n\n  // Providing a constant config\n  { provide: APP_CONFIG, useValue: { apiEndpoint: 'https://api.revochamp.ai' } }\n]"
+    },
+    {
+      "type": "heading",
+      "value": "The Injection Hierarchy"
+    },
+    {
+      "type": "text",
+      "value": "Angular's DI system is hierarchical. If a component requests a dependency, Angular looks at that component's providers, then its parent's, and so on, until it reaches the root."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "Provider Strategies Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Recipe", "When to Use", "Example"],
+        "rows": [
+          ["useClass", "Default; swapping implementations", "Mocking an API service"],
+          ["useValue", "Fixed data or configurations", "API Keys or feature flags"],
+          ["useFactory", "Complex setup involving logic", "Service that needs specific initialization"],
+          ["providedIn: 'root'", "Standard singletons", "Most application services"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is an Injection Token?",
+      "answer": "Sometimes you need to inject things that aren't classes (like a string or an object). An InjectionToken creates a unique 'key' that the DI system can use to find the correct provider for that value."
+    },
+    {
+      "question": "What happens if I provide a service in a Component instead of Root?",
+      "answer": "Each instance of that component will get its own separate instance of the service. It is no longer a singleton for the whole app, which is useful for 'sandboxed' logic."
+    },
+    {
+      "question": "Why is tree-shaking important?",
+      "answer": "Tree-shaking removes unused code during the build process. By using 'providedIn: root', if you never actually inject the service anywhere, Angular won't include it in your production JavaScript bundle, making your app smaller and faster."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which provider property is used to create a singleton service that can be removed if unused?",
+      "options": ["providers: []", "useValue", "providedIn: 'root'", "useFactory"],
+      "answer": 2
+    },
+    {
+      "question": "Which recipe would you use to provide a simple JSON configuration object?",
+      "options": ["useClass", "useValue", "useExisting", "useConstant"],
+      "answer": 1
+    },
+    {
+      "question": "In the hierarchy, where does Angular look FIRST for a requested dependency?",
+      "options": [
+        "The root module",
+        "The current component's providers",
+        "The browser's local storage",
+        "The parent component"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-services-di",
+    "angular-architecture",
+    "angular-modules",
+    "clean-architecture-frontend",
+    "angular-components"
+  ]
+}

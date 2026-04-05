@@ -1,0 +1,143 @@
+{
+  "slug": "angular-cli",
+  "course": "Angular",
+  "title": "Angular CLI – Command Line Mastery",
+
+  "meta": {
+    "title": "Angular CLI Guide – Scaffolding, Building & Testing Commands (2026)",
+    "description": "Master the Angular Command Line Interface. Learn how to generate components, services, and modules, and how to manage the build lifecycle.",
+    "keywords": [
+      "angular cli",
+      "ng generate",
+      "ng serve",
+      "ng build",
+      "angular schematics",
+      "angular development tools"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the Angular CLI?"
+    },
+    {
+      "type": "text",
+      "value": "The Angular CLI (Command Line Interface) is a powerful tool used to initialize, develop, scaffold, and maintain Angular applications directly from a command shell. As an Engineering Manager or Lead, the CLI is your best friend for enforcing consistency across your team—ensuring that every component, service, and module follows the official style guide automatically."
+    },
+    {
+      "type": "heading",
+      "value": "1. Essential Development Commands"
+    },
+    {
+      "type": "text",
+      "value": "These commands are the daily drivers for any Angular developer. They manage the lifecycle of the application from creation to local execution."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**ng new <name>**: Creates a new Angular workspace and an initial application.",
+        "**ng serve**: Builds the application and starts a local development server (usually at `localhost:4200`). It features 'Live Reload' to refresh the browser on save.",
+        "**ng build**: Compiles the application into an output directory (`dist/`) for deployment.",
+        "**ng test**: Runs unit tests using Karma and Jasmine."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. The 'Generate' Blueprint"
+    },
+    {
+      "type": "text",
+      "value": "Instead of creating files manually, the `ng generate` (or `ng g`) command uses schematics to create files with the correct boilerplate and registration logic. This is critical for maintaining a clean architecture."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Generate a new component\nng generate component my-feature\n\n# Generate a service for API calls\nng generate service core/api\n\n# Generate a module with routing\nng generate module admin --routing"
+    },
+    {
+      "type": "heading",
+      "value": "Angular CLI Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "The CLI handles the entire journey of a piece of code, from the moment you scaffold it to the moment it is optimized for production."
+    },
+    ,
+    {
+      "type": "heading",
+      "value": "Common CLI Command Reference"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Command", "Short Alias", "Description"],
+        "rows": [
+          ["ng generate", "ng g", "Creates new files (components, pipes, etc.)"],
+          ["ng serve --open", "ng s -o", "Runs app and opens in default browser"],
+          ["ng build --configuration production", "ng b", "Builds optimized bundle for prod"],
+          ["ng lint", "ng l", "Runs linting tools on your code base"],
+          ["ng add", "n/a", "Installs a library and sets up configuration"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "3. The Power of 'ng add'"
+    },
+    {
+      "type": "text",
+      "value": "The `ng add` command is a game-changer for architects. It doesn't just install a package; it runs a script to automatically configure your project to use that library. For example, adding Angular Material handles all the theme imports and module registrations for you."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "ng add @angular/material"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What does the '--dry-run' flag do?",
+      "answer": "Adding '-d' or '--dry-run' to a generate command will show you exactly what files will be created and modified without actually making any changes. This is great for testing your folder structure first."
+    },
+    {
+      "question": "Can I customize the CLI blueprints?",
+      "answer": "Yes! For large-scale projects like Revochamp, you can create your own 'Schematics' to generate custom boilerplate that matches your specific architecture requirements."
+    },
+    {
+      "question": "What is 'ng update'?",
+      "answer": "It is the safest way to upgrade your Angular version and dependencies. It checks for updates and automatically applies 'code migrations' to keep your project current with the latest Angular APIs."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which command is used to run unit tests in an Angular project?",
+      "options": ["ng run-tests", "ng test", "ng jasmine", "ng verify"],
+      "answer": 1
+    },
+    {
+      "question": "What is the short alias for the 'ng generate' command?",
+      "options": ["ng gen", "ng create", "ng g", "ng +"],
+      "answer": 2
+    },
+    {
+      "question": "Which command would you use to add a new library like Angular Material to your project?",
+      "options": ["npm install", "ng add", "ng generate", "ng build"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-setup",
+    "angular-project-structure",
+    "angular-components",
+    "angular-modules",
+    "nodejs-npm-basics"
+  ]
+}

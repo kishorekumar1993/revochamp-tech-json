@@ -1,0 +1,151 @@
+{
+  "slug": "angular-architecture",
+  "course": "Angular",
+  "title": "Angular Architecture – The Enterprise Blueprint",
+
+  "meta": {
+    "title": "Angular Architecture Guide – Modules, Components & Services (2026)",
+    "description": "Understand the core building blocks of Angular. Learn how Modules, Components, Templates, and Services work together in a high-performance architecture.",
+    "keywords": [
+      "angular architecture",
+      "angular building blocks",
+      "dependency injection angular",
+      "angular modules vs components",
+      "data binding angular",
+      "angular services"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Eight Building Blocks"
+    },
+    {
+      "type": "text",
+      "value": "As a Technical Lead and Architect, understanding the high-level design of Angular is essential for building scalable systems. Angular is a platform built on eight main building blocks that work in harmony to deliver a seamless user experience and a maintainable codebase. Unlike lightweight libraries, Angular provides a structured 'Opinionated' architecture that enforces clean coding standards."
+    },
+    {
+      "type": "heading",
+      "value": "1. Modules (NgModules)"
+    },
+    {
+      "type": "text",
+      "value": "An Angular app is modular. Every app has at least one root module (typically `AppModule`). Modules are containers for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. They declare which components, directives, and pipes belong to that module and export them for use in others."
+    },
+    {
+      "type": "heading",
+      "value": "2. Components & Templates"
+    },
+    {
+      "type": "text",
+      "value": "Components are the most fundamental UI building block. A component consists of a TypeScript class that handles logic and data, and an HTML template that defines the view. Angular uses **Data Binding** to coordinate the communication between the template and the class."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "3. Services & Dependency Injection"
+    },
+    {
+      "type": "text",
+      "value": "Services are used for logic that isn't associated with a specific view (e.g., fetching data from a Python/FastAPI backend). Angular uses **Dependency Injection (DI)** to provide components with the services they need. This makes your code highly testable and decoupled—a core tenet of Clean Architecture."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// A simple service providing data to a component\n@Injectable({ providedIn: 'root' })\nexport class ProjectService {\n  getProjects() { return ['Revochamp', 'Flutter Builder']; }\n}\n\n// Injecting the service into a component\nexport class ProjectComponent {\n  constructor(private projectService: ProjectService) {}\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Directives & Pipes"
+    },
+    {
+      "type": "text",
+      "value": "Directives allow you to attach behavior to elements in the DOM. Pipes are used to transform data for display directly in your HTML templates (e.g., formatting dates or currencies)."
+    },
+    {
+      "type": "heading",
+      "value": "Architecture Overview Table"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Building Block", "Responsibility", "Analogy"],
+        "rows": [
+          ["Module", "Groups related code", "The Toolbox"],
+          ["Component", "Controls a patch of screen", "The Tool"],
+          ["Template", "Defines the HTML/UI", "The Blueprint"],
+          ["Service", "Handles business logic/data", "The Specialist"],
+          ["DI", "Supplies dependencies", "The Delivery Driver"],
+          ["Directive", "Extends HTML behavior", "The Custom Part"],
+          ["Pipe", "Formats data for view", "The Filter"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "5. The Routing System"
+    },
+    {
+      "type": "text",
+      "value": "The Angular Router enables navigation from one view to the next as users perform application tasks. It maps URL paths to components, allowing for the creation of complex Single Page Applications (SPAs) with nested views and lazy-loaded modules."
+    },
+    {
+      "type": "text",
+      "value": ""
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between a Module and a Component?",
+      "answer": "A Component controls a specific piece of the UI and its logic. A Module is a higher-level container that groups multiple components, services, and other modules together to form a functional unit of the application."
+    },
+    {
+      "question": "Why is Dependency Injection important for architects?",
+      "answer": "DI allows for 'Inversion of Control'. It makes it easy to swap out implementations (e.g., using a MockService for testing vs. a real ApiService for production) without changing the component code."
+    },
+    {
+      "question": "Does Angular still use NgModules in 2026?",
+      "answer": "While 'Standalone Components' have become the modern default to reduce boilerplate, NgModules are still widely used in enterprise applications for organization and managing complex dependency trees."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which architectural pattern does Angular use to provide services to components?",
+      "options": ["Singleton Pattern", "Dependency Injection", "Observer Pattern", "Factory Pattern"],
+      "answer": 1
+    },
+    {
+      "question": "What is the primary role of an Angular Service?",
+      "options": [
+        "To define the HTML structure",
+        "To handle CSS styling",
+        "To share logic and data across multiple components",
+        "To manage URL routing"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which building block is responsible for transforming data before it is displayed in a template?",
+      "options": ["Component", "Module", "Pipe", "Directive"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "angular-components",
+    "angular-services-di",
+    "angular-modules",
+    "angular-routing-basics",
+    "clean-architecture-frontend"
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "slug": "angular-lazy-loading",
+  "course": "Angular",
+  "title": "Angular Lazy Loading – Optimizing Performance",
+
+  "meta": {
+    "title": "Angular Lazy Loading Guide – Route-based Code Splitting (2026)",
+    "description": "Learn how to implement lazy loading in Angular to reduce initial load time. Master the loadComponent and loadChildren syntax for high-performance apps.",
+    "keywords": [
+      "angular lazy loading",
+      "code splitting angular",
+      "loadchildren vs loadcomponent",
+      "angular performance optimization",
+      "route based lazy loading"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Lazy Loading?"
+    },
+    {
+      "type": "text",
+      "value": "Lazy loading is a design pattern that delays the initialization of a resource until it is actually needed. In Angular, this means that the JavaScript for a specific feature (like an Admin Dashboard or a Code Editor) isn't downloaded until the user navigates to that feature's route. This significantly reduces the **Initial Bundle Size** and improves the **Time to Interactive (TTI)**."
+    },
+    {
+      "type": "heading",
+      "value": "1. Why Use Lazy Loading?"
+    },
+    {
+      "type": "text",
+      "value": "In large-scale applications, the 'Main' bundle can become bloated. As an Architect, you should aim for a lean initial load. Lazy loading ensures that a user only downloading the core framework and the landing page doesn't have to wait for the code of the entire 'Settings' or 'Analytics' module."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Faster Initial Load**: Users see the first page quicker.",
+        "**Reduced Bandwidth**: Only necessary code is transferred.",
+        "**Better Resource Management**: The browser doesn't have to parse unused JavaScript."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Implementing Route-Based Lazy Loading"
+    },
+    {
+      "type": "text",
+      "value": "In modern Angular (v15+), you can lazy load individual standalone components using the `loadComponent` property in your route configuration. For older module-based apps, you use `loadChildren`."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// app.routes.ts\nexport const routes: Routes = [\n  {\n    path: 'dashboard',\n    // The component is only imported when the user hits /dashboard\n    loadComponent: () => import('./features/dashboard/dashboard.component')\n      .then(m => m.DashboardComponent)\n  },\n  {\n    path: 'admin',\n    // Lazy loading an entire child routing configuration\n    loadChildren: () => import('./features/admin/admin.routes')\n      .then(m => m.ADMIN_ROUTES)\n  }\n];"
+    },
+    {
+      "type": "heading",
+      "value": "Lazy Loading vs. Eager Loading"
+    },
+    {
+      "type": "text",
+      "value": "Eager loading is the default behavior where all components are imported at the top of the file and bundled into the main package."
+    },
+    
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Eager Loading", "Lazy Loading"],
+        "rows": [
+          ["Initial Load", "Slow (Large bundle)", "Fast (Small main bundle)"],
+          ["User Experience", "Wait at start", "Small wait during navigation"],
+          ["Implementation", "Standard 'import' at top", "Dynamic 'import()' in routes"],
+          ["Best For", "Small apps / Critical paths", "Large Feature modules / Admin panels"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "3. Preloading Strategies"
+    },
+    {
+      "type": "text",
+      "value": "To avoid a 'loading' delay when a user clicks a link, you can use a **Preloading Strategy**. This tells Angular to download the lazy-loaded modules in the background *after* the initial app has loaded and the user is idle."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "bootstrapApplication(AppComponent, {\n  providers: [\n    provideRouter(routes, withPreloading(PreloadAllModules))\n  ]\n});"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Does lazy loading affect SEO?",
+      "answer": "If you are using Server-Side Rendering (SSR) with Angular Universal, SEO is not negatively affected. For standard client-side apps, modern search engines can still crawl lazy-loaded routes, but SSR is preferred for critical content."
+    },
+    {
+      "question": "What is 'loadChildren' used for now?",
+      "answer": "While 'loadComponent' is for single components, 'loadChildren' is still used when you want to load a group of routes (a sub-routing config) or a full NgModule for a complex feature."
+    },
+    {
+      "question": "How do I see if lazy loading is working?",
+      "answer": "Open the browser's Network tab and filter by 'JS'. When you navigate to a lazy-loaded route, you should see a new '.js' chunk file being downloaded."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which property in the Route object is used to lazy load a single standalone component?",
+      "options": ["component", "loadChildren", "loadComponent", "importComponent"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary benefit of Lazy Loading for the user?",
+      "options": [
+        "It makes the application logic more secure",
+        "It reduces the initial download size of the application",
+        "It prevents the need for a database",
+        "It automatically optimizes images"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which Preloading Strategy downloads all lazy modules as soon as the app starts in the background?",
+      "options": ["NoPreloading", "PreloadAllModules", "LazyPreload", "IdlePreload"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "angular-routing-basics",
+    "angular-performance-tuning",
+    "angular-architecture",
+    "angular-components",
+    "standalone-components-guide"
+  ]
+}
