@@ -1,0 +1,168 @@
+{
+  "slug": "swift-collections",
+  "course": "Swift",
+  "title": "Swift Collections – Mastering Arrays, Sets, and Dictionaries",
+
+  "meta": {
+    "title": "Swift Collections Guide: Arrays, Sets, Dictionaries Explained (2026)",
+    "description": "Deep dive into Swift's collection types: Arrays (ordered lists), Sets (unique unordered), Dictionaries (key-value). Learn mutability, performance, Hashable requirements, and functional transformations for production iOS apps.",
+    "keywords": [
+      "swift arrays vs sets",
+      "swift dictionary guide",
+      "collection performance swift",
+      "hashable protocol",
+      "map filter reduce swift",
+      "ios data structures",
+      "swift copy on write"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Choosing the Right Collection for Your Data"
+    },
+    {
+      "type": "text",
+      "value": "Swift provides three primary collection types. Choosing the wrong one leads to messy code or performance issues. Use this rule of thumb:\n\n- **Array**: You care about **order** (list of dashboard widgets, chat messages).\n- **Set**: You care about **uniqueness** and fast lookups (user IDs in a room, tags on a post).\n- **Dictionary**: You need to **look up values by an identifier** (user profiles by ID, configuration flags).\n\n> **For Flutter developers:** `Array` = `List<T>`, `Set` = `Set<T>`, `Dictionary` = `Map<K,V>`."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Arrays – Ordered, Indexed, Duplicate-Allowed"
+    },
+    {
+      "type": "text",
+      "value": "Arrays are zero-indexed, ordered collections that can contain duplicate values. They are optimized for sequential iteration and access at the **end** of the array. Insertion or removal at the **front** is O(n) because elements shift."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Explicit typing vs. type inference\nvar dashboardWidgets: [String] = [\"RevenueChart\", \"UserStats\", \"RecentActivity\"]\nvar scores = [95, 87, 102]  // Inferred as [Int]\n\n// Adding elements\nscores.append(98)          // Add to end (O(1) amortized)\nscores.insert(100, at: 1)  // Insert at index 1 (O(n))\n\n// Safe access using if let\nif let firstScore = scores.first {\n    print(\"High score: \\(firstScore)\")\n}\n\n// Removing elements\nlet removed = scores.removeLast()  // Remove from end\nscores.removeAll { $0 < 90 }       // Remove scores below 90\n\n// Useful properties\nprint(\"Count: \\(scores.count), Is Empty: \\(scores.isEmpty)\")"
+    },
+    {
+      "type": "heading",
+      "value": "2. Dictionaries – Fast Key-Based Lookups"
+    },
+    {
+      "type": "text",
+      "value": "Dictionaries store unordered key-value pairs. Keys must be `Hashable` (String, Int, etc.). Lookup, insertion, and deletion are all **O(1) on average** – making them perfect for caches or data stores. Access always returns an **Optional** because the key might not exist."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Dictionary with String keys and Int values\nvar userSessions: [String: Int] = [\n    \"user_001\": 3,\n    \"user_002\": 7\n]\n\n// Safe update using subscript\nuserSessions[\"user_003\"] = 1  // Adds new entry\n\n// Update only if key exists\nuserSessions[\"user_001\"]? += 1  // Now becomes 4\n\n// Provide a default value to avoid Optional\nlet sessionsForUser004 = userSessions[\"user_004\", default: 0]\n\n// Removing entries\nuserSessions[\"user_002\"] = nil\n\n// Iterating over keys and values\nfor (userId, sessionCount) in userSessions {\n    print(\"User \\(userId) has \\(sessionCount) sessions\")\n}\n\n// Get all keys or values as arrays\nlet allUserIds = Array(userSessions.keys)"
+    },
+    {
+      "type": "heading",
+      "value": "3. Sets – Uniqueness and Fast Membership Testing"
+    },
+    {
+      "type": "text",
+      "value": "A `Set` is an unordered collection of unique values. Its superpower is `contains()` – **O(1) vs O(n)** for an Array. Use Sets for tag systems, permission flags, or deduplicating data. Elements must be `Hashable`."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Creating a Set from an array literal\nvar activeFilters: Set<String> = [\"price:low\", \"brand:apple\", \"inStock\"]\n\n// Insert (duplicates are silently ignored)\nactiveFilters.insert(\"price:low\")  // No effect\n\n// Checking membership – super fast!\nif activeFilters.contains(\"brand:apple\") {\n    print(\"Apple products only\")\n}\n\n// Removing\nactiveFilters.remove(\"inStock\")\n\n// Set operations – great for comparing collections\nlet premiumFilters: Set = [\"brand:apple\", \"price:high\", \"expressShipping\"]\nlet combined = activeFilters.union(premiumFilters)        // All filters\nlet common = activeFilters.intersection(premiumFilters)   // Only brand:apple\nlet exclusive = activeFilters.symmetricDifference(premiumFilters)\n\n// Convert Array to Set to remove duplicates\nlet duplicateIDs = [1,2,2,3,4,4,5]\nlet uniqueIDs = Set(duplicateIDs)  // {1,2,3,4,5}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Mutability & Performance: let vs var"
+    },
+    {
+      "type": "text",
+      "value": "Swift enforces mutability at the collection level:\n- `var` = Mutable (can add, remove, change elements).\n- `let` = Immutable (fixed size and content – like a frozen list).\n\n**Copy-on-Write (COW):** Assigning a `var` collection to a new variable doesn't copy the underlying data immediately. It only copies when one of the variables mutates it. This makes Swift collections extremely efficient – even large arrays are cheap to pass around."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Immutable collection – compiler error if you try to modify\nlet immutableArray = [1, 2, 3]\n// immutableArray.append(4)  // ❌ Compiler error\n\n// Copy-on-Write in action\nvar original = [1, 2, 3]\nvar copied = original   // No actual copy yet (both share memory)\ncopied.append(4)        // ✅ Now a copy is made – original stays [1,2,3]\n\n// Performance tip: Reserve capacity if you know the final size\nvar largeArray = [Int]()\nlargeArray.reserveCapacity(1000)  // Avoids repeated reallocation"
+    },
+    {
+      "type": "heading",
+      "value": "5. Functional Transformations (Map, Filter, Reduce)"
+    },
+    {
+      "type": "text",
+      "value": "Swift collections integrate seamlessly with functional programming. These methods are preferred over manual loops for cleaner, more declarative code – especially when transforming data between layers of your architecture (e.g., Repository → UseCase → Presenter)."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "struct User {\n    let id: Int\n    let name: String\n    let isActive: Bool\n}\n\nlet users = [\n    User(id: 1, name: \"Alice\", isActive: true),\n    User(id: 2, name: \"Bob\", isActive: false),\n    User(id: 3, name: \"Charlie\", isActive: true)\n]\n\n// Map: Transform each element\nlet activeUserNames = users\n    .filter { $0.isActive }           // Keep only active\n    .map { $0.name.uppercased() }     // Transform to uppercase names\n// Result: [\"ALICE\", \"CHARLIE\"]\n\n// Reduce: Combine all elements into one value\nlet nameString = users.reduce(\"\") { $0 + $1.name + \", \" }\n// Result: \"Alice, Bob, Charlie, \"\n\n// CompactMap: Filter out nil results\nlet strings = [\"1\", \"2\", \"three\", \"4\"]\nlet ints = strings.compactMap { Int($0) }  // [1, 2, 4] – \"three\" ignored\n\n// Grouping dictionaries by a key path\nlet usersByActiveStatus = Dictionary(grouping: users, by: { $0.isActive })\n// Result: [true: [Alice, Charlie], false: [Bob]]"
+    },
+    {
+      "type": "heading",
+      "value": "6. When to Use Each Collection – Architecture Decision Guide"
+    },
+    {
+      "type": "text",
+      "value": "| Use Case | Recommended Collection | Why |\n|----------|----------------------|-----|\n| List of dashboard widgets (order matters) | **Array** | Preserves display order, allows duplicates |\n| User session store (lookup by userID) | **Dictionary** | O(1) lookup by ID, no order needed |\n| Set of permissions for a user | **Set** | Fast contains() check, ensures uniqueness |\n| Chat message history | **Array** | Ordered, indexed access, supports pagination |\n| Tags on a blog post | **Set** | No duplicates, fast to check if tag exists |\n| Configuration flags (key: flag name, value: enabled) | **Dictionary** | Natural key-value mapping |"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why does dictionary access return an Optional?",
+      "answer": "Because the key you request might not exist. Swift forces you to handle this safely instead of crashing. Use `dict[key, default: value]` if you want a non-optional fallback, or optional binding (`if let`)."
+    },
+    {
+      "question": "What does it take for a custom type to be used in a Set or as a Dictionary key?",
+      "answer": "It must conform to the `Hashable` protocol. Swift provides automatic conformance if all your stored properties are Hashable. Just declare `struct MyKey: Hashable { }` – Swift synthesizes it for you. If you need custom logic, implement `func hash(into hasher: inout Hasher)`."
+    },
+    {
+      "question": "How do I safely get the first element of an Array without crashing?",
+      "answer": "Use the `first` property which returns an Optional: `if let firstItem = myArray.first { ... }`. Avoid subscript access (`myArray[0]`) unless you are 100% sure the array is not empty."
+    },
+    {
+      "question": "What's faster: Array.contains() or Set.contains()?",
+      "answer": "**Set.contains()** is dramatically faster – O(1) vs Array's O(n). If you frequently check membership and don't need order, convert your Array to a Set first (or store as Set from the beginning)."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "You need to store a list of high scores that must remain in the order they were achieved, but duplicates are allowed. Which collection do you use?",
+      "options": ["Set", "Array", "Dictionary", "Tuple"],
+      "answer": 1
+    },
+    {
+      "question": "What happens if you try to add a duplicate value to a Set?",
+      "options": [
+        "The Set throws a runtime error",
+        "The duplicate replaces the existing value",
+        "The duplicate is silently ignored",
+        "The Set becomes an Array"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Given `let config: [String: Int] = [\"retries\": 3]`, what happens when you execute `config[\"timeout\"] = 5`?",
+      "options": [
+        "The value 5 is added with key \"timeout\"",
+        "A compiler error because config is immutable",
+        "It returns nil but does not crash",
+        "It overwrites the \"retries\" key"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which functional method would you use to transform each element of an array into a new array of the same length?",
+      "options": ["reduce", "filter", "compactMap", "map"],
+      "answer": 3
+    }
+  ],
+
+  "related": [
+    "swift-variables",
+    "swift-control-flow",
+    "swift-functions",
+    "swift-optionals",
+    "clean-architecture-native"
+  ]
+}

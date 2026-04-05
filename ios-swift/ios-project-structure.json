@@ -1,0 +1,177 @@
+{
+  "slug": "ios-project-structure",
+  "course": "iOS Development",
+  "title": "iOS Project Structure – Organizing Large-Scale Swift Apps",
+
+  "meta": {
+    "title": "iOS Project Structure Guide: Clean Architecture & Xcode Groups (2026)",
+    "description": "Learn how to organize iOS projects for scalability: Clean Architecture layers (Presentation, Domain, Data), module separation, feature-based grouping, and Xcode folder conventions for teams.",
+    "keywords": [
+      "ios project structure",
+      "xcode folder organization",
+      "clean architecture ios",
+      "swiftui mvvm structure",
+      "modular ios app",
+      "ios scalable architecture",
+      "xcode group vs folder"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Project Structure Matters"
+    },
+    {
+      "type": "text",
+      "value": "A poorly organized iOS project leads to merge conflicts, slow compilation, and developer frustration. A good structure is **feature-based**, **layered**, and **testable**. This guide presents a battle-tested structure for SwiftUI + UIKit apps using Clean Architecture principles, suitable for teams of 2–20 developers."
+    },
+
+    {
+      "type": "heading",
+      "value": "1. High-Level Folder Layout"
+    },
+    {
+      "type": "text",
+      "value": "At the root level, separate your code into these main groups. This works for both SwiftUI and UIKit projects."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "MyApp/\n├── App/\n├── Core/\n├── Features/\n├── Shared/\n├── Services/\n├── Resources/\n├── Networking/\n├── Persistence/\n├── Utilities/\n├── Extensions/\n└── Tests/"
+    },
+
+    {
+      "type": "heading",
+      "value": "2. Detailed Breakdown by Layer"
+    },
+    {
+      "type": "text",
+      "value": "Each top-level folder has a specific responsibility. Below is the complete tree with explanations."
+    },
+
+    {
+      "type": "code",
+      "language": "text",
+      "value": "MyApp/\n│\n├── App/                                 # App lifecycle & entry point\n│   ├── MyAppApp.swift                   # @main for SwiftUI\n│   ├── AppDelegate.swift                # UIKit lifecycle (if needed)\n│   ├── SceneDelegate.swift\n│   └── Info.plist\n│\n├── Core/                                # Core architecture & base classes\n│   ├── Architecture/\n│   │   ├── BaseView.swift\n│   │   ├── BaseViewModel.swift\n│   │   ├── BaseViewController.swift    # UIKit\n│   │   └── CoordinatorProtocol.swift\n│   ├── Routing/\n│   │   ├── AppRouter.swift\n│   │   ├── Route.swift\n│   │   └── DeepLinkHandler.swift\n│   └── DI/                              # Dependency Injection\n│       ├── AppContainer.swift\n│       ├── ServiceLocator.swift\n│       └── Assemblies/\n│\n├── Features/                            # Feature modules (grouped by domain)\n│   ├── Auth/\n│   │   ├── Presentation/\n│   │   │   ├── Views/\n│   │   │   │   ├── LoginView.swift\n│   │   │   │   └── SignUpView.swift\n│   │   │   ├── ViewModels/\n│   │   │   │   └── AuthViewModel.swift\n│   │   │   └── Components/\n│   │   │       └── AuthTextField.swift\n│   │   ├── Domain/\n│   │   │   ├── Entities/\n│   │   │   │   └── User.swift\n│   │   │   ├── UseCases/\n│   │   │   │   ├── LoginUseCase.swift\n│   │   │   │   └── SignUpUseCase.swift\n│   │   │   └── Repositories/\n│   │   │       └── AuthRepositoryProtocol.swift\n│   │   └── Data/\n│   │       ├── Repositories/\n│   │       │   └── AuthRepositoryImpl.swift\n│   │       ├── DataSources/\n│   │       │   ├── Remote/\n│   │       │   │   └── AuthAPI.swift\n│   │       │   └── Local/\n│   │       │       └── AuthLocalStorage.swift\n│   │       └── DTOs/\n│   │           └── AuthResponseDTO.swift\n│   │\n│   ├── Dashboard/\n│   │   ├── Presentation/\n│   │   ├── Domain/\n│   │   └── Data/\n│   │\n│   └── Profile/\n│       ├── Presentation/\n│       ├── Domain/\n│       └── Data/\n│\n├── Shared/                              # Cross-feature UI & logic\n│   ├── UI/\n│   │   ├── Components/\n│   │   │   ├── PrimaryButton.swift\n│   │   │   ├── LoadingView.swift\n│   │   │   └── ErrorView.swift\n│   │   ├── Modifiers/\n│   │   │   └── CardStyle.swift\n│   │   └── Themes/\n│   │       ├── Color+Extensions.swift\n│   │       ├── Font+Extensions.swift\n│   │       └── AppConstants.swift\n│   ├── Utils/\n│   │   ├── Validators/\n│   │   │   └── EmailValidator.swift\n│   │   ├── Formatters/\n│   │   │   └── DateFormatter+Custom.swift\n│   │   └── Helpers/\n│   │       └── KeychainWrapper.swift\n│   └── Extensions/\n│       ├── String+Extensions.swift\n│       ├── View+Extensions.swift\n│       └── Date+Extensions.swift\n│\n├── Services/                            # Global services\n│   ├── Analytics/\n│   │   ├── AnalyticsService.swift\n│   │   └── AnalyticsEvent.swift\n│   ├── Notification/\n│   │   └── PushNotificationService.swift\n│   ├── Logging/\n│   │   └── LoggerService.swift\n│   └── FeatureFlags/\n│       └── FeatureFlagService.swift\n│\n├── Networking/                          # API layer\n│   ├── APIClient.swift\n│   ├── Endpoints.swift\n│   ├── HTTPMethod.swift\n│   ├── Middleware/\n│   │   ├── AuthInterceptor.swift\n│   │   └── LoggingInterceptor.swift\n│   └── Mock/\n│       └── MockAPIClient.swift\n│\n├── Persistence/                         # Local data storage\n│   ├── CoreData/\n│   │   ├── PersistenceController.swift\n│   │   └── Models/\n│   ├── SwiftData/\n│   │   └── ModelContainer.swift\n│   ├── UserDefaults/\n│   │   └── UserDefaults+Keys.swift\n│   └── FileManager/\n│       └── FileStorageService.swift\n│\n├── Resources/                           # Assets & configuration\n│   ├── Assets.xcassets\n│   ├── Localization/\n│   │   ├── Localizable.strings\n│   │   ├── Localizable.stringsdict\n│   │   └── en.lproj/\n│   ├── Fonts/\n│   │   └── CustomFont.ttf\n│   ├── Config/\n│   │   ├── Development.plist\n│   │   ├── Staging.plist\n│   │   └── Production.plist\n│   └── GoogleService-Info.plist\n│\n├── Utilities/                           # Pure logic helpers (no side effects)\n│   ├── Crypto/\n│   │   └── AESCrypto.swift\n│   ├── Math/\n│   │   └── PercentageCalculator.swift\n│   └── Performance/\n│       └── Debouncer.swift\n│\n├── Extensions/                          # Global Swift extensions\n│   ├── Swift/\n│   │   ├── Array+Safe.swift\n│   │   ├── Dictionary+Merge.swift\n│   │   └── Optional+Unwrap.swift\n│   ├── UIKit/\n│   │   ├── UIViewController+Alert.swift\n│   │   └── UIColor+Hex.swift\n│   └── SwiftUI/\n│       ├── Color+Hex.swift\n│       └── View+Conditional.swift\n│\n└── Tests/                               # Test targets\n    ├── UnitTests/\n    │   ├── Domain/\n    │   ├── UseCases/\n    │   └── Utilities/\n    ├── IntegrationTests/\n    │   ├── Networking/\n    │   └── Persistence/\n    ├── UITests/\n    │   └── Features/\n    └── Mocks/\n        ├── MockRepositories/\n        └── MockServices/\n\n# Xcode Project Groups (same hierarchy but note:)\n# - Yellow folders = Group (logical, no physical folder)\n# - Blue folders = Folder Reference (physical folder, preserves structure)"
+    },
+
+    {
+      "type": "heading",
+      "value": "3. Clean Architecture in Practice"
+    },
+    {
+      "type": "text",
+      "value": "Inside each `Feature/` module, we follow Clean Architecture with three layers:\n\n- **Presentation** (UI + ViewModels) – depends only on Domain.\n- **Domain** (Business logic + Entities) – NO dependencies on UIKit, SwiftUI, or networking. Pure Swift.\n- **Data** (Repositories + DataSources) – implements Domain protocols.\n\n**Direction of dependencies:** `Presentation → Domain ← Data` (Dependency Inversion via protocols)."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Domain Layer (protocol)\nprotocol AuthRepositoryProtocol {\n    func login(email: String, password: String) async throws -> User\n}\n\n// Data Layer (implements protocol)\nclass AuthRepositoryImpl: AuthRepositoryProtocol {\n    let api: AuthAPI\n    \n    func login(email: String, password: String) async throws -> User {\n        let dto = try await api.login(request: .init(email: email, password: password))\n        return dto.toDomain()\n    }\n}\n\n// Presentation Layer (uses protocol, not concrete type)\nclass LoginViewModel: ObservableObject {\n    @Published var isLoading = false\n    private let authRepo: AuthRepositoryProtocol\n    \n    init(authRepo: AuthRepositoryProtocol) {\n        self.authRepo = authRepo\n    }\n    \n    func login(email: String, password: String) async {\n        isLoading = true\n        defer { isLoading = false }\n        \n        do {\n            let user = try await authRepo.login(email: email, password: password)\n            // Handle success\n        } catch {\n            // Handle error\n        }\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "4. Module vs Feature vs Layer"
+    },
+    {
+      "type": "text",
+      "value": "For **large apps** (10+ screens, 5+ developers), consider breaking into **Swift packages** or **Xcode projects**:\n\n| Level | When to use | Example |\n|-------|-------------|---------|\n| **Feature Module** | Screens that work together | Auth, Checkout, Settings |\n| **Shared Module** | Code reused across features | UI Components, Networking, Core |\n| **App Module** | Glues everything together | Main app target |\n\n**Modular structure example:**\n```\nMyApp.xcworkspace/\n├── App/ (main app target)\n├── Modules/\n│   ├── CorePackage/ (Swift package)\n│   ├── NetworkingPackage/\n│   ├── UIPackage/\n│   ├── FeatureAuth/\n│   ├── FeatureDashboard/\n│   └── FeatureProfile/\n└── Tests/\n```"
+    },
+
+    {
+      "type": "heading",
+      "value": "5. Xcode Groups vs Folder References"
+    },
+    {
+      "type": "text",
+      "value": "| Feature | Group (Yellow) | Folder Reference (Blue) |\n|---------|---------------|------------------------|\n| Physical folder | Optional | Required |\n| File organization | Logical only | Mirrors disk |\n| Nested resources | ❌ Won't compile | ✅ Works for resources |\n| When to use | Swift code files | Assets, JSON, HTML, Bundled files |\n\n**Best practice:** Use Groups for `.swift` files. Use Folder References for resource folders (fonts, JSON, HTML, videos)."
+    },
+
+    {
+      "type": "heading",
+      "value": "6. Naming Conventions"
+    },
+    {
+      "type": "text",
+      "value": "Consistent naming prevents confusion:\n\n- **View:** `LoginView.swift`, `ProfileHeaderView.swift`\n- **ViewModel:** `LoginViewModel.swift` (SwiftUI), `LoginViewController.swift` + `LoginViewModel.swift` (UIKit + MVVM)\n- **UseCase:** `LoginUseCase.swift`, `FetchProductsUseCase.swift`\n- **Repository Protocol:** `AuthRepositoryProtocol.swift`\n- **Repository Impl:** `AuthRepositoryImpl.swift`\n- **DTO:** `LoginRequestDTO.swift`, `UserResponseDTO.swift`\n- **Service:** `AnalyticsService.swift`, `PushNotificationService.swift`\n- **Coordinator:** `AuthCoordinator.swift`\n- **Factory:** `ViewModelFactory.swift`"
+    },
+
+    {
+      "type": "heading",
+      "value": "7. Project Configuration Files"
+    },
+    {
+      "type": "text",
+      "value": "Keep configuration at the root of your repo (not inside Xcode project):\n\n```\nMyApp/\n├── .swiftlint.yml              # Linting rules\n├── .gitignore\n├── fastlane/\n│   └── Fastfile                # CI/CD automation\n├── project.yml                 # XcodeGen (optional but recommended)\n├── Tuist/\n│   └── ProjectDescriptionHelpers/\n├── Makefile                    # Common tasks (test, lint, format)\n├── README.md\n└── config/\n    ├── Debug.xcconfig\n    ├── Release.xcconfig\n    └── Shared.xcconfig\n```"
+    },
+
+    {
+      "type": "heading",
+      "value": "8. Common Anti-Patterns to Avoid"
+    },
+    {
+      "type": "text",
+      "value": "❌ **Massive View Controller** – Move logic to ViewModels or UseCases.\n\n❌ **God Helpers** – `SharedUtils.swift` with 5000 lines. Break into small, focused files.\n\n❌ **Circular Dependencies** – Feature A imports Feature B, and B imports A. Use shared Core module.\n\n❌ **Deep Nesting** – `Features/Auth/Presentation/Views/Subviews/Components/Button.swift` – Keep max 4 levels.\n\n❌ **Ignoring Tests** – Mirror your main structure under `Tests/` from day one.\n\n❌ **Mixing UI Frameworks** – Avoid UIKit + SwiftUI in same feature without clear boundary."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Should I use groups or folder references for Swift files?",
+      "answer": "Always use **groups** (yellow folders) for Swift code. Xcode automatically maps them to the filesystem, but you can organize logically without mirroring disk structure. Use **folder references** (blue) only for resource bundles (fonts, HTML, JSON) that need to preserve their folder hierarchy at runtime."
+    },
+    {
+      "question": "How do I decide when to create a new feature module?",
+      "answer": "Create a new feature folder when:\n- The screen has its own distinct responsibility (e.g., Login vs Dashboard).\n- It has at least 3-5 files (View, ViewModel, UseCase, Repository).\n- It can be developed independently by a different team member.\n- It has minimal coupling to other features (except through Core)."
+    },
+    {
+      "question": "What's the difference between Shared, Core, and Utilities?",
+      "answer": "- **Core**: Base classes, protocols, DI containers – defines your architecture.\n- **Shared**: UI components, themes, cross-feature logic – used by multiple features.\n- **Utilities**: Pure functions with no side effects (crypto, math, formatters) – no dependencies on the app."
+    },
+    {
+      "question": "How do I handle dependency injection with this structure?",
+      "answer": "Use a container per feature. Create `AppContainer.swift` in Core/DI that registers all global services. Each feature can have its own assembler. In SwiftUI, pass dependencies via `@EnvironmentObject` or custom initializers. For UIKit, use constructor injection in ViewControllers. Avoid Service Locator anti-pattern."
+    },
+    {
+      "question": "Should I use Swift Packages for modularization?",
+      "answers": "Yes, for teams of 5+ or apps with 20+ features. Benefits: explicit dependencies, faster compile times (Xcode builds only changed packages), and reusability across projects. Start with in-repo packages (not external) to avoid overhead."
+    }
+  ],
+
+  "quiz": [
+    {
+      "question": "Which layer in Clean Architecture should have NO dependencies on UIKit, SwiftUI, or networking frameworks?",
+      "options": ["Presentation", "Domain", "Data", "Services"],
+      "answer": 1
+    },
+    {
+      "question": "What color are Xcode groups (logical folders) in the project navigator?",
+      "options": ["Blue", "Yellow", "Gray", "Purple"],
+      "answer": 1
+    },
+    {
+      "question": "In a feature module following Clean Architecture, where should the repository protocol be defined?",
+      "options": ["Presentation layer", "Data layer", "Domain layer", "Shared layer"],
+      "answer": 2
+    },
+    {
+      "question": "Which of these is an anti-pattern in iOS project structure?",
+      "options": [
+        "Using a Shared folder for reusable components",
+        "Creating a 5000-line Utils.swift file",
+        "Organizing by feature instead of by type",
+        "Using dependency injection via initializers"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "clean-architecture-native",
+    "swiftui-mvvm",
+    "ios-dependency-injection",
+    "swift-package-manager",
+    "xcode-configuration-files"
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "slug": "ios-uitableview-fundamentals",
+  "course": "iOS Development",
+  "title": "UITableView – Mastering Native Lists",
+
+  "meta": {
+    "title": "iOS UITableView Guide – Delegates, DataSources & Cell Reuse (2026)",
+    "description": "Master the core of iOS list rendering. Learn how to implement UITableViewDataSource and UITableViewDelegate for high-performance native lists.",
+    "keywords": [
+      "uitableview",
+      "uitableviewdatasource",
+      "uitableviewdelegate",
+      "cell reuse ios",
+      "uitableviewcell",
+      "ios native lists"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a UITableView?"
+    },
+    {
+      "type": "text",
+      "value": "A `UITableView` displays a single column of vertically scrolling content, divided into sections and rows. As an Architect, you should understand that it doesn't create a view for every item in your data source. Instead, it uses a **Reuse Queue** to recycle cells that have scrolled off-screen. This is exactly how Flutter's `ListView.builder` stays memory-efficient."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. The Two Core Protocols"
+    },
+    {
+      "type": "text",
+      "value": "To make a table view work, you must implement two protocols. This 'Separation of Concerns' ensures that the view logic is decoupled from the data logic."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**UITableViewDataSource**: Tells the table view *what* to display (How many rows? Which cell for this index?).",
+        "**UITableViewDelegate**: Handles *how* the table looks and behaves (What happens when I tap a row? How tall is this cell?)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Implementing the Data Source"
+    },
+    {
+      "type": "text",
+      "value": "The most critical method is `cellForRowAt`. This is where you dequeue a cell and 'hydrate' it with your data. For a Lead Developer, ensuring this method is lightweight is the key to smooth scrolling."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {\n    return projects.count\n}\n\nfunc tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {\n    // Dequeue a reusable cell\n    let cell = tableView.dequeueReusableCell(withIdentifier: \"ProjectCell\", for: indexPath)\n    \n    // Configure the cell\n    let project = projects[indexPath.row]\n    cell.textLabel?.text = project.name\n    \n    return cell\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Sections and IndexPaths"
+    },
+    {
+      "type": "text",
+      "value": "In iOS, list locations are identified by an **IndexPath**, which contains both a `section` and a `row`. This allows you to easily group content, such as 'Active Projects' in section 0 and 'Archived Projects' in section 1."
+    },
+    
+    {
+      "type": "heading",
+      "value": "UITableView vs. Flutter ListView"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "UITableView (Native)", "ListView (Flutter)"],
+        "rows": [
+          ["Reactivity", "Manual (reloadData / performBatchUpdates)", "Automatic (State changes)"],
+          ["Cell Recycling", "Explicit (dequeue)", "Implicit (Viewport-based)"],
+          ["Grouped Styles", "Native 'Grouped' or 'Inset' styles", "Manual styling with Slivers"],
+          ["Interactions", "Built-in Swipe-to-Delete", "Requires Dismissible widget"],
+          ["Complexity", "High (Requires delegate setup)", "Low (Declarative)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the 'reuseIdentifier'?",
+      "answer": "It is a string key that identifies the type of cell to be reused. If you have different designs for 'Header' cells and 'Content' cells, you give them different identifiers so the table view doesn't try to reuse a Header design for a Content row."
+    },
+    {
+      "question": "How do I update the list after data changes?",
+      "answer": "The simplest way is calling 'tableView.reloadData()'. However, for better performance and smooth animations, Architects use 'performBatchUpdates' or the modern 'UITableViewDiffableDataSource' (introduced in iOS 13)."
+    },
+    {
+      "question": "Why is my list scrolling choppy?",
+      "answer": "Usually because 'cellForRowAt' is doing too much work. Avoid image decoding, complex math, or database calls inside this method. Do that work in the background and only assign the final result to the cell's UI elements."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which protocol is responsible for providing the number of rows and the cell content to a UITableView?",
+      "options": ["UITableViewDelegate", "UITableViewDataSource", "UITableViewCell", "UIScrollViewDelegate"],
+      "answer": 1
+    },
+    {
+      "question": "What is the primary benefit of 'dequeuing' a cell instead of creating a new one?",
+      "options": [
+        "It makes the cell look better",
+        "It saves memory and CPU by reusing views that are off-screen",
+        "It automatically saves data to the cloud",
+        "It allows the cell to be resized automatically"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which object represents the specific location (section and row) of a cell in a table view?",
+      "options": ["IndexPoint", "RowLocation", "IndexPath", "CellPosition"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "ios-project-structure",
+    "swift-protocols",
+    "ios-app-lifecycle",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

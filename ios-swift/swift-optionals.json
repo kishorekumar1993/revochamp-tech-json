@@ -1,0 +1,134 @@
+{
+  "slug": "swift-optionals",
+  "course": "Swift",
+  "title": "Swift Optionals – Handling Null Safety",
+
+  "meta": {
+    "title": "Swift Optionals Guide – Unwrapping, Optional Binding & Chaining (2026)",
+    "description": "Master null safety in Swift. Learn how to use Optionals, if-let, guard-let, and nil-coalescing to build crash-proof native iOS apps.",
+    "keywords": [
+      "swift optionals",
+      "optional unwrapping",
+      "if let swift",
+      "guard let swift",
+      "nil coalescing",
+      "optional chaining",
+      "null safety swift"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is an Optional?"
+    },
+    {
+      "type": "text",
+      "value": "In many languages, any variable can be 'null'. In Swift, a standard variable **cannot** be nil. If you want a variable to potentially hold 'no value', you must declare it as an **Optional** using a question mark (`?`). Think of an Optional as a box: it either contains a value, or it is empty (nil). As an Architect, this explicit distinction makes your code's intent clear and prevents runtime crashes."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "var projectName: String = \"Revochamp\" // Cannot be nil\nvar projectDescription: String? = nil // Can be nil\n\n// projectDescription = \"AI Visual Builder\" // Now it contains a value"
+    },
+    {
+      "type": "heading",
+      "value": "1. Unwrapping: If-Let and Guard-Let"
+    },
+    {
+      "type": "text",
+      "value": "Because an Optional is a wrapper, you cannot use the value inside directly. You must 'unwrap' it. The safest and most common way is **Optional Binding** using `if let` or `guard let`."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// 1. If-Let (Local scope)\nif let description = projectDescription {\n    print(\"Description is: \\(description)\")\n} else {\n    print(\"No description available.\")\n}\n\n// 2. Guard-Let (Early exit - Preferred for Architects)\nfunc printDetails(desc: String?) {\n    guard let unwrappedDesc = desc else { return }\n    print(\"Details: \\(unwrappedDesc)\")\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Nil-Coalescing Operator"
+    },
+    {
+      "type": "text",
+      "value": "Similar to Dart's `??` operator, the Nil-Coalescing operator in Swift allows you to provide a default value if the optional is nil. This is essential for setting fallback configurations in your UI builders."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "let themeColor: String? = nil\nlet activeColor = themeColor ?? \"#000000\" // Falls back to black"
+    },
+    {
+      "type": "heading",
+      "value": "3. Optional Chaining"
+    },
+    {
+      "type": "text",
+      "value": "Optional chaining allows you to call properties or methods on an optional that might currently be nil. If the optional is nil, the entire call fails gracefully and returns nil, rather than crashing the app."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "let widgetCount = project?.details?.widgets?.count\n// If project, details, or widgets is nil, widgetCount becomes nil"
+    },
+    {
+      "type": "heading",
+      "value": "4. Forced Unwrapping (The 'Crash' Operator)"
+    },
+    {
+      "type": "text",
+      "value": "You can use `!` to force unwrap an optional. This tells the compiler 'I am 100% sure this isn't nil.' As a Lead Developer, you should **forbid** this in code reviews unless absolutely necessary (like @IBOutlet), because if the value is nil, the app will crash instantly."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is an Implicitly Unwrapped Optional?",
+      "answer": "Marked with '!', these are optionals that you don't have to manually unwrap every time. They are used when a value starts as nil but is guaranteed to be set before use (common in iOS UI components). Use them sparingly."
+    },
+    {
+      "question": "How does Swift's Nil differ from Null in other languages?",
+      "answer": "In Swift, 'nil' is not a pointer to a zero memory address. It is the absence of a value of a certain type. Swift uses 'enums' to implement Optionals, which is why they are so type-safe."
+    },
+    {
+      "question": "What is Optional Mapping?",
+      "answer": "Just like arrays, you can use '.map' on an optional. If the optional has a value, the map function transforms it; if it's nil, it returns nil. This is great for clean, functional data transformations."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which symbol is used to declare a variable as an Optional in Swift?",
+      "options": ["!", "@", "?", "#"],
+      "answer": 2
+    },
+    {
+      "question": "Which unwrapping method is preferred for 'early exits' to keep code nesting flat?",
+      "options": ["if let", "switch", "guard let", "forced unwrapping"],
+      "answer": 2
+    },
+    {
+      "question": "What happens if you use '!' to force unwrap an optional that is currently nil?",
+      "options": [
+        "It returns 0",
+        "It returns an empty string",
+        "The application crashes",
+        "The line is skipped"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "swift-variables",
+    "swift-control-flow",
+    "swift-functions",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

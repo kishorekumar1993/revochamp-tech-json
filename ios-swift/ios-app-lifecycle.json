@@ -1,0 +1,225 @@
+{
+  "slug": "ios-app-lifecycle",
+  "course": "iOS Development",
+  "title": "iOS App Lifecycle – From Launch to Termination",
+
+  "meta": {
+    "title": "iOS App Lifecycle Guide: UIKit, SwiftUI & Scene Phases (2026)",
+    "description": "Master the iOS app lifecycle: UIApplicationDelegate, SwiftUI App protocol, scene phases, background execution, state preservation, and memory warnings. Production-ready patterns.",
+    "keywords": [
+      "ios app lifecycle",
+      "uiapplicationdelegate methods",
+      "swiftui app lifecycle",
+      "scene phases ios",
+      "app state management",
+      "background tasks ios",
+      "state restoration swift"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The iOS App Lifecycle – Overview"
+    },
+    {
+      "type": "text",
+      "value": "The iOS app lifecycle describes the sequence of states an app transitions through from launch to termination. Understanding these states is critical for managing resources, saving user data, and providing a seamless experience. In 2026, iOS supports two lifecycle paradigms: **UIKit App Delegate** (legacy, still common) and **SwiftUI App Protocol** (modern). Additionally, **Scene-based** lifecycle (introduced in iOS 13) handles multi-window apps on iPad and macOS."
+    },
+
+    {
+      "type": "heading",
+      "value": "1. UIKit App Lifecycle – UIApplicationDelegate"
+    },
+    {
+      "type": "text",
+      "value": "The traditional UIKit lifecycle uses `UIApplicationDelegate` methods. These are called automatically by the system at specific moments. Below is the complete flow with modern iOS 15+ methods."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// AppDelegate.swift – UIKit lifecycle\n@main\nclass AppDelegate: UIResponder, UIApplicationDelegate {\n    \n    // 1. Launch – app starts\n    func application(\n        _ application: UIApplication,\n        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?\n    ) -> Bool {\n        print(\"1. App finished launching\")\n        // Setup: Crash reporting, analytics, dependency injection\n        return true\n    }\n    \n    // 2. About to become active (receiving events)\n    func applicationDidBecomeActive(_ application: UIApplication) {\n        print(\"2. App became active – user can interact\")\n        // Resume animations, timers, refresh data\n    }\n    \n    // 3. Will resign active (incoming call, user swipes to home)\n    func applicationWillResignActive(_ application: UIApplication) {\n        print(\"3. App will resign active – pause tasks\")\n        // Pause game, stop timers, throttle network requests\n    }\n    \n    // 4. Entered background – app still in memory\n    func applicationDidEnterBackground(_ application: UIApplication) {\n        print(\"4. App entered background – save state\")\n        // Save user data, release resources, invalidate timers\n        // You have ~5 seconds to complete tasks before suspension\n    }\n    \n    // 5. Will enter foreground (coming back from background)\n    func applicationWillEnterForeground(_ application: UIApplication) {\n        print(\"5. App will enter foreground – prepare UI\")\n        // Undo background changes, refresh data\n    }\n    \n    // 6. Will terminate (rare – user swipes up from app switcher)\n    func applicationWillTerminate(_ application: UIApplication) {\n        print(\"6. App will terminate – final cleanup\")\n        // Save final state (though background entry already saved)\n    }\n    \n    // Memory warning – critical!\n    func applicationDidReceiveMemoryWarning(_ application: UIApplication) {\n        print(\"⚠️ Memory warning – clear caches immediately\")\n        // Clear image caches, release large resources\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "2. SwiftUI App Lifecycle – App Protocol"
+    },
+    {
+      "type": "text",
+      "value": "SwiftUI apps use the `App` protocol with scene lifecycle. No AppDelegate needed (unless integrating UIKit features). Modern SwiftUI apps respond to scene phases via `@Environment(\\.scenePhase)`."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// SwiftUI App – iOS 14+\n@main\nstruct MyApp: App {\n    @Environment(\\.scenePhase) private var scenePhase\n    \n    var body: some Scene {\n        WindowGroup {\n            ContentView()\n                .onChange(of: scenePhase) { oldPhase, newPhase in\n                    switch newPhase {\n                    case .active:\n                        print(\"App is active – user can interact\")\n                        // Resume tasks\n                    case .inactive:\n                        print(\"App is inactive – transitioning\")\n                        // Pause but don't save yet\n                    case .background:\n                        print(\"App in background – save state\")\n                        // Save user data, commit transactions\n                    @unknown default:\n                        break\n                    }\n                }\n        }\n    }\n}\n\n// Observing scene phase in any view\nstruct ContentView: View {\n    @Environment(\\.scenePhase) var scenePhase\n    \n    var body: some View {\n        Text(\"Current phase: \\(String(describing: scenePhase))\")\n            .onChange(of: scenePhase) { _, newPhase in\n                if newPhase == .background {\n                    // Save data specifically from this view\n                }\n            }\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "3. Scene-Based Lifecycle (iOS 13+)"
+    },
+    {
+      "type": "text",
+      "value": "Introduced for iPad multitasking and macOS Catalyst. A single app can have multiple scenes (windows). Each scene has its own independent lifecycle state, while the app delegate handles shared resources."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// SceneDelegate.swift – UIKit scene lifecycle\nclass SceneDelegate: UIResponder, UIWindowSceneDelegate {\n    \n    // Scene attached to the app\n    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {\n        print(\"Scene connecting – setup UI\")\n        guard let _ = (scene as? UIWindowScene) else { return }\n    }\n    \n    // Scene entering foreground (becoming visible)\n    func sceneWillEnterForeground(_ scene: UIScene) {\n        print(\"Scene will enter foreground\")\n    }\n    \n    // Scene became active (receiving events)\n    func sceneDidBecomeActive(_ scene: UIScene) {\n        print(\"Scene active – ready for interaction\")\n    }\n    \n    // Scene resigning active (will lose focus)\n    func sceneWillResignActive(_ scene: UIScene) {\n        print(\"Scene resigning active – pause\")\n    }\n    \n    // Scene moved to background\n    func sceneDidEnterBackground(_ scene: UIScene) {\n        print(\"Scene in background – save state\")\n        // Save scene-specific state for restoration\n    }\n    \n    // Scene disconnecting (closed by user)\n    func sceneDidDisconnect(_ scene: UIScene) {\n        print(\"Scene disconnected – cleanup scene resources\")\n        // Release scene-specific caches\n    }\n}\n\n// Supporting multiple scenes in Info.plist\n// Add: UIApplicationSceneManifest → Supports multiple scenes: YES"
+    },
+
+    {
+      "type": "heading",
+      "value": "4. State Transitions – Visual Diagram"
+    },
+    {
+      "type": "text",
+      "value": "Understanding state transitions helps you choose the right method for saving data or cleaning up resources."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "                         ┌─────────────────┐\n                         │   Not Running    │\n                         │   (Terminated)   │\n                         └────────┬────────┘\n                                  │ User taps icon\n                                  │ or push notification\n                                  ▼\n                         ┌─────────────────┐\n          ┌─────────────►│    Inactive      │◄─────────────┐\n          │              │ (Launch/Interrupt)│              │\n          │              └────────┬────────┘              │\n          │                       │                       │\n          │ User finishes         │ Becomes active        │ Incoming call,\n          │ multitasking          │                       │ notification shade\n          │                       ▼                       │\n          │              ┌─────────────────┐              │\n          │              │     Active       │              │\n          │              │  (Foreground)    │              │\n          │              └────────┬────────┘              │\n          │                       │                       │\n          │ User presses          │ User presses          │\n          │ Home button           │ Home button           │\n          │ (multi-task)          │ (multi-task)          │\n          │                       │                       │\n          │              ┌────────┴────────┐              │\n          │              │                 │              │\n          │              ▼                 ▼              │\n          │     ┌──────────────┐   ┌──────────────┐       │\n          │     │   Inactive   │   │  Background  │       │\n          │     │ (Transition) │──►│  (Suspended) │       │\n          │     └──────────────┘   └──────────────┘       │\n          │              │                 │              │\n          │              └─────────────────┘              │\n          │                       │                       │\n          │                User swipes up                 │\n          │               from app switcher               │\n          │                       │                       │\n          └───────────────────────┴───────────────────────┘\n                                  │\n                                  ▼\n                         ┌─────────────────┐\n                         │   Terminated    │\n                         │  (Purged from   │\n                         │    memory)      │\n                         └─────────────────┘"
+    },
+
+    {
+      "type": "heading",
+      "value": "5. Background Execution & Tasks"
+    },
+    {
+      "type": "text",
+      "value": "iOS limits background execution time to preserve battery. Use `BGTaskScheduler` for long-running background work (iOS 13+). Legacy `beginBackgroundTask` is still supported but limited."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Modern background tasks – BGTaskScheduler\nimport BackgroundTasks\n\nclass BackgroundTaskManager {\n    static let shared = BackgroundTaskManager()\n    \n    func registerTasks() {\n        BGTaskScheduler.shared.register(\n            forTaskWithIdentifier: \"com.app.refresh\",\n            using: nil\n        ) { task in\n            self.handleAppRefresh(task: task as! BGAppRefreshTask)\n        }\n    }\n    \n    func scheduleAppRefresh() {\n        let request = BGAppRefreshTaskRequest(identifier: \"com.app.refresh\")\n        request.earliestBeginDate = Date(timeIntervalSinceNow: 3600) // 1 hour\n        \n        do {\n            try BGTaskScheduler.shared.submit(request)\n            print(\"Background refresh scheduled\")\n        } catch {\n            print(\"Could not schedule: \\(error)\")\n        }\n    }\n    \n    private func handleAppRefresh(task: BGAppRefreshTask) {\n        // Schedule next refresh before doing work\n        scheduleAppRefresh()\n        \n        // Expiration handler – cleanup if system kills us\n        task.expirationHandler = {\n            print(\"Background task expired – cancel work\")\n            // Cancel ongoing operations\n        }\n        \n        // Perform background work (fetch data, sync)\n        Task {\n            await fetchLatestData()\n            task.setTaskCompleted(success: true)\n        }\n    }\n    \n    func fetchLatestData() async {\n        // Network call, database sync, etc.\n    }\n}\n\n// Legacy background task (iOS 4-12)\nfunc startBackgroundTask() {\n    var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid\n    backgroundTaskID = UIApplication.shared.beginBackgroundTask {\n        // Expiration handler\n        UIApplication.shared.endBackgroundTask(backgroundTaskID)\n        backgroundTaskID = .invalid\n    }\n    \n    DispatchQueue.global().async {\n        // Perform work\n        \n        UIApplication.shared.endBackgroundTask(backgroundTaskID)\n        backgroundTaskID = .invalid\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "6. State Preservation & Restoration"
+    },
+    {
+      "type": "text",
+      "value": "iOS can terminate your app in the background to reclaim memory. State restoration preserves the UI state so users return to exactly where they left off, even after termination."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// UIKit State Restoration\nclass ViewController: UIViewController {\n    \n    // Encode state before background\n    override func encodeRestorableState(with coder: NSCoder) {\n        super.encodeRestorableState(with: coder)\n        coder.encode(lastSelectedItemID, forKey: \"selectedItemID\")\n        coder.encode(scrollPosition, forKey: \"scrollPosition\")\n    }\n    \n    // Decode state after relaunch\n    override func decodeRestorableState(with coder: NSCoder) {\n        super.decodeRestorableState(with: coder)\n        lastSelectedItemID = coder.decodeInteger(forKey: \"selectedItemID\")\n        scrollPosition = coder.decodeCGPoint(forKey: \"scrollPosition\")\n        restoreUI()\n    }\n    \n    // Called after decode – final setup\n    override func applicationFinishedRestoringState() {\n        print(\"State restoration complete\")\n    }\n    \n    func restoreUI() {\n        // Restore scroll position, selected tab, etc.\n    }\n}\n\n// SwiftUI State Restoration (iOS 15+)\nstruct DetailView: View {\n    @SceneStorage(\"detail.selectedTab\") var selectedTab = 0\n    @AppStorage(\"lastViewedItemID\") var lastViewedItemID = \"\"\n    \n    var body: some View {\n        TabView(selection: $selectedTab) {\n            // Tabs automatically restore selection via SceneStorage\n        }\n    }\n}\n\n// Enabling state restoration in Info.plist\n// Add: UIApplicationSupportsStateRestoration = YES"
+    },
+
+    {
+      "type": "heading",
+      "value": "7. Launch Scenarios & Options"
+    },
+    {
+      "type": "text",
+      "value": "Apps launch differently based on how they're opened. Handle each scenario appropriately."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// AppDelegate – Different launch scenarios\nfunc application(\n    _ application: UIApplication,\n    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?\n) -> Bool {\n    \n    // Cold launch (app not in memory)\n    if launchOptions == nil {\n        print(\"Normal cold launch\")\n    }\n    \n    // Launched from push notification\n    if let pushPayload = launchOptions?[.remoteNotification] as? [String: Any] {\n        print(\"Launched from push: \\(pushPayload)\")\n        handlePushNotification(pushPayload)\n    }\n    \n    // Launched from URL scheme (myapp://something)\n    if let url = launchOptions?[.url] as? URL {\n        print(\"Launched from URL: \\(url)\")\n        handleDeepLink(url)\n    }\n    \n    // Launched from shortcut (3D Touch / Home screen quick action)\n    if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem {\n        print(\"Launched from shortcut: \\(shortcut.type)\")\n        handleShortcut(shortcut)\n    }\n    \n    // Launched from widget\n    if let activity = launchOptions?[.userActivity] as? NSUserActivity {\n        print(\"Launched from widget: \\(activity.activityType)\")\n        handleUserActivity(activity)\n    }\n    \n    return true\n}\n\n// Handle URL while app is running (not launched)\nfunc application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {\n    print(\"App already running, opened URL: \\(url)\")\n    return true\n}\n\n// Handle user activity (handoff, spotlight, Siri)\nfunc application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]) -> Void) -> Bool {\n    if userActivity.activityType == NSUserActivityTypeBrowsingWeb {\n        if let url = userActivity.webpageURL {\n            print(\"Universal link: \\(url)\")\n            return true\n        }\n    }\n    return false\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "8. Memory Management During Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "iOS sends memory warnings before terminating apps. Always implement memory warning handlers to clear caches and release large resources."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// UIKit memory warning\noverride func didReceiveMemoryWarning() {\n    super.didReceiveMemoryWarning()\n    print(\"⚠️ Memory warning received\")\n    \n    // Clear image caches\n    imageCache.removeAllObjects()\n    \n    // Release large temporary objects\n    temporaryData = nil\n    \n    // Tell system we can release more\n    URLCache.shared.removeAllCachedResponses()\n}\n\n// SwiftUI memory monitoring\nclass MemoryMonitor: ObservableObject {\n    @Published var memoryPressure: Bool = false\n    \n    init() {\n        NotificationCenter.default.addObserver(\n            self,\n            selector: #selector(handleMemoryWarning),\n            name: UIApplication.didReceiveMemoryWarningNotification,\n            object: nil\n        )\n    }\n    \n    @objc func handleMemoryWarning() {\n        memoryPressure = true\n        // Clear caches\n    }\n}\n\n// Use in SwiftUI view\nstruct ImageListView: View {\n    @StateObject private var monitor = MemoryMonitor()\n    \n    var body: some View {\n        if monitor.memoryPressure {\n            Text(\"Low memory – reducing quality\")\n                .onAppear {\n                    // Load lower resolution images\n                }\n        }\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "9. Best Practices & Common Pitfalls"
+    },
+    {
+      "type": "text",
+      "value": "**Do's:**\n- Save user data in `applicationDidEnterBackground` (UIKit) or `.background` scene phase (SwiftUI)\n- Request background time only when necessary (use `BGTaskScheduler`)\n- Test memory warnings with simulator: `Debug → Simulate Memory Warning`\n- Handle all launch options (push, URL, shortcuts, widgets)\n- Use `@SceneStorage` for simple UI state, `@AppStorage` for user preferences\n\n**Don'ts:**\n- ❌ Don't assume `applicationWillTerminate` will be called (it often isn't)\n- ❌ Don't perform heavy work in `applicationDidEnterBackground` (you have ~5 seconds)\n- ❌ Don't ignore scene lifecycle if supporting iPad multitasking\n- ❌ Don't store sensitive data in UserDefaults (use Keychain)\n- ❌ Don't ignore memory warnings – clear caches aggressively"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What's the difference between applicationDidEnterBackground and applicationWillTerminate?",
+      "answer": "`applicationDidEnterBackground` is **always** called when the app moves to the background. `applicationWillTerminate` is **rarely** called – only when the user explicitly kills the app from the app switcher or the system terminates a suspended app. Always save critical data in `didEnterBackground`, not `willTerminate`."
+    },
+    {
+      "question": "How long does an app have to execute background tasks?",
+      "answer": "UIKit gives approximately **30 seconds** for `beginBackgroundTask`. `BGTaskScheduler` can run for minutes but is limited by system discretion. Apps in the background can also use specific background modes (audio, location, fetch, push) for extended runtime."
+    },
+    {
+      "question": "Does SwiftUI's @SceneStorage persist after app termination?",
+      "answer": "Yes, `@SceneStorage` automatically persists state across app launches, similar to state restoration in UIKit. It's scoped to the scene (window) and works for simple value types. For complex data, use `@AppStorage` or your own persistence layer."
+    },
+    {
+      "question": "Why is my app sometimes launched directly to the background?",
+      "answer": "When launched by background events (location update, Bluetooth event, push notification with content-available), the app launches directly into the background state. Check `UIApplication.shared.applicationState == .background` in `didFinishLaunchingWithOptions` and avoid showing UI."
+    },
+    {
+      "question": "How do I test background behavior in the simulator?",
+      "answer": "Use the simulator's **Debug → Simulate Background Fetch** or **Send Memory Warning**. For scene lifecycle, cmd+shift+H (home) then cmd+shift+HH (app switcher). For push notifications, use `xcrun simctl push` with a JSON payload."
+    }
+  ],
+
+  "quiz": [
+    {
+      "question": "Which method is always called when an app moves to the background (UIKit)?",
+      "options": [
+        "applicationWillTerminate",
+        "applicationDidEnterBackground",
+        "applicationWillResignActive",
+        "sceneDidDisconnect"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "In SwiftUI, how do you observe the current app state (active/inactive/background)?",
+      "options": [
+        "UIApplication.shared.applicationState",
+        "@Environment(\\.scenePhase)",
+        "NotificationCenter.default.addObserver",
+        "AppDelegate.applicationDidBecomeActive"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the recommended way to perform long-running background tasks in iOS 13+?",
+      "options": [
+        "beginBackgroundTask",
+        "DispatchQueue.global().async",
+        "BGTaskScheduler",
+        "performSelector(inBackground:)"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which method is called when the system is running low on memory?",
+      "options": [
+        "applicationWillTerminate",
+        "applicationDidReceiveMemoryWarning",
+        "sceneDidEnterBackground",
+        "applicationWillResignActive"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "swiftui-state-management",
+    "ios-background-tasks",
+    "ios-state-restoration",
+    "push-notifications-ios",
+    "deep-linking-ios"
+  ]
+}

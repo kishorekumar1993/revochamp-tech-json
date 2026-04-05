@@ -1,0 +1,142 @@
+{
+  "slug": "swift-oop-fundamentals",
+  "course": "Swift",
+  "title": "Swift OOP – Classes, Structs & Protocols",
+
+  "meta": {
+    "title": "Swift Object-Oriented Programming Guide – Classes vs Structs (2026)",
+    "description": "Master OOP in Swift. Learn the architectural differences between Classes and Structs, and how to use Protocols to build decoupled native modules.",
+    "keywords": [
+      "swift oop",
+      "swift classes",
+      "swift structs",
+      "swift protocols",
+      "value vs reference types",
+      "swift inheritance",
+      "encapsulation swift"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Architecture of Swift Objects"
+    },
+    {
+      "type": "text",
+      "value": "Swift is a multi-paradigm language, but its OOP capabilities are its backbone. Unlike Dart, where almost everything is an object (Reference Type), Swift leans heavily on **Structs** for data modeling. As an Architect, your first decision when creating a new model in the Revochamp iOS runner is choosing between a Struct and a Class."
+    },
+    {
+      "type": "heading",
+      "value": "1. Classes vs. Structs: The Golden Rule"
+    },
+    {
+      "type": "text",
+      "value": "In Swift, **Classes** are Reference Types (shared instances), while **Structs** are Value Types (copied when passed around). Apple recommends using Structs by default and only using Classes when you specifically need inheritance or identity (e.g., a Database Manager or a UI Controller)."
+    },
+    
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Struct (Value)", "Class (Reference)"],
+        "rows": [
+          ["Copying", "Copy-on-assignment", "Shared instance"],
+          ["Inheritance", "No", "Yes"],
+          ["Speed", "Fast (Stack allocation)", "Slower (Heap allocation)"],
+          ["Thread Safety", "Safe (Unique copies)", "Requires care (Shared state)"],
+          ["Initializers", "Memberwise (Auto-generated)", "Manual required"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "2. Defining a Class"
+    },
+    {
+      "type": "text",
+      "value": "Classes support inheritance, allowing one class to adopt the characteristics of another. This is identical to the 'extends' keyword in Dart."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "class Widget {\n    var width: Double\n    var height: Double\n\n    init(width: Double, height: Double) {\n        self.width = width\n        self.height = height\n    }\n\n    func render() {\n        print(\"Rendering generic widget\")\n    }\n}\n\nclass Button: Widget {\n    override func render() {\n        print(\"Rendering a button at \\(width)x\\(height)\")\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Protocols (Interfaces)"
+    },
+    {
+      "type": "text",
+      "value": "In Swift, we don't use 'Abstract Classes' to define contracts. Instead, we use **Protocols**. A protocol defines a blueprint of methods or properties that a class, struct, or enum must implement. This is the foundation of 'Protocol-Oriented Programming'."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "protocol CodeGeneratable {\n    var language: String { get }\n    func generate() -> String\n}\n\nstruct FlutterGenerator: CodeGeneratable {\n    let language = \"Dart\"\n    func generate() -> String {\n        return \"void main() { ... }\"\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Encapsulation & Access Control"
+    },
+    {
+      "type": "text",
+      "value": "Swift provides granular control over who can see and modify your code. For an Engineering Manager, enforcing these is key to maintaining a clean API boundary."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**private**: Visible only within the defining declaration.",
+        "**fileprivate**: Visible within the entire file.",
+        "**internal (Default)**: Visible to the entire module (e.g., your iOS app target).",
+        "**public**: Visible to other modules, but cannot be subclassed.",
+        "**open**: Highest level; visible and can be subclassed by other modules."
+      ]
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'Memberwise Initializer' in Structs?",
+      "answer": "If you define a Struct, Swift automatically creates a constructor for you based on its properties. For Classes, you MUST write your own 'init()' method manually, which is a common point of friction for developers moving from Dart."
+    },
+    {
+      "question": "Can a Struct implement a Protocol?",
+      "answer": "Yes. One of Swift's greatest strengths is that Structs can implement protocols, have methods, and use extensions, making them incredibly powerful compared to basic 'Data Classes' in other languages."
+    },
+    {
+      "question": "Does Swift have 'mixins' like Dart?",
+      "answer": "Swift doesn't have a direct 'with' keyword for mixins, but you can achieve identical behavior using 'Protocol Extensions.' You can provide a default implementation for a protocol method, and any type adopting that protocol will automatically get that functionality."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which of these is a 'Value Type' in Swift?",
+      "options": ["Class", "Protocol", "Struct", "Closure"],
+      "answer": 2
+    },
+    {
+      "question": "Which keyword is used in Swift to allow a subclass to provide a new implementation of a parent's method?",
+      "options": ["new", "virtual", "override", "mutating"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary tool for defining 'contracts' and achieving decoupling in Swift architecture?",
+      "options": ["Inheritance", "Protocols", "Extensions", "Singletons"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "swift-syntax",
+    "swift-functions",
+    "swift-variables",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

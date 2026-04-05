@@ -1,0 +1,132 @@
+{
+  "slug": "ios-ecosystem-introduction",
+  "course": "iOS Development",
+  "title": "The iOS Ecosystem – Architecture and Core Concepts",
+
+  "meta": {
+    "title": "iOS Development Introduction – Architecture, SDKs & App Lifecycle (2026)",
+    "description": "A professional introduction to the iOS ecosystem for architects. Learn about the Cocoa Touch layer, App Lifecycle, and the relationship between Flutter and Native iOS.",
+    "keywords": [
+      "ios development",
+      "ios architecture",
+      "cocoa touch",
+      "apple developer ecosystem",
+      "ios app lifecycle",
+      "xcode architecture"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The iOS Architecture Stack"
+    },
+    {
+      "type": "text",
+      "value": "iOS is built on a solid foundation of four abstraction layers. As a Lead Engineer, understanding these layers helps you diagnose where a performance bottleneck or a native crash is occurring. When you write a Flutter Method Channel, you are typically interacting with the top two layers: Cocoa Touch and Media."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**Cocoa Touch**: The top layer containing the frameworks for the UI and user interaction (UIKit, SwiftUI).",
+        "**Media**: Handles graphics, audio, and video (Core Graphics, Metal, Core Audio).",
+        "**Core Services**: Provides fundamental system services (Core Foundation, Networking, Location).",
+        "**Core OS**: The low-level foundation (Kernel, File System, Security)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "1. The App Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "In iOS, an app is more than just a running process; it is a state machine managed by the system. The OS determines when your app is 'Active,' 'Backgrounded,' or 'Suspended' to preserve battery and memory. For your Revochamp engine, handling the transition from 'Inactive' to 'Active' is crucial for resuming the AI generation state correctly."
+    },
+    
+    {
+      "type": "heading",
+      "value": "2. Frameworks: SwiftUI vs. UIKit"
+    },
+    {
+      "type": "text",
+      "value": "There are two ways to build native iOS UIs. **UIKit** is the mature, imperative framework used for over a decade. **SwiftUI** is the modern, declarative framework (very similar to Flutter's widget-based approach). In 2026, SwiftUI is the standard for new development, though UIKit remains essential for complex low-level customizations."
+    },
+    {
+      "type": "heading",
+      "value": "3. The Flutter-Native Bridge"
+    },
+    {
+      "type": "text",
+      "value": "When you run a Flutter app on iOS, it lives inside a single native view called the `FlutterViewController`. Communication happens through **Binary Messages**. This means that whenever you call native Swift code from Dart, the data is serialized, sent across the bridge, and processed on the native side. Minimizing these crossings is the key to maintaining 120 FPS performance."
+    },
+    
+    {
+      "type": "heading",
+      "value": "iOS Development Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Native iOS (Swift)", "Flutter (iOS Runner)"],
+        "rows": [
+          ["Language", "Swift", "Dart"],
+          ["UI Engine", "SwiftUI / UIKit", "Skia / Impeller"],
+          ["Entry Point", "@main (App Struct)", "main.dart -> AppDelegate"],
+          ["Binary Size", "Smaller (Shared SDKs)", "Larger (Bundled Engine)"],
+          ["Hardware Access", "Direct", "Via Method Channels"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the AppDelegate?",
+      "answer": "The AppDelegate is the 'root' of your native iOS application. It is the object that receives system events, such as the app finishing launching or being told to shut down. In Flutter, the AppDelegate is where you register your custom plugins."
+    },
+    {
+      "question": "Why does iOS have strict background execution rules?",
+      "answer": "Apple prioritizes battery life. Unlike Android, iOS will suspend or 'kill' background apps very quickly unless they are explicitly performing tasks like playing music, tracking location, or finishing a short background task."
+    },
+    {
+      "question": "What is 'Sandboxing' in iOS?",
+      "answer": "Every iOS app lives in its own 'Sandbox.' It cannot access files, photos, or the camera unless the user explicitly grants permission. This security model is enforced at the Core OS level."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which iOS layer is responsible for the user interface and high-level interaction frameworks?",
+      "options": ["Core OS", "Media", "Core Services", "Cocoa Touch"],
+      "answer": 3
+    },
+    {
+      "question": "What is the primary role of the 'Suspended' state in the App Lifecycle?",
+      "options": [
+        "To allow the app to download data in the background",
+        "To keep the app in memory without executing code to save battery",
+        "To restart the app automatically",
+        "To sync data with iCloud"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "In 2026, which declarative framework is recommended for building modern iOS user interfaces?",
+      "options": ["Objective-C", "UIKit", "SwiftUI", "Interface Builder"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "swift-introduction",
+    "ios-app-lifecycle",
+    "flutter-method-channels",
+    "ios-security-privacy",
+    "clean-architecture-native"
+  ]
+}

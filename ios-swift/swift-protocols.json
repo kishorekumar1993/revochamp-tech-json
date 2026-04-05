@@ -1,0 +1,127 @@
+{
+  "slug": "swift-protocols",
+  "course": "Swift",
+  "title": "Swift Protocols – Defining Blueprints for Code",
+
+  "meta": {
+    "title": "Swift Protocols Guide – Interfaces, Conformance & Extensions (2026)",
+    "description": "Master Protocols in Swift. Learn how to define contracts, achieve decoupling, and use Protocol Extensions for shared functionality in native iOS modules.",
+    "keywords": [
+      "swift protocols",
+      "swift interfaces",
+      "protocol oriented programming",
+      "swift conformance",
+      "protocol extensions",
+      "dependency inversion swift"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Protocol?"
+    },
+    {
+      "type": "text",
+      "value": "A protocol defines a blueprint of methods, properties, and other requirements that suit a particular task or piece of functionality. The protocol itself doesn't provide an implementation—it simply says 'anything that wants to be X must be able to do Y.' As an Architect, you use protocols to achieve **Dependency Inversion**, allowing your high-level logic to depend on abstractions rather than concrete implementations."
+    },
+    {
+      "type": "heading",
+      "value": "1. Defining and Conforming to Protocols"
+    },
+    {
+      "type": "text",
+      "value": "You define a protocol using the `protocol` keyword. Any class, struct, or enum can then 'conform' to it by providing the required implementation. This is exactly like 'implements' in Dart."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "protocol WidgetGenerator {\n    var platform: String { get } // Property must be readable\n    func generateCode() -> String\n}\n\nstruct FlutterGen: WidgetGenerator {\n    let platform = \"Android/iOS\"\n    \n    func generateCode() -> String {\n        return \"return Container();\"\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Protocol Extensions (The Secret Sauce)"
+    },
+    {
+      "type": "text",
+      "value": "The real power of Swift protocols comes from **Extensions**. You can provide a 'default implementation' for a protocol method. Any type that conforms to the protocol will automatically inherit that behavior. This is Swift's way of doing 'Mixins' without the complexity of multiple inheritance."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "extension WidgetGenerator {\n    func validate() {\n        print(\"Validating code for \\(platform)...\")\n    }\n}\n\n// Now FlutterGen automatically has the validate() method!\nlet gen = FlutterGen()\ngen.validate()"
+    },
+    {
+      "type": "heading",
+      "value": "3. Delegation Pattern"
+    },
+    {
+      "type": "text",
+      "value": "In iOS development, protocols are the foundation of the **Delegation Pattern**. It allows one object to hand off (delegate) responsibilities to another. For example, a 'NetworkManager' might delegate the handling of an error to a UI component via a protocol."
+    },
+    
+    {
+      "type": "heading",
+      "value": "Protocols vs. Inheritance"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Class Inheritance", "Protocols"],
+        "rows": [
+          ["Type Support", "Classes only", "Structs, Classes, and Enums"],
+          ["Flexibility", "Rigid 'Is-A' relationship", "Flexible 'Acts-As' relationship"],
+          ["Multiplicity", "Single inheritance only", "Multiple protocol conformance"],
+          ["Coupling", "Tightly coupled to parent", "Loosely coupled / Decoupled"],
+          ["Initial State", "Can store data", "Cannot store data (properties only)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Can a protocol have optional methods?",
+      "answer": "Standard Swift protocols require all methods to be implemented. However, you can use the '@objc' attribute to define optional methods, which is common when working with older Apple frameworks like UIKit."
+    },
+    {
+      "question": "What is 'Protocol Composition'?",
+      "answer": "You can combine multiple protocols into a single requirement using the '&' symbol. For example, 'func save(item: Codable & Identifiable)' ensures the input meets the requirements of both protocols."
+    },
+    {
+      "question": "Why use 'get' and 'set' in protocol properties?",
+      "answer": "Since a protocol is a contract, it must specify if a property is only readable ({ get }) or both readable and writable ({ get set }). A conforming type can always make a 'get' property writable, but it cannot make a 'get set' property read-only."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to provide default implementations for protocol methods?",
+      "options": ["implement", "extension", "default", "mixin"],
+      "answer": 1
+    },
+    {
+      "question": "True or False: A single Swift Struct can conform to multiple protocols at the same time.",
+      "options": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "question": "Which design pattern in iOS development relies heavily on protocols for one-to-one communication between objects?",
+      "options": ["Singleton", "Observer", "Delegate", "Factory"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "swift-oop-fundamentals",
+    "swift-syntax",
+    "swift-functions",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

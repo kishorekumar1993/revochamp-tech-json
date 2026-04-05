@@ -1,0 +1,144 @@
+{
+  "slug": "swift-control-flow",
+  "course": "Swift",
+  "title": "Swift Control Flow – Managing Logic and State",
+
+  "meta": {
+    "title": "Swift Control Flow Guide – If, Switch & Advanced Loops (2026)",
+    "description": "Master conditional logic and loops in Swift. Learn about exhaustive switch statements, range operators, and control transfer statements.",
+    "keywords": [
+      "swift control flow",
+      "swift switch statement",
+      "swift for-in loop",
+      "swift while loop",
+      "guard statement",
+      "range operators swift"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Logic in Swift"
+    },
+    {
+      "type": "text",
+      "value": "Control flow in Swift is designed to be safe and expressive. While it includes familiar constructs like `if` and `while`, it introduces powerful improvements like mandatory braces for all blocks (no single-line if statements without `{}`) and a switch statement that doesn't 'fall through' by default. As an Engineering Manager, you'll find these constraints significantly reduce common logic bugs in native code."
+    },
+    {
+      "type": "heading",
+      "value": "1. Conditional Statements: if and guard"
+    },
+    {
+      "type": "text",
+      "value": "Swift uses `if` for standard branching. However, for a Technical Lead, the `guard` statement is a game-changer. It is used to exit a function early if a condition isn't met, keeping the 'happy path' of your code flat and readable rather than nested in multiple if-else blocks."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "func processProject(name: String?) {\n    // guard ensures the name exists, or exits early\n    guard let projectName = name else {\n        print(\"No project name provided\")\n        return\n    }\n    \n    // projectName is now available for the rest of the function\n    print(\"Processing \\(projectName)...\")\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. The Exhaustive Switch"
+    },
+    {
+      "type": "text",
+      "value": "In Swift, `switch` statements must be exhaustive. If you are switching over an Enum (like a Project Status), you must handle every single case. This prevents you from accidentally forgetting to handle a new state after a refactor. Unlike Dart, you don't need `break` at the end of each case; the execution stops automatically after a match."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "enum ProjectStatus { case drafting, active, archived }\n\nlet status = ProjectStatus.active\n\nswitch status {\ncase .drafting:\n    print(\"Still editing\")\ncase .active:\n    print(\"Revochamp is running\")\ncase .archived:\n    print(\"Project stored\")\n// No 'default' needed because all cases are covered!\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Loops and Range Operators"
+    },
+    {
+      "type": "text",
+      "value": "Swift's `for-in` loop is the primary way to iterate. It works seamlessly with **Ranges**, which allow you to define a start and end point easily."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Closed Range (1...5)**: Includes both 1 and 5 (loops 5 times).",
+        "**Half-Open Range (1..<5)**: Includes 1 but stops before 5 (loops 4 times).",
+        "**Stride**: Used for non-sequential increments (e.g., counting by 2s)."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "for index in 1...3 {\n    print(\"Deployment attempt #\\(index)\")\n}\n\nlet technologies = [\"Flutter\", \"Swift\", \"Python\"]\nfor tech in technologies {\n    print(\"Building with \\(tech)\")\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Control Flow Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Swift", "Dart (Flutter)"],
+        "rows": [
+          ["if parenthetical", "Optional: if score > 10", "Required: if (score > 10)"],
+          ["Switch Fallthrough", "Disabled by default", "Enabled (requires break)"],
+          ["Switch Exhaustiveness", "Mandatory", "Optional (for non-enums)"],
+          ["Early Exit", "guard statement", "if (!condition) return"],
+          ["Ranges", "Native: 1...5", "Custom or manual loops"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the 'fallthrough' keyword?",
+      "answer": "Since Swift doesn't fall through cases automatically, you must explicitly use the 'fallthrough' keyword if you want a case to execute the code of the next case immediately below it."
+    },
+    {
+      "question": "When should I use a while loop vs a for-in loop?",
+      "answer": "Use 'for-in' when you have a known range or collection. Use 'while' when you need to repeat a task until a specific condition changes, but you don't know exactly how many iterations it will take."
+    },
+    {
+      "question": "What are labeled statements?",
+      "answer": "If you have nested loops, you can label the outer loop (e.g., 'outerLoop: for...'). This allows you to call 'break outerLoop' from inside the inner loop to exit both simultaneously."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which statement is specifically designed to provide an early exit from a function if a condition is not met?",
+      "options": ["if", "switch", "guard", "while"],
+      "answer": 2
+    },
+    {
+      "question": "What is the behavior of a Swift switch statement if a case is matched?",
+      "options": [
+        "It falls through to the next case automatically",
+        "It requires a 'break' to stop",
+        "It finishes execution of the switch after the case block",
+        "It restarts the switch from the beginning"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which operator represents a range from 1 to 5, including 5?",
+      "options": ["1..5", "1...5", "1..<5", "1-5"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "swift-syntax",
+    "swift-variables",
+    "swift-functions",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "slug": "swift-classes-vs-structs",
+  "course": "Swift",
+  "title": "Swift Classes vs. Structs – Choosing the Right Tool",
+
+  "meta": {
+    "title": "Swift Classes and Structs Guide – Value vs Reference Types (2026)",
+    "description": "Learn the fundamental differences between Classes and Structs in Swift. Master memory management, inheritance, and when to use each in your iOS apps.",
+    "keywords": [
+      "swift classes vs structs",
+      "value types swift",
+      "reference types swift",
+      "copy on write swift",
+      "swift initialization",
+      "ios memory management"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Value Types vs. Reference Types"
+    },
+    {
+      "type": "text",
+      "value": "The primary difference lies in how they are stored in memory. A **Struct** is a Value Type: when you assign it to a new variable, the entire data is copied. A **Class** is a Reference Type: when you assign it, you are just creating a new pointer to the same instance in memory. As an Engineering Manager, you should enforce 'Structs by default' to avoid the 'hidden state' bugs common in shared-reference architectures."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Structs: The Lightweight Choice"
+    },
+    {
+      "type": "text",
+      "value": "Structs are stored on the **Stack**, making them incredibly fast. They are ideal for data models, UI state, and small pieces of information. One major benefit is the **Memberwise Initializer**—Swift automatically creates a constructor for all properties, saving you from writing boilerplate code."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "struct WidgetModel {\n    var name: String\n    var x: Double\n    var y: Double\n    // No init() needed! Swift makes it for you.\n}\n\nvar widgetA = WidgetModel(name: \"Button\", x: 10, y: 10)\nvar widgetB = widgetA // widgetB is a completely independent COPY\nwidgetB.name = \"Icon\"\n\nprint(widgetA.name) // Output: \"Button\""
+    },
+    {
+      "type": "heading",
+      "value": "2. Classes: The Shared Source of Truth"
+    },
+    {
+      "type": "text",
+      "value": "Classes are stored on the **Heap**. Use them when you need **Identity** (referring to the same single object from multiple places) or **Inheritance**. In your iOS Runner, Classes are typical for Service layers, Database managers, or ViewControllers."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "class ProjectManager {\n    var activeProjectCount = 0\n}\n\nlet managerA = ProjectManager()\nlet managerB = managerA // Both point to the SAME instance\nmanagerB.activeProjectCount = 5\n\nprint(managerA.activeProjectCount) // Output: 5"
+    },
+    {
+      "type": "heading",
+      "value": "3. Comparison Table for Architects"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Struct (Value Type)", "Class (Reference Type)"],
+        "rows": [
+          ["Storage", "Stack (Fast)", "Heap (Slower)"],
+          ["Assignment", "Deep Copy", "Shared Reference"],
+          ["Inheritance", "No", "Yes"],
+          ["Mutability", "Controlled by 'let' or 'var'", "Can modify even if constant"],
+          ["Deinitializers", "No", "Yes (deinit method)"],
+          ["Use Case", "Data models, UI State", "Services, Managers, UI Controllers"]
+        ]
+      }
+    },
+    
+    {
+      "type": "heading",
+      "value": "4. Identity vs. Equality"
+    },
+    {
+      "type": "text",
+      "value": "With Structs, we care about **Equality** (is the data the same?). With Classes, we care about **Identity** (is this the exact same object?). In Swift, you use `==` to check if values are equal and `===` to check if two references point to the same class instance."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Does Swift copy Structs every single time?",
+      "answer": "Swift uses an optimization called 'Copy-on-Write' (COW) for heavy types like Arrays and Strings. The actual data is only copied if you try to modify it, keeping performance extremely high while maintaining value semantics."
+    },
+    {
+      "question": "Can a Struct have a method that modifies its properties?",
+      "answer": "Yes, but you must mark the method with the 'mutating' keyword. This tells Swift that the method will change the struct's value, which is important for constants (let) declared with that struct type."
+    },
+    {
+      "question": "Why do Classes have 'deinit' but Structs don't?",
+      "answer": "Classes use Reference Counting. When the last reference to a class instance is gone, 'deinit' is called to clean up resources (like closing a database). Structs are simply popped off the stack when they go out of scope, so they don't need a formal deinitializer."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which type should you use by default for data modeling in Swift?",
+      "options": ["Class", "Protocol", "Struct", "Enum"],
+      "answer": 2
+    },
+    {
+      "question": "What happens when you assign a Struct instance to a new variable?",
+      "options": [
+        "A pointer is created to the same memory address",
+        "A complete copy of the data is created",
+        "An error is thrown if the struct is a constant",
+        "The original instance is deleted"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which of these features is EXCLUSIVE to Classes in Swift?",
+      "options": ["Methods", "Properties", "Inheritance", "Initializers"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "swift-oop-fundamentals",
+    "swift-protocols",
+    "swift-variables",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

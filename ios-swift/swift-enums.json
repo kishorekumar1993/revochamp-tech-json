@@ -1,0 +1,131 @@
+{
+  "slug": "swift-enums",
+  "course": "Swift",
+  "title": "Swift Enums – Beyond Simple Lists",
+
+  "meta": {
+    "title": "Swift Enums Guide – Associated Values, Raw Values & Iteration (2026)",
+    "description": "Master Swift Enums. Learn how to use Associated Values for complex state, Raw Values for data mapping, and CaseIterable for easy iteration.",
+    "keywords": [
+      "swift enums",
+      "associated values swift",
+      "raw values swift",
+      "caseiterable",
+      "swift state management",
+      "pattern matching swift"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Power of Swift Enums"
+    },
+    {
+      "type": "text",
+      "value": "In Swift, an enumeration defines a common type for a group of related values. However, they go much further than simple constants. Swift enums can have methods, computed properties, and initializers. As an Architect, you should use enums to model your application's domain logic, ensuring that invalid states are impossible to represent in your code."
+    },
+    {
+      "type": "heading",
+      "value": "1. Basic Enums and Raw Values"
+    },
+    {
+      "type": "text",
+      "value": "You can back an enum with a 'Raw Value' such as a String or Integer. This is particularly useful for mapping API keys or database values to type-safe Swift code."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "enum WidgetType: String {\n    case button = \"material_button\"\n    case textInput = \"text_field\"\n    case image = \"network_image\"\n}\n\nlet type = WidgetType.button\nprint(type.rawValue) // Output: \"material_button\""
+    },
+    {
+      "type": "heading",
+      "value": "2. Associated Values (The State Killer)"
+    },
+    {
+      "type": "text",
+      "value": "Associated values allow you to attach extra information to an enum case. This is how Swift handles 'Result' types and complex UI states. In a Flutter context, this is similar to using 'Sealed Classes' for state management."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "enum ProjectState {\n    case idle\n    case loading(progress: Double)\n    case success(code: String)\n    case failure(error: Error)\n}\n\nlet currentState = ProjectState.loading(progress: 0.75)\n\nswitch currentState {\ncase .loading(let progress):\n    print(\"Build progress: \\(progress * 100)%\")\ncase .success(let code):\n    print(\"Generated: \\(code)\")\ndefault:\n    break\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. CaseIterable and Methods"
+    },
+    {
+      "type": "text",
+      "value": "By conforming to the `CaseIterable` protocol, Swift automatically provides an `allCases` property, allowing you to loop through every case in the enum. You can also add methods to enums to give them behavior."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "enum Theme: CaseIterable {\n    case light, dark, system\n    \n    func getDescription() -> String {\n        switch self {\n        case .light: return \"Bright and clear\"\n        case .dark: return \"Easy on the eyes\"\n        case .system: return \"Follows OS settings\"\n        }\n    }\n}\n\nfor theme in Theme.allCases {\n    print(theme.getDescription())\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Enums: Swift vs. Other Languages"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Swift Enums", "Traditional C/Java Enums"],
+        "rows": [
+          ["Backing Type", "String, Int, Double, etc.", "Integers only"],
+          ["Custom Data", "Associated Values (Per-case)", "Not supported"],
+          ["Functions", "Supported (Methods/Properties)", "Rarely supported"],
+          ["Iteration", "Native (CaseIterable)", "Often manual"],
+          ["Pattern Matching", "Advanced (switch/if-case)", "Basic integer matching"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between a Raw Value and an Associated Value?",
+      "answer": "Raw values are fixed values defined at compile-time for every case (like a String ID). Associated values are set at runtime when you create an instance of the case, allowing different instances of the same case to hold different data."
+    },
+    {
+      "question": "Can Enums have stored properties?",
+      "answer": "No. Swift enums cannot have 'stored' properties (variables that hold data across all cases), but they can have 'computed' properties that return a value based on the current case."
+    },
+    {
+      "question": "What are Recursive Enums?",
+      "answer": "An enum that has another instance of the same enum as an associated value. You must mark it with the 'indirect' keyword. This is useful for building tree structures like a nested UI widget hierarchy."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which protocol allows you to access a collection of all cases in an enum?",
+      "options": ["RawRepresentable", "CaseIterable", "Codable", "Sequence"],
+      "answer": 1
+    },
+    {
+      "question": "Which feature allows you to attach different types of data to specific enum cases at runtime?",
+      "options": ["Raw Values", "Computed Properties", "Associated Values", "Extensions"],
+      "answer": 2
+    },
+    {
+      "question": "True or False: In Swift, a switch statement must be exhaustive when used with an Enum.",
+      "options": ["True", "False"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "swift-oop-fundamentals",
+    "swift-control-flow",
+    "swift-optionals",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

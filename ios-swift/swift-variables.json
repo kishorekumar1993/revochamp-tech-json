@@ -1,0 +1,139 @@
+{
+  "slug": "swift-variables",
+  "course": "Swift",
+  "title": "Swift Variables & Constants – Mutability and Type Safety",
+
+  "meta": {
+    "title": "Swift Variables Guide – let vs var, Type Inference & Annotation (2026)",
+    "description": "Master data declaration in Swift. Learn the difference between let and var, understand type inference, and how to use basic data types.",
+    "keywords": [
+      "swift variables",
+      "let vs var swift",
+      "swift constants",
+      "type inference swift",
+      "swift data types",
+      "ios development basics"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Constants and Variables"
+    },
+    {
+      "type": "text",
+      "value": "Every value in Swift is either a constant or a variable. As a Lead Engineer, you should default to using constants (`let`) unless you are certain the value must change during the program's execution. This 'Immutable by Default' approach reduces side effects and allows the Swift compiler to perform aggressive performance optimizations."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**let (Constant)**: The value is set once and cannot be changed. Similar to 'final' in Dart.",
+        "**var (Variable)**: The value can be updated multiple times as needed."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "let platformName = \"Revochamp\" // Immutable\nvar currentVersion = 1.0       // Mutable\n\ncurrentVersion = 1.1           // This works\n// platformName = \"Revo\"       // This would cause a compiler error"
+    },
+    {
+      "type": "heading",
+      "value": "1. Type Inference vs. Type Annotation"
+    },
+    {
+      "type": "text",
+      "value": "Swift is a **Type-Safe** language, but it is also smart. It uses **Type Inference** to automatically determine the data type based on the initial value you provide. However, you can use **Type Annotation** when you want to be explicit or when declaring a variable without an initial value."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Type Inference (Compiler knows this is a String)\nlet developerName = \"Kishore\"\n\n// Type Annotation (Explicitly defining the type)\nvar projectBudget: Double = 5000.0\nvar isAIGenerated: Bool"
+    },
+    {
+      "type": "heading",
+      "value": "2. Basic Data Types"
+    },
+    {
+      "type": "text",
+      "value": "Swift provides a set of standard types for common data. Note that Swift types are capitalized (PascalCase), similar to Dart objects."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Type", "Description", "Example"],
+        "rows": [
+          ["Int", "Whole numbers (positive/negative)", "42"],
+          ["Double", "64-bit floating-point numbers", "3.14159"],
+          ["Float", "32-bit floating-point numbers", "3.14"],
+          ["String", "Textual data", "\"Flutter to Swift\""],
+          ["Bool", "Logical true or false", "true"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "3. String Interpolation"
+    },
+    {
+      "type": "text",
+      "value": "In Swift, you insert variables into strings using the `\\()` syntax. This is the direct equivalent of Dart's `${}` syntax."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "let count = 5\nlet message = \"Your project has \\(count) widgets generated.\"\nprint(message)"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "When should I use Float vs. Double?",
+      "answer": "In 99% of iOS development, you should use 'Double'. It has higher precision (15 decimal digits vs 6 for Float) and is the default type inferred by the Swift compiler for decimal numbers."
+    },
+    {
+      "question": "Can I change the type of a variable after declaration?",
+      "answer": "No. Once a variable is declared as a specific type (either via inference or annotation), its type is fixed for its entire lifetime. You would need to create a new variable or cast the value to a different type."
+    },
+    {
+      "question": "Does Swift have a 'dynamic' type like Dart?",
+      "answer": "Swift has 'Any' and 'AnyObject' which can hold any type of value, but their use is generally discouraged in favor of strong typing and Generics to maintain type safety and performance."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to declare a value that will not change?",
+      "options": ["var", "const", "let", "final"],
+      "answer": 2
+    },
+    {
+      "question": "What is the process called when the Swift compiler automatically determines a variable's data type?",
+      "options": ["Type Casting", "Type Inference", "Type Annotation", "Type Checking"],
+      "answer": 1
+    },
+    {
+      "question": "Which of these is the correct way to perform string interpolation in Swift?",
+      "options": [
+        "\"Value is $value\"",
+        "\"Value is {value}\"",
+        "\"Value is \\(value)\"",
+        "\"Value is \" + value"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "swift-syntax",
+    "swift-control-flow",
+    "swift-functions",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

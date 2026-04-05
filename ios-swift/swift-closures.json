@@ -1,0 +1,128 @@
+{
+  "slug": "swift-closures",
+  "course": "Swift",
+  "title": "Swift Closures – Master Anonymous Functions",
+
+  "meta": {
+    "title": "Swift Closures Guide – Syntax, Escaping & Capture Lists (2026)",
+    "description": "Learn Swift closures for professional iOS development. Master trailing closure syntax, escaping closures, and memory management with capture lists.",
+    "keywords": [
+      "swift closures",
+      "escaping closures",
+      "trailing closure syntax",
+      "swift lambdas",
+      "capture lists swift",
+      "arc memory management"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Closure?"
+    },
+    {
+      "type": "text",
+      "value": "Closures are self-contained blocks of functionality that can be passed around and used in your code. They can 'capture' and store references to variables and constants from the context in which they are defined. In Swift, functions are actually a special case of closures. As an Architect, you'll use closures primarily for completion handlers (callbacks) and functional programming patterns like `map` and `filter`."
+    },
+    {
+      "type": "heading",
+      "value": "1. Closure Expression Syntax"
+    },
+    {
+      "type": "text",
+      "value": "Swift closures have a distinct syntax: `{ (parameters) -> return type in statements }`. The `in` keyword is crucial as it separates the definition of the closure's parameters and return type from its body."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "let calculateMarkup = { (price: Double, rate: Double) -> Double in\n    return price * rate\n}\n\nlet total = calculateMarkup(100.0, 0.2) // Returns 20.0"
+    },
+    {
+      "type": "heading",
+      "value": "2. Trailing Closure Syntax"
+    },
+    {
+      "type": "text",
+      "value": "If a closure is the final argument to a function, Swift allows you to 'pop' it out of the parentheses. This makes the code look much cleaner and more like a standard block of code, which is a common pattern in SwiftUI."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Standard way\nperformAction(name: \"Build\", action: { print(\"Building...\") })\n\n// Trailing closure way (Preferred)\nperformAction(name: \"Build\") { \n    print(\"Building...\") \n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Escaping Closures (@escaping)"
+    },
+    {
+      "type": "text",
+      "value": "By default, closures are 'non-escaping,' meaning they are executed within the function they are passed to. If a closure needs to be stored and executed *after* the function returns (like a network request callback), you must mark it as `@escaping`. This is a vital safety feature that helps the compiler manage memory."
+    },
+    {
+      "type": "heading",
+      "value": "4. Memory Management: Capture Lists"
+    },
+    {
+      "type": "text",
+      "value": "Closures can cause **Strong Reference Cycles** (Memory Leaks) because they hold onto the objects they use. To prevent this, Architects use 'Capture Lists' to define how the closure should interact with the surrounding scope, usually by marking `self` as `weak` or `unowned`."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "class ProjectUploader {\n    var onComplete: (() -> Void)?\n\n    func start() {\n        // Use [weak self] to prevent a memory leak\n        onComplete = { [weak self] in\n            self?.notifyUser()\n        }\n    }\n    \n    func notifyUser() { print(\"Upload finished\") }\n}"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What are shorthand argument names like $0 and $1?",
+      "answer": "Swift provides shorthand names for inline closures. Instead of writing '(a, b) in a + b', you can simply write '$0 + $1'. This is excellent for simple transformations like 'array.sort { $0 > $1 }'."
+    },
+    {
+      "question": "Is a Closure the same as a Function?",
+      "answer": "Yes and no. All functions are closures, but functions have names and are defined with the 'func' keyword. Closures are generally anonymous and have a more flexible syntax for capturing variables."
+    },
+    {
+      "question": "When should I use 'unowned' vs 'weak' in a capture list?",
+      "answer": "Use 'weak' when the captured reference might become nil (it becomes an Optional). Use 'unowned' only when you are 100% certain the reference will never be nil while the closure exists; it's faster but crashes if the reference is gone."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword separates a closure's signature from its body?",
+      "options": ["do", "then", "in", "where"],
+      "answer": 2
+    },
+    {
+      "question": "Which attribute is required for a closure that is called after the function it was passed to has already returned?",
+      "options": ["@escaping", "@autoclosure", "@discardableResult", "@async"],
+      "answer": 0
+    },
+    {
+      "question": "What is the primary purpose of using [weak self] in a closure's capture list?",
+      "options": [
+        "To make the code execute faster",
+        "To prevent strong reference cycles (memory leaks)",
+        "To allow the closure to modify global variables",
+        "To hide the closure from other classes"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "swift-functions",
+    "swift-async-await",
+    "swift-classes-vs-structs",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

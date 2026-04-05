@@ -1,0 +1,128 @@
+{
+  "slug": "swift-async-await",
+  "course": "Swift",
+  "title": "Swift Concurrency – Async/Await and Structured Logic",
+
+  "meta": {
+    "title": "Swift Async/Await Guide – Concurrency, Tasks & Actors (2026)",
+    "description": "Master modern concurrency in Swift. Learn how to write safe, readable asynchronous code using async, await, and Actors to prevent data races.",
+    "keywords": [
+      "swift async await",
+      "structured concurrency swift",
+      "swift tasks",
+      "actors swift",
+      "ios networking async",
+      "mainactor"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Modern Concurrency in Swift"
+    },
+    {
+      "type": "text",
+      "value": "Before Swift 5.5, developers relied on 'Closures' and 'Completion Handlers,' which often led to 'Pyramid of Doom' code nesting. Modern Swift uses **Structured Concurrency**. This makes asynchronous code look and behave like synchronous code, making it significantly easier to read, maintain, and debug in your native iOS modules."
+    },
+    {
+      "type": "heading",
+      "value": "1. The Async/Await Pattern"
+    },
+    {
+      "type": "text",
+      "value": "To make a function asynchronous, you mark it with the `async` keyword. To call it, you must use `await`. This signals to the system that the function might 'suspend' its execution, freeing up the thread to do other work until the result is ready."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Defining an async function\nfunc fetchAIModel(id: String) async throws -> String {\n    let url = URL(string: \"https://api.revochamp.com/models/\\(id)\")!\n    let (data, _) = try await URLSession.shared.data(from: url)\n    return String(decoding: data, as: UTF8.self)\n}\n\n// Calling an async function\nTask {\n    do {\n        let model = try await fetchAIModel(id: \"flutter_gen_v1\")\n        print(\"Model loaded: \\(model)\")\n    } catch {\n        print(\"Failed to load: \\(error)\")\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Parallel Execution with Task Groups"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes you need to run multiple tasks at once. You can use `async let` for simple parallel tasks or `TaskGroup` for more complex, dynamic collections of work. This is the equivalent of `Future.wait()` in Dart."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "func loadProjectAssets() async {\n    // Both start at the same time\n    async let widgets = fetchWidgets()\n    async let theme = fetchTheme()\n    \n    // Wait for both to finish\n    let results = await (widgets, theme)\n    print(\"Assets ready for \\(results.0)\")\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Actors and Thread Safety"
+    },
+    {
+      "type": "text",
+      "value": "One of Swift's most powerful features for architects is the **Actor**. An Actor is a reference type (like a class) that protects its internal state from 'Data Races.' It ensures that only one piece of code can access its mutable state at a time. For an Engineering Manager, this eliminates a massive category of multi-threading bugs."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "actor ProjectCache {\n    private var cache: [String: String] = [:]\n\n    func save(_ data: String, for key: String) {\n        cache[key] = data\n    }\n\n    func get(_ key: String) -> String? {\n        return cache[key]\n    }\n}\n// Accessing an actor always requires 'await'"
+    },
+    {
+      "type": "heading",
+      "value": "4. The @MainActor"
+    },
+    {
+      "type": "text",
+      "value": "In iOS development, all UI updates **must** happen on the main thread. By marking a class or function with `@MainActor`, Swift automatically ensures that the code always executes on the main thread, preventing 'Background Thread UI Update' crashes."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a 'Task' in Swift?",
+      "answer": "A Task is a unit of asynchronous work. Since you cannot call 'await' from a synchronous function (like a standard button click), you create a 'Task { ... }' block to bridge the synchronous and asynchronous worlds."
+    },
+    {
+      "question": "How does Swift Concurrency differ from GCD?",
+      "answer": "GCD (Grand Central Dispatch) is a low-level API based on queues. Swift Concurrency is a high-level language feature that is safer, more efficient with thread creation, and provides 'Structured' management, meaning child tasks are automatically cancelled if the parent task is cancelled."
+    },
+    {
+      "question": "Can I use async/await with older completion handlers?",
+      "answer": "Yes. Swift provides 'Continuations' (CheckedContinuation) which allow you to wrap older, closure-based APIs into modern async/await functions."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to indicate that a function call may suspend execution while waiting for a result?",
+      "options": ["async", "defer", "await", "yield"],
+      "answer": 2
+    },
+    {
+      "question": "Which Swift type is specifically designed to prevent data races by isolating its state?",
+      "options": ["Struct", "Class", "Actor", "Enum"],
+      "answer": 2
+    },
+    {
+      "question": "What is the purpose of the @MainActor attribute?",
+      "options": [
+        "To make the code run as fast as possible",
+        "To ensure code runs on the main UI thread",
+        "To allow access to private variables",
+        "To start the application"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "swift-functions",
+    "swift-classes-vs-structs",
+    "flutter-method-channels",
+    "swift-oop-fundamentals",
+    "clean-architecture-native"
+  ]
+}

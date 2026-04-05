@@ -1,0 +1,141 @@
+{
+  "slug": "swift-functions",
+  "course": "Swift",
+  "title": "Swift Functions – Designing Modular Logic",
+
+  "meta": {
+    "title": "Swift Functions Guide – Argument Labels, Returns & Tuples (2026)",
+    "description": "Master Swift functions. Learn about external argument labels, variadic parameters, and how to return multiple values using Tuples for clean native modules.",
+    "keywords": [
+      "swift functions",
+      "argument labels",
+      "swift return types",
+      "swift tuples",
+      "ios function syntax",
+      "variadic parameters"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Anatomy of a Swift Function"
+    },
+    {
+      "type": "text",
+      "value": "Functions are self-contained chunks of code that perform a specific task. In Swift, functions are first-class citizens, meaning they can be passed as arguments, returned from other functions, and assigned to variables. As a Technical Lead, you'll appreciate how Swift forces a clear contract between the caller and the implementation through its unique parameter naming system."
+    },
+    {
+      "type": "heading",
+      "value": "1. Argument Labels and Parameter Names"
+    },
+    {
+      "type": "text",
+      "value": "Swift distinguishes between the **argument label** (used when calling the function) and the **parameter name** (used within the function body). This allows the function call to be expressive while keeping the internal logic concise."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// 'for' is the argument label, 'platform' is the parameter name\nfunc buildProject(for platform: String, version: Double) {\n    print(\"Building Revochamp for \\(platform) v\\(version)\")\n}\n\n// Calling the function reads like a sentence:\nbuildProject(for: \"iOS\", version: 2.1)"
+    },
+    {
+      "type": "heading",
+      "value": "2. Returning Values and Tuples"
+    },
+    {
+      "type": "text",
+      "value": "Functions use the `->` symbol to indicate return types. A powerful feature for architects is the ability to return **Tuples**, allowing a function to return multiple values without needing to define a custom struct or class."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "func getProjectStatus(id: Int) -> (name: String, isComplete: Bool) {\n    // Logic to fetch project\n    return (\"AI Generator\", true)\n}\n\nlet status = getProjectStatus(id: 101)\nprint(\"Project \\(status.name) is done: \\(status.isComplete)\")"
+    },
+    {
+      "type": "heading",
+      "value": "3. Default and Variadic Parameters"
+    },
+    {
+      "type": "text",
+      "value": "Swift supports default parameter values, reducing the need for function overloading. It also supports **Variadic Parameters**, which allow a function to accept zero or more values of a specified type, accessible as an array within the function."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Variadic parameter example\nfunc addWidgets(_ widgets: String...) {\n    for widget in widgets {\n        print(\"Adding \\(widget) to canvas\")\n    }\n}\n\naddWidgets(\"Button\", \"TextField\", \"Image\")"
+    },
+    {
+      "type": "heading",
+      "value": "Function Feature Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Swift", "Dart (Flutter)"],
+        "rows": [
+          ["Declaration", "func keyword", "Type-first or void"],
+          ["Return Symbol", "->", "Implicit by position"],
+          ["Multiple Returns", "Tuples (Native)", "Records (Dart 3.0+)"],
+          ["Argument Labels", "External/Internal labels", "Named parameters { }"],
+          ["Omit Label", "Use underscore (_)", "Optional by default"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What does the underscore (_) mean in a function parameter?",
+      "answer": "The underscore is a wildcard that tells Swift the parameter does not require an argument label when the function is called. For example, 'func save(_ data: String)' is called as 'save(\"text\")' instead of 'save(data: \"text\")'."
+    },
+    {
+      "question": "Can Swift functions return 'nil'?",
+      "answer": "Only if the return type is marked as an Optional (e.g., '-> String?'). If a function is not marked optional, it must return a valid instance of the specified type or throw an error."
+    },
+    {
+      "question": "What is an 'inout' parameter?",
+      "answer": "By default, function parameters are constants and cannot be modified. If you need to change a parameter's value and have those changes persist outside the function, you must mark the parameter as 'inout'."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to declare a function in Swift?",
+      "options": ["function", "void", "func", "define"],
+      "answer": 2
+    },
+    {
+      "question": "What is the benefit of using Tuples as a return type?",
+      "options": [
+        "They make the function run faster",
+        "They allow returning multiple related values without a custom struct",
+        "They automatically encrypt the return data",
+        "They are required for all API calls"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you define a parameter that doesn't require a label when calling the function?",
+      "options": [
+        "Prefix the name with $",
+        "Use the 'internal' keyword",
+        "Use an underscore (_) as the argument label",
+        "Put the parameter in brackets [ ]"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "swift-syntax",
+    "swift-control-flow",
+    "swift-variables",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

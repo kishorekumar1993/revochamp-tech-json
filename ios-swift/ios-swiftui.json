@@ -1,0 +1,206 @@
+{
+  "slug": "ios-swiftui",
+  "course": "iOS Development",
+  "title": "iOS SwiftUI – Complete Guide to Declarative UI Development",
+
+  "meta": {
+    "title": "SwiftUI Guide: State Management, Navigation, Animations & More (2026)",
+    "description": "Master SwiftUI for iOS development: declarative syntax, @State, @ObservedObject, @EnvironmentObject, navigation stack, custom layouts, animations, data flow, and UIKit integration. Production-ready patterns.",
+    "keywords": [
+      "swiftui tutorial",
+      "swiftui state management",
+      "swiftui navigation",
+      "swiftui animations",
+      "swiftui data flow",
+      "swiftui vs uikit",
+      "ios declarative ui"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "SwiftUI – Apple's Declarative UI Framework"
+    },
+    {
+      "type": "text",
+      "value": "SwiftUI is Apple's modern framework for building user interfaces across all Apple platforms (iOS, macOS, watchOS, tvOS, visionOS). Unlike UIKit's imperative approach, SwiftUI uses a **declarative** syntax where you describe what the UI should look like based on the current state, and the framework automatically handles updates. In 2026, SwiftUI is mature and feature-complete for most production apps, though UIKit integration remains valuable for complex custom needs."
+    },
+
+    {
+      "type": "heading",
+      "value": "1. SwiftUI Fundamentals – Your First View"
+    },
+    {
+      "type": "text",
+      "value": "SwiftUI views are lightweight structs that conform to the `View` protocol. The `body` property describes the view's content using a composition of built-in components."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "import SwiftUI\n\n// MARK: - Basic View Structure\nstruct ContentView: View {\n    var body: some View {\n        VStack(spacing: 20) {\n            Text(\"Welcome to SwiftUI\")\n                .font(.largeTitle)\n                .fontWeight(.bold)\n            \n            Image(systemName: \"swift\")\n                .font(.system(size: 60))\n                .foregroundColor(.orange)\n            \n            Button(\"Tap Me\") {\n                print(\"Button tapped!\")\n            }\n            .buttonStyle(.borderedProminent)\n            .controlSize(.large)\n        }\n        .padding()\n    }\n}\n\n// MARK: - App Entry Point\n@main\nstruct MyApp: App {\n    var body: some Scene {\n        WindowGroup {\n            ContentView()\n        }\n    }\n}\n\n// MARK: - Common Layout Containers\nstruct LayoutExample: View {\n    var body: some View {\n        // VStack: Vertical stack\n        VStack(alignment: .leading, spacing: 8) {\n            Text(\"Vertical Stack\")\n            Divider()\n        }\n        \n        // HStack: Horizontal stack\n        HStack(spacing: 16) {\n            Image(systemName: \"heart\")\n            Text(\"Horizontal Stack\")\n        }\n        \n        // ZStack: Overlapping views (like a stack of cards)\n        ZStack {\n            Rectangle()\n                .fill(Color.blue)\n                .frame(width: 200, height: 200)\n            Text(\"On Top\")\n                .foregroundColor(.white)\n        }\n        \n        // Lazy stacks for scrolling content\n        ScrollView {\n            LazyVStack(alignment: .leading, spacing: 12) {\n                ForEach(0..<100) { index in\n                    Text(\"Item \\(index)\")\n                        .padding()\n                        .frame(maxWidth: .infinity, alignment: .leading)\n                        .background(Color.gray.opacity(0.1))\n                }\n            }\n        }\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "2. State Management – The Heart of SwiftUI"
+    },
+    {
+      "type": "text",
+      "value": "SwiftUI uses property wrappers to manage state and data flow. Understanding when to use each wrapper is critical for building reactive, bug-free apps."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "import SwiftUI\n\n// MARK: - @State (Local view state)\nstruct CounterView: View {\n    @State private var count = 0 // Owned by this view, value type\n    \n    var body: some View {\n        VStack {\n            Text(\"Count: \\(count)\")\n                .font(.title)\n            \n            Button(\"Increment\") {\n                count += 1 // Triggers view re-render\n            }\n            .buttonStyle(.borderedProminent)\n        }\n    }\n}\n\n// MARK: - @Binding (Two-way connection to parent state)\nstruct ParentView: View {\n    @State private var isOn = false\n    \n    var body: some View {\n        VStack {\n            Text(\"Parent: \\(isOn ? \"ON\" : \"OFF\")\")\n            ChildSwitch(isOn: $isOn) // Pass binding\n        }\n    }\n}\n\nstruct ChildSwitch: View {\n    @Binding var isOn: Bool // References state from parent\n    \n    var body: some View {\n        Toggle(\"Child Toggle\", isOn: $isOn)\n            .padding()\n    }\n}\n\n// MARK: - @ObservedObject (External reference type state)\nclass UserViewModel: ObservableObject {\n    @Published var name = \"\" // @Published triggers updates\n    @Published var age = 0\n    \n    func incrementAge() {\n        age += 1\n    }\n}\n\nstruct ProfileView: View {\n    @ObservedObject var viewModel: UserViewModel // Observes external object\n    \n    var body: some View {\n        Form {\n            TextField(\"Name\", text: $viewModel.name)\n            HStack {\n                Text(\"Age: \\(viewModel.age)\")\n                Button(\"+\", action: viewModel.incrementAge)\n            }\n        }\n    }\n}\n\n// MARK: - @StateObject (Owned observable object – creates and owns lifecycle)\nstruct OwnerView: View {\n    @StateObject private var viewModel = UserViewModel() // Owns the object\n    \n    var body: some View {\n        ProfileView(viewModel: viewModel)\n    }\n}\n\n// MARK: - @EnvironmentObject (Shared across view hierarchy)\nclass AppSettings: ObservableObject {\n    @Published var isDarkMode = false\n    @Published var language = \"en\"\n}\n\nstruct RootView: View {\n    @StateObject private var settings = AppSettings()\n    \n    var body: some View {\n        ContentView()\n            .environmentObject(settings) // Inject into environment\n    }\n}\n\nstruct SettingsToggle: View {\n    @EnvironmentObject var settings: AppSettings // Access anywhere\n    \n    var body: some View {\n        Toggle(\"Dark Mode\", isOn: $settings.isDarkMode)\n    }\n}\n\n// MARK: - @Environment (System-provided values)\nstruct SystemInfoView: View {\n    @Environment(\\.colorScheme) var colorScheme\n    @Environment(\\.locale) var locale\n    @Environment(\\.horizontalSizeClass) var sizeClass\n    \n    var body: some View {\n        VStack {\n            Text(\"Theme: \\(colorScheme == .dark ? \"Dark\" : \"Light\")\")\n            Text(\"Language: \\(locale.languageCode ?? \"unknown\")\")\n            Text(\"Size Class: \\(sizeClass == .compact ? \"Compact\" : \"Regular\")\")\n        }\n    }\n}\n\n// MARK: - @AppStorage (UserDefaults binding)\nstruct UserPreferencesView: View {\n    @AppStorage(\"username\") private var username = \"Guest\"\n    @AppStorage(\"notificationsEnabled\") private var notificationsEnabled = true\n    \n    var body: some View {\n        Form {\n            TextField(\"Username\", text: $username)\n            Toggle(\"Enable Notifications\", isOn: $notificationsEnabled)\n        }\n    }\n}\n\n// MARK: - @SceneStorage (State restoration per scene/window)\nstruct DetailView: View {\n    @SceneStorage(\"detail.selectedTab\") private var selectedTab = 0\n    \n    var body: some View {\n        TabView(selection: $selectedTab) {\n            Text(\"Tab 1\").tag(0)\n            Text(\"Tab 2\").tag(1)\n        }\n        // Selected tab persists across app launches\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "3. Navigation in SwiftUI"
+    },
+    {
+      "type": "text",
+      "value": "SwiftUI provides two navigation systems: the legacy `NavigationView` (deprecated in iOS 16+) and the modern `NavigationStack` (iOS 16+) with programmatic navigation and deep linking support."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "import SwiftUI\n\n// MARK: - Modern NavigationStack (iOS 16+, Recommended)\nstruct HomeView: View {\n    @State private var path = NavigationPath() // Manages navigation stack\n    \n    var body: some View {\n        NavigationStack(path: $path) {\n            List {\n                NavigationLink(\"Basic Detail\", value: \"Simple\")\n                NavigationLink(\"User Profile\", value: User(id: 1, name: \"Alice\"))\n                Button(\"Programmatic Push\") {\n                    path.append(\"Programmatic\")\n                }\n            }\n            .navigationTitle(\"Home\")\n            .navigationDestination(for: String.self) { stringValue in\n                Text(\"Detail: \\(stringValue)\")\n            }\n            .navigationDestination(for: User.self) { user in\n                UserProfileView(user: user)\n            }\n        }\n    }\n}\n\nstruct User: Hashable {\n    let id: Int\n    let name: String\n}\n\nstruct UserProfileView: View {\n    let user: User\n    @Environment(\\.dismiss) private var dismiss\n    \n    var body: some View {\n        VStack {\n            Text(\"Profile: \\(user.name)\")\n            Button(\"Go Back\") {\n                dismiss() // Programmatic dismiss\n            }\n        }\n    }\n}\n\n// MARK: - Sheet & FullScreenCover (Modals)\nstruct ModalExampleView: View {\n    @State private var showingSheet = false\n    @State private var showingFullScreen = false\n    \n    var body: some View {\n        VStack(spacing: 20) {\n            Button(\"Show Sheet\") {\n                showingSheet.toggle()\n            }\n            .sheet(isPresented: $showingSheet) {\n                SheetContentView()\n                    .presentationDetents([.medium, .large]) // iOS 16+\n                    .presentationDragIndicator(.visible)\n            }\n            \n            Button(\"Show Full Screen\") {\n                showingFullScreen.toggle()\n            }\n            .fullScreenCover(isPresented: $showingFullScreen) {\n                FullScreenView()\n            }\n        }\n    }\n}\n\nstruct SheetContentView: View {\n    @Environment(\\.dismiss) private var dismiss\n    \n    var body: some View {\n        NavigationStack {\n            Text(\"Sheet Content\")\n                .toolbar {\n                    ToolbarItem(placement: .cancellationAction) {\n                        Button(\"Cancel\") { dismiss() }\n                    }\n                }\n        }\n    }\n}\n\n// MARK: - Alert & Confirmation Dialog\nstruct AlertExampleView: View {\n    @State private var showingAlert = false\n    @State private var showingConfirmation = false\n    \n    var body: some View {\n        VStack {\n            Button(\"Show Alert\") {\n                showingAlert = true\n            }\n            .alert(\"Delete Item\", isPresented: $showingAlert) {\n                Button(\"Cancel\", role: .cancel) { }\n                Button(\"Delete\", role: .destructive) {\n                    // Perform delete\n                }\n            } message: {\n                Text(\"This action cannot be undone.\")\n            }\n            \n            Button(\"Show Options\") {\n                showingConfirmation = true\n            }\n            .confirmationDialog(\"Choose Option\", isPresented: $showingConfirmation) {\n                Button(\"Option 1\") { }\n                Button(\"Option 2\") { }\n                Button(\"Cancel\", role: .cancel) { }\n            }\n        }\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "4. Layout & Customization"
+    },
+    {
+      "type": "text",
+      "value": "SwiftUI offers powerful layout modifiers and custom layout capabilities for creating responsive, adaptive interfaces."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "import SwiftUI\n\n// MARK: - Layout Modifiers\nstruct LayoutModifiersExample: View {\n    var body: some View {\n        VStack(spacing: 20) {\n            // Frame & sizing\n            Text(\"Fixed Size\")\n                .frame(width: 200, height: 50)\n                .background(Color.blue)\n            \n            Text(\"Max Width\")\n                .frame(maxWidth: .infinity)\n                .background(Color.green)\n            \n            // Padding & margin\n            Text(\"With Padding\")\n                .padding(.all, 16)\n                .background(Color.yellow)\n            \n            // Overlay & background\n            Text(\"Overlay\")\n                .padding()\n                .overlay(\n                    RoundedRectangle(cornerRadius: 8)\n                        .stroke(Color.red, lineWidth: 2)\n                )\n                .background(\n                    RoundedRectangle(cornerRadius: 8)\n                        .fill(Color.gray.opacity(0.1))\n                )\n        }\n        .padding()\n    }\n}\n\n// MARK: - Custom Layout (iOS 16+)\nstruct EqualWidthHStack: Layout {\n    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {\n        let maxHeight = subviews.map { $0.sizeThatFits(.unspecified).height }.max() ?? 0\n        return CGSize(width: proposal.width ?? 0, height: maxHeight)\n    }\n    \n    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {\n        let width = bounds.width / CGFloat(subviews.count)\n        for (index, subview) in subviews.enumerated() {\n            let x = bounds.minX + (CGFloat(index) * width)\n            subview.place(at: CGPoint(x: x, y: bounds.midY), anchor: .center, proposal: ProposedViewSize(width: width, height: nil))\n        }\n    }\n}\n\nstruct CustomLayoutExample: View {\n    var body: some View {\n        EqualWidthHStack {\n            Text(\"Short\")\n                .padding()\n                .background(Color.red)\n            Text(\"Much longer text\")\n                .padding()\n                .background(Color.green)\n            Text(\"Medium\")\n                .padding()\n                .background(Color.blue)\n        }\n        .frame(height: 60)\n    }\n}\n\n// MARK: - Size Classes & Adaptive Layout\nstruct AdaptiveLayoutView: View {\n    @Environment(\\.horizontalSizeClass) var horizontalSizeClass\n    \n    var body: some View {\n        if horizontalSizeClass == .compact {\n            // iPhone layout\n            VStack {\n                Text(\"Compact Layout\")\n                // Stack vertically\n            }\n        } else {\n            // iPad layout\n            HStack {\n                Text(\"Regular Layout\")\n                // Side-by-side\n            }\n        }\n    }\n}\n\n// MARK: - GeometryReader (Access parent dimensions)\nstruct GeometryReaderExample: View {\n    var body: some View {\n        GeometryReader { geometry in\n            VStack {\n                Text(\"Width: \\(geometry.size.width)\")\n                Text(\"Height: \\(geometry.size.height)\")\n                \n                Rectangle()\n                    .fill(Color.blue)\n                    .frame(width: geometry.size.width * 0.7, height: 50)\n            }\n            .frame(maxWidth: .infinity, maxHeight: .infinity)\n        }\n        .frame(height: 200)\n        .background(Color.gray.opacity(0.1))\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "5. Animations & Transitions"
+    },
+    {
+      "type": "text",
+      "value": "SwiftUI makes animation incredibly simple with implicit, explicit, and custom animations."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "import SwiftUI\n\n// MARK: - Implicit Animation (automatic on state change)\nstruct ImplicitAnimationView: View {\n    @State private var isExpanded = false\n    \n    var body: some View {\n        VStack {\n            RoundedRectangle(cornerRadius: 10)\n                .fill(Color.blue)\n                .frame(width: isExpanded ? 200 : 100, height: isExpanded ? 200 : 100)\n                .animation(.spring(), value: isExpanded) // Animate when value changes\n            \n            Button(\"Toggle\") {\n                isExpanded.toggle()\n            }\n        }\n    }\n}\n\n// MARK: - Explicit Animation (withAnimation closure)\nstruct ExplicitAnimationView: View {\n    @State private var rotation = 0.0\n    \n    var body: some View {\n        Button(\"Rotate\") {\n            withAnimation(.easeInOut(duration: 1)) {\n                rotation += 360\n            }\n        }\n        .rotationEffect(.degrees(rotation))\n    }\n}\n\n// MARK: - Transition Animations\nstruct TransitionExampleView: View {\n    @State private var showDetails = false\n    \n    var body: some View {\n        VStack {\n            Button(\"Toggle Details\") {\n                withAnimation(.easeInOut) {\n                    showDetails.toggle()\n                }\n            }\n            \n            if showDetails {\n                Text(\"Detailed Information\")\n                    .transition(.slide.combined(with: .opacity))\n                // Available transitions: .slide, .scale, .opacity, .move(edge:), .asymmetric\n            }\n        }\n    }\n}\n\n// MARK: - Matched Geometry Effect (hero animations)\nstruct MatchedGeometryExample: View {\n    @Namespace private var namespace\n    @State private var isExpanded = false\n    \n    var body: some View {\n        if !isExpanded {\n            VStack {\n                Image(systemName: \"photo\")\n                    .matchedGeometryEffect(id: \"image\", in: namespace)\n                    .frame(width: 100, height: 100)\n                \n                Text(\"Tap to Expand\")\n                    .matchedGeometryEffect(id: \"text\", in: namespace)\n            }\n            .onTapGesture {\n                withAnimation(.spring()) {\n                    isExpanded.toggle()\n                }\n            }\n        } else {\n            VStack {\n                Image(systemName: \"photo\")\n                    .matchedGeometryEffect(id: \"image\", in: namespace)\n                    .frame(width: 300, height: 300)\n                \n                Text(\"Expanded View\")\n                    .matchedGeometryEffect(id: \"text\", in: namespace)\n                \n                Button(\"Close\") {\n                    withAnimation(.spring()) {\n                        isExpanded.toggle()\n                    }\n                }\n            }\n        }\n    }\n}\n\n// MARK: - Custom Animations\nstruct CustomAnimation: View {\n    @State private var animate = false\n    \n    var body: some View {\n        Circle()\n            .fill(Color.red)\n            .frame(width: 100, height: 100)\n            .scaleEffect(animate ? 1.5 : 1)\n            .opacity(animate ? 0.5 : 1)\n            .animation(.easeInOut(duration: 1).repeatForever(), value: animate)\n            .onAppear {\n                animate = true\n            }\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "6. Lists & Forms"
+    },
+    {
+      "type": "text",
+      "value": "SwiftUI provides List, Form, and Lazy stacks for displaying collections of data efficiently."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "import SwiftUI\n\n// MARK: - List with Dynamic Data\nstruct Item: Identifiable {\n    let id = UUID()\n    let name: String\n    let isCompleted: Bool\n}\n\nstruct ListExample: View {\n    @State private var items = [\n        Item(name: \"Buy groceries\", isCompleted: false),\n        Item(name: \"Walk dog\", isCompleted: true),\n        Item(name: \"Write code\", isCompleted: false)\n    ]\n    \n    @State private var newItemName = \"\"\n    \n    var body: some View {\n        List {\n            // Section header\n            Section {\n                ForEach(items) { item in\n                    HStack {\n                        Image(systemName: item.isCompleted ? \"checkmark.circle.fill\" : \"circle\")\n                            .foregroundColor(item.isCompleted ? .green : .gray)\n                        Text(item.name)\n                            .strikethrough(item.isCompleted)\n                    }\n                    .swipeActions {\n                        Button(role: .destructive) {\n                            deleteItem(item)\n                        } label: {\n                            Label(\"Delete\", systemImage: \"trash\")\n                        }\n                    }\n                }\n                .onDelete(perform: deleteItems)\n                .onMove(perform: moveItems)\n            } header: {\n                Text(\"Tasks\")\n            } footer: {\n                Text(\"\\(items.filter { !$0.isCompleted }.count) remaining\")\n            }\n            \n            // Add new item\n            HStack {\n                TextField(\"New task\", text: $newItemName)\n                Button(\"Add\") {\n                    addItem()\n                }\n                .disabled(newItemName.isEmpty)\n            }\n        }\n        .navigationTitle(\"Tasks\")\n        .toolbar {\n            EditButton()\n        }\n    }\n    \n    private func deleteItems(at offsets: IndexSet) {\n        items.remove(atOffsets: offsets)\n    }\n    \n    private func moveItems(from source: IndexSet, to destination: Int) {\n        items.move(fromOffsets: source, toOffset: destination)\n    }\n    \n    private func deleteItem(_ item: Item) {\n        items.removeAll { $0.id == item.id }\n    }\n    \n    private func addItem() {\n        let newItem = Item(name: newItemName, isCompleted: false)\n        items.append(newItem)\n        newItemName = \"\"\n    }\n}\n\n// MARK: - Form (for settings & input screens)\nstruct SettingsFormView: View {\n    @AppStorage(\"notifications\") private var notifications = true\n    @AppStorage(\"darkMode\") private var darkMode = false\n    @State private var selectedColor = \"Blue\"\n    @State private var volume = 0.5\n    \n    let colors = [\"Red\", \"Green\", \"Blue\"]\n    \n    var body: some View {\n        NavigationStack {\n            Form {\n                Section(\"Preferences\") {\n                    Toggle(\"Enable Notifications\", isOn: $notifications)\n                    Toggle(\"Dark Mode\", isOn: $darkMode)\n                }\n                \n                Section(\"Appearance\") {\n                    Picker(\"Theme Color\", selection: $selectedColor) {\n                        ForEach(colors, id: \\.self) { color in\n                            Text(color)\n                        }\n                    }\n                    \n                    HStack {\n                        Text(\"Volume\")\n                        Slider(value: $volume, in: 0...1)\n                        Text(\"\\(Int(volume * 100))%\")\n                            .foregroundColor(.secondary)\n                    }\n                }\n                \n                Section(\"About\") {\n                    HStack {\n                        Text(\"Version\")\n                        Spacer()\n                        Text(\"1.0.0\")\n                            .foregroundColor(.secondary)\n                    }\n                    \n                    Link(\"Visit Website\", destination: URL(string: \"https://apple.com\")!)\n                }\n            }\n            .navigationTitle(\"Settings\")\n        }\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "7. Data Fetching & Async/Await"
+    },
+    {
+      "type": "text",
+      "value": "SwiftUI works seamlessly with Swift concurrency. Use `.task` modifier for async operations and `@Observable` for modern data models (iOS 17+)."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "import SwiftUI\n\n// MARK: - Async/Await with .task (iOS 15+)\nstruct Post: Codable, Identifiable {\n    let id: Int\n    let title: String\n    let body: String\n}\n\nstruct PostsListView: View {\n    @State private var posts: [Post] = []\n    @State private var errorMessage: String?\n    @State private var isLoading = false\n    \n    var body: some View {\n        NavigationStack {\n            Group {\n                if isLoading {\n                    ProgressView(\"Loading...\")\n                } else if let error = errorMessage {\n                    VStack {\n                        Text(\"Error: \\(error)\")\n                            .foregroundColor(.red)\n                        Button(\"Retry\") {\n                            Task { await fetchPosts() }\n                        }\n                    }\n                } else {\n                    List(posts) { post in\n                        VStack(alignment: .leading) {\n                            Text(post.title)\n                                .font(.headline)\n                            Text(post.body)\n                                .font(.caption)\n                                .foregroundColor(.secondary)\n                        }\n                    }\n                }\n            }\n            .navigationTitle(\"Posts\")\n            .refreshable {\n                await fetchPosts()\n            }\n            .task {\n                await fetchPosts() // Runs when view appears\n            }\n        }\n    }\n    \n    private func fetchPosts() async {\n        isLoading = true\n        errorMessage = nil\n        \n        do {\n            let url = URL(string: \"https://jsonplaceholder.typicode.com/posts\")!\n            let (data, _) = try await URLSession.shared.data(from: url)\n            posts = try JSONDecoder().decode([Post].self, from: data)\n        } catch {\n            errorMessage = error.localizedDescription\n        }\n        \n        isLoading = false\n    }\n}\n\n// MARK: - @Observable Macro (iOS 17+, modern replacement for ObservableObject)\n@Observable\nclass UserRepository {\n    var users: [String] = []\n    var isLoading = false\n    \n    @ObservationIgnored // Don't track this property\n    private let apiService = APIService()\n    \n    func fetchUsers() async {\n        isLoading = true\n        defer { isLoading = false }\n        \n        // Simulate network call\n        try? await Task.sleep(nanoseconds: 1_000_000_000)\n        users = [\"Alice\", \"Bob\", \"Charlie\"]\n    }\n}\n\nstruct UserListView: View {\n    @State private var repository = UserRepository() // No @StateObject needed\n    \n    var body: some View {\n        List(repository.users, id: \\.self) { user in\n            Text(user)\n        }\n        .overlay {\n            if repository.isLoading {\n                ProgressView()\n            }\n        }\n        .task {\n            await repository.fetchUsers()\n        }\n    }\n}\n\n// MARK: - Pull to Refresh & Pagination\nstruct PaginatedListView: View {\n    @State private var items: [Int] = []\n    @State private var currentPage = 1\n    @State private var isLoadingMore = false\n    \n    var body: some View {\n        List(items, id: \\.self) { item in\n            Text(\"Item \\(item)\")\n                .onAppear {\n                    if item == items.last && !isLoadingMore {\n                        loadMore()\n                    }\n                }\n        }\n        .refreshable {\n            await refresh()\n        }\n        .task {\n            await loadInitial()\n        }\n    }\n    \n    private func loadInitial() async {\n        items = Array(1...20)\n        currentPage = 2\n    }\n    \n    private func loadMore() {\n        isLoadingMore = true\n        Task {\n            try? await Task.sleep(nanoseconds: 1_000_000_000)\n            let newItems = Array((currentPage*20)...((currentPage+1)*20 - 1))\n            await MainActor.run {\n                items.append(contentsOf: newItems)\n                currentPage += 1\n                isLoadingMore = false\n            }\n        }\n    }\n    \n    private func refresh() async {\n        await loadInitial()\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "8. UIKit Integration"
+    },
+    {
+      "type": "text",
+      "value": "Use `UIViewRepresentable` and `UIViewControllerRepresentable` to embed UIKit components in SwiftUI views."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "import SwiftUI\nimport UIKit\n\n// MARK: - Embed UIKit UIView\nstruct MapView: UIViewRepresentable {\n    @Binding var centerCoordinate: CLLocationCoordinate2D\n    \n    func makeUIView(context: Context) -> MKMapView {\n        let mapView = MKMapView()\n        mapView.delegate = context.coordinator\n        return mapView\n    }\n    \n    func updateUIView(_ uiView: MKMapView, context: Context) {\n        // Update when SwiftUI state changes\n        let region = MKCoordinateRegion(center: centerCoordinate, span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02))\n        uiView.setRegion(region, animated: true)\n    }\n    \n    func makeCoordinator() -> Coordinator {\n        Coordinator(self)\n    }\n    \n    class Coordinator: NSObject, MKMapViewDelegate {\n        var parent: MapView\n        \n        init(_ parent: MapView) {\n            self.parent = parent\n        }\n        \n        func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {\n            parent.centerCoordinate = mapView.centerCoordinate\n        }\n    }\n}\n\n// Usage in SwiftUI\nstruct ContentView: View {\n    @State private var location = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)\n    \n    var body: some View {\n        MapView(centerCoordinate: $location)\n            .frame(height: 300)\n    }\n}\n\n// MARK: - Embed UIKit UIViewController\nclass ImagePickerController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {\n    var onImagePicked: ((UIImage) -> Void)?\n    \n    override func viewDidLoad() {\n        super.viewDidLoad()\n        let picker = UIImagePickerController()\n        picker.delegate = self\n        present(picker, animated: true)\n    }\n    \n    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {\n        if let image = info[.originalImage] as? UIImage {\n            onImagePicked?(image)\n        }\n        dismiss(animated: true)\n    }\n}\n\nstruct ImagePicker: UIViewControllerRepresentable {\n    @Binding var image: UIImage?\n    \n    func makeUIViewController(context: Context) -> ImagePickerController {\n        let picker = ImagePickerController()\n        picker.onImagePicked = { image in\n            self.image = image\n        }\n        return picker\n    }\n    \n    func updateUIViewController(_ uiViewController: ImagePickerController, context: Context) {}\n}\n\n// Usage\nstruct ProfileView: View {\n    @State private var profileImage: UIImage?\n    @State private var showingPicker = false\n    \n    var body: some View {\n        VStack {\n            if let image = profileImage {\n                Image(uiImage: image)\n                    .resizable()\n                    .frame(width: 100, height: 100)\n                    .clipShape(Circle())\n            }\n            \n            Button(\"Select Photo\") {\n                showingPicker = true\n            }\n        }\n        .sheet(isPresented: $showingPicker) {\n            ImagePicker(image: $profileImage)\n        }\n    }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "9. SwiftUI Best Practices"
+    },
+    {
+      "type": "text",
+      "value": "**Keep Views Small** – Break large views into reusable components. Each view should have a single responsibility.\n\n**Use @State for Local UI State** – Not for persisted data or complex app state.\n\n**Prefer @StateObject Over @ObservedObject** – When the view creates the object, use `@StateObject`. When receiving from parent, use `@ObservedObject`.\n\n**Avoid Side Effects in body** – The `body` property should be pure. Use `.task`, `.onAppear`, or `.onChange` for side effects.\n\n**Use @Observable for iOS 17+** – Modern replacement for ObservableObject with cleaner syntax.\n\n**Lazy Stacks for Large Lists** – Use `LazyVStack`/`LazyHStack` instead of `VStack`/`HStack` when scrolling large data sets.\n\n**Accessibility by Default** – Add `.accessibilityLabel`, `.accessibilityHint`, and test with VoiceOver.\n\n**Preview-Driven Development** – Use Xcode previews extensively with mocked data for faster iteration."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// MARK: - Preview with Mock Data\nstruct PostListView_Previews: PreviewProvider {\n    static var previews: some View {\n        Group {\n            PostListView(posts: mockPosts)\n                .previewDisplayName(\"Light Mode\")\n            \n            PostListView(posts: mockPosts)\n                .preferredColorScheme(.dark)\n                .previewDisplayName(\"Dark Mode\")\n            \n            PostListView(posts: [])\n                .previewDisplayName(\"Empty State\")\n        }\n    }\n    \n    static var mockPosts: [Post] {\n        [\n            Post(id: 1, title: \"Mock Post 1\", body: \"This is a mock post\"),\n            Post(id: 2, title: \"Mock Post 2\", body: \"Another mock post\")\n        ]\n    }\n}\n\n// MARK: - View Composition Pattern\nstruct UserAvatar: View {\n    let imageURL: URL?\n    let size: CGFloat\n    \n    var body: some View {\n        AsyncImage(url: imageURL) { phase in\n            switch phase {\n            case .empty:\n                ProgressView()\n            case .success(let image):\n                image.resizable()\n            case .failure:\n                Image(systemName: \"person.circle.fill\")\n            @unknown default:\n                EmptyView()\n            }\n        }\n        .frame(width: size, height: size)\n        .clipShape(Circle())\n    }\n}\n\n// MARK: - Custom View Modifier\nstruct CardStyle: ViewModifier {\n    func body(content: Content) -> some View {\n        content\n            .padding()\n            .background(Color(.systemBackground))\n            .cornerRadius(12)\n            .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)\n    }\n}\n\nextension View {\n    func cardStyle() -> some View {\n        modifier(CardStyle())\n    }\n}\n\n// Usage: Text(\"Hello\").cardStyle()"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Should I use SwiftUI or UIKit for my next app?",
+      "answer": "In 2026, **SwiftUI is production-ready** for most apps. Use SwiftUI for new projects unless you need: (1) advanced custom UICollectionView layouts, (2) extensive camera/ARKit integration, or (3) maintaining a large existing UIKit codebase. Many apps use a hybrid approach: SwiftUI for standard screens, UIKit for complex custom components."
+    },
+    {
+      "question": "What's the difference between @State, @ObservedObject, and @StateObject?",
+      "answer": "`@State` is for simple value types owned by the view (strings, bools, ints). `@ObservedObject` is for reference types (classes) passed from a parent view. `@StateObject` is for reference types created by the view itself – use this instead of `@ObservedObject` when the view owns the object to ensure proper lifecycle management."
+    },
+    {
+      "question": "How do I navigate programmatically in SwiftUI?",
+      "answer": "Use `NavigationStack` with a `NavigationPath` binding. Append values to the path to push screens, and modify the path to pop (e.g., `path.removeLast()`). Avoid the deprecated `NavigationView` and `isActive` bindings."
+    },
+    {
+      "question": "How do I optimize List performance with large data?",
+      "answer": "Use `List` (not `ScrollView` + `LazyVStack`) for dynamic data. Ensure your data models are `Identifiable`. Avoid expensive computations inside `ForEach` closures. Use `.id()` to force recreation when needed, but rarely. For very large datasets (10k+ items), consider pagination or `UICollectionView` via `UIViewRepresentable`."
+    }
+  ],
+
+  "quiz": [
+    {
+      "question": "Which property wrapper should you use for a simple boolean state owned by a view?",
+      "options": ["@ObservedObject", "@State", "@EnvironmentObject", "@Published"],
+      "answer": 1
+    },
+    {
+      "question": "What is the modern navigation component for iOS 16+?",
+      "options": ["NavigationView", "UINavigationController", "NavigationStack", "NavigationLink"],
+      "answer": 2
+    },
+    {
+      "question": "Which protocol must a class conform to in order to use @ObservedObject (pre-iOS 17)?",
+      "options": ["Observable", "ObservableObject", "AnyObject", "View"],
+      "answer": 1
+    },
+    {
+      "question": "How do you perform a side effect when a SwiftUI view appears?",
+      "options": ["viewDidLoad()", "onAppear", "task (with no await)", "init()"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ios-uikit",
+    "swiftui-state-management",
+    "ios-app-lifecycle",
+    "swift-concurrency",
+    "ios-project-structure"
+  ]
+}
