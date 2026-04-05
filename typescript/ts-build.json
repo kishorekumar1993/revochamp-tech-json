@@ -1,0 +1,235 @@
+{
+  "slug": "ts-build",
+  "course": "TypeScript",
+  "title": "TypeScript Build – Compilation & Build Tools",
+
+  "meta": {
+    "title": "TypeScript Build – Compilation & Build Tool Setup (2026)",
+    "description": "Learn how to build TypeScript projects with different tools: tsc, webpack, esbuild, swc, and Vite. Optimize your build pipeline.",
+    "keywords": [
+      "typescript build",
+      "ts compilation",
+      "webpack typescript",
+      "esbuild typescript",
+      "vite typescript",
+      "ts build tools"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "TypeScript Build Overview"
+    },
+    {
+      "type": "text",
+      "value": "Building TypeScript projects involves compiling TS to JavaScript, bundling modules, optimizing output, and generating source maps. Choose the right tool based on your project needs: speed, features, or ecosystem compatibility."
+    },
+    {
+      "type": "heading",
+      "value": "Using tsc (TypeScript Compiler)"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Basic compilation\ntsc\n\n# Watch mode\ntsc --watch\n\n# Build with config\ntsc --project tsconfig.json\n\n# Output declaration files\ntsc --declaration\n\n# Source maps\ntsc --sourceMap"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "// tsconfig.json for builds\n{\n  \"compilerOptions\": {\n    \"target\": \"ES2020\",\n    \"module\": \"CommonJS\",\n    \"lib\": [\"ES2020\"],\n    \"outDir\": \"./dist\",\n    \"rootDir\": \"./src\",\n    \"declaration\": true,\n    \"declarationMap\": true,\n    \"sourceMap\": true,\n    \"removeComments\": true,\n    \"noEmitOnError\": true,\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"forceConsistentCasingInFileNames\": true\n  },\n  \"include\": [\"src/**/*\"],\n  \"exclude\": [\"node_modules\", \"dist\", \"**/*.test.ts\"]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Webpack + TypeScript"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Install dependencies\nnpm install --save-dev webpack webpack-cli ts-loader typescript\nnpm install --save-dev html-webpack-plugin webpack-dev-server"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// webpack.config.js\nconst path = require('path');\nconst HtmlWebpackPlugin = require('html-webpack-plugin');\n\nmodule.exports = {\n  mode: 'production',\n  entry: './src/index.ts',\n  output: {\n    path: path.resolve(__dirname, 'dist'),\n    filename: '[name].[contenthash].js',\n    clean: true,\n  },\n  resolve: {\n    extensions: ['.ts', '.js'],\n  },\n  module: {\n    rules: [\n      {\n        test: /\\.ts$/,\n        use: 'ts-loader',\n        exclude: /node_modules/,\n      },\n    ],\n  },\n  plugins: [\n    new HtmlWebpackPlugin({\n      template: './src/index.html',\n    }),\n  ],\n  optimization: {\n    splitChunks: {\n      chunks: 'all',\n    },\n  },\n};"
+    },
+    {
+      "type": "heading",
+      "value": "esbuild – Fastest Builder"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Install esbuild\nnpm install --save-dev esbuild\n\n# Build from command line\nnpx esbuild src/index.ts --bundle --outfile=dist/bundle.js --minify --sourcemap\n\n# Watch mode\nnpx esbuild src/index.ts --bundle --outfile=dist/bundle.js --watch"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// build.js\nconst esbuild = require('esbuild');\n\nasync function build() {\n  await esbuild.build({\n    entryPoints: ['src/index.ts'],\n    bundle: true,\n    outfile: 'dist/bundle.js',\n    minify: true,\n    sourcemap: true,\n    target: ['es2020'],\n    platform: 'browser',\n    format: 'esm',\n    external: [],\n  });\n  console.log('Build complete!');\n}\n\nbuild();"
+    },
+    {
+      "type": "heading",
+      "value": "SWC (Speedy Web Compiler)"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Install SWC\nnpm install --save-dev @swc/cli @swc/core\n\n# Compile with SWC\nnpx swc src -d dist\n\n# Watch mode\nnpx swc src -d dist -w"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "// .swcrc\n{\n  \"jsc\": {\n    \"parser\": {\n      \"syntax\": \"typescript\",\n      \"tsx\": false,\n      \"decorators\": true\n    },\n    \"target\": \"es2020\",\n    \"loose\": false,\n    \"minify\": {\n      \"compress\": true,\n      \"mangle\": true\n    }\n  },\n  \"module\": {\n    \"type\": \"commonjs\"\n  },\n  \"sourceMaps\": true,\n  \"minify\": true\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Vite – Modern Frontend Build"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Create Vite project\nnpm create vite@latest my-app -- --template typescript\ncd my-app\nnpm install\n\n# Build for production\nnpm run build\n\n# Preview build\nnpm run preview"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// vite.config.ts\nimport { defineConfig } from 'vite';\n\nexport default defineConfig({\n  build: {\n    outDir: 'dist',\n    sourcemap: true,\n    minify: 'esbuild',\n    rollupOptions: {\n      input: {\n        main: 'index.html',\n      },\n      output: {\n        manualChunks: {\n          vendor: ['react', 'react-dom'],\n        },\n      },\n    },\n  },\n  server: {\n    port: 3000,\n    open: true,\n  },\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Build Tool Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Tool", "Speed", "Config Complexity", "Best For"],
+        "rows": [
+          ["tsc", "Slow", "Simple", "Node.js, libraries"],
+          ["Webpack", "Medium", "Complex", "Complex SPAs, legacy"],
+          ["esbuild", "Very Fast", "Simple", "Fast builds, modern apps"],
+          ["SWC", "Very Fast", "Simple", "Rust-based compilation"],
+          ["Vite", "Fast", "Simple", "Modern SPAs, HMR"],
+          ["Parcel", "Medium", "Zero-config", "Quick prototypes"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Multi-Target Builds"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "// tsconfig.build.json - Base config\n{\n  \"compilerOptions\": {\n    \"strict\": true,\n    \"esModuleInterop\": true\n  }\n}\n\n// tsconfig.esm.json\n{\n  \"extends\": \"./tsconfig.build.json\",\n  \"compilerOptions\": {\n    \"module\": \"ESNext\",\n    \"outDir\": \"./dist/esm\"\n  }\n}\n\n// tsconfig.cjs.json\n{\n  \"extends\": \"./tsconfig.build.json\",\n  \"compilerOptions\": {\n    \"module\": \"CommonJS\",\n    \"outDir\": \"./dist/cjs\"\n  }\n}"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "// package.json exports\n{\n  \"main\": \"./dist/cjs/index.js\",\n  \"module\": \"./dist/esm/index.js\",\n  \"types\": \"./dist/types/index.d.ts\",\n  \"exports\": {\n    \".\": {\n      \"import\": \"./dist/esm/index.js\",\n      \"require\": \"./dist/cjs/index.js\",\n      \"types\": \"./dist/types/index.d.ts\"\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Optimizing Build Performance"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use incremental builds** – `tsc --incremental` or `incremental: true`",
+        "**Enable skipLibCheck** – Skips type checking of declaration files",
+        "**Use project references** – Split code into smaller projects",
+        "**Parallel builds** – Run tsc --build with composite projects",
+        "**Cache node_modules** – In CI pipelines",
+        "**Use faster transpilers** – esbuild or SWC for large projects"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Production Build Checklist"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "{\n  \"scripts\": {\n    \"build\": \"npm run clean && npm run compile && npm run bundle\",\n    \"clean\": \"rm -rf dist\",\n    \"compile\": \"tsc\",\n    \"bundle\": \"esbuild dist/index.js --bundle --minify --outfile=dist/bundle.js\",\n    \"type-check\": \"tsc --noEmit\",\n    \"build:prod\": \"NODE_ENV=production npm run build\"\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Build Issues & Solutions"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Issue", "Solution"],
+        "rows": [
+          ["Out of memory", "Increase Node memory: NODE_OPTIONS=--max-old-space-size=4096"],
+          ["Slow builds", "Use incremental: true and skipLibCheck"],
+          ["Declaration file conflicts", "Use consistent typesVersions in package.json"],
+          ["Path resolution errors", "Set baseUrl and paths in tsconfig.json"],
+          ["Circular dependencies", "Use circular-dependency-plugin or madge"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Choose your TypeScript build tool based on project requirements. Use tsc for simplicity, esbuild/SWC for speed, Webpack for complex SPAs, or Vite for modern frontend development. Optimize builds with incremental compilation, caching, and proper configuration."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "tsc vs esbuild?",
+      "answer": "tsc does full type checking; esbuild is faster but skips type checking. Use both: tsc for types, esbuild for transpilation."
+    },
+    {
+      "question": "How to speed up TypeScript builds?",
+      "answer": "Use incremental builds, skipLibCheck, project references, or faster transpilers like esbuild/SWC."
+    },
+    {
+      "question": "What are declaration files?",
+      "answer": ".d.ts files that provide type information for JavaScript code, generated with --declaration flag."
+    },
+    {
+      "question": "Webpack vs Vite?",
+      "answer": "Vite is faster for development with HMR; Webpack is more mature with extensive plugin ecosystem."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "// Build tool comparison example\n\n// This code would be processed differently by each tool\n\ninterface BuildConfig {\n  name: string;\n  speed: 'fast' | 'medium' | 'slow';\n  output: string;\n}\n\nconst configs: BuildConfig[] = [\n  { name: 'tsc', speed: 'slow', output: 'dist/' },\n  { name: 'esbuild', speed: 'fast', output: 'dist/' },\n  { name: 'swc', speed: 'fast', output: 'dist/' },\n  { name: 'webpack', speed: 'medium', output: 'dist/' },\n];\n\nfunction buildProject(config: BuildConfig): Promise<string> {\n  console.log(`Building with ${config.name} (${config.speed})...`);\n  return Promise.resolve(`Output: ${config.output}`);\n}\n\n// Simulate build process\nPromise.all(configs.map(buildProject)).then(results => {\n  console.log('\\nAll builds completed!');\n  results.forEach(result => console.log(result));\n});\n\n// Export for module builds\nexport { BuildConfig, buildProject };"
+  },
+
+  "quiz": [
+    {
+      "question": "Which build tool is fastest for TypeScript compilation?",
+      "options": ["tsc", "Webpack", "esbuild", "Babel"],
+      "answer": 2
+    },
+    {
+      "question": "What flag generates declaration files?",
+      "options": ["--types", "--declaration", "--emit", "--dts"],
+      "answer": 1
+    },
+    {
+      "question": "Which tool is known for zero-configuration builds?",
+      "options": ["Webpack", "esbuild", "Parcel", "Rollup"],
+      "answer": 2
+    },
+    {
+      "question": "How to enable incremental compilation in tsc?",
+      "options": ["--cache", "--fast", "--incremental", "--watch"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "ts-config",
+    "ts-performance",
+    "ts-modules",
+    "ts-compiler",
+    "ts-linting"
+  ]
+}

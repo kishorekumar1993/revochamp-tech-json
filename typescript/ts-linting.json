@@ -1,0 +1,216 @@
+{
+  "slug": "ts-linting",
+  "course": "TypeScript",
+  "title": "TypeScript Linting – ESLint & Code Quality Tools",
+
+  "meta": {
+    "title": "TypeScript Linting – ESLint, Prettier & Best Practices (2026)",
+    "description": "Master TypeScript linting with ESLint, Prettier, and other code quality tools. Learn to enforce coding standards and catch errors early.",
+    "keywords": [
+      "typescript linting",
+      "eslint typescript",
+      "ts lint rules",
+      "prettier typescript",
+      "typescript code quality"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Linting Matters in TypeScript"
+    },
+    {
+      "type": "text",
+      "value": "Linting helps catch errors, enforce coding standards, and maintain code quality across teams. While TypeScript provides type checking, linters catch stylistic issues, potential bugs, and enforce best practices."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up ESLint for TypeScript"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Install dependencies\nnpm install --save-dev eslint @eslint/js typescript-eslint\n\n# Initialize ESLint configuration\nnpm init @eslint/config@latest\n\n# Or manual setup for TypeScript\nnpm install --save-dev @typescript-eslint/parser @typescript-eslint/eslint-plugin"
+    },
+    {
+      "type": "heading",
+      "value": "ESLint Configuration (Flat Config)"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// eslint.config.js (ESLint 9+ flat config)\nimport eslint from '@eslint/js';\nimport tseslint from 'typescript-eslint';\n\nexport default tseslint.config(\n  eslint.configs.recommended,\n  ...tseslint.configs.recommended,\n  {\n    rules: {\n      '@typescript-eslint/no-explicit-any': 'error',\n      '@typescript-eslint/explicit-function-return-type': 'warn',\n      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],\n      '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],\n    },\n  },\n  {\n    ignores: ['dist/**', 'node_modules/**', '*.config.js'],\n  }\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Legacy ESLint Configuration (rc format)"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "// .eslintrc.json (legacy)\n{\n  \"parser\": \"@typescript-eslint/parser\",\n  \"extends\": [\n    \"eslint:recommended\",\n    \"plugin:@typescript-eslint/recommended\"\n  ],\n  \"plugins\": [\"@typescript-eslint\"],\n  \"rules\": {\n    \"@typescript-eslint/no-explicit-any\": \"error\",\n    \"@typescript-eslint/explicit-function-return-type\": \"warn\",\n    \"@typescript-eslint/no-unused-vars\": [\"error\", { \"argsIgnorePattern\": \"^_\" }]\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Essential TypeScript ESLint Rules"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Rule", "Description", "Recommended"],
+        "rows": [
+          ["@typescript-eslint/no-explicit-any", "Disallow 'any' type", "error"],
+          ["@typescript-eslint/no-unsafe-assignment", "Prevent unsafe type assignments", "error"],
+          ["@typescript-eslint/explicit-function-return-type", "Require return type annotations", "warn"],
+          ["@typescript-eslint/consistent-type-definitions", "Enforce interface over type", "warn"],
+          ["@typescript-eslint/no-unused-vars", "Catch unused variables", "error"],
+          ["@typescript-eslint/no-non-null-assertion", "Disallow '!' assertions", "warn"],
+          ["@typescript-eslint/ban-ts-comment", "Ban @ts-ignore comments", "warn"],
+          ["@typescript-eslint/array-type", "Enforce consistent array types", "warn"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Prettier Integration"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Install Prettier and ESLint plugin\nnpm install --save-dev prettier eslint-config-prettier eslint-plugin-prettier\n\n# Create .prettierrc\n{\n  \"semi\": true,\n  \"singleQuote\": true,\n  \"tabWidth\": 2,\n  \"trailingComma\": \"es5\",\n  \"printWidth\": 100\n}"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// eslint.config.js with Prettier\nimport eslint from '@eslint/js';\nimport tseslint from 'typescript-eslint';\nimport prettier from 'eslint-plugin-prettier';\nimport eslintConfigPrettier from 'eslint-config-prettier';\n\nexport default tseslint.config(\n  eslint.configs.recommended,\n  ...tseslint.configs.recommended,\n  {\n    plugins: { prettier },\n    rules: {\n      ...eslintConfigPrettier.rules,\n      'prettier/prettier': 'error',\n      '@typescript-eslint/no-explicit-any': 'error',\n    },\n  }\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Husky & Lint-Staged"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Install husky and lint-staged\nnpm install --save-dev husky lint-staged\n\n# Setup husky\nnpx husky init\n\n# Add pre-commit hook\necho \"npx lint-staged\" > .husky/pre-commit"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "// package.json\n{\n  \"lint-staged\": {\n    \"*.{ts,tsx}\": [\n      \"eslint --fix\",\n      \"prettier --write\"\n    ],\n    \"*.{js,json,md}\": [\n      \"prettier --write\"\n    ]\n  },\n  \"scripts\": {\n    \"lint\": \"eslint . --ext .ts,.tsx\",\n    \"lint:fix\": \"eslint . --ext .ts,.tsx --fix\",\n    \"format\": \"prettier --write .\"\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "VS Code Integration"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "// .vscode/settings.json\n{\n  \"editor.codeActionsOnSave\": {\n    \"source.fixAll.eslint\": \"explicit\"\n  },\n  \"editor.formatOnSave\": true,\n  \"eslint.validate\": [\"typescript\", \"typescriptreact\"],\n  \"typescript.tsdk\": \"node_modules/typescript/lib\"\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Custom Rule Example"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// Custom ESLint rule - no-console-log\nmodule.exports = {\n  meta: {\n    type: 'suggestion',\n    docs: {\n      description: 'Disallow console.log statements',\n      recommended: false,\n    },\n    fixable: 'code',\n  },\n  create(context) {\n    return {\n      CallExpression(node) {\n        if (\n          node.callee.type === 'MemberExpression' &&\n          node.callee.object.name === 'console' &&\n          node.callee.property.name === 'log'\n        ) {\n          context.report({\n            node,\n            message: 'Unexpected console.log statement',\n            fix(fixer) {\n              return fixer.remove(node);\n            },\n          });\n        }\n      },\n    };\n  },\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Common Linting Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Too many rules** - Start with recommended configs and add gradually",
+        "**Ignoring lint errors** - Use CI to enforce linting pass",
+        "**Not configuring Prettier** - Let Prettier handle formatting, ESLint for code quality",
+        "**Using outdated plugins** - Keep @typescript-eslint packages updated",
+        "**No type-aware linting** - Enable parserOptions.project for advanced rules"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Type-Aware Linting"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "// eslint.config.js with type-aware rules\nexport default tseslint.config(\n  ...tseslint.configs.recommendedTypeChecked,\n  {\n    languageOptions: {\n      parserOptions: {\n        project: true,\n        tsconfigRootDir: import.meta.dirname,\n      },\n    },\n    rules: {\n      '@typescript-eslint/no-unsafe-argument': 'error',\n      '@typescript-eslint/no-floating-promises': 'error',\n      '@typescript-eslint/await-thenable': 'error',\n    },\n  }\n);"
+    },
+    {
+      "type": "heading",
+      "value": "Linting in CI/CD"
+    },
+    {
+      "type": "code",
+      "language": "yaml",
+      "value": "# .github/workflows/lint.yml\nname: Lint\n\non: [push, pull_request]\n\njobs:\n  lint:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: '20'\n      - run: npm ci\n      - run: npm run lint\n      - run: npm run type-check\n      - name: Check formatting\n        run: npx prettier --check ."
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Linting is essential for maintaining TypeScript code quality. Use ESLint with typescript-eslint for code rules, Prettier for formatting, and tools like Husky to enforce standards before commits. Start with recommended configurations and customize based on your team's needs."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "ESLint vs Prettier?",
+      "answer": "ESLint catches code quality issues; Prettier handles formatting. Use both together."
+    },
+    {
+      "question": "What is typescript-eslint?",
+      "answer": "A monorepo that allows ESLint to lint TypeScript code with type information."
+    },
+    {
+      "question": "How to disable a rule?",
+      "answer": "Use /* eslint-disable rule-name */ or configure in eslint.config.js."
+    },
+    {
+      "question": "What is type-aware linting?",
+      "answer": "Rules that use TypeScript's type information for deeper analysis."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "// Try linting this code - many rules would trigger warnings!\n\n// ❌ Using 'any' (no-explicit-any)\nfunction processData(data: any) {\n  return data.value;\n}\n\n// ❌ Unused variable (no-unused-vars)\nconst unusedVariable = 'hello';\n\n// ❌ Missing return type (explicit-function-return-type)\nfunction calculateSum(a: number, b: number) {\n  return a + b;\n}\n\n// ❌ Non-null assertion (no-non-null-assertion)\nconst element = document.getElementById('app')!;\n\n// ✅ Fixed version\ninterface Data {\n  value: string;\n}\n\nfunction processDataFixed(data: Data): string {\n  return data.value;\n}\n\nfunction calculateSumFixed(a: number, b: number): number {\n  return a + b;\n}\n\nconst elementFixed = document.getElementById('app');\nif (elementFixed) {\n  console.log('Element found!');\n}\n\nconsole.log('Linting would catch the issues above!');"
+  },
+
+  "quiz": [
+    {
+      "question": "Which package allows ESLint to lint TypeScript?",
+      "options": ["@typescript/eslint", "typescript-eslint", "eslint-typescript", "tslint"],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of Prettier?",
+      "options": ["Type checking", "Code formatting", "Bundling", "Testing"],
+      "answer": 1
+    },
+    {
+      "question": "Which tool runs linters on staged git files?",
+      "options": ["Husky", "lint-staged", "pre-commit", "eslint-staged"],
+      "answer": 1
+    },
+    {
+      "question": "What does '@typescript-eslint/no-explicit-any' do?",
+      "options": ["Allows any type", "Disallows any type", "Converts any to unknown", "Ignores any"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ts-best-practices",
+    "ts-config",
+    "ts-performance",
+    "ts-advanced-types",
+    "ts-functions"
+  ]
+}

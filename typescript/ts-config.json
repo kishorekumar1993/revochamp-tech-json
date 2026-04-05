@@ -1,0 +1,253 @@
+{
+  "slug": "ts-config",
+  "course": "TypeScript",
+  "title": "TypeScript Config – tsconfig.json Mastery",
+
+  "meta": {
+    "title": "TypeScript Config – Complete tsconfig.json Guide (2026)",
+    "description": "Master TypeScript configuration with tsconfig.json. Learn all compiler options, project references, and best practices for different project types.",
+    "keywords": [
+      "typescript config",
+      "tsconfig.json",
+      "typescript compiler options",
+      "ts configuration",
+      "typescript setup"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is tsconfig.json?"
+    },
+    {
+      "type": "text",
+      "value": "tsconfig.json is the configuration file for TypeScript projects. It defines compiler options, file inclusion/exclusion rules, and project settings. Without it, TypeScript uses default settings."
+    },
+    {
+      "type": "heading",
+      "value": "Basic tsconfig.json"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2020\",\n    \"module\": \"commonjs\",\n    \"outDir\": \"./dist\",\n    \"rootDir\": \"./src\",\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"forceConsistentCasingInFileNames\": true\n  },\n  \"include\": [\"src/**/*\"],\n  \"exclude\": [\"node_modules\", \"dist\", \"**/*.test.ts\"]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Complete Compiler Options Reference"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Category", "Option", "Description", "Recommended"],
+        "rows": [
+          ["Language", "target", "JS version output", "ES2020+"],
+          ["Language", "lib", "Runtime libraries", "ES2020, DOM"],
+          ["Language", "jsx", "JSX support", "react-jsx"],
+          ["Modules", "module", "Module system", "ESNext/CommonJS"],
+          ["Modules", "moduleResolution", "Module resolution", "bundler/node10"],
+          ["Modules", "resolveJsonModule", "Import JSON", "true"],
+          ["Output", "outDir", "Output directory", "./dist"],
+          ["Output", "rootDir", "Source root", "./src"],
+          ["Output", "declaration", "Generate .d.ts", "true (libraries)"],
+          ["Output", "sourceMap", "Source maps", "true"],
+          ["Strict", "strict", "All strict flags", "true"],
+          ["Strict", "noImplicitAny", "Disallow any", "true"],
+          ["Strict", "strictNullChecks", "Null safety", "true"],
+          ["Interop", "esModuleInterop", "ES interop", "true"],
+          ["Interop", "allowSyntheticDefaultImports", "Default imports", "true"],
+          ["Performance", "skipLibCheck", "Skip .d.ts check", "true"],
+          ["Performance", "incremental", "Incremental builds", "true"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Preset Configurations by Project Type"
+    },
+    {
+      "type": "heading",
+      "value": "Node.js Backend"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2022\",\n    \"module\": \"NodeNext\",\n    \"moduleResolution\": \"NodeNext\",\n    \"lib\": [\"ES2022\"],\n    \"outDir\": \"./dist\",\n    \"rootDir\": \"./src\",\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"forceConsistentCasingInFileNames\": true,\n    \"resolveJsonModule\": true,\n    \"sourceMap\": true,\n    \"removeComments\": true\n  },\n  \"include\": [\"src/**/*\"],\n  \"exclude\": [\"node_modules\", \"dist\", \"**/*.test.ts\"]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "React Frontend"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2020\",\n    \"lib\": [\"ES2020\", \"DOM\", \"DOM.Iterable\"],\n    \"jsx\": \"react-jsx\",\n    \"module\": \"ESNext\",\n    \"moduleResolution\": \"bundler\",\n    \"allowImportingTsExtensions\": true,\n    \"noEmit\": true,\n    \"allowJs\": true,\n    \"strict\": true,\n    \"noUnusedLocals\": true,\n    \"noUnusedParameters\": true,\n    \"noFallthroughCasesInSwitch\": true,\n    \"skipLibCheck\": true,\n    \"esModuleInterop\": true,\n    \"resolveJsonModule\": true\n  },\n  \"include\": [\"src\"],\n  \"references\": [{ \"path\": \"./tsconfig.node.json\" }]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Library (npm Package)"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2020\",\n    \"module\": \"CommonJS\",\n    \"lib\": [\"ES2020\"],\n    \"declaration\": true,\n    \"declarationMap\": true,\n    \"sourceMap\": true,\n    \"outDir\": \"./dist\",\n    \"rootDir\": \"./src\",\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"forceConsistentCasingInFileNames\": true\n  },\n  \"include\": [\"src/**/*\"],\n  \"exclude\": [\"node_modules\", \"dist\", \"**/*.test.ts\", \"**/*.spec.ts\"]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Path Mapping"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "{\n  \"compilerOptions\": {\n    \"baseUrl\": \".\",\n    \"paths\": {\n      \"@/*\": [\"src/*\"],\n      \"@components/*\": [\"src/components/*\"],\n      \"@utils/*\": [\"src/utils/*\"],\n      \"@types/*\": [\"src/types/*\"]\n    }\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Project References (Monorepo)"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "// tsconfig.base.json\n{\n  \"compilerOptions\": {\n    \"composite\": true,\n    \"declaration\": true,\n    \"declarationMap\": true,\n    \"sourceMap\": true,\n    \"strict\": true,\n    \"esModuleInterop\": true,\n    \"skipLibCheck\": true,\n    \"forceConsistentCasingInFileNames\": true\n  }\n}\n\n// packages/core/tsconfig.json\n{\n  \"extends\": \"../../tsconfig.base.json\",\n  \"compilerOptions\": {\n    \"outDir\": \"./dist\",\n    \"rootDir\": \"./src\"\n  },\n  \"include\": [\"src/**/*\"]\n}\n\n// apps/web/tsconfig.json\n{\n  \"extends\": \"../../tsconfig.base.json\",\n  \"references\": [\n    { \"path\": \"../../packages/core\" }\n  ],\n  \"compilerOptions\": {\n    \"outDir\": \"./dist\",\n    \"rootDir\": \"./src\"\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Type Checking Options"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "{\n  \"compilerOptions\": {\n    // Strict family\n    \"strict\": true,\n    \"noImplicitAny\": true,\n    \"strictNullChecks\": true,\n    \"strictFunctionTypes\": true,\n    \"strictBindCallApply\": true,\n    \"strictPropertyInitialization\": true,\n    \"noImplicitThis\": true,\n    \"useUnknownInCatchVariables\": true,\n    \n    // Linter-like checks\n    \"noUnusedLocals\": true,\n    \"noUnusedParameters\": true,\n    \"noImplicitReturns\": true,\n    \"noFallthroughCasesInSwitch\": true,\n    \"noUncheckedIndexedAccess\": true,\n    \"noPropertyAccessFromIndexSignature\": true\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Extended Configurations"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "// tsconfig.base.json - Shared settings\n{\n  \"compilerOptions\": {\n    \"strict\": true,\n    \"target\": \"ES2020\",\n    \"module\": \"ESNext\"\n  }\n}\n\n// tsconfig.dev.json - Development overrides\n{\n  \"extends\": \"./tsconfig.base.json\",\n  \"compilerOptions\": {\n    \"sourceMap\": true,\n    \"inlineSources\": true\n  }\n}\n\n// tsconfig.prod.json - Production overrides\n{\n  \"extends\": \"./tsconfig.base.json\",\n  \"compilerOptions\": {\n    \"removeComments\": true,\n    \"sourceMap\": false\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "CLI Flags vs tsconfig.json"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Use Case", "tsconfig.json", "CLI Flag"],
+        "rows": [
+          ["Project-wide settings", "✅ Best", "❌ Cumbersome"],
+          ["One-off builds", "❌ Overkill", "✅ Quick"],
+          ["Team consistency", "✅ Required", "❌ Not shared"],
+          ["CI/CD pipelines", "✅ Best", "⚠️ Possible"],
+          ["Watch mode", "✅ tsc --watch", "✅ tsc --watch"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Debugging Configuration"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "{\n  \"compilerOptions\": {\n    \"sourceMap\": true,\n    \"inlineSources\": true,\n    \"sourceRoot\": \"/\",\n    \"mapRoot\": \"/\",\n    \"outDir\": \"./dist\",\n    \"removeComments\": false\n  }\n}\n\n// VS Code launch.json\n{\n  \"version\": \"0.2.0\",\n  \"configurations\": [\n    {\n      \"type\": \"node\",\n      \"request\": \"launch\",\n      \"name\": \"Debug TypeScript\",\n      \"runtimeArgs\": [\"-r\", \"ts-node/register\"],\n      \"args\": [\"${workspaceFolder}/src/index.ts\"],\n      \"sourceMaps\": true\n    }\n  ]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Forgetting to set rootDir** – Causes unexpected output structure",
+        "**Using outDir instead of rootDir** – Misunderstood paths",
+        "**Not using strict mode** – Missing type safety benefits",
+        "**Including node_modules** – Slow compilation",
+        "**Missing declaration files for libraries** – No .d.ts output",
+        "**Inconsistent module resolution** – Import errors"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Always enable strict mode** – Catch more errors",
+        "**Use incremental builds** – Faster compilation",
+        "**Extend base configs** – DRY configuration",
+        "**Set correct target** – Based on your environment",
+        "**Use project references** – For monorepos",
+        "**Commit tsconfig.json** – Share with team",
+        "**Validate config** – Use tsc --showConfig"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "tsconfig.json is the heart of every TypeScript project. Understanding compiler options enables you to optimize builds, enforce coding standards, and configure TypeScript for any environment. Start with strict mode and customize based on your project needs."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is tsconfig.json?",
+      "answer": "Configuration file that specifies compiler options and files to include in a TypeScript project."
+    },
+    {
+      "question": "Strict mode vs noImplicitAny?",
+      "answer": "Strict enables all strict family flags; noImplicitAny only prevents implicit any."
+    },
+    {
+      "question": "What are project references?",
+      "answer": "Feature that allows TypeScript projects to depend on each other for better build performance."
+    },
+    {
+      "question": "How to see effective config?",
+      "answer": "Run `tsc --showConfig` to see the resolved configuration."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "// This code demonstrates tsconfig.json settings\n\n// With strictNullChecks: true, this would error if not handled\nfunction getValue(value: string | null): string {\n  // Without strictNullChecks, this would be allowed\n  // With strictNullChecks, we need proper handling\n  return value ?? 'default value';\n}\n\n// With noUnusedLocals: true, this would cause a warning\n// const unusedVariable = 'this would trigger a warning';\n\n// With noImplicitAny: true, this would error\n// function processData(data) {  // 'data' would have implicit any\n//   return data.value;\n// }\n\n// Proper typing\ninterface Data {\n  value: string;\n}\n\nfunction processData(data: Data): string {\n  return data.value;\n}\n\n// With resolveJsonModule: true\nimport packageJson from './package.json' assert { type: 'json' };\nconsole.log('TypeScript version:', packageJson.devDependencies?.typescript);\n\n// Check your tsconfig.json settings!\nconsole.log('Configuration affects how this code is checked');"
+  },
+
+  "quiz": [
+    {
+      "question": "Which option enables all strict type checking flags?",
+      "options": ["noImplicitAny", "strict", "strictNullChecks", "forceConsistentCasingInFileNames"],
+      "answer": 1
+    },
+    {
+      "question": "What does 'outDir' specify?",
+      "options": ["Source directory", "Output directory", "Type directory", "Config directory"],
+      "answer": 1
+    },
+    {
+      "question": "Which flag generates declaration files?",
+      "options": ["emitDeclaration", "declaration", "dts", "types"],
+      "answer": 1
+    },
+    {
+      "question": "How to extend another tsconfig.json?",
+      "options": ["extends", "inherit", "base", "parent"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "ts-compiler",
+    "ts-build",
+    "ts-performance",
+    "ts-best-practices",
+    "ts-linting"
+  ]
+}

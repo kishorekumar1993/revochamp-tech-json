@@ -1,0 +1,217 @@
+{
+  "slug": "ts-performance",
+  "course": "TypeScript",
+  "title": "TypeScript Performance – Optimize Your Code",
+
+  "meta": {
+    "title": "TypeScript Performance – Optimization Tips & Best Practices (2026)",
+    "description": "Learn how to write high-performance TypeScript code. Discover compiler options, optimization techniques, and common performance pitfalls.",
+    "keywords": [
+      "typescript performance",
+      "ts optimization",
+      "typescript compiler options",
+      "ts build speed",
+      "typescript best practices"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why TypeScript Performance Matters"
+    },
+    {
+      "type": "text",
+      "value": "TypeScript performance affects both compile-time and runtime. Optimizing your TypeScript code leads to faster builds, smaller bundles, and better user experiences."
+    },
+    {
+      "type": "heading",
+      "value": "Compiler Options for Performance"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "{\n  \"compilerOptions\": {\n    \"target\": \"ES2020\",\n    \"module\": \"ESNext\",\n    \"lib\": [\"ES2020\", \"DOM\"],\n    \"skipLibCheck\": true,\n    \"esModuleInterop\": true,\n    \"allowSyntheticDefaultImports\": true,\n    \"strict\": true,\n    \"forceConsistentCasingInFileNames\": true,\n    \"noEmitOnError\": true\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Project References"
+    },
+    {
+      "type": "text",
+      "value": "Split large codebases into smaller projects to speed up compilation."
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "{\n  \"references\": [\n    { \"path\": \"./core\" },\n    { \"path\": \"./utils\" },\n    { \"path\": \"./components\" }\n  ]\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Incremental Builds"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// tsconfig.json\n{\n  \"compilerOptions\": {\n    \"incremental\": true,\n    \"tsBuildInfoFile\": \".tsbuildinfo\"\n  }\n}\n\n// Command line\ntsc --incremental"
+    },
+    {
+      "type": "heading",
+      "value": "Avoiding Type Bloat"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// ❌ Bad - Creates complex inferred types\nconst config = {\n  a: { b: { c: { d: { e: 1 } } } }\n};\n\n// ✅ Good - Explicit typing prevents deep inference\ninterface Config {\n  a: {\n    b: {\n      c: number;\n    };\n  };\n}\n\nconst config: Config = {\n  a: { b: { c: 1 } }\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Using const Assertions"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// More specific, narrower types\nconst routes = {\n  home: '/home',\n  about: '/about',\n  contact: '/contact'\n} as const;\n\n// Type is: { readonly home: '/home'; readonly about: '/about'; ... }"
+    },
+    {
+      "type": "heading",
+      "value": "Runtime Performance Tips"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use primitive types** over objects when possible",
+        "**Avoid type assertions** that cause runtime checks",
+        "**Minimize spread operators** in hot code paths",
+        "**Use Map/Set** instead of plain objects for dynamic lookups",
+        "**Debounce/throttle** frequent events"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Bundle Optimization"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// webpack.config.js\nmodule.exports = {\n  optimization: {\n    splitChunks: {\n      chunks: 'all',\n      cacheGroups: {\n        vendor: {\n          test: /[\\\\/]node_modules[\\\\/]/,\n          name: 'vendors',\n          chunks: 'all',\n        },\n      },\n    },\n  },\n};\n\n// Use dynamic imports\nconst HeavyComponent = await import('./HeavyComponent');"
+    },
+    {
+      "type": "heading",
+      "value": "Performance Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Technique", "Compile Time Impact", "Runtime Impact"],
+        "rows": [
+          ["Incremental builds", "⬇️ -70%", "➖ None"],
+          ["Skip lib check", "⬇️ -30%", "➖ None"],
+          ["Const assertions", "➖ None", "⬆️ +5%"],
+          ["Project refs", "⬇️ -50%", "➖ None"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Common Performance Pitfalls"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Excessive type inference** in large objects",
+        "**Overusing mapped types** and conditional types",
+        "**Deep nested generics** that explode combinatorially",
+        "**Using any type** (disables optimization opportunities)",
+        "**Large union types** (> 10-20 members)"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Profiling TypeScript"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Generate performance trace\ntsc --generateTrace trace\n\n# Analyze with Chrome DevTools or\n# https://typescript.azurewebsites.net/trace\n\n# Measure compile time\ntime tsc --noEmit\n\n# Use TypeScript compiler performance flags\ntsc --extendedDiagnostics"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices Summary"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Enable incremental compilation** in CI/CD pipelines",
+        "**Use project references** for monorepos",
+        "**Set strict mode** to catch errors early",
+        "**Avoid barrel files** (index.ts that re-exports many modules)",
+        "**Prefer interfaces** over type aliases for object types",
+        "**Use satisfies operator** (TS 4.9+) for type-safe inference"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "TypeScript performance optimization balances compile-time speed, bundle size, and runtime efficiency. Use compiler flags, project references, and type design patterns to keep your TypeScript code fast and maintainable."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "How to speed up TypeScript compilation?",
+      "answer": "Use incremental builds, skipLibCheck, and project references."
+    },
+    {
+      "question": "What is incremental compilation?",
+      "answer": "Recompiles only changed files instead of the whole project."
+    },
+    {
+      "question": "Do const assertions improve performance?",
+      "answer": "They improve type inference but don't affect runtime."
+    },
+    {
+      "question": "How to profile TypeScript compiler?",
+      "answer": "Use --generateTrace or --extendedDiagnostics flags."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "// Measure type inference performance\ninterface User {\n  id: number;\n  name: string;\n  email: string;\n  createdAt: Date;\n}\n\n// ❌ Slow with large unions\ntype Status = 'pending' | 'active' | 'inactive' | 'deleted' | 'banned' | 'suspended';\n\n// ✅ Fast with enums for many values\nenum StatusEnum {\n  PENDING = 'pending',\n  ACTIVE = 'active',\n  INACTIVE = 'inactive',\n  DELETED = 'deleted',\n  BANNED = 'banned',\n  SUSPENDED = 'suspended'\n}\n\n// Test performance\nconst users: User[] = [];\nfor (let i = 0; i < 1000; i++) {\n  users.push({\n    id: i,\n    name: `User ${i}`,\n    email: `user${i}@example.com`,\n    createdAt: new Date()\n  });\n}\n\nconsole.log(`Created ${users.length} users`);"
+  },
+
+  "quiz": [
+    {
+      "question": "Which compiler option enables incremental builds?",
+      "options": ["fastBuild", "cache", "incremental", "watchMode"],
+      "answer": 2
+    },
+    {
+      "question": "What do project references improve?",
+      "options": ["Runtime speed", "Compilation speed", "Bundle size", "Type safety"],
+      "answer": 1
+    },
+    {
+      "question": "Which operator provides type-safe inference without losing literal types?",
+      "options": ["as const", "satisfies", "implements", "extends"],
+      "answer": 1
+    },
+    {
+      "question": "What is a common performance pitfall with types?",
+      "options": ["Using primitive types", "Deep nested generics", "Using interfaces", "Explicit typing"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ts-compiler",
+    "ts-advanced-types",
+    "ts-config",
+    "ts-optimization",
+    "ts-best-practices"
+  ]
+}

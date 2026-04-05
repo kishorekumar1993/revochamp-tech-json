@@ -1,0 +1,230 @@
+{
+  "slug": "ts-best-practices",
+  "course": "TypeScript",
+  "title": "TypeScript Best Practices – Write Clean & Maintainable Code",
+
+  "meta": {
+    "title": "TypeScript Best Practices – Clean Code Guide (2026)",
+    "description": "Learn TypeScript best practices for writing clean, maintainable, and type-safe code. Includes style guides, patterns, and common pitfalls to avoid.",
+    "keywords": [
+      "typescript best practices",
+      "ts style guide",
+      "typescript patterns",
+      "clean typescript",
+      "ts coding standards"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Best Practices Matter"
+    },
+    {
+      "type": "text",
+      "value": "TypeScript best practices help you write code that is type-safe, maintainable, and scalable. Following these guidelines reduces bugs, improves collaboration, and makes refactoring easier."
+    },
+    {
+      "type": "heading",
+      "value": "Use Strict Mode"
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "value": "{\n  \"compilerOptions\": {\n    \"strict\": true,\n    \"noImplicitAny\": true,\n    \"strictNullChecks\": true,\n    \"strictFunctionTypes\": true,\n    \"strictPropertyInitialization\": true,\n    \"noImplicitReturns\": true,\n    \"noFallthroughCasesInSwitch\": true\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Prefer Interfaces Over Types"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// ✅ Good - Interface for objects\ninterface User {\n  id: number;\n  name: string;\n  email: string;\n}\n\n// ✅ When to use type aliases\ntype ID = string | number;\ntype Nullable<T> = T | null;\n\n// ❌ Avoid - Type for objects (unless you need union/intersection)\ntype UserType = {\n  id: number;\n  name: string;\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Use const Assertions for Immutability"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// ✅ Good - Immutable configuration\nconst COLORS = ['red', 'green', 'blue'] as const;\nconst API_ENDPOINTS = {\n  users: '/api/users',\n  posts: '/api/posts'\n} as const;\n\n// Type: readonly ['red', 'green', 'blue']\n// Type: { readonly users: '/api/users'; readonly posts: '/api/posts' }"
+    },
+    {
+      "type": "heading",
+      "value": "Avoid any at All Costs"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// ❌ Bad - Using any\ndata: any;\n\n// ✅ Good - Use unknown for uncertain types\ndata: unknown;\n\n// ✅ Better - Use proper types\ninterface ApiResponse {\n  data: User[];\n  status: number;\n}\n\n// ✅ Use type guards\nfunction isUser(data: unknown): data is User {\n  return typeof data === 'object' && data !== null && 'id' in data;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Use Discriminated Unions"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// ✅ Good - Discriminated union pattern\ninterface SuccessResponse {\n  status: 'success';\n  data: User[];\n}\n\ninterface ErrorResponse {\n  status: 'error';\n  error: string;\n}\n\ntype ApiResponse = SuccessResponse | ErrorResponse;\n\nfunction handleResponse(response: ApiResponse) {\n  if (response.status === 'success') {\n    console.log(response.data); // TypeScript knows it's SuccessResponse\n  } else {\n    console.log(response.error); // TypeScript knows it's ErrorResponse\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Use Optional Chaining and Nullish Coalescing"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// ❌ Bad - Verbose null checks\nconst userName = user && user.profile && user.profile.name;\nconst displayName = userName !== null && userName !== undefined ? userName : 'Anonymous';\n\n// ✅ Good - Modern TypeScript\nconst userName = user?.profile?.name;\nconst displayName = userName ?? 'Anonymous';"
+    },
+    {
+      "type": "heading",
+      "value": "Prefer Readonly and as const"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// ✅ Good - Readonly arrays and properties\ninterface Config {\n  readonly apiUrl: string;\n  readonly timeout: number;\n}\n\nfunction processItems(items: readonly string[]) {\n  // items.push('new'); // ❌ Error: Cannot modify\n  items.forEach(item => console.log(item)); // ✅ OK\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Use Generics for Reusable Code"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// ✅ Good - Generic function\nfunction getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {\n  return obj[key];\n}\n\n// ✅ Good - Generic class\nclass Repository<T extends { id: number }> {\n  private items: T[] = [];\n  \n  findById(id: number): T | undefined {\n    return this.items.find(item => item.id === id);\n  }\n  \n  save(item: T): void {\n    this.items.push(item);\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Naming Conventions"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Element", "Convention", "Example"],
+        "rows": [
+          ["Variables/Functions", "camelCase", "userName, getUser()"],
+          ["Classes/Interfaces", "PascalCase", "UserService, IUser (avoid I prefix)"],
+          ["Constants", "UPPER_SNAKE_CASE", "MAX_RETRY_COUNT"],
+          ["Private members", "_camelCase or camelCase", "_cache, private cache"],
+          ["Type parameters", "T, K, V or PascalCase", "T, TData, TResponse"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Use Utility Types"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "interface User {\n  id: number;\n  name: string;\n  email: string;\n  password: string;\n}\n\n// Partial - All properties optional\ntype UserUpdate = Partial<User>;\n\n// Pick - Select specific properties\ntype PublicUser = Pick<User, 'id' | 'name' | 'email'>;\n\n// Omit - Exclude properties\ntype UserWithoutPassword = Omit<User, 'password'>;\n\n// Readonly - Make immutable\ntype ImmutableUser = Readonly<User>;\n\n// ReturnType - Extract function return type\nfunction getUser(): User { /* ... */ }\ntype GetUserReturn = ReturnType<typeof getUser>; // User"
+    },
+    {
+      "type": "heading",
+      "value": "Avoid Function Overloads When Possible"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// ❌ Bad - Complex overloads\nfunction process(value: string): string;\nfunction process(value: number): number;\nfunction process(value: boolean): boolean;\nfunction process(value: string | number | boolean): string | number | boolean {\n  return value;\n}\n\n// ✅ Good - Generics or union types\nfunction process<T>(value: T): T {\n  return value;\n}\n\n// Or with conditional types\nfunction process<T extends string | number | boolean>(value: T): T {\n  return value;\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices Summary Table"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Practice", "Do", "Don't"],
+        "rows": [
+          ["Type safety", "Use strict mode, unknown, type guards", "Use any, @ts-ignore"],
+          ["Object types", "Use interfaces", "Use type aliases for objects"],
+          ["Null handling", "Optional chaining (?.), nullish coalescing (??)", "Manual null checks, || for defaults"],
+          ["Immutability", "Use readonly, as const, Readonly<T>", "Modify objects directly"],
+          ["Reusability", "Use generics, utility types", "Duplicate code, any types"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Common Anti-Patterns to Avoid"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using any** - Destroys type safety completely",
+        "**Overusing ! (non-null assertion)** - Hides potential null errors",
+        "**Using as type assertions unnecessarily** - Bypasses type checking",
+        "**Exporting types/interfaces unnecessarily** - Increases bundle size",
+        "**Using enums for runtime values** - Prefer union types or as const",
+        "**Ignoring TypeScript errors** - Fix them, don't suppress them"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Following TypeScript best practices leads to safer, more maintainable code. Enable strict mode, avoid any, use proper naming conventions, and leverage TypeScript's powerful type system. Remember: good TypeScript code is not just about making the compiler happy—it's about making your code understandable and reliable."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Interface or type alias?",
+      "answer": "Prefer interfaces for objects; use types for unions, intersections, and mapped types."
+    },
+    {
+      "question": "How to avoid any?",
+      "answer": "Use unknown, generics, or proper type definitions. Enable noImplicitAny."
+    },
+    {
+      "question": "What is strict mode?",
+      "answer": "Enables full type checking including null checks, no implicit any, and strict function types."
+    },
+    {
+      "question": "When to use as const?",
+      "answer": "When you need immutable, literal types for arrays or objects."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "// TypeScript Best Practices in Action\n\n// ✅ Use strict typing\ninterface Product {\n  readonly id: number;\n  name: string;\n  price: number;\n  category: 'electronics' | 'clothing' | 'books';\n}\n\n// ✅ Use discriminated unions\ntype Result<T> = \n  | { success: true; data: T }\n  | { success: false; error: string };\n\n// ✅ Use generics\nfunction fetchData<T>(url: string): Promise<Result<T>> {\n  return fetch(url)\n    .then(res => res.json())\n    .then(data => ({ success: true, data }))\n    .catch(err => ({ success: false, error: err.message }));\n}\n\n// ✅ Use optional chaining\nconst product: Product = {\n  id: 1,\n  name: 'Laptop',\n  price: 999,\n  category: 'electronics'\n};\n\nconsole.log(product?.name ?? 'Unknown product');\nconsole.log(`Product ${product.name} is in category: ${product.category}`);\n\n// Try modifying a readonly property (will error)\n// product.id = 2; // ❌ Error: Cannot assign to 'id' because it is a read-only property"
+  },
+
+  "quiz": [
+    {
+      "question": "What should you use instead of 'any' for unknown types?",
+      "options": ["object", "null", "unknown", "undefined"],
+      "answer": 2
+    },
+    {
+      "question": "Which is preferred for defining object shapes?",
+      "options": ["type aliases", "interfaces", "classes", "enums"],
+      "answer": 1
+    },
+    {
+      "question": "What does the '??' operator do?",
+      "options": ["Logical OR", "Nullish coalescing", "Optional chaining", "Type assertion"],
+      "answer": 1
+    },
+    {
+      "question": "Which utility type makes all properties optional?",
+      "options": ["Pick", "Omit", "Partial", "Required"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "ts-types",
+    "ts-advanced-types",
+    "ts-config",
+    "ts-performance",
+    "ts-functions"
+  ]
+}
