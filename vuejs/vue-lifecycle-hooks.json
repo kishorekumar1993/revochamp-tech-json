@@ -1,0 +1,189 @@
+{
+  "slug": "vue-lifecycle-hooks",
+  "course": "Vue",
+  "title": "Vue Lifecycle Hooks",
+
+  "meta": {
+    "title": "Vue Lifecycle Hooks – Complete Guide (2026)",
+    "description": "Learn Vue lifecycle hooks including mounted, created, updated, and unmounted with examples and use cases.",
+    "keywords": [
+      "vue lifecycle hooks",
+      "vue mounted created",
+      "vue lifecycle methods",
+      "vue component lifecycle",
+      "vue hooks"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Lifecycle Hooks?"
+    },
+    {
+      "type": "text",
+      "value": "Lifecycle hooks are special methods in Vue that allow you to run code at specific stages of a component's life."
+    },
+    {
+      "type": "heading",
+      "value": "Lifecycle Phases"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Phase", "Hooks"],
+        "rows": [
+          ["Creation", "created"],
+          ["Mounting", "beforeMount, mounted"],
+          ["Updating", "beforeUpdate, updated"],
+          ["Unmounting", "beforeUnmount, unmounted"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "created Hook"
+    },
+    {
+      "type": "text",
+      "value": "Called when the component is created but not yet mounted to the DOM."
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "created() {\n  console.log('Component created');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "mounted Hook"
+    },
+    {
+      "type": "text",
+      "value": "Called after the component is mounted to the DOM."
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "mounted() {\n  console.log('Component mounted');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "updated Hook"
+    },
+    {
+      "type": "text",
+      "value": "Called when reactive data changes and the DOM updates."
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "updated() {\n  console.log('Component updated');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "unmounted Hook"
+    },
+    {
+      "type": "text",
+      "value": "Called when the component is removed from the DOM."
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "unmounted() {\n  console.log('Component destroyed');\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Fetch data in mounted()**",
+        "**Initialize variables in created()**",
+        "**Watch DOM updates in updated()**",
+        "**Cleanup resources in unmounted()**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use mounted for DOM-related logic**",
+        "**Avoid heavy logic in updated**",
+        "**Clean up timers and listeners in unmounted**",
+        "**Use created for initial setup**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Using DOM before mounted**",
+        "**Heavy operations in updated hook**",
+        "**Not cleaning resources in unmounted**",
+        "**Confusing created and mounted hooks**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Lifecycle hooks are essential for controlling component behavior at different stages, enabling efficient and organized Vue applications."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is mounted?",
+      "answer": "It runs after component is added to DOM."
+    },
+    {
+      "question": "When to fetch API?",
+      "answer": "In mounted hook."
+    },
+    {
+      "question": "What is unmounted?",
+      "answer": "It runs when component is removed."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "mounted() {\n  console.log('Mounted');\n}"
+  },
+
+  "quiz": [
+    {
+      "question": "Which hook runs after DOM?",
+      "options": ["created", "mounted", "updated", "beforeCreate"],
+      "answer": 1
+    },
+    {
+      "question": "Cleanup happens in?",
+      "options": ["created", "mounted", "unmounted", "updated"],
+      "answer": 2
+    },
+    {
+      "question": "First hook?",
+      "options": ["mounted", "created", "updated", "unmounted"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "vue-components-intro",
+    "vue-events",
+    "vue-data-binding",
+    "vue-reactivity",
+    "vue-composition-api"
+  ]
+}

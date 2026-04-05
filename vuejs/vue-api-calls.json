@@ -1,0 +1,153 @@
+{
+  "slug": "vue-api-calls",
+  "course": "Vue",
+  "title": "Vue API Calls",
+
+  "meta": {
+    "title": "Vue API Calls – Fetch Data from Server (2026)",
+    "description": "Learn how to make API calls in Vue using fetch, axios, and handle responses, errors, and loading states.",
+    "keywords": [
+      "vue api calls",
+      "vue fetch api",
+      "vue axios",
+      "vue http request",
+      "vue data fetching"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are API Calls?"
+    },
+    {
+      "type": "text",
+      "value": "API calls allow Vue applications to communicate with servers to fetch or send data."
+    },
+    {
+      "type": "heading",
+      "value": "Using Fetch API"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "fetch('https://api.example.com/data')\n  .then(res => res.json())\n  .then(data => console.log(data));"
+    },
+    {
+      "type": "heading",
+      "value": "Using Axios"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "import axios from 'axios';\n\naxios.get('https://api.example.com/data')\n  .then(response => console.log(response.data));"
+    },
+    {
+      "type": "heading",
+      "value": "Async/Await Example"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "async mounted() {\n  const res = await fetch('https://api.example.com/data');\n  const data = await res.json();\n  console.log(data);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Handling Errors"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "try {\n  const res = await fetch(url);\n} catch (error) {\n  console.error(error);\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Loading State"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "data() {\n  return { loading: true };\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use async/await for cleaner code**",
+        "**Handle loading and error states**",
+        "**Use axios for complex requests**",
+        "**Keep API logic separate (services)**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Not handling errors properly**",
+        "**Mixing API logic in components**",
+        "**Ignoring loading states**",
+        "**Making unnecessary API calls**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "API calls are essential for dynamic Vue applications. Proper handling of data, errors, and loading states ensures a smooth user experience."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is API call?",
+      "answer": "Fetching or sending data to server."
+    },
+    {
+      "question": "Which library is popular?",
+      "answer": "Axios is widely used."
+    },
+    {
+      "question": "Why async/await?",
+      "answer": "Cleaner and readable code."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "fetch('https://api.example.com/data').then(res => res.json());"
+  },
+
+  "quiz": [
+    {
+      "question": "API used for?",
+      "options": ["Styling", "Data fetching", "Routing", "Events"],
+      "answer": 1
+    },
+    {
+      "question": "Popular library?",
+      "options": ["Vuex", "Axios", "Router", "Pinia"],
+      "answer": 1
+    },
+    {
+      "question": "Async keyword?",
+      "options": ["await", "async", "then", "fetch"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "vue-state-management",
+    "vue-pinia",
+    "vue-components-intro",
+    "vue-lifecycle-hooks",
+    "vue-performance"
+  ]
+}

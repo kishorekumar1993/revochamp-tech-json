@@ -1,0 +1,157 @@
+{
+  "slug": "vue-slots",
+  "course": "Vue",
+  "title": "Vue Slots",
+
+  "meta": {
+    "title": "Vue Slots – Content Distribution in Components (2026)",
+    "description": "Learn how to use slots in Vue for flexible component composition, including default, named, and scoped slots.",
+    "keywords": [
+      "vue slots",
+      "vue default slot",
+      "vue named slots",
+      "vue scoped slots",
+      "vue component content"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Slots?"
+    },
+    {
+      "type": "text",
+      "value": "Slots allow you to pass content from a parent component into a child component, enabling flexible and reusable component layouts."
+    },
+    {
+      "type": "heading",
+      "value": "Default Slot"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<!-- Child -->\n<div>\n  <slot></slot>\n</div>\n\n<!-- Parent -->\n<my-component>\n  <p>Hello Slot</p>\n</my-component>"
+    },
+    {
+      "type": "heading",
+      "value": "Named Slots"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<!-- Child -->\n<header><slot name=\"header\"></slot></header>\n<main><slot></slot></main>\n\n<!-- Parent -->\n<my-component>\n  <template v-slot:header>\n    <h1>Title</h1>\n  </template>\n  <p>Content</p>\n</my-component>"
+    },
+    {
+      "type": "heading",
+      "value": "Scoped Slots"
+    },
+    {
+      "type": "text",
+      "value": "Scoped slots allow child components to pass data to slot content."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<!-- Child -->\n<slot :user=\"user\"></slot>\n\n<!-- Parent -->\n<my-component v-slot=\"slotProps\">\n  {{ slotProps.user.name }}\n</my-component>"
+    },
+    {
+      "type": "heading",
+      "value": "Shorthand Syntax"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<template #header>\n  <h1>Header</h1>\n</template>"
+    },
+    {
+      "type": "heading",
+      "value": "Fallback Content"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<slot>Default Content</slot>"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use slots for flexible layouts**",
+        "**Use named slots for complex UI**",
+        "**Keep slot structure simple**",
+        "**Use scoped slots for dynamic data sharing**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Overusing slots unnecessarily**",
+        "**Not using named slots properly**",
+        "**Confusing scoped slots syntax**",
+        "**Making components too complex**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Slots provide a powerful way to create flexible and reusable Vue components by allowing dynamic content insertion."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What are slots?",
+      "answer": "They allow passing content into components."
+    },
+    {
+      "question": "What is named slot?",
+      "answer": "A slot with a specific name for structured content."
+    },
+    {
+      "question": "What is scoped slot?",
+      "answer": "It allows passing data from child to slot content."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "<my-component>\n  <p>Hello Slot</p>\n</my-component>"
+  },
+
+  "quiz": [
+    {
+      "question": "Slots used for?",
+      "options": ["API", "Content distribution", "Database", "Routing"],
+      "answer": 1
+    },
+    {
+      "question": "Named slot syntax?",
+      "options": ["v-bind", "v-slot", "v-if", "v-for"],
+      "answer": 1
+    },
+    {
+      "question": "Scoped slots allow?",
+      "options": ["Loop", "Binding", "Data passing", "Event"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "vue-components-intro",
+    "vue-props",
+    "vue-events",
+    "vue-template-syntax",
+    "vue-custom-directives"
+  ]
+}

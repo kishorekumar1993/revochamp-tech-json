@@ -1,0 +1,168 @@
+{
+  "slug": "vue-mixins",
+  "course": "Vue",
+  "title": "Vue Mixins",
+
+  "meta": {
+    "title": "Vue Mixins – Reuse Logic Across Components (2026)",
+    "description": "Learn how to use mixins in Vue to reuse logic across multiple components and understand their advantages and limitations.",
+    "keywords": [
+      "vue mixins",
+      "vue reusable logic",
+      "vue mixin example",
+      "vue code reuse",
+      "vue mixin usage"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Mixins?"
+    },
+    {
+      "type": "text",
+      "value": "Mixins are a way to reuse component logic across multiple Vue components by merging shared functionality."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Mixins?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Reuse common logic**",
+        "**Reduce code duplication**",
+        "**Share functionality across components**",
+        "**Simplify maintenance**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Example"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "const myMixin = {\n  data() {\n    return { count: 0 };\n  },\n  methods: {\n    increment() {\n      this.count++;\n    }\n  }\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Using Mixin"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "export default {\n  mixins: [myMixin]\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Merging Behavior"
+    },
+    {
+      "type": "text",
+      "value": "Vue merges data, methods, and lifecycle hooks from mixins into components."
+    },
+    {
+      "type": "heading",
+      "value": "Lifecycle Hooks in Mixins"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "const mixin = {\n  mounted() {\n    console.log('Mixin mounted');\n  }\n};"
+    },
+    {
+      "type": "heading",
+      "value": "Limitations"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Name conflicts between mixin and component**",
+        "**Hard to trace logic origin**",
+        "**Less explicit than composition API**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use mixins for simple reusable logic**",
+        "**Avoid large or complex mixins**",
+        "**Use Composition API for better clarity**",
+        "**Document mixin behavior clearly**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Overusing mixins**",
+        "**Creating naming conflicts**",
+        "**Mixing too many responsibilities**",
+        "**Not understanding merge behavior**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Mixins provide a way to reuse logic in Vue, but modern Vue encourages using the Composition API for better structure and maintainability."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a mixin?",
+      "answer": "A reusable piece of logic shared across components."
+    },
+    {
+      "question": "Are mixins recommended?",
+      "answer": "They are useful, but Composition API is preferred."
+    },
+    {
+      "question": "What is merge behavior?",
+      "answer": "Vue combines mixin and component options."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "export default { mixins: [myMixin] };"
+  },
+
+  "quiz": [
+    {
+      "question": "Mixins used for?",
+      "options": ["Routing", "Reuse logic", "Styling", "API"],
+      "answer": 1
+    },
+    {
+      "question": "Problem with mixins?",
+      "options": ["Speed", "Conflicts", "Size", "Routing"],
+      "answer": 1
+    },
+    {
+      "question": "Modern alternative?",
+      "options": ["Vuex", "Composition API", "Router", "Props"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "vue-composition-api",
+    "vue-components-intro",
+    "vue-state-management",
+    "vue-pinia",
+    "vue-lifecycle-hooks"
+  ]
+}

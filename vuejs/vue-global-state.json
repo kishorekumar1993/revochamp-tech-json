@@ -1,0 +1,169 @@
+{
+  "slug": "vue-global-state",
+  "course": "Vue",
+  "title": "Vue Global State",
+
+  "meta": {
+    "title": "Vue Global State – Share Data Across App (2026)",
+    "description": "Learn how to manage global state in Vue using reactive objects, provide/inject, and state management libraries like Pinia.",
+    "keywords": [
+      "vue global state",
+      "vue shared state",
+      "vue reactive global",
+      "vue provide inject state",
+      "vue state sharing"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Global State?"
+    },
+    {
+      "type": "text",
+      "value": "Global state refers to data that is shared across multiple components in a Vue application."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Global State?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Share data across components**",
+        "**Avoid prop drilling**",
+        "**Maintain consistent data**",
+        "**Simplify data flow in large apps**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Using Reactive Object"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "import { reactive } from 'vue';\n\nexport const store = reactive({\n  count: 0\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Using Global State in Component"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "import { store } from './store';\n\nstore.count++;\nconsole.log(store.count);"
+    },
+    {
+      "type": "heading",
+      "value": "Provide & Inject"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "provide('message', 'Hello');\n\ninject('message');"
+    },
+    {
+      "type": "heading",
+      "value": "Using Pinia (Recommended)"
+    },
+    {
+      "type": "text",
+      "value": "For scalable applications, use Pinia for managing global state efficiently."
+    },
+    {
+      "type": "heading",
+      "value": "When to Use"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Multiple components need same data**",
+        "**Large applications**",
+        "**Complex state logic**",
+        "**User authentication data**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use global state only when necessary**",
+        "**Keep state centralized**",
+        "**Use Pinia for scalability**",
+        "**Avoid overcomplicating simple apps**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Overusing global state**",
+        "**Not organizing state properly**",
+        "**Mixing multiple state patterns**",
+        "**Ignoring reactivity rules**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Global state helps manage shared data efficiently in Vue applications, but should be used wisely to maintain clean architecture."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is global state?",
+      "answer": "Data shared across multiple components."
+    },
+    {
+      "question": "Best tool for global state?",
+      "answer": "Pinia is recommended."
+    },
+    {
+      "question": "What is prop drilling?",
+      "answer": "Passing data through multiple components unnecessarily."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "const store = reactive({ count: 0 });"
+  },
+
+  "quiz": [
+    {
+      "question": "Global state used for?",
+      "options": ["Styling", "Sharing data", "Routing", "API"],
+      "answer": 1
+    },
+    {
+      "question": "Reactive API?",
+      "options": ["ref", "reactive", "computed", "watch"],
+      "answer": 1
+    },
+    {
+      "question": "Recommended tool?",
+      "options": ["Vuex", "Pinia", "Redux", "MobX"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "vue-state-management",
+    "vue-pinia",
+    "vue-components-intro",
+    "vue-props",
+    "vue-events"
+  ]
+}

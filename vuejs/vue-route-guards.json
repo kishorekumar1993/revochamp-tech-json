@@ -1,0 +1,171 @@
+{
+  "slug": "vue-route-guards",
+  "course": "Vue",
+  "title": "Vue Route Guards",
+
+  "meta": {
+    "title": "Vue Route Guards – Navigation Control (2026)",
+    "description": "Learn how to use Vue Router guards to control navigation, protect routes, and handle authentication.",
+    "keywords": [
+      "vue route guards",
+      "vue navigation guards",
+      "vue beforeEach",
+      "vue route protection",
+      "vue auth routing"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Route Guards?"
+    },
+    {
+      "type": "text",
+      "value": "Route guards are functions that run before or during navigation to control access to routes in a Vue application."
+    },
+    {
+      "type": "heading",
+      "value": "Types of Route Guards"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Type", "Usage"],
+        "rows": [
+          ["Global Guards", "Applied to all routes"],
+          ["Per-Route Guards", "Defined inside route config"],
+          ["In-Component Guards", "Defined inside components"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Global Before Guard"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "router.beforeEach((to, from, next) => {\n  if (to.meta.requiresAuth && !isAuthenticated) {\n    next('/login');\n  } else {\n    next();\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Per-Route Guard"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "{\n  path: '/admin',\n  component: Admin,\n  beforeEnter: (to, from, next) => {\n    if (!isAdmin) next('/');\n    else next();\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "In-Component Guard"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "beforeRouteEnter(to, from, next) {\n  next(vm => {\n    // access component instance\n  });\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Use Cases"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Authentication check**",
+        "**Authorization control**",
+        "**Redirecting users**",
+        "**Preventing access to certain routes**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Navigation Flow"
+    },
+    {
+      "type": "text",
+      "value": "Guards run in sequence before navigation is confirmed, allowing control over routing behavior."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use global guards for auth checks**",
+        "**Keep guard logic simple**",
+        "**Avoid heavy operations in guards**",
+        "**Use meta fields for route rules**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Forgetting to call next()**",
+        "**Blocking navigation unintentionally**",
+        "**Using complex logic inside guards**",
+        "**Not handling async operations properly**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Route guards are essential for controlling navigation and securing routes in Vue applications."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a route guard?",
+      "answer": "A function that controls route navigation."
+    },
+    {
+      "question": "What is beforeEach?",
+      "answer": "A global route guard."
+    },
+    {
+      "question": "Why use route guards?",
+      "answer": "To protect routes and control access."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "router.beforeEach((to, from, next) => { next(); });"
+  },
+
+  "quiz": [
+    {
+      "question": "Route guards used for?",
+      "options": ["Styling", "Routing control", "Database", "API"],
+      "answer": 1
+    },
+    {
+      "question": "Global guard?",
+      "options": ["beforeEach", "mounted", "created", "updated"],
+      "answer": 0
+    },
+    {
+      "question": "Must call?",
+      "options": ["return", "next()", "emit", "bind"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "vue-router-intro",
+    "vue-dynamic-routing",
+    "vue-routing-advanced",
+    "vue-components-intro",
+    "vue-events"
+  ]
+}

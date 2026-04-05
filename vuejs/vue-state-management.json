@@ -1,0 +1,170 @@
+{
+  "slug": "vue-state-management",
+  "course": "Vue",
+  "title": "Vue State Management",
+
+  "meta": {
+    "title": "Vue State Management – Managing App State (2026)",
+    "description": "Learn how to manage state in Vue applications using local state, props, provide/inject, and tools like Pinia and Vuex.",
+    "keywords": [
+      "vue state management",
+      "vue pinia",
+      "vuex vue",
+      "vue global state",
+      "vue state handling"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is State Management?"
+    },
+    {
+      "type": "text",
+      "value": "State management refers to handling and sharing data across components in a Vue application."
+    },
+    {
+      "type": "heading",
+      "value": "Types of State"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Type", "Description"],
+        "rows": [
+          ["Local State", "State inside a component"],
+          ["Shared State", "State shared via props or events"],
+          ["Global State", "State shared across entire app"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Using Props and Events"
+    },
+    {
+      "type": "text",
+      "value": "Props pass data down, and events ($emit) send data up between components."
+    },
+    {
+      "type": "heading",
+      "value": "Provide & Inject"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "provide() {\n  return { message: 'Hello' };\n},\ninject: ['message']"
+    },
+    {
+      "type": "heading",
+      "value": "Pinia (Recommended)"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "import { defineStore } from 'pinia';\n\nexport const useStore = defineStore('main', {\n  state: () => ({ count: 0 })\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Vuex (Legacy)"
+    },
+    {
+      "type": "text",
+      "value": "Vuex is an older state management library, now replaced by Pinia in modern Vue apps."
+    },
+    {
+      "type": "heading",
+      "value": "When to Use State Management"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Large applications**",
+        "**Multiple components sharing data**",
+        "**Complex data flow**",
+        "**Global state requirements**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use local state when possible**",
+        "**Use Pinia for global state**",
+        "**Avoid unnecessary global state**",
+        "**Keep state predictable**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Overusing global state**",
+        "**Not structuring stores properly**",
+        "**Mixing multiple state patterns**",
+        "**Ignoring reactivity principles**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "State management is crucial for scalable Vue applications. Choosing the right approach ensures clean and maintainable architecture."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is state in Vue?",
+      "answer": "Data used and shared across components."
+    },
+    {
+      "question": "What is Pinia?",
+      "answer": "A modern state management library for Vue."
+    },
+    {
+      "question": "When to use global state?",
+      "answer": "When data is shared across many components."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "const count = ref(0);"
+  },
+
+  "quiz": [
+    {
+      "question": "State means?",
+      "options": ["Style", "Data", "API", "Route"],
+      "answer": 1
+    },
+    {
+      "question": "Recommended tool?",
+      "options": ["Vuex", "Pinia", "Redux", "MobX"],
+      "answer": 1
+    },
+    {
+      "question": "Local state?",
+      "options": ["Global", "Component level", "Server", "API"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "vue-components-intro",
+    "vue-props",
+    "vue-events",
+    "vue-reactivity",
+    "vue-composition-api"
+  ]
+}

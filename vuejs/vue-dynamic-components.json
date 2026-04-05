@@ -1,0 +1,161 @@
+{
+  "slug": "vue-dynamic-components",
+  "course": "Vue",
+  "title": "Vue Dynamic Components",
+
+  "meta": {
+    "title": "Vue Dynamic Components – Switch Components Dynamically (2026)",
+    "description": "Learn how to use dynamic components in Vue to switch between components at runtime using the component tag.",
+    "keywords": [
+      "vue dynamic components",
+      "vue component switch",
+      "vue component tag",
+      "vue is attribute",
+      "vue dynamic rendering"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Dynamic Components?"
+    },
+    {
+      "type": "text",
+      "value": "Dynamic components allow you to switch between different components dynamically using the <component> element."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<component :is=\"currentComponent\"></component>"
+    },
+    {
+      "type": "heading",
+      "value": "Example"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<button @click=\"current = 'CompA'\">A</button>\n<button @click=\"current = 'CompB'\">B</button>\n\n<component :is=\"current\"></component>"
+    },
+    {
+      "type": "heading",
+      "value": "Registering Components"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "components: {\n  CompA,\n  CompB\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Keep Alive"
+    },
+    {
+      "type": "text",
+      "value": "Use <keep-alive> to cache inactive components and preserve state."
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<keep-alive>\n  <component :is=\"currentComponent\"></component>\n</keep-alive>"
+    },
+    {
+      "type": "heading",
+      "value": "When to Use"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Switching tabs dynamically**",
+        "**Conditional component rendering**",
+        "**Reusable layouts**",
+        "**Dynamic UI rendering**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use meaningful component names**",
+        "**Use keep-alive for caching**",
+        "**Avoid unnecessary switching**",
+        "**Keep component logic simple**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Not registering components properly**",
+        "**Forgetting keep-alive when needed**",
+        "**Overusing dynamic components**",
+        "**Complex logic in switching conditions**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Dynamic components in Vue provide flexibility in rendering different components at runtime, improving UI adaptability."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a dynamic component?",
+      "answer": "It allows switching components dynamically."
+    },
+    {
+      "question": "What is :is?",
+      "answer": "It defines which component to render."
+    },
+    {
+      "question": "What is keep-alive?",
+      "answer": "It caches components to preserve state."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "<component :is=\"currentComponent\"></component>"
+  },
+
+  "quiz": [
+    {
+      "question": "Which tag used?",
+      "options": ["div", "component", "span", "section"],
+      "answer": 1
+    },
+    {
+      "question": "What does :is do?",
+      "options": ["Loop", "Condition", "Select component", "Bind data"],
+      "answer": 2
+    },
+    {
+      "question": "Which caches component?",
+      "options": ["v-if", "keep-alive", "v-for", "v-bind"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "vue-components-intro",
+    "vue-slots",
+    "vue-props",
+    "vue-events",
+    "vue-template-syntax"
+  ]
+}

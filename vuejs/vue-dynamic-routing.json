@@ -1,0 +1,171 @@
+{
+  "slug": "vue-dynamic-routing",
+  "course": "Vue",
+  "title": "Vue Dynamic Routing",
+
+  "meta": {
+    "title": "Vue Dynamic Routing – Params & Dynamic Routes (2026)",
+    "description": "Learn how to create dynamic routes in Vue Router using route params and access them inside components.",
+    "keywords": [
+      "vue dynamic routing",
+      "vue route params",
+      "vue router dynamic",
+      "vue url params",
+      "vue routing params"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Dynamic Routing?"
+    },
+    {
+      "type": "text",
+      "value": "Dynamic routing allows you to create routes with variable segments, enabling dynamic URLs like user profiles or product pages."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Syntax"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "const routes = [\n  { path: '/user/:id', component: User }\n];"
+    },
+    {
+      "type": "heading",
+      "value": "Access Route Params"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "this.$route.params.id"
+    },
+    {
+      "type": "heading",
+      "value": "Template Example"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<p>User ID: {{ $route.params.id }}</p>"
+    },
+    {
+      "type": "heading",
+      "value": "Multiple Params"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "{ path: '/user/:id/post/:postId', component: Post }"
+    },
+    {
+      "type": "heading",
+      "value": "Programmatic Navigation"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "this.$router.push({ path: `/user/${id}` });"
+    },
+    {
+      "type": "heading",
+      "value": "Named Routes with Params"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "this.$router.push({ name: 'user', params: { id: 1 } });"
+    },
+    {
+      "type": "heading",
+      "value": "Watching Route Changes"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "watch: {\n  '$route.params.id'(newId) {\n    // handle change\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use meaningful param names**",
+        "**Validate route params**",
+        "**Use named routes for navigation**",
+        "**Watch route changes for updates**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Not handling route param changes**",
+        "**Incorrect param naming**",
+        "**Using path instead of name incorrectly**",
+        "**Not validating params**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Dynamic routing is essential for building flexible Vue applications with dynamic URLs and content."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is dynamic routing?",
+      "answer": "Routing with variable URL segments."
+    },
+    {
+      "question": "How to access params?",
+      "answer": "Using $route.params."
+    },
+    {
+      "question": "Can we have multiple params?",
+      "answer": "Yes, multiple params can be defined."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "<p>{{ $route.params.id }}</p>"
+  },
+
+  "quiz": [
+    {
+      "question": "Dynamic route syntax?",
+      "options": ["/user/id", "/user/:id", "/user{id}", "/user-id"],
+      "answer": 1
+    },
+    {
+      "question": "Access param?",
+      "options": ["this.id", "$route.params", "$router.params", "params.id"],
+      "answer": 1
+    },
+    {
+      "question": "Multiple params?",
+      "options": ["No", "Yes", "Only one", "Only string"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "vue-router-intro",
+    "vue-navigation-guards",
+    "vue-routing-advanced",
+    "vue-components-intro",
+    "vue-events"
+  ]
+}

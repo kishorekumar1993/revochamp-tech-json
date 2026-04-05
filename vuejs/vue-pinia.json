@@ -1,0 +1,172 @@
+{
+  "slug": "vue-pinia",
+  "course": "Vue",
+  "title": "Vue Pinia",
+
+  "meta": {
+    "title": "Vue Pinia – Modern State Management (2026)",
+    "description": "Learn how to use Pinia for state management in Vue, including stores, state, actions, and getters.",
+    "keywords": [
+      "vue pinia",
+      "pinia vue",
+      "vue store pinia",
+      "vue state management pinia",
+      "pinia example"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Pinia?"
+    },
+    {
+      "type": "text",
+      "value": "Pinia is the official state management library for Vue, designed to replace Vuex with a simpler and more modern API."
+    },
+    {
+      "type": "heading",
+      "value": "Why Use Pinia?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Simple and intuitive API**",
+        "**Better TypeScript support**",
+        "**Lightweight and fast**",
+        "**DevTools integration**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Install Pinia"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "npm install pinia"
+    },
+    {
+      "type": "heading",
+      "value": "Setup Pinia"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "import { createApp } from 'vue';\nimport { createPinia } from 'pinia';\n\nconst app = createApp(App);\napp.use(createPinia());\napp.mount('#app');"
+    },
+    {
+      "type": "heading",
+      "value": "Create Store"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "import { defineStore } from 'pinia';\n\nexport const useStore = defineStore('main', {\n  state: () => ({ count: 0 }),\n  actions: {\n    increment() {\n      this.count++;\n    }\n  },\n  getters: {\n    doubleCount: (state) => state.count * 2\n  }\n});"
+    },
+    {
+      "type": "heading",
+      "value": "Using Store"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "const store = useStore();\nstore.increment();\nconsole.log(store.count);"
+    },
+    {
+      "type": "heading",
+      "value": "Core Concepts"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Concept", "Description"],
+        "rows": [
+          ["State", "Reactive data"],
+          ["Actions", "Methods to modify state"],
+          ["Getters", "Computed values from state"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Keep stores modular**",
+        "**Use actions for logic**",
+        "**Use getters for computed data**",
+        "**Avoid direct state mutation outside store**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Putting too much logic in components**",
+        "**Not organizing stores properly**",
+        "**Overusing global state**",
+        "**Not using getters effectively**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Pinia simplifies state management in Vue with a clean and modern approach, making applications easier to maintain and scale."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is Pinia?",
+      "answer": "A modern state management library for Vue."
+    },
+    {
+      "question": "Is Pinia better than Vuex?",
+      "answer": "Yes, it is simpler and recommended."
+    },
+    {
+      "question": "What are getters?",
+      "answer": "Computed values based on state."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "const store = useStore();\nstore.increment();"
+  },
+
+  "quiz": [
+    {
+      "question": "Pinia used for?",
+      "options": ["Routing", "State management", "Styling", "API"],
+      "answer": 1
+    },
+    {
+      "question": "Store created using?",
+      "options": ["createStore", "defineStore", "useStore", "makeStore"],
+      "answer": 1
+    },
+    {
+      "question": "Getter returns?",
+      "options": ["State", "Method", "Computed value", "API"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "vue-state-management",
+    "vue-components-intro",
+    "vue-reactivity",
+    "vue-composition-api",
+    "vue-events"
+  ]
+}

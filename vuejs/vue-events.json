@@ -1,0 +1,193 @@
+{
+  "slug": "vue-events",
+  "course": "Vue",
+  "title": "Vue Events",
+
+  "meta": {
+    "title": "Vue Events – Handling User Interactions (2026)",
+    "description": "Learn how to handle events in Vue including click, input, keyboard events, and communication using emit.",
+    "keywords": [
+      "vue events",
+      "vue event handling",
+      "vue emit",
+      "vue click event",
+      "vue user interaction"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Events in Vue?"
+    },
+    {
+      "type": "text",
+      "value": "Events in Vue are used to handle user interactions such as clicks, typing, and form submissions."
+    },
+    {
+      "type": "heading",
+      "value": "Basic Event Handling"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<button @click=\"handleClick\">Click</button>"
+    },
+    {
+      "type": "heading",
+      "value": "Inline Event"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<button @click=\"count++\">Increment</button>\n<p>{{ count }}</p>"
+    },
+    {
+      "type": "heading",
+      "value": "Methods Example"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "methods: {\n  handleClick() {\n    alert('Clicked');\n  }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Passing Arguments"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<button @click=\"greet('Vue')\">Greet</button>"
+    },
+    {
+      "type": "heading",
+      "value": "Event Object"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<button @click=\"handleClick($event)\">Click</button>"
+    },
+    {
+      "type": "heading",
+      "value": "Emitting Events (Child to Parent)"
+    },
+    {
+      "type": "code",
+      "language": "javascript",
+      "value": "this.$emit('customEvent', data);"
+    },
+    {
+      "type": "heading",
+      "value": "Listening to Emitted Events"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<child-component @customEvent=\"handleEvent\"></child-component>"
+    },
+    {
+      "type": "heading",
+      "value": "Event Modifiers"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**.stop → Stop propagation**",
+        "**.prevent → Prevent default action**",
+        "**.once → Trigger once**",
+        "**.self → Only trigger on element itself**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Keyboard Events"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<input @keyup.enter=\"submit\">"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use methods for complex logic**",
+        "**Use emit for component communication**",
+        "**Keep event handlers simple**",
+        "**Use modifiers effectively**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Common Mistakes"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Writing complex logic inline**",
+        "**Not using emit for communication**",
+        "**Ignoring event modifiers**",
+        "**Incorrect event naming**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Conclusion"
+    },
+    {
+      "type": "text",
+      "value": "Vue events provide a powerful way to handle user interactions and component communication efficiently."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is @click?",
+      "answer": "It listens to click events."
+    },
+    {
+      "question": "What is $emit?",
+      "answer": "It sends events from child to parent."
+    },
+    {
+      "question": "What are event modifiers?",
+      "answer": "They modify event behavior like prevent or stop."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "<button @click=\"count++\">Click</button>\n<p>{{ count }}</p>"
+  },
+
+  "quiz": [
+    {
+      "question": "Event shorthand?",
+      "options": ["#", "@", ":", "$"],
+      "answer": 1
+    },
+    {
+      "question": "Child to parent?",
+      "options": ["v-model", "$emit", "v-bind", "v-if"],
+      "answer": 1
+    },
+    {
+      "question": "Prevent default?",
+      "options": [".stop", ".prevent", ".once", ".self"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "vue-v-on",
+    "vue-props",
+    "vue-components-intro",
+    "vue-data-binding",
+    "vue-v-model"
+  ]
+}
