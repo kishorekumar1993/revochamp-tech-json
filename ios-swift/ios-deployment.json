@@ -1,0 +1,137 @@
+{
+  "slug": "ios-app-deployment-distribution",
+  "course": "iOS Development",
+  "title": "iOS Deployment – Shipping to the App Store",
+
+  "meta": {
+    "title": "iOS Deployment Guide – Code Signing, TestFlight & App Store (2026)",
+    "description": "Master the professional iOS distribution pipeline. Learn about provisioning profiles, TestFlight beta testing, and the App Store submission process.",
+    "keywords": [
+      "ios deployment",
+      "app store connect",
+      "testflight",
+      "code signing ios",
+      "provisioning profiles",
+      "ios app review"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Distribution Pipeline"
+    },
+    {
+      "type": "text",
+      "value": "Deploying an iOS app is a multi-step journey that moves from your local machine to Apple's cloud. As an Architect, you must manage three distinct environments: **Development** (for active coding), **Staging/TestFlight** (for stakeholder feedback), and **Production** (the public App Store). Each step requires a specific set of cryptographic 'Certificates' and 'Profiles' to verify the app's authenticity."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Code Signing and Provisioning"
+    },
+    {
+      "type": "text",
+      "value": "This is often the most complex part of native development. Code signing ensures that the code has not been altered since you signed it. You need two components:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Certificates**: Linked to your Apple Developer Account, identifying you as a trusted developer.",
+        "**Provisioning Profiles**: A link between your Certificate, your App ID, and the specific Devices (UDIDs) allowed to run the app during testing."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Beta Testing with TestFlight"
+    },
+    {
+      "type": "text",
+      "value": "Before going public, you should use **TestFlight**. It allows you to distribute 'Beta' builds to up to 10,000 external testers using just their email. For your Revochamp team, this is the phase where you catch native crashes that didn't appear in the simulator."
+    },
+    
+    {
+      "type": "heading",
+      "value": "3. App Store Connect and Review"
+    },
+    {
+      "type": "text",
+      "value": "Once a build is uploaded via Xcode, you manage its metadata (screenshots, descriptions, and pricing) in App Store Connect. Every update is manually reviewed by Apple employees. As a Lead, you must ensure the app complies with **Guideline 2.1 (Performance)** and **Guideline 5 (Privacy)** to avoid delays."
+    },
+    {
+      "type": "heading",
+      "value": "Deployment Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "iOS (App Store)", "Android (Play Store)"],
+        "rows": [
+          ["Review Process", "Strict Manual Review (24-48h)", "Automated/Manual Mix"],
+          ["Beta Testing", "TestFlight (Native)", "Google Play Console (Internal/Open)"],
+          ["Signing", "Certificate/Provisioning (.p12)", "Keystore (.jks)"],
+          ["Binary Format", ".ipa / Bitcode", ".aab (App Bundle)"],
+          ["Updates", "Atomic (Whole version)", "Staged rollouts supported"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "4. CI/CD for Native Runners"
+    },
+    {
+      "type": "text",
+      "value": "For a Technical Lead, manual archiving in Xcode is inefficient. You should implement **Fastlane** to automate the generation of screenshots, management of provisioning profiles, and the uploading of builds to TestFlight directly from your CI pipeline (GitHub Actions or GitLab CI)."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a 'Bundle Identifier'?",
+      "answer": "It is a unique string (e.g., com.revochamp.app) that identifies your app globally in the Apple ecosystem. It cannot be changed after the app is published, so choose it carefully during setup."
+    },
+    {
+      "question": "Do I need a Mac for deployment?",
+      "answer": "Yes. Even if you use a cloud CI, the final 'Archive' and 'Code Signing' processes require the Xcode toolchain, which only runs on macOS."
+    },
+    {
+      "question": "What is 'App Store Optimization' (ASO)?",
+      "answer": "ASO is the process of optimizing your app's metadata (keywords, title, and screenshots) to rank higher in App Store search results, which is vital for the organic growth of your platform."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which Apple tool is used to distribute beta versions of an app to external testers?",
+      "options": ["Xcode", "TestFlight", "Instruments", "CoreData"],
+      "answer": 1
+    },
+    {
+      "question": "What is the primary purpose of a Provisioning Profile?",
+      "options": [
+        "To make the app run faster",
+        "To link a developer certificate and App ID to specific devices",
+        "To translate the app into different languages",
+        "To store user passwords securely"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which platform is the official portal for managing app metadata and submissions?",
+      "options": ["GitHub", "App Store Connect", "Firebase Console", "Xcode Cloud"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ios-project-structure",
+    "ios-app-lifecycle",
+    "flutter-method-channels",
+    "ios-security-privacy",
+    "ios-performance-optimization"
+  ]
+}

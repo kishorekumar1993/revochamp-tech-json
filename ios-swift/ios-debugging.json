@@ -1,0 +1,138 @@
+{
+  "slug": "ios-debugging-xcode-tools",
+  "course": "iOS Development",
+  "title": "iOS Debugging – Mastering the Xcode Toolset",
+
+  "meta": {
+    "title": "iOS Debugging Guide – Breakpoints, LLDB & Instruments (2026)",
+    "description": "Professional debugging strategies for iOS. Learn to use the LLDB debugger, memory inspectors, and Instruments to optimize native Swift modules.",
+    "keywords": [
+      "xcode debugging",
+      "lldb commands",
+      "ios memory leaks",
+      "xcode breakpoints",
+      "ios instruments",
+      "view hierarchy debugger"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Debugging Workflow"
+    },
+    {
+      "type": "text",
+      "value": "Debugging in Xcode is a multi-layered process. As an Architect, you aren't just looking for syntax errors; you are looking for logical inconsistencies, race conditions in your `async/await` code, and memory bloat. Xcode provides a integrated suite of tools that allow you to pause execution, inspect variables in real-time, and even modify the UI without restarting the app."
+    },
+    {
+      "type": "heading",
+      "value": "1. Breakpoints and LLDB"
+    },
+    {
+      "type": "text",
+      "value": "Breakpoints allow you to stop code execution at a specific line. Once paused, you use the **LLDB (Low Level Debugger)** console to interact with the app's state. For a Lead Developer, the `po` (print object) command is the most frequently used tool to inspect complex Swift structs or JSON payloads."
+    },
+    
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "(lldb) po project.name       // Print the value of a variable\n(lldb) p 2 + 2               // Evaluate an expression\n(lldb) expression project.name = \"New Name\" // Change a value at runtime\n(lldb) bt                   // Show the full backtrace of the current thread"
+    },
+    {
+      "type": "heading",
+      "value": "2. The Visual Debuggers"
+    },
+    {
+      "type": "text",
+      "value": "Sometimes a bug is visual rather than logical. Xcode offers two powerful graphical inspectors:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Debug View Hierarchy**: Explodes the 2D screen into a 3D stack, allowing you to see if a view is hidden, has zero height, or is being clipped by a parent. This is vital for debugging the native 'Runner' views.",
+        "**Debug Memory Graph**: Shows every object currently in memory and the references between them. This is the primary tool for finding **Retain Cycles** (Memory Leaks) in your closures."
+      ]
+    },
+    
+    {
+      "type": "heading",
+      "value": "3. Instruments: Performance Profiling"
+    },
+    {
+      "type": "text",
+      "value": "When Revochamp feels sluggish or uses too much battery, you use **Instruments**. This is a separate app that attaches to your running process to track high-level metrics. For an Engineering Manager, 'Leaks' and 'Time Profiler' are the most critical instruments to monitor."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Instrument", "Purpose", "Metric Tracked"],
+        "rows": [
+          ["Time Profiler", "Find CPU bottlenecks", "Thread CPU usage %"],
+          ["Leaks", "Find memory that isn't freed", "Object allocation/deallocation"],
+          ["Core Animation", "Debug scroll stutter (Jank)", "Frames Per Second (FPS)"],
+          ["Network", "Monitor API traffic", "Request/Response size & latency"],
+          ["Energy Log", "Monitor battery impact", "GPU/CPU/Radio power draw"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "4. Debugging the Flutter Bridge"
+    },
+    {
+      "type": "text",
+      "value": "When debugging Method Channels, you should set breakpoints in *both* VS Code (Dart) and Xcode (Swift). If the data is correct in Dart but wrong in Swift, the issue lies in the serialization or the native implementation logic. Use the 'Console' app in macOS to see system-level logs if the app crashes before the debugger attaches."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is an 'Exception Breakpoint'?",
+      "answer": "This is a global setting in Xcode that pauses the app the exact moment a crash occurs, rather than showing you a cryptic assembly screen after the fact. Architects recommend always having this turned on."
+    },
+    {
+      "question": "How do I debug a release build?",
+      "answer": "You generally can't use the full debugger on an App Store build due to optimizations. Instead, you should use a crash reporting tool like 'Firebase Crashlytics' or 'Sentry' to gather stack traces from real users in Chennai and worldwide."
+    },
+    {
+      "question": "What does 'EXC_BAD_ACCESS' mean?",
+      "answer": "This usually means your code tried to access a piece of memory that has already been deallocated. In modern Swift, this is rare, but it can still happen when working with low-level C-APIs or unowned references."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which LLDB command is used to print a human-readable description of an object?",
+      "options": ["print", "show", "po", "echo"],
+      "answer": 2
+    },
+    {
+      "question": "Which tool would you use to identify a memory leak caused by a retain cycle between two classes?",
+      "options": ["Time Profiler", "Debug Memory Graph", "View Hierarchy Debugger", "Instruments Network"],
+      "answer": 1
+    },
+    {
+      "question": "What is the primary benefit of the 'Debug View Hierarchy' tool?",
+      "options": [
+        "It speeds up the app's performance",
+        "It allows you to see the 3D structure of your UI to find layout issues",
+        "It automatically fixes constraints",
+        "It generates Swift code from the UI"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ios-project-structure",
+    "ios-app-lifecycle",
+    "swift-async-await",
+    "flutter-method-channels",
+    "ios-testing-xctest"
+  ]
+}

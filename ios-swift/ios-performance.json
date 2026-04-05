@@ -1,0 +1,139 @@
+{
+  "slug": "ios-performance-optimization",
+  "course": "iOS Development",
+  "title": "iOS Performance – Beyond 120 FPS",
+
+  "meta": {
+    "title": "iOS Performance Guide – CPU, Memory & Battery Optimization (2026)",
+    "description": "Master professional iOS performance tuning. Learn about the 'Golden Rules' of 120Hz scrolling, memory management with ARC, and energy efficiency.",
+    "keywords": [
+      "ios performance",
+      "pro-motion 120hz",
+      "arc memory management",
+      "ios energy efficiency",
+      "main thread optimization",
+      "xcode instruments"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Three Pillars of Performance"
+    },
+    {
+      "type": "text",
+      "value": "In the Apple ecosystem, performance is evaluated across three vectors: **Responsiveness** (Main Thread hygiene), **Efficiency** (Resource usage), and **Longevity** (Impact on battery). As an Architect, your goal is to ensure the Revochamp app feels 'instant' while consuming as little power as possible, especially during intensive AI generation tasks."
+    },
+    {
+      "type": "heading",
+      "value": "1. Main Thread Hygiene"
+    },
+    {
+      "type": "text",
+      "value": "The Golden Rule: **Never block the Main Thread.** The Main Thread handles all UI rendering and user interactions. If a heavy task (like parsing a massive JSON from your Python backend) runs on the main thread, the app will 'hitch' or freeze, dropping frames on ProMotion (120Hz) displays."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**Offload Data Tasks**: Use `async/await` to perform networking and disk I/O on background threads.",
+        "**Heavy Image Processing**: Use the Global queue for image filtering or scaling before returning the result to the UI.",
+        "**Layout Optimization**: Avoid deeply nested views in your native screens; flat hierarchies render faster."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Memory Management (ARC)"
+    },
+    {
+      "type": "text",
+      "value": "Swift uses **Automatic Reference Counting (ARC)**. While it manages memory for you, it is not a 'Garbage Collector.' Memory is only freed when the reference count hits zero. For an Engineering Manager, the biggest performance risk is a **Retain Cycle**, where two objects point to each other, preventing memory from ever being released."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Bad: Strong reference cycle\nclass Project { var manager: Manager? }\nclass Manager { var project: Project? }\n\n// Good: Use 'weak' to allow deallocation\nclass Project { var manager: Manager? }\nclass Manager { weak var project: Project? }"
+    },
+    {
+      "type": "heading",
+      "value": "3. Energy and Battery Efficiency"
+    },
+    {
+      "type": "text",
+      "value": "The most expensive operations for battery life are the **Radios** (Wi-Fi/Cellular) and the **GPU**. To optimize Revochamp for all-day use in Chennai's heat, you must batch your network requests and avoid unnecessary screen redraws."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Operation", "Cost", "Optimization Strategy"],
+        "rows": [
+          ["Network Request", "High (Radio Power)", "Batch requests & use caching"],
+          ["Location Tracking", "Extreme (GPS)", "Use 'Significant Change' or lower accuracy"],
+          ["AI Model Processing", "High (CPU/NPU)", "Run on the Neural Engine (CoreML)"],
+          ["UI Animation", "Medium (GPU)", "Use standard SwiftUI/UIKit animations"],
+          ["Disk I/O", "Low", "Avoid frequent small writes; use buffering"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "4. The 120Hz (ProMotion) Standard"
+    },
+    {
+      "type": "text",
+      "value": "Modern iPhones run at 120Hz, meaning you have only **8.3ms** to prepare a frame. If your native code takes longer, the user will see 'Jank.' Use the **Time Profiler** in Instruments to identify methods taking more than 5ms and refactor them into smaller, asynchronous tasks."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the 'Dirty Memory' limit?",
+      "answer": "iOS doesn't have a 'Swap' file like macOS. If your app uses too much 'Dirty Memory' (memory that has been written to and cannot be recreated from disk), the OS will simply terminate your app with an OOM (Out of Memory) crash."
+    },
+    {
+      "question": "How does 'Image Downsampling' help?",
+      "answer": "Loading a 20MB 4K image into a 100x100 thumbnail uses massive amounts of RAM. Architects recommend 'Downsampling'—decoding only the pixels needed for the target size—to save up to 90% of memory usage for image-heavy lists."
+    },
+    {
+      "question": "Does using SwiftUI instead of UIKit improve performance?",
+      "answer": "In most cases, yes. SwiftUI is highly optimized for the modern render loop and handles 'Diffing' (identifying what changed in the UI) more efficiently than manual UIKit updates, though complex custom views may still require UIKit for raw speed."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "How much time do you have to render a single frame on a 120Hz ProMotion display?",
+      "options": ["16.6ms", "8.3ms", "33.3ms", "1ms"],
+      "answer": 1
+    },
+    {
+      "question": "Which keyword should be used to prevent a 'Strong Reference Cycle' in a relationship between two classes?",
+      "options": ["strong", "unowned", "weak", "static"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary cause of UI 'stutter' or 'jank' in an iOS application?",
+      "options": [
+        "Low battery",
+        "Performing heavy tasks on the Main Thread",
+        "Using too many Swift Structs",
+        "Having too many files in the project"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ios-debugging-xcode-tools",
+    "swift-async-await",
+    "ios-app-lifecycle",
+    "flutter-method-channels",
+    "ios-networking-urlsession"
+  ]
+}

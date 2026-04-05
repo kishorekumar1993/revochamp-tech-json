@@ -1,0 +1,131 @@
+{
+  "slug": "ios-uiviewcontroller-lifecycle",
+  "course": "iOS Development",
+  "title": "UIViewController – The Heart of iOS Logic",
+
+  "meta": {
+    "title": "iOS UIViewController Guide – Lifecycle, Roles & Management (2026)",
+    "description": "Master the UIViewController. Learn about the view lifecycle methods, from viewDidLoad to viewDidDisappear, and how to manage native views.",
+    "keywords": [
+      "uiviewcontroller",
+      "ios view lifecycle",
+      "viewdidload vs viewwillappear",
+      "ios controller architecture",
+      "uiview",
+      "native ios development"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Role of the View Controller"
+    },
+    {
+      "type": "text",
+      "value": "A `UIViewController` manages a single 'screen' or a significant portion of a screen's interface. It is responsible for loading the view, handling user interactions (taps, swipes), and coordinating with the data layer. As an Engineering Manager, you should ensure your team follows the **Single Responsibility Principle**, preventing the 'Massive View Controller' anti-pattern by offloading business logic to ViewModels or Services."
+    },
+    {
+      "type": "heading",
+      "value": "1. The View Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "Unlike Flutter widgets which are rebuilt constantly, a View Controller is an object with a persistent lifecycle. Understanding the sequence of events is critical for performance—for example, you should fetch data from your Python API in `viewDidLoad`, but update the UI visibility in `viewWillAppear`."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**viewDidLoad()**: Called once when the view is first loaded into memory. Perfect for one-time setup and initializing UI components.",
+        "**viewWillAppear()**: Called every time the view is about to appear on screen. Use this for tasks that need to happen every time the user returns to the screen.",
+        "**viewDidAppear()**: Called after the view is fully visible. Ideal for starting animations or GPS tracking.",
+        "**viewWillDisappear()**: Called when the user navigates away. Use this to hide the keyboard or cancel pending network requests.",
+        "**viewDidDisappear()**: Called after the view is gone. Final cleanup happens here."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. View Management"
+    },
+    {
+      "type": "text",
+      "value": "Every View Controller has a root `view` property. You build your interface by adding subviews to this root. In modern iOS development, you define the layout of these views using **Auto Layout** (constraints) to ensure they adapt to different iPhone screen sizes."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "class ProjectViewController: UIViewController {\n    \n    override func viewDidLoad() {\n        super.viewDidLoad()\n        view.backgroundColor = .white\n        setupUI()\n    }\n    \n    private func setupUI() {\n        let label = UILabel()\n        label.text = \"Revochamp Engine Active\"\n        label.center = view.center\n        view.addSubview(label)\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Container View Controllers"
+    },
+    {
+      "type": "text",
+      "value": "Architects use 'Container' controllers to manage multiple child controllers. Common examples include `UINavigationController` (for stacks) and `UITabBarController` (for tabs). You can also create custom containers to swap between a 'Loading' state controller and a 'Data' state controller."
+    },
+    {
+      "type": "heading",
+      "value": "Controller vs. Widget"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "UIViewController (Native)", "StatefulWidget (Flutter)"],
+        "rows": [
+          ["Nature", "Persistent Object", "Immutable/Rebuilt"],
+          ["Logic Placement", "Methods (viewDidLoad, etc.)", "initState / build"],
+          ["UI Definition", "Imperative (addSubview)", "Declarative (Widget Tree)"],
+          ["Memory", "Managed via ARC", "Managed via Dart GC"],
+          ["Layout", "Auto Layout / Constraints", "Flexbox / Box Constraints"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between loadView and viewDidLoad?",
+      "answer": "You should rarely override 'loadView' unless you are building your entire UI programmatically without Storyboards or XIBs. 'viewDidLoad' is where the vast majority of your setup code belongs because the view is guaranteed to exist by then."
+    },
+    {
+      "question": "How do I communicate between two View Controllers?",
+      "answer": "For one-way communication (Forward), you inject data into properties before pushing. For two-way communication (Backward), Architects use the **Delegate Pattern** or **Closures** to pass information back to the previous screen."
+    },
+    {
+      "question": "Why is my UIViewController not being released from memory?",
+      "answer": "This is usually caused by a **Strong Reference Cycle**. If a closure or a delegate holds a 'strong' reference back to the controller, it will never be deallocated. Always use '[weak self]' in closures to prevent this."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which lifecycle method is called exactly once when the controller's view is first created?",
+      "options": ["viewWillAppear", "viewDidAppear", "viewDidLoad", "viewWillLayoutSubviews"],
+      "answer": 2
+    },
+    {
+      "question": "What is the root property that every UIViewController uses to host its visual content?",
+      "options": ["rootView", "container", "view", "window"],
+      "answer": 2
+    },
+    {
+      "question": "Which method should be used to stop a repeating timer when the user leaves a screen?",
+      "options": ["viewDidLoad", "viewWillAppear", "viewWillDisappear", "didReceiveMemoryWarning"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "ios-project-structure",
+    "ios-app-lifecycle",
+    "ios-navigation-controller",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

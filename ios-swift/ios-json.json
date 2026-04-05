@@ -1,0 +1,133 @@
+{
+  "slug": "swift-json-codable",
+  "course": "iOS Development",
+  "title": "JSON in Swift – Data Parsing with Codable",
+
+  "meta": {
+    "title": "Swift JSON Guide – Codable, JSONDecoder & Custom Keys (2026)",
+    "description": "Master JSON parsing in Swift. Learn how to use the Codable protocol, handle custom snake_case mapping, and manage optional nested data.",
+    "keywords": [
+      "swift json",
+      "codable swift",
+      "jsondecoder",
+      "jsonencoder",
+      "codingkeys",
+      "swift data parsing",
+      "api integration ios"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Codable Protocol"
+    },
+    {
+      "type": "text",
+      "value": "In modern Swift, we use the `Codable` protocol (a typealias for `Encodable & Decodable`) to handle JSON. It allows you to convert between your native Swift types and a JSON representation without writing manual parsing logic. As an Architect, you should prioritize **Structs** for your JSON models to leverage value semantics and thread safety."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Decoding JSON to Structs"
+    },
+    {
+      "type": "text",
+      "value": "To turn a JSON payload into a Swift object, you use the `JSONDecoder`. If your Python API returns `snake_case` keys, you can configure the decoder to automatically convert them to Swift's standard `camelCase`."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "struct Project: Codable {\n    let id: String\n    let projectName: String\n    let widgetCount: Int\n}\n\nlet jsonData = \"\"\"\n{\n    \"id\": \"revo_01\",\n    \"project_name\": \"AI Builder\",\n    \"widget_count\": 42\n}\n\"\"\".data(using: .utf8)!\n\nlet decoder = JSONDecoder()\ndecoder.keyDecodingStrategy = .convertFromSnakeCase\n\ntry {\n    let project = try decoder.decode(Project.self, from: jsonData)\n    print(\"Parsed: \\(project.projectName)\")\n} catch {\n    print(\"Decoding Error: \\(error)\")\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Handling Custom Keys with CodingKeys"
+    },
+    {
+      "type": "text",
+      "value": "When an API uses keys that are reserved words in Swift or don't match your naming conventions, you use the `CodingKeys` enum. This acts as a mapping layer between the JSON key and your property name."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "struct User: Codable {\n    let name: String\n    let emailAddress: String\n\n    enum CodingKeys: String, CodingKey {\n        case name\n        case emailAddress = \"user_primary_email\"\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Encodable: Sending Data Back"
+    },
+    {
+      "type": "text",
+      "value": "Encoding is the reverse process. You use `JSONEncoder` to turn your Swift objects back into JSON Data, which can then be sent to your backend or passed through a Method Channel to Flutter."
+    },
+    
+    {
+      "type": "heading",
+      "value": "JSON Management Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Swift (Codable)", "Dart (Flutter)"],
+        "rows": [
+          ["Code Gen", "Not required (Built into compiler)", "Required (build_runner / json_serializable)"],
+          ["Mapping", "CodingKeys enum", "Annotations (@JsonKey)"],
+          ["Null Safety", "Via Optionals (?)", "Via Null-safe types"],
+          ["Performance", "High (Native binary)", "High (AOT Compiled)"],
+          ["Snake Case", "keyDecodingStrategy", "Manual or generator config"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "How do I handle nested JSON objects?",
+      "answer": "If your JSON has nested objects, simply define child Structs that also conform to 'Codable'. Swift will automatically recursively decode the entire tree into your model."
+    },
+    {
+      "question": "What happens if a key is missing in the JSON?",
+      "answer": "If a key is missing and the corresponding property in your Struct is not an 'Optional' (marked with ?), the decoder will throw a 'keyNotFound' error. Always use Optionals for keys that are not guaranteed to exist."
+    },
+    {
+      "question": "Can I parse an array of JSON objects?",
+      "answer": "Yes. You simply decode as an array of your type: 'try decoder.decode([Project].self, from: data)'. This is much cleaner than the manual mapping often seen in older Swift code."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which protocol must a Swift Struct adopt to support both JSON encoding and decoding?",
+      "options": ["Jsonable", "Codable", "Convertible", "Encodable"],
+      "answer": 1
+    },
+    {
+      "question": "Which object is responsible for converting JSON Data into a native Swift Struct instance?",
+      "options": ["JSONEncoder", "JSONDecoder", "CodableParser", "UrlSession"],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of the 'CodingKeys' enumeration inside a Struct?",
+      "options": [
+        "To encrypt the JSON data",
+        "To map JSON keys to custom property names",
+        "To define the order of variables in memory",
+        "To bypass security checks"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ios-networking-urlsession",
+    "swift-optionals",
+    "swift-classes-vs-structs",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

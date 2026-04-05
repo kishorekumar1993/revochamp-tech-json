@@ -1,0 +1,132 @@
+{
+  "slug": "ios-testing-xctest",
+  "course": "iOS Development",
+  "title": "iOS Testing – Unit and UI Automation",
+
+  "meta": {
+    "title": "iOS Testing Guide – XCTest, Mocking & UI Testing (2026)",
+    "description": "Master automated testing in iOS. Learn to write Unit Tests with XCTest and UI Tests with XCUITest for native Swift modules.",
+    "keywords": [
+      "xctest",
+      "ios unit testing",
+      "xcuitest",
+      "ios ui testing",
+      "mocking swift",
+      "code coverage xcode"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The XCTest Framework"
+    },
+    {
+      "type": "text",
+      "value": "XCTest is the integrated framework provided by Apple for all levels of testing. As an Architect, you should follow the **Testing Pyramid**: a broad base of fast Unit Tests, a middle layer of Integration Tests (testing Method Channels), and a thin top layer of UI Tests. In Xcode, these are organized into separate 'Test Targets' that run independently of your main app code."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Unit Testing Swift Logic"
+    },
+    {
+      "type": "text",
+      "value": "Unit tests focus on individual functions or classes in isolation. To test your Swift code, you create a class inheriting from `XCTestCase`. Use `setUpWithError()` to initialize your objects and `tearDownWithError()` to clean up memory after each test runs."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "import XCTest\n@testable import Runner\n\nclass ProjectLogicTests: XCTestCase {\n    var generator: AIWidgetGenerator!\n\n    override func setUp() {\n        super.setUp()\n        generator = AIWidgetGenerator()\n    }\n\n    func testWidgetNameValidation() {\n        let isValid = generator.validateName(\"Button_01\")\n        XCTAssertTrue(isValid, \"Widget name should be valid\")\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Asynchronous Testing"
+    },
+    {
+      "type": "text",
+      "value": "Since your Revochamp engine relies heavily on `async/await` for networking and AI processing, you must use **XCTestExpectations**. This allows the test runner to wait for an asynchronous task to complete before asserting the result."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "func testFetchProjectAsync() async throws {\n    let project = try await networkManager.fetchProject(id: \"123\")\n    XCTAssertEqual(project.id, \"123\")\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. UI Testing (XCUITest)"
+    },
+    {
+      "type": "text",
+      "value": "UI Tests simulate a real user interacting with the app. They launch the app and perform actions like tapping buttons or entering text. For a Technical Lead, these are vital for verifying the 'Happy Path' of your onboarding or project creation flow."
+    },
+    
+    {
+      "type": "heading",
+      "value": "Testing Comparison: Native vs. Flutter"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "XCTest (Native)", "Flutter Test"],
+        "rows": [
+          ["Unit Testing", "XCTest (Swift)", "flutter_test (Dart)"],
+          ["UI Testing", "XCUITest (Black-box)", "Integration Test / Patrol"],
+          ["Mocking", "Manual Mocks / Protocols", "Mockito / Mocktail"],
+          ["Speed", "Very Fast", "Fast"],
+          ["Platform Access", "Direct Native APIs", "Simulated/Embedded"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is @testable import?",
+      "answer": "By default, internal classes and methods aren't visible to your test target. Adding '@testable import' allows the test runner to access internal symbols of your app without you having to make everything 'public'."
+    },
+    {
+      "question": "How do I measure Code Coverage?",
+      "answer": "In Xcode, go to the 'Test' tab in the Scheme editor and enable 'Gather coverage for all targets.' After running your tests, Xcode will show exactly which lines of code were executed and which were missed."
+    },
+    {
+      "question": "Should I mock the Python API for tests?",
+      "answer": "Yes. Real network calls make tests slow and flaky. You should define a Protocol for your network client and create a 'Mock' version for tests that returns hardcoded JSON data instantly."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which method is used to prepare the environment before each individual test case runs?",
+      "options": ["init()", "setUp()", "start()", "viewDidLoad()"],
+      "answer": 1
+    },
+    {
+      "question": "Which assertion would you use to verify that a value is exactly what you expect?",
+      "options": ["XCTAssertTrue", "XCTAssertEqual", "XCTAssertNil", "XCTFail"],
+      "answer": 1
+    },
+    {
+      "question": "What is the primary difference between Unit Tests and UI Tests in iOS?",
+      "options": [
+        "Unit tests are written in Objective-C",
+        "UI tests run the actual app and interact with the screen",
+        "Unit tests require a physical device",
+        "UI tests cannot be automated"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "swift-async-await",
+    "ios-project-structure",
+    "flutter-method-channels",
+    "ios-app-lifecycle",
+    "clean-architecture-native"
+  ]
+}

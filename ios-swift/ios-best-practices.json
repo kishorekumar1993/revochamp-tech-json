@@ -1,0 +1,140 @@
+{
+  "slug": "ios-engineering-best-practices",
+  "course": "iOS Development",
+  "title": "iOS Best Practices – Professional Engineering Standards",
+
+  "meta": {
+    "title": "iOS Development Best Practices – Architecture, Security & Clean Code (2026)",
+    "description": "Master the professional standards for iOS development. Learn about Protocol-Oriented Programming, Dependency Injection, and thread safety in native Swift.",
+    "keywords": [
+      "ios best practices",
+      "protocol oriented programming",
+      "dependency injection swift",
+      "ios security best practices",
+      "clean architecture ios",
+      "swift code style"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Modern iOS Architect's Manifesto"
+    },
+    {
+      "type": "text",
+      "value": "Professional iOS development has shifted away from the 'Massive View Controller' era. Today, a Lead Developer focuses on **Composition over Inheritance** and **Value Types over Reference Types**. For your Revochamp platform, these practices ensure that the native iOS code is modular enough to be tested in isolation from the Flutter UI."
+    },
+    {
+      "type": "heading",
+      "value": "1. Protocol-Oriented Programming (POP)"
+    },
+    {
+      "type": "text",
+      "value": "In Swift, Protocols are the primary way to define interfaces. Unlike Java or Dart interfaces, Swift protocols can have 'Default Implementations' via Extensions. This allows you to create highly reusable traits (like `Searchable` or `Generatable`) that can be applied to both Structs and Classes."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "protocol AIService {\n    func generate(prompt: String) async throws -> String\n}\n\nextension AIService {\n    func validate(prompt: String) -> Bool {\n        return !prompt.isEmpty\n    }\n}\n\nstruct RevoGenService: AIService {\n    func generate(prompt: String) async throws -> String {\n        // implementation\n        return \"Generated UI\"\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Dependency Injection (DI)"
+    },
+    {
+      "type": "text",
+      "value": "Avoid hard-coding dependencies inside your View Controllers or Managers. Use **Constructor Injection** to pass services in. This is vital for an Engineering Manager because it makes your native code **testable**—you can easily swap a real AI network service for a 'Mock' version during Unit Testing."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "class ProjectManager {\n    private let aiService: AIService\n    \n    // Injecting the dependency via the initializer\n    init(aiService: AIService) {\n        self.aiService = aiService\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Thread Safety and @MainActor"
+    },
+    {
+      "type": "text",
+      "value": "With Swift 6's strict concurrency checks, managing threads is no longer optional. Always mark your ViewModels or UI-updating classes with `@MainActor`. This guarantees that any code modifying the UI will execute on the Main Thread, preventing the most common cause of native iOS crashes."
+    },
+    
+    {
+      "type": "heading",
+      "value": "4. Security: The 'Never Store' Rule"
+    },
+    {
+      "type": "text",
+      "value": "For a platform like Revochamp, security is paramount. Never store API keys, tokens, or PII (Personally Identifiable Information) in `UserDefaults` or `Info.plist`. Use the **Keychain** for tokens and **Secure Enclave** for biometric-linked keys. Additionally, ensure 'App Transport Security' (ATS) is never disabled in production."
+    },
+    {
+      "type": "heading",
+      "value": "Architectural Standards Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Pattern", "Recommended Practice", "Anti-Pattern (Avoid)"],
+        "rows": [
+          ["UI Logic", "SwiftUI / ViewModels", "Massive View Controllers"],
+          ["Data Models", "Structs (Value Types)", "Classes (Reference Types)"],
+          ["Networking", "URLSession + async/await", "Singleton-based closures"],
+          ["State", "Single Source of Truth (SSOT)", "Scattered mutable state"],
+          ["Dependencies", "Dependency Injection", "Singletons / Global variables"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Should I use Singletons in iOS?",
+      "answer": "Use them sparingly. While Apple uses them (e.g., 'URLSession.shared'), global state makes testing difficult. If you use a Singleton, ensure it conforms to a Protocol so you can still inject a mock version during tests."
+    },
+    {
+      "question": "What is the 'Clean Architecture' approach for iOS?",
+      "answer": "It involves separating the app into Layers: Domain (Entities/Use Cases), Presentation (SwiftUI/VM), and Data (Repositories/API). This mirrors the Clean Architecture patterns you use in Flutter, making the whole system easier to reason about."
+    },
+    {
+      "question": "How should I handle Error Messages for users?",
+      "answer": "Architects recommend using 'Enums' that conform to the 'LocalizedError' protocol. This allows you to define user-friendly error strings in one place, which can then be easily displayed in the UI or passed back through a Method Channel."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which programming paradigm is central to Swift's design, favoring composition over deep inheritance?",
+      "options": ["Object-Oriented", "Protocol-Oriented", "Functional-Only", "Imperative"],
+      "answer": 1
+    },
+    {
+      "question": "What is the primary architectural benefit of Dependency Injection?",
+      "options": [
+        "It makes the app run faster",
+        "It makes classes easier to test by allowing mock objects",
+        "It reduces the size of the app binary",
+        "It automatically saves data to the cloud"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which attribute ensures that a class or method always runs on the main UI thread?",
+      "options": ["@MainThread", "@UIOnly", "@MainActor", "@Foreground"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "swift-protocols",
+    "ios-debugging-xcode-tools",
+    "ios-security-privacy",
+    "swift-async-await",
+    "clean-architecture-native"
+  ]
+}

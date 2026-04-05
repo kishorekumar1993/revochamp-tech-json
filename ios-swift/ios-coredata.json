@@ -1,0 +1,138 @@
+{
+  "slug": "ios-core-data-persistence",
+  "course": "iOS Development",
+  "title": "Core Data – Enterprise Persistence and Object Mapping",
+
+  "meta": {
+    "title": "iOS Core Data Guide – NSPersistentContainer, Contexts & Fetching (2026)",
+    "description": "Master Core Data for iOS. Learn about the persistent stack, managed object contexts, and how to perform performant data fetching in native Swift.",
+    "keywords": [
+      "core data",
+      "nspersistentcontainer",
+      "nsmanagedobjectcontext",
+      "ios persistence",
+      "core data vs sqlite",
+      "nsfetchrequest"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Core Data?"
+    },
+    {
+      "type": "text",
+      "value": "Core Data is Apple's framework for managing the model layer of your application. While it can use SQLite as its backing store, it treats your data as a graph of live Swift objects. As an Architect, you should value Core Data for its built-in features like **Undo/Redo support**, **Data Validation**, and **Relationship Management** (e.g., automatically deleting all 'Widgets' when a 'Project' is deleted)."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. The Core Data Stack"
+    },
+    {
+      "type": "text",
+      "value": "In 2026, setting up Core Data is simplified through the `NSPersistentContainer`. This container encapsulates the entire stack. The most important part for your daily coding is the **Managed Object Context (MOC)**, which acts as a 'scratchpad' where you create, edit, and delete your data before 'Saving' it to the permanent disk."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "let container = NSPersistentContainer(name: \"RevoDataModel\")\ncontainer.loadPersistentStores { (storeDescription, error) in\n    if let error = error as NSError? {\n        fatalError(\"Unresolved error \\(error)\")\n    }\n}\n\n// The 'Scratchpad'\nlet context = container.viewContext"
+    },
+    {
+      "type": "heading",
+      "value": "2. Creating and Saving Data"
+    },
+    {
+      "type": "text",
+      "value": "When you define an Entity in the Xcode Data Model editor (e.g., 'Project'), Xcode generates a class for you. To save data, you create an instance of that class within a context and then tell the context to save."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "let newProject = Project(context: context)\nnewProject.id = UUID().uuidString\nnewProject.name = \"New AI Mobile App\"\nnewProject.createdAt = Date()\n\ndo {\n    try context.save()\n    print(\"Project saved to native storage!\")\n} catch {\n    print(\"Save failed: \\(error)\")\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Fetching with NSFetchRequest"
+    },
+    {
+      "type": "text",
+      "value": "To retrieve data, you use an `NSFetchRequest`. You can refine your results using **NSPredicate** (filtering) and **NSSortDescriptor** (ordering), making it highly efficient for searching through thousands of generated project logs."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "let fetchRequest: NSFetchRequest<Project> = Project.fetchRequest()\n\n// Filter: Name contains 'AI'\nfetchRequest.predicate = NSPredicate(format: \"name CONTAINS[cd] %@\", \"AI\")\n\n// Sort: Newest first\nfetchRequest.sortDescriptors = [NSSortDescriptor(key: \"createdAt\", ascending: false)]\n\ntry {\n    let results = try context.fetch(fetchRequest)\n    for project in results {\n        print(\"Found: \\(project.name ?? \"Untitled\")\")\n    }\n} catch {\n    print(\"Fetch failed\")\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Persistence Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Core Data (Native)", "Hive / Sqflite (Flutter)"],
+        "rows": [
+          ["Type", "Object-Graph Manager", "Key-Value / SQL"],
+          ["Relationships", "Built-in (To-one, To-many)", "Manual linking"],
+          ["Migrations", "Automated mapping", "Manual script handling"],
+          ["Performance", "Extreme (Lazy loading)", "High"],
+          ["UI Binding", "NSFetchedResultsController", "StreamBuilder / Listenable"],
+          ["Memory Usage", "Efficient (Faulting mechanism)", "Loads objects into memory"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Does Core Data run on the main thread?",
+      "answer": "The 'viewContext' runs on the main thread and is safe for UI work. For heavy imports or background syncs from your Python API, Architects use 'performBackgroundTask', which creates a private background context to prevent UI stuttering."
+    },
+    {
+      "question": "What is 'Faulting' in Core Data?",
+      "answer": "Faulting is a performance feature where Core Data retrieves an object's shell but doesn't load its full data from disk until you actually access a property. This allows you to handle thousands of objects with very low memory overhead."
+    },
+    {
+      "question": "Should I use Core Data or a simple JSON file?",
+      "answer": "For small configurations, a JSON file or UserDefaults is fine. For complex data with relationships, searching requirements, or large datasets (like the Revochamp project library), Core Data is significantly more robust and performant."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which object acts as the 'scratchpad' for creating and editing Core Data objects?",
+      "options": ["NSPersistentContainer", "NSManagedObjectContext", "NSPersistentStore", "NSEntityDescription"],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of an NSPredicate in a fetch request?",
+      "options": [
+        "To sort the data alphabetically",
+        "To filter the data based on specific criteria",
+        "To encrypt the data on disk",
+        "To delete all data in the store"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which Core Data feature automatically manages memory by loading only the object's ID until the data is needed?",
+      "options": ["Caching", "Indexing", "Faulting", "Mirroring"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "ios-project-structure",
+    "swift-classes-vs-structs",
+    "ios-app-lifecycle",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

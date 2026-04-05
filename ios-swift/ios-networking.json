@@ -1,0 +1,131 @@
+{
+  "slug": "ios-networking-urlsession",
+  "course": "iOS Development",
+  "title": "iOS Networking – Mastering URLSession",
+
+  "meta": {
+    "title": "iOS Networking Guide – URLSession, Tasks & JSON Parsing (2026)",
+    "description": "Learn professional networking in iOS. Master URLSession, asynchronous data fetching, and the Codable protocol for native API integration.",
+    "keywords": [
+      "urlsession",
+      "ios networking",
+      "codable swift",
+      "jsondecoder",
+      "urlrequest",
+      "ios background tasks",
+      "native api calls"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The URLSession Architecture"
+    },
+    {
+      "type": "text",
+      "value": "In iOS, all networking is managed through **URLSession**. It is a highly optimized, system-wide service that handles connection pooling, cache management, and cookie storage. As an Architect, you should view URLSession as a manager that coordinates multiple **URLSessionTasks**. These tasks are asynchronous by nature and do not block the main UI thread."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Types of Network Tasks"
+    },
+    {
+      "type": "text",
+      "value": "Depending on your requirements for Revochamp—such as fetching a JSON config or uploading a large image—you must choose the appropriate task type:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Data Tasks**: Used for basic GET/POST requests where data is returned directly to memory (ideal for JSON APIs).",
+        "**Upload Tasks**: Designed specifically for sending files or data to a server, supporting multi-part requests.",
+        "**Download Tasks**: Downloads data directly to a file on disk. These are unique because they can continue running even if the app is suspended or terminated by the OS."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Modern Async Networking"
+    },
+    {
+      "type": "text",
+      "value": "In 2026, the standard way to perform network requests is using Swift's `async/await`. This eliminates the 'Callback Hell' associated with older completion handlers and aligns perfectly with Dart’s asynchronous style."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "func fetchProjectDetails(id: String) async throws -> Project {\n    let url = URL(string: \"https://api.revochamp.com/v2/projects/\\(id)\")!\n    \n    // Create a request with custom headers\n    var request = URLRequest(url: url)\n    request.httpMethod = \"GET\"\n    request.setValue(\"Bearer \\(token)\", forHTTPHeaderField: \"Authorization\")\n\n    // Perform the request\n    let (data, response) = try await URLSession.shared.data(for: request)\n\n    // Validate HTTP response\n    guard (response as? HTTPURLResponse)?.statusCode == 200 else {\n        throw NetworkError.serverError\n    }\n\n    // Parse JSON\n    return try JSONDecoder().decode(Project.self, from: data)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Data Parsing with Codable"
+    },
+    {
+      "type": "text",
+      "value": "Swift's **Codable** protocol is a powerful feature that allows for automatic conversion between JSON and Swift Structs. Unlike Dart, which often requires code generation (like `json_serializable`), Swift's compiler handles the mapping natively, reducing boilerplate in your native modules."
+    },
+    
+    {
+      "type": "heading",
+      "value": "Networking: Native vs. Flutter"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "URLSession (Native)", "Dio / Http (Flutter)"],
+        "rows": [
+          ["Platform Integration", "Deep (Supports OS-level caching)", "High-level abstraction"],
+          ["Background Support", "Native system-level downloads", "Requires native plugins"],
+          ["Parsing", "Codable (Compiler-level)", "Manual or build_runner"],
+          ["Configuration", "Via URLSessionConfiguration", "Via Interceptors"],
+          ["Security", "Native App Transport Security (ATS)", "Standard certificate handling"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is App Transport Security (ATS)?",
+      "answer": "ATS is a security feature enforced by Apple that blocks any non-secure (HTTP) connections by default. All your Revochamp APIs must use HTTPS, or you must explicitly add exceptions to the Info.plist file—though doing so can lead to App Store rejection."
+    },
+    {
+      "question": "When should I use a custom URLSessionConfiguration?",
+      "answer": "Use 'default' for standard tasks. Use 'ephemeral' for private browsing (no cookies or cache stored to disk). Use 'background' if you need the OS to finish the download even if the user switches apps or the phone locks."
+    },
+    {
+      "question": "How do I handle timeouts?",
+      "answer": "You set the 'timeoutInterval' property on your URLRequest object. In an enterprise environment, a common standard is 30 seconds for data tasks and much longer for upload tasks."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which URLSessionTask type should be used to download a large file that continues even if the app enters the background?",
+      "options": ["Data Task", "Download Task", "Upload Task", "Stream Task"],
+      "answer": 1
+    },
+    {
+      "question": "Which Swift protocol is used to make a Struct easily decodable from a JSON response?",
+      "options": ["Encodable", "Decodable", "Codable", "JsonMap"],
+      "answer": 2
+    },
+    {
+      "question": "Which object in iOS is responsible for managing networking configurations like timeouts and caching policies?",
+      "options": ["URLRequest", "URLSessionConfiguration", "URLResponse", "HTTPHeader"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "swift-async-await",
+    "swift-classes-vs-structs",
+    "ios-app-lifecycle",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

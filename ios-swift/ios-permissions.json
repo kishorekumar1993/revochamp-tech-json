@@ -1,0 +1,127 @@
+{
+  "slug": "ios-permissions-and-privacy",
+  "course": "iOS Development",
+  "title": "iOS Permissions – Navigating the Privacy Sandbox",
+
+  "meta": {
+    "title": "iOS Permissions Guide – Info.plist, Usage Descriptions & Requests (2026)",
+    "description": "Master the iOS permission system. Learn how to configure usage descriptions in Info.plist and handle runtime permission requests in Swift.",
+    "keywords": [
+      "ios permissions",
+      "info.plist usage descriptions",
+      "avfoundation permissions",
+      "photokit authorization",
+      "ios privacy sandbox",
+      "tcc framework"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The iOS Privacy Model"
+    },
+    {
+      "type": "text",
+      "value": "Every iOS app runs in a sandbox. Access to sensitive data (Location, Contacts, Photos) or hardware (Camera, Microphone) requires explicit user consent. As an Engineering Manager, you must ensure that your app provides a clear 'Purpose String' that explains *why* the data is needed, or Apple will automatically reject the app during the review process."
+    },
+    {
+      "type": "heading",
+      "value": "1. Configuration: The Info.plist"
+    },
+    {
+      "type": "text",
+      "value": "Before you write a single line of Swift code, you must declare the permission in your `Info.plist` file. If your code attempts to access a protected resource without this key, the system will terminate (crash) the app instantly for security reasons."
+    },
+    
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Key", "Hardware/Data", "Purpose Example"],
+        "rows": [
+          ["NSCameraUsageDescription", "Camera", "Used to scan UI sketches for AI generation."],
+          ["NSPhotoLibraryAddUsageDescription", "Photo Library", "Required to save generated app mockups."],
+          ["NSLocationWhenInUseUsageDescription", "GPS Location", "Used to tag projects with a location."],
+          ["NSMicrophoneUsageDescription", "Microphone", "Needed for voice-controlled AI commands."]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "2. Runtime Requests"
+    },
+    {
+      "type": "text",
+      "value": "Declaring the key isn't enough; you must check the status at runtime. If the status is `.notDetermined`, you trigger the system alert. For a Flutter Architect, this is where you bridge the native `AVFoundation` or `PhotoKit` status back to your Dart UI."
+    },
+    
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "import AVFoundation\n\nfunc checkCameraPermission() {\n    let status = AVCaptureDevice.authorizationStatus(for: .video)\n    \n    switch status {\n    case .authorized:\n        print(\"Access granted\")\n    case .notDetermined:\n        AVCaptureDevice.requestAccess(for: .video) { granted in\n            if granted { print(\"User allowed access\") }\n        }\n    case .denied, .restricted:\n        print(\"User blocked access - redirect to Settings\")\n    @unknown default:\n        break\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. The One-Time Prompt Rule"
+    },
+    {
+      "type": "text",
+      "value": "iOS will only show the system permission dialog **once**. If the user taps 'Don't Allow,' your app cannot trigger the prompt again. You must instead detect the `.denied` state and provide a deep link that takes the user directly to the 'iOS Settings' app so they can toggle it manually."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Deep link to app settings\nif let settingsUrl = URL(string: UIApplication.openSettingsURLString) {\n    UIApplication.shared.open(settingsUrl)\n}"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the 'Limited Photos Library' access?",
+      "answer": "Introduced in iOS 14, users can choose to grant access only to specific photos rather than their entire library. Your code should be prepared to handle cases where the app only sees a subset of the user's media."
+    },
+    {
+      "question": "Can I customize the look of the permission alert?",
+      "answer": "No. The system alert is standard and cannot be styled. However, Architects recommend showing a 'Pre-Permission Screen' (a custom UI) that explains the benefits of the feature *before* triggering the un-customizable system prompt."
+    },
+    {
+      "question": "Does Flutter handle this automatically?",
+      "answer": "No. While packages like 'permission_handler' exist, they simply call these native Swift methods under the hood. You still must manually add the usage descriptions to the Info.plist in the 'ios/Runner' folder."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "What happens if an app tries to access the camera without an NSCameraUsageDescription key in Info.plist?",
+      "options": [
+        "The system ignores the request",
+        "The app crashes immediately",
+        "A default message is shown",
+        "The camera returns black frames"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How many times will iOS show the system-level permission dialog for a specific resource?",
+      "options": ["Once", "Twice", "Every time the app opens", "Unlimited"],
+      "answer": 0
+    },
+    {
+      "question": "Which framework is primarily used for requesting access to the user's photos?",
+      "options": ["AVFoundation", "PhotoKit", "CoreGraphics", "UIKit"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ios-project-structure",
+    "ios-app-lifecycle",
+    "flutter-method-channels",
+    "ios-security-privacy",
+    "clean-architecture-native"
+  ]
+}

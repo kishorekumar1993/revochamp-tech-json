@@ -1,0 +1,132 @@
+{
+  "slug": "ios-navigation-controller",
+  "course": "iOS Development",
+  "title": "UINavigationController – Managing the Native Stack",
+
+  "meta": {
+    "title": "iOS Navigation Guide – Push, Pop & Segues (2026)",
+    "description": "Master navigation in iOS. Learn how to use UINavigationController, manage the navigation bar, and pass data between View Controllers.",
+    "keywords": [
+      "uinavigationcontroller",
+      "ios navigation stack",
+      "push view controller",
+      "pop view controller",
+      "ios back button",
+      "uinavigationbar"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Navigation Stack Architecture"
+    },
+    {
+      "type": "text",
+      "value": "At the heart of most iOS apps is the **UINavigationController**. It maintains a stack of View Controllers. When you navigate to a new screen, you 'Push' it onto the stack. When the user taps the back button, the top controller is 'Popped' off. This is a Last-In, First-Out (LIFO) structure that manages the lifecycle and memory of every screen in the flow."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Pushing and Popping Programmatically"
+    },
+    {
+      "type": "text",
+      "value": "As a Lead Developer, you often trigger navigation based on logic (like a successful API call from your Python backend). You access the navigation controller through the `navigationController` property of any UIViewController."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// 1. Create the destination controller\nlet detailVC = ProjectDetailViewController()\ndetailVC.project = currentProject\n\n// 2. Push it onto the stack\nself.navigationController?.pushViewController(detailVC, animated: true)\n\n// 3. To go back manually:\n// self.navigationController?.popViewController(animated: true)"
+    },
+    {
+      "type": "heading",
+      "value": "2. The UINavigationBar"
+    },
+    {
+      "type": "text",
+      "value": "The navigation controller automatically manages the **UINavigationBar** at the top of the screen. It handles the title, the back button (including the 'Back' text or arrow), and any custom 'Bar Button Items' you want to add for actions like 'Save' or 'Edit'."
+    },
+    
+    {
+      "type": "heading",
+      "value": "3. Modal vs. Push Navigation"
+    },
+    {
+      "type": "text",
+      "value": "It is critical for an Architect to know when to use each. **Pushing** is for hierarchical content (List -> Detail). **Presenting Modally** is for a temporary interruption or a self-contained task (Login, Create New Project, Filter Settings). Modals usually slide up from the bottom and can be dismissed."
+    },
+    {
+      "type": "code",
+      "language": "swift",
+      "value": "// Presenting a Modal\nlet settingsVC = SettingsViewController()\nself.present(settingsVC, animated: true, completion: nil)"
+    },
+    {
+      "type": "heading",
+      "value": "Navigation Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "UINavigationController (Native)", "Navigator (Flutter)"],
+        "rows": [
+          ["Structure", "Imperative Stack", "Declarative or Imperative"],
+          ["Transitions", "Standard iOS Slide (Push)", "Platform-adaptive"],
+          ["Back Button", "Automatic", "Automatic (via AppBar)"],
+          ["Data Passing", "Direct property injection", "Arguments Map / Constructor"],
+          ["Customization", "Via NavigationBar properties", "Via Theme or PageRouteBuilder"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "How do I hide the back button text?",
+      "answer": "The back button text is actually determined by the *previous* View Controller's title. If you want only the arrow, you can set an empty string as the 'backButtonTitle' on the source controller before pushing the destination."
+    },
+    {
+      "question": "Can I have multiple navigation stacks?",
+      "answer": "Yes. This is common in apps with a **UITabBarController**. Each tab usually has its own independent UINavigationController, allowing the user to maintain their position in one tab while switching to another."
+    },
+    {
+      "question": "What is 'Unwinding'?",
+      "answer": "If you are using Storyboards, an 'Unwind Segue' allows you to jump back multiple levels in the stack to a specific previous View Controller, automatically popping everything in between."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which method is used to add a new View Controller to a navigation stack?",
+      "options": ["present()", "pushViewController()", "show()", "insert()"],
+      "answer": 1
+    },
+    {
+      "question": "What is the standard behavior when the 'Pop' operation is performed?",
+      "options": [
+        "The bottom controller is removed",
+        "A new controller is added to the stack",
+        "The current top controller is removed and the previous one is revealed",
+        "The app is minimized"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which navigation type is best suited for a 'Login' screen that interrupts the main flow?",
+      "options": ["Push", "Modal Presentation", "Tab Bar Switch", "Recursive"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "ios-project-structure",
+    "ios-app-lifecycle",
+    "ios-tableview-fundamentals",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}
