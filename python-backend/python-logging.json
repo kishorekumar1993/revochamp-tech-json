@@ -1,0 +1,143 @@
+{
+  "slug": "python-logging",
+  "course": "Python",
+  "title": "Python Logging – Professional Debugging & Monitoring",
+
+  "meta": {
+    "title": "Python Logging Guide – Log Levels, Handlers & Best Practices (2026)",
+    "description": "Learn how to implement professional logging in Python. Master log levels, handlers, formatters, and how to track application behavior in production.",
+    "keywords": [
+      "python logging",
+      "logging module python",
+      "log levels python",
+      "rotating file handler",
+      "python debugger vs logging",
+      "monitoring python apps"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Use Logging Instead of Print?"
+    },
+    {
+      "type": "text",
+      "value": "As a Technical Lead, you know that `print()` is for development, but **Logging** is for production. When your Flutter backend is running on a remote server, you can't see the standard output. The `logging` module provides a flexible framework for emitting log messages from Python programs, allowing you to categorize events by severity and direct them to different destinations (files, consoles, or external monitoring services)."
+    },
+    {
+      "type": "heading",
+      "value": "1. Log Levels (Severity)"
+    },
+    {
+      "type": "text",
+      "value": "Logging levels allow you to filter the importance of the information being recorded. In production, you might only care about 'Error' and 'Critical', while in development, you want 'Debug' information."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Level", "Numeric Value", "Usage"],
+        "rows": [
+          ["DEBUG", "10", "Detailed info for diagnosing problems"],
+          ["INFO", "20", "Confirmation that things are working as expected"],
+          ["WARNING", "30", "Indication that something unexpected happened (Default)"],
+          ["ERROR", "40", "A more serious problem; the software couldn't perform a function"],
+          ["CRITICAL", "50", "A serious error; the program itself may be unable to continue"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "2. The Logging Architecture"
+    },
+    {
+      "type": "text",
+      "value": "The logging flow involves three main objects: **Loggers** (the entry point), **Handlers** (where the log goes), and **Formatters** (how the log looks)."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import logging\n\n# Basic configuration\nlogging.basicConfig(\n    level=logging.INFO,\n    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',\n    filename='app.log',\n    filemode='a'\n)\n\nlogger = logging.getLogger('ProjectManager')\n\nlogger.info(\"Initializing Revochamp AI Engine...\")\ntry:\n    # Simulate a failure\n    1 / 0\nexcept ZeroDivisionError:\n    logger.error(\"Math error occurred\", exc_info=True) # exc_info captures the stack trace"
+    },
+    {
+      "type": "heading",
+      "value": "3. Advanced Handlers"
+    },
+    {
+      "type": "text",
+      "value": "For enterprise applications, you don't want a single text file that grows to several gigabytes. You should use specialized handlers:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**RotatingFileHandler**: Automatically 'rolls over' the log file when it reaches a certain size.",
+        "**TimedRotatingFileHandler**: Rotates logs at specific time intervals (e.g., every midnight).",
+        "**StreamHandler**: Sends logs to the console (useful for Docker/Container logs).",
+        "**SMTPHandler**: Sends an email when a 'CRITICAL' error occurs."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices for Architecture"
+    },
+    {
+      "type": "text",
+      "value": "Always use `__name__` when creating a logger: `logger = logging.getLogger(__name__)`. This ensures the log message shows exactly which module produced the error, making debugging significantly easier in complex microservices."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'exc_info=True'?",
+      "answer": "When an exception occurs, passing 'exc_info=True' to a logger method (like logger.error) will automatically append the full stack trace to the log message. This is vital for finding the line of code that caused the crash."
+    },
+    {
+      "question": "Can I log to multiple places at once?",
+      "answer": "Yes. You can add multiple handlers to a single logger. For example, you can send 'INFO' logs to the console and 'ERROR' logs to a persistent file or an external service like Sentry."
+    },
+    {
+      "question": "How do I stop third-party libraries from flooding my logs?",
+      "answer": "You can set the level for specific loggers. For example: 'logging.getLogger(\"requests\").setLevel(logging.WARNING)' will hide all DEBUG and INFO messages from the requests library."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import logging\nimport sys\n\n# Setup logger to output to console\nlogger = logging.getLogger('TestApp')\nhandler = logging.StreamHandler(sys.stdout)\nformatter = logging.Formatter('%(levelname)s: %(message)s')\nhandler.setFormatter(formatter)\nlogger.addHandler(handler)\nlogger.setLevel(logging.DEBUG)\n\n# Test the levels\nlogger.debug(\"This is a hidden detail\")\nlogger.info(\"User logged in\")\nlogger.warning(\"Disk space low\")\nlogger.error(\"Database connection failed\")"
+  },
+
+  "quiz": [
+    {
+      "question": "What is the default logging level if not configured?",
+      "options": ["DEBUG", "INFO", "WARNING", "ERROR"],
+      "answer": 2
+    },
+    {
+      "question": "Which logging component determines the final string representation of the log message?",
+      "options": ["Logger", "Handler", "Filter", "Formatter"],
+      "answer": 3
+    },
+    {
+      "question": "Why is logging.basicConfig() usually called only once?",
+      "options": [
+        "It consumes too much memory",
+        "It sets the global configuration for the root logger",
+        "It locks the database",
+        "It is a Python syntax rule"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-security",
+    "python-deployment",
+    "python-performance-tuning",
+    "django-rest-framework",
+    "python-exception-handling"
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "slug": "python-authentication",
+  "course": "Python",
+  "title": "Python Authentication – Managing Identity",
+
+  "meta": {
+    "title": "Python Authentication Guide – JWT, OAuth2 & Sessions (2026)",
+    "description": "Master identity management in Python. Learn the differences between Session and Token authentication, and how to implement secure login flows.",
+    "keywords": [
+      "python authentication",
+      "jwt python",
+      "oauth2 python",
+      "fastapi security",
+      "django auth",
+      "flask login"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Authentication vs. Authorization"
+    },
+    {
+      "type": "text",
+      "value": "Before building, clarify the two: **Authentication (AuthN)** is proving who you are (e.g., login). **Authorization (AuthZ)** is proving what you are allowed to do (e.g., admin vs. user). In a modern architecture, your Python backend verifies the identity and then issues a credential that the client (like a Flutter app) uses for subsequent requests."
+    },
+    {
+      "type": "heading",
+      "value": "1. Session-Based Authentication"
+    },
+    {
+      "type": "text",
+      "value": "Traditional web apps use Sessions. The server creates a session record in the database/memory and sends a 'Session ID' to the browser via a cookie. This is the default in Django and Flask-Login."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Pros**: Easy to revoke, built-in CSRF protection.",
+        "**Cons**: Harder to scale horizontally (requires shared session storage like Redis), not ideal for mobile apps."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Token-Based Authentication (JWT)"
+    },
+    {
+      "type": "text",
+      "value": "JWTs are the standard for modern APIs. The server signs a JSON object containing user data and sends it to the client. The client sends this token in the `Authorization: Bearer <token>` header for every request."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import jwt\nimport datetime\n\nSECRET_KEY = \"your-architect-level-secret\"\n\n# Create a Token\npayload = {\n    \"user_id\": 123,\n    \"exp\": datetime.datetime.utcnow() + datetime.timedelta(hours=1)\n}\ntoken = jwt.encode(payload, SECRET_KEY, algorithm=\"HS256\")\n\n# Decode and Verify\ntry:\n    decoded = jwt.decode(token, SECRET_KEY, algorithms=[\"HS256\"])\n    print(f\"Authenticated User: {decoded['user_id']}\")\nexcept jwt.ExpiredSignatureError:\n    print(\"Token expired. Please login again.\")"
+    },
+    {
+      "type": "heading",
+      "value": "3. OAuth2 and OpenID Connect (OIDC)"
+    },
+    {
+      "type": "text",
+      "value": "If you want to allow 'Login with Google' or 'Login with GitHub', you use OAuth2. Python libraries like `Authlib` or `PyOIDC` handle the complex handshake between your app and the identity provider."
+    },
+    {
+      "type": "heading",
+      "value": "Authentication Methods Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Method", "Storage", "State", "Use Case"],
+        "rows": [
+          ["Basic Auth", "Headers (Base64)", "Stateless", "Simple internal scripts"],
+          ["Sessions", "Server DB / Cookies", "Stateful", "Traditional Web Apps"],
+          ["JWT / Tokens", "Client-side / Header", "Stateless", "Mobile Apps & SPAs"],
+          ["OAuth2", "External Provider", "Delegated", "Third-party login (SSO)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'Stateless' authentication?",
+      "answer": "It means the server doesn't need to store any session data in its database to verify a user. All the information needed to verify the user is contained within the token itself (like a JWT)."
+    },
+    {
+      "question": "How do I secure my JWTs?",
+      "answer": "Use a strong secret key, set a short expiration time (exp), use HTTPS to prevent interception, and consider 'Refresh Tokens' to renew access without re-entering credentials."
+    },
+    {
+      "question": "Which Python framework has the best Auth?",
+      "answer": "Django has the most comprehensive built-in Auth system. FastAPI is excellent for OAuth2/JWT because it has security dependencies built directly into the route handlers."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Where is a JWT typically stored in a mobile app or SPA for API requests?",
+      "options": [
+        "In the database",
+        "In the Authorization header",
+        "In the URL query parameters",
+        "In a plain text file"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What happens if an attacker steals a valid JWT?",
+      "options": [
+        "Nothing, it only works on the user's IP",
+        "They can impersonate the user until the token expires",
+        "They can change the user's password immediately",
+        "The token becomes invalid automatically"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which protocol is used for 'Login with Google'?",
+      "options": ["SMTP", "OAuth2", "FTP", "SSH"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-security",
+    "python-rest-api",
+    "django-rest-framework-jwt",
+    "fastapi-security-advanced",
+    "python-environment-setup"
+  ]
+}

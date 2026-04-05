@@ -1,0 +1,134 @@
+{
+  "slug": "python-rest-api",
+  "course": "Python",
+  "title": "Python REST APIs – Building and Consuming Web Services",
+
+  "meta": {
+    "title": "Python REST API Tutorial – FastAPI, Flask & Requests (2026)",
+    "description": "Learn how to build and consume REST APIs using Python. Master FastAPI for high-performance backends and the Requests library for client-side integration.",
+    "keywords": [
+      "python rest api",
+      "fastapi tutorial",
+      "flask api",
+      "python requests library",
+      "http methods python",
+      "json api python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a REST API?"
+    },
+    {
+      "type": "text",
+      "value": "A REST (Representational State Transfer) API is an architectural style for providing an interface between systems over HTTP. In the Python ecosystem, APIs are the backbone of modern web and mobile development, allowing your Flutter apps or React frontends to communicate with a Python backend to fetch data, authenticate users, or process AI tasks."
+    },
+    {
+      "type": "heading",
+      "value": "Consuming APIs with 'Requests'"
+    },
+    {
+      "type": "text",
+      "value": "The `requests` library is the industry standard for making HTTP calls in Python. It is much more intuitive than the built-in `urllib` and handles JSON, headers, and authentication with minimal code."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import requests\n\n# GET Request\nresponse = requests.get('https://api.example.com/data')\nif response.status_code == 200:\n    data = response.json()\n    print(data)\n\n# POST Request with JSON body\npayload = {'title': 'New Post', 'body': 'Hello World'}\nres = requests.post('https://api.example.com/posts', json=payload)\nprint(res.status_code) # 201 Created"
+    },
+    {
+      "type": "heading",
+      "value": "Building APIs: FastAPI vs. Flask"
+    },
+    {
+      "type": "text",
+      "value": "When it comes to building your own API, you have two main choices. In 2026, **FastAPI** is the preferred choice for new projects due to its speed and native support for asynchronous code and type hinting."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Flask", "FastAPI"],
+        "rows": [
+          ["Performance", "Standard (Synchronous)", "High (Asynchronous/Asgi)"],
+          ["Typing", "Not enforced", "Strongly enforced (Pydantic)"],
+          ["Documentation", "Manual (Swagger plugins)", "Automatic (/docs)"],
+          ["Ease of Use", "Very simple / Minimal", "Developer-friendly / Modern"],
+          ["Best For", "Small scripts / Simple sites", "Production APIs / AI services"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "FastAPI Quick Start"
+    },
+    {
+      "type": "text",
+      "value": "FastAPI uses Python type hints to validate data automatically. It also generates interactive API documentation (Swagger UI) by default."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get(\"/hello\")\ndef read_root():\n    return {\"message\": \"Hello from Python Backend\"}\n\n@app.get(\"/items/{item_id}\")\ndef read_item(item_id: int, q: str = None):\n    return {\"item_id\": item_id, \"query\": q}"
+    },
+    {
+      "type": "heading",
+      "value": "Common HTTP Methods"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**GET**: Retrieve data from the server (Read).",
+        "**POST**: Submit new data to the server (Create).",
+        "**PUT / PATCH**: Update existing data (Update).",
+        "**DELETE**: Remove data from the server (Delete)."
+      ]
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is Uvicorn?",
+      "answer": "Uvicorn is a lightning-fast ASGI server implementation. While FastAPI provides the logic, Uvicorn is the actual 'engine' that runs the server and handles the web requests."
+    },
+    {
+      "question": "How do I handle authentication in a Python API?",
+      "answer": "The most common method is using JWT (JSON Web Tokens). Libraries like 'python-jose' and FastAPI's built-in OAuth2 support make it easy to protect routes."
+    },
+    {
+      "question": "Is FastAPI faster than Node.js?",
+      "answer": "In many benchmarks, FastAPI performs on par with or even faster than Node.js and Go, thanks to its underlying Starlette framework and Uvicorn server."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which HTTP method is used to update an existing resource on a server?",
+      "options": ["GET", "POST", "PUT", "DELETE"],
+      "answer": 2
+    },
+    {
+      "question": "Which Python library is most commonly used to consume (request) APIs?",
+      "options": ["FastAPI", "Flask", "Requests", "Pandas"],
+      "answer": 2
+    },
+    {
+      "question": "What is the status code for a successful 'Created' resource?",
+      "options": ["200", "201", "404", "500"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-json-handling",
+    "python-asynchronous",
+    "fastapi-advanced",
+    "python-deployment",
+    "python-environment-setup"
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "slug": "python-background-tasks",
+  "course": "Python",
+  "title": "Python Background Tasks – Asynchronous Processing",
+
+  "meta": {
+    "title": "Python Background Tasks Guide – Celery, Redis & Redis Queue (2026)",
+    "description": "Learn how to offload heavy computations, email sending, and AI processing to background workers in Python. Master Celery, Redis, and Task Queues.",
+    "keywords": [
+      "python background tasks",
+      "celery python",
+      "redis queue python",
+      "fastapi background tasks",
+      "task queue architecture",
+      "worker process python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Why Use Background Tasks?"
+    },
+    {
+      "type": "text",
+      "value": "In modern web architecture, some tasks take too long to process during a standard HTTP request (e.g., generating a PDF, processing a video, or calling the Gemini API for a long prompt). If you run these in the main thread, your user's browser or Flutter app will 'hang' until the task is done. Background tasks allow you to return an immediate '202 Accepted' response while the heavy lifting happens in a separate worker process."
+    },
+    {
+      "type": "heading",
+      "value": "The Task Queue Architecture"
+    },
+    {
+      "type": "text",
+      "value": "This pattern involves three main components: the **Producer** (your web app), the **Broker** (a message queue like Redis or RabbitMQ), and the **Consumer** (the worker process)."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "1. Celery (The Industry Standard)"
+    },
+    {
+      "type": "text",
+      "value": "Celery is the most robust and widely used task queue for Python. It supports complex workflows, task scheduling (cron jobs), and retries. It is commonly paired with Redis as a broker."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from celery import Celery\n\n# Initialize Celery with Redis as the broker\napp = Celery('tasks', broker='redis://localhost:6379/0')\n\n@app.task\ndef process_ai_image(image_id):\n    # Simulate a long-running task\n    print(f\"Processing image {image_id} via Gemini API...\")\n    return f\"Image {image_id} processed!\"\n\n# In your web route:\n# process_ai_image.delay(101)  # Offloads to worker immediately"
+    },
+    {
+      "type": "heading",
+      "value": "2. FastAPI BackgroundTasks"
+    },
+    {
+      "type": "text",
+      "value": "If your needs are simple (like sending a confirmation email) and you don't want to manage a full Celery setup, FastAPI provides a built-in `BackgroundTasks` class that runs tasks after the response is sent, using the same process."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from fastapi import BackgroundTasks, FastAPI\n\napp = FastAPI()\n\ndef write_notification(email: str):\n    with open(\"log.txt\", mode=\"a\") as f:\n        f.write(f\"Notification sent to {email}\\n\")\n\n@app.post(\"/send-notification/{email}\")\nasync def send_notification(email: str, background_tasks: BackgroundTasks):\n    background_tasks.add_task(write_notification, email)\n    return {\"message\": \"Notification sent in the background\"}"
+    },
+    {
+      "type": "heading",
+      "value": "Comparison of Task Tools"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Tool", "Complexity", "Persistence", "Best For"],
+        "rows": [
+          ["FastAPI BackgroundTasks", "Low", "No (Lost on restart)", "Simple logging/emails"],
+          ["Redis Queue (RQ)", "Medium", "Yes", "Simple task offloading"],
+          ["Celery", "High", "Yes", "Complex workflows, retries, cron jobs"],
+          ["Drama", "Medium", "Yes", "Modern, type-safe alternative to Celery"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a 'Message Broker'?",
+      "answer": "A broker is a middleman (like Redis or RabbitMQ) that stores the tasks in a queue until a worker is free to pick them up. This ensures tasks aren't lost if the server is busy."
+    },
+    {
+      "question": "How do I see if a background task failed?",
+      "answer": "Tools like Celery provide 'Results Backends' to store the status. You can also use monitoring tools like 'Flower' to see a real-time dashboard of your workers."
+    },
+    {
+      "question": "Can I run background tasks on a schedule?",
+      "answer": "Yes. Celery has a component called 'Celery Beat' that acts like a scheduler, triggering tasks at specific intervals (e.g., every day at midnight)."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which component is responsible for storing tasks until they are processed?",
+      "options": ["The Producer", "The Worker", "The Broker", "The Serializer"],
+      "answer": 2
+    },
+    {
+      "question": "What is the main benefit of using a background task for long processes?",
+      "options": [
+        "It makes the task run faster",
+        "It prevents the web server from timing out and improves user experience",
+        "It uses less memory",
+        "It automatically encrypts the data"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which Python library is considered the industry standard for complex distributed task queues?",
+      "options": ["Requests", "Celery", "Flask", "Pandas"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-asynchronous",
+    "fastapi-intro",
+    "python-rest-api",
+    "python-postgresql",
+    "python-performance-tuning"
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "slug": "python-json-handling",
+  "course": "Python",
+  "title": "Python JSON Handling – Working with Data API",
+
+  "meta": {
+    "title": "Python JSON Tutorial – Parsing, Serialization & Deserialization (2026)",
+    "description": "Learn how to work with JSON in Python using the built-in json module. Master json.loads, json.dumps, and handling complex data structures.",
+    "keywords": [
+      "python json",
+      "json.loads",
+      "json.dumps",
+      "parse json python",
+      "serialize python object",
+      "python api data"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "JSON in the Python Ecosystem"
+    },
+    {
+      "type": "text",
+      "value": "JSON (JavaScript Object Notation) is the standard format for data exchange between a server and a web or mobile application. As a developer, you'll constantly handle JSON when consuming REST APIs or saving configuration files. Python provides a built-in `json` module to convert between JSON strings and Python dictionaries/lists."
+    },
+    {
+      "type": "heading",
+      "value": "Key Terminology"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Serialization (Encoding)**: Converting a Python object (like a dict) into a JSON-formatted string using `json.dumps()`.",
+        "**Deserialization (Decoding)**: Converting a JSON string back into a Python object using `json.loads()`."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Basic Operations"
+    },
+    {
+      "type": "text",
+      "value": "The `json` module makes it easy to switch between types. Note that Python's `True`, `False`, and `None` are automatically mapped to JSON's `true`, `false`, and `null`."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import json\n\n# 1. Parsing JSON (String to Dict)\njson_string = '{\"name\": \"Kishore\", \"isActive\": true}'\nuser_dict = json.loads(json_string)\nprint(user_dict[\"name\"]) # Kishore\n\n# 2. Creating JSON (Dict to String)\nuser_data = {\n    \"id\": 101,\n    \"skills\": [\"Flutter\", \"Python\"],\n    \"verified\": False\n}\n# Use 'indent' for pretty-printing\npretty_json = json.dumps(user_data, indent=4)\nprint(pretty_json)"
+    },
+    {
+      "type": "heading",
+      "value": "Working with Files"
+    },
+    {
+      "type": "text",
+      "value": "When dealing with files (e.g., `config.json`), use the `load()` and `dump()` methods (without the 's'). These operate directly on file streams."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "# Writing to a file\nwith open('data.json', 'w') as f:\n    json.dump(user_data, f)\n\n# Reading from a file\nwith open('data.json', 'r') as f:\n    data = json.load(f)"
+    },
+    {
+      "type": "heading",
+      "value": "Data Type Mapping"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Python Type", "JSON Equivalent"],
+        "rows": [
+          ["dict", "object {}"],
+          ["list, tuple", "array []"],
+          ["str", "string \"\""],
+          ["int, float", "number"],
+          ["True / False", "true / false"],
+          ["None", "null"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why did I get a 'TypeError: Object of type datetime is not JSON serializable'?",
+      "answer": "The standard JSON module doesn't know how to handle complex Python objects like datetime or custom classes. You must provide a custom encoder function or convert them to strings first."
+    },
+    {
+      "question": "What is the difference between loads() and load()?",
+      "answer": "The 's' in loads stands for 'string'. Use loads() for strings and load() for file-like objects."
+    },
+    {
+      "question": "Is JSON the same as a Python Dictionary?",
+      "answer": "No. A Dictionary is a Python memory structure; JSON is a text format. While they look similar, JSON has stricter rules (e.g., keys must be double-quoted strings)."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import json\n\n# Complex Python data\nproject = {\n    \"title\": \"Revochamp\",\n    \"version\": 1.0,\n    \"features\": [\"AI Builder\", \"Code Gen\"],\n    \"is_beta\": True\n}\n\n# Convert to JSON with sorting keys\njson_output = json.dumps(project, indent=2, sort_keys=True)\nprint(\"Encoded JSON:\")\nprint(json_output)\n\n# Back to Python\nparsed_data = json.loads(json_output)\nprint(f\"\\nProject Title: {parsed_data['title']}\")"
+  },
+
+  "quiz": [
+    {
+      "question": "Which method is used to parse a JSON string into a Python dictionary?",
+      "options": ["json.parse()", "json.load()", "json.loads()", "json.dict()"],
+      "answer": 2
+    },
+    {
+      "question": "How do you make the output of json.dumps() readable for humans (pretty-print)?",
+      "options": ["Use the 'pretty=True' argument", "Use the 'indent' argument", "Use the 'format' argument", "JSON is always pretty-printed"],
+      "answer": 1
+    },
+    {
+      "question": "What JSON type does a Python 'None' value convert to?",
+      "options": ["undefined", "nil", "null", "None"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-variables",
+    "python-data-structures",
+    "python-file-handling",
+    "python-api-requests",
+    "fastapi-intro"
+  ]
+}

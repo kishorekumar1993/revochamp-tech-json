@@ -1,0 +1,133 @@
+{
+  "slug": "flask-introduction",
+  "course": "Python",
+  "title": "Introduction to Flask – The Micro-Framework",
+
+  "meta": {
+    "title": "What is Flask? – Python Web Development Introduction (2026)",
+    "description": "Discover Flask, the lightweight Python web framework. Learn about its micro-kernel architecture, WSGI, and why it is a top choice for REST APIs and microservices.",
+    "keywords": [
+      "flask introduction",
+      "python web framework",
+      "what is flask",
+      "flask vs django",
+      "wsgi python",
+      "microservices python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Flask?"
+    },
+    {
+      "type": "text",
+      "value": "Flask is a lightweight WSGI (Web Server Gateway Interface) web application framework. It is designed to make getting started quick and easy, with the ability to scale up to complex applications. Originally created as an April Fool's joke by Armin Ronacher, it has grown into one of the most popular Python web frameworks in the world."
+    },
+    {
+      "type": "heading",
+      "value": "The 'Micro' Philosophy"
+    },
+    {
+      "type": "text",
+      "value": "Flask is often called a 'micro-framework' because it does not require particular tools or libraries. It keeps the core simple but extensible. Unlike 'batteries-included' frameworks like Django, Flask doesn't force a specific database or form validation tool on you. You choose the components you need."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "Core Components"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Werkzeug**: A utility library for the Python programming language that handles routing, debugging, and WSGI details.",
+        "**Jinja2**: A modern and designer-friendly templating engine for Python, used to render dynamic HTML.",
+        "**Click**: A package for creating beautiful command-line interfaces, used for the `flask` command."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Hello World Example"
+    },
+    {
+      "type": "text",
+      "value": "A complete Flask application can be written in a single file. This simplicity is why many developers use it for prototyping and building REST APIs for mobile apps."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from flask import Flask\n\n# Initialize the application\napp = Flask(__name__)\n\n# Define a route\n@app.route('/')\ndef hello_world():\n    return 'Hello, World!'\n\nif __name__ == '__main__':\n    app.run()"
+    },
+    {
+      "type": "heading",
+      "value": "Flask vs. Django"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Flask", "Django"],
+        "rows": [
+          ["Type", "Micro-framework", "Full-stack framework"],
+          ["Flexibility", "High (Choose your tools)", "Low (The 'Django' way)"],
+          ["Learning Curve", "Very shallow", "Steep"],
+          ["Admin Panel", "Available via extensions", "Built-in"],
+          ["Best For", "Microservices, Small-Medium apps", "Large Enterprise monoliths"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Is Flask only for small applications?",
+      "answer": "No. While it is 'micro', Flask is used by large companies like Netflix, Airbnb, and Reddit. Its modular nature allows you to add only the complexity you actually need."
+    },
+    {
+      "question": "Does Flask support Asynchronous (async/await)?",
+      "answer": "Yes. Since version 2.0, Flask supports asynchronous route handlers, though it remains a WSGI framework at its core. For purely asynchronous performance, some developers look at FastAPI."
+    },
+    {
+      "question": "What is WSGI?",
+      "answer": "WSGI (Web Server Gateway Interface) is a standard for Python web application servers to communicate with web frameworks. It ensures that Flask can run on different web servers like Gunicorn or Nginx."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which templating engine does Flask use by default?",
+      "options": ["Mako", "Mustache", "Jinja2", "EJS"],
+      "answer": 2
+    },
+    {
+      "question": "What does it mean that Flask is a 'micro' framework?",
+      "options": [
+        "It only works on small computers",
+        "It lacks a built-in database layer and other heavy components",
+        "It is written in a micro programming language",
+        "It can only handle one user at a time"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Who created the Flask framework?",
+      "options": ["Guido van Rossum", "Armin Ronacher", "Mark Zuckerberg", "Brendan Eich"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "flask-routing",
+    "flask-request-response",
+    "flask-templates",
+    "flask-rest-api",
+    "python-introduction"
+  ]
+}

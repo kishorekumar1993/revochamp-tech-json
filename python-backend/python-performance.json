@@ -1,0 +1,134 @@
+{
+  "slug": "python-performance-tuning",
+  "course": "Python",
+  "title": "Python Performance – Optimization & Scaling",
+
+  "meta": {
+    "title": "Python Performance Tuning – Profiling, GIL & Optimization (2026)",
+    "description": "Learn how to identify bottlenecks and speed up Python code. Master profiling tools, memory management, and strategies to bypass the GIL.",
+    "keywords": [
+      "python performance",
+      "python profiling",
+      "global interpreter lock",
+      "cprofile tutorial",
+      "python memory optimization",
+      "multiprocessing vs threading"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Performance Mindset"
+    },
+    {
+      "type": "text",
+      "value": "Python is known for developer productivity, not raw execution speed. However, as a Technical Lead, you must ensure your Flutter backends can scale. Performance tuning is the art of identifying the 20% of code that consumes 80% of resources. Before optimizing, you must always measure; 'Premature optimization is the root of all evil.'"
+    },
+    {
+      "type": "heading",
+      "value": "1. Understanding the GIL"
+    },
+    {
+      "type": "text",
+      "value": "The **Global Interpreter Lock (GIL)** is a mutex that allows only one thread to execute Python bytecode at a time. This simplifies memory management but limits CPU-bound performance in multi-threaded programs. To achieve true parallelism on multi-core machines, Python developers use the `multiprocessing` module."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "2. Profiling: Finding the Bottleneck"
+    },
+    {
+      "type": "text",
+      "value": "You cannot fix what you cannot measure. Python provides built-in tools like `cProfile` for function-level timing and `line_profiler` for identifying exactly which line of code is slow."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Run a script with the built-in profiler sorted by total time\npython -m cProfile -s tottime my_script.py"
+    },
+    {
+      "type": "heading",
+      "value": "3. Optimization Techniques"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Use Built-in Functions**: Methods like `map()`, `filter()`, and list comprehensions are implemented in C and are significantly faster than manual `for` loops.",
+        "**Vectorization with NumPy**: For mathematical heavy-lifting, use NumPy. It offloads calculations to highly optimized C and Fortran code.",
+        "**Caching**: Use `@functools.lru_cache` to store results of expensive function calls.",
+        "**Efficient Data Structures**: Use `sets` for membership checks (O(1)) instead of `lists` (O(n))."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from functools import lru_cache\n\n@lru_cache(maxsize=128)\ndef expensive_ai_calculation(n):\n    # This result will be cached for subsequent calls\n    return n * n * n"
+    },
+    {
+      "type": "heading",
+      "value": "Concurrency Models Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Method", "Constraint", "Best Use Case"],
+        "rows": [
+          ["Asyncio", "Single-threaded / Event Loop", "I/O Bound (Network, APIs, DB)"],
+          ["Threading", "Limited by GIL", "I/O Bound (Reading files, legacy code)"],
+          ["Multiprocessing", "Bypasses GIL (Multi-core)", "CPU Bound (Image processing, Math)"],
+          ["Cython / PyPy", "External Runtimes", "When Python code itself is too slow"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "When should I use PyPy instead of CPython?",
+      "answer": "PyPy is a Just-In-Time (JIT) compiler that can make long-running loops significantly faster. It is great for heavy computation but may have compatibility issues with some C-extensions like NumPy."
+    },
+    {
+      "question": "How do I optimize memory usage?",
+      "answer": "Use generators (`yield`) instead of returning large lists. Generators produce items one by one, keeping the memory footprint low even when processing millions of records."
+    },
+    {
+      "question": "What is 'String Interning'?",
+      "answer": "Python automatically reuses objects for small strings and integers. For your own large strings, you can use 'sys.intern()' to ensure only one copy exists in memory, speeding up comparisons."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import time\n\n# Slow way: Manual loop\nstart = time.perf_counter()\nresult = []\nfor i in range(1000000):\n    result.append(i * 2)\nprint(f\"Loop time: {time.perf_counter() - start:.4f}s\")\n\n# Fast way: List comprehension\nstart = time.perf_counter()\nresult = [i * 2 for i in range(1000000)]\nprint(f\"Comprehension time: {time.perf_counter() - start:.4f}s\")"
+  },
+
+  "quiz": [
+    {
+      "question": "Which Python module allows you to bypass the GIL by using separate memory spaces?",
+      "options": ["threading", "asyncio", "multiprocessing", "subprocess"],
+      "answer": 2
+    },
+    {
+      "question": "What is the time complexity of a membership check ( 'x in data' ) for a Python Set?",
+      "options": ["O(1)", "O(n)", "O(log n)", "O(n^2)"],
+      "answer": 0
+    },
+    {
+      "question": "Which tool would you use to see a breakdown of execution time for every function in your script?",
+      "options": ["pip", "cProfile", "pylint", "black"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-asynchronous",
+    "python-background-tasks",
+    "python-logging",
+    "python-deployment",
+    "python-orm"
+  ]
+}

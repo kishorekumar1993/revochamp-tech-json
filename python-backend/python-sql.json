@@ -1,0 +1,131 @@
+{
+  "slug": "python-sql",
+  "course": "Python",
+  "title": "Python & SQL – Interacting with Relational Databases",
+
+  "meta": {
+    "title": "Python SQL Tutorial – SQLite, MySQL & Parameterized Queries (2026)",
+    "description": "Learn how to execute SQL queries in Python. Master the standard DB-API 2.0, handle transactions, and prevent SQL injection using SQLite and other RDBMS.",
+    "keywords": [
+      "python sql",
+      "sqlite3 python",
+      "execute sql python",
+      "python database connection",
+      "sql injection prevention",
+      "db-api python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Python and the SQL Standard"
+    },
+    {
+      "type": "text",
+      "value": "Python interacts with relational databases through a standard specification called **DB-API 2.0** (`PEP 249`). This ensures that whether you are using SQLite, MySQL, or PostgreSQL, the basic methods like `connect()`, `execute()`, and `fetchone()` remain consistent across different database drivers."
+    },
+    {
+      "type": "heading",
+      "value": "1. Working with SQLite (Built-in)"
+    },
+    {
+      "type": "text",
+      "value": "Python comes with the `sqlite3` module out of the box. It is perfect for local storage, mobile app testing, or small-scale automation tools. Since it's a file-based database, no server installation is required."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import sqlite3\n\n# 1. Connect to a database file (creates it if it doesn't exist)\nconn = sqlite3.connect('local_storage.db')\ncursor = conn.cursor()\n\n# 2. Create a table\ncursor.execute('''CREATE TABLE IF NOT EXISTS projects \n               (id INTEGER PRIMARY KEY, name TEXT, stars INTEGER)''')\n\n# 3. Insert data safely\nproject_data = ('Revochamp', 500)\ncursor.execute(\"INSERT INTO projects (name, stars) VALUES (?, ?)\", project_data)\n\n# 4. Commit and close\nconn.commit()\nconn.close()"
+    },
+    {
+      "type": "heading",
+      "value": "The Database Connection Workflow"
+    },
+    {
+      "type": "text",
+      "value": "Every SQL interaction in Python follows a specific hierarchy of objects: the Connection manages the link to the database, while the Cursor acts as a pointer to execute commands and fetch results."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "2. Parameterized Queries vs. Injection"
+    },
+    {
+      "type": "text",
+      "value": "As a Technical Lead, security is a priority. **SQL Injection** occurs when user input is directly concatenated into a query string. Python drivers prevent this by using placeholders (`?` for SQLite, `%s` for others)."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "user_id = \"1 OR 1=1\" # A common injection attack\n\n# ❌ DANGEROUS\n# cursor.execute(f\"SELECT * FROM users WHERE id = {user_id}\")\n\n# ✅ SAFE\ncursor.execute(\"SELECT * FROM users WHERE id = ?\", (user_id,))"
+    },
+    {
+      "type": "heading",
+      "value": "Common DB-API Methods"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Method", "Purpose", "Returns"],
+        "rows": [
+          ["execute()", "Runs a single SQL command", "Cursor object"],
+          ["executemany()", "Runs a command against a list of data", "None"],
+          ["fetchone()", "Retrieves the next row of a query result", "Tuple or None"],
+          ["fetchall()", "Retrieves all remaining rows", "List of Tuples"],
+          ["commit()", "Saves all current changes to the DB", "None"],
+          ["rollback()", "Undoes changes since the last commit", "None"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "When should I use SQLite vs. a server-based SQL like PostgreSQL?",
+      "answer": "Use SQLite for local apps, prototypes, or read-heavy apps with low concurrency. Use PostgreSQL or MySQL for web applications with many simultaneous users and high write volumes."
+    },
+    {
+      "question": "What is 'conn.commit()' and why do I need it?",
+      "answer": "SQL databases use transactions. When you Insert or Update data, the changes are 'pending' in a temporary state. Calling commit() makes those changes permanent in the database file."
+    },
+    {
+      "question": "Can I return results as a Dictionary instead of a Tuple?",
+      "answer": "Yes. In SQLite, you can set 'conn.row_factory = sqlite3.Row'. This allows you to access columns by name (e.g., row['name']) instead of index (e.g., row[0])."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import sqlite3\n\n# Create an in-memory database for testing\nconn = sqlite3.connect(':memory:')\ncur = conn.cursor()\n\ncur.execute(\"CREATE TABLE dev(name, lang)\")\ncur.execute(\"INSERT INTO dev VALUES (?, ?)\", (\"Kishore\", \"Python\"))\n\n# Query data\ncur.execute(\"SELECT * FROM dev\")\nrow = cur.fetchone()\n\nprint(f\"Developer: {row[0]}, Language: {row[1]}\")"
+  },
+
+  "quiz": [
+    {
+      "question": "Which object is responsible for executing SQL commands and fetching results?",
+      "options": ["Connection", "Cursor", "Driver", "ORM"],
+      "answer": 1
+    },
+    {
+      "question": "Which placeholder does SQLite use for parameterized queries?",
+      "options": ["%s", ":val", "?", "$1"],
+      "answer": 2
+    },
+    {
+      "question": "What command must be called to ensure data changes are saved to the database?",
+      "options": ["save()", "push()", "commit()", "close()"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-postgresql",
+    "python-orm",
+    "python-json-handling",
+    "python-security-best-practices",
+    "django-models"
+  ]
+}

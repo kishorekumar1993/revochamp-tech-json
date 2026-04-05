@@ -1,0 +1,146 @@
+{
+  "slug": "python-postgresql",
+  "course": "Python",
+  "title": "Python & PostgreSQL – Database Integration",
+
+  "meta": {
+    "title": "Python PostgreSQL Tutorial – Psycopg, SQLAlchemy & CRUD (2026)",
+    "description": "Learn how to connect Python applications to PostgreSQL databases. Master the Psycopg library, execute SQL queries, and manage connection pooling.",
+    "keywords": [
+      "python postgresql",
+      "psycopg3",
+      "sqlalchemy postgres",
+      "connect python to database",
+      "sql queries python",
+      "database adapter python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Connecting Python to PostgreSQL"
+    },
+    {
+      "type": "text",
+      "value": "PostgreSQL is a powerful, open-source object-relational database system. In the Python ecosystem, connecting to Postgres is essential for building scalable backends. Whether you are using a low-level driver like **Psycopg** or a high-level ORM like **SQLAlchemy**, Python makes database interaction seamless and secure."
+    },
+    {
+      "type": "heading",
+      "value": "1. Using Psycopg (The Database Driver)"
+    },
+    {
+      "type": "text",
+      "value": "Psycopg is the most popular PostgreSQL adapter for Python. In 2026, **Psycopg 3** is the standard, offering native support for Python's `asyncio`, improved performance, and better security through static typing."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import psycopg\n\n# Establish a connection\nwith psycopg.connect(\"dbname=mydb user=kishore password=secret\") as conn:\n    # Open a cursor to perform database operations\n    with conn.cursor() as cur:\n        # Execute a command\n        cur.execute(\"SELECT * FROM projects WHERE is_active = %s\", (True,))\n        \n        # Fetch results\n        for record in cur.fetchall():\n            print(record)\n\n# Connection and cursor are automatically closed by the 'with' statement"
+    },
+    {
+      "type": "heading",
+      "value": "2. Database Interaction Workflow"
+    },
+    {
+      "type": "text",
+      "value": "The interaction follows a strict cycle: Requesting a connection from a pool, opening a cursor, executing SQL with parameters, committing the transaction, and closing resources."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "3. SQL Injection Prevention"
+    },
+    {
+      "type": "text",
+      "value": "Never use string formatting (`f-strings`) to build SQL queries with user input. Always use **parameterized queries** where the driver handles the escaping. This is a critical security practice for any Technical Lead or Architect."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "# ❌ DANGEROUS: Vulnerable to SQL Injection\n# cur.execute(f\"SELECT * FROM users WHERE name = '{user_input}'\")\n\n# ✅ SAFE: Using placeholders\ncur.execute(\"SELECT * FROM users WHERE name = %s\", (user_input,))"
+    },
+    {
+      "type": "heading",
+      "value": "Comparison: Driver vs. ORM"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Approach", "Tool", "Best For"],
+        "rows": [
+          ["Low-level Driver", "Psycopg 3", "Raw performance, complex SQL, one-off scripts"],
+          ["SQL Toolkit/ORM", "SQLAlchemy", "Enterprise apps, database migrations, complex relationships"],
+          ["Async Driver", "asyncpg", "High-concurrency FastAPI applications"],
+          ["Micro-ORM", "Peewee", "Small projects where SQLAlchemy is too heavy"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "4. Connection Pooling"
+    },
+    {
+      "type": "text",
+      "value": "Creating a new database connection for every request is expensive. For production applications, use a connection pool to reuse existing connections, significantly improving the response time of your API."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between execute() and executemany()?",
+      "answer": "execute() runs a single SQL statement. executemany() allows you to run the same command for a list of multiple data sets efficiently, which is much faster for bulk inserts."
+    },
+    {
+      "question": "How do I handle database transactions?",
+      "answer": "By default, Psycopg starts a transaction on the first command. You must call 'conn.commit()' to save changes or 'conn.rollback()' to discard them. Using the 'with' statement on the connection object handles this automatically."
+    },
+    {
+      "question": "Which PostgreSQL tool should I use with FastAPI?",
+      "answer": "For FastAPI, 'SQLAlchemy' with 'asyncpg' or 'Psycopg 3' in async mode is recommended to take full advantage of asynchronous execution."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Why should you use placeholders (%s) instead of f-strings in SQL queries?",
+      "options": [
+        "It makes the code shorter",
+        "It prevents SQL Injection attacks",
+        "It is required by the SQL standard",
+        "It converts integers to strings automatically"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which Python library is the most standard adapter for PostgreSQL?",
+      "options": ["SQLAlchemy", "SQLite3", "Psycopg", "Postgres-Py"],
+      "answer": 2
+    },
+    {
+      "question": "What is the purpose of a Database Cursor?",
+      "options": [
+        "To style the database output",
+        "To manage the connection pool",
+        "To execute commands and fetch result rows from a database",
+        "To encrypt the database password"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-rest-api",
+    "django-models",
+    "python-environment-setup",
+    "sqlalchemy-intro",
+    "python-security-best-practices"
+  ]
+}

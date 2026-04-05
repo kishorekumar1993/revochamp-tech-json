@@ -1,0 +1,148 @@
+{
+  "slug": "flask-routing",
+  "course": "Python",
+  "title": "Flask Routing – Mapping URLs to Functions",
+
+  "meta": {
+    "title": "Flask Routing Guide – Dynamic URLs, Methods & Converters (2026)",
+    "description": "Master URL routing in Flask. Learn how to handle dynamic paths, use variable converters (int, string, uuid), and manage HTTP methods for RESTful APIs.",
+    "keywords": [
+      "flask routing",
+      "dynamic urls flask",
+      "flask url converters",
+      "flask methods",
+      "flask redirect",
+      "url_for flask"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Routing?"
+    },
+    {
+      "type": "text",
+      "value": "Routing is the process of binding a URL to a specific Python function. In Flask, this is handled primarily through the `@app.route()` decorator. When a user visits a specific path, Flask identifies the associated function (called a 'View Function') and executes it to return a response."
+    },
+    {
+      "type": "heading",
+      "value": "1. Basic and Dynamic Routing"
+    },
+    {
+      "type": "text",
+      "value": "Static routes are simple, but dynamic routes allow you to capture values from the URL and pass them as arguments to your function. This is vital for resources like user profiles or blog posts."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "@app.route('/welcome')\ndef welcome():\n    return \"Welcome to the Flask App!\"\n\n# Dynamic route capturing a string\n@app.route('/user/<username>')\ndef show_user_profile(username):\n    return f\"User: {username}\""
+    },
+    {
+      "type": "heading",
+      "value": "2. Variable Converters"
+    },
+    {
+      "type": "text",
+      "value": "By default, dynamic segments are treated as strings. You can use converters to ensure the data is of a specific type (int, float, path, uuid) before the function is even called. If the type doesn't match, Flask returns a 404 error."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "@app.route('/post/<int:post_id>')\ndef show_post(post_id):\n    # post_id is guaranteed to be an integer\n    return f\"Post ID: {post_id}\"\n\n@app.route('/file/<path:subpath>')\ndef show_subpath(subpath):\n    # Captures the rest of the URL including slashes\n    return f\"Subpath: {subpath}\""
+    },
+    {
+      "type": "heading",
+      "value": "3. HTTP Methods"
+    },
+    {
+      "type": "text",
+      "value": "By default, routes only respond to GET requests. To build a RESTful API, you must explicitly list the methods the route should handle."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "@app.route('/login', methods=['GET', 'POST'])\ndef login():\n    if request.method == 'POST':\n        return \"Processing Login...\"\n    else:\n        return \"Showing Login Form...\""
+    },
+    {
+      "type": "heading",
+      "value": "4. URL Building with url_for"
+    },
+    {
+      "type": "text",
+      "value": "Never hardcode URLs in your application. Use `url_for()` to generate URLs based on the function name. This ensures that if you change the URL path in the decorator, all your links automatically update."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from flask import url_for\n\n# Generates '/user/Kishore'\nurl = url_for('show_user_profile', username='Kishore')"
+    },
+    {
+      "type": "heading",
+      "value": "Routing Summary"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Converter", "Description", "Example"],
+        "rows": [
+          ["string", "Default (accepts any text without slashes)", "/page/<name>"],
+          ["int", "Accepts positive integers", "/user/<int:id>"],
+          ["float", "Accepts positive floating point values", "/price/<float:val>"],
+          ["path", "Like string but accepts slashes", "/storage/<path:file>"],
+          ["uuid", "Accepts UUID strings", "/transaction/<uuid:id>"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between /path and /path/ (Trailing Slashes)?",
+      "answer": "If a route is defined as /path/, visiting /path will result in a 301 redirect to /path/. If defined as /path, visiting /path/ will result in a 404 error. It is best practice to include the trailing slash for 'folder-like' URLs."
+    },
+    {
+      "question": "Can one function have multiple routes?",
+      "answer": "Yes! You can stack decorators: \n@app.route('/')\n@app.route('/home')\ndef index(): return 'Hello!'"
+    },
+    {
+      "question": "What are Blueprints in Flask routing?",
+      "answer": "Blueprints are a way to organize your application into distinct components (e.g., auth, admin, api). They allow you to define routes in separate files and group them under a common URL prefix."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which converter would you use to capture a URL that contains multiple slashes (e.g., /uploads/images/logo.png)?",
+      "options": ["string", "url", "path", "file"],
+      "answer": 2
+    },
+    {
+      "question": "What is the default HTTP method for a Flask route if 'methods' is not specified?",
+      "options": ["POST", "GET", "ALL", "PUT"],
+      "answer": 1
+    },
+    {
+      "question": "How do you generate a URL for a function named 'profile' that takes a 'username' argument?",
+      "options": [
+        "url_for('profile', username='user1')",
+        "redirect('/profile/user1')",
+        "flask.get_url('profile', 'user1')",
+        "url_for('/profile/<username>')"
+      ],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "flask-rest-api",
+    "flask-request-response",
+    "flask-blueprints-advanced",
+    "python-http-basics",
+    "flask-error-handling"
+  ]
+}

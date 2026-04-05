@@ -1,0 +1,146 @@
+{
+  "slug": "python-fastapi",
+  "course": "Python",
+  "title": "FastAPI – High-Performance Modern APIs",
+
+  "meta": {
+    "title": "FastAPI Tutorial – Async, Typing & Pydantic Validation (2026)",
+    "description": "Master FastAPI, the modern Python framework for building high-performance APIs. Learn about type hints, Pydantic models, and native async support.",
+    "keywords": [
+      "fastapi tutorial",
+      "python async api",
+      "pydantic validation",
+      "fastapi vs flask",
+      "uvicorn",
+      "swagger ui python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is FastAPI?"
+    },
+    {
+      "type": "text",
+      "value": "FastAPI is a modern, high-performance web framework for building APIs with Python 3.8+ based on standard Python type hints. In 2026, it is the industry favorite for AI/ML backends and high-concurrency services because it is one of the fastest Python frameworks available, rivaling NodeJS and Go in performance."
+    },
+    {
+      "type": "heading",
+      "value": "Core Features"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Fast**: Very high performance, on par with **NodeJS** and **Go** (thanks to Starlette and Pydantic).",
+        "**Fast to code**: Increase the speed to develop features by about 200% to 300%.",
+        "**Fewer bugs**: Reduce about 40% of human (developer) induced errors.",
+        "**Automatic Docs**: Interactive API documentation via Swagger UI and ReDoc comes out of the box."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "1. Typing and Pydantic"
+    },
+    {
+      "type": "text",
+      "value": "FastAPI uses Python type hints for data validation and serialization. By defining a Pydantic model, you ensure that incoming JSON data matches your expected structure before your code even runs."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from fastapi import FastAPI\nfrom pydantic import BaseModel\n\napp = FastAPI()\n\nclass Project(BaseModel):\n    name: str\n    stars: int\n    is_published: bool = False\n\n@app.post(\"/projects/\")\nasync def create_project(project: Project):\n    # 'project' is automatically validated and converted to an object\n    return {\"msg\": f\"Project {project.name} created!\"}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Native Async Support"
+    },
+    {
+      "type": "text",
+      "value": "FastAPI is built on **Starlette**, which means it has native support for `async` and `await`. This allows the server to handle thousands of concurrent connections efficiently without blocking the main thread."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "3. Automatic Documentation"
+    },
+    {
+      "type": "text",
+      "value": "One of the most loved features for a Flutter Lead or Frontend dev is the automatic Swagger UI. By visiting `/docs` on your running server, you get a full interactive testing environment for your API."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "FastAPI vs. Flask"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Flask", "FastAPI"],
+        "rows": [
+          ["Type System", "None (Manual validation)", "Strict (Python Type Hints)"],
+          ["Async Support", "Limited / Plugin-based", "Native & First-class"],
+          ["Documentation", "Manual (Swagger-Flask)", "Automatic (/docs)"],
+          ["Performance", "Moderate (WSGI)", "Extreme (ASGI)"],
+          ["Best For", "Simple Web Apps / Monoliths", "Microservices / AI APIs"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is Uvicorn?",
+      "answer": "Uvicorn is the ASGI (Asynchronous Server Gateway Interface) server used to run FastAPI applications. It handles the low-level network communication while FastAPI handles the logic."
+    },
+    {
+      "question": "Does FastAPI replace Django?",
+      "answer": "Not necessarily. Django is a 'batteries-included' framework with an ORM and Admin panel built-in. FastAPI is a 'toolkit' designed specifically for high-speed APIs where you might choose your own database tools like SQLAlchemy or TortoiseORM."
+    },
+    {
+      "question": "Why use 'async def' instead of 'def'?",
+      "answer": "Use 'async def' if you are performing I/O bound tasks (like database queries or API calls). Use regular 'def' for CPU-bound tasks. FastAPI intelligently handles both, but async is key for scaling."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which library does FastAPI use for data validation and settings management?",
+      "options": ["Flask", "Pydantic", "Requests", "Django"],
+      "answer": 1
+    },
+    {
+      "question": "Where can you find the automatically generated interactive documentation for a FastAPI app?",
+      "options": ["/admin", "/swagger", "/docs", "/api"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary benefit of using Python Type Hints in FastAPI?",
+      "options": [
+        "It makes the code look more colorful",
+        "It provides automatic data validation, serialization, and documentation",
+        "It allows Python to run in the browser",
+        "It replaces the need for a database"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-asynchronous",
+    "python-rest-api",
+    "python-json-handling",
+    "python-background-tasks",
+    "python-security-advanced"
+  ]
+}

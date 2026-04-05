@@ -1,0 +1,134 @@
+{
+  "slug": "python-modules",
+  "course": "Python",
+  "title": "Python Modules & Packages – Organizing Large Projects",
+
+  "meta": {
+    "title": "Python Modules and Packages Guide – Import, Export & Namespace (2026)",
+    "description": "Learn how to break your Python code into reusable modules and packages. Master import statements, __init__.py, and the standard library.",
+    "keywords": [
+      "python modules",
+      "python packages",
+      "import statement",
+      "pip install",
+      "python standard library",
+      "init.py"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Modules and Packages?"
+    },
+    {
+      "type": "text",
+      "value": "As your program grows, keeping all code in one file becomes unmanageable. A **Module** is simply a file containing Python definitions and statements. A **Package** is a collection of modules organized in a folder hierarchy. This modularity allows for code reuse and better organization, similar to how you use 'exports' and 'imports' in Flutter or JavaScript."
+    },
+    {
+      "type": "heading",
+      "value": "Importing Modules"
+    },
+    {
+      "type": "text",
+      "value": "You can use any Python source file as a module by executing an `import` statement in another source file. Python searches for these modules in the current directory, then in the installed libraries path."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "# 1. Import the whole module\nimport math\nprint(math.sqrt(16))\n\n# 2. Import specific functions (cleaner names)\nfrom datetime import datetime\nprint(datetime.now())\n\n# 3. Import with an alias\nimport pandas as pd\nimport numpy as np"
+    },
+    {
+      "type": "heading",
+      "value": "Creating Your Own Module"
+    },
+    {
+      "type": "text",
+      "value": "Create a file named `calculator.py`. This is now a module that can be imported into other files in the same directory."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "# calculator.py\ndef add(a, b):\n    return a + b\n\n# main.py\nimport calculator\nresult = calculator.add(5, 3)"
+    },
+    {
+      "type": "heading",
+      "value": "The Role of __init__.py"
+    },
+    {
+      "type": "text",
+      "value": "To turn a directory into a **Package**, it traditionally required a file named `__init__.py`. While modern Python (3.3+) supports 'Namespace Packages' without it, `__init__.py` is still used to initialize package-level data or to simplify complex imports."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "my_app/\n├── main.py\n└── utils/\n    ├── __init__.py\n    ├── helpers.py\n    └── validators.py"
+    },
+    {
+      "type": "heading",
+      "value": "Standard Library vs. Third-Party"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Category", "Source", "Examples"],
+        "rows": [
+          ["Built-in", "Python Core", "print(), len(), range()"],
+          ["Standard Library", "Included with Python", "os, sys, json, math, re"],
+          ["Third-Party", "PyPI (via pip)", "requests, flask, tensorflow, pandas"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'if __name__ == \"__main__\":'?",
+      "answer": "This idiom allows you to write code that only runs when the file is executed directly, not when it is imported as a module in another file."
+    },
+    {
+      "question": "How do I see all functions in a module?",
+      "answer": "You can use the built-in dir() function. For example, 'import math; print(dir(math))' will list everything inside the math module."
+    },
+    {
+      "question": "What is a 'Circular Import'?",
+      "answer": "This happens when Module A imports Module B, and Module B also tries to import Module A. This causes an error and should be avoided by restructuring the code."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import math\nimport random\n\n# Using the math module\nradius = 7\narea = math.pi * math.pow(radius, 2)\nprint(f\"Area of circle: {area:.2f}\")\n\n# Using the random module\ntech_list = [\"Flutter\", \"Python\", \"React\", \"Node\"]\nchoice = random.choice(tech_list)\nprint(f\"Today we are studying: {choice}\")"
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to bring a module into your current file?",
+      "options": ["include", "require", "import", "using"],
+      "answer": 2
+    },
+    {
+      "question": "How do you import only the 'sqrt' function from the 'math' module?",
+      "options": [
+        "import sqrt from math",
+        "from math import sqrt",
+        "import math.sqrt",
+        "get sqrt from math"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "What is the standard name of the file used to initialize a Python package?",
+      "options": ["main.py", "package.py", "__init__.py", "__start__.py"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-setup",
+    "python-pip-advanced",
+    "python-standard-library",
+    "python-folder-structure",
+    "python-namespaces"
+  ]
+}

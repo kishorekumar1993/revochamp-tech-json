@@ -1,0 +1,133 @@
+{
+  "slug": "python-error-handling",
+  "course": "Python",
+  "title": "Python Error Handling – Robust Code with Exceptions",
+
+  "meta": {
+    "title": "Python Exception Handling Guide – Try, Except, Finally (2026)",
+    "description": "Learn how to handle runtime errors in Python using try/except blocks. Master custom exceptions, the finally clause, and the 'with' statement for resource management.",
+    "keywords": [
+      "python error handling",
+      "python exceptions",
+      "try except python",
+      "raise exception python",
+      "finally block",
+      "custom exceptions python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Understanding Exceptions"
+    },
+    {
+      "type": "text",
+      "value": "In Python, errors detected during execution are called **Exceptions**. If an exception is not handled, the program terminates abruptly. Handling these gracefully ensures your application can recover from unexpected situations like missing files, network failures, or invalid user input."
+    },
+    {
+      "type": "heading",
+      "value": "The Try...Except Block"
+    },
+    {
+      "type": "text",
+      "value": "The `try` block contains the code that might raise an error, while the `except` block contains the code that handles the error. You should always aim to catch specific exceptions rather than using a blanket `except:` statement."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "try:\n    number = int(input(\"Enter a number: \"))\n    result = 10 / number\nexcept ValueError:\n    print(\"Invalid input! Please enter a numeric value.\")\nexcept ZeroDivisionError:\n    print(\"Cannot divide by zero!\")\nexcept Exception as e:\n    print(f\"An unexpected error occurred: {e}\")"
+    },
+    {
+      "type": "heading",
+      "value": "Else and Finally"
+    },
+    {
+      "type": "text",
+      "value": "Python provides two additional keywords to make error handling more precise:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**else**: Runs only if the code in the `try` block did NOT throw an exception.",
+        "**finally**: Always runs, regardless of whether an exception occurred or not. This is typically used for cleanup actions (e.g., closing a database connection)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Raising Exceptions"
+    },
+    {
+      "type": "text",
+      "value": "You can manually trigger an exception using the `raise` keyword. This is useful for enforcing business logic or validation rules."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "def set_age(age):\n    if age < 0:\n        raise ValueError(\"Age cannot be negative!\")\n    return f\"Age set to {age}\"\n\n# Usage\ntry:\n    set_age(-5)\nexcept ValueError as e:\n    print(e) # Output: Age cannot be negative!"
+    },
+    {
+      "type": "heading",
+      "value": "Comparison: Error Handling Patterns"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Keyword", "Purpose", "Requirement"],
+        "rows": [
+          ["try", "Test a block of code for errors", "Mandatory"],
+          ["except", "Handle the error", "At least one (or finally)"],
+          ["else", "Run code if no error occurred", "Optional"],
+          ["finally", "Always execute (cleanup)", "Optional"],
+          ["raise", "Manually trigger an error", "Optional"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between a Syntax Error and an Exception?",
+      "answer": "A Syntax Error occurs when the parser detects incorrect code structure (e.g., missing colon). An Exception occurs during runtime even if the syntax is correct (e.g., ZeroDivisionError)."
+    },
+    {
+      "question": "Can I catch multiple exceptions in one block?",
+      "answer": "Yes, you can use a tuple: `except (ValueError, TypeError):` to handle multiple different error types with the same logic."
+    },
+    {
+      "question": "What is the 'with' statement?",
+      "answer": "The `with` statement simplifies exception handling by encapsulating common preparation and cleanup tasks (Context Managers). It is most commonly used for opening files safely."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "def divide_numbers(a, b):\n    try:\n        result = a / b\n    except ZeroDivisionError:\n        return \"Error: You cannot divide by zero.\"\n    except TypeError:\n        return \"Error: Both inputs must be numbers.\"\n    else:\n        return f\"The result is {result}\"\n    finally:\n        print(\"Execution of divide_numbers finished.\")\n\n# Try changing these values!\nprint(divide_numbers(10, 2))\nprint(divide_numbers(10, 0))\nprint(divide_numbers(10, '5'))"
+  },
+
+  "quiz": [
+    {
+      "question": "Which block is used to run code ONLY if no exceptions were raised?",
+      "options": ["finally", "except", "else", "catch"],
+      "answer": 2
+    },
+    {
+      "question": "Which keyword is used to manually trigger an exception in Python?",
+      "options": ["throw", "raise", "trigger", "error"],
+      "answer": 1
+    },
+    {
+      "question": "In a try...except...finally sequence, which block is guaranteed to run?",
+      "options": ["try", "except", "finally", "else"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-syntax",
+    "python-functions",
+    "python-custom-exceptions",
+    "python-assertions",
+    "python-logging"
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "slug": "python-virtualenv",
+  "course": "Python",
+  "title": "Python Virtual Environments – Project Isolation",
+
+  "meta": {
+    "title": "Mastering Python venv – Virtual Environments & Dependency Management (2026)",
+    "description": "Learn how to use venv to create isolated Python environments. Prevent dependency conflicts, manage requirements.txt, and streamline your development workflow.",
+    "keywords": [
+      "python venv",
+      "virtualenv",
+      "python environment isolation",
+      "pip install requirements",
+      "activate venv",
+      "dependency management"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Virtual Environment?"
+    },
+    {
+      "type": "text",
+      "value": "A virtual environment is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages. Without virtual environments, every package you install via `pip` goes into a global folder. If Project A needs Django 4.2 and Project B needs Django 5.0, a global installation would cause a version conflict. Virtual environments solve this by giving each project its own isolated 'sandbox'."
+    },
+    {
+      "type": "heading",
+      "value": "The venv Workflow"
+    },
+    {
+      "type": "text",
+      "value": "In 2026, the `venv` module (built into Python 3) is the standard tool for creating environments. The typical workflow involves creating the environment, activating it, and then installing your project's specific libraries."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# 1. Create a virtual environment named '.venv'\npython -m venv .venv\n\n# 2. Activate the environment\n# On Windows:\n.venv\\Scripts\\activate\n# On macOS/Linux:\nsource .venv/bin/activate\n\n# 3. Your terminal should now show (.venv) indicating it's active\n# 4. Install packages safely\npip install requests"
+    },
+    {
+      "type": "heading",
+      "value": "Managing Dependencies with requirements.txt"
+    },
+    {
+      "type": "text",
+      "value": "To ensure your team or your production server has the exact same environment, you should 'freeze' your dependencies into a text file. This is the Python equivalent of `pubspec.yaml` in Flutter or `package.json` in Node.js."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Save current environment's packages\npip freeze > requirements.txt\n\n# Install packages from a file in a new environment\npip install -r requirements.txt"
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Never commit your environment folder**: Add `.venv/` or `env/` to your `.gitignore`. Only commit the `requirements.txt` file.",
+        "**One environment per project**: Avoid sharing environments across different apps to maintain clean dependencies.",
+        "**Standard Naming**: Using `.venv` is a common convention that many IDEs (like VS Code) recognize automatically to suggest the correct interpreter."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Environment Tools Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Tool", "Type", "Best For"],
+        "rows": [
+          ["venv", "Built-in", "Standard web/scripting projects"],
+          ["virtualenv", "Third-party", "Older Python versions (<3.3)"],
+          ["Conda", "External Manager", "Data Science & Machine Learning"],
+          ["Poetry", "Dependency Manager", "Modern packaging & publishing"],
+          ["Pipenv", "Dependency Manager", "Combining pip and venv into one tool"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "How do I know if my virtual environment is active?",
+      "answer": "Your command line prompt will usually show the name of the environment in parentheses, like (.venv). You can also run 'which python' (macOS) or 'where python' (Windows) to see if it points to your project folder."
+    },
+    {
+      "question": "How do I stop using a virtual environment?",
+      "answer": "Simply type 'deactivate' in the terminal. This returns you to the global Python system environment."
+    },
+    {
+      "question": "Does a virtual environment include the whole Python source code?",
+      "answer": "No. It typically contains a copy of (or a symlink to) the Python binary and its own 'site-packages' folder where libraries are stored."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "What is the primary purpose of a Python virtual environment?",
+      "options": [
+        "To make Python code run faster",
+        "To isolate project-specific dependencies and prevent version conflicts",
+        "To encrypt your source code",
+        "To allow Python to run without being installed"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which command is used to save the list of installed packages to a file?",
+      "options": [
+        "pip save requirements.txt",
+        "python freeze > requirements.txt",
+        "pip freeze > requirements.txt",
+        "pip install --list > requirements.txt"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which file should you add to your .gitignore to avoid committing the environment?",
+      "options": ["requirements.txt", "main.py", "the virtual environment folder (e.g., .venv/)", "README.md"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-setup",
+    "python-pip-advanced",
+    "python-modules-packages",
+    "python-vscode-config",
+    "python-deployment-basics"
+  ]
+}

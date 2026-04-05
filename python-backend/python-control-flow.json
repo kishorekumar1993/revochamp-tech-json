@@ -1,0 +1,143 @@
+{
+  "slug": "python-control-flow",
+  "course": "Python",
+  "title": "Python Control Flow – Decisions & Loops",
+
+  "meta": {
+    "title": "Python Control Flow Guide – If, For, While & Match (2026)",
+    "description": "Master the logic of Python. Learn how to use conditional statements, for/while loops, and the modern structural pattern matching (match-case).",
+    "keywords": [
+      "python if else",
+      "python loops",
+      "python for loop",
+      "python while loop",
+      "python match case",
+      "python range function"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Logic and Decision Making"
+    },
+    {
+      "type": "text",
+      "value": "Control flow is the order in which individual statements, instructions, or function calls are executed. Python uses standard conditional statements and loops, but with a focus on clean, readable syntax driven by indentation."
+    },
+    {
+      "type": "heading",
+      "value": "Conditional Statements (if, elif, else)"
+    },
+    {
+      "type": "text",
+      "value": "Python uses `if`, `elif` (short for else if), and `else` to perform different actions based on different conditions. Unlike Dart or JavaScript, parentheses around conditions are optional, and there are no curly braces."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "score = 85\n\nif score >= 90:\n    print(\"Grade: A\")\nelif score >= 80:\n    print(\"Grade: B\")\nelse:\n    print(\"Grade: C\")"
+    },
+    {
+      "type": "heading",
+      "value": "Structural Pattern Matching (match)"
+    },
+    {
+      "type": "text",
+      "value": "Introduced in Python 3.10, the `match` statement is similar to `switch` in other languages but much more powerful. It can match values, types, and even the internal structure of objects."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "status_code = 404\n\nmatch status_code:\n    case 200:\n        print(\"Success\")\n    case 404:\n        print(\"Not Found\")\n    case 500 | 501:\n        print(\"Server Error\")\n    case _:\n        print(\"Unknown Status\")"
+    },
+    {
+      "type": "heading",
+      "value": "Loops: for and while"
+    },
+    {
+      "type": "text",
+      "value": "Python's `for` loop is primarily an 'iterator'—it loops over a sequence (like a list, string, or range). The `while` loop continues as long as a condition remains true."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "# Iterating over a list\nlangs = [\"Python\", \"Dart\", \"Swift\"]\nfor lang in langs:\n    print(f\"Learning {lang}\")\n\n# Using range(start, stop, step)\nfor i in range(0, 5):\n    print(f\"Iteration {i}\") # 0, 1, 2, 3, 4"
+    },
+    {
+      "type": "heading",
+      "value": "Loop Control: break, continue, and pass"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**break**: Terminates the loop immediately.",
+        "**continue**: Skips the rest of the current iteration and moves to the next one.",
+        "**pass**: A null operation; used as a placeholder when a statement is syntactically required but you want no action taken."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Comparison Operators"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Operator", "Description", "Example"],
+        "rows": [
+          ["==", "Equal to", "5 == 5 (True)"],
+          ["!=", "Not equal to", "5 != 3 (True)"],
+          ["and / or", "Logical gates", "True and False (False)"],
+          ["in", "Membership", "'a' in 'apple' (True)"],
+          ["is", "Identity", "x is y (True if same object)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Does Python have a ternary operator?",
+      "answer": "Yes, but the syntax is unique: 'value_if_true if condition else value_if_false'. Example: 'result = \"Pass\" if score > 50 else \"Fail\"'."
+    },
+    {
+      "question": "What is the difference between '==' and 'is'?",
+      "answer": "'==' checks for equality (are the values the same?), while 'is' checks for identity (are they the exact same object in memory?)."
+    },
+    {
+      "question": "How do I loop with an index?",
+      "answer": "Use the enumerate() function: 'for index, value in enumerate(my_list):'."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "# Try modifying the range or the condition!\nprint(\"Counting even numbers:\")\nfor num in range(1, 11):\n    if num % 2 == 0:\n        print(f\"{num} is even\")\n    else:\n        continue\n\n# Simple while loop\ncount = 3\nwhile count > 0:\n    print(f\"Countdown: {count}\")\n    count -= 1\nprint(\"Blast off!\")"
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is Python's version of 'else if'?",
+      "options": ["elseif", "else if", "elif", "case"],
+      "answer": 2
+    },
+    {
+      "question": "What will 'range(5)' produce?",
+      "options": ["0, 1, 2, 3, 4, 5", "1, 2, 3, 4, 5", "0, 1, 2, 3, 4", "1, 2, 3, 4"],
+      "answer": 2
+    },
+    {
+      "question": "Which statement is used to skip the current iteration of a loop?",
+      "options": ["break", "pass", "continue", "skip"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-introduction",
+    "python-functions",
+    "python-list-comprehensions",
+    "python-error-handling",
+    "python-data-structures"
+  ]
+}

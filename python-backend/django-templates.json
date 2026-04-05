@@ -1,0 +1,149 @@
+{
+  "slug": "django-templates",
+  "course": "Django",
+  "title": "Django Templates – Building Dynamic UI",
+
+  "meta": {
+    "title": "Django Template Language (DTL) Guide – Logic, Tags & Filters (2026)",
+    "description": "Master Django Templates. Learn about template inheritance, custom tags, filters, and how to pass data from views to HTML efficiently.",
+    "keywords": [
+      "django templates",
+      "django template language",
+      "dtl",
+      "template inheritance django",
+      "django context",
+      "django template tags"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is the Django Template Language (DTL)?"
+    },
+    {
+      "type": "text",
+      "value": "The Django Template Language is a text-based language designed to strike a balance between power and ease of use. It allows developers to define the structure of the UI while leaving 'holes' for data provided by the View. Because it is not pure Python, it is safe to allow designers to edit templates without risking the execution of malicious backend code."
+    },
+    {
+      "type": "heading",
+      "value": "1. Rendering a Template"
+    },
+    {
+      "type": "text",
+      "value": "In Django, a View fetches data (the context) and passes it to a template. By default, Django looks for a 'templates' folder inside each installed app."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from django.shortcuts import render\n\ndef profile_view(request):\n    context = {\n        'name': 'Kishore',\n        'projects': ['Revochamp', 'Flutter Builder'],\n        'is_premium': True\n    }\n    return render(request, 'user/profile.html', context)"
+    },
+    {
+      "type": "heading",
+      "value": "2. Template Syntax"
+    },
+    {
+      "type": "text",
+      "value": "DTL uses four main types of constructs to handle data and logic:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Variables `{{ variable }}`**: Outputs a value from the context. If the value is an object, you can use dot notation (e.g., `{{ user.name }}`).",
+        "**Tags `{% tag %}`**: Controls the logic of the template (loops, ifs, and inheritance).",
+        "**Filters `{{ var|filter }}`**: Modifies variables for display (e.g., `{{ name|lower }}`).",
+        "**Comments `{# comment #}`**: Internal notes that are not rendered in the final HTML."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "3. Template Inheritance"
+    },
+    {
+      "type": "text",
+      "value": "Inheritance is the most powerful part of Django's template engine. You define a 'base' skeleton and use blocks that child templates can override."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<html>\n  <body>\n    <header>My App</header>\n    {% block content %}\n      \n    {% endblock %}\n    <footer>© 2026</footer>\n  </body>\n</html>\n\n\n{% extends 'base.html' %}\n\n{% block content %}\n  <h1>Welcome to the Homepage</h1>\n{% endblock %}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Template Tags & Filters"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Type", "Syntax", "Description"],
+        "rows": [
+          ["Loop", "{% for item in list %}", "Iterates over a sequence"],
+          ["Condition", "{% if user.is_authenticated %}", "Conditional rendering"],
+          ["URL", "{% url 'view-name' %}", "Reverse URL resolution (best practice)"],
+          ["Static", "{% static 'css/style.css' %}", "Links to static assets"],
+          ["Filter", "{{ date|date:'Y-m-d' }}", "Formats date objects"],
+          ["CSRF", "{% csrf_token %}", "Protects forms from cross-site request forgery"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Can I call Python methods with arguments in DTL?",
+      "answer": "No. DTL intentionally prevents this to keep logic out of the template. If you need to process data, do it in the View or create a Custom Template Filter."
+    },
+    {
+      "question": "What is a 'Context Processor'?",
+      "answer": "It is a function that makes specific data (like the logged-in user or site settings) available in every template automatically, without manually passing it in every view."
+    },
+    {
+      "question": "How do I handle missing variables?",
+      "answer": "By default, if a variable doesn't exist, Django renders it as an empty string. You can change this behavior in the settings, but it is rarely necessary."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which tag must be used at the very top of a file to inherit from a base template?",
+      "options": ["{% include %}", "{% load %}", "{% extends %}", "{% block %}"],
+      "answer": 2
+    },
+    {
+      "question": "How do you apply multiple filters to a single variable?",
+      "options": [
+        "{{ name|lower|truncatechars:10 }}",
+        "{{ name|lower, truncatechars:10 }}",
+        "{{ lower(truncatechars(name, 10)) }}",
+        "You can only use one filter at a time"
+      ],
+      "answer": 0
+    },
+    {
+      "question": "What is the purpose of the {% csrf_token %} tag?",
+      "options": [
+        "To style the form",
+        "To provide security for POST requests",
+        "To identify the user's browser",
+        "To connect the form to the database"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "django-views-basics",
+    "django-models-intro",
+    "django-static-files",
+    "django-custom-template-tags",
+    "django-forms-rendering"
+  ]
+}

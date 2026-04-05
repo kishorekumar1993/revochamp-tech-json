@@ -1,0 +1,162 @@
+{
+  "slug": "python-functions",
+  "course": "Python",
+  "title": "Python Functions – Writing Reusable & Modular Code",
+
+  "meta": {
+    "title": "Python Functions Guide – Parameters, Return Values & Scoping (2026)",
+    "description": "Master Python functions. Learn how to define functions, handle arguments (args/kwargs), use type hinting, and understand variable scope.",
+    "keywords": [
+      "python functions",
+      "def keyword",
+      "python arguments",
+      "lambda functions",
+      "python return",
+      "python type hinting"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Function?"
+    },
+    {
+      "type": "text",
+      "value": "A function is a block of organized, reusable code that is used to perform a single, related action. Functions provide better modularity for your application and a high degree of code reusing. In Python, you define a function using the `def` keyword."
+    },
+    {
+      "type": "heading",
+      "value": "Defining and Calling Functions"
+    },
+    {
+      "type": "text",
+      "value": "Python uses indentation to define the body of a function. You can pass data, known as parameters, into a function, and it can return data as a result."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "def greet_user(username):\n    \"\"\"Displays a simple greeting.\"\"\"\n    return f\"Hello, {username}!\"\n\n# Calling the function\nmessage = greet_user(\"Kishore\")\nprint(message) # Output: Hello, Kishore!"
+    },
+    {
+      "type": "heading",
+      "value": "Function Parameters & Arguments"
+    },
+    {
+      "type": "text",
+      "value": "Python offers flexible ways to pass arguments. You can use positional arguments, keyword arguments, and even default values."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Default Arguments**: Assign a value in the definition if none is provided during the call.",
+        "**Keyword Arguments**: Identify arguments by name so order doesn't matter.",
+        "**Arbitrary Arguments (*args)**: Pass a non-keyworded, variable-length argument list.",
+        "**Keyworded Arbitrary Arguments (**kwargs)**: Pass a keyworded, variable-length argument list."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "def create_profile(name, role=\"Developer\", **extra_info):\n    profile = {\"name\": name, \"role\": role}\n    profile.update(extra_info)\n    return profile\n\nuser = create_profile(\"Kishore\", location=\"Chennai\", tech=\"Flutter\")\n# Output: {'name': 'Kishore', 'role': 'Developer', 'location': 'Chennai', 'tech': 'Flutter'}"
+    },
+    {
+      "type": "heading",
+      "value": "Type Hinting (Modern Python)"
+    },
+    {
+      "type": "text",
+      "value": "Since you are familiar with Dart's static typing, you'll appreciate Python's type hinting. While not enforced by the interpreter, it makes code significantly more maintainable and helps IDEs catch bugs."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "def add_numbers(a: int, b: int) -> int:\n    return a + b"
+    },
+    {
+      "type": "heading",
+      "value": "Lambda Functions (Anonymous)"
+    },
+    {
+      "type": "text",
+      "value": "Small anonymous functions can be created with the `lambda` keyword. They are restricted to a single expression."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "square = lambda x: x * x\nprint(square(5)) # Output: 25"
+    },
+    {
+      "type": "heading",
+      "value": "Argument Types Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Type", "Syntax", "Use Case"],
+        "rows": [
+          ["Positional", "def func(a, b)", "Basic, ordered inputs"],
+          ["Default", "def func(a=1)", "Optional parameters"],
+          ["*args", "def func(*args)", "Passing a variable list of items"],
+          ["**kwargs", "def func(**kwargs)", "Passing variable named settings/configs"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'pass' in a function?",
+      "answer": "If you want to define a function but haven't written the logic yet, you use the 'pass' keyword as a placeholder to avoid syntax errors."
+    },
+    {
+      "question": "Can a Python function return multiple values?",
+      "answer": "Yes! You can return a tuple (e.g., return x, y) and then destructure them when calling: a, b = my_func()."
+    },
+    {
+      "question": "What is a docstring?",
+      "answer": "A docstring is a string literal that occurs as the first statement in a function. It's used to document what the function does and is accessible via help() or __doc__."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "def calculate_discount(price, discount_percent=10):\n    \"\"\"Calculates the final price after discount.\"\"\"\n    savings = price * (discount_percent / 100)\n    return price - savings\n\n# Try changing the arguments!\ninitial_price = 1000\nfinal = calculate_discount(initial_price, 25)\n\nprint(f\"Initial: {initial_price}\")\nprint(f\"Final: {final}\")\n\n# Lambda example\nmultiply = lambda a, b: a * b\nprint(f\"5 x 6 = {multiply(5, 6)}\")"
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to create a function in Python?",
+      "options": ["function", "def", "func", "define"],
+      "answer": 1
+    },
+    {
+      "question": "What does *args allow you to do?",
+      "options": [
+        "Return multiple values",
+        "Pass a variable number of positional arguments",
+        "Force a function to be async",
+        "Define a private function"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "How do you define a default value for a parameter?",
+      "options": [
+        "def my_func(x? = 10):",
+        "def my_func(x : 10):",
+        "def my_func(x = 10):",
+        "def my_func(default x = 10):"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-introduction",
+    "python-control-flow",
+    "python-modules-packages",
+    "python-scope-closures",
+    "python-decorators"
+  ]
+}

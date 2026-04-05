@@ -1,0 +1,143 @@
+{
+  "slug": "django-models",
+  "course": "Django",
+  "title": "Django Models – Designing Your Database",
+
+  "meta": {
+    "title": "Django Models Guide – ORM, Fields & Relationships (2026)",
+    "description": "Master the Django ORM. Learn how to define database schemas using Python classes, handle migrations, and manage complex table relationships.",
+    "keywords": [
+      "django models",
+      "django orm",
+      "database migrations",
+      "django foreign key",
+      "model fields django",
+      "django querysets"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Django Model?"
+    },
+    {
+      "type": "text",
+      "value": "A model is the single, definitive source of information about your data. It contains the essential fields and behaviors of the data you’re storing. In Django, models are Python classes that subclass `django.db.models.Model`. Django uses these classes to automatically create the database tables for you via the **ORM (Object-Relational Mapper)**."
+    },
+    {
+      "type": "heading",
+      "value": "1. Defining Fields"
+    },
+    {
+      "type": "text",
+      "value": "Each attribute of the model represents a database field. Django provides a wide variety of field types that handle validation and SQL mapping automatically."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from django.db import models\n\nclass Project(models.Model):\n    title = models.CharField(max_length=200)\n    description = models.TextField()\n    created_at = models.DateTimeField(auto_now_add=True)\n    is_active = models.BooleanField(default=True)\n    stars = models.IntegerField(default=0)\n\n    def __str__(self):\n        return self.title"
+    },
+    {
+      "type": "heading",
+      "value": "2. Database Relationships"
+    },
+    {
+      "type": "text",
+      "value": "Django handles the three most common types of database relationships with ease: One-to-Many, Many-to-Many, and One-to-One."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**ForeignKey**: Defines a many-to-one relationship (e.g., many Tasks belong to one Project).",
+        "**ManyToManyField**: Defines a many-to-many relationship (e.g., a Project can have many Tags, and a Tag can be on many Projects).",
+        "**OneToOneField**: Defines a one-to-one relationship (e.g., a User has exactly one Profile)."
+      ]
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "3. Migrations: Evolving Your Schema"
+    },
+    {
+      "type": "text",
+      "value": "Migrations are Django’s way of propagating changes you make to your models (adding a field, deleting a model, etc.) into your database schema. It’s a two-step process:"
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# 1. Scan models and create a set of instructions\npython manage.py makemigrations\n\n# 2. Execute the instructions on the database\npython manage.py migrate"
+    },
+    {
+      "type": "heading",
+      "value": "Common Model Fields"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Field Type", "Usage", "SQL Equivalent"],
+        "rows": [
+          ["CharField", "Short to medium strings", "VARCHAR"],
+          ["TextField", "Large amounts of text", "TEXT / LONGTEXT"],
+          ["EmailField", "Strings with email validation", "VARCHAR"],
+          ["DateTimeField", "Date and time objects", "DATETIME"],
+          ["DecimalField", "Fixed-precision decimals (Money)", "DECIMAL"],
+          ["SlugField", "URL-friendly strings (hyphenated)", "VARCHAR"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the ORM?",
+      "answer": "The ORM (Object-Relational Mapper) allows you to interact with your database using Python code instead of writing raw SQL. For example, 'Project.objects.all()' replaces 'SELECT * FROM project;'."
+    },
+    {
+      "question": "What does 'on_delete=models.CASCADE' do?",
+      "answer": "It defines the behavior when a referenced object is deleted. CASCADE means if the 'Parent' is deleted, all 'Child' records referencing it will also be deleted."
+    },
+    {
+      "question": "Can I use an existing database with Django?",
+      "answer": "Yes. Django has an 'inspectdb' utility that can scan an existing database and automatically generate the Model classes for you."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which command is used to sync your database with your model changes?",
+      "options": ["python manage.py runserver", "python manage.py sync", "python manage.py migrate", "python manage.py update"],
+      "answer": 2
+    },
+    {
+      "question": "Which field type would you use for a blog post content?",
+      "options": ["CharField", "TextField", "StringField", "ContentField"],
+      "answer": 1
+    },
+    {
+      "question": "What is the purpose of the __str__ method in a Model?",
+      "options": [
+        "To convert the model to JSON",
+        "To provide a human-readable name for the object in the Admin panel",
+        "To save the object to the database",
+        "To encrypt sensitive strings"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "django-views",
+    "django-admin-customization",
+    "django-querysets-advanced",
+    "django-forms-modelforms",
+    "django-rest-framework-serializers"
+  ]
+}

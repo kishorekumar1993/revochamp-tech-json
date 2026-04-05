@@ -1,0 +1,140 @@
+{
+  "slug": "python-deployment",
+  "course": "Python",
+  "title": "Python Deployment – Moving from Local to Production",
+
+  "meta": {
+    "title": "Python Deployment Guide – Docker, Gunicorn, Nginx & CI/CD (2026)",
+    "description": "Learn the professional workflow for deploying Python applications. Master WSGI/ASGI servers, containerization with Docker, and cloud hosting strategies.",
+    "keywords": [
+      "python deployment",
+      "dockerize python app",
+      "gunicorn vs uvicorn",
+      "nginx reverse proxy",
+      "deploy fastapi",
+      "cicd python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Deployment Pipeline"
+    },
+    {
+      "type": "text",
+      "value": "Deployment is the process of making your Python application available to users. As a Technical Lead, you know that 'it works on my machine' isn't enough. Modern deployment requires a robust pipeline that ensures environment consistency, security, and scalability. Whether you're deploying a Flutter-backend API or a complex AI service, the principles of containerization and automated CI/CD are universal."
+    },
+    {
+      "type": "heading",
+      "value": "1. Web Servers: WSGI vs. ASGI"
+    },
+    {
+      "type": "text",
+      "value": "Python's built-in development servers (like `app.run()`) are not secure or performant enough for production. You must use a production-grade server. The choice depends on whether your framework is synchronous (Django/Flask) or asynchronous (FastAPI)."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Gunicorn (WSGI)**: The gold standard for Flask and Django. It uses a pre-fork worker model to handle multiple requests.",
+        "**Uvicorn (ASGI)**: A lightning-fast server for asynchronous frameworks like FastAPI. It handles concurrent connections using an event loop.",
+        "**Nginx**: Typically used as a 'Reverse Proxy' in front of Gunicorn/Uvicorn to handle SSL, caching, and static files."
+      ]
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "2. Containerization with Docker"
+    },
+    {
+      "type": "text",
+      "value": "Docker is the industry standard for ensuring your app runs the same in production as it does locally. By creating a 'Docker Image', you package your Python version, dependencies (via `requirements.txt`), and code into a single immutable unit."
+    },
+    {
+      "type": "code",
+      "language": "dockerfile",
+      "value": "# Example Dockerfile for a Python API\nFROM python:3.11-slim\n\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\nCOPY . .\n\n# Run using a production server\nCMD [\"gunicorn\", \"--bind\", \"0.0.0.0:8000\", \"main:app\"]"
+    },
+    {
+      "type": "heading",
+      "value": "3. Deployment Environments"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Type", "Platform Examples", "Best For"],
+        "rows": [
+          ["PaaS", "Heroku, Railway, Render", "MVPs, Small apps, Rapid prototyping"],
+          ["Serverless", "AWS Lambda, Google Cloud Run", "Event-driven tasks, APIs with variable traffic"],
+          ["IaaS (VPS)", "DigitalOcean, AWS EC2, Linode", "Full control, Custom server configurations"],
+          ["Orchestration", "Kubernetes (K8s)", "High-scale microservices, Complex architectures"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "4. CI/CD: Continuous Integration & Delivery"
+    },
+    {
+      "type": "text",
+      "value": "In a professional setup, you never manually upload files to a server. You use tools like GitHub Actions or GitLab CI to automatically run tests and deploy your code whenever you push to the main branch."
+    },
+    {
+      "type": "text",
+      "value": ""
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why do I need Nginx if Gunicorn works?",
+      "answer": "Nginx is better at handling slow clients, buffering requests, and serving static images/CSS. It also makes setting up Let's Encrypt (SSL/HTTPS) much easier and more secure."
+    },
+    {
+      "question": "What is 'Environment Parity'?",
+      "answer": "It is the practice of keeping your local, staging, and production environments as similar as possible to avoid 'production-only' bugs. Tools like Docker and `.env` files are key to achieving this."
+    },
+    {
+      "question": "How do I manage database migrations in production?",
+      "answer": "Migrations should be part of your deployment script. For example, in Django, your CD pipeline should run 'python manage.py migrate' after the code is updated but before the server restarts."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which tool is commonly used as a reverse proxy in a Python production stack?",
+      "options": ["Flask", "Nginx", "Pip", "Docker"],
+      "answer": 1
+    },
+    {
+      "question": "What is the main advantage of using Docker for deployment?",
+      "options": [
+        "It makes Python code run 2x faster",
+        "It guarantees that the application runs in the same environment regardless of the host",
+        "It automatically writes the requirements.txt file for you",
+        "It replaces the need for a web server"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which server is specifically designed to handle Asynchronous (ASGI) Python applications?",
+      "options": ["Gunicorn", "Apache", "Uvicorn", "WSGI-Ref"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-virtualenv",
+    "python-package-management",
+    "python-security-advanced",
+    "fastapi-intro",
+    "django-rest-framework"
+  ]
+}

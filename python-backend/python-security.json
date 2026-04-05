@@ -1,0 +1,153 @@
+{
+  "slug": "python-security",
+  "course": "Python",
+  "title": "Python Security – Writing Secure & Robust Code",
+
+  "meta": {
+    "title": "Python Security Best Practices – OWASP, Injection & Encryption (2026)",
+    "description": "Learn the essential security practices for Python developers. Master SQL injection prevention, secure credential management, and data encryption.",
+    "keywords": [
+      "python security",
+      "prevent sql injection",
+      "secure coding python",
+      "python cryptography",
+      "environment variables python",
+      "owasp python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Security-First Python Development"
+    },
+    {
+      "type": "text",
+      "value": "Security in Python involves more than just fixing bugs; it's about architectural decisions. Whether you are building an AI-powered Flutter builder or a high-performance REST API, you must account for the OWASP Top 10 vulnerabilities. In Python, this primarily means focusing on input validation, secure dependency management, and protecting sensitive data."
+    },
+    {
+      "type": "heading",
+      "value": "1. Preventing Injections"
+    },
+    {
+      "type": "text",
+      "value": "Injections occur when untrusted data is sent to an interpreter as part of a command. This is most common in SQL queries, but can also happen with OS commands (`os.system`) and dynamic code execution (`eval()`)."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "# ❌ DANGEROUS: eval() can execute any string as code\n# user_input = \"__import__('os').system('rm -rf /')\"\n# eval(user_input)\n\n# ✅ SAFE: Use literal_eval for safely parsing strings into Python types\nfrom ast import literal_eval\ntry:\n    data = literal_eval(\"[1, 2, 3]\")\nexcept (ValueError, SyntaxError):\n    print(\"Invalid input\")"
+    },
+    {
+      "type": "heading",
+      "value": "2. Secure Credential Management"
+    },
+    {
+      "type": "text",
+      "value": "Never hardcode API keys (like Gemini API keys), database passwords, or secret tokens in your source code. Use environment variables and `.env` files (which should be added to `.gitignore`)."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import os\nfrom dotenv import load_dotenv\n\nload_dotenv() # Loads variables from .env\n\n# Accessing sensitive data safely\nGEMINI_API_KEY = os.getenv(\"GEMINI_API_KEY\")\nDATABASE_URL = os.getenv(\"DATABASE_URL\")"
+    },
+    {
+      "type": "heading",
+      "value": "3. Data Encryption & Hashing"
+    },
+    {
+      "type": "text",
+      "value": "Never store passwords in plain text. Always use a strong, salted hashing algorithm like Argon2 or bcrypt. For general data encryption, use the `cryptography` library rather than rolling your own crypto logic."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import bcrypt\n\n# Hashing a password\npassword = b\"super_secret_123\"\nhashed = bcrypt.hashpw(password, bcrypt.gensalt())\n\n# Checking a password\nif bcrypt.checkpw(password, hashed):\n    print(\"Login Successful\")"
+    },
+    {
+      "type": "heading",
+      "value": "The Security Layer Cake"
+    },
+    {
+      "type": "text",
+      "value": "Effective security requires multiple layers, from the environment level down to the code execution level."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "Security Checklist for Python Apps"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Vulnerability", "Python Solution", "Tool/Library"],
+        "rows": [
+          ["SQL Injection", "Parameterized Queries / ORMs", "SQLAlchemy, Django ORM"],
+          ["Insecure Secrets", "Environment Variables", "python-dotenv, HashiCorp Vault"],
+          ["Vulnerable Deps", "Dependency Auditing", "safety, pip-audit"],
+          ["XSS (Templates)", "Auto-escaping", "Jinja2 (Flask), DTL (Django)"],
+          ["Weak Hashing", "Modern Hashing Algorithms", "bcrypt, passlib"],
+          ["Broken Auth", "JWT / OAuth2", "PyJWT, FastAPI Security"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the 'Safety' package?",
+      "answer": "Safety is a CLI tool that checks your installed dependencies against a database of known security vulnerabilities. It's a best practice to run 'safety check' as part of your CI/CD pipeline."
+    },
+    {
+      "question": "Should I use the built-in 'hashlib' for passwords?",
+      "answer": "No. hashlib provides raw algorithms like SHA-256 which are too fast and easily crackable for passwords. Use 'bcrypt' or 'Argon2' because they are designed to be slow and computationally expensive for attackers."
+    },
+    {
+      "question": "Is Pickle safe to use for data serialization?",
+      "answer": "No. The 'pickle' module is not secure. It can be exploited to execute arbitrary code during unpickling. Only unpickle data you trust completely, or preferably use JSON for cross-language data exchange."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which module should be strictly avoided for untrusted data due to remote code execution risks?",
+      "options": ["json", "pickle", "requests", "logging"],
+      "answer": 1
+    },
+    {
+      "question": "What is the best way to prevent SQL Injection in Python?",
+      "options": [
+        "Replacing single quotes with double quotes",
+        "Using f-strings to build queries",
+        "Using parameterized queries or an ORM",
+        "Encoding the query in Base64"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Why is it dangerous to hardcode API keys in your repository?",
+      "options": [
+        "It makes the file size larger",
+        "The keys can be stolen by anyone with access to the history, even if deleted later",
+        "Python won't be able to read them",
+        "It slows down the application performance"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-sql",
+    "python-postgresql",
+    "python-rest-api",
+    "python-environment-setup",
+    "django-rest-framework"
+  ]
+}

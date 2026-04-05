@@ -1,0 +1,143 @@
+{
+  "slug": "python-setup",
+  "course": "Python",
+  "title": "Python Setup – Preparing Your Environment",
+
+  "meta": {
+    "title": "Python Installation & Environment Setup Guide (2026)",
+    "description": "Learn how to install Python, manage multiple versions, set up Virtual Environments (venv), and configure VS Code for professional Python development.",
+    "keywords": [
+      "install python",
+      "python path",
+      "pip install",
+      "python virtual environment",
+      "venv",
+      "python vs code setup"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Setting Up Your Workspace"
+    },
+    {
+      "type": "text",
+      "value": "Before writing Python code, you need a stable environment. This involves installing the Python interpreter, a package manager (pip), and an Integrated Development Environment (IDE). In 2026, the standard for most developers is using Python 3.12+ with Visual Studio Code."
+    },
+    {
+      "type": "heading",
+      "value": "1. Installation & Verification"
+    },
+    {
+      "type": "text",
+      "value": "Download the latest stable version from python.org. **Crucial Step**: During installation on Windows, ensure the checkbox 'Add Python to PATH' is checked. This allows you to run Python from any terminal window."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Verify installation in terminal\npython --version\n\n# Verify pip (Package Installer for Python)\npip --version"
+    },
+    {
+      "type": "heading",
+      "value": "2. Virtual Environments (venv)"
+    },
+    {
+      "type": "text",
+      "value": "In Python, it is a best practice to create a 'Virtual Environment' for every project. This isolates your project's dependencies, preventing version conflicts between different projects (e.g., Project A needs Django 4.0 while Project B needs Django 5.0)."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# 1. Create the environment folder\npython -m venv .venv\n\n# 2. Activate it (Windows)\n.venv\\Scripts\\activate\n\n# 2. Activate it (macOS/Linux)\nsource .venv/bin/activate"
+    },
+    {
+      "type": "heading",
+      "value": "3. Managing Packages with pip"
+    },
+    {
+      "type": "text",
+      "value": "The Python Package Index (PyPI) is the central repository for libraries. You use `pip` to install these. Always record your dependencies in a `requirements.txt` file so others can replicate your setup."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Install a specific library\npip install requests\n\n# Save all current libraries to a file\npip freeze > requirements.txt\n\n# Install all libraries from a file (e.g., when cloning a repo)\npip install -r requirements.txt"
+    },
+    {
+      "type": "heading",
+      "value": "Recommended VS Code Extensions"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Python (by Microsoft)**: Essential support for IntelliSense, linting, and debugging.",
+        "**Pylance**: High-performance language support for Python.",
+        "**Black Formatter**: Automatically formats your code to follow PEP 8 standards.",
+        "**Jupyter**: If you plan to work on Data Science or AI prototyping."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Environment Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Tool", "Purpose", "Frequency of Use"],
+        "rows": [
+          ["Python Interpreter", "Runs the .py files", "Every project"],
+          ["pip", "Installs external libraries", "Often"],
+          ["venv", "Project isolation", "Once per project"],
+          ["Conda", "Scientific environment management", "Data Science specific"],
+          ["Pyenv", "Manage multiple Python versions", "Advanced development"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between 'python' and 'python3'?",
+      "answer": "On many systems (especially macOS/Linux), 'python' might still point to the old Python 2.7. 'python3' explicitly calls the modern version. Always use python3 to be safe."
+    },
+    {
+      "question": "How do I exit a virtual environment?",
+      "answer": "Simply type 'deactivate' in your terminal and press enter."
+    },
+    {
+      "question": "Why is 'Add to PATH' so important?",
+      "answer": "Without it, the command line won't recognize 'python' as a command, and you'll have to type the full file path to the interpreter every time."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which command is used to create a virtual environment?",
+      "options": ["python create venv", "pip install venv", "python -m venv <name>", "venv setup"],
+      "answer": 2
+    },
+    {
+      "question": "What is 'pip' in the Python ecosystem?",
+      "options": ["A code editor", "The standard package manager", "A built-in data type", "A debugging tool"],
+      "answer": 1
+    },
+    {
+      "question": "Which file is standard for listing project dependencies?",
+      "options": ["packages.json", "setup.py", "requirements.txt", "env.config"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-introduction",
+    "python-syntax",
+    "python-pip-advanced",
+    "python-vscode-config",
+    "python-modules-packages"
+  ]
+}

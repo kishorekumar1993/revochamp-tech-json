@@ -1,0 +1,135 @@
+{
+  "slug": "flask-request-response",
+  "course": "Python",
+  "title": "Flask Request & Response – Handling Web Traffic",
+
+  "meta": {
+    "title": "Flask Request/Response Guide – Header, Body & Status Codes (2026)",
+    "description": "Learn how to manage the HTTP lifecycle in Flask. Master the request object for incoming data and the make_response utility for custom outgoing data.",
+    "keywords": [
+      "flask request object",
+      "flask response",
+      "http headers flask",
+      "flask cookies",
+      "flask status codes",
+      "flask make_response"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Flask Request-Response Cycle"
+    },
+    {
+      "type": "text",
+      "value": "In Flask, every time a client visits a URL, Flask creates a **Request** object containing all the information sent by the browser. Once your function processes the logic, it must return a **Response** object. Understanding how to extract data from the request and format the response is the core of API development."
+    },
+    {
+      "type": "heading",
+      "value": "1. The Request Object"
+    },
+    {
+      "type": "text",
+      "value": "The `request` object is global within the context of a function call. It allows you to access URL parameters, form data, JSON payloads, and HTTP headers."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from flask import request\n\n@app.route('/login', methods=['POST'])\ndef login():\n    # Get JSON data from a POST request\n    data = request.get_json()\n    username = data.get('username')\n\n    # Get Query Parameters from URL (?source=mobile)\n    source = request.args.get('source')\n\n    # Access Headers\n    user_agent = request.headers.get('User-Agent')\n\n    return f\"Hello {username} from {source}\""
+    },
+    {
+      "type": "heading",
+      "value": "2. Creating a Response"
+    },
+    {
+      "type": "text",
+      "value": "By default, if you return a string or a dictionary, Flask automatically converts it into a response with a `200 OK` status. However, for APIs, you often need to set custom status codes or headers using `make_response` or by returning a tuple."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from flask import make_response, jsonify\n\n@app.route('/error')\ndef custom_error():\n    # Option A: Simple Tuple (Body, Status, Headers)\n    # return jsonify({\"error\": \"Not Found\"}), 404, {\"X-Custom-Header\": \"Value\"}\n\n    # Option B: make_response for more control\n    res = make_response(jsonify({\"msg\": \"Auth Failed\"}))\n    res.status_code = 401\n    res.headers['WWW-Authenticate'] = 'Basic realm=\"Login Required\"'\n    return res"
+    },
+    {
+      "type": "heading",
+      "value": "Common Request Attributes"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Attribute", "Description", "Example Use Case"],
+        "rows": [
+          ["request.args", "URL Query parameters", "Filtering search results (?q=python)"],
+          ["request.form", "Form data from POST", "Traditional HTML form submissions"],
+          ["request.json", "Parsed JSON body", "Modern REST API payloads"],
+          ["request.files", "Uploaded files", "Handling profile picture uploads"],
+          ["request.method", "HTTP Method", "Checking if request is GET or POST"],
+          ["request.cookies", "Browser cookies", "Reading session IDs"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Visualizing the Flow"
+    },
+    {
+      "type": "text",
+      "value": "The flow starts at the client, passes through Flask's routing middleware, hits your view function, and returns through the response pipeline."
+    },
+    {
+      "type": "text",
+      "value": ""
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between request.args and request.form?",
+      "answer": "request.args contains parameters from the URL (query string). request.form contains data sent in the body of a POST request via an HTML form."
+    },
+    {
+      "question": "How do I set a cookie in the response?",
+      "answer": "You must use make_response() to get a response object, then call res.set_cookie('key', 'value') before returning it."
+    },
+    {
+      "question": "What happens if I don't return anything from a route?",
+      "answer": "Flask will raise a TypeError. A route must always return a string, a dictionary, a tuple, or a valid Response object."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which object is used to access the JSON data sent in a POST request?",
+      "options": ["request.json", "response.json", "flask.data", "request.query"],
+      "answer": 0
+    },
+    {
+      "question": "How do you return a 201 Created status code with a JSON response?",
+      "options": [
+        "return jsonify(data).status(201)",
+        "return jsonify(data), 201",
+        "return 201, jsonify(data)",
+        "make_response(201, data)"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Where are URL parameters like ?id=5 stored in the request object?",
+      "options": ["request.form", "request.params", "request.args", "request.values"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "flask-rest-api",
+    "python-http-basics",
+    "python-json-handling",
+    "flask-routing-advanced",
+    "flask-middleware-hooks"
+  ]
+}

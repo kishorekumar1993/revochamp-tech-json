@@ -1,0 +1,134 @@
+{
+  "slug": "python-package-management",
+  "course": "Python",
+  "title": "Python Package Management – pip and PyPI",
+
+  "meta": {
+    "title": "Mastering Python Package Management – pip, PyPI & Dependencies (2026)",
+    "description": "Learn how to manage external libraries in Python. Master pip commands, search the Python Package Index (PyPI), and handle versioning for stable builds.",
+    "keywords": [
+      "python pip",
+      "pypi",
+      "install python packages",
+      "pip freeze",
+      "python dependency management",
+      "pip upgrade"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Python Package Ecosystem"
+    },
+    {
+      "type": "text",
+      "value": "One of Python's greatest strengths is its massive ecosystem of third-party libraries. **PyPI** (Python Package Index) is the official repository for these libraries, and **pip** is the standard tool used to install and manage them. Whether you need a web framework like FastAPI or an AI tool like Gemini, you will use these tools to bring them into your project."
+    },
+    {
+      "type": "heading",
+      "value": "Essential pip Commands"
+    },
+    {
+      "type": "text",
+      "value": "Using `pip` is straightforward, but knowing the right flags can save you from broken environments. Always ensure your virtual environment is active before running these commands."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# 1. Install the latest version of a package\npip install requests\n\n# 2. Install a specific version (Crucial for stability)\npip install requests==2.31.0\n\n# 3. Uninstall a package\npip uninstall requests\n\n# 4. List all installed packages in the current environment\npip list\n\n# 5. Check for outdated packages\npip list --outdated"
+    },
+    {
+      "type": "heading",
+      "value": "Understanding Versioning"
+    },
+    {
+      "type": "text",
+      "value": "Python packages generally follow Semantic Versioning (Major.Minor.Patch). When installing, you can specify constraints to prevent breaking changes while still getting security updates."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**==**: Exact version (e.g., `requests==2.28.1`).",
+        "**>=**: Minimum version (e.g., `django>=4.0`).",
+        "**~=**: Compatible release (e.g., `~=2.2` matches 2.2.1 but not 2.3.0)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "The Installation Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "When you run a pip command, it communicates with PyPI to find the correct 'Wheel' (pre-compiled binary) or 'Source Distribution' for your operating system."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Action", "Command", "Effect"],
+        "rows": [
+          ["Install", "pip install <pkg>", "Adds library to site-packages"],
+          ["Update", "pip install -U <pkg>", "Upgrades package to latest"],
+          ["Record", "pip freeze > req.txt", "Saves snapshot of environment"],
+          ["Replicate", "pip install -r req.txt", "Installs all listed dependencies"],
+          ["Search", "Browse pypi.org", "Find new libraries and documentation"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a 'Wheel' file (.whl)?",
+      "answer": "A Wheel is a built-package format that allows for faster installation because it doesn't require the package to be built/compiled on your local machine."
+    },
+    {
+      "question": "Help! 'pip' command not found.",
+      "answer": "This usually means Python's scripts folder isn't in your System PATH. On Windows, try 'python -m pip install' instead. On macOS, ensure you have the command line tools installed."
+    },
+    {
+      "question": "Is it safe to use pip as a superuser (sudo)?",
+      "answer": "No. Using 'sudo pip' can break system-level tools that rely on specific Python versions. Always use virtual environments to avoid needing root permissions for library installs."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "What does the 'freeze' command do in pip?",
+      "options": [
+        "Pauses the execution of a script",
+        "Outputs all installed packages and their versions in a format suitable for requirements.txt",
+        "Deletes all packages in the environment",
+        "Prevents a package from being updated"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which website is the official repository for Python third-party software?",
+      "options": ["github.com", "python.org", "pypi.org", "pip.io"],
+      "answer": 2
+    },
+    {
+      "question": "How do you install a list of dependencies stored in a text file?",
+      "options": [
+        "pip install --list requirements.txt",
+        "pip get -f requirements.txt",
+        "pip install -r requirements.txt",
+        "python load requirements.txt"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-setup",
+    "python-virtualenv",
+    "python-modules-packages",
+    "python-deployment-basics",
+    "python-security-best-practices"
+  ]
+}

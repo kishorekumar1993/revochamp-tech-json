@@ -1,0 +1,151 @@
+{
+  "slug": "python-orm",
+  "course": "Python",
+  "title": "Python ORM – Object-Relational Mapping",
+
+  "meta": {
+    "title": "Python ORM Guide – SQLAlchemy, Django ORM & Peewee (2026)",
+    "description": "Master Object-Relational Mapping (ORM) in Python. Learn how to bridge the gap between Python classes and relational databases like PostgreSQL and MySQL.",
+    "keywords": [
+      "python orm",
+      "sqlalchemy tutorial",
+      "django orm",
+      "peewee python",
+      "object relational mapping",
+      "database abstraction python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is an ORM?"
+    },
+    {
+      "type": "text",
+      "value": "Object-Relational Mapping (ORM) is a technique that lets you query and manipulate data from a database using an object-oriented paradigm. Instead of writing raw SQL strings, you define your database tables as Python classes. For a Technical Lead, using an ORM means faster development, cleaner code, and built-in protection against SQL injection."
+    },
+    {
+      "type": "heading",
+      "value": "The Concept: Class to Table"
+    },
+    {
+      "type": "text",
+      "value": "An ORM maps a **Class** to a database **Table**, an **Instance** of that class to a **Row**, and **Attributes** to **Columns**."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "1. SQLAlchemy (The Toolkit)"
+    },
+    {
+      "type": "text",
+      "value": "SQLAlchemy is the most flexible and widely used ORM in the Python ecosystem. It provides two main components: the Core (SQL expression language) and the ORM (High-level mapping)."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from sqlalchemy import Column, Integer, String, create_engine\nfrom sqlalchemy.orm import declarative_base, sessionmaker\n\nBase = declarative_base()\n\nclass User(Base):\n    __tablename__ = 'users'\n    id = Column(Integer, primary_key=True)\n    name = Column(String)\n\n# Database setup\nengine = create_engine('sqlite:///:memory:')\nBase.metadata.create_all(engine)\n\n# Interaction\nSession = sessionmaker(bind=engine)\nsession = Session()\nnew_user = User(name=\"Kishore\")\nsession.add(new_user)\nsession.commit()"
+    },
+    {
+      "type": "heading",
+      "value": "2. Django ORM (The Integrated Choice)"
+    },
+    {
+      "type": "text",
+      "value": "If you are using the Django framework, the ORM is built-in and tightly integrated with the rest of the ecosystem. It is famous for its simple syntax and powerful migration system."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "# Django Model Example\nclass Project(models.Model):\n    title = models.CharField(max_length=100)\n\n# Querying\nprojs = Project.objects.filter(title__contains='Flutter')"
+    },
+    {
+      "type": "heading",
+      "value": "Comparison of Python ORMs"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["ORM", "Philosophy", "Best For"],
+        "rows": [
+          ["SQLAlchemy", "Explicit & Flexible", "Enterprise, Complex Flask/FastAPI apps"],
+          ["Django ORM", "Opinionated & Fast", "Full-stack Django applications"],
+          ["Peewee", "Small & Simple", "Micro-services, small CLI tools"],
+          ["Tortoise ORM", "Async-first", "High-performance AsyncIO apps"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Why Use an ORM?"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Maintainability**: Code is written in Python, making it easier to read and debug for developers.",
+        "**Database Agnostic**: Switch from SQLite (local) to PostgreSQL (production) with minimal code changes.",
+        "**Security**: ORMs automatically use parameterized queries, preventing SQL Injection.",
+        "**Migrations**: Most ORMs provide tools to track and apply database schema changes over time."
+      ]
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Is an ORM slower than raw SQL?",
+      "answer": "Yes, there is a small performance overhead because the ORM has to translate Python objects into SQL. However, for 95% of applications, this is negligible compared to the development speed gained."
+    },
+    {
+      "question": "What is the 'N+1 Problem'?",
+      "answer": "A common ORM pitfall where the app makes one query to fetch parent records and then N separate queries to fetch children. This can be solved using 'Eager Loading' or 'Selected Related' techniques."
+    },
+    {
+      "question": "Can I still write raw SQL with an ORM?",
+      "answer": "Absolutely. All major Python ORMs provide an 'escape hatch' to execute raw SQL for highly complex queries that are difficult to express in Python syntax."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "What does 'Mapping' refer to in ORM?",
+      "options": [
+        "GPS coordinates of the server",
+        "The relationship between Python Classes and Database Tables",
+        "A list of all functions in a module",
+        "The process of connecting to a VPN"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which Python ORM is known for being 'async-first' and inspired by Django?",
+      "options": ["SQLAlchemy", "Peewee", "Tortoise ORM", "SQLite3"],
+      "answer": 2
+    },
+    {
+      "question": "What is the benefit of a database-agnostic ORM?",
+      "options": [
+        "It makes the database faster",
+        "It allows the app to work with different database engines (e.g., MySQL or Postgres) with little to no code change",
+        "It eliminates the need for a database administrator",
+        "It encrypts all data automatically"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-postgresql",
+    "django-models",
+    "python-oop",
+    "python-fastapi-intro",
+    "python-database-security"
+  ]
+}

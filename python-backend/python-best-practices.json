@@ -1,0 +1,156 @@
+{
+  "slug": "python-best-practices",
+  "course": "Python",
+  "title": "Python Best Practices – Writing Clean & Pythonic Code",
+
+  "meta": {
+    "title": "Python Best Practices Guide – PEP 8, Clean Code & Zen of Python (2026)",
+    "description": "Learn the industry standards for writing high-quality Python. Master PEP 8, naming conventions, structural patterns, and the 'Pythonic' way of solving problems.",
+    "keywords": [
+      "python best practices",
+      "pep 8 tutorial",
+      "clean code python",
+      "pythonic code",
+      "zen of python",
+      "linting python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is 'Pythonic' Code?"
+    },
+    {
+      "type": "text",
+      "value": "As an Engineering Manager and Architect, you know that code is read far more often than it is written. In Python, we strive for 'Pythonic' code—code that doesn't just work, but follows the idioms and design philosophies of the language. This leads to better maintainability, fewer bugs, and smoother collaboration across your technical teams."
+    },
+    {
+      "type": "heading",
+      "value": "1. PEP 8 – The Style Guide"
+    },
+    {
+      "type": "text",
+      "value": "PEP 8 is the official style guide for Python code. Consistency is the primary goal. While your personal preference might differ, following PEP 8 ensures that any Python developer can jump into your project and feel at home."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Naming**: `snake_case` for functions/variables, `PascalCase` for classes, `SCREAMING_SNAKE_CASE` for constants.",
+        "**Indentation**: Always use 4 spaces per indentation level. Never mix tabs and spaces.",
+        "**Line Length**: Limit all lines to a maximum of 79 characters for better readability on split screens.",
+        "**Imports**: Group imports (Standard Library, Third-party, Local) and place them at the top of the file."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. The Zen of Python"
+    },
+    {
+      "type": "text",
+      "value": "If you run `import this` in a Python terminal, you'll see 19 guiding principles for Python's design. Key takeaways include: 'Simple is better than complex', 'Explicit is better than implicit', and 'Readability counts'."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "3. Writing Clean Code"
+    },
+    {
+      "type": "text",
+      "value": "Beyond just formatting, best practices involve how you structure logic. Use list comprehensions for simple transformations, but revert to for-loops if the logic becomes too nested or complex."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "# ❌ Not Pythonic (Unnecessary index management)\ni = 0\nwhile i < len(fruits):\n    print(fruits[i])\n    i += 1\n\n# ✅ Pythonic (Direct iteration)\nfor fruit in fruits:\n    print(fruit)\n\n# ✅ Even better for indexes (Enumerate)\nfor index, fruit in enumerate(fruits):\n    print(f\"{index}: {fruit}\")"
+    },
+    {
+      "type": "heading",
+      "value": "4. Tooling: Linting & Formatting"
+    },
+    {
+      "type": "text",
+      "value": "Don't waste time arguing about formatting in code reviews. Use automated tools to enforce standards."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Tool", "Type", "Purpose"],
+        "rows": [
+          ["Black", "Formatter", "The 'uncompromising' code formatter (deterministic)"],
+          ["Flake8", "Linter", "Checks for PEP 8 compliance and logical errors"],
+          ["isort", "Sorter", "Automatically sorts and groups your imports"],
+          ["Mypy", "Type Checker", "Checks for type consistency based on type hints"],
+          ["Pylint", "Linter", "Highly configurable, detailed code analysis"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "5. Documentation & Type Hints"
+    },
+    {
+      "type": "text",
+      "value": "Modern Python relies heavily on **Type Hints** (PEP 484). They act as documentation that your IDE and tools like Mypy can verify, which is essential for large-scale architectures like Revochamp."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "def calculate_project_score(stars: int, active: bool) -> float:\n    \"\"\"\n    Calculate a weighted score based on stars and activity status.\n    \"\"\"\n    base = float(stars)\n    return base * 1.5 if active else base"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the 'EAFP' principle?",
+      "answer": "It stands for 'Easier to Ask for Forgiveness than Permission'. In Python, this means assuming a valid state and catching exceptions rather than checking conditions (LBYL - Look Before You Leap) first."
+    },
+    {
+      "question": "How should I handle docstrings?",
+      "answer": "Use triple quotes. The first line should be a brief summary, followed by a blank line and a more detailed description of parameters and return types (following Google or NumPy style)."
+    },
+    {
+      "question": "When should I use a Class vs. a Function?",
+      "answer": "Use functions for tasks and transformations. Use classes only when you need to maintain state (attributes) and provide behaviors (methods) that operate on that state."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "def get_active_users(users):\n    # Re-write this in a 'Pythonic' way using list comprehension\n    # result = []\n    # for user in users:\n    #     if user['active']:\n    #         result.append(user['name'])\n    # return result\n\n    return [user['name'] for user in users if user['active']]\n\nsample_users = [\n    {'name': 'Kishore', 'active': True}, \n    {'name': 'Alex', 'active': False}\n]\nprint(get_active_users(sample_users))"
+  },
+
+  "quiz": [
+    {
+      "question": "Which PEP document defines the official Python coding style guide?",
+      "options": ["PEP 20", "PEP 484", "PEP 8", "PEP 249"],
+      "answer": 2
+    },
+    {
+      "question": "What is the recommended naming convention for Python classes?",
+      "options": ["snake_case", "camelCase", "PascalCase", "kebab-case"],
+      "answer": 2
+    },
+    {
+      "question": "What does the 'Zen of Python' suggest regarding simplicity?",
+      "options": [
+        "Complex is better than simple",
+        "Simple is better than complex",
+        "Code should be as long as possible",
+        "Performance is more important than readability"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-performance-tuning",
+    "python-security",
+    "python-logging",
+    "python-environment-setup",
+    "python-oop"
+  ]
+}

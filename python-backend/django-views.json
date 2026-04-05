@@ -1,0 +1,141 @@
+{
+  "slug": "django-views",
+  "course": "Django",
+  "title": "Django Views – The Logic Layer",
+
+  "meta": {
+    "title": "Django Views Tutorial – Function-Based vs Class-Based Views (2026)",
+    "description": "Learn how to handle HTTP requests in Django. Master Function-Based Views (FBV), Class-Based Views (CBV), and the Request/Response lifecycle.",
+    "keywords": [
+      "django views",
+      "function based views",
+      "class based views",
+      "django render",
+      "django redirect",
+      "django httpresponse"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Django View?"
+    },
+    {
+      "type": "text",
+      "value": "In the Django MVT (Model-View-Template) architecture, the **View** is the 'controller' logic. It receives an `HttpRequest`, performs the necessary logic (like fetching data from a database or validating a form), and returns an `HttpResponse`. It acts as the bridge between your data (Models) and your presentation (Templates)."
+    },
+    {
+      "type": "heading",
+      "value": "1. Function-Based Views (FBV)"
+    },
+    {
+      "type": "text",
+      "value": "Function-Based Views are the simplest way to write views. They are just Python functions that take a request object as the first argument. They are excellent for simple logic and are highly readable."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from django.http import HttpResponse\nfrom django.shortcuts import render\n\ndef welcome_view(request):\n    if request.method == 'GET':\n        return render(request, 'welcome.html', {'message': 'Hello Kishore!'})\n    return HttpResponse(\"Method not allowed\", status=405)"
+    },
+    {
+      "type": "heading",
+      "value": "2. Class-Based Views (CBV)"
+    },
+    {
+      "type": "text",
+      "value": "As your project grows, you might find yourself repeating the same logic. Class-Based Views allow you to use inheritance and mixins to reuse code. Django provides generic views for common tasks like listing objects or showing details."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from django.views.generic import ListView\nfrom .models import Project\n\nclass ProjectListView(ListView):\n    model = Project\n    template_name = 'projects/list.html'\n    context_object_name = 'my_projects'"
+    },
+    {
+      "type": "heading",
+      "value": "The Request-Response Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "Every view starts with a request and must end with a response. Django processes the request through middleware before it ever hits your view function."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "FBV vs. CBV Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Function-Based Views", "Class-Based Views"],
+        "rows": [
+          ["Complexity", "Easy to understand", "Requires OOP knowledge"],
+          ["Reusability", "Limited (Harder to extend)", "High (Inheritance & Mixins)"],
+          ["Control Flow", "Explicit (if/else for methods)", "Implicit (method-based: get, post)"],
+          ["Code Volume", "More boilerplate", "Very concise for standard tasks"],
+          ["Best For", "Custom/Unique logic", "CRUD operations & generic patterns"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Common View Shortcuts"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**render()**: Combines a template with a context dictionary and returns an HttpResponse.",
+        "**redirect()**: Sends the user to a different URL (301 or 302 status).",
+        "**get_object_or_404()**: Tries to get an object from a model; raises a 404 error if not found (cleaner than try/except)."
+      ]
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the 'request' object?",
+      "answer": "The 'request' object contains metadata about the incoming request, including user session data, POST data (request.POST), and headers."
+    },
+    {
+      "question": "Which should I use: FBVs or CBVs?",
+      "answer": "Start with Function-Based Views to learn the flow. Switch to Class-Based Views for standard CRUD operations (Create, Read, Update, Delete) to save time and reduce code."
+    },
+    {
+      "question": "How do I protect a view so only logged-in users can see it?",
+      "answer": "For FBVs, use the @login_required decorator. For CBVs, inherit from the LoginRequiredMixin."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "What is the mandatory first argument for every function-based view?",
+      "options": ["context", "response", "request", "self"],
+      "answer": 2
+    },
+    {
+      "question": "Which shortcut is used to combine a template and data into an HTTP response?",
+      "options": ["redirect()", "render()", "response()", "template()"],
+      "answer": 1
+    },
+    {
+      "question": "In Class-Based Views, which method handles a standard GET request?",
+      "options": ["get()", "on_request()", "handle_get()", "retrieve()"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "django-url-routing",
+    "django-templates",
+    "django-models-querysets",
+    "django-rest-framework-views",
+    "django-middleware-basics"
+  ]
+}

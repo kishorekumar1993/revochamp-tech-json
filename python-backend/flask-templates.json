@@ -1,0 +1,141 @@
+{
+  "slug": "flask-templates",
+  "course": "Python",
+  "title": "Flask Templates – Dynamic HTML with Jinja2",
+
+  "meta": {
+    "title": "Flask Templates Guide – Jinja2, Inheritance & Control Flow (2026)",
+    "description": "Learn how to use Jinja2 templates in Flask to build dynamic web pages. Master template inheritance, variables, loops, and conditional logic.",
+    "keywords": [
+      "flask templates",
+      "jinja2 python",
+      "render_template flask",
+      "template inheritance",
+      "flask html",
+      "jinja2 loops"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Flask Templates?"
+    },
+    {
+      "type": "text",
+      "value": "While APIs return JSON, web applications often need to serve HTML. Flask uses the **Jinja2** engine to generate dynamic HTML. This allows you to write standard HTML files with special placeholders and logic that Flask fills in before sending the page to the user's browser."
+    },
+    {
+      "type": "heading",
+      "value": "1. Rendering a Template"
+    },
+    {
+      "type": "text",
+      "value": "By default, Flask looks for HTML files in a folder named `templates/` at the root of your project. You use the `render_template()` function to serve these files and pass data to them."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from flask import Flask, render_template\n\napp = Flask(__name__)\n\n@app.route('/')\ndef home():\n    user_name = \"Kishore\"\n    skills = [\"Flutter\", \"Python\", \"Clean Architecture\"]\n    return render_template('index.html', name=user_name, tech_stack=skills)"
+    },
+    {
+      "type": "heading",
+      "value": "2. Jinja2 Syntax Basics"
+    },
+    {
+      "type": "text",
+      "value": "Jinja2 uses specific delimiters to distinguish between plain HTML and Python-like logic."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**{{ variable }}**: Expressions used to print output to the page.",
+        "**{% statement %}**: Control structures like loops or conditionals.",
+        "**{# comment #}**: Comments that won't appear in the final HTML."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<h1>Welcome, {{ name }}!</h1>\n\n<h3>Your Skills:</h3>\n<ul>\n    {% for skill in tech_stack %}\n        <li>{{ skill }}</li>\n    {% else %}\n        <li>No skills listed.</li>\n    {% endfor %}\n</ul>"
+    },
+    {
+      "type": "heading",
+      "value": "3. Template Inheritance"
+    },
+    {
+      "type": "text",
+      "value": "To avoid repeating headers, footers, and navigation bars on every page, Flask uses inheritance. You create a base 'layout' and other pages 'extend' it."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "\n<html>\n  <body>\n    <nav>Navigation Bar</nav>\n    {% block content %}{% endblock %}\n  </body>\n</html>\n\n\n{% extends 'base.html' %}\n{% block content %}\n  <h2>This is the Home Page</h2>\n{% endblock %}"
+    },
+    {
+      "type": "heading",
+      "value": "Common Jinja2 Features"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Syntax", "Description"],
+        "rows": [
+          ["Filters", "{{ name|upper }}", "Modifies variables (e.g., uppercase, length)"],
+          ["Conditionals", "{% if user %}...{% endif %}", "Shows content based on logic"],
+          ["Includes", "{% include 'footer.html' %}", "Imports a small snippet of HTML"],
+          ["URL Building", "{{ url_for('static', filename='style.css') }}", "Generates paths to static files"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Can I use Python functions inside Jinja2?",
+      "answer": "Not directly. You can only use functions that you explicitly pass to render_template or those that Flask provides by default (like url_for)."
+    },
+    {
+      "question": "What is the 'safe' filter?",
+      "answer": "By default, Jinja2 escapes HTML for security. If you want to render actual HTML tags stored in a variable, use {{ my_html|safe }}. Be careful with user input!"
+    },
+    {
+      "question": "Where do I put my CSS and Images?",
+      "answer": "Put them in a folder named 'static/'. In your template, reference them using: {{ url_for('static', filename='css/main.css') }}."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which Jinja2 delimiter is used for printing a variable?",
+      "options": ["{% ... %}", "{{ ... }}", "{# ... #}", "<% ... %>"],
+      "answer": 1
+    },
+    {
+      "question": "Where must template files be stored by default in a Flask project?",
+      "options": ["/html", "/views", "/templates", "/pages"],
+      "answer": 2
+    },
+    {
+      "question": "Which tag is used to allow a child template to insert content into a parent template?",
+      "options": ["{% include %}", "{% extends %}", "{% block %}", "{% insert %}"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "flask-rest-api",
+    "flask-routing-advanced",
+    "python-html-basics",
+    "flask-static-files",
+    "flask-forms-handling"
+  ]
+}

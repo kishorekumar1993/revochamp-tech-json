@@ -1,0 +1,135 @@
+{
+  "slug": "flask-rest-api",
+  "course": "Python",
+  "title": "Building REST APIs with Flask",
+
+  "meta": {
+    "title": "Flask REST API Tutorial – Routing, Request Handling & JSON (2026)",
+    "description": "Learn how to build lightweight and flexible REST APIs using the Flask framework. Master routing, HTTP methods, and returning JSON responses.",
+    "keywords": [
+      "flask rest api",
+      "python flask tutorial",
+      "flask jsonify",
+      "flask routing",
+      "build api with python",
+      "flask request object"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Flask?"
+    },
+    {
+      "type": "text",
+      "value": "Flask is a 'micro' web framework for Python. It is called micro because it does not require particular tools or libraries. It has no database abstraction layer, form validation, or any other components where pre-existing third-party libraries provide common functions. This makes it incredibly flexible and an excellent choice for building lightweight REST APIs or microservices."
+    },
+    {
+      "type": "heading",
+      "value": "Setting Up a Simple Flask API"
+    },
+    {
+      "type": "text",
+      "value": "To create an API endpoint in Flask, you define a function and decorate it with `@app.route()`. You specify the URL path and the allowed HTTP methods."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from flask import Flask, jsonify, request\n\napp = Flask(__name__)\n\n# A simple in-memory data store\nitems = [{\"id\": 1, \"name\": \"Item One\"}]\n\n@app.route('/items', methods=['GET'])\ndef get_items():\n    return jsonify(items)\n\nif __name__ == '__main__':\n    app.run(debug=True)"
+    },
+    {
+      "type": "heading",
+      "value": "Handling POST Requests"
+    },
+    {
+      "type": "text",
+      "value": "When building a REST API, you often need to receive data from the client. In Flask, you use the `request` object to access the JSON payload sent in the body of a POST request."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "@app.route('/items', methods=['POST'])\ndef add_item():\n    new_item = request.get_json()\n    items.append(new_item)\n    return jsonify(new_item), 201"
+    },
+    {
+      "type": "heading",
+      "value": "Dynamic Routing (URL Parameters)"
+    },
+    {
+      "type": "text",
+      "value": "You can capture values from the URL using angle brackets `<>`. This is essential for building endpoints that act on specific resources, like fetching a single user by their ID."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "@app.route('/items/<int:item_id>', methods=['GET'])\ndef get_item(item_id):\n    item = next((i for i in items if i['id'] == item_id), None)\n    if item:\n        return jsonify(item)\n    return jsonify({\"error\": \"Item not found\"}), 404"
+    },
+    {
+      "type": "heading",
+      "value": "Flask vs. FastAPI for REST"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Flask", "FastAPI"],
+        "rows": [
+          ["Style", "WSGI (Synchronous)", "ASGI (Asynchronous)"],
+          ["Data Validation", "Manual", "Automatic (via Pydantic)"],
+          ["Speed", "Fast", "Very Fast"],
+          ["Documentation", "Requires extensions", "Automatic Swagger UI"],
+          ["Flexibility", "Extremely High", "High (but opinionated)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'jsonify' in Flask?",
+      "answer": "It is a helper function that turns a Python dictionary or list into a JSON response object and automatically sets the 'Content-Type' header to 'application/json'."
+    },
+    {
+      "question": "How do I handle CORS in Flask?",
+      "answer": "If your Flutter or React app is on a different domain, you'll need the 'Flask-CORS' extension to allow the browser to make requests to your API."
+    },
+    {
+      "question": "Is Flask suitable for production?",
+      "answer": "Yes! While the built-in server is for development only, Flask apps are production-ready when deployed behind a robust WSGI server like Gunicorn or uWSGI."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which decorator is used to define a route in Flask?",
+      "options": ["@app.path()", "@app.route()", "@flask.api()", "@route.add()"],
+      "answer": 1
+    },
+    {
+      "question": "Which Flask object is used to access incoming request data like JSON or form values?",
+      "options": ["response", "payload", "request", "data"],
+      "answer": 2
+    },
+    {
+      "question": "What is the purpose of the 'debug=True' flag in app.run()?",
+      "options": [
+        "It makes the API faster",
+        "It enables a debugger and automatically reloads the server on code changes",
+        "It hides errors from the user",
+        "It prepares the app for production deployment"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-rest-api",
+    "fastapi-intro",
+    "python-http-basics",
+    "python-json-handling",
+    "flask-deployment-guide"
+  ]
+}

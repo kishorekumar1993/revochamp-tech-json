@@ -1,0 +1,132 @@
+{
+  "slug": "python-syntax",
+  "course": "Python",
+  "title": "Python Syntax – The Rules of the Road",
+
+  "meta": {
+    "title": "Python Syntax Guide – Indentation, Comments & Structure (2026)",
+    "description": "Master the foundational syntax of Python. Learn why indentation is mandatory, how to write comments, and the structural differences from other C-style languages.",
+    "keywords": [
+      "python syntax",
+      "python indentation",
+      "python comments",
+      "python docstrings",
+      "python coding style",
+      "pep 8"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Philosophy of Python Syntax"
+    },
+    {
+      "type": "text",
+      "value": "Python's syntax is famously clean and minimalist. Unlike languages that use curly braces `{}` or semicolons `;` to define structure, Python relies on **indentation**. This isn't just a style choice—it is a requirement of the language that enforces readable code."
+    },
+    {
+      "type": "heading",
+      "value": "1. Indentation is Mandatory"
+    },
+    {
+      "type": "text",
+      "value": "In Python, a block of code (like the body of a loop or function) starts with a colon `:` and must be indented. While you can use any number of spaces, the standard (PEP 8) is **4 spaces per level**."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "def check_status(is_active):\n    if is_active:\n        print(\"System is Online\") # Indented 8 spaces\n    else:\n        print(\"System is Offline\") # Indented 8 spaces\n    print(\"Check complete.\") # Indented 4 spaces (back in function scope)"
+    },
+    {
+      "type": "heading",
+      "value": "2. Comments & Docstrings"
+    },
+    {
+      "type": "text",
+      "value": "Comments are essential for documenting logic. Python supports single-line comments and multi-line documentation strings (docstrings)."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Single-line**: Use the hash `#` symbol.",
+        "**Multi-line / Docstrings**: Use triple quotes `\"\"\"` or `'''`. These are often used at the start of functions to explain their purpose."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "# This is a single-line comment\n\ndef calculate_roi(investment, return_val):\n    \"\"\"\n    Calculates the Return on Investment.\n    Args: investment (int), return_val (int)\n    \"\"\"\n    return (return_val - investment) / investment"
+    },
+    {
+      "type": "heading",
+      "value": "3. Statement Termination"
+    },
+    {
+      "type": "text",
+      "value": "In Python, the end of a line marks the end of a statement. You don't need semicolons. If a statement is very long, you can use a backslash `\\` to continue it on the next line, though surrounding the code in parentheses `()` is the preferred way."
+    },
+    {
+      "type": "heading",
+      "value": "Syntax Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Dart / JavaScript", "Python"],
+        "rows": [
+          ["Code Blocks", "Curly braces { }", "Colon : and Indentation"],
+          ["Statement End", "Semicolon ;", "New line"],
+          ["Main Function", "void main() { }", "if __name__ == \"__main__\":"],
+          ["Comments", "// or /* */", "# or \"\"\" \"\"\""]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What happens if I mix tabs and spaces?",
+      "answer": "Python 3 does not allow mixing tabs and spaces for indentation. Doing so will result in an 'IndentationError'. It is best to set your editor to convert tabs to 4 spaces."
+    },
+    {
+      "question": "Are semicolons allowed at all?",
+      "answer": "Technically, yes. You can use a semicolon to put multiple statements on one line (e.g., x=5; y=10), but this is highly discouraged as it violates Python's readability standards."
+    },
+    {
+      "question": "What is PEP 8?",
+      "answer": "PEP 8 is the official Style Guide for Python Code. it provides conventions for naming, spacing, and overall code structure."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "# Fix the indentation to make this code work!\ndef welcome_message(name):\nif name == \"Kishore\":\nprint(\"Welcome back, Lead!\")\nelse:\nprint(f\"Hello, {name}!\")\n\nwelcome_message(\"Kishore\")"
+  },
+
+  "quiz": [
+    {
+      "question": "How does Python define a block of code?",
+      "options": ["Using curly braces {}", "Using parentheses ()", "Using colons and indentation", "Using the 'begin' and 'end' keywords"],
+      "answer": 2
+    },
+    {
+      "question": "What is the PEP 8 recommended number of spaces for indentation?",
+      "options": ["2 spaces", "4 spaces", "8 spaces", "1 tab"],
+      "answer": 1
+    },
+    {
+      "question": "Which character is used to continue a statement onto a new line?",
+      "options": ["/", "\\", "&", "|"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-introduction",
+    "python-variables",
+    "python-control-flow",
+    "python-functions",
+    "python-error-handling"
+  ]
+}

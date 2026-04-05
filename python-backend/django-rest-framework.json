@@ -1,0 +1,138 @@
+{
+  "slug": "django-rest-framework",
+  "course": "Django",
+  "title": "Django REST Framework (DRF) – Building Professional APIs",
+
+  "meta": {
+    "title": "Django REST Framework Tutorial – Serializers, ViewSets & Auth (2026)",
+    "description": "Master the industry standard for building APIs with Django. Learn about Serializers, APIViews, ViewSets, and powerful authentication patterns.",
+    "keywords": [
+      "django rest framework",
+      "drf tutorial",
+      "django serializers",
+      "drf viewsets",
+      "django api authentication",
+      "rest api python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Django REST Framework?"
+    },
+    {
+      "type": "text",
+      "value": "Django REST Framework (DRF) is a powerful and flexible toolkit for building Web APIs. While standard Django is built around rendering HTML templates, DRF is designed to return machine-readable data (usually JSON). It is the most popular choice for powering single-page applications (React/Vue) and mobile backends (Flutter/iOS/Android)."
+    },
+    {
+      "type": "heading",
+      "value": "1. The Serializer: Data Translation"
+    },
+    {
+      "type": "text",
+      "value": "Serializers allow complex data, such as querysets and model instances, to be converted to native Python datatypes that can then be easily rendered into JSON. They also provide deserialization, allowing parsed data to be converted back into complex types after first validating the incoming data."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from rest_framework import serializers\nfrom .models import Project\n\nclass ProjectSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Project\n        fields = ['id', 'title', 'description', 'stars', 'is_active']"
+    },
+    {
+      "type": "heading",
+      "value": "2. API Views & ViewSets"
+    },
+    {
+      "type": "text",
+      "value": "DRF provides several ways to write views. `APIView` gives you total control (similar to Django's View), while `ViewSets` allow you to define the logic for a set of related views in a single class, automatically handling standard operations like list, create, retrieve, update, and destroy."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "from rest_framework import viewsets\nfrom .models import Project\nfrom .serializers import ProjectSerializer\n\nclass ProjectViewSet(viewsets.ModelViewSet):\n    queryset = Project.objects.all()\n    serializer_class = ProjectSerializer"
+    },
+    {
+      "type": "heading",
+      "value": "DRF Architecture Flow"
+    },
+    {
+      "type": "text",
+      "value": "When a request arrives, DRF handles authentication, permissions, and throttling before passing the data to the ViewSet and Serializer."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "3. Authentication & Permissions"
+    },
+    {
+      "type": "text",
+      "value": "DRF comes with built-in support for various authentication schemes (Session, Basic, Token, JWT) and a robust permission system to determine who can access or modify data."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Component", "Purpose", "Example"],
+        "rows": [
+          ["Serializers", "Object to JSON / JSON to Object", "ModelSerializer"],
+          ["Permissions", "Decide access rights", "IsAuthenticated, IsAdminUser"],
+          ["Authentication", "Identify the user", "JWTAuthentication, TokenAuthentication"],
+          ["Parsers", "Handle incoming data formats", "JSONParser, FormParser"],
+          ["Renderers", "Format outgoing data", "JSONRenderer, BrowsableAPIRenderer"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the Browsable API?",
+      "answer": "One of DRF's best features is the Browsable API. It automatically generates a web-based UI for your API, allowing developers to interact with endpoints, send POST requests, and view documentation directly in the browser."
+    },
+    {
+      "question": "Should I use APIView or ViewSets?",
+      "answer": "Use APIView when you need custom logic or non-standard behavior. Use ViewSets (and Routers) for standard CRUD logic to keep your code DRY (Don't Repeat Yourself) and consistent."
+    },
+    {
+      "question": "Does DRF support JWT?",
+      "answer": "Yes, although not natively in the core. It is standard practice to use third-party libraries like 'djangorestframework-simplejwt' to implement robust JWT authentication."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which component in DRF is responsible for converting a Database Model into JSON?",
+      "options": ["Renderer", "Parser", "Serializer", "Router"],
+      "answer": 2
+    },
+    {
+      "question": "Which class would you inherit from to automatically get list, create, and delete functionality?",
+      "options": ["APIView", "ModelViewSet", "GenericAPIView", "TemplateView"],
+      "answer": 1
+    },
+    {
+      "question": "What is the primary benefit of using a Router in DRF?",
+      "options": [
+        "It makes the API run faster",
+        "It automatically generates URL configurations for your ViewSets",
+        "It encrypts the outgoing data",
+        "It connects the API to the database"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "django-models",
+    "django-views",
+    "python-rest-api",
+    "django-rest-framework-jwt",
+    "django-rest-framework-filtering"
+  ]
+}

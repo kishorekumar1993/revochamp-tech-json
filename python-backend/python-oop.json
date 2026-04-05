@@ -1,0 +1,136 @@
+{
+  "slug": "python-oop",
+  "course": "Python",
+  "title": "Object-Oriented Programming (OOP) in Python",
+
+  "meta": {
+    "title": "Python OOP Guide – Classes, Inheritance & Polymorphism (2026)",
+    "description": "Master the four pillars of OOP in Python. Learn how to create classes, use the __init__ constructor, handle inheritance, and implement encapsulation.",
+    "keywords": [
+      "python oop",
+      "python classes",
+      "inheritance python",
+      "polymorphism python",
+      "encapsulation python",
+      "python self keyword"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is OOP?"
+    },
+    {
+      "type": "text",
+      "value": "Object-Oriented Programming (OOP) is a programming paradigm based on the concept of 'objects', which can contain data (attributes) and code (methods). Python is a multi-paradigm language, but it is heavily built around OOP principles. Everything in Python—from strings to functions—is actually an object."
+    },
+    {
+      "type": "heading",
+      "value": "Classes and Objects"
+    },
+    {
+      "type": "text",
+      "value": "A **Class** is a blueprint for creating objects. An **Object** is an instance of a class. The `__init__` method is the constructor that initializes an object's attributes when it is created."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "class Developer:\n    # Class attribute\n    platform = \"Mobile\"\n\n    def __init__(self, name, tech_stack):\n        # Instance attributes\n        self.name = name\n        self.tech_stack = tech_stack\n\n    def introduce(self):\n        return f\"Hi, I'm {self.name}, a {self.tech_stack} expert.\"\n\n# Creating an instance (Object)\nlead = Developer(\"Kishore\", \"Flutter\")\nprint(lead.introduce())"
+    },
+    {
+      "type": "heading",
+      "value": "The Four Pillars of OOP"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Encapsulation**: Bundling data and methods that work on that data within one unit and restricting access to some components (using underscores like `_name` or `__name`).",
+        "**Inheritance**: Allowing a class (child) to derive attributes and methods from another class (parent).",
+        "**Polymorphism**: Allowing different classes to be treated as instances of the same general class through the same interface (e.g., different objects having a `render()` method).",
+        "**Abstraction**: Hiding complex implementation details and showing only the necessary features of an object."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Inheritance Example"
+    },
+    {
+      "type": "text",
+      "value": "Inheritance allows for code reuse. You can use the `super()` function to call methods from the parent class."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "class Person:\n    def __init__(self, name):\n        self.name = name\n\nclass Manager(Person):\n    def __init__(self, name, team_size):\n        super().__init__(name) # Call parent constructor\n        self.team_size = team_size\n\n    def manage(self):\n        return f\"{self.name} is managing a team of {self.team_size}.\""
+    },
+    {
+      "type": "heading",
+      "value": "OOP Comparison: Python vs. Dart"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Python", "Dart (Flutter)"],
+        "rows": [
+          ["Constructor", "__init__(self, ...)", "ClassName(...)"],
+          ["Instance Reference", "self", "this"],
+          ["Access Modifiers", "Naming convention (_ or __)", "Keywords (private is _)"],
+          ["Multiple Inheritance", "Supported", "Not supported (uses Mixins)"],
+          ["Interfaces", "Abstract Base Classes (abc)", "Implicit (every class is an interface)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'self' in Python?",
+      "answer": "The 'self' parameter is a reference to the current instance of the class and is used to access variables that belong to the class. It must be the first parameter of any function in the class."
+    },
+    {
+      "question": "What are 'Dunder' methods?",
+      "answer": "Dunder (Double Under) methods are special methods like __init__, __str__, or __add__ that allow you to define how objects behave with built-in Python operations."
+    },
+    {
+      "question": "Does Python have private variables?",
+      "answer": "Technically, no. Using a single underscore (e.g., _name) is a hint that it's internal. Using double underscores (e.g., __name) triggers 'name mangling' to make it harder to access from outside, but it's not strictly private like in Java."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "class BankAccount:\n    def __init__(self, owner, balance=0):\n        self.owner = owner\n        self.__balance = balance # Private attribute\n\n    def deposit(self, amount):\n        self.__balance += amount\n        print(f\"Added {amount}. New balance: {self.__balance}\")\n\n    def get_balance(self):\n        return self.__balance\n\naccount = BankAccount(\"Kishore\", 1000)\naccount.deposit(500)\nprint(f\"Final Balance for {account.owner}: {account.get_balance()}\")"
+  },
+
+  "quiz": [
+    {
+      "question": "Which method is called automatically when a new object is created?",
+      "options": ["__new__", "__start__", "__init__", "__create__"],
+      "answer": 2
+    },
+    {
+      "question": "How do you inherit a class in Python?",
+      "options": ["class Child(Parent):", "class Child extends Parent:", "class Child implements Parent:", "class Child : Parent"],
+      "answer": 0
+    },
+    {
+      "question": "What is the purpose of super()?",
+      "options": [
+        "To make a class run faster",
+        "To call the parent class's methods or constructor",
+        "To define a static method",
+        "To terminate an object"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "python-introduction",
+    "python-functions",
+    "python-abstract-classes",
+    "python-decorators",
+    "python-dunder-methods"
+  ]
+}

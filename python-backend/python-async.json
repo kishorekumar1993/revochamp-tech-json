@@ -1,0 +1,136 @@
+{
+  "slug": "python-asynchronous",
+  "course": "Python",
+  "title": "Asynchronous Programming – Concurrency with Asyncio",
+
+  "meta": {
+    "title": "Python Asyncio Guide – Async/Await, Coroutines & Event Loops (2026)",
+    "description": "Master asynchronous programming in Python. Learn how to handle I/O-bound tasks efficiently using async, await, and the asyncio event loop.",
+    "keywords": [
+      "python async",
+      "asyncio tutorial",
+      "async await python",
+      "concurrency python",
+      "event loop python",
+      "coroutine python"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is Asynchronous Programming?"
+    },
+    {
+      "type": "text",
+      "value": "Asynchronous programming is a design pattern that allows a unit of work to run separately from the primary application thread. For a Technical Lead building Flutter backends, this is crucial: it allows your server to handle thousands of concurrent API requests (like Gemini AI calls or database queries) without waiting for each one to finish before starting the next. It is about **Concurrency**, not necessarily parallelism."
+    },
+    {
+      "type": "heading",
+      "value": "The Event Loop Concept"
+    },
+    {
+      "type": "text",
+      "value": "At the heart of Python's `asyncio` is the **Event Loop**. Think of it as a central scheduler that manages and distributes execution of different tasks. When a task hits an I/O wait (like a network request), the loop pauses that task and moves to another one, resuming the first only when the data is ready."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "1. Coroutines: Async and Await"
+    },
+    {
+      "type": "text",
+      "value": "To create an asynchronous function, you use the `async def` syntax. To call it and wait for its result without blocking the loop, you use `await`. A function defined with `async def` is called a **Coroutine**."
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "value": "import asyncio\n\nasync def fetch_ai_response(prompt):\n    print(f\"Starting AI task for: {prompt}\")\n    await asyncio.sleep(2)  # Simulates a non-blocking network call\n    return f\"Response for {prompt}\"\n\nasync def main():\n    # Running tasks concurrently\n    task1 = fetch_ai_response(\"Flutter Code\")\n    task2 = fetch_ai_response(\"Python Logic\")\n    \n    results = await asyncio.gather(task1, task2)\n    print(results)\n\nasyncio.run(main())"
+    },
+    {
+      "type": "heading",
+      "value": "2. When to use Async vs. Threading"
+    },
+    {
+      "type": "text",
+      "value": "Choosing the right concurrency model depends on the type of bottleneck your application is facing."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Model", "Best For", "Mechanism"],
+        "rows": [
+          ["Asyncio", "I/O Bound (API calls, DB, Files)", "Single-threaded cooperative multitasking"],
+          ["Threading", "I/O Bound (Legacy code/libraries)", "Pre-emptive multitasking (OS managed)"],
+          ["Multiprocessing", "CPU Bound (Video encoding, Math)", "True parallelism using multiple CPU cores"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "3. Common Pitfalls"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Blocking the Loop**: Running a synchronous, time-consuming function (like `time.sleep()`) inside an `async def` will freeze the entire event loop.",
+        "**Forgotten Await**: Calling a coroutine without `await` won't execute the function; it will just return a coroutine object.",
+        "**Library Compatibility**: Not all libraries support `async`. For example, use `httpx` or `aiohttp` instead of `requests` for async network calls."
+      ]
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Does async make my code run faster?",
+      "answer": "Not necessarily for a single task. Async makes your application capable of handling *more* tasks simultaneously. It improves throughput, not necessarily raw execution speed of one task."
+    },
+    {
+      "question": "What is 'asyncio.run()'?",
+      "answer": "Introduced in Python 3.7, it is the standard way to run the top-level entry point (main coroutine) and manage the event loop lifecycle automatically."
+    },
+    {
+      "question": "Can I use async with FastAPI?",
+      "answer": "Yes! FastAPI is built natively for async. Defining routes as 'async def' allows FastAPI to handle requests extremely efficiently using the Uvicorn ASGI server."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": true,
+    "defaultCode": "import asyncio\n\nasync def say_after(delay, what):\n    await asyncio.sleep(delay)\n    print(what)\n\nasync def main():\n    print(f\"Started at {asyncio.get_event_loop().time()}\")\n    \n    # This runs them concurrently\n    await asyncio.gather(\n        say_after(1, 'hello'),\n        say_after(2, 'world')\n    )\n\n    print(f\"Finished at {asyncio.get_event_loop().time()}\")\n\nasyncio.run(main())"
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to pause a coroutine until the awaited task is complete?",
+      "options": ["wait", "pause", "await", "yield"],
+      "answer": 2
+    },
+    {
+      "question": "What happens if you run a blocking 'time.sleep(5)' inside an async function?",
+      "options": [
+        "It only pauses that specific function",
+        "It freezes the entire event loop and all other concurrent tasks",
+        "Python automatically converts it to a non-blocking sleep",
+        "It throws a SyntaxError"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which module is the standard for asynchronous I/O in Python?",
+      "options": ["threading", "multiprocessing", "asyncio", "concurrent.futures"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-fastapi",
+    "python-background-tasks",
+    "python-rest-api",
+    "python-performance-tuning",
+    "python-httpx-guide"
+  ]
+}

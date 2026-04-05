@@ -1,0 +1,140 @@
+{
+  "slug": "python-http-basics",
+  "course": "Python",
+  "title": "Python HTTP Basics – Understanding Web Communication",
+
+  "meta": {
+    "title": "Python HTTP Fundamentals – Requests, Responses & Status Codes (2026)",
+    "description": "Learn the core concepts of HTTP in Python. Understand how clients and servers communicate using headers, methods, and status codes.",
+    "keywords": [
+      "python http",
+      "http requests python",
+      "http response structure",
+      "http status codes",
+      "python web basics",
+      "url anatomy"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is HTTP?"
+    },
+    {
+      "type": "text",
+      "value": "HTTP (Hypertext Transfer Protocol) is the foundation of data exchange on the web. It is a request-response protocol where a client (like your Flutter app or a Python script) sends a request to a server, and the server returns a response. Understanding this flow is essential for building backends with FastAPI or integrating Gemini AI services."
+    },
+    {
+      "type": "heading",
+      "value": "The Request-Response Cycle"
+    },
+    {
+      "type": "text",
+      "value": "Every HTTP interaction consists of two parts. The **Request** contains the method, URL, headers, and optional body. The **Response** contains a status code, headers, and the data (usually JSON or HTML)."
+    },
+    {
+      "type": "text",
+      "value": ""
+    },
+    {
+      "type": "heading",
+      "value": "HTTP Methods (Verbs)"
+    },
+    {
+      "type": "text",
+      "value": "Methods tell the server what action to perform on the resource. While there are several, four are used in 99% of REST API development."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**GET**: Retrieve data. Should never change server state.",
+        "**POST**: Create new data. Usually includes a body (payload).",
+        "**PUT**: Replace an existing resource entirely.",
+        "**DELETE**: Remove a resource from the server."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Understanding Status Codes"
+    },
+    {
+      "type": "text",
+      "value": "Status codes are three-digit numbers issued by a server in response to a client's request. They are grouped into five classes based on the first digit."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Range", "Category", "Examples"],
+        "rows": [
+          ["2xx", "Success", "200 (OK), 201 (Created)"],
+          ["3xx", "Redirection", "301 (Moved), 304 (Not Modified)"],
+          ["4xx", "Client Error", "400 (Bad Request), 401 (Unauthorized), 404 (Not Found)"],
+          ["5xx", "Server Error", "500 (Internal Server Error), 503 (Service Unavailable)"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "Anatomy of a URL"
+    },
+    {
+      "type": "text",
+      "value": "A URL (Uniform Resource Locator) is the address used to find a resource. It consists of the protocol (https), domain (api.example.com), port (:443), path (/v1/users), and query parameters (?id=123)."
+    },
+    {
+      "type": "text",
+      "value": ""
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between HTTP and HTTPS?",
+      "answer": "HTTPS is HTTP with encryption. It uses TLS (Transport Layer Security) to wrap the HTTP data, ensuring that the communication between client and server cannot be read by third parties."
+    },
+    {
+      "question": "What are HTTP Headers?",
+      "answer": "Headers are key-value pairs sent with both requests and responses to provide metadata. Examples include 'Content-Type' (telling the client it's receiving JSON) or 'Authorization' (sending a token)."
+    },
+    {
+      "question": "When should I use POST vs. PUT?",
+      "answer": "Use POST to create a new record where the server decides the ID. Use PUT when you want to update or create a record at a specific, known location (e.g., /users/101)."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which status code represents a 'Not Found' error?",
+      "options": ["200", "401", "404", "500"],
+      "answer": 2
+    },
+    {
+      "question": "Which part of the URL is used to send optional filters, like '?sort=desc'?",
+      "options": ["Protocol", "Path", "Query Parameters", "Domain"],
+      "answer": 2
+    },
+    {
+      "question": "What does a 5xx status code usually imply?",
+      "options": [
+        "The client made a mistake",
+        "The request was successful",
+        "The server failed to fulfill a valid request",
+        "The page has moved to a new URL"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "python-rest-api",
+    "python-json-handling",
+    "python-api-requests",
+    "fastapi-intro",
+    "python-security-basics"
+  ]
+}
