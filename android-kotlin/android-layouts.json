@@ -1,0 +1,127 @@
+{
+  "slug": "android-layouts-and-viewgroups",
+  "course": "Android Development",
+  "title": "Android Layouts – Structuring Native User Interfaces",
+
+  "meta": {
+    "title": "Android Layouts Guide – ConstraintLayout, LinearLayout & Performance (2026)",
+    "description": "Master Android ViewGroups. Learn how to use ConstraintLayout for flat hierarchies, LinearLayout for simple stacks, and FrameLayout for layering.",
+    "keywords": [
+      "android layouts",
+      "constraintlayout tutorial",
+      "linearlayout vs framelayout",
+      "android viewgroup hierarchy",
+      "android ui performance",
+      "native android development"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Role of ViewGroups"
+    },
+    {
+      "type": "text",
+      "value": "In the native Android world, a layout is a `ViewGroup`—a container that dictates how its children (Views) are sized and positioned. As an Engineering Manager, you must prioritize 'Flat Hierarchies'. Deeply nested layouts require multiple 'Measure' passes, leading to UI jank. Modern Android development in 2026 centers around a few key Layout engines."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. ConstraintLayout: The Modern Standard"
+    },
+    {
+      "type": "text",
+      "value": "ConstraintLayout is the most powerful and flexible layout in Android. It allows you to create complex, large-scale UIs with a flat view hierarchy by defining 'constraints' between elements. It is the native equivalent of a highly advanced 'Stack' and 'Positioned' combo in Flutter."
+    },
+    
+    {
+      "type": "code",
+      "language": "xml",
+      "value": "\n<androidx.constraintlayout.widget.ConstraintLayout\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\">\n\n    <TextView\n        android:id=\"@+id/ai_status\"\n        app:layout_constraintTop_toTopOf=\"parent\"\n        app:layout_constraintStart_toStartOf=\"parent\" />\n\n    <Button\n        android:id=\"@+id/generate_btn\"\n        app:layout_constraintTop_toBottomOf=\"@id/ai_status\"\n        app:layout_constraintEnd_toEndOf=\"parent\" />\n\n</androidx.constraintlayout.widget.ConstraintLayout>"
+    },
+    {
+      "type": "heading",
+      "value": "2. LinearLayout: The Simple Stack"
+    },
+    {
+      "type": "text",
+      "value": "LinearLayout organizes children in a single direction—either vertically or horizontally. It is the direct equivalent of Flutter's `Column` and `Row`. While simple, using too many nested LinearLayouts is a common architectural anti-pattern that slows down the 'Measure' pass."
+    },
+    {
+      "type": "heading",
+      "value": "3. FrameLayout: The Layering Container"
+    },
+    {
+      "type": "text",
+      "value": "FrameLayout is used to display a single child or multiple children layered on top of each other. In your Revochamp Runner, a `FrameLayout` is often used as the 'Container' for Fragments or the Flutter View itself, as it is the most lightweight ViewGroup available."
+    },
+    {
+      "type": "heading",
+      "value": "Layout Comparison: Native vs. Flutter"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Android ViewGroup", "Flutter Equivalent", "Best Use Case"],
+        "rows": [
+          ["ConstraintLayout", "Stack + CustomMultiChildLayout", "Complex, responsive UIs"],
+          ["LinearLayout (Vertical)", "Column", "Simple vertical lists or forms"],
+          ["LinearLayout (Horizontal)", "Row", "Linear horizontal arrangements"],
+          ["FrameLayout", "Stack", "Layering views or Fragment hosting"],
+          ["CoordinatorLayout", "SliverAppBar / NestedScrollView", "Collapsing toolbars and animations"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'Match Parent' vs 'Wrap Content'?",
+      "answer": "'match_parent' tells the view to be as big as its parent, while 'wrap_content' tells the view to be only as big as its own internal content. In ConstraintLayout, we often use '0dp' (match_constraint), which allows the view to expand to the edges defined by its constraints."
+    },
+    {
+      "question": "Why is ConstraintLayout preferred over RelativeLayout?",
+      "answer": "RelativeLayout is an older layout that often requires two measurement passes for every child. ConstraintLayout uses a much more efficient linear equation solver to calculate positions, significantly improving performance for complex screens."
+    },
+    {
+      "question": "How do I handle different screen sizes with layouts?",
+      "answer": "In native Android, you use 'Configuration Qualifiers'. You can create separate XML files for different screen widths (e.g., 'layout-sw600dp/' for tablets). However, with ConstraintLayout and Guidelines, you can often create a single 'Adaptive' layout that works across all devices."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which layout is specifically designed to reduce view nesting and improve UI performance?",
+      "options": ["LinearLayout", "RelativeLayout", "ConstraintLayout", "TableLayout"],
+      "answer": 2
+    },
+    {
+      "question": "Which ViewGroup is the native equivalent of a Flutter 'Column'?",
+      "options": ["FrameLayout", "Vertical LinearLayout", "ConstraintLayout", "GridLayout"],
+      "answer": 1
+    },
+    {
+      "question": "What is the result of nesting too many ViewGroups in an Android app?",
+      "options": [
+        "Better organization",
+        "Increased performance",
+        "Multiple measure passes leading to frame drops",
+        "Nothing, the compiler optimizes it"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "android-views-fundamentals",
+    "android-material-ui",
+    "android-project-structure",
+    "flutter-platform-views",
+    "clean-architecture-native"
+  ]
+}

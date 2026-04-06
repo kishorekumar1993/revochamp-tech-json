@@ -1,0 +1,144 @@
+{
+  "slug": "android-livedata-lifecycle-aware",
+  "course": "Android Development",
+  "title": "Android LiveData – Observable Lifecycle-Aware Data",
+
+  "meta": {
+    "title": "Android LiveData Guide – Observers, ViewModels & Lifecycle Safety (2026)",
+    "description": "Master Android LiveData. Learn how to use MutableLiveData, observe data from ViewModels, and ensure lifecycle-safe UI updates in native Android.",
+    "keywords": [
+      "android livedata",
+      "mutablelivedata vs livedata",
+      "livedata observer",
+      "lifecycle aware components",
+      "android viewmodel livedata",
+      "livedata vs flow"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Concept of LiveData"
+    },
+    {
+      "type": "text",
+      "value": "LiveData is an observable data holder class. Unlike a regular observable (like RxJava), LiveData is **lifecycle-aware**, meaning it respects the lifecycle of other app components, such as Activities and Fragments. This awareness ensures LiveData only updates app component observers that are in an active lifecycle state (`STARTED` or `RESUMED`)."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. LiveData vs. MutableLiveData"
+    },
+    {
+      "type": "text",
+      "value": "Following the principle of encapsulation, we separate the ability to read data from the ability to modify it. As an Architect, you should always expose `LiveData` (read-only) to the UI, while keeping `MutableLiveData` (read/write) private within the ViewModel."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "class ProjectViewModel : ViewModel() {\n    // Private mutable state\n    private val _projectName = MutableLiveData<String>()\n\n    // Public immutable observable\n    val projectName: LiveData<String> = _projectName\n\n    fun updateName(newName: String) {\n        _projectName.value = newName\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Observing LiveData in the UI"
+    },
+    {
+      "type": "text",
+      "value": "In your native Activity or Fragment, you 'observe' the LiveData. Because you pass `this` (the LifecycleOwner), LiveData automatically stops sending updates if the user backgrounds the app, and resumes when they return. This is the native version of a `StreamBuilder` or `ref.watch()`."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "viewModel.projectName.observe(this) { name ->\n    // Update the native UI\n    binding.titleTextView.text = name\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Advantages for Revochamp"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**No Memory Leaks**: Observers are bound to Lifecycle objects and clean up after themselves.",
+        "**No Crashes due to Stopped Activities**: If an Activity is in the back stack, it won't receive LiveData events, preventing 'IllegalStateException'.",
+        "**Always Up-to-date Data**: If an activity becomes active again, it receives the latest data immediately.",
+        "**Proper Configuration Change Handling**: If the phone is rotated, the Activity immediately re-subscribes to the existing LiveData in the ViewModel and gets the current state."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Observable Comparison: Native vs. Flutter"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Android LiveData", "Flutter Riverpod/Streams"],
+        "rows": [
+          ["Lifecycle Aware", "Yes (Built-in)", "Requires manual cancel / flutter_hooks"],
+          ["Main Thread Only", "Yes (UI updates)", "No (Isolate dependent)"],
+          ["Initial Value", "Nullable by default", "AsyncValue / Required"],
+          ["Backpressure", "Not supported (LATEST only)", "Supported in Streams"],
+          ["Complex Transforms", "MediatorLiveData", "Provider Combinations / map()"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "4. LiveData vs. Kotlin Flow"
+    },
+    {
+      "type": "text",
+      "value": "In 2026, many native Android developers are migrating to **StateFlow**. However, LiveData remains the simplest and most stable choice for basic UI-state observation in Java-compatible or simple native Runner modules because it is tied directly to the Main Thread and requires no coroutine scope management."
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between setValue() and postValue()?",
+      "answer": "Use 'setValue()' when you are already on the Main (UI) thread. Use 'postValue()' when you are on a background thread (e.g., inside a network callback or AI processing task). 'postValue' internally dispatches the update to the main thread for you."
+    },
+    {
+      "question": "Can I use LiveData without a ViewModel?",
+      "answer": "Yes, but it is not recommended. LiveData's greatest strength is surviving configuration changes (like rotation) when hosted inside a ViewModel. Using it standalone in an Activity loses this benefit."
+    },
+    {
+      "question": "What is MediatorLiveData?",
+      "answer": "It is a subclass of LiveData that can observe other LiveData objects. For example, if you have a 'FirstName' LiveData and a 'LastName' LiveData, you can use a MediatorLiveData to emit a combined 'FullName' whenever either one changes."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which method should be used to update LiveData from a background thread?",
+      "options": ["setValue()", "postValue()", "updateValue()", "sendValue()"],
+      "answer": 1
+    },
+    {
+      "question": "What happens to a LiveData observer if the Activity it is in is destroyed?",
+      "options": [
+        "It keeps running in the background",
+        "It throws a NullPointerException",
+        "It is automatically removed to prevent a leak",
+        "The app restarts"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "True or False: LiveData can only be observed when the LifecycleOwner is in the STARTED or RESUMED state.",
+      "options": ["True", "False"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "android-viewmodel-architecture",
+    "android-activity-lifecycle",
+    "kotlin-coroutines",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

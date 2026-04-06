@@ -1,0 +1,141 @@
+{
+  "slug": "android-permissions-and-security",
+  "course": "Android Development",
+  "title": "Android Permissions – Security and User Privacy",
+
+  "meta": {
+    "title": "Android Permissions Guide – Manifest, Runtime & Best Practices (2026)",
+    "description": "Master the Android permission model. Learn about normal vs. dangerous permissions, requesting runtime consent, and the new privacy dashboard requirements.",
+    "keywords": [
+      "android permissions",
+      "runtime permissions kotlin",
+      "uses-permission manifest",
+      "android privacy model",
+      "requestpermissions api",
+      "checkselfpermission"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Permission Hierarchy"
+    },
+    {
+      "type": "text",
+      "value": "Android categorizes permissions into different types based on the level of risk they pose to user privacy. As an Architect, your goal is to follow the 'Principle of Least Privilege'—only requesting what is strictly necessary for Revochamp to function. In 2026, the system is more aggressive about revoking unused permissions for apps that haven't been opened in months."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**Normal Permissions**: Lower risk to privacy (e.g., INTERNET). These are granted automatically by the OS at install time if declared in the Manifest.",
+        "**Signature Permissions**: Granted only if the requesting app is signed with the same certificate as the app that declared the permission.",
+        "**Dangerous (Runtime) Permissions**: High risk to privacy (e.g., CAMERA, LOCATION, FILES). The user must explicitly grant these while the app is running."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "1. Declaration in the Manifest"
+    },
+    {
+      "type": "text",
+      "value": "All permissions must first be declared in the `AndroidManifest.xml`. This informs the Google Play Store and the OS about the app's requirements. For your project, this is where you enable your AI backend communication and camera access."
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "value": "\n<uses-permission android:name=\"android.permission.INTERNET\" />\n\n\n<uses-permission android:name=\"android.permission.CAMERA\" />\n<uses-permission android:name=\"android.permission.READ_MEDIA_IMAGES\" />"
+    },
+    {
+      "type": "heading",
+      "value": "2. The Runtime Request Flow"
+    },
+    {
+      "type": "text",
+      "value": "For dangerous permissions, simply declaring them isn't enough. In 2026, we use the **ActivityResultLauncher** for a type-safe, lifecycle-aware way to request permissions. You must check if the permission is already granted, show a rationale if the user previously denied it, and then request it."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Modern way to request camera for Revochamp AI Preview\nval requestPermissionLauncher = registerForActivityResult(\n    ActivityResultContracts.RequestPermission()\n) { isGranted: Boolean ->\n    if (isGranted) {\n        startCamera() // Logic for AI-powered UI scanning\n    } else {\n        showPermissionDeniedUI()\n    }\n}\n\nfun checkCameraPermission() {\n    when {\n        ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == \n            PackageManager.PERMISSION_GRANTED -> {\n            startCamera()\n        }\n        shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {\n            showInAppExplanationDialog() // Explain why AI needs the camera\n        }\n        else -> {\n            requestPermissionLauncher.launch(Manifest.permission.CAMERA)\n        }\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Scoped Storage and Media Access"
+    },
+    {
+      "type": "text",
+      "value": "In recent Android versions, global 'Read/Write External Storage' is deprecated. If Revochamp needs to save a generated code file or read an image for UI analysis, you should use **Scoped Storage**. This allows your app to access its own folders without any permission, or use the 'Photo Picker' to let the user select a specific file without granting full storage access."
+    },
+    {
+      "type": "heading",
+      "value": "Permission Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Android Native", "Flutter (permission_handler)"],
+        "rows": [
+          ["Manifest Entry", "Required (XML)", "Required (XML)"],
+          ["Request Logic", "registerForActivityResult", "permission.request()"],
+          ["Status Check", "checkSelfPermission", "permission.status"],
+          ["Rationale", "shouldShowRequestPermissionRationale", "shouldShowRequestRationale"],
+          ["Storage Access", "Scoped Storage / Media API", "Platform-specific implementation"],
+          ["Security Level", "OS-enforced sandbox", "Wrapper around native APIs"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What happens if I forget to declare a permission in the Manifest?",
+      "answer": "Your app will crash with a 'SecurityException' as soon as you try to perform the restricted action, even if the user would have granted it. The OS uses the Manifest as the master list of possible permissions."
+    },
+    {
+      "question": "Can I request multiple permissions at once?",
+      "answer": "Yes. You can use 'RequestMultiplePermissions()' to request a group (e.g., Camera and Microphone). The system will show a single dialog or a sequence of dialogs to the user."
+    },
+    {
+      "question": "What is 'One-time' permission?",
+      "answer": "Introduced in Android 11, users can grant 'Only this time' for sensitive permissions like Camera or Location. The permission is revoked as soon as the user closes the app, so you must always check for the permission every time you launch a feature."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which type of permission is automatically granted by the system if it's declared in the Manifest?",
+      "options": ["Dangerous Permissions", "Normal Permissions", "Special Permissions", "Signature Permissions"],
+      "answer": 1
+    },
+    {
+      "question": "What is the recommended modern API for requesting runtime permissions in 2026?",
+      "options": ["startActivityForResult", "RequestPermission Intent", "ActivityResultLauncher", "SystemBroadcast"],
+      "answer": 2
+    },
+    {
+      "question": "What should you show the user if they have denied a permission once but the feature is still needed?",
+      "options": [
+        "A system error message",
+        "A rationale (explanation) of why the permission is needed",
+        "A link to the Play Store",
+        "Nothing, just request it again silently"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "android-manifest-fundamentals",
+    "android-activity-lifecycle",
+    "flutter-method-channels",
+    "android-security-best-practices",
+    "android-scoped-storage"
+  ]
+}

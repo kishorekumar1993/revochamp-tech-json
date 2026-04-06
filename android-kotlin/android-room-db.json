@@ -1,0 +1,142 @@
+{
+  "slug": "android-room-persistence-library",
+  "course": "Android Development",
+  "title": "Android Room – Type-Safe SQLite Persistence",
+
+  "meta": {
+    "title": "Android Room Database Guide – Entities, DAOs & Migrations (2026)",
+    "description": "Master local data persistence in Android. Learn about Room Entities, DAOs, Database configurations, and integrating with Kotlin Coroutines and Flow.",
+    "keywords": [
+      "android room database",
+      "room persistence library",
+      "sqlite android",
+      "room dao",
+      "room entity",
+      "kotlin room flow",
+      "offline-first android architecture"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Architecture of Room"
+    },
+    {
+      "type": "text",
+      "value": "Room provides a fluent API for database access while leveraging the full power of SQLite. As an Architect, the primary benefit of Room is safety: it checks your SQL queries at compile time. This prevents runtime crashes caused by syntax errors or missing columns—a major pain point in older Android development. Room consists of three major components that work together."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. The Entity (The Table)"
+    },
+    {
+      "type": "text",
+      "value": "An Entity represents a table within your database. In Kotlin, this is usually a **Data Class** annotated with `@Entity`. For Revochamp, you might have entities for `ProjectEntity` or `WidgetTemplateEntity`."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "@Entity(tableName = \"projects\")\ndata class ProjectEntity(\n    @PrimaryKey val id: String,\n    val name: String,\n    val lastModified: Long,\n    val isAiGenerated: Boolean\n)"
+    },
+    {
+      "type": "heading",
+      "value": "2. The DAO (Data Access Object)"
+    },
+    {
+      "type": "text",
+      "value": "The DAO is an interface where you define your database interactions. Instead of writing verbose 'Cursor' code, you use simple annotations like `@Insert`, `@Delete`, and `@Query`. In 2026, we utilize **Flow** or **Suspend functions** in DAOs to ensure database operations never block the main UI thread."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "@Dao\ninterface ProjectDao {\n    @Query(\"SELECT * FROM projects ORDER BY lastModified DESC\")\n    fun getAllProjects(): Flow<List<ProjectEntity>>\n\n    @Insert(onConflict = OnConflictStrategy.REPLACE)\n    suspend fun insertProject(project: ProjectEntity)\n\n    @Delete\n    suspend fun deleteProject(project: ProjectEntity)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. The Database Class"
+    },
+    {
+      "type": "text",
+      "value": "This class serves as the main connection point to your SQLite data. It must be abstract, extend `RoomDatabase`, and include the list of entities associated with the database."
+    },
+    {
+      "type": "heading",
+      "value": "4. Migration and Schema Management"
+    },
+    {
+      "type": "text",
+      "value": "When you change your data model (e.g., adding an 'author' field to a project), you must handle migrations. Room requires explicit migration paths to prevent user data loss. As a Lead Developer, you can also export the schema to a JSON file to track database versions in your Git repository."
+    },
+    
+    {
+      "type": "heading",
+      "value": "Local Persistence Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Android Room", "Flutter sqflite / Drift"],
+        "rows": [
+          ["Type Safety", "Compile-time verified SQL", "Drift (Verified) / sqflite (Raw)"],
+          ["Reactive UI", "Native Flow / LiveData", "Streams / Watchers"],
+          ["Boilerplate", "Minimal (Annotations)", "Medium (Code Generation)"],
+          ["Thread Safety", "Mandatory (via Coroutines)", "Implicit (via Async/Await)"],
+          ["Migration", "Manual / Automated Paths", "Manual Migration Logic"],
+          ["Verification", "Compile-time", "Runtime (sqflite) / Compile-time (Drift)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Can I use Room on the Main Thread?",
+      "answer": "By default, Room does not allow database access on the main thread because it may lock the UI for long periods. You must use 'allowMainThreadQueries()' only for testing; in production, always use Coroutines or Flow."
+    },
+    {
+      "question": "What is @TypeConverter in Room?",
+      "answer": "SQLite only supports basic types (Int, String, etc.). If you want to store a custom object (like a List of Tags) in a single column, you use a TypeConverter to tell Room how to convert that object to a String (JSON) and back."
+    },
+    {
+      "question": "How do I implement 'Offline-First' with Room?",
+      "answer": "Use Room as your 'Single Source of Truth'. Your UI observes a Flow from the DAO. When you fetch new data from your Python AI API, you save it to Room. The UI will automatically update because it is observing the database, not the API directly."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which component in Room is responsible for defining the methods used to access the database?",
+      "options": ["Entity", "DAO", "Database Class", "TypeConverter"],
+      "answer": 1
+    },
+    {
+      "question": "What happens if you write a malformed SQL query in a Room @Query annotation?",
+      "options": [
+        "The app crashes at runtime",
+        "The query returns null",
+        "The project fails to compile",
+        "Room ignores the query"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which keyword should be used in a DAO function to ensure it runs asynchronously within a coroutine?",
+      "options": ["async", "wait", "suspend", "background"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "kotlin-coroutines",
+    "android-viewmodel-architecture",
+    "clean-architecture-native",
+    "flutter-offline-caching",
+    "android-project-structure"
+  ]
+}

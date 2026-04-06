@@ -1,0 +1,133 @@
+{
+  "slug": "android-authentication-credential-manager",
+  "course": "Android Development",
+  "title": "Android Authentication – Identity and Credential Management",
+
+  "meta": {
+    "title": "Android Authentication Guide – Credential Manager, Passkeys & OAuth (2026)",
+    "description": "Master user authentication on Android. Learn about the Credential Manager API, implementing Passkeys, and secure OAuth 2.0 flows.",
+    "keywords": [
+      "android authentication",
+      "credential manager api",
+      "passkeys android",
+      "google sign-in android",
+      "android oauth2",
+      "biometric authentication android"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Modern Identity Stack"
+    },
+    {
+      "type": "text",
+      "value": "Authentication on Android has evolved into a 'Passwordless' future. As an Architect, your focus should be on the **Credential Manager API**. This Jetpack library replaces the legacy 'Identity' and 'Google Sign-In' SDKs, providing a single entry point for all authentication methods. It allows Revochamp users to log in using biometric sensors (Face/Fingerprint) via Passkeys, significantly reducing drop-off rates in the Chennai market."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Credential Manager API"
+    },
+    {
+      "type": "text",
+      "value": "The Credential Manager handles the complexity of storage and retrieval. It supports multiple types of credentials: Passkeys (FIDO2), Google ID Tokens, and traditional Password-based accounts. By using this API, you ensure that user credentials are encrypted and synced across their Google account devices."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Modern request to sign in a user\nval credentialManager = CredentialManager.create(context)\n\nval getCredentialRequest = GetCredentialRequest(\n    listOf(GetPasswordOption(), GetGoogleIdOption(webClientId = \"YOUR_CLIENT_ID\"))\n)\n\nviewModelScope.launch {\n    try {\n        val result = credentialManager.getCredential(context, getCredentialRequest)\n        handleSignIn(result)\n    } catch (e: GetCredentialException) {\n        // Handle error: No credentials found or user canceled\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Passkeys: The Password Successor"
+    },
+    {
+      "type": "text",
+      "value": "Passkeys are a safer, easier replacement for passwords. They use public-key cryptography and are tied to the device's screen lock (Biometrics/PIN). For an Engineering Manager, the benefit is clear: zero phishing risk and no need to manage complex password reset flows for Revochamp's AI services."
+    },
+    
+    {
+      "type": "heading",
+      "value": "3. Biometric Authentication"
+    },
+    {
+      "type": "text",
+      "value": "When your app needs an extra layer of security—such as before exporting a production-ready AI template—you can use the **BiometricPrompt API**. This allows you to request a fingerprint or face scan without managing the hardware specifics yourself."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "val biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {\n    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {\n        super.onAuthenticationSucceeded(result)\n        // Proceed with sensitive action (e.g., Code Export)\n    }\n})\n\nval promptInfo = BiometricPrompt.PromptInfo.Builder()\n    .setTitle(\"Authenticate to Export\")\n    .setSubtitle(\"Use your fingerprint to confirm identity\")\n    .setNegativeButtonText(\"Cancel\")\n    .build()\n\nbiometricPrompt.authenticate(promptInfo)"
+    },
+    {
+      "type": "heading",
+      "value": "Authentication Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Android Native (Cred Manager)", "Flutter (firebase_auth / local_auth)"],
+        "rows": [
+          ["Unified UI", "Native bottom-sheet (All-in-one)", "Plugin-dependent / Custom UI"],
+          ["Passkey Support", "First-class / Integrated", "Plugin support (passkeys_flutter)"],
+          ["Google Sign-In", "Direct ID Token handling", "GoogleSignIn plugin"],
+          ["Biometrics", "BiometricPrompt API", "local_auth plugin"],
+          ["Credential Sync", "Auto-sync with Google Password Mgr", "Manual / Firebase backend"],
+          ["Security Level", "Hardware-backed (Strong)", "App-level bridge"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What happened to the old Google Sign-In SDK?",
+      "answer": "In 2026, the legacy Google Sign-In SDK is deprecated. All Google identity features have been merged into the Credential Manager. This reduces APK size and provides a consistent experience across all Android versions."
+    },
+    {
+      "question": "Is it safe to store tokens in SharedPreferences?",
+      "answer": "No. As an Architect, you should never store sensitive Auth Tokens in plain-text SharedPreferences. Use 'EncryptedSharedPreferences' or the 'Android KeyStore' to ensure that tokens are encrypted at rest and cannot be read by rooted devices or other apps."
+    },
+    {
+      "question": "What is an ID Token vs. Access Token?",
+      "answer": "An ID Token (JWT) is used to verify the user's identity (who they are). An Access Token is used to authorize the app to access specific resources (what they can do, like your Python AI API)."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which Android API is the unified replacement for passwords, Passkeys, and Google Sign-In?",
+      "options": ["AccountManager", "IdentityManager", "Credential Manager", "SecurityProvider"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary security advantage of using Passkeys over passwords?",
+      "options": [
+        "They are easier to remember",
+        "They are immune to phishing and credential stuffing",
+        "They work without an internet connection",
+        "They use less battery"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which API should be used to request a fingerprint scan for a specific in-app action?",
+      "options": ["BiometricPrompt", "FingerprintManager", "SensorManager", "ActivityManager"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "android-security-best-practices",
+    "android-manifest-fundamentals",
+    "flutter-method-channels",
+    "android-api-calls",
+    "android-key-store-usage"
+  ]
+}

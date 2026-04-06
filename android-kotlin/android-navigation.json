@@ -1,0 +1,141 @@
+{
+  "slug": "android-navigation-component",
+  "course": "Android Development",
+  "title": "Android Navigation – Principles and Jetpack Navigation",
+
+  "meta": {
+    "title": "Android Navigation Guide – NavGraph, NavHost & Safe Args (2026)",
+    "description": "Master the Jetpack Navigation component. Learn about Navigation Graphs, NavHostFragments, and type-safe data passing with Safe Args.",
+    "keywords": [
+      "android navigation component",
+      "navgraph android",
+      "navhostfragment",
+      "safe args kotlin",
+      "jetpack navigation",
+      "android back stack management"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Three Pillars of Navigation"
+    },
+    {
+      "type": "text",
+      "value": "The Navigation Component consists of three key parts that work together to simplify native screen flow. As an Architect, this separation allows you to visualize your app's entire native structure in one place, rather than hunting through scattered 'startActivity' calls."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**Navigation Graph (XML/Kotlin DSL)**: A centralized resource that contains all individual destinations (Fragments/Activities) and the connections (Actions) between them.",
+        "**NavHost**: An empty container that displays destinations from the graph. In native apps, this is usually a `NavHostFragment` placed inside your Activity layout.",
+        "**NavController**: The object that manages app navigation within a NavHost. You tell the controller where to go, and it handles the swapping of Fragments."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "1. Defining the NavGraph"
+    },
+    {
+      "type": "text",
+      "value": "The graph defines your app's 'paths'. You can define 'Actions' which are the arrows connecting destinations. Actions can also define custom animations, much like PageRouteTransitions in Flutter."
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "value": "\n<navigation xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res/android\"\n    app:startDestination=\"@id/homeFragment\">\n\n    <fragment\n        android:id=\"@id/homeFragment\"\n        android:name=\"com.revo.HomeFragment\">\n        <action\n            android:id=\"@id/action_home_to_editor\"\n            app:destination=\"@id/editorFragment\" />\n    </fragment>\n\n    <fragment\n        android:id=\"@id/editorFragment\"\n        android:name=\"com.revo.EditorFragment\" />\n</navigation>"
+    },
+    {
+      "type": "heading",
+      "value": "2. Safe Args: Type-Safe Data Passing"
+    },
+    {
+      "type": "text",
+      "value": "Passing data between screens in native Android used to involve 'Bundles' and 'String Keys', which were prone to runtime errors. **Safe Args** is a Gradle plugin that generates simple object classes for type-safe access to arguments. This mirrors the type-safety you get when passing constructor parameters to Flutter Widgets."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Sending data (Generated Code)\nval action = HomeFragmentDirections.actionHomeToEditor(templateId = \"REVO_7\")\nfindNavController().navigate(action)\n\n// Receiving data in EditorFragment\nval args: EditorFragmentArgs by navArgs()\nval id = args.templateId"
+    },
+    {
+      "type": "heading",
+      "value": "3. Deep Linking with Navigation"
+    },
+    {
+      "type": "text",
+      "value": "One of the strongest features of the Navigation Component is its first-class support for Deep Links. You can add a `<deepLink>` tag directly to a destination in your NavGraph. When a user clicks a link in Chennai or anywhere else, the Navigation Component automatically handles building the 'Back Stack' so the user can hit 'back' and return to your app's home screen properly."
+    },
+    
+    {
+      "type": "heading",
+      "value": "Navigation Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Jetpack Navigation", "Flutter GoRouter"],
+        "rows": [
+          ["Definition", "NavGraph (XML / DSL)", "Route Map (Dart)"],
+          ["Container", "NavHostFragment", "MaterialApp.router"],
+          ["Data Passing", "Safe Args (Generated)", "Extra / Path Parameters"],
+          ["Back Stack", "Automatic (System managed)", "Imperative / Declarative Stack"],
+          ["Deep Links", "Manifest + Graph integrated", "URL Pattern Matching"],
+          ["Animations", "XML Resource / NavOptions", "Page Transitions Builder"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between navigate() and popBackStack()?",
+      "answer": "'navigate()' adds a new destination to the top of the stack. 'popBackStack()' removes the current destination and returns to the previous one. This is equivalent to Navigator.push and Navigator.pop in Flutter."
+    },
+    {
+      "question": "How do I handle Conditional Navigation (e.g., Login)?",
+      "answer": "In your 'startDestination', check the user's auth state in the ViewModel. If not logged in, immediately call 'navigate()' to the Login fragment. Use 'popUpTo' in your NavOptions to remove the start destination from the back stack so the user can't 'back' into it."
+    },
+    {
+      "question": "Can I use Navigation with Jetpack Compose?",
+      "answer": "Yes! In 2026, 'Navigation Compose' is the standard for new native modules. Instead of XML, you define your graph using a 'NavHost' composable and 'composable()' routes, providing a purely declarative navigation experience."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which component is responsible for actually swapping the fragments on screen based on the Navigation Graph?",
+      "options": ["NavController", "NavHost", "NavGraph", "SafeArgs"],
+      "answer": 1
+    },
+    {
+      "question": "What is the primary benefit of using the Safe Args plugin?",
+      "options": [
+        "It makes navigation faster",
+        "It provides type-safe way to pass data between destinations",
+        "It automatically generates UI layouts",
+        "It reduces the app size"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Where is the start destination of an application defined?",
+      "options": ["AndroidManifest.xml", "The Navigation Graph", "MainActivity.kt", "build.gradle.kts"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "android-activity-lifecycle",
+    "android-fragments-modular-ui",
+    "jetpack-compose-basics",
+    "flutter-method-channels",
+    "android-deep-linking"
+  ]
+}

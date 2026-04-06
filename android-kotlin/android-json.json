@@ -1,0 +1,133 @@
+{
+  "slug": "android-json-parsing-serialization",
+  "course": "Android Development",
+  "title": "Android JSON – Data Serialization and Parsing",
+
+  "meta": {
+    "title": "Android JSON Guide – Kotlin Serialization, Moshi & Parsing (2026)",
+    "description": "Master JSON handling on Android. Learn about Kotlin Serialization, Moshi, and how to convert complex AI data into native Kotlin objects.",
+    "keywords": [
+      "android json parsing",
+      "kotlin serialization tutorial",
+      "moshi vs gson",
+      "android data modeling",
+      "json to kotlin object",
+      "native android networking"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Evolution of JSON on Android"
+    },
+    {
+      "type": "text",
+      "value": "JSON (JavaScript Object Notation) is the universal language of mobile APIs. On Android, we transition from raw strings to structured objects. As an Engineering Manager, you must choose a serialization library that balances **Performance** (parsing speed) with **Code Safety** (nullability and type checks). Modern libraries like Kotlin Serialization are preferred because they are 'Multiplatform' ready, matching your Flutter-first mindset."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Kotlin Serialization: The Native Standard"
+    },
+    {
+      "type": "text",
+      "value": "Developed by JetBrains, this is the recommended way to handle JSON in 2026. It uses a compiler plugin to generate parsing code at compile time, making it significantly faster than Gson. It also respects Kotlin's default values and null-safety, ensuring your Revochamp models never have 'missing' required fields."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Annotate your data class for serialization\n@Serializable\ndata class WidgetResponse(\n    val id: String,\n    @SerialName(\"widget_type\") val type: String,\n    val isVisible: Boolean = true // Default value used if missing in JSON\n)\n\n// Parsing a JSON string\nval jsonString = \"\"\"{\"id\": \"w1\", \"widget_type\": \"Button\"}\"\"\"\nval widget = Json.decodeFromString<WidgetResponse>(jsonString)"
+    },
+    {
+      "type": "heading",
+      "value": "2. Moshi: The Reflection-Based Powerhouse"
+    },
+    {
+      "type": "text",
+      "value": "Moshi is the successor to Gson, built by the Square team (the creators of Retrofit). It is highly efficient and designed specifically for modern Android. It handles 'Platform Types' and JSON adapters better than almost any other library. For a Lead Developer, Moshi is the best choice when dealing with highly dynamic JSON structures from your AI backend."
+    },
+    
+    {
+      "type": "heading",
+      "value": "3. Handling Nested and Dynamic JSON"
+    },
+    {
+      "type": "text",
+      "value": "In Revochamp, your AI might return a list of various widget types. You can use **Polymorphic Serialization** to parse a list into different subclasses based on a 'type' field in the JSON. This is the native equivalent of Dart's 'switch' expressions for pattern matching in JSON mapping."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "@Serializable\nsealed class BaseComponent {\n    @Serializable\n    @SerialName(\"button\")\n    data class ButtonComponent(val text: String) : BaseComponent()\n\n    @Serializable\n    @SerialName(\"input\")\n    data class InputComponent(val hint: String) : BaseComponent()\n}"
+    },
+    {
+      "type": "heading",
+      "value": "JSON Library Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Kotlin Serialization", "Moshi", "Gson (Legacy)"],
+        "rows": [
+          ["Primary Tech", "Compiler Plugin", "Reflection / Code-gen", "Reflection"],
+          ["Null Safety", "Strict (Respects Kotlin)", "Good", "Poor (can force nulls)"],
+          ["Speed", "Very Fast (No reflection)", "Fast", "Slower"],
+          ["File Size", "Small (Tiny runtime)", "Medium", "Medium"],
+          ["ProGuard/R8", "Easy (No rules needed)", "Needs configuration", "Complex rules"],
+          ["Multiplatform", "Yes (iOS/Web/Android)", "No (JVM only)", "No (JVM only)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why should I stop using Gson?",
+      "answer": "Gson relies heavily on reflection, which is slow and can lead to runtime crashes because it doesn't understand Kotlin's null-safety. It can assign 'null' to a non-nullable Kotlin property without any warning during parsing."
+    },
+    {
+      "question": "What is @SerialName used for?",
+      "answer": "It is used when the JSON key name (e.g., 'user_first_name') differs from your Kotlin property name (e.g., 'firstName'). This allows you to maintain clean Kotlin coding standards while still matching the API contract."
+    },
+    {
+      "question": "How do I handle Date formats in JSON?",
+      "answer": "You must create a custom 'KSerializer' or 'JsonAdapter'. This tells the library how to convert a String (e.g., '2026-04-06') into a native 'java.time.LocalDateTime' object and vice versa."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which annotation is required at the top of a class to use Kotlin Serialization?",
+      "options": ["@Json", "@Serialized", "@Serializable", "@DataClass"],
+      "answer": 2
+    },
+    {
+      "question": "Which library is known for being 'Multiplatform', allowing code sharing between Android and iOS?",
+      "options": ["Moshi", "Gson", "Kotlin Serialization", "Jackson"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary danger of using reflection-based JSON libraries in a production Android app?",
+      "options": [
+        "They make the app icon look different",
+        "Performance overhead and potential for runtime null-safety violations",
+        "They only work on WiFi",
+        "They require a paid license"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "kotlin-data-classes",
+    "android-api-calls",
+    "flutter-json-serializable",
+    "kotlin-coroutines",
+    "clean-architecture-native"
+  ]
+}

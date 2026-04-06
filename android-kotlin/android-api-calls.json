@@ -1,0 +1,128 @@
+{
+  "slug": "android-networking-retrofit",
+  "course": "Android Development",
+  "title": "Android API Calls – Networking with Retrofit & OkHttp",
+
+  "meta": {
+    "title": "Android Networking Guide – Retrofit, OkHttp & Coroutines (2026)",
+    "description": "Master native Android networking. Learn how to use Retrofit for REST APIs, handle JSON with Gson/Moshi, and manage async calls with Kotlin Coroutines.",
+    "keywords": [
+      "android retrofit tutorial",
+      "okhttp android",
+      "android rest api call",
+      "kotlin networking coroutines",
+      "json parsing android",
+      "android network security"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Modern Networking Stack"
+    },
+    {
+      "type": "text",
+      "value": "Native Android networking has evolved from manual 'HttpURLConnection' to high-level abstraction libraries. As an Architect, you should view **Retrofit** as your 'Contract Layer' and **OkHttp** as your 'Engine Layer'. This combination handles connection pooling, interceptors (for Auth tokens), and automatic JSON-to-Kotlin object conversion seamlessly."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Defining the API Interface"
+    },
+    {
+      "type": "text",
+      "value": "Retrofit uses annotations to define HTTP requests. Because you are an expert in Clean Architecture, you'll appreciate how Retrofit turns your API into a simple Kotlin interface, making it easy to mock for unit testing your AI services."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "interface RevoApiService {\n    @GET(\"v2/templates/{id}\")\n    suspend fun getTemplate(@Path(\"id\") templateId: String): Response<TemplateResponse>\n\n    @POST(\"v2/generate\")\n    suspend fun generateCode(@Body request: PromptRequest): TemplateResponse\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. OkHttp Interceptors"
+    },
+    {
+      "type": "text",
+      "value": "Interceptors are the most powerful feature of OkHttp. They allow you to 'intercept' every outgoing request to add Headers (like your AI API Keys) or every incoming response to log errors globally. This is identical to Interceptors in the Dart `dio` package."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "val okHttpClient = OkHttpClient.Builder()\n    .addInterceptor { chain ->\n        val request = chain.request().newBuilder()\n            .addHeader(\"Authorization\", \"Bearer $AUTH_TOKEN\")\n            .build()\n        chain.proceed(request)\n    }\n    .build()"
+    },
+    {
+      "type": "heading",
+      "value": "3. Integrating with Coroutines"
+    },
+    {
+      "type": "text",
+      "value": "In 2026, we never perform network calls on the Main Thread. Retrofit natively supports `suspend` functions. When calling your Python backend, the coroutine will suspend (freeing the UI thread) and resume automatically when the data arrives, ensuring the Revochamp UI never freezes."
+    },
+    {
+      "type": "heading",
+      "value": "Networking Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Android (Retrofit/OkHttp)", "Flutter (Dio)"],
+        "rows": [
+          ["Type Safety", "Strong (Interface-based)", "Moderate (Dynamic/Generic)"],
+          ["Async Model", "Coroutines (Suspend)", "Futures (Async/Await)"],
+          ["JSON Parsing", "Automatic (Gson/Moshi/Serialization)", "Manual or Code-gen (json_serializable)"],
+          ["Interceptors", "OkHttp Interceptors", "Dio Interceptors"],
+          ["Caching", "OkHttp Cache (Native-level)", "Dio Cache Interceptor"],
+          ["Thread Management", "Explicit via Dispatchers.IO", "Implicit Event Loop"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Which JSON converter should I use: Gson, Moshi, or Kotlin Serialization?",
+      "answer": "In 2026, 'Kotlin Serialization' is the recommended standard for Kotlin-first projects. It is compiler-safe and doesn't rely on reflection, making it faster and more ProGuard-friendly than Gson."
+    },
+    {
+      "question": "How do I handle network timeouts?",
+      "answer": "Timeouts are configured in the OkHttpClient. For heavy AI tasks, you might want to increase the 'readTimeout' to 60 seconds or more to account for generation time on the server."
+    },
+    {
+      "question": "What is Network Security Configuration?",
+      "answer": "Android restricts cleartext (HTTP) traffic by default. If your local Python AI server uses HTTP instead of HTTPS, you must declare a 'network_security_config.xml' in your Manifest to permit that specific domain."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which library is responsible for the actual HTTP connection and interceptors in the Android stack?",
+      "options": ["Retrofit", "OkHttp", "Gson", "ViewModel"],
+      "answer": 1
+    },
+    {
+      "question": "True or False: Retrofit suspend functions automatically switch to a background thread if called from the Main thread.",
+      "options": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "question": "Which annotation is used to pass a variable into the URL path (e.g., /users/{id})?",
+      "options": ["@Query", "@Body", "@Path", "@Header"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "kotlin-coroutines",
+    "android-manifest-fundamentals",
+    "flutter-method-channels",
+    "android-room-persistence-library",
+    "clean-architecture-native"
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "slug": "android-best-practices-architecture",
+  "course": "Android Development",
+  "title": "Android Best Practices – Architecture and Modern Standards",
+
+  "meta": {
+    "title": "Android Best Practices Guide – UDF, Clean Architecture & MAD (2026)",
+    "description": "Master the industry standards for Android development. Learn about Unidirectional Data Flow, Repository patterns, and performance-first engineering.",
+    "keywords": [
+      "android best practices 2026",
+      "unidirectional data flow android",
+      "clean architecture native",
+      "android repository pattern",
+      "modern android development mad",
+      "android ui state management"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Modern Architectural Standard"
+    },
+    {
+      "type": "text",
+      "value": "In 2026, Android development is governed by **Modern Android Development (MAD)**. As a Lead Architect, your primary goal is 'Separation of Concerns.' By decoupling your UI from your business logic and your data sources, you ensure that Revochamp can scale from a simple builder to a full-scale IDE without becoming a 'Big Ball of Mud.'"
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Unidirectional Data Flow (UDF)"
+    },
+    {
+      "type": "text",
+      "value": "UDF is the mandatory pattern for state management in 2026. State flows down from the ViewModel to the UI, and Events flow up from the UI to the ViewModel. This prevents 'State Inconsistency' bugs where the UI shows one thing while the underlying AI model holds another. This is the native equivalent of the BLoC or Riverpod patterns you use in Flutter."
+    },
+    
+    {
+      "type": "heading",
+      "value": "2. The Repository Pattern (SSOT)"
+    },
+    {
+      "type": "text",
+      "value": "The Repository acts as the **Single Source of Truth (SSOT)**. Your ViewModels should never know if data comes from your Python AI API or the local Room database. The Repository mediates between these sources, handles logic like 'Cache-then-Network,' and exposes a clean, observable `Flow` to the rest of the app."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Clean Repository Implementation\nclass WidgetRepository(\n    private val localDb: WidgetDao,\n    private val remoteApi: RevoApiService\n) {\n    // Expose a stream of data to the ViewModel\n    val allWidgets: Flow<List<Widget>> = localDb.getWidgets()\n\n    suspend fun refreshWidgets() {\n        val response = remoteApi.fetchLatest()\n        localDb.insertAll(response.toEntity())\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Dependency Injection (Hilt)"
+    },
+    {
+      "type": "text",
+      "value": "Manual dependency injection is an anti-pattern for a Technical Lead. In 2026, **Hilt** (built on Dagger) is the standard for native Android. It manages the lifecycle of your objects, ensuring that things like your AI Service or Database instance are created once and shared correctly across the app, making your native Runner highly testable."
+    },
+    {
+      "type": "heading",
+      "value": "4. Performance: Baseline Profiles"
+    },
+    {
+      "type": "text",
+      "value": "Performance is a feature. In 2026, every production app must include **Baseline Profiles**. This tells the Android Runtime (ART) which code paths are critical (like the Revochamp startup sequence), allowing it to pre-compile that code during installation. This results in significantly faster app launches and smoother initial scrolling."
+    },
+    {
+      "type": "heading",
+      "value": "Best Practice Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Category", "Old Way (Legacy)", "Best Practice (2026)"],
+        "rows": [
+          ["UI Toolkit", "XML Layouts", "Jetpack Compose (Material 3)"],
+          ["State", "Multiple LiveData variables", "Single StateFlow (UDF)"],
+          ["Concurrency", "AsyncTasks / Callbacks", "Kotlin Coroutines & Flow"],
+          ["Data Storage", "SharedPreferences", "Jetpack DataStore / Room"],
+          ["DI", "Manual Singleton / Factories", "Hilt / Koin"],
+          ["Navigation", "Intent/FragmentTransaction", "Navigation Component / Compose Nav"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Should I use Kotlin Multiplatform (KMP) for Best Practices?",
+      "answer": "Yes. In 2026, an Architect should consider KMP for the 'Data' and 'Domain' layers. This allows you to share your Revochamp widget-parsing logic between Android, iOS, and even Web, while keeping the UI layer native or in Flutter."
+    },
+    {
+      "question": "What is the 'Single Activity' architecture?",
+      "answer": "It is the practice of using one Activity (the Runner) as the entry point and using the Navigation Component to swap Fragments or Composables. This simplifies the lifecycle and makes state sharing between screens much easier."
+    },
+    {
+      "question": "How do I handle 'Process Death' properly?",
+      "answer": "Use 'SavedStateHandle' in your ViewModels. This ensures that even if the OS kills your app in the background, you can restore the user's specific AI prompt or configuration when they return."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which pattern ensures that the UI only receives data updates from a single source of truth?",
+      "options": ["Singleton Pattern", "Repository Pattern", "Factory Pattern", "Adapter Pattern"],
+      "answer": 1
+    },
+    {
+      "question": "In Unidirectional Data Flow (UDF), what flows from the UI to the ViewModel?",
+      "options": ["State", "Data", "Events/Intents", "UI Logic"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary benefit of using Hilt for Dependency Injection?",
+      "options": [
+        "It makes the app icon look better",
+        "It improves app startup time",
+        "It provides a standard way to manage object lifecycles and improves testability",
+        "It automatically writes your SQL queries"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "android-viewmodel-architecture",
+    "android-performance-optimization",
+    "kotlin-coroutines",
+    "android-project-structure",
+    "clean-architecture-native"
+  ]
+}

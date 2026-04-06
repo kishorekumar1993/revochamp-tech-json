@@ -1,0 +1,138 @@
+{
+  "slug": "android-debugging-and-profiling",
+  "course": "Android Development",
+  "title": "Android Debugging – Tools and Performance Profiling",
+
+  "meta": {
+    "title": "Android Debugging Guide – Logcat, Profiler & App Inspection (2026)",
+    "description": "Master the art of debugging native Android apps. Learn how to use Logcat, the Android Profiler for memory/CPU, and Debugger breakpoints efficiently.",
+    "keywords": [
+      "android studio debugger",
+      "logcat v2",
+      "android profiler memory",
+      "method channel debugging",
+      "android app inspection",
+      "native memory leaks"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Debugging Ecosystem"
+    },
+    {
+      "type": "text",
+      "value": "Debugging a native Android app involves more than just fixing crashes. As an Architect, you must balance functional debugging (code correctness) with performance profiling (resource efficiency). In 2026, Android Studio's 'App Inspection' suite provides a unified view of your database, background workers, and network traffic, which is critical when Revochamp interacts with your Python AI backend."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Logcat V2: Real-time Diagnostics"
+    },
+    {
+      "type": "text",
+      "value": "Logcat is the central console for system and app logs. In 2026, Logcat V2 supports advanced 'Key-Value' searching and formatting. For a Lead Developer, the most important practice is using proper 'Log Levels' to filter noise during high-concurrency AI operations."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Log.v (Verbose)**: Highest volume; use for granular state changes.",
+        "**Log.d (Debug)**: Use for information helpful during development.",
+        "**Log.i (Info)**: Significant runtime events (e.g., Method Channel connection established).",
+        "**Log.w (Warning)**: Unexpected but non-fatal issues.",
+        "**Log.e (Error)**: Critical failures or crashes."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. The Android Profiler"
+    },
+    {
+      "type": "text",
+      "value": "To ensure Revochamp maintains 120 FPS, you must use the Profiler. It provides real-time data on your app's CPU, Memory, Network, and Battery usage. As an Engineering Manager, you should pay special attention to the **Memory Profiler** to catch 'Activity Leaks' where native activities are not cleared from RAM when the user returns to the Flutter side."
+    },
+    
+    {
+      "type": "heading",
+      "value": "3. Breakpoints and Watchers"
+    },
+    {
+      "type": "text",
+      "value": "Modern debugging uses 'Conditional Breakpoints'. You can set a breakpoint to only trigger if an AI-generated widget's 'type' is null. This prevents you from pausing every single time a list item renders, significantly speeding up the debugging of your native Flutter Runner."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Setting a log point instead of pausing execution\nLog.d(\"REVO_DEBUG\", \"Processing widget: ${widget.id}\")\n\n// Use 'Evaluate Expression' during a pause to change state at runtime\nwidget.color = \"#FF0000\" // Test UI changes without recompiling"
+    },
+    {
+      "type": "heading",
+      "value": "Debugging Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Android Native Debugger", "Flutter DevTools"],
+        "rows": [
+          ["Primary View", "Logcat / Debugger Tab", "Flutter Inspector / Logging"],
+          ["Memory Analysis", "Memory Profiler (Heap Dump)", "Memory View (Treemap)"],
+          ["UI Debugging", "Layout Inspector (Native Views)", "Widget Inspector (Flutter Tree)"],
+          ["Network", "Network Inspector (OkHttp)", "Network Tab (Dart IO)"],
+          ["Thread Control", "Pause individual native threads", "Pause the main UI Isolate"],
+          ["Hot Reload", "Apply Changes (Native)", "Hot Reload / Hot Restart"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'Apply Changes' vs 'Restart Activity'?",
+      "answer": "'Apply Changes' attempts to push code changes into the running process without restarting anything. 'Apply Code Changes' restarts only the current Activity. This is the native equivalent of Flutter's Hot Reload, but it is limited to changes inside existing methods."
+    },
+    {
+      "question": "How do I debug a crash that only happens on a specific user's device?",
+      "answer": "In 2026, use 'Firebase Crashlytics' or 'Sentry'. These tools record the stack trace, device state, and breadcrumbs leading up to the crash. For Revochamp, always log the 'AI Prompt' as a custom key in Crashlytics to see if a specific input caused a native parsing error."
+    },
+    {
+      "question": "What is the 'Layout Inspector'?",
+      "answer": "It is a tool that lets you inspect your app's native View hierarchy in 3D. It is invaluable for debugging 'Platform Views' in Flutter to ensure your native Android components are correctly sized and positioned relative to the Flutter canvas."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which tool in Android Studio is used to analyze heap dumps and find memory leaks?",
+      "options": ["Logcat", "Memory Profiler", "Layout Inspector", "Device Manager"],
+      "answer": 1
+    },
+    {
+      "question": "Which log level should be used for critical failures that cause the app to stop functioning?",
+      "options": ["Log.d", "Log.i", "Log.w", "Log.e"],
+      "answer": 3
+    },
+    {
+      "question": "What is a 'Conditional Breakpoint'?",
+      "options": [
+        "A breakpoint that only works on Wi-Fi",
+        "A breakpoint that only pauses execution if a specific condition is met",
+        "A breakpoint that restarts the app",
+        "A breakpoint that works only in Release mode"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "android-activity-lifecycle",
+    "android-views-fundamentals",
+    "flutter-method-channels",
+    "android-testing-fundamentals",
+    "clean-architecture-native"
+  ]
+}

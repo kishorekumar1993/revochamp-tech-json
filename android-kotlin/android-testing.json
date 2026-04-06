@@ -1,0 +1,133 @@
+{
+  "slug": "android-testing-fundamentals",
+  "course": "Android Development",
+  "title": "Android Testing – Unit, Integration, and UI Tests",
+
+  "meta": {
+    "title": "Android Testing Guide – JUnit 5, MockK, Espresso & Compose Test (2026)",
+    "description": "Master the Android testing pyramid. Learn how to write local unit tests with MockK and instrumented UI tests for native Android components.",
+    "keywords": [
+      "android testing pyramid",
+      "junit 5 android",
+      "mockk vs mockito",
+      "espresso android testing",
+      "compose ui testing",
+      "android integration tests"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Testing Pyramid"
+    },
+    {
+      "type": "text",
+      "value": "An effective testing strategy for an Architect follows the 'Testing Pyramid' model. For Revochamp, this means having a massive base of fast-running Unit Tests, a middle layer of Integration Tests (to verify Method Channel data flow), and a thin top layer of end-to-end UI tests."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Local Unit Tests (test/)"
+    },
+    {
+      "type": "text",
+      "value": "These tests run on your development machine's JVM and do not require an Android device or emulator. They are extremely fast. As a Lead Developer, you use these to verify your ViewModel logic and AI data parsing using **MockK** to simulate dependencies like Repositories or APIs."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Testing RevoViewModel using JUnit 5 and MockK\nclass RevoViewModelTest {\n    private val repository = mockk<AiRepository>()\n    private lateinit var viewModel: RevoViewModel\n\n    @Test\n    fun `when generate is called, uiState should transition to loading`() = runTest {\n        coEvery { repository.generate(any()) } returns \"Success\"\n        viewModel = RevoViewModel(repository)\n\n        viewModel.generateWidget(\"Button\")\n\n        assertEquals(UiState.Loading, viewModel.uiState.value)\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Instrumented Tests (androidTest/)"
+    },
+    {
+      "type": "text",
+      "value": "These tests run on a real device or emulator. They are necessary when your code interacts with the Android framework (e.g., Room Database, SharedPreferences, or Context). In 2026, **Hilt** is used to inject test doubles into these instrumented environments effortlessly."
+    },
+    {
+      "type": "heading",
+      "value": "3. UI Testing: Espresso vs. Compose Test"
+    },
+    {
+      "type": "text",
+      "value": "For legacy XML views, we use **Espresso**. For modern native modules in Revochamp, we use the **Compose Testing library**. Unlike Espresso, which uses 'View IDs', Compose testing uses 'Semantics' to find elements, making tests more robust and accessible."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// UI Test for a Compose-based AI Preview\n@get:Rule\nval composeTestRule = createComposeRule()\n\n@Test\nfun previewScreen_showsGeneratedTitle() {\n    composeTestRule.setContent {\n        RevoPreviewScreen(title = \"AI Generated UI\")\n    }\n\n    composeTestRule.onNodeWithText(\"AI Generated UI\").assertIsDisplayed()\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Testing Comparison: Native vs. Flutter"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Android Native", "Flutter"],
+        "rows": [
+          ["Unit Framework", "JUnit 5", "test package"],
+          ["Mocking Library", "MockK / Mockito", "Mockito / Mocktail"],
+          ["UI Testing", "Espresso / Compose Test", "WidgetTester / Patrol"],
+          ["Execution Path", "JVM (Unit) / Dalvik (UI)", "Dart VM / Flutter Engine"],
+          ["Async Testing", "Coroutines (runTest)", "Future (await)"],
+          ["Isolation", "Hilt / Koin", "Provider / Riverpod Overrides"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between 'test' and 'androidTest' folders?",
+      "answer": "The 'test' folder is for local JVM unit tests (no device needed). The 'androidTest' folder is for instrumented tests that require an Android environment to run. Generally, business logic goes in 'test', and UI/Database logic goes in 'androidTest'."
+    },
+    {
+      "question": "Why use MockK instead of Mockito for Kotlin?",
+      "answer": "MockK is built specifically for Kotlin. It has first-class support for final classes (which all Kotlin classes are by default), extension functions, and Coroutines (coEvery), which are difficult to handle with Mockito."
+    },
+    {
+      "question": "How do I test Method Channels?",
+      "answer": "To test a Method Channel, you should create an integration test that uses 'MethodChannel.setMockMethodCallHandler' on the Flutter side or 'MethodCallHandler' mocks on the Android side to verify that the correct data is serialized and sent across the bridge."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which testing library is the standard for modern declarative UI in 2026?",
+      "options": ["Espresso", "Robolectric", "Compose Testing Library", "Appium"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary benefit of a 'Local Unit Test'?",
+      "options": [
+        "It can test hardware like the camera",
+        "It runs extremely fast on the JVM without an emulator",
+        "It tests the AndroidManifest.xml",
+        "It provides a screen recording of the test"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which annotation is used in MockK to mock a suspending function?",
+      "options": ["every", "coEvery", "suspendEvery", "mockEvery"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "android-viewmodel-architecture",
+    "kotlin-coroutines",
+    "flutter-method-channels",
+    "clean-architecture-native",
+    "android-project-structure"
+  ]
+}

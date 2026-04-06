@@ -1,0 +1,136 @@
+{
+  "slug": "android-recyclerview-deep-dive",
+  "course": "Android Development",
+  "title": "RecyclerView – High-Performance Lists and Grids",
+
+  "meta": {
+    "title": "Android RecyclerView Guide – Adapters, ViewHolders & Optimization (2026)",
+    "description": "Master the Android RecyclerView. Learn about the Adapter pattern, ViewHolder pattern, LayoutManagers, and DiffUtil for high-performance native lists.",
+    "keywords": [
+      "android recyclerview",
+      "recyclerview adapter",
+      "viewholder pattern",
+      "diffutil android",
+      "recyclerview vs listview",
+      "native android lists"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Anatomy of Recycling"
+    },
+    {
+      "type": "text",
+      "value": "The `RecyclerView` is designed to display large datasets by reusing (recycling) a limited number of view objects. When an item scrolls off the screen, its view is not destroyed; instead, it is sent to a pool and 're-bound' with new data for an item entering the screen. This prevents the frequent inflation of XML layouts, which is the primary cause of 'jank' in mobile apps."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. The Three Essential Pillars"
+    },
+    {
+      "type": "text",
+      "value": "To implement a RecyclerView, an Architect must coordinate three distinct components that work together to manage the data-to-UI pipeline."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Adapter**: The 'Brain'. It handles the data collection and binds it to the views. Equivalent to the 'itemBuilder' in Flutter.",
+        "**ViewHolder**: The 'Cache'. It holds references to the views within an item layout to avoid calling `findViewById()` repeatedly.",
+        "**LayoutManager**: The 'Director'. It determines how items are positioned (e.g., LinearLayoutManager for lists, GridLayoutManager for grids)."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Professional Implementation (Kotlin)"
+    },
+    {
+      "type": "text",
+      "value": "In modern Android development, we use **ListAdapter** and **DiffUtil**. These tools calculate the difference between two lists on a background thread and only animate the items that actually changed, providing a much smoother experience for Revochamp's AI-generated updates."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "class WidgetAdapter : ListAdapter<Widget, WidgetViewHolder>(WidgetDiffCallback()) {\n\n    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WidgetViewHolder {\n        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_widget, parent, false)\n        return WidgetViewHolder(view)\n    }\n\n    override fun onBindViewHolder(holder: WidgetViewHolder, position: Int) {\n        val widget = getItem(position)\n        holder.bind(widget)\n    }\n}\n\n// DiffUtil ensures we only update what changed\nclass WidgetDiffCallback : DiffUtil.ItemCallback<Widget>() {\n    override fun areItemsTheSame(old: Widget, new: Widget) = old.id == new.id\n    override fun areContentsTheSame(old: Widget, new: Widget) = old == new\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Advanced Performance: ViewPool and Prefetch"
+    },
+    {
+      "type": "text",
+      "value": "For nested lists (like a horizontal carousel of AI templates inside a vertical list), you can share a single **RecycledViewPool** across multiple RecyclerViews. This optimization significantly reduces memory footprint and ensures that the UI remains responsive even on low-end Android devices in Chennai."
+    },
+    
+    {
+      "type": "heading",
+      "value": "List Comparison: Native vs. Flutter"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Android RecyclerView", "Flutter ListView.builder"],
+        "rows": [
+          ["Lazy Loading", "Automatic via Adapter", "Automatic via Builder"],
+          ["View Reuse", "Explicit (ViewHolder Pattern)", "Implicit (Sliver Re-rendering)"],
+          ["Animations", "ItemAnimator / DiffUtil", "AnimatedList / Automatic Transition"],
+          ["Layouts", "Pluggable LayoutManager", "Fixed (List / Grid / Custom Sliver)"],
+          ["Performance", "Native UI Thread", "Dart UI Thread + Impeller Canvas"],
+          ["Heterogeneous Types", "getItemViewType()", "Custom Multi-Widget Builder"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between ListView and RecyclerView?",
+      "answer": "ListView is an older, less efficient component that recreates views frequently. RecyclerView forces the ViewHolder pattern, supports horizontal scrolling, staggered grids, and has far superior item animation capabilities. In 2026, ListView is considered legacy and should never be used."
+    },
+    {
+      "question": "How do I handle click listeners in a RecyclerView?",
+      "answer": "The professional way is to define a callback interface or pass a lambda to the Adapter's constructor. You should attach the listener inside 'onCreateViewHolder' rather than 'onBindViewHolder' to avoid creating new object instances during scrolling."
+    },
+    {
+      "question": "What is DiffUtil?",
+      "answer": "DiffUtil is a utility class that calculates the minimal number of updates needed to transform one list into another. It uses an algorithm similar to 'git diff' and helps the RecyclerView animate only the items that were added, removed, or moved."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which component is responsible for recycling views and holding references to view IDs?",
+      "options": ["Adapter", "LayoutManager", "ViewHolder", "ItemDecoration"],
+      "answer": 2
+    },
+    {
+      "question": "Which tool is used to calculate the difference between two datasets and animate changes efficiently?",
+      "options": ["FastDiff", "DiffUtil", "ListSync", "RecycleDiff"],
+      "answer": 1
+    },
+    {
+      "question": "What happens when you use a horizontal LinearLayoutManager in a RecyclerView?",
+      "options": [
+        "The list scrolls vertically",
+        "The list scrolls horizontally",
+        "The items are arranged in a grid",
+        "The app crashes"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "android-activity-lifecycle",
+    "android-material-ui",
+    "kotlin-collections-framework",
+    "flutter-platform-views",
+    "clean-architecture-android"
+  ]
+}

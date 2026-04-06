@@ -1,0 +1,131 @@
+{
+  "slug": "android-material-design-3",
+  "course": "Android Development",
+  "title": "Material UI – Modern Native Design with Material 3",
+
+  "meta": {
+    "title": "Android Material Design 3 Guide – Dynamic Color, Components & Compose (2026)",
+    "description": "Master Material You on Android. Learn about Material 3 components, dynamic color theming, and building adaptive native UIs with Jetpack Compose.",
+    "keywords": [
+      "android material ui",
+      "material 3 android",
+      "material you dynamic color",
+      "jetpack compose material",
+      "material components android",
+      "adaptive layouts android"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Evolution: Material 3 (Material You)"
+    },
+    {
+      "type": "text",
+      "value": "Material 3 is the latest version of Google’s open-source design system. For an Architect, the shift to M3 is significant because it introduces **Dynamic Color**—where the app's primary, secondary, and tertiary palettes are derived from the user's wallpaper. In your Revochamp native modules, implementing this ensures your generated previews feel personal and consistent with the user's system-wide theme."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Core Material Components"
+    },
+    {
+      "type": "text",
+      "value": "Native Android provides high-level components that handle elevation, ripple effects, and accessibility out of the box. In 2026, these are primarily implemented using **Jetpack Compose**, though the XML-based Material Components library (MDC) is still used for legacy Runner maintenance."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**TopAppBar**: Handles navigation and actions. M3 supports four types: center-aligned, small, medium, and large.",
+        "**Floating Action Button (FAB)**: The primary action button. M3 introduces a new 'Square-ish' rounded corner shape.",
+        "**Navigation Bar**: Replaces BottomNavigationView with a more accessible, pill-shaped indicator for active states.",
+        "**Cards**: Provided in Elevated, Filled, and Outlined variants to match the content hierarchy."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Theming with Jetpack Compose"
+    },
+    {
+      "type": "text",
+      "value": "Theming in native Android is now handled through the `MaterialTheme` composable. Unlike Flutter's `ThemeData`, native Compose themes are often split into `Color.kt`, `Type.kt`, and `Shape.kt` for better modularity in large-scale engineering projects."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Defining a Material 3 Theme in Compose\n@Composable\nfun RevoTheme(\n    useDynamicColor: Boolean = true,\n    content: @Composable () -> Unit\n) {\n    val colorScheme = when {\n        useDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {\n            val context = LocalContext.current\n            if (isSystemInDarkTheme()) dynamicDarkColorScheme(context) \n            else dynamicLightColorScheme(context)\n        }\n        isSystemInDarkTheme() -> DarkColorScheme\n        else -> LightColorScheme\n    }\n\n    MaterialTheme(\n        colorScheme = colorScheme,\n        typography = RevoTypography,\n        content = content\n    )\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Adaptive Layouts"
+    },
+    {
+      "type": "text",
+      "value": "With the rise of foldables and tablets, Material UI now emphasizes **Window Size Classes**. As a Technical Lead, you should use these to determine if your native AI preview should show a 'Navigation Rail' (on tablets) or a 'Bottom Navigation Bar' (on phones)."
+    },
+    
+    {
+      "type": "heading",
+      "value": "Material UI Comparison: Native vs. Flutter"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Android Native (M3)", "Flutter Material"],
+        "rows": [
+          ["Color Engine", "Monet (Dynamic Color)", "ColorScheme / Material 3 flag"],
+          ["Implementation", "Jetpack Compose / XML", "Skia / Impeller Canvas"],
+          ["Theming", "Composable MaterialTheme", "ThemeData Widget"],
+          ["Components", "Native OS-optimized", "Flutter-drawn 'lookalikes'"],
+          ["Responsiveness", "Window Size Classes", "LayoutBuilder / MediaQuery"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'Monet' in Android UI?",
+      "answer": "Monet is the codename for the theme engine that powers Material You. It uses a clustering algorithm to extract a color seed from the user's wallpaper and generates five tonal palettes (Primary, Secondary, Tertiary, Neutral, and Neutral Variant) used to theme the entire OS and apps."
+    },
+    {
+      "question": "Should I use XML or Compose for Material UI?",
+      "answer": "For all new native modules in 2026, Jetpack Compose is the industry standard. It is declarative (like Flutter), more performant, and has significantly better support for Material 3 features like dynamic color and complex animations."
+    },
+    {
+      "question": "How do I ensure accessibility in Material UI?",
+      "answer": "Material components come with built-in accessibility support. Ensure you provide 'contentDescription' for images and use 'Modifier.semantics' in Compose to describe the role of custom components to TalkBack users."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which design philosophy introduced 'Dynamic Color' based on user wallpapers?",
+      "options": ["Material 1", "Material 2 (Design)", "Material 3 (Material You)", "Holo UI"],
+      "answer": 2
+    },
+    {
+      "question": "What is the recommended tool for determining layout strategy for different screen sizes (Foldables, Tablets, Phones)?",
+      "options": ["MediaQuery", "Window Size Classes", "DisplayMetrics", "ConstraintLayout"],
+      "answer": 1
+    },
+    {
+      "question": "True or False: Native Jetpack Compose components use the same rendering engine as Flutter (Impeller/Skia).",
+      "options": ["True", "False"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "jetpack-compose-basics",
+    "android-adaptive-layouts",
+    "android-theming-deep-dive",
+    "flutter-vs-native-ui",
+    "material-design-guidelines"
+  ]
+}
