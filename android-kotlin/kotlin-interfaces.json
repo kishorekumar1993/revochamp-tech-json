@@ -1,0 +1,150 @@
+{
+  "slug": "kotlin-interfaces-and-composition",
+  "course": "Kotlin Development",
+  "title": "Kotlin Interfaces – Defining Native Contracts",
+
+  "meta": {
+    "title": "Kotlin Interfaces Guide – Default Methods, Properties & Composition (2026)",
+    "description": "Master Kotlin interfaces for Android. Learn about abstract and default methods, interface properties, and how to use composition in your native modules.",
+    "keywords": [
+      "kotlin interfaces",
+      "default implementation kotlin",
+      "interface properties",
+      "multiple inheritance kotlin",
+      "abstract methods kotlin",
+      "kotlin vs dart interfaces"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Role of Interfaces"
+    },
+    {
+      "type": "text",
+      "value": "Interfaces in Kotlin define a set of methods and properties that a class must implement. Unlike classes, a single Kotlin class can implement an unlimited number of interfaces. This 'Interface-based design' is critical for a Technical Lead because it decouples your high-level AI logic from the specific Android implementation details."
+    },
+    {
+      "type": "heading",
+      "value": "1. Basic Syntax and Implementation"
+    },
+    {
+      "type": "text",
+      "value": "An interface is declared with the `interface` keyword. Unlike Java, Kotlin does not require an `implements` keyword; you simply use the colon `:` for both inheritance and interface implementation, matching the style of Swift."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "interface Renderable {\n    fun render() // Abstract method\n}\n\nclass NativeButton : Renderable {\n    override fun render() {\n        println(\"Rendering native Android button...\")\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Default Implementations"
+    },
+    {
+      "type": "text",
+      "value": "One of Kotlin's strongest features is the ability to provide a default body for a method within an interface. If a class implements the interface but doesn't override the method, it inherits the default behavior. For Revochamp, this allows you to add 'Logging' or 'Analytics' traits to widgets without forcing every class to rewrite the same logic."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "interface Loggable {\n    fun log(message: String) {\n        // Default implementation\n        println(\"[LOG]: $message\")\n    }\n}\n\nclass AIService : Loggable {\n    // No need to implement log() unless you want to change it\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Interface Properties"
+    },
+    {
+      "type": "text",
+      "value": "Interfaces can also define properties. However, these properties cannot hold state (they cannot have 'backing fields'). They are essentially a requirement for the implementing class to provide a value or a getter/setter."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "interface WidgetConfig {\n    val version: String // Abstract property\n    val engine: String\n        get() = \"RevoCore-V2\" // Property with default getter\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Resolving Conflicts (Multiple Inheritance)"
+    },
+    {
+      "type": "text",
+      "value": "When a class implements two interfaces that have the same default method, Kotlin requires the developer to explicitly override that method to resolve the ambiguity. This ensures your native Android Runner never behaves unpredictably."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "interface A { fun call() { println(\"A\") } }\ninterface B { fun call() { println(\"B\") } }\n\nclass Controller : A, B {\n    override fun call() {\n        super<A>.call() // Explicitly call A's version\n        super<B>.call() // Or both\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Interface Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Kotlin Interface", "Dart Interface (Abstract Class)"],
+        "rows": [
+          ["Declaration", "interface keyword", "abstract class keyword"],
+          ["Default Methods", "Supported (with body)", "Supported (within abstract class)"],
+          ["Properties", "Supported (No state)", "Supported"],
+          ["Implementation", "colon ( : )", "implements keyword"],
+          ["Multiple inheritance", "Unlimited interfaces", "Unlimited via implements / Mixins"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Can an interface in Kotlin have a constructor?",
+      "answer": "No. Interfaces cannot be instantiated directly and cannot hold state, so they do not have constructors. If you need a constructor, you must use an 'Abstract Class' instead."
+    },
+    {
+      "question": "What is the difference between an Interface and an Abstract Class?",
+      "answer": "An Abstract Class can hold state (variables with backing fields) and can have a constructor. An Interface is purely for defining behavior (contracts) and cannot hold state, but it allows for multiple 'inheritance' which classes do not."
+    },
+    {
+      "question": "Should I use an Interface or a Mixin (in Flutter context)?",
+      "answer": "In native Android, Interfaces with default implementations serve a very similar purpose to Mixins. Use them when you want to share a specific capability across unrelated classes (like 'Clickable' or 'Draggable')."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to define an interface in Kotlin?",
+      "options": ["contract", "protocol", "interface", "abstract"],
+      "answer": 2
+    },
+    {
+      "question": "True or False: Kotlin interfaces can provide a default implementation for methods.",
+      "options": ["True", "False"],
+      "answer": 0
+    },
+    {
+      "question": "How does a class implement multiple interfaces in Kotlin?",
+      "options": [
+        "By using the 'implements' keyword multiple times",
+        "By separating interface names with commas after the colon (:)",
+        "By nesting one interface inside another",
+        "Kotlin does not support multiple interfaces"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "kotlin-oop-fundamentals",
+    "kotlin-classes-and-objects",
+    "android-app-lifecycle",
+    "flutter-method-channels",
+    "clean-architecture-android"
+  ]
+}

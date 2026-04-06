@@ -1,0 +1,146 @@
+{
+  "slug": "kotlin-advanced-lambdas",
+  "course": "Kotlin Development",
+  "title": "Advanced Lambdas – DSLs, Receivers, and Inlining",
+
+  "meta": {
+    "title": "Advanced Kotlin Lambdas Guide – Function Types, Receivers & DSLs (2026)",
+    "description": "Master advanced functional programming in Kotlin. Learn about lambdas with receivers, inline functions, reified type parameters, and building Type-Safe DSLs.",
+    "keywords": [
+      "kotlin lambdas",
+      "lambda with receiver",
+      "kotlin dsl",
+      "inline functions",
+      "crossinline vs noinline",
+      "reified type parameters",
+      "functional programming android"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Advanced Functional Power"
+    },
+    {
+      "type": "text",
+      "value": "In Kotlin, lambdas are more than just anonymous functions; they are the foundation of the language's extensibility. At an architectural level, you utilize lambdas to create custom Domain Specific Languages (DSLs) and to optimize higher-order functions using the compiler's inlining capabilities. This ensures that your native Android bridge remains zero-overhead even with complex logic."
+    },
+    {
+      "type": "heading",
+      "value": "1. Lambdas with Receivers (Type-Safe Builders)"
+    },
+    {
+      "type": "text",
+      "value": "A 'Lambda with Receiver' allows you to call methods on a specific object inside the lambda body without any qualifiers. This is exactly how Jetpack Compose and Gradle Kotlin DSL work. In Revochamp, you can use this to create a declarative syntax for defining native Android widgets."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "class WidgetBuilder {\n    var name: String = \"\"\n    var color: String = \"#FFFFFF\"\n    fun build() = \"Widget($name, $color)\"\n}\n\n// 'init: WidgetBuilder.() -> Unit' is a lambda with receiver\nfun createWidget(init: WidgetBuilder.() -> Unit): String {\n    val builder = WidgetBuilder()\n    builder.init() // The receiver 'builder' becomes 'this' inside the lambda\n    return builder.build()\n}\n\n// Usage: Looks like a native DSL\nval myWidget = createWidget {\n    name = \"AI_Submit_Button\" \n    color = \"#007AFF\"\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Inline Functions & Memory Optimization"
+    },
+    {
+      "type": "text",
+      "value": "Standard lambdas in Kotlin are converted to anonymous classes at runtime, which can lead to memory pressure. The `inline` keyword tells the compiler to copy the lambda code directly into the call site. For a Lead Developer, this is critical for utility functions that are called thousands of times per second during AI data parsing."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "inline fun <T> measureTime(block: () -> T): T {\n    val start = System.currentTimeMillis()\n    val result = block()\n    println(\"Execution took ${System.currentTimeMillis() - start}ms\")\n    return result\n}\n\n// During compilation, the 'block' code is pasted here directly."
+    },
+    {
+      "type": "heading",
+      "value": "3. Crossinline and Noinline"
+    },
+    {
+      "type": "text",
+      "value": "When using `inline`, you sometimes need finer control over how lambdas are executed. `noinline` prevents a specific lambda from being inlined, while `crossinline` prevents 'non-local returns' (returning from the calling function inside the lambda), ensuring predictable execution flow in asynchronous tasks."
+    },
+    {
+      "type": "heading",
+      "value": "4. Reified Type Parameters"
+    },
+    {
+      "type": "text",
+      "value": "Due to JVM type erasure, you normally can't check types like `T::class.java` at runtime. However, by combining `inline` with the `reified` keyword, Kotlin preserves the type information. This is extremely useful for JSON deserializers in your native Android runner."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "inline fun <reified T> parseJson(json: String): T {\n    return Gson().fromJson(json, T::class.java) // T is available at runtime!\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Advanced Functionality Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Kotlin (Advanced)", "Dart (Flutter)"],
+        "rows": [
+          ["Receiver Context", "Supported (Type.() -> Unit)", "Limited (Extensions)"],
+          ["Inlining", "Explicit (inline keyword)", "Implicitly optimized by JIT/AOT"],
+          ["Type Reification", "Supported (inline reified)", "Natively supported (Types are real)"],
+          ["Non-local Returns", "Allowed in inline lambdas", "Supported via 'return'"],
+          ["Closure Capture", "Class-based (non-inline)", "Function-based"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is a 'Non-local Return'?",
+      "answer": "In an 'inline' lambda, a 'return' statement will actually exit the function that called the lambda, not just the lambda itself. This is called a non-local return. If you want to prevent this behavior, use the 'crossinline' modifier."
+    },
+    {
+      "question": "When should I NOT use the 'inline' keyword?",
+      "answer": "Avoid inlining very large functions, as it increases the size of your app's binary. Also, you cannot inline functions that access private members of a class unless those members are also marked as internal/public."
+    },
+    {
+      "question": "How do Lambdas with Receivers help in Clean Architecture?",
+      "answer": "They allow you to create 'Configuration Blocks' that are strictly typed. This prevents developers from setting invalid properties and makes the code self-documenting, which is a core goal of professional engineering."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword allows you to access the type 'T' at runtime within a function?",
+      "options": ["inline", "reified", "generic", "actual"],
+      "answer": 1
+    },
+    {
+      "question": "What does a 'Lambda with Receiver' change about the scope of the lambda?",
+      "options": [
+        "It makes the lambda run on a background thread",
+        "It changes the value of 'this' to refer to a specific object type",
+        "It prevents the lambda from returning a value",
+        "It makes the lambda private to the class"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which modifier should be used if you want to pass multiple lambdas to an inline function but only want to inline one of them?",
+      "options": ["crossinline", "noinline", "internal", "lazy"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "kotlin-functions-deep-dive",
+    "kotlin-dsl-building",
+    "android-app-performance",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "android-lifecycle-management",
+  "course": "Android Development",
+  "title": "Android Lifecycle – Activity & Process Management",
+
+  "meta": {
+    "title": "Android Lifecycle Guide – States, Transitions & Best Practices (2026)",
+    "description": "Master the Android Activity and Process lifecycles. Learn how to handle state changes, prevent memory leaks, and manage background tasks in native Android.",
+    "keywords": [
+      "android lifecycle",
+      "activity lifecycle states",
+      "oncreate onresume onpause",
+      "android process death",
+      "viewmodel lifecycle",
+      "flutter app lifecycle"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Lifecycle State Machine"
+    },
+    {
+      "type": "text",
+      "value": "The Android OS manages the lifecycle of every Activity using a 'stack' approach. As the user moves between screens or receives a phone call, the OS moves your Activity through a series of callback methods. For a Lead Architect, the goal is to ensure that heavy resources (like AI model listeners) are only active when the user can actually see the screen."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. The Visible Lifecycle (onStart to onStop)"
+    },
+    {
+      "type": "text",
+      "value": "Between `onStart()` and `onStop()`, the Activity is visible to the user. This is the window where you should maintain active UI updates. However, the Activity might not be in the 'foreground' (interactive) during this entire window."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**onCreate()**: The 'Initialization' phase. Used to inflate layouts and initialize ViewModels. In Flutter, this is where the Engine is usually warmed up.",
+        "**onStart()**: The 'Visibility' phase. The app is on-screen but might be covered by a dialog.",
+        "**onResume()**: The 'Interactive' phase. The app is in the foreground. Start your camera previews or high-frequency AI polling here."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. The Background Transition (onPause to onDestroy)"
+    },
+    {
+      "type": "text",
+      "value": "When the user leaves the app, the reverse happens. `onPause()` is the most critical callback for a Lead Developer—it is the last guaranteed moment to save small pieces of state before the OS might kill the process."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**onPause()**: The user is leaving (e.g., another app is opening in split-screen). Stop animations or sensor data collection here.",
+        "**onStop()**: The app is no longer visible. You must release heavy resources now to prevent being the first app the OS kills to save RAM.",
+        "**onDestroy()**: The final cleanup. Release memory and shut down background threads. Note: This is NOT always called if the OS kills the process abruptly."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "3. Handling Process Death"
+    },
+    {
+      "type": "text",
+      "value": "In Chennai's competitive mid-range device market, RAM management is strict. If a user backgrounds Revochamp to check a message, the OS might kill the process. To handle this, you must use **SavedStateHandle** in your ViewModels to store 'Transient State' so the user can pick up exactly where they left off in the AI builder."
+    },
+    
+    {
+      "type": "heading",
+      "value": "Lifecycle Mapping: Native vs. Flutter"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Android Native State", "Description", "Flutter AppLifecycleState"],
+        "rows": [
+          ["onResume()", "App is focused and interactive.", "AppLifecycleState.resumed"],
+          ["onPause()", "App is partially visible / losing focus.", "AppLifecycleState.inactive"],
+          ["onStop()", "App is completely in the background.", "AppLifecycleState.hidden / paused"],
+          ["onDestroy()", "App is being terminated.", "AppLifecycleState.detached"],
+          ["Process Death", "OS kills app for memory.", "N/A (Requires manual persistence)"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Does onPause() mean the user is definitely closing the app?",
+      "answer": "Not necessarily. It could mean a permission dialog has appeared or the user is in split-screen mode. You should only stop lightweight UI-related tasks here; wait for onStop() to kill heavy network or database tasks."
+    },
+    {
+      "question": "Why use ViewModel if the Activity has a lifecycle?",
+      "answer": "Activities are destroyed on screen rotation. ViewModels are 'Lifecycle Aware' and survive these rotations. They only clear their memory when the Activity is finished for good, providing a much more stable place for your Revochamp AI data."
+    },
+    {
+      "question": "How do I test my app's behavior during process death?",
+      "answer": "In Android Studio, you can use the 'Stop' icon or the 'Fill RAM' command in the emulator. You can also use ADB to kill the app process while it's in the background to verify that your state restoration logic works."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which lifecycle method is the last one guaranteed to be called before the OS might kill the process without further warning?",
+      "options": ["onStop()", "onPause()", "onDestroy()", "onFinish()"],
+      "answer": 1
+    },
+    {
+      "question": "What happens to the current Activity when the user rotates their screen?",
+      "options": [
+        "It stays in the 'resumed' state",
+        "It is paused and then resumed",
+        "It is destroyed and recreated",
+        "Nothing happens"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "Which component is designed to survive configuration changes like screen rotation?",
+      "options": ["Activity", "Fragment", "ViewModel", "Intent"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "android-activity-lifecycle",
+    "android-viewmodel-architecture",
+    "android-project-structure",
+    "flutter-method-channels",
+    "clean-architecture-native"
+  ]
+}

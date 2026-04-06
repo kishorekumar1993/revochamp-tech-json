@@ -1,0 +1,140 @@
+{
+  "slug": "android-project-structure",
+  "course": "Android Development",
+  "title": "Android Project Structure – Modules, Gradle & Manifest",
+
+  "meta": {
+    "title": "Android Project Structure Guide – Modules, Gradle (KTS) & Manifest (2026)",
+    "description": "Master the organization of an Android project. Learn about the app module, Gradle build scripts (Kotlin DSL), and the role of the AndroidManifest.xml.",
+    "keywords": [
+      "android project structure",
+      "gradle kotlin dsl",
+      "androidmanifest.xml",
+      "android modules",
+      "res folder android",
+      "build.gradle.kts"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Anatomy of an Android Project"
+    },
+    {
+      "type": "text",
+      "value": "An Android project is organized into **Modules**. A standard project contains at least one 'App' module, but large-scale architectures like Revochamp often split logic into 'Library' modules for networking, AI processing, and UI components. This modularity improves build times and code separation."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. The Project-Level Root"
+    },
+    {
+      "type": "text",
+      "value": "The root directory contains configuration files that apply to the entire project, including all modules. For a Technical Lead, the `settings.gradle.kts` and the root `build.gradle.kts` are the most critical for managing global dependencies and repository sources (like Maven Central or JitPack)."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**build.gradle.kts (Project)**: Defines build plugins and versions used across all modules.",
+        "**settings.gradle.kts**: Lists all included modules and defines where to find plugins.",
+        "**gradle.properties**: Stores project-wide settings like JVM memory limits and AndroidX flags.",
+        "**local.properties**: Contains local paths (like the SDK location)—this file should never be committed to Git."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. The 'app' Module (The Native Core)"
+    },
+    {
+      "type": "text",
+      "value": "This is where your functional code lives. In a Flutter project, this module contains the `MainActivity` that boots the Flutter engine."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "app/\n├── build.gradle.kts   # Module-specific build logic (Dependencies, SDK versions)\n├── proguard-rules.pro # Code shrinking and obfuscation rules\n└── src/\n    ├── main/\n    │   ├── AndroidManifest.xml # The App's metadata and permissions\n    │   ├── kotlin/             # Your Kotlin source code (com.revo.app)\n    │   └── res/                # UI Resources (Icons, Strings, Layouts)\n    └── test/                   # Unit tests for native logic"
+    },
+    {
+      "type": "heading",
+      "value": "3. AndroidManifest.xml: The System Interface"
+    },
+    {
+      "type": "text",
+      "value": "The Manifest is the 'Source of Truth' for the Android OS. It tells the system which components exist, what permissions the app needs (like Camera or Internet), and which Activity to launch first. For your project, this is where you declare `Intent Filters` for deep linking into AI templates."
+    },
+    
+    {
+      "type": "heading",
+      "value": "4. The 'res' (Resources) Folder"
+    },
+    {
+      "type": "text",
+      "value": "Android strictly separates code from static resources. Even in a Flutter app, you must use this folder for native-level assets like the App Icon (**mipmap**), Launch Screens (**drawable**), and localized strings (**values**)."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Folder", "Content Type", "Architectural Importance"],
+        "rows": [
+          ["drawable/", "Images/XML vectors", "Launch screens and native UI assets"],
+          ["layout/", "XML UI definitions", "Native views (not used by Flutter UI)"],
+          ["mipmap/", "App launcher icons", "Standardized icons for all device densities"],
+          ["values/", "Strings, Colors, Styles", "Localization and theme constants"],
+          ["xml/", "Config files", "Network security and accessibility configs"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between build.gradle and build.gradle.kts?",
+      "answer": "'.gradle' uses Groovy, while '.gradle.kts' uses Kotlin. The Kotlin DSL (KTS) is now the industry standard because it provides type safety, better auto-completion in Android Studio, and a more consistent experience for Kotlin developers."
+    },
+    {
+      "question": "Where do I add native Android dependencies?",
+      "answer": "Dependencies are added in the 'dependencies' block of the module-level 'build.gradle.kts'. For example: implementation('com.google.ai:generative-ai:1.0.0')."
+    },
+    {
+      "question": "What is the 'R' class in Android?",
+      "answer": "The R class is an autogenerated Java class that contains IDs for all resources in your 'res' folder. It allows you to reference resources in Kotlin code, e.g., 'R.string.app_name' or 'R.drawable.launch_bg'."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which file is used to declare app permissions and components like Activities?",
+      "options": ["build.gradle.kts", "AndroidManifest.xml", "settings.gradle.kts", "res/values/strings.xml"],
+      "answer": 1
+    },
+    {
+      "question": "In which folder would you place the app's launcher icons for different screen densities?",
+      "options": ["drawable/", "values/", "mipmap/", "raw/"],
+      "answer": 2
+    },
+    {
+      "question": "What is the primary purpose of the 'settings.gradle.kts' file?",
+      "options": [
+        "To define app versioning",
+        "To include and manage modules within the project",
+        "To store API keys",
+        "To configure the Kotlin compiler"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "android-platform-introduction",
+    "kotlin-introduction",
+    "android-app-lifecycle",
+    "flutter-method-channels",
+    "android-security-best-practices"
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "slug": "android-manifest-fundamentals",
+  "course": "Android Development",
+  "title": "Android Manifest – The Application Identity",
+
+  "meta": {
+    "title": "Android Manifest Guide – Permissions, Activities & Intent Filters (2026)",
+    "description": "Master the AndroidManifest.xml. Learn how to configure permissions, declare components, and manage app metadata for professional Android apps.",
+    "keywords": [
+      "androidmanifest.xml",
+      "android permissions",
+      "intent filters android",
+      "android activity declaration",
+      "application metadata android",
+      "flutter android configuration"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Role of the Manifest"
+    },
+    {
+      "type": "text",
+      "value": "Every Android app must have an `AndroidManifest.xml` file at the root of its source set. It provides essential information to the Android build tools, the Android OS, and Google Play. As an Architect, you use the Manifest to define the 'Surface Area' of your app—what it can do, what it needs from the device, and how other apps can interact with it."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Essential Manifest Elements"
+    },
+    {
+      "type": "text",
+      "value": "The Manifest is a structured XML document. The root `<manifest>` tag defines the package name, while the `<application>` tag contains all the components and global settings like the app icon and theme."
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "value": "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"com.revochamp.app\">\n\n    <application\n        android:label=\"Revochamp\"\n        android:icon=\"@mipmap/ic_launcher\"\n        android:theme=\"@style/LaunchTheme\">\n        \n        \n        \n    </application>\n</manifest>"
+    },
+    {
+      "type": "heading",
+      "value": "2. Declaring Permissions"
+    },
+    {
+      "type": "text",
+      "value": "Permissions are declared outside the `<application>` tag. In 2026, Android follows a strict 'Least Privilege' model. You must declare 'Normal' permissions (like Internet) and 'Dangerous' permissions (like Camera) here. Dangerous permissions also require a runtime request in your Kotlin or Dart code."
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "value": "\n<uses-permission android:name=\"android.permission.INTERNET\" />\n\n\n<uses-permission android:name=\"android.permission.CAMERA\" />"
+    },
+    {
+      "type": "heading",
+      "value": "3. Activities and Intent Filters"
+    },
+    {
+      "type": "text",
+      "value": "Every screen (Activity) must be declared. The most important one is the `MainActivity` (the Flutter Runner), which contains an **Intent Filter** marking it as the 'Main' entry point that appears in the app launcher."
+    },
+    
+    {
+      "type": "code",
+      "language": "xml",
+      "value": "<activity\n    android:name=\".MainActivity\"\n    android:exported=\"true\">\n    <intent-filter>\n        <action android:name=\"android.intent.action.MAIN\" />\n        <category android:name=\"android.intent.category.LAUNCHER\" />\n    </intent-filter>\n    \n    \n    <intent-filter android:autoVerify=\"true\">\n        <action android:name=\"android.intent.action.VIEW\" />\n        <category android:name=\"android.intent.category.DEFAULT\" />\n        <category android:name=\"android.intent.category.BROWSABLE\" />\n        <data android:scheme=\"https\" android:host=\"revochamp.com\" android:pathPrefix=\"/template\" />\n    </intent-filter>\n</activity>"
+    },
+    {
+      "type": "heading",
+      "value": "4. Metadata and Queries"
+    },
+    {
+      "type": "text",
+      "value": "Modern Android (API 30+) requires the `<queries>` tag if your app needs to interact with other specific apps on the device (e.g., sharing a generated UI to WhatsApp). Additionally, `<meta-data>` tags are used to provide API keys or configuration flags for third-party libraries like Firebase or Google Maps."
+    },
+    {
+      "type": "heading",
+      "value": "Manifest Comparison: Role vs. Implementation"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Manifest Tag", "Purpose"],
+        "rows": [
+          ["App Identity", "package=\"...\"", "Unique ID for the Play Store"],
+          ["Permissions", "<uses-permission>", "Requests access to system features"],
+          ["Entry Point", "<intent-filter>", "Defines how the app is launched"],
+          ["Hardware", "<uses-feature>", "Filters devices that don't have specific hardware (e.g., NFC)"],
+          ["Styling", "android:theme", "Sets the global native look and feel"],
+          ["Security", "android:exported", "Controls if other apps can launch an Activity"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What does 'android:exported' mean?",
+      "answer": "It determines whether a component (like an Activity or Service) can be started by components of other applications. For your Launch activity, it must be 'true'. For internal private screens, it should be 'false' to prevent unauthorized access."
+    },
+    {
+      "question": "How do I handle hardware requirements in Revochamp?",
+      "answer": "Use the '<uses-feature>' tag. For example, if your AI builder requires a camera to function, setting 'android:required=\"true\"' will prevent the Play Store from showing the app to users whose devices don't have a camera."
+    },
+    {
+      "question": "Can I have multiple manifests in one project?",
+      "answer": "Yes. If you have multiple modules or 'Build Variants' (like free vs. pro), each can have its own manifest. The 'Manifest Merger' tool automatically combines them into a single final manifest during the build process."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which tag is used to request access to the device's Location or Camera?",
+      "options": ["<permission>", "<uses-permission>", "<request-feature>", "<access-control>"],
+      "answer": 1
+    },
+    {
+      "question": "Where should the intent-filter for the main launcher activity be placed?",
+      "options": ["Inside the <manifest> tag", "Inside the <application> tag", "Inside the specific <activity> tag", "Inside the <intent> tag"],
+      "answer": 2
+    },
+    {
+      "question": "What is the purpose of the 'android:label' attribute in the application tag?",
+      "options": [
+        "It defines the internal package name",
+        "It sets the name of the app displayed to the user",
+        "It names the main Java/Kotlin class",
+        "It is used for SEO in the Play Store only"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "android-project-structure",
+    "android-app-lifecycle",
+    "android-security-best-practices",
+    "flutter-method-channels",
+    "ios-info-plist"
+  ]
+}

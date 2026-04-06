@@ -1,0 +1,151 @@
+{
+  "slug": "kotlin-coroutines-concurrency",
+  "course": "Kotlin Development",
+  "title": "Kotlin Coroutines – Structured Concurrency for Android",
+
+  "meta": {
+    "title": "Kotlin Coroutines Guide – Suspend Functions, Dispatchers & Scopes (2026)",
+    "description": "Master asynchronous programming with Kotlin Coroutines. Learn about suspend functions, coroutine scopes, dispatchers, and structured concurrency.",
+    "keywords": [
+      "kotlin coroutines",
+      "suspend functions",
+      "coroutine dispatchers",
+      "coroutine scope",
+      "structured concurrency",
+      "async await kotlin",
+      "android background threading"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What are Coroutines?"
+    },
+    {
+      "type": "text",
+      "value": "Coroutines are 'lightweight threads.' Unlike traditional OS threads, which are expensive to create and switch, thousands of coroutines can run on a single thread. They use 'Suspension' instead of 'Blocking'—when a coroutine waits for a network response from your Python API, it releases the underlying thread so other tasks can run. This is the secret to maintaining 120 FPS in your native Android Runner."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. The 'suspend' Keyword"
+    },
+    {
+      "type": "text",
+      "value": "The `suspend` modifier marks a function that can pause execution without blocking the current thread. Suspend functions can only be called from other suspend functions or from within a coroutine builder."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "suspend fun fetchAiModelConfig(): String {\n    delay(1000) // Non-blocking delay (suspends the coroutine)\n    return \"Config_V3_Loaded\"\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Coroutine Dispatchers"
+    },
+    {
+      "type": "text",
+      "value": "Dispatchers determine which thread the coroutine runs on. As an Architect, choosing the right dispatcher is critical for performance and preventing 'NetworkOnMainThread' exceptions."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Dispatchers.Main**: Used for UI interactions (equivalent to Flutter's main isolate).",
+        "**Dispatchers.IO**: Optimized for disk or network I/O (like calling your AI endpoints).",
+        "**Dispatchers.Default**: Used for CPU-intensive work (like parsing large JSON widget trees).",
+        "**Dispatchers.Unconfined**: Starts in the caller thread, but only until the first suspension point."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "3. Coroutine Builders: launch vs. async"
+    },
+    {
+      "type": "text",
+      "value": "There are two main ways to start a coroutine. `launch` is 'fire and forget' (returns a Job), while `async` is used when you expect a result (returns a Deferred, which is Kotlin's version of a Future)."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "val scope = CoroutineScope(Dispatchers.Main)\n\n// 1. Launch for background tasks\nscope.launch {\n    saveToDatabase(data)\n}\n\n// 2. Async for concurrent results\nscope.launch {\n    val deferredData = async(Dispatchers.IO) { fetchAiData() }\n    val result = deferredData.await() // Suspends until data is ready\n    updateUI(result)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Structured Concurrency"
+    },
+    {
+      "type": "text",
+      "value": "In 2026, we avoid 'GlobalScope'. We use **Structured Concurrency** by launching coroutines within a `CoroutineScope` linked to a lifecycle (like `viewModelScope` or `lifecycleScope`). If the Activity or ViewModel is destroyed, all child coroutines are automatically canceled, preventing memory leaks in the Revochamp app."
+    },
+    
+    {
+      "type": "heading",
+      "value": "Concurrency Comparison: Kotlin vs. Dart"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Kotlin Coroutines", "Dart (Flutter)"],
+        "rows": [
+          ["Model", "Multi-threaded (Shared Memory)", "Single-threaded (Isolates)"],
+          ["Primary Tool", "suspend / launch / async", "async / await / Future"],
+          ["Scaling", "Millions of coroutines", "Heavy tasks need new Isolates"],
+          ["Thread Control", "Explicit via Dispatchers", "Mostly implicit (Event Loop)"],
+          ["Cancellation", "Built-in (Job / Scope)", "Manual (StreamSubscription/Cancelable)"],
+          ["Communication", "Channels / Shared State", "Ports / Messages"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between a Thread and a Coroutine?",
+      "answer": "A Thread is managed by the OS and is resource-heavy (approx. 1MB per thread). A Coroutine is managed by the Kotlin library and is extremely light (a few bytes). You can launch 100,000 coroutines on a single thread without performance issues."
+    },
+    {
+      "question": "How do I handle errors in Coroutines?",
+      "answer": "You can use standard 'try-catch' blocks inside a coroutine. For a more professional architectural approach, use a 'CoroutineExceptionHandler' to catch uncaught exceptions globally within a specific scope."
+    },
+    {
+      "question": "Can I use Coroutines in Flutter Method Channels?",
+      "answer": "Yes! In your Kotlin MethodChannel handler, you should launch a coroutine to perform background work and then use 'result.success()' on 'Dispatchers.Main' to send data back to Dart. This ensures you don't block the platform thread."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to mark a function that can pause execution without blocking a thread?",
+      "options": ["async", "await", "suspend", "defer"],
+      "answer": 2
+    },
+    {
+      "question": "Which Dispatcher should be used for making network requests to a Python AI backend?",
+      "options": ["Dispatchers.Main", "Dispatchers.Default", "Dispatchers.IO", "Dispatchers.UI"],
+      "answer": 2
+    },
+    {
+      "question": "What happens to child coroutines if their parent CoroutineScope is canceled?",
+      "options": [
+        "They continue running until finished",
+        "They are moved to GlobalScope",
+        "They are automatically canceled",
+        "They throw an exception"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "kotlin-advanced-lambdas",
+    "android-app-lifecycle",
+    "flutter-method-channels",
+    "kotlin-flow-streams",
+    "clean-architecture-native"
+  ]
+}

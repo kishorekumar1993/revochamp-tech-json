@@ -1,0 +1,142 @@
+{
+  "slug": "kotlin-oop-fundamentals",
+  "course": "Kotlin Development",
+  "title": "Kotlin OOP – Classes, Objects, and Inheritance",
+
+  "meta": {
+    "title": "Kotlin OOP Guide – Classes, Sealed Classes & Data Classes (2026)",
+    "description": "Master Object-Oriented Programming in Kotlin. Learn about primary constructors, data classes for models, and sealed classes for state management.",
+    "keywords": [
+      "kotlin oop",
+      "kotlin classes",
+      "data classes kotlin",
+      "sealed classes kotlin",
+      "kotlin inheritance",
+      "companion objects"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Classes and Constructors"
+    },
+    {
+      "type": "text",
+      "value": "In Kotlin, classes are declared using the `class` keyword. The most striking difference from Java is the **Primary Constructor**, which is part of the class header itself. This makes property declaration incredibly concise. As an Architect, you'll appreciate how this reduces 'boilerplate' noise in your native Android models."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// A class with a primary constructor and default values\nclass Project(val id: String, var name: String, val isPublic: Boolean = false) {\n    init {\n        println(\"Initializing project: $name\")\n    }\n}\n\n// Usage\nval myProject = Project(\"rev_01\", \"AI Builder\")"
+    },
+    {
+      "type": "heading",
+      "value": "1. Data Classes: The Perfect Models"
+    },
+    {
+      "type": "text",
+      "value": "When a class is created primarily to hold data (like a JSON response from your Python backend), you mark it as a `data` class. The compiler automatically generates `equals()`, `hashCode()`, `toString()`, and the powerful `copy()` function. This is far more advanced than standard Dart classes and saves hours of manual coding."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "data class User(val uid: String, val email: String)\n\nval user1 = User(\"123\", \"k@test.com\")\n// Create a new instance with one property changed\nval user2 = user1.copy(email = \"new@test.com\")"
+    },
+    {
+      "type": "heading",
+      "value": "2. Inheritance and 'open' Classes"
+    },
+    {
+      "type": "text",
+      "value": "By default, all classes in Kotlin are `final` (cannot be inherited). To allow a class to be a parent, you must explicitly mark it with the `open` keyword. This 'Design for Inheritance' philosophy prevents accidental architectural fragility in your native Android modules."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "open class BaseWidget(val type: String) {\n    open fun render() = println(\"Rendering $type\")\n}\n\nclass ButtonWidget : BaseWidget(\"Button\") {\n    override fun render() {\n        super.render()\n        println(\"Applying shadow...\")\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Sealed Classes: State Management Pro"
+    },
+    {
+      "type": "text",
+      "value": "Sealed classes are used for representing restricted class hierarchies. They are essentially 'Enums on steroids.' For a Flutter Architect, they are the ideal way to represent **UI States** (Loading, Success, Error) when passing data back through a Method Channel."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "sealed class UIState {\n    object Loading : UIState()\n    data class Success(val data: List<String>) : UIState()\n    data class Error(val message: String) : UIState()\n}\n\n// Comprehensive handling in 'when'\nfun handleState(state: UIState) = when(state) {\n    is UIState.Loading -> showSpinner()\n    is UIState.Success -> showList(state.data)\n    is UIState.Error -> showError(state.message)\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Objects and Companion Objects"
+    },
+    {
+      "type": "text",
+      "value": "Kotlin doesn't have `static` members. Instead, it uses `object` for Singletons and `companion object` for members that belong to a class. This makes the Singleton pattern a first-class language feature."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Kotlin OOP", "Dart (Flutter) OOP"],
+        "rows": [
+          ["Default Visibility", "Public", "Public"],
+          ["Immutability", "Classes are final by default", "Classes are open by default"],
+          ["Static Members", "Companion Objects", "static keyword"],
+          ["Data Models", "Data Classes (Autogen)", "Manual / Code Gen"],
+          ["Enums", "Enums / Sealed Classes", "Enums / Sealed Classes"],
+          ["Constructors", "Primary & Secondary", "Generative & Named"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between a Class and an Object?",
+      "answer": "A 'class' is a blueprint for creating instances. An 'object' is a keyword used to define a Singleton—a class that has exactly one instance created automatically by the system."
+    },
+    {
+      "question": "Can a class have multiple constructors?",
+      "answer": "Yes. While the primary constructor is most common, you can define secondary constructors using the 'constructor' keyword. However, they must always call the primary constructor."
+    },
+    {
+      "question": "Why use Sealed Classes over Enums?",
+      "answer": "Enums are for constant values. Sealed classes are for types. Each branch of a sealed class can have its own unique properties and state (like an Error message or a Data list), which Enums cannot do effectively."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is required to allow a Kotlin class to be inherited by another class?",
+      "options": ["public", "open", "abstract", "static"],
+      "answer": 1
+    },
+    {
+      "question": "Which specific class type provides autogenerated copy() and toString() methods?",
+      "options": ["Sealed Class", "Object Class", "Data Class", "Inner Class"],
+      "answer": 2
+    },
+    {
+      "question": "What is the Kotlin equivalent of a static block or static method?",
+      "options": ["Companion Object", "Static Object", "Init Block", "Module Object"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "kotlin-interfaces",
+    "kotlin-control-flow",
+    "flutter-method-channels",
+    "clean-architecture-android",
+    "kotlin-data-types"
+  ]
+}

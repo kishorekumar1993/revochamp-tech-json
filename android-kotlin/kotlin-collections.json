@@ -1,0 +1,133 @@
+{
+  "slug": "kotlin-collections-framework",
+  "course": "Kotlin Development",
+  "title": "Kotlin Collections – Lists, Sets, and Maps",
+
+  "meta": {
+    "title": "Kotlin Collections Guide – Immutable vs Mutable, Filtering & Mapping (2026)",
+    "description": "Master Kotlin's collection framework. Learn the difference between read-only and mutable collections, and how to use functional operators like filter and map.",
+    "keywords": [
+      "kotlin collections",
+      "kotlin list vs mutablelist",
+      "kotlin map and set",
+      "kotlin collection operators",
+      "functional programming kotlin",
+      "iterating collections kotlin"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Immutability by Default"
+    },
+    {
+      "type": "text",
+      "value": "In Kotlin, the collections library is split into two hierarchies: **Read-Only** (covariant) and **Mutable**. As an Engineering Manager, you should default to read-only collections to prevent 'side-effect' bugs in your native Android modules. This aligns with the 'unidirectional data flow' patterns used in modern Flutter architectures."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Lists: Ordered Collections"
+    },
+    {
+      "type": "text",
+      "value": "A List stores elements in a specific order and allows duplicates. Use `listOf()` for a fixed list and `mutableListOf()` if you need to add or remove elements at runtime."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Read-only list\nval tags = listOf(\"AI\", \"Mobile\", \"Flutter\")\n// tags.add(\"Dart\") // Compilation Error\n\n// Mutable list\nval widgets = mutableListOf(\"Button\", \"Icon\")\nwidgets.add(\"Switch\") // OK"
+    },
+    {
+      "type": "heading",
+      "value": "2. Sets and Maps"
+    },
+    {
+      "type": "text",
+      "value": "Sets store unique elements, while Maps store key-value pairs. Kotlin's `mapOf` uses the `to` keyword to create a readable 'Pair' syntax, making configuration objects for your Revochamp engine easy to define."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Set (Unique items only)\nval uniqueIds = setOf(\"id_1\", \"id_2\", \"id_1\") // Contains 2 items\n\n// Map (Key-Value pairs)\nval config = mapOf(\n    \"theme\" to \"dark\",\n    \"version\" to \"2.0\",\n    \"isEnabled\" to true\n)\n\nprintln(config[\"theme\"]) // \"dark\""
+    },
+    {
+      "type": "heading",
+      "value": "3. Functional Operators"
+    },
+    {
+      "type": "text",
+      "value": "Kotlin provides a rich set of higher-order functions for processing collections. These are highly optimized and allow you to transform data from your Python API into native Android models without using complex loops."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "val numbers = listOf(1, 2, 3, 4, 5, 6)\n\n// Filter: Keep only even numbers\nval evens = numbers.filter { it % 2 == 0 }\n\n// Map: Transform each number\nval squared = numbers.map { it * it }\n\n// Find: Locate the first element matching a condition\nval firstBig = numbers.find { it > 4 } // Returns 5"
+    },
+    {
+      "type": "heading",
+      "value": "Collection Comparison: Kotlin vs. Dart"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Kotlin", "Dart (Flutter)"],
+        "rows": [
+          ["Read-only List", "List (via listOf)", "List (via const or Unmodifiable)"],
+          ["Mutable List", "MutableList", "List"],
+          ["Map Syntax", "key to value", "key: value"],
+          ["Filtering", ".filter { }", ".where((e) => )"],
+          ["Mapping", ".map { }", ".map((e) => ).toList()"],
+          ["First Match", ".firstOrNull { }", ".firstWhere((e) => , orElse: )"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between List and ArrayList in Kotlin?",
+      "answer": "In Kotlin, 'List' is an interface representing a read-only list. 'ArrayList' is a specific implementation of a MutableList based on a dynamic array. In native Android development, you usually use the factory methods 'listOf()' or 'mutableListOf()' rather than instantiating ArrayList directly."
+    },
+    {
+      "question": "How do I handle nulls in collections?",
+      "answer": "Kotlin provides 'filterNotNull()' which efficiently removes all null elements from a collection, and 'listOfNotNull()' which creates a list excluding any null arguments passed to it. This is extremely useful when parsing messy AI data."
+    },
+    {
+      "question": "What is a Sequence in Kotlin?",
+      "answer": "A Sequence is the Kotlin equivalent of Dart's 'Iterable'. Unlike a List, which performs transformations eagerly (creating a new list at each step), a Sequence performs them lazily. Use Sequences for large datasets to improve performance and reduce memory overhead."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which function is used to create a list that can be modified after initialization?",
+      "options": ["listOf()", "mutableListOf()", "fixedListOf()", "array()"],
+      "answer": 1
+    },
+    {
+      "question": "Which operator would you use to transform every element in a list into something else?",
+      "options": ["filter", "find", "map", "reduce"],
+      "answer": 2
+    },
+    {
+      "question": "What is the result of setOf(1, 2, 2, 3).size?",
+      "options": ["2", "3", "4", "Error"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "kotlin-functions",
+    "kotlin-control-flow",
+    "android-app-lifecycle",
+    "flutter-method-channels",
+    "clean-architecture-android"
+  ]
+}

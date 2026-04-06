@@ -1,0 +1,133 @@
+{
+  "slug": "android-activity-lifecycle",
+  "course": "Android Development",
+  "title": "Android Activity – The UI Entry Point & Lifecycle",
+
+  "meta": {
+    "title": "Android Activity Guide – Lifecycle, Intent and Context (2026)",
+    "description": "Master the Android Activity. Learn about the lifecycle states (onCreate, onResume, etc.), launching activities with Intents, and managing UI state.",
+    "keywords": [
+      "android activity lifecycle",
+      "oncreate onresume onpause",
+      "activity intent android",
+      "android context",
+      "activity result api",
+      "flutter host activity"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is an Activity?"
+    },
+    {
+      "type": "text",
+      "value": "An Activity is a core Android component that provides a window in which the app draws its UI. Typically, one Activity implements one screen in an application. In your Flutter Runner, the `MainActivity` acts as a canvas where the Flutter Engine renders its widget tree. As an Engineering Manager, you must ensure that your Activities are 'lean'—shifting heavy business logic to ViewModels or background Coroutines."
+    },
+    {
+      "type": "heading",
+      "value": "1. The Activity Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "As a user navigates through, leaves, and returns to your app, the `Activity` instances in your app transition through different states in their lifecycle. Managing these transitions is critical to prevent memory leaks and ensure a smooth user experience in Chennai's diverse device ecosystem."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**onCreate()**: Fired when the system first creates the activity. You perform basic startup logic here (e.g., `setContentView` or initializing Riverpod-like native state).",
+        "**onStart()**: Makes the activity visible to the user.",
+        "**onResume()**: The activity enters the foreground and becomes interactive. This is where you start animations or camera previews.",
+        "**onPause()**: The first indication that the user is leaving the activity. Use this to pause ongoing actions or save small amounts of data.",
+        "**onStop()**: The activity is no longer visible. You should release heavy resources here.",
+        "**onDestroy()**: Fired before the activity is destroyed. Final cleanup happens here."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Launching Activities with Intents"
+    },
+    {
+      "type": "text",
+      "value": "Activities don't call each other directly. Instead, they use an **Intent**—an abstract description of an operation to be performed. This allows for 'Loose Coupling' between screens."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Launching a native AI Preview Activity from your Flutter Bridge\nval intent = Intent(this, AIPreviewActivity::class.java).apply {\n    putExtra(\"TEMPLATE_ID\", \"revo_99\")\n}\nstartActivity(intent)"
+    },
+    {
+      "type": "heading",
+      "value": "3. Configuration Changes & State"
+    },
+    {
+      "type": "text",
+      "value": "By default, Android destroys and recreates your Activity when a 'Configuration Change' occurs (like rotating the screen). For Revochamp, you must handle this by either using **ViewModels** to persist data or by overriding `onSaveInstanceState()` to store the current state of the AI builder."
+    },
+    
+    {
+      "type": "heading",
+      "value": "Activity Role Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Scenario", "Activity Usage", "Flutter Equivalent"],
+        "rows": [
+          ["Main Entry", "MainActivity (Launcher)", "main.dart"],
+          ["New Screen", "Start new Activity via Intent", "Navigator.push()"],
+          ["Data Persistence", "onSaveInstanceState / ViewModel", "Hydrated Bloc / Riverpod"],
+          ["Resource Cleanup", "onStop() / onDestroy()", "dispose() method"],
+          ["Background Task", "Start a Service from Activity", "WorkManager / Isolates"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the 'Context' in an Activity?",
+      "answer": "The Activity class inherits from 'Context'. It is a handle to the system; it allows you to access resources (strings, images), launch other activities, and interact with system services. In Flutter Method Channels, you often pass the 'Activity Context' to native plugins."
+    },
+    {
+      "question": "Why is my Activity recreating when I rotate the phone?",
+      "answer": "Android triggers a configuration change to reload resources (like landscape-specific layouts). To prevent this in a Flutter app, the Manifest usually includes 'android:configChanges=\"orientation|screenSize|smallestScreenSize\"', which tells the OS that the app will handle these changes manually."
+    },
+    {
+      "question": "How do I get a result back from a launched Activity?",
+      "answer": "In 2026, we use the 'Activity Result API' (registerForActivityResult). This replaces the deprecated 'startActivityForResult' and provides a type-safe way to receive data back from a native screen."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which lifecycle method is called when the Activity is no longer visible to the user but not yet destroyed?",
+      "options": ["onPause()", "onStop()", "onDetach()", "onHide()"],
+      "answer": 1
+    },
+    {
+      "question": "What object is used to request the launch of another Activity?",
+      "options": ["Context", "Messenger", "Intent", "Router"],
+      "answer": 2
+    },
+    {
+      "question": "In which lifecycle method should you initialize your UI and set the content view?",
+      "options": ["onStart()", "onResume()", "onCreate()", "onAttach()"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "android-manifest-fundamentals",
+    "android-project-structure",
+    "kotlin-introduction",
+    "flutter-method-channels",
+    "android-viewmodel-architecture"
+  ]
+}

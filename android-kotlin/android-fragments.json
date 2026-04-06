@@ -1,0 +1,138 @@
+{
+  "slug": "android-fragments-modular-ui",
+  "course": "Android Development",
+  "title": "Android Fragments – Building Modular and Reusable UI",
+
+  "meta": {
+    "title": "Android Fragments Guide – Lifecycle, Manager & Transactions (2026)",
+    "description": "Master Android Fragments for modular UI design. Learn about the Fragment lifecycle, FragmentManager, and how to perform FragmentTransactions.",
+    "keywords": [
+      "android fragments",
+      "fragment lifecycle",
+      "fragmentmanager",
+      "fragmenttransaction",
+      "native android ui",
+      "modular android architecture"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is a Fragment?"
+    },
+    {
+      "type": "text",
+      "value": "A Fragment is a self-contained UI component that must reside within a 'Host' Activity. Think of a Fragment as a 'Sub-Activity' that has its own lifecycle and receives its own input events. For an Engineering Manager, Fragments are the key to **Multi-Pane Layouts**—where a single Activity might show a list on the left and details on the right using two separate Fragments."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. The Fragment Lifecycle"
+    },
+    {
+      "type": "text",
+      "value": "The Fragment lifecycle is closely tied to its host Activity, but it has additional states specifically for managing its 'View'. This separation is crucial for a Lead Architect to understand, as a Fragment can exist even when its UI (View) has been destroyed to save memory."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**onAttach()**: Called when the fragment is first associated with its activity.",
+        "**onCreateView()**: The most important method—this is where you inflate the XML layout or initialize the Compose UI for the fragment.",
+        "**onViewCreated()**: Called immediately after onCreateView. Best place to set up listeners and ViewModels.",
+        "**onDestroyView()**: Called when the fragment's UI is being removed. This is where you clean up View references.",
+        "**onDetach()**: The final step—the fragment is no longer associated with the activity."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. FragmentManager and Transactions"
+    },
+    {
+      "type": "text",
+      "value": "To add, remove, or replace Fragments at runtime, you use the **FragmentManager** to start a **FragmentTransaction**. These operations are asynchronous and can be added to a 'Back Stack', allowing the user to navigate 'back' through Fragment changes just like they would through Activities."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Swapping to an AI Preview Fragment in your native Runner\nval fragment = AIPreviewFragment.newInstance(templateId = \"revo_01\")\n\nsupportFragmentManager.beginTransaction()\n    .replace(R.id.fragment_container, fragment)\n    .addToBackStack(null) // Allows the 'Back' button to reverse this\n    .commit()"
+    },
+    {
+      "type": "heading",
+      "value": "3. Communication: Fragment to Activity"
+    },
+    {
+      "type": "text",
+      "value": "Fragments should be independent. To communicate with their host, we avoid direct references. In 2026, the standard is to use a **Shared ViewModel**. Both the Activity and its Fragments observe the same ViewModel instance, ensuring that a change in the AI data layer is reflected instantly across the entire UI."
+    },
+    
+    {
+      "type": "heading",
+      "value": "Fragment Role Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Scenario", "Fragment Usage", "Flutter Equivalent"],
+        "rows": [
+          ["UI Modularity", "Fragment (Modular View)", "Custom Widget"],
+          ["Navigation", "FragmentTransaction", "Navigator.push()"],
+          ["Screen Portion", "Partial screen (Pane)", "Expanded / Flexible Widget"],
+          ["Tab Content", "ViewPager2 + Fragments", "TabBarView"],
+          ["Dialogs", "DialogFragment", "showDialog()"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Why use a Fragment instead of just another Activity?",
+      "answer": "Fragments are more lightweight and flexible. They are ideal for creating adaptive UIs (like tablet vs. phone) and allow you to keep the user within the same Activity context while changing the content, which is faster and uses less memory."
+    },
+    {
+      "question": "What is the 'Back Stack'?",
+      "answer": "The Fragment Back Stack is a list of FragmentTransactions that the system saves. When the user presses the 'Back' button, the system pops the last transaction off the stack, effectively undoing the last Fragment change."
+    },
+    {
+      "question": "How do I pass data to a Fragment?",
+      "answer": "The professional way is using 'Arguments'. You create a Bundle, put your data in it, and call 'setArguments()' before the fragment is attached. This ensures the data survives if the OS kills and recreates the fragment."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which lifecycle method is specifically responsible for inflating the Fragment's UI layout?",
+      "options": ["onCreate()", "onStart()", "onCreateView()", "onAttach()"],
+      "answer": 2
+    },
+    {
+      "question": "What object is used to perform actions like adding or replacing fragments?",
+      "options": ["FragmentIntent", "FragmentTransaction", "ActivityContext", "ViewManager"],
+      "answer": 1
+    },
+    {
+      "question": "What is the recommended way for an Activity and its Fragments to share data in 2026?",
+      "options": [
+        "Passing a direct reference of the Activity to the Fragment",
+        "Using Static Global variables",
+        "Using a Shared ViewModel",
+        "Writing data to a local file"
+      ],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "android-activity-lifecycle",
+    "android-viewmodel-architecture",
+    "android-project-structure",
+    "flutter-method-channels",
+    "jetpack-navigation-component"
+  ]
+}
