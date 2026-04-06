@@ -1,122 +1,160 @@
 {
   "slug": "html-structure",
   "course": "HTML",
-  "title": "HTML Structure: Understanding the Skeleton of a Web Page",
+  "title": "HTML Structure: The Skeleton of Every Web Page",
   "meta": {
-    "title": "HTML Structure Explained – Build Clean Web Pages (2026)",
-    "description": "Learn the complete structure of an HTML document including DOCTYPE, head, body, and semantic layout elements with best practices and examples.",
+    "title": "HTML Structure Explained – Complete Guide to Document Hierarchy (2026)",
+    "description": "Master HTML document structure: DOCTYPE, html, head, body, semantic tags, nesting rules, and how browsers parse HTML. Includes best practices, common mistakes, and interactive examples.",
     "keywords": [
       "html structure",
       "html document structure",
       "html skeleton",
-      "html layout basics",
+      "semantic html",
       "html head body",
-      "semantic html structure"
+      "dom tree",
+      "html layout",
+      "web page anatomy"
     ]
   },
   "content": [
     {
       "type": "heading",
-      "value": "What is HTML Structure?"
+      "value": "What Is HTML Structure?"
     },
     {
       "type": "text",
-      "value": "HTML structure defines how a webpage is organized. It acts as the skeleton of a website, arranging content into meaningful sections like header, body, and footer."
+      "value": "HTML structure refers to the hierarchical arrangement of elements within an HTML document. It acts as the skeleton of a webpage, defining how content is organized, interpreted by browsers, and presented to users. A well-structured HTML document improves accessibility, SEO, performance, and maintainability."
     },
     {
       "type": "heading",
-      "value": "Basic HTML Document Structure"
+      "value": "Minimal Valid HTML Document"
     },
     {
       "type": "code",
       "language": "html",
-      "value": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>My Web Page</title>\n</head>\n<body>\n  <header>\n    <h1>Welcome</h1>\n  </header>\n\n  <main>\n    <section>\n      <h2>About</h2>\n      <p>This is a sample page.</p>\n    </section>\n  </main>\n\n  <footer>\n    <p>© 2026 My Website</p>\n  </footer>\n</body>\n</html>"
+      "value": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Document</title>\n</head>\n<body>\n  <!-- Visible content goes here -->\n</body>\n</html>"
     },
     {
       "type": "heading",
-      "value": "Main Parts of HTML Structure"
+      "value": "Anatomy of an HTML Document"
     },
     {
       "type": "table",
       "value": {
-        "headers": ["Element", "Purpose"],
+        "headers": ["Component", "Purpose", "Required?"],
         "rows": [
-          ["<!DOCTYPE html>", "Defines HTML5 document type"],
-          ["<html>", "Root element of the page"],
-          ["<head>", "Contains metadata, title, links"],
-          ["<body>", "Visible content of the page"],
-          ["<title>", "Page title shown in browser tab"],
-          ["<meta>", "Defines character set and responsiveness"]
+          ["`<!DOCTYPE html>`", "Declares HTML5 to the browser", "Yes (first line)"],
+          ["`<html>`", "Root container of the entire document", "Yes"],
+          ["`<head>`", "Metadata, title, styles, scripts, links", "Yes (but can be empty)"],
+          ["`<body>`", "All visible page content", "Yes"],
+          ["`<title>`", "Page title (browser tab, bookmarks, SEO)", "Yes (inside `<head>`)"],
+          ["`<meta charset=\"UTF-8\">`", "Defines character encoding (supports all languages)", "Strongly recommended"],
+          ["`<meta name=\"viewport\">`", "Controls responsive scaling on mobile devices", "Strongly recommended"]
         ]
       }
     },
     {
       "type": "heading",
-      "value": "Semantic Structure Elements"
+      "value": "Semantic Structure Elements (HTML5)"
     },
     {
       "type": "text",
-      "value": "Semantic elements improve readability and SEO by clearly defining different parts of a webpage."
+      "value": "Semantic elements clearly describe their meaning to both browsers and developers. They create a logical document outline and improve accessibility for screen readers."
     },
     {
       "type": "table",
       "value": {
-        "headers": ["Tag", "Usage"],
+        "headers": ["Tag", "Purpose", "Typical Children"],
         "rows": [
-          ["<header>", "Top section of the page"],
-          ["<nav>", "Navigation links"],
-          ["<main>", "Main content area"],
-          ["<section>", "Grouped content section"],
-          ["<article>", "Independent content"],
-          ["<aside>", "Sidebar content"],
-          ["<footer>", "Bottom section of the page"]
+          ["`<header>`", "Introductory content or navigation aids", "h1–h6, nav, logo, search form"],
+          ["`<nav>`", "Major navigation links (primary menus)", "ul, ol, a"],
+          ["`<main>`", "Unique, dominant content of the document", "article, section, div"],
+          ["`<section>`", "Thematic grouping of content (with heading)", "h2, p, figures, tables"],
+          ["`<article>`", "Self-contained, reusable composition", "blog post, news item, comment"],
+          ["`<aside>`", "Tangentially related content (sidebar, pull quote)", "ads, related links, author bio"],
+          ["`<footer>`", "Closing section (cookies, copyright, links)", "address, small, ul, p"],
+          ["`<figure>` + `<figcaption>`", "Illustration with caption", "img, pre, diagram"]
         ]
       }
     },
     {
       "type": "heading",
-      "value": "Visual Layout Example"
+      "value": "Complete Semantic Layout Example"
     },
     {
       "type": "code",
       "language": "html",
-      "value": "<body>\n  <header>Header</header>\n  <nav>Navigation</nav>\n  <main>\n    <section>Main Content</section>\n    <aside>Sidebar</aside>\n  </main>\n  <footer>Footer</footer>\n</body>"
+      "value": "<body>\n  <header>\n    <h1>My Blog</h1>\n    <nav>\n      <ul>\n        <li><a href=\"/\">Home</a></li>\n        <li><a href=\"/about\">About</a></li>\n      </ul>\n    </nav>\n  </header>\n\n  <main>\n    <article>\n      <h2>Understanding HTML Structure</h2>\n      <p>Published on <time datetime=\"2026-04-06\">April 6, 2026</time></p>\n      <section>\n        <h3>Why Structure Matters</h3>\n        <p>...</p>\n      </section>\n    </article>\n    <aside>\n      <h3>Related Articles</h3>\n      <ul>...</ul>\n    </aside>\n  </main>\n\n  <footer>\n    <p>© 2026 My Blog. All rights reserved.</p>\n  </footer>\n</body>"
     },
     {
       "type": "heading",
-      "value": "How Browser Understands Structure"
+      "value": "How Browsers Parse HTML Structure"
     },
     {
       "type": "text",
-      "value": "Browsers parse HTML from top to bottom, building a DOM (Document Object Model). Proper structure ensures faster rendering, better accessibility, and improved SEO."
+      "value": "Browsers parse HTML from top to bottom, constructing the **DOM (Document Object Model)** — a tree of nodes. Each opening tag creates a node. Improper nesting (e.g., `<div><p></div></p>`) forces the browser to guess fixes, slowing rendering and causing layout bugs. Valid structure = faster DOM construction and better performance."
     },
     {
       "type": "heading",
-      "value": "Common Mistakes to Avoid"
+      "value": "Critical Rules of HTML Structure"
     },
     {
       "type": "list",
       "value": [
-        "**Missing DOCTYPE declaration**",
-        "**Placing content outside <body>**",
-        "**Not closing tags properly**",
-        "**Using too many <div> instead of semantic tags**",
-        "**Incorrect nesting of elements**"
+        "**Only one `<main>` per document** — it must be unique",
+        "**Headings must follow a logical order** (`h1` then `h2`, never skip levels unnecessarily)",
+        "**Block elements cannot be children of inline elements** (e.g., `<span><div></div></span>` is invalid)",
+        "**`<li>` must be inside `<ul>`, `<ol>`, or `<menu>`**",
+        "**`<figcaption>` must be first or last inside `<figure>`**"
       ]
     },
     {
       "type": "heading",
-      "value": "Best Practices"
+      "value": "Most Common Structural Mistakes"
     },
     {
       "type": "list",
       "value": [
-        "**Use semantic HTML elements** for clarity",
-        "**Keep structure clean and readable**",
-        "**Always include meta viewport for responsiveness**",
-        "**Follow proper indentation**",
-        "**Separate structure (HTML), style (CSS), and logic (JS)**"
+        "**❌ Missing or wrong DOCTYPE** — triggers quirks mode (inconsistent rendering)",
+        "**❌ Content placed directly inside `<html>` or `<body>` without block containers** — valid but often breaks layout",
+        "**❌ Unclosed tags** — browser adds them, but may create unexpected nesting",
+        "**❌ `<div>` soup (overusing non-semantic divs)** — hurts SEO and accessibility",
+        "**❌ Multiple `<h1>` in a single document** — use one per page unless using sectioning elements correctly",
+        "**❌ Forgetting `alt` attributes on images** — accessibility failure"
       ]
+    },
+    {
+      "type": "heading",
+      "value": "Best Practices (Do's & Don'ts)"
+    },
+    {
+      "type": "list",
+      "value": [
+        "✅ **Use semantic elements** — `header`, `main`, `section`, `article`, `footer`",
+        "✅ **Indent properly** — 2 spaces per level (consistent nesting visible)",
+        "✅ **Always declare `lang` attribute** — for screen readers (`<html lang=\"en\">`)",
+        "✅ **Include viewport meta tag** — for mobile responsive design",
+        "✅ **Validate your HTML** — use [W3C Validator](https://validator.w3.org/)",
+        "✅ **Separate concerns** — HTML for structure, CSS for styling, JavaScript for behavior",
+        "✅ **Use `aria` roles only when semantic HTML is insufficient**"
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Example: Bad vs Good Structure"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<!-- ❌ Bad: non-semantic, hard to read -->\n<div class=\"header\">\n  <div class=\"title\">My Page</div>\n</div>\n<div class=\"content\">\n  <div class=\"post\">\n    <div class=\"post-title\">Hello</div>\n  </div>\n</div>\n\n<!-- ✅ Good: semantic, accessible, maintainable -->\n<header>\n  <h1>My Page</h1>\n</header>\n<main>\n  <article>\n    <h2>Hello</h2>\n  </article>\n</main>"
+    },
+    {
+      "type": "heading",
+      "value": "HTML Structure and SEO"
+    },
+    {
+      "type": "text",
+      "value": "Search engines use your HTML structure to understand page hierarchy. A clear heading order (`h1` → `h6`), semantic sections, and descriptive `title` + `meta description` directly improve rankings. Structured data (JSON-LD) also depends on correct nesting."
     },
     {
       "type": "heading",
@@ -124,49 +162,69 @@
     },
     {
       "type": "text",
-      "value": "A well-structured HTML document is essential for building scalable, maintainable, and SEO-friendly web applications. Mastering structure helps you create professional web pages efficiently."
+      "value": "Mastering HTML structure is the foundation of web development. A clean, semantic, and valid document ensures better performance, accessibility, SEO, and long-term maintainability. Start every project with the minimal valid template and layer semantic elements intentionally."
     }
   ],
   "faq": [
     {
-      "question": "What is DOCTYPE in HTML?",
-      "answer": "DOCTYPE tells the browser that the document is written in HTML5."
+      "question": "Is `<!DOCTYPE html>` case-sensitive?",
+      "answer": "No, but lowercase is the standard HTML5 convention."
     },
     {
-      "question": "What is the difference between <head> and <body>?",
-      "answer": "The head contains metadata, while the body contains visible content."
+      "question": "Can I have multiple `<header>` or `<footer>` elements?",
+      "answer": "Yes. You can have one per sectioning element (e.g., each `<article>` can have its own `<header>`)."
     },
     {
-      "question": "Why use semantic tags?",
-      "answer": "They improve readability, accessibility, and SEO."
+      "question": "What happens if I forget to close a tag?",
+      "answer": "Most browsers try to auto-close it, but the result is unpredictable. Always validate your HTML."
+    },
+    {
+      "question": "What’s the difference between `<section>` and `<article>`?",
+      "answer": "`<article>` is self-contained (could be syndicated). `<section>` groups related content within a page."
+    },
+    {
+      "question": "Why should I avoid multiple `<h1>` tags?",
+      "answer": "It confuses screen readers and search engines about the primary topic. One `<h1>` per page is best practice."
     }
   ],
   "tryEditor": {
     "enabled": true,
-    "defaultCode": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Structure Practice</title>\n</head>\n<body>\n  <header><h1>My Site</h1></header>\n  <main>\n    <section><p>Hello World</p></section>\n  </main>\n  <footer>Footer</footer>\n</body>\n</html>"
+    "defaultCode": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Structure Practice</title>\n</head>\n<body>\n  <header>\n    <h1>My Website</h1>\n    <nav>\n      <a href=\"#\">Home</a> |\n      <a href=\"#\">About</a>\n    </nav>\n  </header>\n\n  <main>\n    <article>\n      <h2>Welcome</h2>\n      <p>This is a semantic HTML structure.</p>\n    </article>\n    <aside>\n      <h3>Did you know?</h3>\n      <p>Semantic tags improve accessibility.</p>\n    </aside>\n  </main>\n\n  <footer>\n    <p>© 2026 — My First Semantic Page</p>\n  </footer>\n</body>\n</html>"
   },
   "quiz": [
     {
-      "question": "Which tag contains visible content?",
-      "options": ["<head>", "<meta>", "<body>", "<title>"],
+      "question": "Which element contains the visible content of a webpage?",
+      "options": ["<head>", "<meta>", "<body>", "<html>"],
       "answer": 2
     },
     {
-      "question": "What is the root element of HTML?",
-      "options": ["<body>", "<html>", "<head>", "<main>"],
+      "question": "What is the root element of every HTML document?",
+      "options": ["<body>", "<html>", "<head>", "<!DOCTYPE>"],
       "answer": 1
     },
     {
-      "question": "Which tag is used for main content?",
-      "options": ["<section>", "<main>", "<div>", "<article>"],
+      "question": "Which semantic element represents the main unique content of a document?",
+      "options": ["<section>", "<main>", "<article>", "<div>"],
+      "answer": 1
+    },
+    {
+      "question": "What does the `lang` attribute in `<html lang=\"en\">` do?",
+      "options": [
+        "It changes the page font",
+        "It helps search engines and screen readers understand the language",
+        "It enables translation popups",
+        "It validates the HTML document"
+      ],
       "answer": 1
     }
   ],
   "related": [
     "html-introduction",
-    "html-installation",
-    "html-tags",
     "html-semantic-elements",
-    "css-introduction"
+    "html-head-and-metadata",
+    "html-lists",
+    "html-links",
+    "css-introduction",
+    "html-best-practices"
   ]
 }
