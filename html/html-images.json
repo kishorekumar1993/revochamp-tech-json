@@ -21,11 +21,20 @@
     },
     {
       "type": "text",
-      "value": "HTML images are used to display pictures on a webpage using the <img> tag. Images enhance user experience and make content visually appealing."
+      "value": "HTML images allow you to display pictures, graphics, icons, and illustrations on web pages using the `<img>` tag. Images make websites more engaging, help explain concepts visually, and improve user experience."
+    },
+    {
+      "type": "callout",
+      "variant": "info",
+      "value": "💡 The `<img>` tag is an **empty element** — it doesn't have a closing tag. All image information is stored in its attributes."
     },
     {
       "type": "heading",
       "value": "Basic Syntax"
+    },
+    {
+      "type": "text",
+      "value": "Here's the simplest way to add an image to your webpage:"
     },
     {
       "type": "code",
@@ -33,107 +42,213 @@
       "value": "<img src=\"image.jpg\" alt=\"Description of image\">"
     },
     {
+      "type": "text",
+      "value": "The browser reads this tag, fetches the image from the specified location, and displays it in your page."
+    },
+    {
       "type": "heading",
-      "value": "Important Attributes"
+      "value": "Essential Image Attributes"
     },
     {
       "type": "table",
       "value": {
-        "headers": ["Attribute", "Purpose", "Example"],
+        "headers": ["Attribute", "Purpose", "Example", "Required?"],
         "rows": [
-          ["src", "Image source path", "<img src=\"img.jpg\">"],
-          ["alt", "Alternative text", "<img alt=\"image\">"],
-          ["width", "Image width", "<img width=\"200\">"],
-          ["height", "Image height", "<img height=\"100\">"],
-          ["title", "Tooltip text", "<img title=\"Image\">"],
-          ["loading", "Lazy loading", "<img loading=\"lazy\">"]
+          ["`src`", "Image source path (URL or file path)", "`src=\"images/photo.jpg\"`", "✅ Yes"],
+          ["`alt`", "Alternative text for accessibility & broken images", "`alt=\"Sunset over mountains\"`", "✅ Yes (recommended)"],
+          ["`width`", "Image width in pixels or percentage", "`width=\"300\"`", "❌ No"],
+          ["`height`", "Image height in pixels", "`height=\"200\"`", "❌ No"],
+          ["`title`", "Tooltip text shown on hover", "`title=\"Click to enlarge\"`", "❌ No"],
+          ["`loading`", "Lazy loading strategy", "`loading=\"lazy\"`", "❌ No"]
         ]
       }
     },
     {
       "type": "heading",
-      "value": "Example Usage"
+      "value": "Complete Example"
+    },
+    {
+      "type": "text",
+      "value": "Here's a well-structured image tag with multiple attributes:"
     },
     {
       "type": "code",
       "language": "html",
-      "value": "<img src=\"https://via.placeholder.com/150\" alt=\"Sample Image\" width=\"150\" height=\"150\">"
+      "value": "<img \n  src=\"https://images.unsplash.com/photo-1506905925346-21bda4d32df4\" \n  alt=\"Mountain landscape with snow-capped peaks\" \n  width=\"600\" \n  height=\"400\" \n  title=\"Beautiful Mountains\" \n  loading=\"lazy\"\n>"
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "value": "✨ **Pro tip:** Always specify `width` and `height` to prevent layout shifts while images load — this improves your Core Web Vitals score!"
     },
     {
       "type": "heading",
-      "value": "Image Paths"
+      "value": "Understanding Image Paths"
+    },
+    {
+      "type": "text",
+      "value": "The `src` attribute accepts two types of paths:"
     },
     {
       "type": "table",
       "value": {
-        "headers": ["Type", "Example"],
+        "headers": ["Path Type", "Example", "When to Use"],
         "rows": [
-          ["Absolute Path", "https://example.com/image.jpg"],
-          ["Relative Path", "./images/photo.jpg"]
+          ["**Absolute Path** (External URL)", "`https://example.com/images/cat.jpg`", "Images hosted on another website or CDN"],
+          ["**Relative Path** (Local file)", "`./images/cat.jpg` or `../assets/photo.png`", "Images stored in your own project folder"]
+        ]
+      }
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<!-- Absolute path (external image) -->\n<img src=\"https://via.placeholder.com/300\" alt=\"Placeholder\">\n\n<!-- Relative path (local image in same folder) -->\n<img src=\"logo.png\" alt=\"Company Logo\">\n\n<!-- Relative path (image in subfolder) -->\n<img src=\"images/banner.jpg\" alt=\"Website Banner\">"
+    },
+    {
+      "type": "heading",
+      "value": "Supported Image Formats"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Format", "Best For", "Pros", "Cons"],
+        "rows": [
+          ["**JPEG/JPG**", "Photographs, complex images", "Small file size, millions of colors", "No transparency, loses quality when compressed"],
+          ["**PNG**", "Logos, icons, screenshots", "Lossless, supports transparency", "Larger file size"],
+          ["**WebP**", "Modern websites (all types)", "Smaller than JPEG/PNG, supports transparency", "Older browser support (but 96%+ covered)"],
+          ["**SVG**", "Logos, icons, illustrations", "Scalable without quality loss, small size", "Not suitable for complex photos"],
+          ["**GIF**", "Simple animations", "Supports animation", "Limited colors (256), large file size"]
         ]
       }
     },
     {
       "type": "heading",
-      "value": "Responsive Images"
+      "value": "Responsive Images (Mobile-Friendly)"
     },
     {
       "type": "text",
-      "value": "Responsive images adjust based on screen size using CSS or HTML attributes."
+      "value": "Websites must look good on all devices — from smartphones to 4K monitors. Here's how to make images responsive:"
+    },
+    {
+      "type": "subheading",
+      "value": "Method 1: CSS max-width (Simplest)"
     },
     {
       "type": "code",
       "language": "html",
-      "value": "<img src=\"image.jpg\" style=\"max-width:100%; height:auto;\">"
-    },
-    {
-      "type": "heading",
-      "value": "Picture Element (Advanced)"
+      "value": "<img src=\"image.jpg\" alt=\"Responsive image\" style=\"max-width: 100%; height: auto;\">"
     },
     {
       "type": "text",
-      "value": "The <picture> tag allows different images for different screen sizes."
+      "value": "This ensures the image never exceeds its container's width while maintaining aspect ratio."
+    },
+    {
+      "type": "subheading",
+      "value": "Method 2: srcset (Serves different sizes for different screens)"
     },
     {
       "type": "code",
       "language": "html",
-      "value": "<picture>\n  <source media=\"(max-width:600px)\" srcset=\"small.jpg\">\n  <source media=\"(max-width:1200px)\" srcset=\"medium.jpg\">\n  <img src=\"large.jpg\" alt=\"Responsive Image\">\n</picture>"
+      "value": "<img \n  src=\"image-small.jpg\" \n  srcset=\"image-small.jpg 480w, image-medium.jpg 800w, image-large.jpg 1200w\"\n  sizes=\"(max-width: 600px) 480px, (max-width: 1200px) 800px, 1200px\"\n  alt=\"Responsive mountain view\"\n>"
+    },
+    {
+      "type": "text",
+      "value": "The browser automatically picks the most appropriate image based on screen size and resolution."
     },
     {
       "type": "heading",
-      "value": "Image as Link"
+      "value": "Advanced: The Picture Element"
+    },
+    {
+      "type": "text",
+      "value": "Use `<picture>` when you need different **crops** or entirely different images for different screen sizes (e.g., mobile vs desktop layouts)."
     },
     {
       "type": "code",
       "language": "html",
-      "value": "<a href=\"https://example.com\">\n  <img src=\"image.jpg\" alt=\"Clickable Image\">\n</a>"
+      "value": "<picture>\n  <!-- Mobile: landscape crop -->\n  <source media=\"(max-width: 600px)\" srcset=\"landscape-mobile.jpg\">\n  \n  <!-- Tablet: standard crop -->\n  <source media=\"(max-width: 1200px)\" srcset=\"landscape-tablet.jpg\">\n  \n  <!-- Desktop: wide panoramic crop -->\n  <img src=\"landscape-desktop.jpg\" alt=\"Scenic landscape\">\n</picture>"
+    },
+    {
+      "type": "callout",
+      "variant": "info",
+      "value": "📱 The `<picture>` element is perfect for art direction — showing a portrait crop on mobile and a wide landscape on desktop."
     },
     {
       "type": "heading",
-      "value": "Best Practices"
+      "value": "Making Images Clickable (Image Links)"
+    },
+    {
+      "type": "text",
+      "value": "Wrap an `<img>` inside an `<a>` tag to turn it into a clickable link:"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<!-- Link to another webpage -->\n<a href=\"https://example.com/product\">\n  <img src=\"product.jpg\" alt=\"Our best-selling product\">\n</a>\n\n<!-- Link to full-size image (lightbox effect) -->\n<a href=\"high-res-image.jpg\" target=\"_blank\">\n  <img src=\"thumbnail.jpg\" alt=\"Click to view full size\">\n</a>"
+    },
+    {
+      "type": "heading",
+      "value": "Image Optimization Best Practices"
     },
     {
       "type": "list",
       "value": [
-        "**Always use alt text for accessibility**",
-        "**Optimize images for faster loading**",
-        "**Use appropriate formats (JPEG, PNG, WebP)**",
-        "**Use lazy loading for performance**",
-        "**Avoid large image sizes**"
+        "**✅ Always include alt text** – Critical for accessibility (screen readers) and SEO. Describe the image's content or purpose.",
+        "**✅ Compress your images** – Use tools like TinyPNG, Squoosh, or ImageOptim to reduce file size without visible quality loss.",
+        "**✅ Choose the right format** – JPEG for photos, PNG for logos/transparency, WebP for everything modern.",
+        "**✅ Enable lazy loading** – Add `loading=\"lazy\"` to images below the fold to speed up initial page load.",
+        "**✅ Specify dimensions** – Always set `width` and `height` to prevent layout shifts (Cumulative Layout Shift optimization).",
+        "**✅ Use responsive images** – Serve smaller images on mobile devices to save bandwidth."
       ]
     },
     {
       "type": "heading",
-      "value": "Common Mistakes"
+      "value": "Common Mistakes to Avoid"
     },
     {
       "type": "list",
       "value": [
-        "**Missing alt attribute**",
-        "**Using large unoptimized images**",
-        "**Incorrect file paths**",
-        "**Not making images responsive**"
+        "**❌ Missing alt attribute** – Screen reader users won't know what the image shows. Also hurts SEO.",
+        "**❌ Using huge unoptimized images** – A 5MB image will make your page slow and frustrate mobile users.",
+        "**❌ Incorrect file paths** – Double-check relative paths; `./images/photo.jpg` is different from `images/photo.jpg`.",
+        "**❌ Scaling with width/height only** – Downloading a 2000px image and displaying it at 200px wastes bandwidth. Use `srcset` instead.",
+        "**❌ Text inside images** – Screen readers can't read text inside JPEGs. Use real HTML text whenever possible.",
+        "**❌ Forgetting to set dimensions** – Causes layout shifts (CLS) and poor user experience."
       ]
+    },
+    {
+      "type": "heading",
+      "value": "Accessibility Tips"
+    },
+    {
+      "type": "text",
+      "value": "Making images accessible ensures everyone can understand your content, including people using screen readers:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Descriptive alt text** – `alt=\"Golden retriever playing in snow\"` not `alt=\"dog\"`.",
+        "**Empty alt for decorative images** – Use `alt=\"\"` for purely visual images (backgrounds, spacers).",
+        "**Longdesc for complex images** – For charts or diagrams, provide a longer description nearby.",
+        "**Good contrast** – Ensure text overlaying images has sufficient contrast."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "Real-World Example"
+    },
+    {
+      "type": "text",
+      "value": "Here's a complete, production-ready image implementation:"
+    },
+    {
+      "type": "code",
+      "language": "html",
+      "value": "<figure>\n  <picture>\n    <source media=\"(max-width: 600px)\" srcset=\"product-mobile.webp\" type=\"image/webp\">\n    <source srcset=\"product-desktop.webp\" type=\"image/webp\">\n    <img \n      src=\"product-desktop.jpg\" \n      alt=\"Ergonomic wireless mouse with USB-C charging\"\n      width=\"600\"\n      height=\"400\"\n      loading=\"lazy\"\n      decoding=\"async\"\n    >\n  </picture>\n  <figcaption>Our best-selling ergonomic mouse – now with USB-C</figcaption>\n</figure>"
+    },
+    {
+      "type": "text",
+      "value": "This example includes modern formats (WebP with fallbacks), responsive sizing, accessibility, and performance optimizations."
     },
     {
       "type": "heading",
@@ -141,42 +256,74 @@
     },
     {
       "type": "text",
-      "value": "HTML images are essential for modern web design. Proper usage ensures better performance, accessibility, and user experience."
+      "value": "Images bring your websites to life, but they must be implemented thoughtfully. By following these best practices — proper `alt` text, responsive techniques, format selection, and optimization — you'll create fast, accessible, and visually appealing web pages that work beautifully on any device."
+    },
+    {
+      "type": "text",
+      "value": "Remember: A well-optimized image loads instantly and looks great. A poorly implemented image frustrates users and hurts your SEO. Choose wisely!"
     }
   ],
   "faq": [
     {
-      "question": "What is the <img> tag?",
-      "answer": "It is used to display images in HTML."
+      "question": "What is the difference between JPEG, PNG, and WebP?",
+      "answer": "JPEG is best for photos (small file size, no transparency). PNG supports transparency but has larger files. WebP is modern — smaller than both JPEG and PNG while supporting transparency, but older browsers may not support it (though 96%+ do)."
     },
     {
-      "question": "Why is alt important?",
-      "answer": "It improves accessibility and helps when images fail to load."
+      "question": "Why is the alt attribute so important?",
+      "answer": "Alt text serves three purposes: 1) Accessibility — screen readers describe images to visually impaired users. 2) SEO — search engines understand image content. 3) Fallback — text appears when images fail to load."
     },
     {
-      "question": "What is lazy loading?",
-      "answer": "It delays loading images until they are needed."
+      "question": "What is lazy loading and when should I use it?",
+      "answer": "Lazy loading delays loading images until they're about to appear on screen. Use it for images below the fold (not visible when page first loads). Don't use it for above-the-fold images (hero images, logos) — they should load immediately."
+    },
+    {
+      "question": "How do I make images responsive on mobile devices?",
+      "answer": "Use `style=\"max-width: 100%; height: auto;\"` for simple scaling, or `srcset` with multiple image sizes. For different crops (art direction), use the `<picture>` element with `media` queries."
+    },
+    {
+      "question": "What happens if I don't specify width and height?",
+      "answer": "The browser doesn't know how much space to reserve, causing layout shifts as images load (Cumulative Layout Shift). This hurts user experience and Google's Core Web Vitals ranking. Always specify dimensions!"
     }
   ],
   "tryEditor": {
     "enabled": true,
-    "defaultCode": "<img src=\"https://via.placeholder.com/150\" alt=\"Demo Image\">"
+    "defaultCode": "<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    body { font-family: Arial, sans-serif; padding: 20px; }\n    img { border-radius: 8px; margin: 10px 0; }\n    .container { max-width: 600px; margin: 0 auto; }\n  </style>\n</head>\n<body>\n  <div class=\"container\">\n    <h1>🖼️ Try HTML Images</h1>\n    \n    <!-- Basic image -->\n    <img src=\"https://picsum.photos/id/1015/400/300\" alt=\"Mountain landscape\" width=\"400\" height=\"300\">\n    \n    <!-- Responsive image -->\n    <img src=\"https://picsum.photos/id/104/400/300\" alt=\"Lake view\" style=\"max-width: 100%; height: auto;\">\n    \n    <!-- Image as link -->\n    <a href=\"https://picsum.photos/id/10/800/600\" target=\"_blank\">\n      <img src=\"https://picsum.photos/id/10/400/300\" alt=\"Click to enlarge\">\n    </a>\n    \n    <p>✨ Try editing the src, alt, width, or height attributes above!</p>\n  </div>\n</body>\n</html>"
   },
   "quiz": [
     {
-      "question": "Which tag is used to display images?",
+      "question": "Which HTML tag is used to display images?",
       "options": ["<image>", "<img>", "<pic>", "<src>"],
-      "answer": 1
+      "answer": 1,
+      "explanation": "The <img> tag is the correct HTML element for displaying images. <image> is not valid HTML, and <pic> is not a real tag."
     },
     {
-      "question": "Which attribute specifies image path?",
-      "options": ["alt", "src", "link", "path"],
-      "answer": 1
+      "question": "Which attribute specifies the image source (path or URL)?",
+      "options": ["alt", "src", "href", "source"],
+      "answer": 1,
+      "explanation": "The src (source) attribute tells the browser where to find the image file. alt provides alternative text, href is for links."
     },
     {
-      "question": "Which attribute improves accessibility?",
-      "options": ["title", "alt", "width", "height"],
-      "answer": 1
+      "question": "Which attribute is most important for accessibility and SEO?",
+      "options": ["title", "alt", "width", "loading"],
+      "answer": 1,
+      "explanation": "The alt attribute provides text descriptions for screen readers and search engines. It's essential for accessibility."
+    },
+    {
+      "question": "What does loading=\"lazy\" do?",
+      "options": [
+        "Loads images slowly on purpose",
+        "Delays loading images until they're about to appear on screen",
+        "Prevents images from loading entirely",
+        "Loads all images at once but with lower quality"
+      ],
+      "answer": 1,
+      "explanation": "Lazy loading improves performance by deferring off-screen images. They only load when the user scrolls near them."
+    },
+    {
+      "question": "Which image format supports transparency and animation?",
+      "options": ["JPEG", "PNG", "GIF", "WebP"],
+      "answer": 2,
+      "explanation": "GIF supports both transparency (though limited) and animation. PNG supports transparency but not animation. WebP supports both but is newer."
     }
   ],
   "related": [
@@ -184,6 +331,7 @@
     "html-attributes",
     "html-links",
     "css-images",
-    "responsive-design"
+    "responsive-design",
+    "web-performance-optimization"
   ]
 }
