@@ -1,0 +1,140 @@
+{
+  "slug": "react-native-environment-setup",
+  "course": "React Native",
+  "title": "Environment Setup – Expo vs. CLI",
+
+  "meta": {
+    "title": "React Native Setup Guide – Expo, CLI & New Architecture (2026)",
+    "description": "Master the React Native setup. Learn the professional workflow for setting up Expo, React Native CLI, and configuring the New Architecture on macOS and Windows.",
+    "keywords": [
+      "react native setup",
+      "expo vs cli",
+      "react native environment",
+      "hermes engine",
+      "cocoapods react native",
+      "android studio for react native"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Choosing Your Workflow"
+    },
+    {
+      "type": "text",
+      "value": "In 2026, there are two primary paths to start a React Native project. **Expo** is the recommended 'Framework' approach (similar to Flutter's standard flow), providing a managed suite of tools and easy OTA (Over-the-Air) updates. **React Native CLI** is the 'Bare' approach, giving you full control over the `ios/` and `android/` directories, which is essential if you plan to write complex native C++ or Swift modules for Revochamp."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Prerequisites (The Core Toolchain)"
+    },
+    {
+      "type": "text",
+      "value": "Before installing React Native, you need the underlying platform tools. As a Lead Developer, you likely already have these for Flutter, but React Native adds a dependency on **Node.js** and a package manager like **Yarn** or **pnpm**."
+    },
+    {
+      "type": "list",
+      "value": [
+        "**Node.js (LTS)**: The JavaScript runtime that executes the build scripts.",
+        "**Watchman**: A tool by Meta for watching file changes (improves 'Fast Refresh' speed).",
+        "**JDK (Java Development Kit)**: Required for Android builds (Azul Zulu is recommended).",
+        "**Xcode & Android Studio**: For platform-specific compilers and emulators."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Setting Up with Expo (The Modern Standard)"
+    },
+    {
+      "type": "text",
+      "value": "Expo has evolved into a production-grade framework. It handles the 'Native Runner' complexity for you while allowing 'Continuous Native Generation' (CNG), which means you don't have to manually touch Xcode or Android Studio files unless necessary."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Create a new Expo project\nnpx create-expo-app@latest MyRevoApp\n\n# Start the development server\nnpx expo start"
+    },
+    {
+      "type": "heading",
+      "value": "3. Setting Up React Native CLI"
+    },
+    {
+      "type": "text",
+      "value": "For projects requiring custom native engines or integration with existing native libraries, the CLI is the way to go. This setup requires more manual configuration of environment variables (like `ANDROID_HOME`)."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Initialize a template project\nnpx react-native@latest init MyProject\n\n# Install iOS dependencies (macOS only)\ncd ios && pod install && cd .."
+    },
+    
+    {
+      "type": "heading",
+      "value": "4. Enabling the New Architecture"
+    },
+    {
+      "type": "text",
+      "value": "To leverage **JSI** and **Fabric**, you must ensure the New Architecture is enabled. In 2026, this is the default for new projects, but it's important to verify it in your project settings to ensure your AI generation logic isn't running through the legacy bridge."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Expo Managed", "React Native CLI"],
+        "rows": [
+          ["Native Folders", "Hidden/Generated", "Always visible"],
+          ["Setup Complexity", "Very Low", "Moderate"],
+          ["OTA Updates", "Built-in (Expo Updates)", "Requires 3rd party (CodePush)"],
+          ["Custom Native Code", "Via Config Plugins", "Directly in Swift/Kotlin"],
+          ["Build Times", "Fast (Cloud/Local)", "Standard Local Builds"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the Metro Bundler?",
+      "answer": "Metro is the JavaScript bundler for React Native. It takes all your JS files and combines them into a single bundle that is sent to the app. It's also responsible for 'Fast Refresh,' allowing you to see code changes instantly without a full re-compile."
+    },
+    {
+      "question": "Do I need to use CocoaPods?",
+      "answer": "Yes, for iOS development. CocoaPods is the dependency manager for Swift/Objective-C. Even if you use Expo, it uses CocoaPods under the hood to link native libraries to your Xcode project."
+    },
+    {
+      "question": "Should I use pnpm or npm?",
+      "answer": "As an Architect, pnpm or Yarn Berry is recommended for large projects because they handle nested dependencies more efficiently and provide faster installation times compared to standard npm."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which tool is used to watch file changes and provide 'Fast Refresh' in React Native?",
+      "options": ["Metro", "Watchman", "Hermes", "Yarn"],
+      "answer": 1
+    },
+    {
+      "question": "Which workflow allows for 'Continuous Native Generation' without manually editing ios/android folders?",
+      "options": ["React Native CLI", "Expo", "NativeScript", "Flutter"],
+      "answer": 1
+    },
+    {
+      "question": "What is the primary JavaScript bundler used by React Native?",
+      "options": ["Webpack", "Vite", "Metro", "Rollup"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-native-introduction",
+    "react-native-components",
+    "react-native-performance",
+    "ios-project-structure",
+    "clean-architecture-cross-platform"
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "react-native-introduction",
+  "course": "React Native",
+  "title": "React Native – High-Performance Cross-Platform Apps",
+
+  "meta": {
+    "title": "React Native Introduction – Architecture, Components & JSI (2026)",
+    "description": "A professional introduction to React Native for architects. Learn about the New Architecture (Fabric, TurboModules), JSI, and the React reconciliation model.",
+    "keywords": [
+      "react native introduction",
+      "react native architecture 2026",
+      "fabric renderer",
+      "jsi react native",
+      "turbomodules",
+      "react native vs flutter"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "What is React Native?"
+    },
+    {
+      "type": "text",
+      "value": "React Native is an open-source framework created by Meta that allows you to build natively rendering mobile apps for iOS and Android using JavaScript and React. Unlike hybrid frameworks that use WebViews, React Native invokes actual native UI components. In 2026, the framework has transitioned to a 'Bridgeless' architecture, providing a near-zero latency connection between JavaScript logic and native platform APIs."
+    },
+    {
+      "type": "heading",
+      "value": "1. The New Architecture (2026)"
+    },
+    {
+      "type": "text",
+      "value": "The 'New Architecture' is the most significant evolution in React Native's history. It eliminates the old asynchronous bridge that caused performance bottlenecks during heavy animations or large data transfers. It is built on four pillars:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**JSI (JavaScript Interface)**: A lightweight C++ layer that allows JS to hold a direct reference to native C++ objects. This enables synchronous execution and eliminates JSON serialization costs.",
+        "**Fabric**: The new rendering system that unifies rendering logic in C++. It supports concurrent rendering (React 18+) and priority-based UI updates.",
+        "**TurboModules**: A more efficient way to write native modules. They are lazily loaded and type-safe, significantly improving app startup time.",
+        "**Codegen**: A tool that automatically generates native code (Java/C++/Swift) from your JS specs, ensuring type safety across the language boundary."
+      ]
+    },
+    {
+      "type": "heading",
+      "value": "2. Core Components: The Native Mapping"
+    },
+    {
+      "type": "text",
+      "value": "In React Native, you write UI using JSX. These components are not translated into HTML; they are mapped directly to their native platform equivalents. For a Flutter Architect, this is like having a direct line to `UIView` (iOS) or `android.view` (Android)."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["React Native Component", "iOS Native Equivalent", "Android Native Equivalent", "Flutter Equivalent"],
+        "rows": [
+          ["<View>", "UIView", "ViewGroup / View", "Container / SizedBox"],
+          ["<Text>", "UILabel", "TextView", "Text"],
+          ["<Image>", "UIImageView", "ImageView", "Image"],
+          ["<ScrollView>", "UIScrollView", "ScrollView", "SingleChildScrollView"],
+          ["<FlatList>", "UITableView", "RecyclerView", "ListView.builder"]
+        ]
+      }
+    },
+    {
+      "type": "heading",
+      "value": "3. The Reconciliation Model"
+    },
+    {
+      "type": "text",
+      "value": "React Native uses a 'Virtual DOM' (or more accurately, a Shadow Tree in the New Architecture) to manage UI updates. When state changes, React calculates the difference ('diffing') and sends only the necessary updates to the native side. With **Fabric**, these updates can now be synchronous, allowing for the same pixel-perfect responsiveness you see with Flutter's Impeller engine."
+    },
+    {
+      "type": "heading",
+      "value": "Architectural Comparison: React Native vs. Flutter"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "React Native (2026)", "Flutter (2026)"],
+        "rows": [
+          ["Language", "JavaScript / TypeScript", "Dart"],
+          ["Rendering", "Native UI Components", "Custom Engine (Impeller)"],
+          ["Architecture", "Bridgeless (JSI + Fabric)", "Skia / Impeller Layer"],
+          ["Startup Time", "Excellent (Hermes + TurboModules)", "Fast (AOT Compiled)"],
+          ["Ecosystem", "npm (Largest in the world)", "pub.dev (Growing rapidly)"],
+          ["Hot Reload", "Fast Refresh", "Hot Reload / Restart"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is Hermes?",
+      "answer": "Hermes is a JavaScript engine optimized specifically for React Native. It pre-compiles JS into bytecode during the build process, which dramatically improves app start time, reduces memory usage, and results in a smaller app size."
+    },
+    {
+      "question": "Does React Native still have a 'Bridge'?",
+      "answer": "In the New Architecture, the 'Bridge' has been replaced by JSI. While people still use the term colloquially, the technical implementation is now a direct, synchronous C++ interface, which solves the historical 'lag' issues."
+    },
+    {
+      "question": "Can I use Swift or Kotlin with React Native?",
+      "answer": "Absolutely. Through TurboModules, you can write high-performance native logic in Swift or Kotlin and expose it to JavaScript. This is the equivalent of Method Channels in Flutter."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which technology replaced the JSON-based bridge in React Native's New Architecture?",
+      "options": ["V8 Engine", "JSI (JavaScript Interface)", "Webview", "TurboBridge"],
+      "answer": 1
+    },
+    {
+      "question": "What is the name of the new rendering engine in React Native?",
+      "options": ["Skia", "Impeller", "Fabric", "Yoga"],
+      "answer": 2
+    },
+    {
+      "question": "True or False: React Native components like <View> render as actual platform-native views (UIViews/Android Views).",
+      "options": ["True", "False"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "react-native-hooks",
+    "react-native-navigation",
+    "react-native-performance",
+    "flutter-vs-react-native",
+    "clean-architecture-cross-platform"
+  ]
+}

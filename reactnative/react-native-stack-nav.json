@@ -1,0 +1,234 @@
+{
+  "slug": "react-native-stack-nav",
+  "course": "React Native",
+  "title": "React Native Stack Navigator – Complete Guide to Native Stack Navigation",
+
+  "meta": {
+    "title": "React Native Stack Navigator: Native Stack, Params, Animation & TypeScript (2026)",
+    "description": "Master React Native Stack Navigator: native stack navigation, screen transitions, parameter passing, navigation lifecycle, header customization, deep linking, TypeScript, and React Navigation 8 features.",
+    "keywords": [
+      "react native stack navigator",
+      "native stack navigation",
+      "react navigation stack",
+      "react native screen transitions",
+      "stack navigator typescript",
+      "react navigation header",
+      "react native navigation params"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Stack Navigator – The Foundation of Mobile Navigation"
+    },
+    {
+      "type": "text",
+      "value": "Stack Navigator is the most common navigation pattern in mobile apps. It manages a stack of screens, pushing new screens onto the stack and popping to go back. React Navigation provides two stack implementations: `createNativeStackNavigator` (recommended, uses native UINavigationController on iOS and Fragment on Android) and `createStackNavigator` (JavaScript-based, for custom transitions). In 2026, `NativeStackNavigator` is the default choice for production apps."
+    },
+
+    {
+      "type": "heading",
+      "value": "1. Installation & Setup"
+    },
+    {
+      "type": "text",
+      "value": "Native Stack Navigator requires the core navigation package and native dependencies. For Expo managed projects, use `npx expo install`. For bare React Native projects, manual linking may be required."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Core packages\nnpm install @react-navigation/native @react-navigation/native-stack\n\n# Peer dependencies (Expo managed)\nnpx expo install react-native-screens react-native-safe-area-context\n\n# Peer dependencies (bare React Native)\nnpm install react-native-screens react-native-safe-area-context\ncd ios && pod install && cd ..\n\n# For Android, add to MainActivity.java:\n# import android.os.Bundle;\n# @Override\n# protected void onCreate(Bundle savedInstanceState) {\n#   super.onCreate(null);\n# }"
+    },
+
+    {
+      "type": "heading",
+      "value": "2. Basic Native Stack Navigator"
+    },
+    {
+      "type": "text",
+      "value": "Create a stack navigator with screens, configure options, and navigate between them using navigation methods."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// App.tsx - Basic Native Stack Navigator\nimport * as React from 'react';\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { Button, View, Text, StyleSheet, Alert } from 'react-native';\n\n// Type definitions for navigation params\ntype RootStackParamList = {\n  Home: undefined;\n  Details: { itemId: number; title: string };\n  Profile: { userId: string };\n  Modal: { message: string };\n};\n\nconst Stack = createNativeStackNavigator<RootStackParamList>();\n\n// Home Screen\nfunction HomeScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={styles.container}>\n      <Text style={styles.title}>Home Screen</Text>\n      \n      {/* Basic navigation with params */}\n      <Button\n        title=\"Go to Details\"\n        onPress={() => navigation.navigate('Details', { \n          itemId: 42, \n          title: 'The Answer' \n        })}\n      />\n      \n      {/* Push always adds new screen */}\n      <Button\n        title=\"Push Details (always new)\"\n        onPress={() => navigation.push('Details', { \n          itemId: Date.now(), \n          title: 'New Instance' \n        })}\n      />\n      \n      {/* Replace current screen */}\n      <Button\n        title=\"Replace with Profile\"\n        onPress={() => navigation.replace('Profile', { userId: 'new_user' })}\n      />\n      \n      {/* Go back */}\n      <Button\n        title=\"Go Back\"\n        onPress={() => navigation.goBack()}\n      />\n      \n      {/* Pop to first screen */}\n      <Button\n        title=\"Pop to Top\"\n        onPress={() => navigation.popToTop()}\n      />\n    </View>\n  );\n}\n\n// Details Screen with params\nfunction DetailsScreen({ route, navigation }: { route: any; navigation: any }) {\n  const { itemId, title } = route.params;\n  \n  return (\n    <View style={styles.container}>\n      <Text style={styles.title}>Details Screen</Text>\n      <Text>Item ID: {itemId}</Text>\n      <Text>Title: {title}</Text>\n      \n      {/* Update current screen params */}\n      <Button\n        title=\"Update Title\"\n        onPress={() => navigation.setParams({ title: 'Updated Title' })}\n      />\n      \n      {/* Navigate to parent */}\n      <Button\n        title=\"Go to Home\"\n        onPress={() => navigation.popToTop()}\n      />\n    </View>\n  );\n}\n\n// Profile Screen\nfunction ProfileScreen({ route, navigation }: { route: any; navigation: any }) {\n  const { userId } = route.params;\n  \n  // Navigate and replace current screen\n  return (\n    <View style={styles.container}>\n      <Text style={styles.title}>Profile</Text>\n      <Text>User ID: {userId}</Text>\n      <Button title=\"Edit Profile\" onPress={() => navigation.navigate('Modal', { \n        message: 'Edit your profile' \n      })} />\n    </View>\n  );\n}\n\n// Modal Screen (different presentation)\nfunction ModalScreen({ route, navigation }: { route: any; navigation: any }) {\n  return (\n    <View style={styles.modalContainer}>\n      <Text style={styles.title}>Modal</Text>\n      <Text>{route.params.message}</Text>\n      <Button title=\"Close\" onPress={() => navigation.goBack()} />\n    </View>\n  );\n}\n\nexport default function App() {\n  return (\n    <NavigationContainer>\n      <Stack.Navigator\n        initialRouteName=\"Home\"\n        screenOptions={{\n          headerStyle: { backgroundColor: '#007AFF' },\n          headerTintColor: '#FFFFFF',\n          headerTitleStyle: { fontWeight: 'bold' },\n          headerBackTitle: 'Back',\n          gestureEnabled: true, // iOS swipe back\n          animation: 'slide_from_right', // default animation\n        }}\n      >\n        <Stack.Screen\n          name=\"Home\"\n          component={HomeScreen}\n          options={{ title: 'Welcome' }}\n        />\n        <Stack.Screen\n          name=\"Details\"\n          component={DetailsScreen}\n          options={({ route }) => ({ \n            title: route.params.title \n          })}\n        />\n        <Stack.Screen\n          name=\"Profile\"\n          component={ProfileScreen}\n          options={{ title: 'User Profile' }}\n        />\n        {/* Modal presentation */}\n        <Stack.Screen\n          name=\"Modal\"\n          component={ModalScreen}\n          options={{\n            presentation: 'modal',\n            headerShown: false,\n          }}\n        />\n      </Stack.Navigator>\n    </NavigationContainer>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: {\n    flex: 1,\n    alignItems: 'center',\n    justifyContent: 'center',\n    gap: 16,\n    padding: 16,\n  },\n  title: {\n    fontSize: 24,\n    fontWeight: 'bold',\n    marginBottom: 20,\n  },\n  modalContainer: {\n    flex: 1,\n    alignItems: 'center',\n    justifyContent: 'center',\n    backgroundColor: 'rgba(0,0,0,0.9)',\n    gap: 16,\n  },\n});\n\n// Navigation Methods Reference:\n// navigation.navigate('RouteName', params) - Navigate to route, don't push if exists\n// navigation.push('RouteName', params) - Always push new screen\n// navigation.goBack() - Go back one screen\n// navigation.popToTop() - Go back to first screen in stack\n// navigation.replace('RouteName', params) - Replace current screen\n// navigation.setParams(params) - Update current screen params\n// navigation.canGoBack() - Check if can go back"
+    },
+
+    {
+      "type": "heading",
+      "value": "3. Header Customization"
+    },
+    {
+      "type": "text",
+      "value": "Native Stack Navigator provides extensive header customization options including custom components, buttons, large titles, and search bars."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// HeaderCustomization.tsx\nimport * as React from 'react';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { Button, View, Text, TouchableOpacity, Platform } from 'react-native';\nimport { Ionicons } from '@expo/vector-icons';\n\nconst Stack = createNativeStackNavigator();\n\nfunction HomeScreen({ navigation }: { navigation: any }) {\n  React.useLayoutEffect(() => {\n    navigation.setOptions({\n      headerRight: () => (\n        <Button\n          onPress={() => navigation.navigate('Settings')}\n          title=\"Settings\"\n          color=\"#fff\"\n        />\n      ),\n      headerLeft: () => (\n        <TouchableOpacity onPress={() => console.log('Menu pressed')} style={{ marginLeft: 16 }}>\n          <Ionicons name=\"menu\" size={24} color=\"#fff\" />\n        </TouchableOpacity>\n      ),\n    });\n  }, [navigation]);\n\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Home Screen</Text>\n    </View>\n  );\n}\n\nfunction SettingsScreen() {\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Settings Screen</Text>\n    </View>\n  );\n}\n\nexport default function HeaderCustomizationApp() {\n  return (\n    <NavigationContainer>\n      <Stack.Navigator\n        screenOptions={{\n          headerStyle: { backgroundColor: '#007AFF' },\n          headerTintColor: '#fff',\n          headerTitleStyle: { fontWeight: 'bold', fontSize: 20 },\n          // iOS large title\n          headerLargeTitle: Platform.OS === 'ios',\n          headerLargeTitleStyle: { fontSize: 34, fontWeight: 'bold' },\n          // Header shadow\n          headerShadowVisible: false,\n          // Back button customization\n          headerBackTitle: 'Back',\n          headerBackTitleStyle: { fontSize: 16 },\n          headerBackVisible: true,\n          // Hide header for specific screens\n          // headerShown: false,\n        }}\n      >\n        <Stack.Screen\n          name=\"Home\"\n          component={HomeScreen}\n          options={{\n            title: 'Dashboard',\n            // Large title only on this screen\n            headerLargeTitle: true,\n          }}\n        />\n        <Stack.Screen\n          name=\"Settings\"\n          component={SettingsScreen}\n          options={{\n            title: 'App Settings',\n            presentation: 'card',\n          }}\n        />\n      </Stack.Navigator>\n    </NavigationContainer>\n  );\n}\n\n// Custom header component\nfunction CustomHeader() {\n  return (\n    <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16 }}>\n      <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Custom Header</Text>\n    </View>\n  );\n}\n\n// Usage in screen options:\n// header: (props) => <CustomHeader {...props} />\n// headerTitle: (props) => <CustomTitle {...props} />\n// headerBackground: () => <LinearGradient colors={['#007AFF', '#0055CC']} />"
+    },
+
+    {
+      "type": "heading",
+      "value": "4. Screen Transitions & Animations"
+    },
+    {
+      "type": "text",
+      "value": "Native Stack Navigator supports various screen transition animations including default, fade, flip, and custom animations on iOS."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// ScreenTransitions.tsx\nimport * as React from 'react';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { Button, View, Text, StyleSheet } from 'react-native';\n\nconst Stack = createNativeStackNavigator();\n\nfunction HomeScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={styles.container}>\n      <Text style={styles.title}>Home</Text>\n      <Button title=\"Slide from Right\" onPress={() => navigation.navigate('SlideScreen')} />\n      <Button title=\"Fade Animation\" onPress={() => navigation.navigate('FadeScreen')} />\n      <Button title=\"Flip Animation\" onPress={() => navigation.navigate('FlipScreen')} />\n      <Button title=\"Modal Presentation\" onPress={() => navigation.navigate('ModalScreen')} />\n    </View>\n  );\n}\n\nfunction SlideScreen() {\n  return (\n    <View style={styles.container}>\n      <Text>Slide from Right (Default)</Text>\n    </View>\n  );\n}\n\nfunction FadeScreen() {\n  return (\n    <View style={styles.container}>\n      <Text>Fade Animation</Text>\n    </View>\n  );\n}\n\nfunction FlipScreen() {\n  return (\n    <View style={styles.container}>\n      <Text>Flip Horizontal (iOS only)</Text>\n    </View>\n  );\n}\n\nfunction ModalContentScreen() {\n  return (\n    <View style={styles.modalContainer}>\n      <Text>Modal Presentation</Text>\n    </View>\n  );\n}\n\nexport default function TransitionsApp() {\n  return (\n    <NavigationContainer>\n      <Stack.Navigator initialRouteName=\"Home\">\n        <Stack.Screen name=\"Home\" component={HomeScreen} />\n        \n        {/* Different animations */}\n        <Stack.Screen\n          name=\"SlideScreen\"\n          component={SlideScreen}\n          options={{ animation: 'slide_from_right' }}\n        />\n        <Stack.Screen\n          name=\"FadeScreen\"\n          component={FadeScreen}\n          options={{ animation: 'fade' }}\n        />\n        <Stack.Screen\n          name=\"FlipScreen\"\n          component={FlipScreen}\n          options={{ animation: 'flip' }}\n        />\n        \n        {/* Presentation styles */}\n        <Stack.Screen\n          name=\"ModalScreen\"\n          component={ModalContentScreen}\n          options={{\n            presentation: 'modal',\n            animation: 'slide_from_bottom',\n            headerShown: false,\n          }}\n        />\n      </Stack.Navigator>\n    </NavigationContainer>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },\n  title: { fontSize: 24, fontWeight: 'bold' },\n  modalContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.9)' },\n});\n\n// Animation Options:\n// animation: 'slide_from_right' (default)\n// animation: 'slide_from_left'\n// animation: 'slide_from_bottom'\n// animation: 'fade'\n// animation: 'flip' (iOS only)\n// animation: 'none'\n//\n// Presentation Options:\n// presentation: 'card' (default)\n// presentation: 'modal' (iOS modal style, slide from bottom)\n// presentation: 'transparentModal' (modal with transparent background)\n// presentation: 'fullScreenModal' (full screen modal)\n// presentation: 'formSheet' (iOS form sheet on iPad)"
+    },
+
+    {
+      "type": "heading",
+      "value": "5. Navigation Lifecycle & Hooks"
+    },
+    {
+      "type": "text",
+      "value": "React Navigation provides hooks to respond to screen focus, blur, and state changes. Use these for data fetching, analytics, and cleanup."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// NavigationLifecycle.tsx\nimport * as React from 'react';\nimport {\n  useFocusEffect,\n  useIsFocused,\n  useNavigation,\n  useRoute,\n} from '@react-navigation/native';\nimport { View, Text, Button, ActivityIndicator } from 'react-native';\n\nfunction DataFetchingScreen() {\n  const [isLoading, setIsLoading] = React.useState(false);\n  const [data, setData] = React.useState(null);\n\n  // Method 1: useFocusEffect (recommended for data fetching)\n  useFocusEffect(\n    React.useCallback(() => {\n      let isActive = true;\n      \n      const fetchData = async () => {\n        setIsLoading(true);\n        try {\n          const result = await fetch('https://api.example.com/data');\n          const json = await result.json();\n          if (isActive) {\n            setData(json);\n          }\n        } catch (error) {\n          console.error(error);\n        } finally {\n          if (isActive) {\n            setIsLoading(false);\n          }\n        }\n      };\n\n      fetchData();\n\n      // Cleanup when screen loses focus\n      return () => {\n        isActive = false;\n        console.log('Screen blurred - cleanup');\n      };\n    }, [])\n  );\n\n  // Method 2: useIsFocused (triggers re-render)\n  const isFocused = useIsFocused();\n\n  if (isLoading) {\n    return <ActivityIndicator size=\"large\" />;\n  }\n\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Screen Focused: {isFocused ? 'Yes' : 'No'}</Text>\n      <Text>{JSON.stringify(data)}</Text>\n    </View>\n  );\n}\n\n// BeforeRemove event (prevent accidental navigation)\nfunction FormScreen({ navigation }: { navigation: any }) {\n  const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);\n\n  React.useEffect(() => {\n    const unsubscribe = navigation.addListener('beforeRemove', (e: any) => {\n      if (!hasUnsavedChanges) {\n        return;\n      }\n\n      e.preventDefault();\n      \n      // Show confirmation dialog\n      Alert.alert(\n        'Discard changes?',\n        'You have unsaved changes. Are you sure you want to leave?',\n        [\n          { text: 'Stay', style: 'cancel', onPress: () => {} },\n          {\n            text: 'Discard',\n            style: 'destructive',\n            onPress: () => navigation.dispatch(e.data.action),\n          },\n        ]\n      );\n    });\n\n    return unsubscribe;\n  }, [navigation, hasUnsavedChanges]);\n\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Form Screen</Text>\n      <Button title=\"Edit\" onPress={() => setHasUnsavedChanges(true)} />\n    </View>\n  );\n}\n\n// Tab press to scroll to top\nfunction ScrollableScreen() {\n  const scrollRef = React.useRef(null);\n  const navigation = useNavigation();\n\n  React.useEffect(() => {\n    const unsubscribe = navigation.addListener('tabPress', (e: any) => {\n      // Prevent default tab behavior\n      // e.preventDefault();\n      \n      // Scroll to top\n      scrollRef.current?.scrollTo({ y: 0, animated: true });\n    });\n\n    return unsubscribe;\n  }, [navigation]);\n\n  return (\n    <ScrollView ref={scrollRef}>\n      {[...Array(50)].map((_, i) => (\n        <Text key={i}>Item {i + 1}</Text>\n      ))}\n    </ScrollView>\n  );\n}\n\n// Navigation state tracking\nfunction NavigationTracker() {\n  const navigation = useNavigation();\n  const route = useRoute();\n\n  React.useEffect(() => {\n    // Track screen view for analytics\n    console.log(`Screen viewed: ${route.name}`);\n    \n    // Track navigation state changes\n    const unsubscribe = navigation.addListener('state', (e) => {\n      console.log('Navigation state changed', e.data.state);\n    });\n\n    return unsubscribe;\n  }, [navigation, route]);\n\n  return null;\n}\n\n// Lifecycle Events:\n// focus - Screen came into focus\n// blur - Screen went out of focus\n// beforeRemove - Screen is about to be removed\n// state - Navigation state changed\n// transitionStart - Transition animation started\n// transitionEnd - Transition animation ended"
+    },
+
+    {
+      "type": "heading",
+      "value": "6. Passing & Accessing Parameters"
+    },
+    {
+      "type": "text",
+      "value": "Pass data between screens using route params. TypeScript ensures type safety for parameters."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// ParamsExample.tsx - Full TypeScript implementation\nimport * as React from 'react';\nimport {\n  NavigationContainer,\n  RouteProp,\n  useNavigation,\n  useRoute,\n} from '@react-navigation/native';\nimport { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';\nimport { Button, View, Text, TextInput, StyleSheet } from 'react-native';\n\n// Define param types for each screen\ntype RootStackParamList = {\n  Home: undefined;\n  Product: { id: number; name: string };\n  Checkout: {\n    items: Array<{ id: number; name: string; price: number }>;\n    total: number;\n    promoCode?: string;\n  };\n  UserProfile: { userId: string; readonly?: boolean };\n};\n\n// Type-safe navigation and route hooks\ntype HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;\ntype ProductScreenRouteProp = RouteProp<RootStackParamList, 'Product'>;\ntype CheckoutScreenRouteProp = RouteProp<RootStackParamList, 'Checkout'>;\n\nconst Stack = createNativeStackNavigator<RootStackParamList>();\n\nfunction HomeScreen() {\n  const navigation = useNavigation<HomeScreenNavigationProp>();\n\n  return (\n    <View style={styles.container}>\n      <Text style={styles.title}>Products</Text>\n      \n      {/* Passing single object */}\n      <Button\n        title=\"View Product 1\"\n        onPress={() => navigation.navigate('Product', { id: 1, name: 'iPhone 15 Pro' })}\n      />\n      \n      {/* Passing complex data */}\n      <Button\n        title=\"Go to Checkout\"\n        onPress={() =>\n          navigation.navigate('Checkout', {\n            items: [\n              { id: 1, name: 'iPhone', price: 999 },\n              { id: 2, name: 'Case', price: 49 },\n            ],\n            total: 1048,\n            promoCode: 'SAVE10',\n          })\n        }\n      />\n    </View>\n  );\n}\n\nfunction ProductScreen() {\n  const route = useRoute<ProductScreenRouteProp>();\n  const navigation = useNavigation();\n  const { id, name } = route.params;\n\n  // Update params\n  const updateProduct = () => {\n    navigation.setParams({ name: `${name} (Updated)` });\n  };\n\n  return (\n    <View style={styles.container}>\n      <Text style={styles.title}>{name}</Text>\n      <Text>Product ID: {id}</Text>\n      <Button title=\"Update Name\" onPress={updateProduct} />\n    </View>\n  );\n}\n\nfunction CheckoutScreen() {\n  const route = useRoute<CheckoutScreenRouteProp>();\n  const { items, total, promoCode } = route.params;\n\n  return (\n    <View style={styles.container}>\n      <Text style={styles.title}>Checkout</Text>\n      <Text>Items: {items.length}</Text>\n      <Text>Total: ${total}</Text>\n      {promoCode && <Text>Promo Code: {promoCode}</Text>}\n    </View>\n  );\n}\n\n// Default params (when param is optional)\nfunction UserProfileScreen() {\n  const route = useRoute<RouteProp<RootStackParamList, 'UserProfile'>>();\n  const { userId, readonly = false } = route.params;\n\n  return (\n    <View style={styles.container}>\n      <Text>User: {userId}</Text>\n      <Text>Readonly: {readonly ? 'Yes' : 'No'}</Text>\n    </View>\n  );\n}\n\nexport default function ParamsApp() {\n  return (\n    <NavigationContainer>\n      <Stack.Navigator>\n        <Stack.Screen name=\"Home\" component={HomeScreen} />\n        <Stack.Screen name=\"Product\" component={ProductScreen} />\n        <Stack.Screen name=\"Checkout\" component={CheckoutScreen} />\n        <Stack.Screen name=\"UserProfile\" component={UserProfileScreen} />\n      </Stack.Navigator>\n    </NavigationContainer>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },\n  title: { fontSize: 24, fontWeight: 'bold' },\n});\n\n// Parameter best practices:\n// 1. Only pass serializable data (avoid functions, class instances)\n// 2. Use TypeScript for type safety\n// 3. Keep params minimal - pass IDs, fetch full data in child screen\n// 4. Use optional params with default values\n// 5. Avoid passing entire objects when ID would suffice\n// 6. Use route.params?.field for optional params"
+    },
+
+    {
+      "type": "heading",
+      "value": "7. Nesting Stack Navigators"
+    },
+    {
+      "type": "text",
+      "value": "Nesting stack navigators inside tabs or drawers is common. Access parent navigators and pass params between nested stacks."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// NestedStacks.tsx - Stack inside Tab Navigator\nimport * as React from 'react';\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { createBottomTabNavigator } from '@react-navigation/bottom-tabs';\nimport { Button, View, Text } from 'react-native';\nimport { Ionicons } from '@expo/vector-icons';\n\n// ----- Home Stack -----\ntype HomeStackParamList = {\n  HomeList: undefined;\n  HomeDetail: { id: number };\n};\n\nconst HomeStack = createNativeStackNavigator<HomeStackParamList>();\n\nfunction HomeListScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }}>\n      <Text>Home List</Text>\n      <Button\n        title=\"Go to Detail\"\n        onPress={() => navigation.navigate('HomeDetail', { id: 42 })}\n      />\n      {/* Access parent tab navigator */}\n      <Button\n        title=\"Open Drawer (if exists)\"\n        onPress={() => navigation.getParent()?.openDrawer?.()}\n      />\n    </View>\n  );\n}\n\nfunction HomeDetailScreen({ route, navigation }: { route: any; navigation: any }) {\n  const { id } = route.params;\n  \n  return (\n    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }}>\n      <Text>Home Detail - ID: {id}</Text>\n      <Button title=\"Go Back\" onPress={() => navigation.goBack()} />\n      {/* Navigate in parent tab */}\n      <Button\n        title=\"Go to Profile Tab\"\n        onPress={() => navigation.getParent()?.navigate('ProfileTab')}\n      />\n    </View>\n  );\n}\n\nfunction HomeStackScreen() {\n  return (\n    <HomeStack.Navigator>\n      <HomeStack.Screen name=\"HomeList\" component={HomeListScreen} />\n      <HomeStack.Screen name=\"HomeDetail\" component={HomeDetailScreen} />\n    </HomeStack.Navigator>\n  );\n}\n\n// ----- Profile Stack -----\ntype ProfileStackParamList = {\n  ProfileMain: undefined;\n  ProfileEdit: undefined;\n};\n\nconst ProfileStack = createNativeStackNavigator<ProfileStackParamList>();\n\nfunction ProfileMainScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }}>\n      <Text>Profile Main</Text>\n      <Button title=\"Edit Profile\" onPress={() => navigation.navigate('ProfileEdit')} />\n    </View>\n  );\n}\n\nfunction ProfileEditScreen() {\n  return (\n    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>\n      <Text>Edit Profile</Text>\n    </View>\n  );\n}\n\nfunction ProfileStackScreen() {\n  return (\n    <ProfileStack.Navigator>\n      <ProfileStack.Screen name=\"ProfileMain\" component={ProfileMainScreen} />\n      <ProfileStack.Screen name=\"ProfileEdit\" component={ProfileEditScreen} />\n    </ProfileStack.Navigator>\n  );\n}\n\n// ----- Tab Navigator -----\ntype TabParamList = {\n  HomeTab: undefined;\n  ProfileTab: undefined;\n};\n\nconst Tab = createBottomTabNavigator<TabParamList>();\n\nfunction MainTabNavigator() {\n  return (\n    <Tab.Navigator\n      screenOptions={({ route }) => ({\n        tabBarIcon: ({ focused, color, size }) => {\n          const iconName = route.name === 'HomeTab' ? 'home' : 'person';\n          return <Ionicons name={focused ? iconName : `${iconName}-outline`} size={size} color={color} />;\n        },\n        tabBarActiveTintColor: '#007AFF',\n        headerShown: false,\n      })}\n    >\n      <Tab.Screen name=\"HomeTab\" component={HomeStackScreen} />\n      <Tab.Screen name=\"ProfileTab\" component={ProfileStackScreen} />\n    </Tab.Navigator>\n  );\n}\n\nexport default function NestedStacksApp() {\n  return (\n    <NavigationContainer>\n      <MainTabNavigator />\n    </NavigationContainer>\n  );\n}\n\n// Accessing parent navigators:\n// navigation.getParent() - Returns parent navigator\n// navigation.getParent('TabNavigator') - Get specific parent by ID\n// navigation.dispatch(CommonActions.navigate({ name: 'Tab', params: {} }))\n\n// Passing params between nested stacks:\n// Option 1: Use navigation.getParent()?.navigate('Tab', { screen: 'Screen', params: {} })\n// Option 2: Use navigation.dispatch with CommonActions\n// Option 3: Use global state (Redux, Zustand) for shared data"
+    },
+
+    {
+      "type": "heading",
+      "value": "8. Deep Linking with Stack Navigator"
+    },
+    {
+      "type": "text",
+      "value": "Configure deep linking to open specific screens from URLs. React Navigation 8 supports Zod schemas for parameter validation."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// DeepLinkingConfig.tsx\nimport * as React from 'react';\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { View, Text, Linking } from 'react-native';\nimport { z } from 'zod'; // React Navigation 8 supports Zod\n\nconst Stack = createNativeStackNavigator();\n\n// Deep linking configuration\nconst linking = {\n  prefixes: ['myapp://', 'https://myapp.com', 'https://www.myapp.com'],\n  \n  // React Navigation 8 - Automatic path generation\n  // Paths are automatically generated from screen names (PascalCase -> kebab-case)\n  // Example: ProductDetailScreen -> /product-detail-screen\n  \n  // Custom path configuration\n  config: {\n    screens: {\n      Home: {\n        path: '', // root\n        exact: true,\n      },\n      ProductList: 'products',\n      ProductDetail: {\n        path: 'product/:id',\n        parse: {\n          // React Navigation 8 - Zod schema for validation\n          id: z.coerce.number(), // Convert string to number, reject if not a number\n        },\n        stringify: {\n          id: (id: number) => id.toString(),\n        },\n      },\n      Profile: 'user/:userId',\n      Settings: 'settings',\n      // Nested navigators\n      Modal: {\n        path: 'modal',\n        screens: {\n          ModalContent: 'content',\n        },\n      },\n    },\n  },\n  \n  // Optional: Get initial URL from the app\n  async getInitialURL() {\n    const url = await Linking.getInitialURL();\n    return url;\n  },\n  \n  // Optional: Subscribe to URL events\n  subscribe(listener: (url: string) => void) {\n    const onReceiveURL = ({ url }: { url: string }) => listener(url);\n    Linking.addEventListener('url', onReceiveURL);\n    return () => Linking.removeEventListener('url', onReceiveURL);\n  },\n};\n\nfunction HomeScreen() {\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Home Screen</Text>\n    </View>\n  );\n}\n\nfunction ProductListScreen() {\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Product List</Text>\n    </View>\n  );\n}\n\nfunction ProductDetailScreen({ route }: { route: any }) {\n  const { id } = route.params;\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Product Detail - ID: {id}</Text>\n    </View>\n  );\n}\n\nfunction ProfileScreen({ route }: { route: any }) {\n  const { userId } = route.params;\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Profile - User: {userId}</Text>\n    </View>\n  );\n}\n\nfunction SettingsScreen() {\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Settings</Text>\n    </View>\n  );\n}\n\n// React Navigation 8 - Standard Schema support\n// You can use Zod, Valibot, or ArkType for param validation\n// Benefits:\n// - Validation: If validation fails, URL won't match the screen\n// - Fallback: Schemas called with undefined when param missing\n// - Better TypeScript inference for required/optional params\n\n// For React Navigation 7, use parse function:\n// parse: {\n//   id: (id: string) => Number(id),\n// }\n\nexport default function DeepLinkingApp() {\n  return (\n    <NavigationContainer linking={linking}>\n      <Stack.Navigator>\n        <Stack.Screen name=\"Home\" component={HomeScreen} />\n        <Stack.Screen name=\"ProductList\" component={ProductListScreen} />\n        <Stack.Screen name=\"ProductDetail\" component={ProductDetailScreen} />\n        <Stack.Screen name=\"Profile\" component={ProfileScreen} />\n        <Stack.Screen name=\"Settings\" component={SettingsScreen} />\n      </Stack.Navigator>\n    </NavigationContainer>\n  );\n}\n\n// URL Examples:\n// myapp://\n// myapp://products\n// myapp://product/42\n// myapp://user/johndoe\n// https://myapp.com/product/100\n// https://www.myapp.com/settings\n\n// Testing deep links (iOS Simulator):\n// xcrun simctl openurl booted myapp://product/123\n\n// Testing deep links (Android Emulator):\n// adb shell am start -W -a android.intent.action.VIEW -d \"myapp://product/123\" com.myapp"
+    },
+
+    {
+      "type": "heading",
+      "value": "9. TypeScript Best Practices"
+    },
+    {
+      "type": "text",
+      "value": "Full TypeScript integration ensures type safety for navigation and route parameters."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// types/navigation.ts - Global navigation types\nexport type RootStackParamList = {\n  Home: undefined;\n  Details: { id: number; title: string };\n  Profile: { userId: string; readonly?: boolean };\n  Modal: undefined;\n};\n\n// Global type declaration\ndeclare global {\n  namespace ReactNavigation {\n    interface RootParamList extends RootStackParamList {}\n  }\n}\n\n// Screen component with full typing\nimport type { NativeStackScreenProps } from '@react-navigation/native-stack';\n\ntype DetailsScreenProps = NativeStackScreenProps<RootStackParamList, 'Details'>;\n\nfunction DetailsScreen({ route, navigation }: DetailsScreenProps) {\n  const { id, title } = route.params;\n  // TypeScript knows id is number, title is string\n  \n  return (\n    <View>\n      <Text>{title}</Text>\n      <Button title=\"Go Back\" onPress={() => navigation.goBack()} />\n    </View>\n  );\n}\n\n// useNavigation with type parameter\ntype HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;\n\nfunction HomeScreen() {\n  const navigation = useNavigation<HomeScreenNavigationProp>();\n  \n  // Type-safe navigate call\n  navigation.navigate('Details', { id: 42, title: 'Hello' });\n  // Error: navigation.navigate('Details', { wrong: 'param' });\n  \n  return null;\n}\n\n// React Navigation 8 - Automatic type inference with createXScreen\nimport { createNativeStackScreen } from '@react-navigation/native-stack';\n\nconst Stack = createStackNavigator({\n  screens: {\n    Profile: createNativeStackScreen({\n      screen: ProfileScreen,\n      linking: {\n        path: 'user/:userId',\n        parse: {\n          userId: (userId) => Number(userId),\n        },\n      },\n      options: ({ route }) => {\n        // route.params.userId is automatically typed as number\n        return { title: `User ${route.params.userId}` };\n      },\n    }),\n  },\n});\n\n// useRoute with type parameter\nconst route = useRoute<RouteProp<RootStackParamList, 'Details'>>();\nconst { id, title } = route.params;\n\n// Optional params with default values\ntype UserProfileParams = {\n  userId: string;\n  readonly?: boolean;\n};\n\nfunction UserProfileScreen({ route }: { route: RouteProp<RootStackParamList, 'Profile'> }) {\n  const { userId, readonly = false } = route.params;\n  return <Text>{userId} - Readonly: {readonly}</Text>;\n}\n\n// Navigation service with TypeScript\nimport { createNavigationContainerRef } from '@react-navigation/native';\n\nexport const navigationRef = createNavigationContainerRef<RootStackParamList>();\n\nexport function navigate(name: keyof RootStackParamList, params?: any) {\n  if (navigationRef.isReady()) {\n    navigationRef.navigate(name, params);\n  }\n}\n\n// Usage in non-component\n// import { navigate } from './NavigationService';\n// navigate('Details', { id: 1, title: 'Test' });"
+    },
+
+    {
+      "type": "heading",
+      "value": "10. Performance Optimization"
+    },
+    {
+      "type": "text",
+      "value": "Optimize stack navigator performance for large apps with lazy loading, screen freezing, and proper memoization."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// PerformanceOptimizations.tsx\nimport * as React from 'react';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { View, Text, ActivityIndicator } from 'react-native';\n\nconst Stack = createNativeStackNavigator();\n\n// 1. Lazy loading screens with React.lazy\nconst LazyProfileScreen = React.lazy(() => import('./ProfileScreen'));\n\nfunction LazyLoadedScreen() {\n  return (\n    <React.Suspense fallback={<ActivityIndicator size=\"large\" />}>\n      <LazyProfileScreen />\n    </React.Suspense>\n  );\n}\n\n// 2. Memoize screen components\nconst MemoizedHomeScreen = React.memo(function HomeScreen() {\n  return (\n    <View>\n      <Text>Memoized Home Screen</Text>\n    </View>\n  );\n});\n\n// 3. Freeze inactive screens (React Navigation 8)\n// Prevents rendering of inactive screens, improves performance\nfunction FreezingExample() {\n  return (\n    <Stack.Navigator\n      screenOptions={{\n        freezeOnBlur: true, // React Navigation 8 - freeze inactive screens\n        // inactiveBehavior: 'pause', // Clean up effects on inactive screens\n      }}\n    >\n      <Stack.Screen name=\"Home\" component={HomeScreen} />\n      <Stack.Screen name=\"Details\" component={DetailsScreen} />\n    </Stack.Navigator>\n  );\n}\n\n// 4. Detach inactive screens (Native Stack only)\n// Completely detaches screens from view hierarchy when inactive\nfunction DetachInactiveExample() {\n  return (\n    <Stack.Navigator\n      screenOptions={{\n        detachInactiveScreens: true, // Native Stack only, improves memory\n      }}\n    >\n      <Stack.Screen name=\"Home\" component={HomeScreen} />\n      <Stack.Screen name=\"Details\" component={DetailsScreen} />\n    </Stack.Navigator>\n  );\n}\n\n// 5. Avoid heavy components in header\n// Bad:\n// options={{\n//   headerRight: () => <ExpensiveComponent /> // Re-renders frequently\n// }}\n\n// Good:\n// const MemoizedHeaderRight = React.memo(() => <SimpleButton />);\n// options={{ headerRight: () => <MemoizedHeaderRight /> }}\n\n// 6. Use useCallback for navigation handlers\nfunction HomeScreenWithHandlers() {\n  const navigation = useNavigation();\n  \n  const handlePress = React.useCallback(() => {\n    navigation.navigate('Details');\n  }, [navigation]);\n  \n  return <Button title=\"Go\" onPress={handlePress} />;\n}\n\n// 7. Avoid inline functions in options\n// Bad:\n// <Stack.Screen\n//   options={{\n//     headerRight: () => <Button onPress={() => console.log('press')} /> // New function each render\n//   }}\n// />\n\n// Good:\n// const HeaderRight = React.memo(() => <Button onPress={handlePress} />);\n// <Stack.Screen options={{ headerRight: HeaderRight }} />\n\n// 8. Use getFocusedRouteNameFromRoute to conditionally render tab bars\nimport { getFocusedRouteNameFromRoute } from '@react-navigation/native';\n\nfunction getTabBarVisibility(route: any) {\n  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';\n  const hideOnScreens = ['Details', 'Profile'];\n  return { display: hideOnScreens.includes(routeName) ? 'none' : 'flex' };\n}\n\n// Performance Checklist:\n// ✅ Use freezeOnBlur: true (React Navigation 8)\n// ✅ Use detachInactiveScreens: true (Native Stack)\n// ✅ Lazy load heavy screens\n// ✅ Memoize screen components\n// ✅ Use useCallback for navigation handlers\n// ✅ Avoid inline functions in options\n// ✅ Keep header components simple and memoized\n// ✅ Profile with React DevTools and Flipper"
+    },
+
+    {
+      "type": "heading",
+      "value": "11. Common Patterns & Best Practices"
+    },
+    {
+      "type": "text",
+      "value": "Production-proven patterns for stack navigator implementation."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// NavigationService.ts - Navigation outside components\nimport { createNavigationContainerRef, CommonActions } from '@react-navigation/native';\nimport { RootStackParamList } from './types';\n\nexport const navigationRef = createNavigationContainerRef<RootStackParamList>();\n\nexport function navigate(name: keyof RootStackParamList, params?: any) {\n  if (navigationRef.isReady()) {\n    navigationRef.navigate(name, params);\n  }\n}\n\nexport function goBack() {\n  if (navigationRef.isReady() && navigationRef.canGoBack()) {\n    navigationRef.goBack();\n  }\n}\n\nexport function resetAndNavigate(name: keyof RootStackParamList) {\n  if (navigationRef.isReady()) {\n    navigationRef.dispatch(\n      CommonActions.reset({\n        index: 0,\n        routes: [{ name }],\n      })\n    );\n  }\n}\n\n// useBeforeRemove.ts - Prevent accidental navigation\nimport { useBeforeRemove } from '@react-navigation/native';\n\nexport function usePreventNavigation(hasUnsavedChanges: boolean) {\n  const navigation = useNavigation();\n  \n  useBeforeRemove((e) => {\n    if (!hasUnsavedChanges) return;\n    \n    e.preventDefault();\n    \n    Alert.alert(\n      'Discard changes?',\n      'You have unsaved changes. Are you sure?',\n      [\n        { text: 'Stay', style: 'cancel' },\n        {\n          text: 'Discard',\n          style: 'destructive',\n          onPress: () => navigation.dispatch(e.data.action),\n        },\n      ]\n    );\n  });\n}\n\n// useFocusRefresh.ts - Refresh data on focus\nimport { useFocusEffect } from '@react-navigation/native';\n\nexport function useFocusRefresh(refreshFn: () => Promise<void>) {\n  useFocusEffect(\n    React.useCallback(() => {\n      refreshFn();\n      return () => {};\n    }, [refreshFn])\n  );\n}\n\n// App.tsx - Complete setup with TypeScript\nimport { NavigationContainer } from '@react-navigation/native';\nimport { navigationRef } from './NavigationService';\n\nexport default function App() {\n  return (\n    <NavigationContainer ref={navigationRef}>\n      <RootNavigator />\n    </NavigationContainer>\n  );\n}\n\n// Best Practices Summary:\n// 1. Use createNativeStackNavigator over createStackNavigator\n// 2. Define TypeScript param types for all screens\n// 3. Use useFocusEffect for data fetching on screen focus\n// 4. Use navigation.push() when you need multiple instances of same screen\n// 5. Use navigation.replace() for login/onboarding flows\n// 6. Set freezeOnBlur: true for performance (React Navigation 8)\n// 7. Use React.memo for screen components\n// 8. Avoid passing non-serializable data in params\n// 9. Use getFocusedRouteNameFromRoute to conditionally hide tab bars\n// 10. Test deep links with simulators and real devices"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What's the difference between navigate and push?",
+      "answer": "`navigate` checks if a screen with that name already exists in the stack. If it does, it jumps to that existing screen. If not, it pushes a new screen. `push` always adds a new screen to the stack, even if an instance already exists. Use `navigate` for main navigation flows (prevents duplicate screens). Use `push` when you need multiple instances (e.g., product details from different categories)."
+    },
+    {
+      "question": "How do I pass complex objects between screens?",
+      "answer": "Pass only serializable data (JSON-compatible). For large objects, pass an ID and fetch the full object in the child screen. For shared state, use global state management (Zustand, Redux). Avoid passing functions, class instances, or React components as params."
+    },
+    {
+      "question": "Why does my screen re-render when I navigate back?",
+      "answer": "When you navigate back, the previous screen becomes focused again, triggering a re-render. This is expected. If you're fetching data, use `useFocusEffect` with proper caching to avoid unnecessary network requests. For expensive re-renders, use `React.memo` on your screen components."
+    },
+    {
+      "question": "What's the difference between Native Stack and JS Stack?",
+      "answer": "Native Stack (`createNativeStackNavigator`) uses native navigation components (UINavigationController on iOS, Fragment on Android) for better performance, native gestures, and smaller bundle size. JS Stack (`createStackNavigator`) is JavaScript-based, supports custom transitions, but has lower performance. Use Native Stack for production apps."
+    }
+  ],
+
+  "quiz": [
+    {
+      "question": "Which navigation method always adds a new screen to the stack?",
+      "options": ["navigate", "push", "goBack", "replace"],
+      "answer": 1
+    },
+    {
+      "question": "What is the default animation for Native Stack Navigator?",
+      "options": ["fade", "slide_from_bottom", "slide_from_right", "flip"],
+      "answer": 2
+    },
+    {
+      "question": "Which hook should you use to fetch data when a screen becomes visible?",
+      "options": ["useEffect", "useLayoutEffect", "useFocusEffect", "useIsFocused"],
+      "answer": 2
+    },
+    {
+      "question": "Which React Navigation 8 feature improves performance by preventing inactive screen rendering?",
+      "options": ["detachInactiveScreens", "freezeOnBlur", "lazy", "unmountOnBlur"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-native-navigation",
+    "react-native-components",
+    "react-native-styling",
+    "react-native-performance",
+    "react-native-deep-linking"
+  ]
+}

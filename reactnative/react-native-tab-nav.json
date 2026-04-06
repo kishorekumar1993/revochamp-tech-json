@@ -1,0 +1,220 @@
+{
+  "slug": "react-native-tab-nav",
+  "course": "React Native",
+  "title": "React Native Tab Navigator – Bottom Tabs, Top Tabs & Custom Tab Bars",
+
+  "meta": {
+    "title": "React Native Tab Navigator: Bottom Tabs, Material Top Tabs & Custom Tab Bars (2026)",
+    "description": "Master React Navigation tabs: bottom tabs, material top tabs, custom tab bar components, badges, icons, nested navigators, TypeScript, and performance optimization.",
+    "keywords": [
+      "react native bottom tabs",
+      "react navigation tabs",
+      "material top tabs react native",
+      "custom tab bar react native",
+      "tab navigator typescript",
+      "react native tab bar badge",
+      "nested tab navigation"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Tab Navigator – Organizing App Screens"
+    },
+    {
+      "type": "text",
+      "value": "Tab navigators are essential for organizing app content into logical categories. React Navigation provides two primary tab implementations: `@react-navigation/bottom-tabs` (standard iOS/Android bottom tab bar) and `@react-navigation/material-top-tabs` (Material Design top tabs for Android). In 2026, React Navigation 8 introduces native bottom tabs by default, featuring iOS 26 liquid glass effects and improved performance."
+    },
+
+    {
+      "type": "heading",
+      "value": "1. Installation & Setup"
+    },
+    {
+      "type": "text",
+      "value": "Install the required packages for bottom tabs and optional material top tabs. For React Navigation 8, native bottom tabs are the default implementation."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Bottom Tabs (React Navigation 7/8)\nnpm install @react-navigation/bottom-tabs\n\n# Material Top Tabs (Android-style)\nnpm install @react-navigation/material-top-tabs react-native-tab-view\n\n# For React Navigation 8 - Native bottom tabs (default, no extra package needed)\n# Built into @react-navigation/native\n\n# Peer dependencies (Expo managed)\nnpx expo install react-native-screens react-native-safe-area-context\n\n# For Material Top Tabs (bare React Native)\nnpm install react-native-pager-view\ncd ios && pod install && cd ..\n\n# Icons (optional, for tab bar icons)\nnpm install react-native-vector-icons\n# or for Expo: npx expo install @expo/vector-icons"
+    },
+
+    {
+      "type": "heading",
+      "value": "2. Bottom Tab Navigator (Standard)"
+    },
+    {
+      "type": "text",
+      "value": "Bottom tabs are the most common tab pattern in mobile apps. They appear at the bottom of the screen and are always visible. React Navigation 8 uses native bottom tabs by default for iOS 26 liquid glass effects."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// BottomTabNavigator.tsx\nimport * as React from 'react';\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createBottomTabNavigator } from '@react-navigation/bottom-tabs';\nimport { Ionicons } from '@expo/vector-icons';\nimport { View, Text, StyleSheet, Platform } from 'react-native';\n\n// Screen components\nfunction HomeScreen() {\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.title}>Home Screen</Text>\n    </View>\n  );\n}\n\nfunction SearchScreen() {\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.title}>Search Screen</Text>\n    </View>\n  );\n}\n\nfunction NotificationsScreen() {\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.title}>Notifications</Text>\n    </View>\n  );\n}\n\nfunction ProfileScreen() {\n  return (\n    <View style={styles.screen}>\n      <Text style={styles.title}>Profile Screen</Text>\n    </View>\n  );\n}\n\n// Type definitions\ntype TabParamList = {\n  Home: undefined;\n  Search: undefined;\n  Notifications: undefined;\n  Profile: undefined;\n};\n\nconst Tab = createBottomTabNavigator<TabParamList>();\n\nexport default function BottomTabNavigator() {\n  return (\n    <NavigationContainer>\n      <Tab.Navigator\n        screenOptions={({ route }) => ({\n          tabBarIcon: ({ focused, color, size }) => {\n            let iconName: keyof typeof Ionicons.glyphMap = 'home-outline';\n\n            if (route.name === 'Home') {\n              iconName = focused ? 'home' : 'home-outline';\n            } else if (route.name === 'Search') {\n              iconName = focused ? 'search' : 'search-outline';\n            } else if (route.name === 'Notifications') {\n              iconName = focused ? 'notifications' : 'notifications-outline';\n            } else if (route.name === 'Profile') {\n              iconName = focused ? 'person' : 'person-outline';\n            }\n\n            return <Ionicons name={iconName} size={size} color={color} />;\n          },\n          tabBarActiveTintColor: '#007AFF',\n          tabBarInactiveTintColor: 'gray',\n          tabBarStyle: {\n            paddingBottom: Platform.OS === 'ios' ? 20 : 10,\n            height: Platform.OS === 'ios' ? 85 : 65,\n            backgroundColor: '#fff',\n          },\n          tabBarLabelStyle: {\n            fontSize: 12,\n            fontWeight: '500',\n          },\n          headerStyle: {\n            backgroundColor: '#007AFF',\n          },\n          headerTintColor: '#fff',\n          headerTitleStyle: {\n            fontWeight: 'bold',\n          },\n        })}\n      >\n        <Tab.Screen \n          name=\"Home\" \n          component={HomeScreen} \n          options={{ title: 'Home' }}\n        />\n        <Tab.Screen \n          name=\"Search\" \n          component={SearchScreen} \n          options={{ title: 'Discover' }}\n        />\n        <Tab.Screen \n          name=\"Notifications\" \n          component={NotificationsScreen} \n          options={{ \n            title: 'Alerts',\n            tabBarBadge: 3, // Show badge with number 3\n          }}\n        />\n        <Tab.Screen \n          name=\"Profile\" \n          component={ProfileScreen} \n          options={{ title: 'My Profile' }}\n        />\n      </Tab.Navigator>\n    </NavigationContainer>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: {\n    flex: 1,\n    justifyContent: 'center',\n    alignItems: 'center',\n    backgroundColor: '#fff',\n  },\n  title: {\n    fontSize: 24,\n    fontWeight: 'bold',\n  },\n});\n\n// React Navigation 8 - Native bottom tabs (simpler syntax)\n// In React Navigation 8, native bottom tabs are the default:\n// import { createBottomTabNavigator } from '@react-navigation/native';\n// No need for @react-navigation/bottom-tabs package"
+    },
+
+    {
+      "type": "heading",
+      "value": "3. Material Top Tab Navigator"
+    },
+    {
+      "type": "text",
+      "value": "Material Top Tabs follow Material Design guidelines and are commonly used on Android. They appear at the top of the screen and can scroll horizontally."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// MaterialTopTabNavigator.tsx\nimport * as React from 'react';\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';\nimport { View, Text, StyleSheet } from 'react-native';\n\n// Screen components\nfunction FeedScreen() {\n  return (\n    <View style={styles.screen}>\n      <Text>Feed - Latest posts from people you follow</Text>\n    </View>\n  );\n}\n\nfunction TrendingScreen() {\n  return (\n    <View style={styles.screen}>\n      <Text>Trending - Popular content right now</Text>\n    </View>\n  );\n}\n\nfunction LatestScreen() {\n  return (\n    <View style={styles.screen}>\n      <Text>Latest - Newest content first</Text>\n    </View>\n  );\n}\n\nfunction FavoritesScreen() {\n  return (\n    <View style={styles.screen}>\n      <Text>Favorites - Content you've saved</Text>\n    </View>\n  );\n}\n\nconst Tab = createMaterialTopTabNavigator();\n\nexport default function MaterialTopTabNavigator() {\n  return (\n    <NavigationContainer>\n      <Tab.Navigator\n        screenOptions={{\n          tabBarLabelStyle: { fontSize: 14, fontWeight: '600', textTransform: 'none' },\n          tabBarIndicatorStyle: { backgroundColor: '#007AFF', height: 3 },\n          tabBarActiveTintColor: '#007AFF',\n          tabBarInactiveTintColor: 'gray',\n          tabBarStyle: { backgroundColor: '#fff', elevation: 4, shadowOpacity: 0.1 },\n          // Scrollable tabs for many items\n          tabBarScrollEnabled: true,\n          tabBarItemStyle: { width: 'auto', minWidth: 80 },\n        }}\n      >\n        <Tab.Screen name=\"Feed\" component={FeedScreen} />\n        <Tab.Screen name=\"Trending\" component={TrendingScreen} />\n        <Tab.Screen name=\"Latest\" component={LatestScreen} />\n        <Tab.Screen name=\"Favorites\" component={FavoritesScreen} />\n      </Tab.Navigator>\n    </NavigationContainer>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: {\n    flex: 1,\n    justifyContent: 'center',\n    alignItems: 'center',\n    padding: 16,\n  },\n});\n\n// Material Top Tabs with custom indicator\nfunction CustomIndicatorScreen() {\n  return (\n    <Tab.Navigator\n      screenOptions={{\n        tabBarIndicator: () => (\n          <View\n            style={{\n              backgroundColor: '#007AFF',\n              height: 4,\n              borderRadius: 2,\n              width: '50%',\n              alignSelf: 'center',\n            }}\n          />\n        ),\n        tabBarStyle: { elevation: 0, shadowOpacity: 0 },\n      }}\n    >\n      {/* Tabs */}\n    </Tab.Navigator>\n  );\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "4. Custom Tab Bar Component"
+    },
+    {
+      "type": "text",
+      "value": "Create fully customized tab bars with animations, custom buttons, and unique styling for brand-specific designs."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// CustomTabBar.tsx\nimport * as React from 'react';\nimport { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';\nimport { Ionicons } from '@expo/vector-icons';\nimport { BottomTabBarProps } from '@react-navigation/bottom-tabs';\n\n// Custom tab bar component\nfunction CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {\n  const [isTabBarVisible, setIsTabBarVisible] = React.useState(true);\n\n  // Optional: Hide tab bar on scroll\n  // You can implement scroll listener to hide/show tab bar\n\n  return (\n    <View style={[styles.tabBar, !isTabBarVisible && styles.tabBarHidden]}>\n      {state.routes.map((route, index) => {\n        const { options } = descriptors[route.key];\n        const label =\n          options.tabBarLabel !== undefined\n            ? options.tabBarLabel\n            : options.title !== undefined\n            ? options.title\n            : route.name;\n\n        const isFocused = state.index === index;\n\n        const onPress = () => {\n          const event = navigation.emit({\n            type: 'tabPress',\n            target: route.key,\n            canPreventDefault: true,\n          });\n\n          if (!isFocused && !event.defaultPrevented) {\n            navigation.navigate(route.name);\n          }\n        };\n\n        const onLongPress = () => {\n          navigation.emit({\n            type: 'tabLongPress',\n            target: route.key,\n          });\n        };\n\n        // Get icon name\n        let iconName: keyof typeof Ionicons.glyphMap = 'home-outline';\n        if (route.name === 'Home') iconName = isFocused ? 'home' : 'home-outline';\n        else if (route.name === 'Search') iconName = isFocused ? 'search' : 'search-outline';\n        else if (route.name === 'Notifications') iconName = isFocused ? 'notifications' : 'notifications-outline';\n        else if (route.name === 'Profile') iconName = isFocused ? 'person' : 'person-outline';\n\n        // Special tab: Center button (for actions like camera, create post)\n        if (route.name === 'Create') {\n          return (\n            <TouchableOpacity\n              key={index}\n              onPress={onPress}\n              onLongPress={onLongPress}\n              style={styles.centerButton}\n              activeOpacity={0.8}\n            >\n              <View style={styles.centerButtonInner}>\n                <Ionicons name=\"add\" size={32} color=\"#fff\" />\n              </View>\n            </TouchableOpacity>\n          );\n        }\n\n        return (\n          <TouchableOpacity\n            key={index}\n            accessibilityRole=\"button\"\n            accessibilityState={isFocused ? { selected: true } : {}}\n            accessibilityLabel={options.tabBarAccessibilityLabel}\n            onPress={onPress}\n            onLongPress={onLongPress}\n            style={styles.tabItem}\n          >\n            <View style={styles.tabItemInner}>\n              <Ionicons name={iconName} size={24} color={isFocused ? '#007AFF' : 'gray'} />\n              <Text style={[styles.tabLabel, { color: isFocused ? '#007AFF' : 'gray' }]}>\n                {typeof label === 'string' ? label : route.name}\n              </Text>\n              {/* Badge example */}\n              {route.name === 'Notifications' && (\n                <View style={styles.badge}>\n                  <Text style={styles.badgeText}>3</Text>\n                </View>\n              )}\n            </View>\n          </TouchableOpacity>\n        );\n      })}\n    </View>\n  );\n}\n\n// Using custom tab bar in navigator\nfunction CustomTabBarExample() {\n  return (\n    <Tab.Navigator\n      tabBar={(props) => <CustomTabBar {...props} />}\n      screenOptions={{ headerShown: true }}\n    >\n      <Tab.Screen name=\"Home\" component={HomeScreen} />\n      <Tab.Screen name=\"Search\" component={SearchScreen} />\n      <Tab.Screen name=\"Create\" component={CreateScreen} />\n      <Tab.Screen name=\"Notifications\" component={NotificationsScreen} />\n      <Tab.Screen name=\"Profile\" component={ProfileScreen} />\n    </Tab.Navigator>\n  );\n}\n\nconst styles = StyleSheet.create({\n  tabBar: {\n    flexDirection: 'row',\n    backgroundColor: '#fff',\n    paddingBottom: Platform.OS === 'ios' ? 20 : 10,\n    paddingTop: 8,\n    borderTopWidth: 1,\n    borderTopColor: '#e0e0e0',\n    shadowColor: '#000',\n    shadowOffset: { width: 0, height: -2 },\n    shadowOpacity: 0.05,\n    shadowRadius: 3,\n    elevation: 8,\n  },\n  tabBarHidden: {\n    transform: [{ translateY: 100 }],\n  },\n  tabItem: {\n    flex: 1,\n    alignItems: 'center',\n    justifyContent: 'center',\n  },\n  tabItemInner: {\n    alignItems: 'center',\n    position: 'relative',\n  },\n  tabLabel: {\n    fontSize: 11,\n    marginTop: 4,\n  },\n  centerButton: {\n    top: -20,\n    justifyContent: 'center',\n    alignItems: 'center',\n    marginHorizontal: 8,\n  },\n  centerButtonInner: {\n    width: 56,\n    height: 56,\n    borderRadius: 28,\n    backgroundColor: '#007AFF',\n    justifyContent: 'center',\n    alignItems: 'center',\n    shadowColor: '#007AFF',\n    shadowOffset: { width: 0, height: 4 },\n    shadowOpacity: 0.3,\n    shadowRadius: 4,\n    elevation: 5,\n  },\n  badge: {\n    position: 'absolute',\n    top: -8,\n    right: -12,\n    backgroundColor: '#FF3B30',\n    borderRadius: 10,\n    minWidth: 18,\n    height: 18,\n    justifyContent: 'center',\n    alignItems: 'center',\n    paddingHorizontal: 4,\n  },\n  badgeText: {\n    color: '#fff',\n    fontSize: 10,\n    fontWeight: 'bold',\n  },\n});"
+    },
+
+    {
+      "type": "heading",
+      "value": "5. Tab Badges & Dynamic Updates"
+    },
+    {
+      "type": "text",
+      "value": "Show badges on tab icons to indicate new content, pending actions, or notification counts. Update them dynamically based on app state."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// TabBadges.tsx\nimport * as React from 'react';\nimport { createBottomTabNavigator } from '@react-navigation/bottom-tabs';\nimport { View, Text, Button, StyleSheet } from 'react-native';\nimport { Ionicons } from '@expo/vector-icons';\n\nconst Tab = createBottomTabNavigator();\n\nfunction HomeScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={styles.container}>\n      <Text>Home Screen</Text>\n      <Button\n        title=\"Clear Notifications Badge\"\n        onPress={() => navigation.setOptions({ tabBarBadge: null })}\n      />\n    </View>\n  );\n}\n\nfunction NotificationsScreen({ navigation }: { navigation: any }) {\n  const [count, setCount] = React.useState(0);\n\n  const addNotification = () => {\n    const newCount = count + 1;\n    setCount(newCount);\n    // Update badge from within the screen\n    navigation.setOptions({ tabBarBadge: newCount > 0 ? newCount : null });\n    \n    // Also update parent tab navigator if needed\n    navigation.getParent()?.setOptions({\n      tabBarBadge: newCount > 0 ? newCount : null,\n    });\n  };\n\n  const clearAll = () => {\n    setCount(0);\n    navigation.setOptions({ tabBarBadge: null });\n  };\n\n  return (\n    <View style={styles.container}>\n      <Text>Notifications: {count}</Text>\n      <Button title=\"Add Notification\" onPress={addNotification} />\n      <Button title=\"Clear All\" onPress={clearAll} />\n    </View>\n  );\n}\n\n// Dynamic badge based on state (using Redux/Zustand)\nfunction DynamicBadgeTab() {\n  const notificationCount = useNotificationStore((state) => state.unreadCount);\n\n  return (\n    <Tab.Navigator>\n      <Tab.Screen\n        name=\"Home\"\n        component={HomeScreen}\n        options={{\n          tabBarBadge: undefined,\n        }}\n      />\n      <Tab.Screen\n        name=\"Notifications\"\n        component={NotificationsScreen}\n        options={{\n          tabBarBadge: notificationCount > 0 ? notificationCount : undefined,\n          tabBarBadgeStyle: {\n            backgroundColor: '#FF3B30',\n            color: '#fff',\n            fontSize: 11,\n          },\n        }}\n      />\n    </Tab.Navigator>\n  );\n}\n\n// Animated badge (simple pulse animation)\nfunction AnimatedBadge({ count }: { count: number }) {\n  const pulseAnim = React.useRef(new Animated.Value(1)).current;\n\n  React.useEffect(() => {\n    if (count > 0) {\n      Animated.sequence([\n        Animated.timing(pulseAnim, {\n          toValue: 1.3,\n          duration: 200,\n          useNativeDriver: true,\n        }),\n        Animated.timing(pulseAnim, {\n          toValue: 1,\n          duration: 200,\n          useNativeDriver: true,\n        }),\n      ]).start();\n    }\n  }, [count]);\n\n  if (count === 0) return null;\n\n  return (\n    <Animated.View\n      style={[\n        styles.animatedBadge,\n        { transform: [{ scale: pulseAnim }] },\n      ]}\n    >\n      <Text style={styles.badgeText}>{count > 99 ? '99+' : count}</Text>\n    </Animated.View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16 },\n  animatedBadge: {\n    position: 'absolute',\n    top: -5,\n    right: -10,\n    backgroundColor: '#FF3B30',\n    borderRadius: 12,\n    minWidth: 20,\n    height: 20,\n    justifyContent: 'center',\n    alignItems: 'center',\n    paddingHorizontal: 4,\n  },\n  badgeText: { color: '#fff', fontSize: 11, fontWeight: 'bold' },\n});"
+    },
+
+    {
+      "type": "heading",
+      "value": "6. Nested Tab Navigators"
+    },
+    {
+      "type": "text",
+      "value": "Combine tab navigators with stack navigators for complex navigation patterns. Tabs can contain stacks, and stacks can contain tabs."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// NestedTabNavigators.tsx\nimport * as React from 'react';\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { createBottomTabNavigator } from '@react-navigation/bottom-tabs';\nimport { Button, View, Text, StyleSheet } from 'react-native';\nimport { Ionicons } from '@expo/vector-icons';\n\n// ----- Home Stack (nested inside Home Tab) -----\ntype HomeStackParamList = {\n  HomeList: undefined;\n  HomeDetail: { id: number };\n};\n\nconst HomeStack = createNativeStackNavigator<HomeStackParamList>();\n\nfunction HomeListScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={styles.screen}>\n      <Text>Home List Screen</Text>\n      <Button\n        title=\"Go to Detail\"\n        onPress={() => navigation.navigate('HomeDetail', { id: 42 })}\n      />\n    </View>\n  );\n}\n\nfunction HomeDetailScreen({ route, navigation }: { route: any; navigation: any }) {\n  const { id } = route.params;\n  return (\n    <View style={styles.screen}>\n      <Text>Home Detail - ID: {id}</Text>\n      <Button title=\"Go Back\" onPress={() => navigation.goBack()} />\n      <Button\n        title=\"Go to Profile Tab\"\n        onPress={() => navigation.getParent()?.navigate('ProfileTab')}\n      />\n    </View>\n  );\n}\n\nfunction HomeStackScreen() {\n  return (\n    <HomeStack.Navigator>\n      <HomeStack.Screen name=\"HomeList\" component={HomeListScreen} />\n      <HomeStack.Screen name=\"HomeDetail\" component={HomeDetailScreen} />\n    </HomeStack.Navigator>\n  );\n}\n\n// ----- Profile Stack (nested inside Profile Tab) -----\ntype ProfileStackParamList = {\n  ProfileMain: undefined;\n  ProfileEdit: undefined;\n};\n\nconst ProfileStack = createNativeStackNavigator<ProfileStackParamList>();\n\nfunction ProfileMainScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={styles.screen}>\n      <Text>Profile Main</Text>\n      <Button title=\"Edit Profile\" onPress={() => navigation.navigate('ProfileEdit')} />\n    </View>\n  );\n}\n\nfunction ProfileEditScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={styles.screen}>\n      <Text>Edit Profile</Text>\n      <Button title=\"Save\" onPress={() => navigation.goBack()} />\n    </View>\n  );\n}\n\nfunction ProfileStackScreen() {\n  return (\n    <ProfileStack.Navigator>\n      <ProfileStack.Screen name=\"ProfileMain\" component={ProfileMainScreen} />\n      <ProfileStack.Screen name=\"ProfileEdit\" component={ProfileEditScreen} />\n    </ProfileStack.Navigator>\n  );\n}\n\n// ----- Settings Screen (simple) -----\nfunction SettingsScreen() {\n  return (\n    <View style={styles.screen}>\n      <Text>Settings Screen</Text>\n    </View>\n  );\n}\n\n// ----- Main Tab Navigator -----\ntype TabParamList = {\n  HomeTab: undefined;\n  SettingsTab: undefined;\n  ProfileTab: undefined;\n};\n\nconst Tab = createBottomTabNavigator<TabParamList>();\n\nfunction MainTabNavigator() {\n  return (\n    <Tab.Navigator\n      screenOptions={({ route }) => ({\n        tabBarIcon: ({ focused, color, size }) => {\n          let iconName: keyof typeof Ionicons.glyphMap = 'home-outline';\n          if (route.name === 'HomeTab') iconName = focused ? 'home' : 'home-outline';\n          else if (route.name === 'SettingsTab') iconName = focused ? 'settings' : 'settings-outline';\n          else if (route.name === 'ProfileTab') iconName = focused ? 'person' : 'person-outline';\n          return <Ionicons name={iconName} size={size} color={color} />;\n        },\n        tabBarActiveTintColor: '#007AFF',\n        headerShown: false, // Hide headers on tabs (stacks have their own)\n      })}\n    >\n      <Tab.Screen name=\"HomeTab\" component={HomeStackScreen} />\n      <Tab.Screen name=\"SettingsTab\" component={SettingsScreen} />\n      <Tab.Screen name=\"ProfileTab\" component={ProfileStackScreen} />\n    </Tab.Navigator>\n  );\n}\n\nexport default function NestedTabsApp() {\n  return (\n    <NavigationContainer>\n      <MainTabNavigator />\n    </NavigationContainer>\n  );\n}\n\nconst styles = StyleSheet.create({\n  screen: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16 },\n});\n\n// Dynamically hiding tab bar on certain screens\nimport { getFocusedRouteNameFromRoute } from '@react-navigation/native';\n\nfunction getTabBarVisibility(route: any) {\n  const routeName = getFocusedRouteNameFromRoute(route) ?? 'HomeList';\n  const hideOnScreens = ['HomeDetail', 'ProfileEdit'];\n  return { display: hideOnScreens.includes(routeName) ? 'none' : 'flex' };\n}\n\n// Usage in tab navigator screen options:\n// <Tab.Screen\n//   name=\"HomeTab\"\n//   component={HomeStackScreen}\n//   options={({ route }) => ({\n//     tabBarStyle: getTabBarVisibility(route),\n//   })}\n// />"
+    },
+
+    {
+      "type": "heading",
+      "value": "7. TypeScript Integration"
+    },
+    {
+      "type": "text",
+      "value": "Full TypeScript support for tab navigators ensures type safety for route names and parameters."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// TabNavigator.types.ts\nimport { BottomTabScreenProps } from '@react-navigation/bottom-tabs';\nimport { CompositeScreenProps } from '@react-navigation/native';\nimport { NativeStackScreenProps } from '@react-navigation/native-stack';\n\n// Define param list for tabs\nexport type RootTabParamList = {\n  Home: undefined;\n  Search: { query?: string };\n  Notifications: undefined;\n  Profile: { userId: string };\n};\n\n// Define param list for stacks inside tabs\nexport type HomeStackParamList = {\n  HomeList: undefined;\n  HomeDetail: { id: number; title: string };\n};\n\nexport type ProfileStackParamList = {\n  ProfileMain: undefined;\n  ProfileEdit: { readonly?: boolean };\n};\n\n// Composite screen props (tab + stack)\nexport type HomeDetailScreenProps = CompositeScreenProps<\n  NativeStackScreenProps<HomeStackParamList, 'HomeDetail'>,\n  BottomTabScreenProps<RootTabParamList>\n>;\n\n// TabNavigator.tsx with TypeScript\nimport * as React from 'react';\nimport { createBottomTabNavigator } from '@react-navigation/bottom-tabs';\nimport { RootTabParamList } from './types';\n\nconst Tab = createBottomTabNavigator<RootTabParamList>();\n\nexport default function TabNavigator() {\n  return (\n    <Tab.Navigator>\n      <Tab.Screen name=\"Home\" component={HomeScreen} />\n      <Tab.Screen \n        name=\"Search\" \n        component={SearchScreen}\n        initialParams={{ query: '' }}\n      />\n      <Tab.Screen name=\"Notifications\" component={NotificationsScreen} />\n      <Tab.Screen name=\"Profile\" component={ProfileScreen} />\n    </Tab.Navigator>\n  );\n}\n\n// Screen with typed navigation and route\nimport { BottomTabScreenProps } from '@react-navigation/bottom-tabs';\n\ntype SearchScreenProps = BottomTabScreenProps<RootTabParamList, 'Search'>;\n\nfunction SearchScreen({ navigation, route }: SearchScreenProps) {\n  const { query } = route.params;\n  \n  // TypeScript knows query is string | undefined\n  return (\n    <View>\n      <Text>Search: {query || 'No query'}</Text>\n      <Button\n        title=\"Search for 'React'\"\n        onPress={() => navigation.setParams({ query: 'React' })}\n      />\n    </View>\n  );\n}\n\n// Global type declaration for useNavigation\ndeclare global {\n  namespace ReactNavigation {\n    interface RootParamList extends RootTabParamList {}\n  }\n}\n\n// Now useNavigation works without type arguments\nfunction AnyScreen() {\n  const navigation = useNavigation();\n  // TypeScript knows all routes\n  navigation.navigate('Profile', { userId: '123' });\n  return null;\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "8. Tab Navigator Performance"
+    },
+    {
+      "type": "text",
+      "value": "Optimize tab navigator performance with lazy loading, screen freezing, and proper memoization."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// PerformanceOptimizations.tsx\nimport * as React from 'react';\nimport { createBottomTabNavigator } from '@react-navigation/bottom-tabs';\nimport { ActivityIndicator, View } from 'react-native';\n\nconst Tab = createBottomTabNavigator();\n\n// 1. Lazy loading screens (React.lazy)\nconst LazyProfileScreen = React.lazy(() => import('./ProfileScreen'));\nconst LazySettingsScreen = React.lazy(() => import('./SettingsScreen'));\n\nfunction LazyLoadedScreen({ children }: { children: React.ReactNode }) {\n  return (\n    <React.Suspense fallback={<ActivityIndicator size=\"large\" style={{ flex: 1 }} />}>\n      {children}\n    </React.Suspense>\n  );\n}\n\n// 2. Memoized tab screens\nconst MemoizedHomeScreen = React.memo(function HomeScreen() {\n  // Component logic\n  return <View />;\n});\n\n// 3. Optimized tab navigator\nfunction OptimizedTabNavigator() {\n  return (\n    <Tab.Navigator\n      screenOptions={{\n        // React Navigation 8 - Freeze inactive tabs\n        freezeOnBlur: true,\n        // Lazy load tabs (only render when focused first time)\n        lazy: true,\n        // Unmount inactive tabs (saves memory)\n        unmountOnBlur: false, // Set to true for memory-constrained devices\n      }}\n    >\n      <Tab.Screen \n        name=\"Home\" \n        component={MemoizedHomeScreen}\n        options={{ lazy: true }}\n      />\n      <Tab.Screen \n        name=\"Profile\" \n        component={() => (\n          <LazyLoadedScreen>\n            <LazyProfileScreen />\n          </LazyLoadedScreen>\n        )}\n      />\n    </Tab.Navigator>\n  );\n}\n\n// 4. Avoid re-renders with useCallback\nfunction HomeScreenWithOptimization() {\n  const handlePress = React.useCallback(() => {\n    // Handle press\n  }, []);\n\n  return <Button title=\"Press\" onPress={handlePress} />;\n}\n\n// 5. Tab bar visibility optimization\nimport { useFocusEffect } from '@react-navigation/native';\n\nfunction ScreenThatHidesTabBar() {\n  const navigation = useNavigation();\n\n  React.useEffect(() => {\n    const parent = navigation.getParent();\n    parent?.setOptions({ tabBarStyle: { display: 'none' } });\n\n    return () => {\n      parent?.setOptions({ tabBarStyle: { display: 'flex' } });\n    };\n  }, [navigation]);\n\n  return <View />;\n}\n\n// Performance Checklist:\n// ✅ Use lazy: true for tabs not needed immediately\n// ✅ Use freezeOnBlur: true (React Navigation 8)\n// ✅ Memoize screen components with React.memo\n// ✅ Lazy load heavy screens with React.lazy\n// ✅ Avoid inline functions in tab options\n// ✅ Use useCallback for event handlers\n// ✅ Profile with React DevTools\n// ✅ Consider unmountOnBlur for memory-constrained devices"
+    },
+
+    {
+      "type": "heading",
+      "value": "9. Advanced Tab Bar Animations"
+    },
+    {
+      "type": "text",
+      "value": "Create animated tab bars with spring animations, floating effects, and custom transitions."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// AnimatedTabBar.tsx\nimport * as React from 'react';\nimport { View, TouchableOpacity, StyleSheet, Animated, Easing } from 'react-native';\nimport { Ionicons } from '@expo/vector-icons';\nimport { BottomTabBarProps } from '@react-navigation/bottom-tabs';\n\nfunction AnimatedTabBar({ state, descriptors, navigation }: BottomTabBarProps) {\n  const [animatedValues] = React.useState(\n    state.routes.map(() => new Animated.Value(0))\n  );\n\n  React.useEffect(() => {\n    // Animate icons when tab changes\n    state.routes.forEach((_, index) => {\n      const isFocused = state.index === index;\n      Animated.spring(animatedValues[index], {\n        toValue: isFocused ? 1 : 0,\n        useNativeDriver: true,\n        friction: 6,\n        tension: 40,\n      }).start();\n    });\n  }, [state.index]);\n\n  const onPress = (route: any, index: number) => {\n    const event = navigation.emit({\n      type: 'tabPress',\n      target: route.key,\n      canPreventDefault: true,\n    });\n\n    if (!event.defaultPrevented) {\n      navigation.navigate(route.name);\n    }\n  };\n\n  return (\n    <View style={styles.container}>\n      {state.routes.map((route, index) => {\n        const isFocused = state.index === index;\n        const scale = animatedValues[index].interpolate({\n          inputRange: [0, 1],\n          outputRange: [0.9, 1.2],\n        });\n\n        const translateY = animatedValues[index].interpolate({\n          inputRange: [0, 1],\n          outputRange: [0, -8],\n        });\n\n        const opacity = animatedValues[index].interpolate({\n          inputRange: [0, 1],\n          outputRange: [0.6, 1],\n        });\n\n        let iconName: keyof typeof Ionicons.glyphMap = 'home-outline';\n        if (route.name === 'Home') iconName = isFocused ? 'home' : 'home-outline';\n        else if (route.name === 'Search') iconName = isFocused ? 'search' : 'search-outline';\n        else if (route.name === 'Profile') iconName = isFocused ? 'person' : 'person-outline';\n\n        return (\n          <TouchableOpacity\n            key={index}\n            onPress={() => onPress(route, index)}\n            style={styles.tab}\n          >\n            <Animated.View\n              style={[\n                styles.iconContainer,\n                {\n                  transform: [{ scale }, { translateY }],\n                },\n              ]}\n            >\n              <Animated.View style={{ opacity }}>\n                <Ionicons name={iconName} size={24} color={isFocused ? '#007AFF' : 'gray'} />\n              </Animated.View>\n            </Animated.View>\n          </TouchableOpacity>\n        );\n      })}\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: {\n    flexDirection: 'row',\n    backgroundColor: '#fff',\n    paddingVertical: 10,\n    borderTopWidth: 1,\n    borderTopColor: '#e0e0e0',\n  },\n  tab: {\n    flex: 1,\n    alignItems: 'center',\n    justifyContent: 'center',\n  },\n  iconContainer: {\n    alignItems: 'center',\n    justifyContent: 'center',\n  },\n});\n\n// Floating tab bar effect\nfunction FloatingTabBar({ state, descriptors, navigation }: BottomTabBarProps) {\n  const translateY = React.useRef(new Animated.Value(0)).current;\n\n  React.useEffect(() => {\n    // Animate tab bar on mount\n    Animated.spring(translateY, {\n      toValue: 0,\n      useNativeDriver: true,\n      friction: 8,\n      tension: 40,\n    }).start();\n  }, []);\n\n  return (\n    <Animated.View\n      style={[\n        styles.floatingContainer,\n        {\n          transform: [{ translateY }],\n        },\n      ]}\n    >\n      <View style={styles.floatingTabBar}>\n        {/* Tab buttons */}\n      </View>\n    </Animated.View>\n  );\n}\n\nconst floatingStyles = StyleSheet.create({\n  floatingContainer: {\n    position: 'absolute',\n    bottom: 20,\n    left: 20,\n    right: 20,\n  },\n  floatingTabBar: {\n    flexDirection: 'row',\n    backgroundColor: '#fff',\n    borderRadius: 30,\n    paddingVertical: 8,\n    paddingHorizontal: 16,\n    shadowColor: '#000',\n    shadowOffset: { width: 0, height: 4 },\n    shadowOpacity: 0.1,\n    shadowRadius: 8,\n    elevation: 8,\n  },\n});"
+    },
+
+    {
+      "type": "heading",
+      "value": "10. Best Practices & Common Patterns"
+    },
+    {
+      "type": "text",
+      "value": "Production-proven patterns for tab navigator implementation."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// TabNavigatorBestPractices.tsx\n\n// 1. Centralized tab configuration\nconst TAB_CONFIG = {\n  Home: {\n    icon: { focused: 'home', unfocused: 'home-outline' },\n    label: 'Home',\n  },\n  Search: {\n    icon: { focused: 'search', unfocused: 'search-outline' },\n    label: 'Discover',\n  },\n  Profile: {\n    icon: { focused: 'person', unfocused: 'person-outline' },\n    label: 'Profile',\n  },\n} as const;\n\n// 2. Reusable tab bar icon component\nfunction TabBarIcon({ \n  name, \n  focused, \n  color, \n  size \n}: { \n  name: keyof typeof TAB_CONFIG; \n  focused: boolean; \n  color: string; \n  size: number;\n}) {\n  const iconName = TAB_CONFIG[name].icon[focused ? 'focused' : 'unfocused'];\n  return <Ionicons name={iconName} size={size} color={color} />;\n}\n\n// 3. Dynamic tab bar height for safe area\nimport { useSafeAreaInsets } from 'react-native-safe-area-context';\n\nfunction SafeAreaTabBar(props: BottomTabBarProps) {\n  const insets = useSafeAreaInsets();\n  \n  return (\n    <View style={{ paddingBottom: insets.bottom }}>\n      <BottomTabBar {...props} />\n    </View>\n  );\n}\n\n// 4. Tab press analytics tracking\nfunction AnalyticsTabBar(props: BottomTabBarProps) {\n  const { navigation, state } = props;\n  \n  const handleTabPress = (route: any, index: number) => {\n    // Track tab press for analytics\n    Analytics.trackEvent('tab_press', {\n      tab_name: route.name,\n      tab_index: index,\n    });\n    \n    // Default navigation behavior\n    navigation.navigate(route.name);\n  };\n  \n  return <BottomTabBar {...props} navigation={{ ...navigation, navigate: handleTabPress }} />;\n}\n\n// 5. Conditionally render tabs based on auth state\nfunction ConditionalTabNavigator() {\n  const { isAuthenticated, userRole } = useAuth();\n  \n  return (\n    <Tab.Navigator>\n      <Tab.Screen name=\"Home\" component={HomeScreen} />\n      {isAuthenticated && (\n        <>\n          <Tab.Screen name=\"Dashboard\" component={DashboardScreen} />\n          {userRole === 'admin' && (\n            <Tab.Screen name=\"Admin\" component={AdminScreen} />\n          )}\n        </>\n      )}\n      <Tab.Screen name=\"Profile\" component={ProfileScreen} />\n    </Tab.Navigator>\n  );\n}\n\n// 6. Reset stack when re-selecting tab\nfunction TabWithStackReset() {\n  const navigation = useNavigation();\n  \n  const handleTabPress = () => {\n    // Get the current state of the stack inside this tab\n    const stackState = navigation.getState();\n    \n    // If already on the tab, pop to top\n    if (stackState.index > 0) {\n      navigation.popToTop();\n    }\n  };\n  \n  return (\n    <Tab.Screen\n      name=\"Home\"\n      component={HomeStackScreen}\n      listeners={{\n        tabPress: (e) => {\n          e.preventDefault();\n          handleTabPress();\n        },\n      }}\n    />\n  );\n}\n\n// Best Practices Summary:\n// ✅ Use 3-5 tabs maximum for better UX\n// ✅ Provide both icons and labels\n// ✅ Handle safe area insets (notch, home indicator)\n// ✅ Use proper accessibility labels\n// ✅ Implement lazy loading for performance\n// ✅ Track tab analytics\n// ✅ Handle deep linking to specific tabs\n// ✅ Reset nested stacks on tab re-selection\n// ✅ Support keyboard navigation (iPad)\n// ✅ Test on both iOS and Android"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What's the difference between bottom tabs and top tabs?",
+      "answer": "Bottom tabs are standard for mobile navigation (iOS and Android) and appear at the bottom of the screen. They're always accessible via thumb reach. Top tabs (Material Design) are common on Android for secondary navigation (e.g., categories within a screen) and can scroll horizontally. Use bottom tabs for primary app navigation, top tabs for content filtering."
+    },
+    {
+      "question": "How do I hide the tab bar on certain screens?",
+      "answer": "Use `getFocusedRouteNameFromRoute` to detect the current route inside nested stacks. Then conditionally set `tabBarStyle: { display: 'none' }` on the tab screen options. For simple cases, you can also hide the tab bar directly from a screen using `navigation.getParent()?.setOptions({ tabBarStyle: { display: 'none' } })`."
+    },
+    {
+      "question": "What's new in React Navigation 8 tabs?",
+      "answer": "React Navigation 8 introduces native bottom tabs by default (no separate package), iOS 26 liquid glass effects, improved performance with `freezeOnBlur`, better TypeScript inference, and simplified API. The native implementation uses `UITabBarController` on iOS and `BottomNavigationView` on Android for native look and feel."
+    },
+    {
+      "question": "How do I add badges to tab icons?",
+      "answer": "Use the `tabBarBadge` option on Tab.Screen: `options={{ tabBarBadge: 5 }}`. Update it dynamically using `navigation.setOptions({ tabBarBadge: newCount })`. For custom badge styling, use `tabBarBadgeStyle` or implement a custom tab bar component for complete control."
+    }
+  ],
+
+  "quiz": [
+    {
+      "question": "Which package is required for bottom tabs in React Navigation 7?",
+      "options": ["@react-navigation/bottom-tabs", "@react-navigation/tabs", "@react-navigation/native-tabs", "@react-navigation/tab-bar"],
+      "answer": 0
+    },
+    {
+      "question": "What React Navigation 8 feature improves performance by freezing inactive tabs?",
+      "options": ["lazy", "unmountOnBlur", "freezeOnBlur", "detachInactive"],
+      "answer": 2
+    },
+    {
+      "question": "Which tab bar option shows a notification count on a tab icon?",
+      "options": ["tabBarIcon", "tabBarNotification", "tabBarBadge", "tabBarAlert"],
+      "answer": 2
+    },
+    {
+      "question": "What is the default maximum number of visible tabs in Material Top Tabs without scrolling?",
+      "options": ["3", "4", "5", "6"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "react-native-navigation",
+    "react-native-stack-nav",
+    "react-native-components",
+    "react-native-styling",
+    "react-native-performance"
+  ]
+}

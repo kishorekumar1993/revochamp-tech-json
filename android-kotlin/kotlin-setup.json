@@ -1,0 +1,140 @@
+{
+  "slug": "kotlin-environment-setup",
+  "course": "Kotlin Development",
+  "title": "Environment Setup – Android Studio & Kotlin SDK",
+
+  "meta": {
+    "title": "Kotlin Setup Guide – Android Studio, SDK & Gradle Configuration (2026)",
+    "description": "Master the professional Kotlin setup for Android development. Learn to configure the Kotlin SDK, Gradle build scripts, and the Android Studio IDE.",
+    "keywords": [
+      "kotlin setup",
+      "android studio installation",
+      "kotlin sdk configuration",
+      "gradle build kotlin",
+      "kotlin compiler setup",
+      "jvm for kotlin"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Kotlin Toolchain"
+    },
+    {
+      "type": "text",
+      "value": "To develop in Kotlin, you need three core components: the **Java Development Kit (JDK)**, the **Kotlin Compiler**, and an **IDE**. While you can use VS Code with plugins, Android Studio is the industry standard for architects because it provides deep integration with the Android Gradle Plugin and advanced profiling tools for your native modules."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Prerequisites: The JDK"
+    },
+    {
+      "type": "text",
+      "value": "Kotlin runs on the Java Virtual Machine (JVM). In 2026, **JDK 21** is the recommended Long-Term Support (LTS) version for maximum performance and compatibility with modern Android Gradle Plugins. Using a managed distribution like 'Azul Zulu' is preferred for stability across different development machines in Chennai."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Check your current Java version\njava -version\n\n# Recommended: Install via Homebrew (macOS)\nbrew install --cask zulu21"
+    },
+    {
+      "type": "heading",
+      "value": "2. Installing Android Studio"
+    },
+    {
+      "type": "text",
+      "value": "Android Studio comes bundled with the Kotlin plugin. During the 'Setup Wizard', ensure you install the **Android SDK Build-Tools** and a **System Image** for the emulator. As a Flutter Architect, you probably have this, but you should verify that the 'Kotlin' plugin is updated to the latest version in the IDE settings."
+    },
+    
+    {
+      "type": "heading",
+      "value": "3. Configuring Gradle (The Build Engine)"
+    },
+    {
+      "type": "text",
+      "value": "Kotlin projects are managed by Gradle. In your `build.gradle.kts` (Kotlin DSL), you define the Kotlin version and the target JVM compatibility. For Revochamp, always use the Kotlin DSL over the legacy Groovy syntax for better type safety and IDE auto-completion."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// build.gradle.kts (Project Level)\nplugins {\n    kotlin(\"android\") version \"1.9.22\" apply false\n}\n\n// build.gradle.kts (Module Level)\nplugins {\n    id(\"com.android.application\")\n    kotlin(\"android\")\n}\n\nandroid {\n    kotlinOptions {\n        jvmTarget = \"21\"\n    }\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Verification: The 'Hello Kotlin'"
+    },
+    {
+      "type": "text",
+      "value": "To verify the setup, create a simple Kotlin file and run it. The IDE should provide instant syntax highlighting and suggest 'Coroutines' libraries if they are missing from your classpath."
+    },
+    {
+      "type": "heading",
+      "value": "Setup Comparison: Kotlin vs. Flutter"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Kotlin Setup (Native)", "Flutter Setup"],
+        "rows": [
+          ["Primary IDE", "Android Studio / IntelliJ", "VS Code / Android Studio"],
+          ["Runtime", "JVM (Java Virtual Machine)", "Dart VM / AOT Engine"],
+          ["Build System", "Gradle (Kotlin DSL)", "Flutter Build (pubspec)"],
+          ["SDK Manager", "Android SDK Manager", "Flutter Doctor / SDK Manager"],
+          ["Output", "Bytecode (.dex)", "Native Machine Code"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Do I need a separate Kotlin compiler if I have Android Studio?",
+      "answer": "No. Android Studio includes the Kotlin compiler (kotlinc). If you want to run Kotlin scripts in the terminal, you can install the standalone compiler via 'sdkman' or 'Homebrew'."
+    },
+    {
+      "question": "What is the Kotlin DSL in Gradle?",
+      "answer": "It is a way to write build scripts using Kotlin instead of Groovy. It provides better error checking, refactoring support, and auto-completion, which is why it's the standard for modern Android projects in 2026."
+    },
+    {
+      "question": "Can I use VS Code for Kotlin?",
+      "answer": "Yes, with the 'Kotlin' and 'Language Support for Java' extensions. However, for native Android development and debugging Method Channels, Android Studio remains far superior due to its specialized tooling."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which build system is the standard for Kotlin Android projects?",
+      "options": ["Maven", "Gradle", "Ant", "NPM"],
+      "answer": 1
+    },
+    {
+      "question": "Which version of the JVM is recommended for modern Kotlin development (2026)?",
+      "options": ["JVM 8", "JVM 11", "JVM 17", "JVM 21"],
+      "answer": 3
+    },
+    {
+      "question": "What is the advantage of using 'build.gradle.kts' over 'build.gradle'?",
+      "options": [
+        "It makes the app smaller",
+        "It provides better type safety and auto-completion in the IDE",
+        "It runs faster on the device",
+        "It is required for iOS compatibility"
+      ],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "kotlin-introduction",
+    "android-project-structure",
+    "kotlin-coroutines-setup",
+    "flutter-method-channels",
+    "clean-architecture-android"
+  ]
+}

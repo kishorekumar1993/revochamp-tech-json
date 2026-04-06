@@ -1,0 +1,248 @@
+{
+  "slug": "react-native-navigation",
+  "course": "React Native",
+  "title": "React Native Navigation – Stack, Tab, Drawer & Deep Links",
+
+  "meta": {
+    "title": "React Native Navigation Guide: Stack, Tab, Drawer Navigators & Deep Linking (2026)",
+    "description": "Master React Navigation 8: native stack, bottom tabs, drawer navigators, nested navigation, authentication flows, deep linking, TypeScript, and performance optimization.",
+    "keywords": [
+      "react native navigation",
+      "react navigation 8",
+      "stack navigator react native",
+      "bottom tab navigator",
+      "drawer navigator",
+      "react native deep linking",
+      "react navigation typescript"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "React Native Navigation – The Complete Guide"
+    },
+    {
+      "type": "text",
+      "value": "React Navigation is the de facto navigation library for React Native apps. Unlike web browsers with built-in history stacks, React Native requires a navigation solution to manage screen transitions, deep linking, and navigation state. React Navigation 8 (currently in alpha) introduces native bottom tabs by default, improved TypeScript inference, pushParams API, and better deep linking support [citation:2][citation:6]. This guide covers both React Navigation 7 (stable) and 8 (next) patterns for production apps."
+    },
+
+    {
+      "type": "heading",
+      "value": "1. Installation & Setup"
+    },
+    {
+      "type": "text",
+      "value": "React Navigation requires several core packages and native dependencies. The installation differs between Expo managed projects and bare React Native projects [citation:1]."
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "value": "# Core navigation packages\nnpm install @react-navigation/native @react-navigation/native-stack\n\n# For React Navigation 8 (alpha)\nnpm install @react-navigation/native@next @react-navigation/bottom-tabs@next\n\n# Peer dependencies (Expo managed project)\nnpx expo install react-native-screens react-native-safe-area-context\n\n# Peer dependencies (bare React Native project)\nnpm install react-native-screens react-native-safe-area-context\n\n# iOS pods (bare React Native only)\ncd ios && pod install && cd ..\n\n# Additional navigators (install as needed)\nnpm install @react-navigation/bottom-tabs\nnpm install @react-navigation/drawer\nnpm install react-native-gesture-handler\n\n# For Android, add to MainActivity.java:\n# @Override\n# protected void onCreate(Bundle savedInstanceState) {\n#   super.onCreate(null);\n# }\n# import android.os.Bundle;"
+    },
+
+    {
+      "type": "heading",
+      "value": "2. Stack Navigator (Native Stack)"
+    },
+    {
+      "type": "text",
+      "value": "Stack Navigator manages a stack of screens, pushing new screens onto the stack and popping to go back. `createNativeStackNavigator` uses native UINavigationController on iOS and Fragment on Android for better performance [citation:1][citation:3]."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// App.tsx - Basic Stack Navigator\nimport * as React from 'react';\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { Button, View, Text } from 'react-native';\n\n// Type definitions for navigation\ntype RootStackParamList = {\n  Home: undefined;\n  Details: { itemId: number; title: string };\n  Profile: { userId: string };\n};\n\nconst Stack = createNativeStackNavigator<RootStackParamList>();\n\n// Home Screen\nfunction HomeScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }}>\n      <Text>Home Screen</Text>\n      <Button\n        title=\"Go to Details\"\n        onPress={() => navigation.navigate('Details', { itemId: 42, title: 'The Answer' })}\n      />\n      <Button\n        title=\"Push same screen (creates new)\"\n        onPress={() => navigation.push('Details', { itemId: 43, title: 'Another One' })}\n      />\n      <Button\n        title=\"Go to Profile\"\n        onPress={() => navigation.navigate('Profile', { userId: 'user123' })}\n      />\n    </View>\n  );\n}\n\n// Details Screen\nfunction DetailsScreen({ route, navigation }: { route: any; navigation: any }) {\n  const { itemId, title } = route.params;\n  \n  return (\n    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 }}>\n      <Text>Details Screen</Text>\n      <Text>Item ID: {itemId}</Text>\n      <Text>Title: {title}</Text>\n      <Button title=\"Go Back\" onPress={() => navigation.goBack()} />\n      <Button title=\"Pop to Top\" onPress={() => navigation.popToTop()} />\n    </View>\n  );\n}\n\n// Profile Screen\nfunction ProfileScreen({ route }: { route: any }) {\n  const { userId } = route.params;\n  return (\n    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>\n      <Text>Profile Screen for: {userId}</Text>\n    </View>\n  );\n}\n\nexport default function App() {\n  return (\n    <NavigationContainer>\n      <Stack.Navigator\n        initialRouteName=\"Home\"\n        screenOptions={{\n          headerStyle: { backgroundColor: '#007AFF' },\n          headerTintColor: '#fff',\n          headerTitleStyle: { fontWeight: 'bold' },\n        }}\n      >\n        <Stack.Screen\n          name=\"Home\"\n          component={HomeScreen}\n          options={{ title: 'Welcome' }}\n        />\n        <Stack.Screen\n          name=\"Details\"\n          component={DetailsScreen}\n          options={({ route }) => ({ title: route.params.title })}\n        />\n        <Stack.Screen\n          name=\"Profile\"\n          component={ProfileScreen}\n          options={{ title: 'User Profile' }}\n        />\n      </Stack.Navigator>\n    </NavigationContainer>\n  );\n}\n\n// Navigation methods reference:\n// navigation.navigate('RouteName', params) - Go to route, don't push if exists\n// navigation.push('RouteName', params) - Always push new screen\n// navigation.goBack() - Go back one screen\n// navigation.popToTop() - Go back to first screen in stack\n// navigation.replace('RouteName', params) - Replace current screen\n// navigation.setParams({ ... }) - Update current screen params"
+    },
+
+    {
+      "type": "heading",
+      "value": "3. Bottom Tab Navigator"
+    },
+    {
+      "type": "text",
+      "value": "Bottom Tab Navigator provides a tab bar at the bottom of the screen. In React Navigation 8, native bottom tabs are the default, using `react-native-screens` for native performance and iOS 26 liquid glass effects [citation:2][citation:6]."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// BottomTabNavigator.tsx\nimport * as React from 'react';\nimport { createBottomTabNavigator } from '@react-navigation/bottom-tabs';\nimport { Ionicons } from '@expo/vector-icons'; // or any icon library\nimport { HomeScreen, SettingsScreen, ProfileScreen } from './screens';\n\n// React Navigation 8 - Native bottom tabs (default)\n// For JS implementation fallback, add: implementation=\"custom\"\n\ntype TabParamList = {\n  Home: undefined;\n  Settings: undefined;\n  Profile: { userId?: string };\n};\n\nconst Tab = createBottomTabNavigator<TabParamList>();\n\nexport default function BottomTabNavigator() {\n  return (\n    <Tab.Navigator\n      screenOptions={({ route }) => ({\n        tabBarIcon: ({ focused, color, size }) => {\n          let iconName: keyof typeof Ionicons.glyphMap = 'home-outline';\n          \n          if (route.name === 'Home') {\n            iconName = focused ? 'home' : 'home-outline';\n          } else if (route.name === 'Settings') {\n            iconName = focused ? 'settings' : 'settings-outline';\n          } else if (route.name === 'Profile') {\n            iconName = focused ? 'person' : 'person-outline';\n          }\n          \n          return <Ionicons name={iconName} size={size} color={color} />;\n        },\n        tabBarActiveTintColor: '#007AFF',\n        tabBarInactiveTintColor: 'gray',\n        tabBarStyle: { paddingBottom: 5, height: 60 },\n        headerStyle: { backgroundColor: '#007AFF' },\n        headerTintColor: '#fff',\n      })}\n    >\n      <Tab.Screen name=\"Home\" component={HomeScreen} />\n      <Tab.Screen name=\"Settings\" component={SettingsScreen} />\n      <Tab.Screen\n        name=\"Profile\"\n        component={ProfileScreen}\n        initialParams={{ userId: 'guest' }}\n      />\n    </Tab.Navigator>\n  );\n}\n\n// React Navigation 8 - SF Symbols (iOS) and Material Symbols (Android)\n// import { SFSymbol, MaterialSymbol } from '@react-navigation/native';\n// \n// function TabBarIcon({ focused, name }: { focused: boolean; name: string }) {\n//   if (Platform.OS === 'ios') {\n//     return <SFSymbol name={name} color={focused ? '#007AFF' : 'gray'} />;\n//   }\n//   return <MaterialSymbol name={name} color={focused ? '#007AFF' : 'gray'} />;\n// }"
+    },
+
+    {
+      "type": "heading",
+      "value": "4. Drawer Navigator"
+    },
+    {
+      "type": "text",
+      "value": "Drawer Navigator provides a side menu that slides from the left (or right) edge. Requires `react-native-gesture-handler` installation [citation:3][citation:5]."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// DrawerNavigator.tsx\nimport * as React from 'react';\nimport { createDrawerNavigator } from '@react-navigation/drawer';\nimport { Button, View, Text, StyleSheet } from 'react-native';\nimport { NavigationContainer } from '@react-navigation/native';\n\n// Must import gesture handler at the top of your entry file\nimport 'react-native-gesture-handler';\n\ntype DrawerParamList = {\n  Home: undefined;\n  Notifications: undefined;\n  Settings: undefined;\n  About: undefined;\n};\n\nconst Drawer = createDrawerNavigator<DrawerParamList>();\n\nfunction HomeScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={styles.container}>\n      <Text>Home Screen</Text>\n      <Button title=\"Open Drawer\" onPress={() => navigation.openDrawer()} />\n      <Button title=\"Close Drawer\" onPress={() => navigation.closeDrawer()} />\n      <Button title=\"Toggle Drawer\" onPress={() => navigation.toggleDrawer()} />\n    </View>\n  );\n}\n\nfunction NotificationsScreen() {\n  return (\n    <View style={styles.container}>\n      <Text>Notifications Screen</Text>\n    </View>\n  );\n}\n\nfunction SettingsScreen() {\n  return (\n    <View style={styles.container}>\n      <Text>Settings Screen</Text>\n    </View>\n  );\n}\n\n// Custom drawer content\nfunction CustomDrawerContent({ navigation }: { navigation: any }) {\n  return (\n    <View style={styles.drawerContent}>\n      <View style={styles.drawerHeader}>\n        <Text style={styles.drawerHeaderText}>My App</Text>\n      </View>\n      <Button title=\"Go to Home\" onPress={() => navigation.navigate('Home')} />\n      <Button title=\"Notifications\" onPress={() => navigation.navigate('Notifications')} />\n      <Button title=\"Settings\" onPress={() => navigation.navigate('Settings')} />\n      <Button title=\"About\" onPress={() => navigation.navigate('About')} />\n    </View>\n  );\n}\n\nexport default function DrawerNavigator() {\n  return (\n    <NavigationContainer>\n      <Drawer.Navigator\n        screenOptions={{\n          drawerStyle: { width: 280, backgroundColor: '#fff' },\n          drawerActiveTintColor: '#007AFF',\n          drawerInactiveTintColor: 'gray',\n          drawerLabelStyle: { fontSize: 16 },\n        }}\n        drawerContent={(props) => <CustomDrawerContent {...props} />}\n      >\n        <Drawer.Screen name=\"Home\" component={HomeScreen} />\n        <Drawer.Screen name=\"Notifications\" component={NotificationsScreen} />\n        <Drawer.Screen name=\"Settings\" component={SettingsScreen} />\n      </Drawer.Navigator>\n    </NavigationContainer>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },\n  drawerContent: { flex: 1, paddingTop: 40 },\n  drawerHeader: { padding: 20, borderBottomWidth: 1, borderBottomColor: '#e0e0e0', marginBottom: 20 },\n  drawerHeaderText: { fontSize: 24, fontWeight: 'bold' },\n});"
+    },
+
+    {
+      "type": "heading",
+      "value": "5. Nested Navigators"
+    },
+    {
+      "type": "text",
+      "value": "Real apps often combine multiple navigators. Common patterns: Stack inside Tabs, Drawer containing Stack, or Tabs inside Drawer [citation:9]."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// NestedNavigators.tsx - Stack inside Tabs inside Drawer\nimport * as React from 'react';\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createDrawerNavigator } from '@react-navigation/drawer';\nimport { createBottomTabNavigator } from '@react-navigation/bottom-tabs';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { Ionicons } from '@expo/vector-icons';\n\n// ----- Stack Navigator for Home Tab -----\ntype HomeStackParamList = {\n  HomeList: undefined;\n  HomeDetail: { id: number };\n};\n\nconst HomeStack = createNativeStackNavigator<HomeStackParamList>();\n\nfunction HomeStackScreen() {\n  return (\n    <HomeStack.Navigator>\n      <HomeStack.Screen name=\"HomeList\" component={HomeListScreen} />\n      <HomeStack.Screen name=\"HomeDetail\" component={HomeDetailScreen} />\n    </HomeStack.Navigator>\n  );\n}\n\nfunction HomeListScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Home List</Text>\n      <Button title=\"Go to Detail\" onPress={() => navigation.navigate('HomeDetail', { id: 1 })} />\n    </View>\n  );\n}\n\nfunction HomeDetailScreen({ route }: { route: any }) {\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Home Detail - ID: {route.params.id}</Text>\n    </View>\n  );\n}\n\n// ----- Stack Navigator for Profile Tab -----\ntype ProfileStackParamList = {\n  ProfileMain: undefined;\n  ProfileEdit: undefined;\n};\n\nconst ProfileStack = createNativeStackNavigator<ProfileStackParamList>();\n\nfunction ProfileStackScreen() {\n  return (\n    <ProfileStack.Navigator>\n      <ProfileStack.Screen name=\"ProfileMain\" component={ProfileMainScreen} />\n      <ProfileStack.Screen name=\"ProfileEdit\" component={ProfileEditScreen} />\n    </ProfileStack.Navigator>\n  );\n}\n\nfunction ProfileMainScreen({ navigation }: { navigation: any }) {\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Profile Main</Text>\n      <Button title=\"Edit Profile\" onPress={() => navigation.navigate('ProfileEdit')} />\n    </View>\n  );\n}\n\nfunction ProfileEditScreen() {\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Edit Profile</Text>\n    </View>\n  );\n}\n\n// ----- Bottom Tab Navigator -----\ntype TabParamList = {\n  HomeTab: undefined;\n  ProfileTab: undefined;\n};\n\nconst Tab = createBottomTabNavigator<TabParamList>();\n\nfunction MainTabNavigator() {\n  return (\n    <Tab.Navigator\n      screenOptions={({ route }) => ({\n        tabBarIcon: ({ focused, color, size }) => {\n          const iconName = route.name === 'HomeTab' ? 'home' : 'person';\n          return <Ionicons name={focused ? iconName : `${iconName}-outline`} size={size} color={color} />;\n        },\n        tabBarActiveTintColor: '#007AFF',\n        headerShown: false,\n      })}\n    >\n      <Tab.Screen name=\"HomeTab\" component={HomeStackScreen} />\n      <Tab.Screen name=\"ProfileTab\" component={ProfileStackScreen} />\n    </Tab.Navigator>\n  );\n}\n\n// ----- Drawer Navigator (Root) -----\ntype DrawerParamList = {\n  MainTabs: undefined;\n  Settings: undefined;\n  About: undefined;\n};\n\nconst Drawer = createDrawerNavigator<DrawerParamList>();\n\nfunction SettingsScreen() {\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>Settings</Text>\n    </View>\n  );\n}\n\nfunction AboutScreen() {\n  return (\n    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n      <Text>About</Text>\n    </View>\n  );\n}\n\nexport default function App() {\n  return (\n    <NavigationContainer>\n      <Drawer.Navigator screenOptions={{ headerShown: false }}>\n        <Drawer.Screen name=\"MainTabs\" component={MainTabNavigator} options={{ title: 'Home' }} />\n        <Drawer.Screen name=\"Settings\" component={SettingsScreen} />\n        <Drawer.Screen name=\"About\" component={AboutScreen} />\n      </Drawer.Navigator>\n    </NavigationContainer>\n  );\n}\n\n// Accessing navigation from nested screens:\n// In HomeDetailScreen, to open drawer: navigation.getParent()?.openDrawer()\n// To navigate to Settings in drawer: navigation.getParent()?.navigate('Settings')"
+    },
+
+    {
+      "type": "heading",
+      "value": "6. Authentication Flow (Conditional Navigation)"
+    },
+    {
+      "type": "text",
+      "value": "Handle authentication screens (Login/Signup) separately from authenticated app screens. React Navigation 8 introduces `routeNamesChangeBehavior: 'lastUnhandled'` to handle deep links that arrive before authentication completes [citation:6]."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// AuthFlow.tsx - Authentication navigation pattern\nimport * as React from 'react';\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { ActivityIndicator, View } from 'react-native';\nimport AsyncStorage from '@react-native-async-storage/async-storage';\n\n// Auth Stack (unauthenticated)\nconst AuthStack = createNativeStackNavigator();\nfunction AuthStackScreen() {\n  return (\n    <AuthStack.Navigator>\n      <AuthStack.Screen name=\"Login\" component={LoginScreen} />\n      <AuthStack.Screen name=\"Signup\" component={SignupScreen} />\n    </AuthStack.Navigator>\n  );\n}\n\n// App Stack (authenticated)\nconst AppStack = createNativeStackNavigator();\nfunction AppStackScreen() {\n  return (\n    <AppStack.Navigator>\n      <AppStack.Screen name=\"Home\" component={HomeScreen} />\n      <AppStack.Screen name=\"Profile\" component={ProfileScreen} />\n    </AppStack.Navigator>\n  );\n}\n\n// Root Navigator with conditional rendering\nconst RootStack = createNativeStackNavigator();\n\nexport default function App() {\n  const [isLoading, setIsLoading] = React.useState(true);\n  const [userToken, setUserToken] = React.useState<string | null>(null);\n\n  React.useEffect(() => {\n    // Check if user is logged in\n    const bootstrapAsync = async () => {\n      try {\n        const token = await AsyncStorage.getItem('userToken');\n        setUserToken(token);\n      } catch (e) {\n        console.error(e);\n      } finally {\n        setIsLoading(false);\n      }\n    };\n    bootstrapAsync();\n  }, []);\n\n  if (isLoading) {\n    return (\n      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>\n        <ActivityIndicator size=\"large\" />\n      </View>\n    );\n  }\n\n  return (\n    <NavigationContainer>\n      <RootStack.Navigator screenOptions={{ headerShown: false }}>\n        {userToken === null ? (\n          <RootStack.Screen name=\"Auth\" component={AuthStackScreen} />\n        ) : (\n          <RootStack.Screen name=\"App\" component={AppStackScreen} />\n        )}\n      </RootStack.Navigator>\n    </NavigationContainer>\n  );\n}\n\n// React Navigation 8 - Handle deep links during auth\n// <RootStack.Navigator routeNamesChangeBehavior=\"lastUnhandled\">\n// This remembers deep links that arrive before auth completes\n// and processes them once the auth screen is replaced"
+    },
+
+    {
+      "type": "heading",
+      "value": "7. Navigation Lifecycle & Hooks"
+    },
+    {
+      "type": "text",
+      "value": "React Navigation provides hooks to respond to screen focus/blur events. In React Navigation 8, `inactiveBehavior: 'pause'` is the new default, cleaning up effects for inactive screens [citation:2]."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// NavigationLifecycle.tsx\nimport * as React from 'react';\nimport { useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';\nimport { View, Text, Button } from 'react-native';\n\nfunction ProfileScreen() {\n  // Method 1: useFocusEffect (runs on focus, cleans up on blur)\n  useFocusEffect(\n    React.useCallback(() => {\n      console.log('Screen focused - start fetching data');\n      \n      // Start timers, subscriptions, fetch data\n      const subscription = someObservable.subscribe();\n      \n      return () => {\n        console.log('Screen blurred - cleanup');\n        subscription.unsubscribe();\n      };\n    }, [])\n  );\n\n  // Method 2: useIsFocused (boolean, triggers re-render)\n  const isFocused = useIsFocused();\n  \n  return (\n    <View>\n      <Text>Profile Screen - {isFocused ? 'Focused' : 'Not Focused'}</Text>\n    </View>\n  );\n}\n\n// React Navigation 8 - Access parent screen navigation\nfunction NestedScreen() {\n  // Access navigation object for any parent screen by name\n  const parentNavigation = useNavigation('Home');\n  const parentRoute = useRoute('Home');\n  \n  // Get navigation state for parent navigator\n  const focusedRoute = useNavigationState(\n    'Home',\n    (state) => state.routes[state.index]\n  );\n  \n  return (\n    <Button\n      title=\"Go to Home Root\"\n      onPress={() => parentNavigation.navigate('Home')}\n    />\n  );\n}\n\n// React Navigation 8 - inactiveBehavior configuration\n// In navigator options:\n// screenOptions: {\n//   inactiveBehavior: 'pause'  // default - cleans up effects\n//   // 'unmount' - unmount screens completely (Native Stack only)\n//   // 'none' - keep mounted as before\n// }"
+    },
+
+    {
+      "type": "heading",
+      "value": "8. Deep Linking"
+    },
+    {
+      "type": "text",
+      "value": "Deep linking allows opening your app from URLs. React Navigation 8 enables deep linking by default with automatic path generation from screen names (PascalCase to kebab-case) [citation:2][citation:6]."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// DeepLinking.tsx\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { z } from 'zod'; // React Navigation 8 supports Zod schemas\n\nconst Stack = createNativeStackNavigator();\n\n// React Navigation 8 - Deep linking enabled by default\n// Paths automatically generated: ProfileScreen -> /profile-screen\n// Custom paths can be configured per screen\n\nconst linking = {\n  // Custom prefixes (optional in React Navigation 8)\n  prefixes: ['myapp://', 'https://myapp.com'],\n  \n  // Custom path configuration\n  config: {\n    screens: {\n      Home: 'home',\n      Profile: {\n        path: 'user/:userId',\n        parse: {\n          // React Navigation 8 supports Zod schemas\n          userId: z.coerce.number(), // Converts string to number\n        },\n      },\n      Settings: 'settings',\n      // Nested navigators\n      Product: {\n        screens: {\n          ProductList: 'products',\n          ProductDetail: 'product/:id',\n        },\n      },\n    },\n  },\n  \n  // Optional: disable deep linking\n  // enabled: false,\n};\n\n// React Navigation 8 - Standard Schema support (Zod, Valibot, ArkType)\n// Benefits over parse functions:\n// - Validation: If validation fails, URL won't match the screen\n// - Fallback: Schemas called with undefined when param missing\n// - Better TypeScript inference for required/optional params\n\nfunction App() {\n  return (\n    <NavigationContainer linking={linking}>\n      <Stack.Navigator>\n        <Stack.Screen name=\"Home\" component={HomeScreen} />\n        <Stack.Screen name=\"Profile\" component={ProfileScreen} />\n        <Stack.Screen name=\"Settings\" component={SettingsScreen} />\n        <Stack.Screen name=\"ProductList\" component={ProductListScreen} />\n        <Stack.Screen name=\"ProductDetail\" component={ProductDetailScreen} />\n      </Stack.Navigator>\n    </NavigationContainer>\n  );\n}\n\n// Handling deep links while app is running\nimport { useDeepLinking } from '@react-navigation/native';\n\nfunction DeepLinkHandler() {\n  // React Navigation 8 automatically handles deep links\n  // You can listen to deep link events if needed\n  \n  return null;\n}\n\n// URL examples:\n// myapp://home\n// myapp://user/123\n// https://myapp.com/product/456\n// https://myapp.com/products"
+    },
+
+    {
+      "type": "heading",
+      "value": "9. TypeScript Integration"
+    },
+    {
+      "type": "text",
+      "value": "React Navigation 8 significantly improves TypeScript inference. Navigation hooks now automatically infer types based on screen names, and path patterns can infer parameter types [citation:2][citation:6]."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// types/navigation.ts\nexport type RootStackParamList = {\n  Home: undefined;\n  Details: { id: number; title: string };\n  Profile: { userId: string };\n  Modal: { screen: string };\n};\n\n// Global type declaration\ndeclare global {\n  namespace ReactNavigation {\n    interface RootParamList extends RootStackParamList {}\n  }\n}\n\n// App.tsx with full TypeScript\nexport default function App() {\n  return (\n    <NavigationContainer>\n      <Stack.Navigator>\n        <Stack.Screen name=\"Home\" component={HomeScreen} />\n        <Stack.Screen name=\"Details\" component={DetailsScreen} />\n        <Stack.Screen name=\"Profile\" component={ProfileScreen} />\n      </Stack.Navigator>\n    </NavigationContainer>\n  );\n}\n\n// HomeScreen.tsx - typed navigation\nimport { useNavigation, useRoute } from '@react-navigation/native';\nimport type { NativeStackNavigationProp } from '@react-navigation/native-stack';\nimport type { RootStackParamList } from '../types/navigation';\n\ntype HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;\n\nfunction HomeScreen() {\n  const navigation = useNavigation<HomeScreenNavigationProp>();\n  \n  return (\n    <Button\n      title=\"Go to Details\"\n      onPress={() => navigation.navigate('Details', { id: 42, title: 'Answer' })}\n    />\n  );\n}\n\n// React Navigation 8 - Automatic type inference with createXScreen helpers\nimport { createNativeStackScreen } from '@react-navigation/native-stack';\n\nconst Stack = createStackNavigator({\n  screens: {\n    Profile: createNativeStackScreen({\n      screen: ProfileScreen,\n      linking: {\n        path: 'user/:userId',\n        parse: {\n          userId: (userId) => Number(userId),\n        },\n      },\n      options: ({ route }) => {\n        // route.params.userId is automatically typed as number\n        return { title: `User ${route.params.userId}` };\n      },\n    }),\n  },\n});\n\n// useNavigation with screen name (React Navigation 8)\nconst navigation = useNavigation('Profile'); // Returns typed navigation for Profile screen\nconst route = useRoute('Profile'); // Returns typed route for Profile screen"
+    },
+
+    {
+      "type": "heading",
+      "value": "10. Theming & Styling"
+    },
+    {
+      "type": "text",
+      "value": "React Navigation supports custom themes including PlatformColor and DynamicColorIOS. React Navigation 8 introduces Material Design 3 themes for Android [citation:2]."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// CustomTheme.tsx\nimport { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';\nimport { useColorScheme, Platform } from 'react-native';\n\n// React Navigation 8 - Material Design 3 themes\nimport { MaterialLightTheme, MaterialDarkTheme } from '@react-navigation/native';\n\nconst MyLightTheme = {\n  ...DefaultTheme,\n  colors: {\n    ...DefaultTheme.colors,\n    primary: '#007AFF',\n    background: '#FFFFFF',\n    card: '#F8F9FA',\n    text: '#000000',\n    border: '#E9ECEF',\n  },\n};\n\nconst MyDarkTheme = {\n  ...DarkTheme,\n  colors: {\n    ...DarkTheme.colors,\n    primary: '#0A84FF',\n    background: '#000000',\n    card: '#1C1C1E',\n    text: '#FFFFFF',\n    border: '#38383A',\n  },\n};\n\n// React Navigation 8 - PlatformColor support\nconst PlatformAwareTheme = {\n  ...DefaultTheme,\n  colors: Platform.select({\n    ios: {\n      ...DefaultTheme.colors,\n      primary: PlatformColor('systemBlue'),\n      background: PlatformColor('systemBackground'),\n    },\n    android: {\n      ...DefaultTheme.colors,\n      primary: PlatformColor('@android:color/system_primary_light'),\n      background: PlatformColor('@android:color/background'),\n    },\n    default: DefaultTheme.colors,\n  }),\n};\n\nexport default function App() {\n  const scheme = useColorScheme();\n  \n  return (\n    <NavigationContainer theme={scheme === 'dark' ? MyDarkTheme : MyLightTheme}>\n      {/* App content */}\n    </NavigationContainer>\n  );\n}\n\n// Custom header styling\n<Stack.Navigator\n  screenOptions={{\n    headerStyle: { backgroundColor: '#007AFF' },\n    headerTintColor: '#fff',\n    headerTitleStyle: { fontWeight: 'bold' },\n    headerBackTitle: 'Back',\n    headerShadowVisible: false,\n    headerLargeTitle: true, // iOS large titles\n  }}\n>\n  <Stack.Screen\n    name=\"Home\"\n    component={HomeScreen}\n    options={{\n      title: 'Welcome',\n      headerRight: () => <Button title=\"Edit\" onPress={() => {}} />,\n    }}\n  />\n</Stack.Navigator>"
+    },
+
+    {
+      "type": "heading",
+      "value": "11. State Persistence"
+    },
+    {
+      "type": "text",
+      "value": "Persist navigation state across app restarts to restore user position. React Navigation 8 introduces a `persistor` prop that simplifies this [citation:6]."
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// StatePersistence.tsx\nimport { NavigationContainer } from '@react-navigation/native';\nimport AsyncStorage from '@react-native-async-storage/async-storage';\n\n// React Navigation 8 - Simplified persistor API\nfunction App() {\n  return (\n    <NavigationContainer\n      persistor={{\n        async persist(state) {\n          await AsyncStorage.setItem('NAVIGATION_STATE_V1', JSON.stringify(state));\n        },\n        async restore() {\n          const state = await AsyncStorage.getItem('NAVIGATION_STATE_V1');\n          return state ? JSON.parse(state) : undefined;\n        },\n      }}\n    >\n      <RootNavigator />\n    </NavigationContainer>\n  );\n}\n\n// React Navigation 7 - Manual persistence\nfunction AppV7() {\n  const [isReady, setIsReady] = React.useState(false);\n  const [initialState, setInitialState] = React.useState();\n\n  React.useEffect(() => {\n    const restoreState = async () => {\n      try {\n        const savedState = await AsyncStorage.getItem('NAVIGATION_STATE');\n        if (savedState) {\n          setInitialState(JSON.parse(savedState));\n        }\n      } finally {\n        setIsReady(true);\n      }\n    };\n    restoreState();\n  }, []);\n\n  if (!isReady) {\n    return <LoadingScreen />;\n  }\n\n  return (\n    <NavigationContainer\n      initialState={initialState}\n      onStateChange={(state) => AsyncStorage.setItem('NAVIGATION_STATE', JSON.stringify(state))}\n    >\n      <RootNavigator />\n    </NavigationContainer>\n  );\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "12. Best Practices & Common Pitfalls"
+    },
+    {
+      "type": "text",
+      "value": "**Do's:**\n- Use `navigation.navigate()` for standard navigation, `navigation.push()` when you need multiple instances of same screen\n- Use `useFocusEffect` instead of `useEffect` for data fetching on screen focus\n- Define navigation param types with TypeScript for type safety\n- Use `getFocusedRouteNameFromRoute` to dynamically hide tab bars on nested screens\n- Set `inactiveBehavior: 'pause'` (React Navigation 8 default) to clean up effects on inactive screens\n\n**Don'ts:**\n- ❌ Don't nest multiple `NavigationContainer` components - only one at root\n- ❌ Don't pass inline functions to `component` prop (causes unmount on re-render)\n- ❌ Don't rely on `navigation.state` directly - use `useRoute` hook instead\n- ❌ Don't forget to add `react-native-gesture-handler` import at top of entry file for Drawer\n- ❌ Don't ignore Android hardware back button - it works automatically with React Navigation"
+    },
+    {
+      "type": "code",
+      "language": "tsx",
+      "value": "// Dynamic tab bar hiding based on nested route\nimport { getFocusedRouteNameFromRoute } from '@react-navigation/native';\n\nfunction HomeTabs() {\n  return (\n    <Tab.Navigator\n      screenOptions={({ route }) => ({\n        tabBarStyle: ((route) => {\n          const routeName = getFocusedRouteNameFromRoute(route) ?? 'HomeList';\n          const hideTabBar = routeName === 'HomeDetail';\n          return { display: hideTabBar ? 'none' : 'flex' };\n        })(route),\n      })}\n    >\n      <Tab.Screen name=\"HomeList\" component={HomeListScreen} />\n      <Tab.Screen name=\"HomeDetail\" component={HomeDetailScreen} />\n    </Tab.Navigator>\n  );\n}\n\n// Screen tracking for analytics\nfunction App() {\n  const navigationRef = useNavigationContainerRef();\n\n  return (\n    <NavigationContainer\n      ref={navigationRef}\n      onReady={() => {\n        // Navigation is ready\n      }}\n      onStateChange={async (state) => {\n        const currentRouteName = navigationRef.getCurrentRoute()?.name;\n        if (currentRouteName) {\n          await Analytics.trackScreenView(currentRouteName);\n        }\n      }}\n    >\n      <RootNavigator />\n    </NavigationContainer>\n  );\n}"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What's the difference between navigate and push?",
+      "answer": "`navigate` checks if a screen with that name already exists in the stack. If it does, it jumps to it. If not, it pushes a new screen. `push` always adds a new screen to the stack, even if one already exists. Use `navigate` for main navigation flows (prevents duplicate screens). Use `push` when you need multiple instances of the same screen (e.g., product details)."
+    },
+    {
+      "question": "How do I navigate from a non-component (Redux saga, API service)?",
+      "answer": "Set up a navigation ref and export it. Create a file `NavigationService.ts` that holds a ref to the navigator and exposes functions like `navigate`, `goBack`, etc. This allows navigation from anywhere in your app, including Redux sagas, API interceptors, and utility functions."
+    },
+    {
+      "question": "What's new in React Navigation 8?",
+      "answer": "Key features: native bottom tabs by default (iOS 26 liquid glass effects), automatic TypeScript inference with screen-name parameters, `pushParams` API for history entries without new screens, `routeNamesChangeBehavior` for deep links during auth, `persistor` prop for state persistence, and Standard Schema support (Zod) for deep linking validation."
+    },
+    {
+      "question": "How do I handle deep links before authentication?",
+      "answer": "In React Navigation 8, add `routeNamesChangeBehavior: 'lastUnhandled'` to your root navigator. The navigator remembers deep links that arrive while on the auth screen and processes them automatically after authentication completes. For React Navigation 7, you need to manually store the deep link URL and handle it after login."
+    }
+  ],
+
+  "quiz": [
+    {
+      "question": "Which navigation method always pushes a new screen onto the stack, even if one already exists?",
+      "options": ["navigate", "push", "goBack", "replace"],
+      "answer": 1
+    },
+    {
+      "question": "What is the default value of inactiveBehavior in React Navigation 8?",
+      "options": ["none", "unmount", "pause", "keep"],
+      "answer": 2
+    },
+    {
+      "question": "Which hook should you use to perform cleanup when a screen loses focus?",
+      "options": ["useEffect", "useLayoutEffect", "useFocusEffect", "useIsFocused"],
+      "answer": 2
+    },
+    {
+      "question": "What must be imported at the top of the entry file for Drawer Navigator to work?",
+      "options": ["react-native-screens", "react-native-safe-area-context", "react-native-gesture-handler", "@react-navigation/drawer"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "react-native-components",
+    "react-native-project-structure",
+    "react-native-styling",
+    "react-native-performance",
+    "react-native-deep-linking"
+  ]
+}

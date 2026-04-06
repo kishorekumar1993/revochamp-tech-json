@@ -1,0 +1,158 @@
+{
+  "slug": "kotlin-introduction",
+  "course": "Kotlin Development",
+  "title": "Kotlin – Modern Native Android Development",
+  "meta": {
+    "title": "Kotlin Introduction – Syntax, Null Safety, Coroutines & KMP (2026)",
+    "description": "Master Kotlin for professional Android development. Learn about sound null safety, extension functions, coroutines, and the Kotlin Multiplatform (KMP) ecosystem.",
+    "keywords": [
+      "kotlin introduction",
+      "kotlin null safety",
+      "kotlin coroutines",
+      "kotlin multiplatform kmp",
+      "android native development",
+      "kotlin vs java",
+      "functional programming kotlin"
+    ]
+  },
+  "content": [
+    {
+      "type": "heading",
+      "value": "Kotlin: The Modern Native Standard"
+    },
+    {
+      "type": "text",
+      "value": "Kotlin is a statically typed, cross-platform language designed to be fully interoperable with Java while providing a significantly more concise and safe developer experience. In 2026, Kotlin is not just the 'Android language'—it is the backbone of the Kotlin Multiplatform (KMP) movement, allowing architects to share business logic across iOS, Android, and Web. For your Revochamp engine, Kotlin serves as the high-performance bridge to Android's low-level system services."
+    },
+    
+    {
+      "type": "heading",
+      "value": "1. Sound Null Safety"
+    },
+    {
+      "type": "text",
+      "value": "Like Dart, Kotlin's type system is designed to eliminate the 'Billion Dollar Mistake' (NullPointerException). Types are non-nullable by default. To allow a null value, you must explicitly declare the type as nullable using the `?` operator. This forces the compiler to ensure you handle null cases safely."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Non-nullable by default\nvar projectName: String = \"Revochamp\"\n// projectName = null // Compilation Error\n\n// Nullable type\nvar projectDescription: String? = null\n\n// Safe call operator (?.)\nprintln(projectDescription?.length)\n\n// Elvis operator (?:) for default values\nval length = projectDescription?.length ?: 0"
+    },
+    {
+      "type": "heading",
+      "value": "2. Functional & Concise Syntax"
+    },
+    {
+      "type": "text",
+      "value": "Kotlin reduces boilerplate by approximately 40% compared to Java. It supports data classes, extension functions, and high-order functions, which allow you to write expressive, maintainable code for your native Android modules."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Data Class - automatically generates equals, hashCode, toString, and copy\ndata class Widget(val id: String, val type: String, val isVisible: Boolean = true)\n\n// Extension Function - adds functionality to existing classes without inheritance\nfun String.toSnakeCase() = this.lowercase().replace(\" \", \"_\")\n\n// Usage\nval myWidget = Widget(\"001\", \"Button\")\nval fileName = \"My New Widget\".toSnakeCase() // \"my_new_widget\""
+    },
+    {
+      "type": "heading",
+      "value": "3. Structured Concurrency with Coroutines"
+    },
+    {
+      "type": "text",
+      "value": "Kotlin Coroutines provide a way to write non-blocking, asynchronous code that is as easy to read as synchronous code. While Dart uses an Event Loop and Isolates, Kotlin uses lightweight threads called Coroutines. They are ideal for network calls to your Python backend or processing AI data without freezing the Android UI."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "import kotlinx.coroutines.*\n\nfun main() = runBlocking {\n    launch {\n        val result = fetchAIData()\n        println(\"Data received: $result\")\n    }\n    println(\"Processing in background...\")\n}\n\nsuspend fun fetchAIData(): String {\n    delay(1000) // Non-blocking delay\n    return \"AI Model V2\"\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. Interoperability & The Flutter Bridge"
+    },
+    {
+      "type": "text",
+      "value": "When building Flutter Method Channels, you will implement the Android side in Kotlin. Kotlin is 100% interoperable with Java, meaning you can use any existing Android library or Maven dependency seamlessly within your Revochamp native runner."
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": [
+          "Feature",
+          "Kotlin (Android)",
+          "Dart (Flutter)",
+          "Swift (iOS)"
+        ],
+        "rows": [
+          ["Null Safety", "Built-in (Explicit)", "Sound Null Safety", "Optionals"],
+          ["Async Pattern", "Coroutines", "Async/Await", "Async/Await & Actors"],
+          ["UI Paradigm", "Jetpack Compose", "Flutter Framework", "SwiftUI"],
+          ["Extension", "Extension Functions", "Extension Methods", "Extensions"],
+          ["Memory", "JVM Garbage Collection", "Dart GC", "ARC (Reference Counting)"]
+        ]
+      }
+    }
+  ],
+  "faq": [
+    {
+      "question": "Why is Kotlin preferred over Java for Android development?",
+      "answer": "Kotlin is more concise, safer (reducing null-related crashes), and is Google's 'first-class' language for Android. It supports modern features like Coroutines and Jetpack Compose that Java does not support natively."
+    },
+    {
+      "question": "Can Kotlin code be used in iOS development?",
+      "answer": "Yes, through Kotlin Multiplatform (KMP). While it doesn't share UI (like Flutter), KMP allows you to compile shared business logic into a native framework that can be called by Swift code in iOS."
+    },
+    {
+      "question": "What are Coroutines compared to Threads?",
+      "answer": "Coroutines are 'lightweight threads.' You can run thousands of coroutines on a single thread. They use 'suspension' instead of 'blocking,' which saves system resources and improves app performance."
+    }
+  ],
+  "quiz": [
+    {
+      "question": "Which keyword is used to declare an immutable variable in Kotlin?",
+      "options": [
+        "var",
+        "let",
+        "val",
+        "const"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What symbol is used to denote a nullable type in Kotlin?",
+      "options": [
+        "!",
+        "?",
+        "*",
+        "@"
+      ],
+      "answer": 1
+    },
+    {
+      "question": "Which class type automatically generates boilerplate methods like toString() and equals()?",
+      "options": [
+        "Model Class",
+        "Object Class",
+        "Data Class",
+        "Sealed Class"
+      ],
+      "answer": 2
+    },
+    {
+      "question": "What is the name of Kotlin's lightweight concurrency framework?",
+      "options": [
+        "Isolates",
+        "Promises",
+        "Coroutines",
+        "Observables"
+      ],
+      "answer": 2
+    }
+  ],
+  "related": [
+    "kotlin-coroutines-deep-dive",
+    "android-app-lifecycle",
+    "flutter-method-channels",
+    "kotlin-multiplatform-setup",
+    "clean-architecture-android"
+  ]
+}

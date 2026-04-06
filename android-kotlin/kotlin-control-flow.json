@@ -1,0 +1,140 @@
+{
+  "slug": "kotlin-control-flow",
+  "course": "Kotlin Development",
+  "title": "Kotlin Control Flow – Expressions and Pattern Matching",
+
+  "meta": {
+    "title": "Kotlin Control Flow Guide – When, If-Expressions & Loops (2026)",
+    "description": "Master Kotlin's control flow. Learn about the powerful 'when' expression, if-as-an-expression, and idiomatic looping for native Android development.",
+    "keywords": [
+      "kotlin control flow",
+      "kotlin when expression",
+      "kotlin if expression",
+      "kotlin ranges",
+      "loops in kotlin",
+      "pattern matching kotlin"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Control Flow as Expressions"
+    },
+    {
+      "type": "text",
+      "value": "In Kotlin, `if` and `when` are expressions: they can return a value that can be assigned to a variable. As an Architect, you should use this to replace the ternary operator (which Kotlin does not have) and to make your native Android logic more functional and less imperative."
+    },
+    {
+      "type": "heading",
+      "value": "1. If-Expression"
+    },
+    {
+      "type": "text",
+      "value": "Because `if` returns a value, you can use it directly in assignments. This reduces the scope of variables and makes the intent of your code clearer."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Traditional style\nval max: Int\nif (a > b) { max = a } else { max = b }\n\n// Idiomatic Kotlin (The 'Ternary' replacement)\nval maxValue = if (a > b) a else b\n\n// Multi-line expression (the last line is the return value)\nval status = if (isModelLoaded) {\n    println(\"System Ready\")\n    \"ACTIVE\"\n} else {\n    \"PENDING\"\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. The 'When' Expression (Power Switch)"
+    },
+    {
+      "type": "text",
+      "value": "The `when` expression is Kotlin's highly evolved version of the `switch` statement. It is significantly more flexible, allowing you to check types, ranges, and multiple conditions in a single branch. For Revochamp, this is the perfect tool for handling different widget types coming from the AI."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "fun processWidget(obj: Any) = when (obj) {\n    1 -> println(\"Numeric ID\")\n    \"Button\", \"Icon\" -> println(\"Interactive Element\")\n    is String -> println(\"String of length ${obj.length}\")\n    in 1..10 -> println(\"Priority Range\")\n    !is Int -> println(\"Not an integer\")\n    else -> println(\"Unknown Type\")\n}\n\n// Using 'when' as a replacement for complex if-else-if chains\nwhen {\n    project.isCloud -> syncToCloud()\n    project.isLocal -> saveToDisk()\n    else -> discardChanges()\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. For Loops and Ranges"
+    },
+    {
+      "type": "text",
+      "value": "Kotlin simplifies iteration using **Ranges**. You don't write traditional `for (int i=0; i<10; i++)` loops. Instead, you use the `in` operator with ranges like `1..10` or `0 until list.size`."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Inclusive range (1 to 5)\nfor (i in 1..5) print(i)\n\n// Exclusive range (0 to 9)\nfor (i in 0 until 10) print(i)\n\n// Stepping and downward ranges\nfor (i in 10 downTo 0 step 2) print(i)\n\n// Iterating over a collection with index\nfor ((index, value) in widgetList.withIndex()) {\n    println(\"Item at $index is $value\")\n}"
+    },
+    {
+      "type": "heading",
+      "value": "4. While and Do-While"
+    },
+    {
+      "type": "text",
+      "value": "The `while` and `do-while` loops in Kotlin behave exactly as they do in Dart and Java. Use these when the number of iterations is not known beforehand, such as waiting for a background AI process to finish."
+    },
+    {
+      "type": "heading",
+      "value": "Control Flow Comparison"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Kotlin", "Dart (Flutter)"],
+        "rows": [
+          ["If", "Expression (Returns value)", "Statement Only"],
+          ["Switch Equivalent", "when (Expression)", "switch (Statement)"],
+          ["Ternary Operator", "None (Use If-Expression)", "Supported (a ? b : c)"],
+          ["Iteration", "for (item in list)", "for (var item in list)"],
+          ["Ranges", "1..10 / until / step", "N/A (Use List.generate)"],
+          ["Type Check", "is / !is", "is / is!"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Does 'when' require an 'else' branch?",
+      "answer": "If you use 'when' as an expression (assigning it to a variable), the compiler must be sure all cases are covered. If you are checking an Enum or a Sealed Class, and you cover all cases, 'else' is not needed. Otherwise, 'else' is mandatory."
+    },
+    {
+      "question": "How do I break out of nested loops in Kotlin?",
+      "answer": "Kotlin supports 'Labels'. You can mark a loop with a label (e.g., 'loop@') and then use 'break@loop' to exit specifically from that outer loop, which is much cleaner than using boolean flags."
+    },
+    {
+      "question": "Can I use 'when' without an argument?",
+      "answer": "Yes! When used without an argument, it acts as a more readable replacement for an if-else-if chain. Each branch condition must evaluate to a Boolean."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which Kotlin structure serves as a more powerful replacement for the traditional switch statement?",
+      "options": ["switch", "case", "when", "choose"],
+      "answer": 2
+    },
+    {
+      "question": "What is the result of using a range like '1 until 5' in a loop?",
+      "options": ["1, 2, 3, 4, 5", "1, 2, 3, 4", "0, 1, 2, 3, 4", "5, 4, 3, 2, 1"],
+      "answer": 1
+    },
+    {
+      "question": "True or False: Kotlin does not have a ternary operator (condition ? true : false).",
+      "options": ["True", "False"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "kotlin-functions",
+    "kotlin-variables",
+    "android-app-lifecycle",
+    "flutter-method-channels",
+    "clean-architecture-android"
+  ]
+}

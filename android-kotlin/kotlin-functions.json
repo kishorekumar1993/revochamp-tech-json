@@ -1,0 +1,133 @@
+{
+  "slug": "kotlin-functions",
+  "course": "Kotlin Development",
+  "title": "Kotlin Functions – From Basics to Higher-Order Logic",
+
+  "meta": {
+    "title": "Kotlin Functions Guide – Lambdas, Extensions & Higher-Order Functions (2026)",
+    "description": "Master Kotlin functions for professional Android development. Learn about top-level functions, extension functions, and functional programming patterns.",
+    "keywords": [
+      "kotlin functions",
+      "extension functions kotlin",
+      "kotlin lambdas",
+      "higher order functions",
+      "kotlin default arguments",
+      "inline functions kotlin"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Function Basics and Syntax"
+    },
+    {
+      "type": "text",
+      "value": "In Kotlin, functions are declared using the `fun` keyword. Unlike Java, functions can exist at the 'Top Level' of a file, meaning you don't need to wrap every utility in a class. As an Architect, this leads to much cleaner code for your Flutter Method Channel handlers and utility helpers."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Standard function with parameters and return type\nfun calculateScale(value: Double, factor: Double): Double {\n    return value * factor\n}\n\n// Single-expression function (Concise)\nfun getVersion(): String = \"2.0.4\"\n\n// Default and Named Arguments (Similar to Dart)\nfun logMessage(message: String, level: String = \"INFO\") {\n    println(\"[$level] $message\")\n}\n\n// Usage\nlogMessage(\"AI Model Loaded\") // Uses default \"INFO\"\nlogMessage(level = \"WARN\", message = \"Low Memory\") // Named arguments"
+    },
+    {
+      "type": "heading",
+      "value": "1. Extension Functions: The Architect's Secret"
+    },
+    {
+      "type": "text",
+      "value": "Extension functions allow you to add new functionality to an existing class without inheriting from it. In your Revochamp project, you can use this to add 'toFlutterMap()' methods to native Android types, making data passing across the bridge seamless."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Adding a method to the standard String class\nfun String.isValidWidgetId(): Boolean {\n    return this.startsWith(\"wdg_\") && this.length > 5\n}\n\nval myId = \"wdg_button_1\"\nif (myId.isValidWidgetId()) {\n    println(\"Valid ID\")\n}"
+    },
+    {
+      "type": "heading",
+      "value": "2. Higher-Order Functions and Lambdas"
+    },
+    {
+      "type": "text",
+      "value": "A higher-order function is a function that takes another function as a parameter or returns one. This is the foundation of functional programming in Kotlin. When a function has a single lambda as its last parameter, Kotlin allows the 'Trailing Lambda' syntax, which makes your code look incredibly clean."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Function taking a lambda as a parameter\nfun performOperation(name: String, action: (String) -> Unit) {\n    println(\"Starting: $name\")\n    action(name)\n}\n\n// Trailing Lambda Syntax (Preferred)\nperformOperation(\"Widget Generation\") { taskName ->\n    println(\"Executing $taskName logic...\")\n}"
+    },
+    {
+      "type": "heading",
+      "value": "3. Inline Functions for Performance"
+    },
+    {
+      "type": "text",
+      "value": "Using higher-order functions can sometimes introduce runtime overhead due to object allocation for lambdas. By marking a function as `inline`, the Kotlin compiler copies the function's bytecode directly into the call site. As an Engineering Manager, you should use `inline` for small utility functions that take lambdas to keep the Revochamp runner highly performant."
+    },
+    
+    {
+      "type": "heading",
+      "value": "Function Comparison: Kotlin vs. Dart"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Kotlin", "Dart (Flutter)"],
+        "rows": [
+          ["Declaration", "fun", "void / Type / Dynamic"],
+          ["Named Arguments", "Supported (native)", "Supported (braces {})"],
+          ["Extensions", "Extension Functions", "Extension Methods"],
+          ["Anonymous", "Lambdas { }", "Anonymous Functions ( ) { }"],
+          ["Inlining", "Supported (inline keyword)", "Automatically handled by compiler"],
+          ["Top-Level", "Supported", "Supported"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is 'it' in a Kotlin Lambda?",
+      "answer": "If a lambda has exactly one parameter, you can omit its name and refer to it as 'it'. For example: 'list.filter { it.isActive }'. This is great for concise functional chains."
+    },
+    {
+      "question": "What is a 'Unit' return type?",
+      "answer": "Unit is the Kotlin equivalent of 'void' in Java or Dart. It means the function returns no meaningful value. Unlike void, Unit is a real object (a Singleton), which makes it easier to use in generic code."
+    },
+    {
+      "question": "When should I use an Extension Function over a Utility Class?",
+      "answer": "Always prefer Extension Functions for better readability and IDE discoverability. Instead of 'WidgetUtils.hide(view)', 'view.hide()' feels more natural and is easier to find via auto-completion."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to add functionality to an existing class without inheritance?",
+      "options": ["extend", "fun", "operator", "infix"],
+      "answer": 1
+    },
+    {
+      "question": "What is the return type of a function that does not return any value?",
+      "options": ["Void", "Null", "Unit", "Nothing"],
+      "answer": 2
+    },
+    {
+      "question": "Which attribute tells the compiler to copy the function body to the call site for performance?",
+      "options": ["fast", "inline", "static", "embedded"],
+      "answer": 1
+    }
+  ],
+
+  "related": [
+    "kotlin-introduction",
+    "kotlin-variables",
+    "kotlin-coroutines",
+    "flutter-method-channels",
+    "clean-architecture-android"
+  ]
+}

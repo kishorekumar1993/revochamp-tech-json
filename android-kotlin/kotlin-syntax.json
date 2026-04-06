@@ -1,0 +1,146 @@
+{
+  "slug": "kotlin-syntax-fundamentals",
+  "course": "Kotlin Development",
+  "title": "Kotlin Syntax – Concise and Expressive Coding",
+
+  "meta": {
+    "title": "Kotlin Syntax Guide – Basics, Null Safety & Expressions (2026)",
+    "description": "Master the core syntax of Kotlin. Learn about variable declarations, string templates, null safety, and how to write idiomatic Kotlin for Android.",
+    "keywords": [
+      "kotlin syntax",
+      "kotlin basics",
+      "string templates kotlin",
+      "kotlin type inference",
+      "idiomatic kotlin",
+      "kotlin coding style"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "The Anatomy of Kotlin Syntax"
+    },
+    {
+      "type": "text",
+      "value": "Kotlin is designed to be expressive. It eliminates semicolons (optional), reduces boilerplate, and treats most control structures as expressions. As an Engineering Manager, you'll find that Kotlin codebases in Chennai and globally are generally 30-40% smaller than their Java counterparts for the same functionality."
+    },
+    {
+      "type": "heading",
+      "value": "1. Variables and Type Inference"
+    },
+    {
+      "type": "text",
+      "value": "Kotlin uses `val` for read-only values (immutable) and `var` for mutable variables. While it is statically typed, you rarely need to declare the type explicitly because the compiler is smart enough to infer it from the assigned value."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "val name = \"Kishore\"      // String (Inferred)\nvar score = 100            // Int (Inferred)\nval price: Double = 19.99  // Explicit type declaration\n\n// name = \"Kumar\"          // Error: val cannot be reassigned\nscore = 110                // OK: var is mutable"
+    },
+    {
+      "type": "heading",
+      "value": "2. String Templates"
+    },
+    {
+      "type": "text",
+      "value": "Similar to Dart's `${variable}` syntax, Kotlin uses string templates to build strings dynamically. This is far more efficient than the string concatenation used in older languages."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "val version = 2.0\nval message = \"Revochamp Engine v$version\"\n\n// Using expressions in templates\nval status = \"Model is ${if (score > 50) \"Ready\" else \"Loading\"}\""
+    },
+    {
+      "type": "heading",
+      "value": "3. Null Safety: The '?' Operator"
+    },
+    {
+      "type": "text",
+      "value": "In Kotlin, nullability is part of the type system. A variable cannot be null unless you explicitly allow it. This prevents the NullPointerException before your app even runs."
+    },
+    
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "var nonNull: String = \"Always has a value\"\n// nonNull = null // Compilation Error\n\nvar canBeNull: String? = null // Allowed\n\n// Safe call (?.)\nprintln(canBeNull?.length) \n\n// Elvis operator (?:) provides default if null\nval length = canBeNull?.length ?: 0"
+    },
+    {
+      "type": "heading",
+      "value": "4. Functions and Expressions"
+    },
+    {
+      "type": "text",
+      "value": "Functions are first-class citizens. If a function only contains a single expression, you can skip the curly braces and the `return` keyword entirely."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Traditional function\nfun add(a: Int, b: Int): Int {\n    return a + b\n}\n\n// Expression-bodied function (Idiomatic)\nfun multiply(a: Int, b: Int) = a * b"
+    },
+    {
+      "type": "heading",
+      "value": "Syntax Comparison: Kotlin vs. Dart"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Kotlin", "Dart (Flutter)"],
+        "rows": [
+          ["Immutability", "val", "final / const"],
+          ["Mutability", "var", "var"],
+          ["Semicolons", "Optional (Rarely used)", "Required"],
+          ["String Interpolation", "\"$var\" or \"${expr}\"", "\"$var\" or \"${expr}\""],
+          ["Nullability", "Type? (Explicit)", "Type? (Explicit)"],
+          ["Single-Line Func", "fun f() = expr", "f() => expr"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Does Kotlin require semicolons?",
+      "answer": "No. Semicolons are optional in Kotlin. By convention, they are never used unless you are putting multiple statements on a single line, which is generally discouraged."
+    },
+    {
+      "question": "What is the 'Any' type in Kotlin?",
+      "answer": "Any is the root of the Kotlin type hierarchy. Every non-nullable class in Kotlin inherits from Any. It is similar to 'Object' in Dart or Java, but it is not a dynamic type."
+    },
+    {
+      "question": "How do I comment code in Kotlin?",
+      "answer": "Kotlin uses standard syntax: '//' for single-line comments and '/* ... */' for multi-line comments. It also supports KDoc (like Javadoc) using '/** ... */' for documenting functions and classes."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to declare an immutable (read-only) variable in Kotlin?",
+      "options": ["var", "let", "val", "const"],
+      "answer": 2
+    },
+    {
+      "question": "How do you include a variable called 'count' inside a string template?",
+      "options": ["'Value: ' + count", "\"Value: &count\"", "\"Value: $count\"", "\"Value: {count}\""],
+      "answer": 2
+    },
+    {
+      "question": "What is the correct symbol to declare a type that is allowed to be null?",
+      "options": ["!", "@", "?", "#"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "kotlin-variables-and-types",
+    "kotlin-functions",
+    "kotlin-control-flow",
+    "flutter-method-channels",
+    "clean-architecture-android"
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "slug": "react-native-project-structure",
+  "course": "React Native",
+  "title": "React Native Project Structure – Scalable Architecture for 2026",
+
+  "meta": {
+    "title": "React Native Project Structure: Clean Architecture & Folder Organization (2026)",
+    "description": "Master React Native project organization: Clean Architecture layers, feature-based modules, shared code, environment configs, testing patterns, and performance optimization for large-scale apps.",
+    "keywords": [
+      "react native project structure",
+      "react native folder structure",
+      "clean architecture react native",
+      "react native modular architecture",
+      "rn project organization",
+      "react native scalable app",
+      "react native monorepo"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "React Native Project Structure – Building for Scale"
+    },
+    {
+      "type": "text",
+      "value": "A well-organized React Native project is critical for team productivity, maintainability, and performance. In 2026, the industry standard is **feature-based modular architecture** combined with **Clean Architecture principles**. This guide presents production-tested structures for apps of all sizes — from small startups to large enterprise applications."
+    },
+
+    {
+      "type": "heading",
+      "value": "1. High-Level Project Structure"
+    },
+    {
+      "type": "text",
+      "value": "The root of your React Native project should separate configuration, source code, assets, and tests. Below is the recommended structure for a modern React Native app using TypeScript."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "MyReactNativeApp/\n├── .husky/                          # Git hooks (pre-commit, pre-push)\n├── .vscode/                         # Editor configuration\n├── __tests__/                       # Root-level test setup\n├── android/                         # Native Android project\n├── ios/                             # Native iOS project\n├── patches/                         # Patch-package patches for dependencies\n├── scripts/                         # Build and deployment scripts\n├── src/                             # Main source code (see detailed breakdown)\n├── .env.development                 # Dev environment variables\n├── .env.production                  # Prod environment variables\n├── .env.staging                     # Staging environment variables\n├── .eslintrc.js                     # ESLint configuration\n├── .prettierrc                      # Prettier configuration\n├── .swiftlint.yml                   # Swift linting for iOS\n├── app.config.js                    # Expo config (if using Expo)\n├── babel.config.js                  # Babel configuration\n├── detox.config.js                  # E2E testing (Detox)\n├── jest.config.js                   # Unit testing configuration\n├── metro.config.js                  # Metro bundler configuration\n├── package.json                     # Dependencies and scripts\n├── react-native.config.js           # React Native configuration\n├── tsconfig.json                    # TypeScript configuration\n└── yarn.lock / package-lock.json    # Lock file"
+    },
+
+    {
+      "type": "heading",
+      "value": "2. Source Code Structure (src/)"
+    },
+    {
+      "type": "text",
+      "value": "The `src/` folder contains all application code organized by features and layers. This structure scales from 1 to 100+ developers."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "src/\n├── app/                             # App initialization & configuration\n│   ├── App.tsx                      # Root component\n│   ├── index.tsx                    # Entry point\n│   ├── providers/                   # Context providers\n│   │   ├── ThemeProvider.tsx\n│   │   ├── AuthProvider.tsx\n│   │   ├── QueryProvider.tsx        # React Query setup\n│   │   └── index.tsx                # Combined providers\n│   └── navigation/                  # Root navigation\n│       ├── RootNavigator.tsx\n│       ├── NavigationTypes.ts\n│       └── linking.ts               # Deep linking configuration\n│\n├── core/                            # Core infrastructure (reusable across features)\n│   ├── api/                         # API client setup\n│   │   ├── client.ts                # Axios/Fetch client\n│   │   ├── endpoints.ts             # API endpoint constants\n│   │   ├── interceptors.ts          # Request/response interceptors\n│   │   └── types.ts                 # API response types\n│   ├── config/                      # App configuration\n│   │   ├── env.ts                   # Environment variables\n│   │   ├── constants.ts             # App constants\n│   │   └── featureFlags.ts          # Feature flag system\n│   ├── hooks/                       # Global reusable hooks\n│   │   ├── useDebounce.ts\n│   │   ├── useThrottle.ts\n│   │   ├── useAppState.ts\n│   │   └── useNetworkStatus.ts\n│   ├── utils/                       # Utility functions\n│   │   ├── formatters.ts            # Date, currency, number formatting\n│   │   ├── validators.ts            # Input validation\n│   │   ├── storage.ts               # AsyncStorage/mmkv wrapper\n│   │   ├── analytics.ts             # Analytics tracking\n│   │   └── logger.ts                # Logging utility\n│   ├── types/                       # Global TypeScript types\n│   │   ├── global.d.ts\n│   │   └── api.types.ts\n│   └── constants/                   # App-wide constants\n│       ├── colors.ts\n│       ├── typography.ts\n│       └── spacing.ts\n│\n├── modules/                         # Feature modules (grouped by domain)\n│   ├── auth/                        # Authentication feature\n│   │   ├── components/              # Feature-specific components\n│   │   │   ├── LoginForm.tsx\n│   │   │   ├── SignUpForm.tsx\n│   │   │   └── SocialLoginButton.tsx\n│   │   ├── screens/                 # Feature screens\n│   │   │   ├── LoginScreen.tsx\n│   │   │   ├── SignUpScreen.tsx\n│   │   │   └── ForgotPasswordScreen.tsx\n│   │   ├── hooks/                   # Feature hooks\n│   │   │   └── useAuth.ts\n│   │   ├── services/                # Feature services (API calls)\n│   │   │   └── authService.ts\n│   │   ├── store/                   # Feature state management\n│   │   │   └── authSlice.ts         # Redux/Zustand slice\n│   │   ├── types/                   # Feature types\n│   │   │   └── auth.types.ts\n│   │   └── utils/                   # Feature utilities\n│   │       └── validation.ts\n│   │\n│   ├── dashboard/                   # Dashboard feature\n│   │   ├── components/\n│   │   ├── screens/\n│   │   ├── hooks/\n│   │   ├── services/\n│   │   ├── store/\n│   │   └── types/\n│   │\n│   ├── profile/                     # Profile feature\n│   │   ├── components/\n│   │   ├── screens/\n│   │   ├── hooks/\n│   │   ├── services/\n│   │   ├── store/\n│   │   └── types/\n│   │\n│   └── settings/                    # Settings feature\n│       ├── components/\n│       ├── screens/\n│       ├── hooks/\n│       └── types/\n│\n├── shared/                          # Shared UI & business logic\n│   ├── components/                  # Reusable UI components\n│   │   ├── Button/\n│   │   │   ├── Button.tsx\n│   │   │   ├── Button.styles.ts\n│   │   │   ├── Button.test.tsx\n│   │   │   └── index.ts\n│   │   ├── Card/\n│   │   ├── Input/\n│   │   ├── Modal/\n│   │   ├── LoadingSpinner/\n│   │   ├── EmptyState/\n│   │   └── index.ts                # Barrel export\n│   ├── layouts/                     # Layout components\n│   │   ├── AuthLayout.tsx\n│   │   ├── MainLayout.tsx\n│   │   └── TabBarLayout.tsx\n│   ├── navigation/                  # Shared navigation components\n│   │   ├── TabBarIcon.tsx\n│   │   └── HeaderButton.tsx\n│   ├── hooks/                       # Shared hooks\n│   │   ├── useTheme.ts\n│   │   ├── useKeyboard.ts\n│   │   └── usePermissions.ts\n│   └── theme/                       # Theming system\n│       ├── ThemeProvider.tsx\n│       ├── lightTheme.ts\n│       ├── darkTheme.ts\n│       └── useTheme.ts\n│\n├── services/                        # Global services\n│   ├── analytics/\n│   │   ├── AnalyticsService.ts\n│   │   └── events.ts\n│   ├── crashReporting/\n│   │   └── CrashReporter.ts\n│   ├── notifications/\n│   │   ├── PushNotificationService.ts\n│   │   └── localNotifications.ts\n│   ├── storage/\n│   │   ├── SecureStorage.ts        # Encrypted storage (sensitive data)\n│   │   └── MMKVStorage.ts          # High-performance storage\n│   └── cache/\n│       ├── QueryCache.ts\n│       └── ImageCache.ts\n│\n├── store/                           # Global state management\n│   ├── rootReducer.ts              # Combined reducers\n│   ├── rootSaga.ts                 # If using Redux-Saga\n│   ├── store.ts                    # Store configuration\n│   └── middleware/\n│       ├── logger.ts\n│       └── persistence.ts\n│\n├── assets/                          # Static assets\n│   ├── fonts/\n│   │   ├── Inter-Regular.ttf\n│   │   ├── Inter-Bold.ttf\n│   │   └── index.ts\n│   ├── images/\n│   │   ├── icons/\n│   │   ├── illustrations/\n│   │   └── index.ts\n│   ├── animations/                 # Lottie animations\n│   │   └── loading.json\n│   └── locales/                    # i18n translations\n│       ├── en/\n│       ├── es/\n│       ├── fr/\n│       └── i18n.ts\n│\n└── types/                           # Global TypeScript declarations\n    ├── navigation.d.ts\n    ├── env.d.ts\n    └── images.d.ts"
+    },
+
+    {
+      "type": "heading",
+      "value": "3. Clean Architecture in React Native"
+    },
+    {
+      "type": "text",
+      "value": "Implement Clean Architecture within each feature module to separate concerns: **Presentation** (UI), **Domain** (business logic), and **Data** (API/storage). This makes code testable, maintainable, and framework-independent."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "src/modules/tasks/                 # Example feature with Clean Architecture\n├── presentation/                    # UI Layer\n│   ├── screens/\n│   │   ├── TaskListScreen.tsx\n│   │   └── TaskDetailScreen.tsx\n│   ├── components/\n│   │   ├── TaskCard.tsx\n│   │   └── TaskFilter.tsx\n│   └── viewModels/\n│       └── TaskListViewModel.ts     # Connects UI to domain\n│\n├── domain/                          # Business Logic Layer (No React Native imports)\n│   ├── entities/\n│   │   └── Task.ts                  # Business model\n│   ├── useCases/\n│   │   ├── GetTasksUseCase.ts\n│   │   ├── CreateTaskUseCase.ts\n│   │   └── UpdateTaskUseCase.ts\n│   ├── repositories/\n│   │   └── TaskRepository.ts       # Interface (abstraction)\n│   └── validators/\n│       └── TaskValidator.ts\n│\n└── data/                            # Data Layer\n    ├── repositories/\n    │   └── TaskRepositoryImpl.ts   # Implements TaskRepository\n    ├── dataSources/\n    │   ├── remote/\n    │   │   ├── TaskAPI.ts\n    │   │   └── TaskDTO.ts\n    │   └── local/\n    │       ├── TaskLocalStorage.ts\n    │       └── TaskEntity.ts\n    └── mappers/\n        └── TaskMapper.ts           # DTO <-> Entity mapping"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// Domain Layer (No React Native dependencies)\n// domain/entities/Task.ts\nexport interface Task {\n  id: string;\n  title: string;\n  description: string;\n  completed: boolean;\n  createdAt: Date;\n}\n\n// domain/repositories/TaskRepository.ts\nexport interface TaskRepository {\n  getTasks(): Promise<Task[]>;\n  createTask(task: Omit<Task, 'id' | 'createdAt'>): Promise<Task>;\n  updateTask(id: string, updates: Partial<Task>): Promise<Task>;\n  deleteTask(id: string): Promise<void>;\n}\n\n// domain/useCases/GetTasksUseCase.ts\nimport { TaskRepository } from '../repositories/TaskRepository';\nimport { Task } from '../entities/Task';\n\nexport class GetTasksUseCase {\n  constructor(private taskRepository: TaskRepository) {}\n  \n  async execute(): Promise<Task[]> {\n    return await this.taskRepository.getTasks();\n  }\n}\n\n// Data Layer (Implements interfaces)\n// data/repositories/TaskRepositoryImpl.ts\nimport { TaskRepository } from '../../domain/repositories/TaskRepository';\nimport { Task } from '../../domain/entities/Task';\nimport { TaskAPI } from '../dataSources/remote/TaskAPI';\nimport { TaskMapper } from '../mappers/TaskMapper';\n\nexport class TaskRepositoryImpl implements TaskRepository {\n  constructor(private api: TaskAPI) {}\n  \n  async getTasks(): Promise<Task[]> {\n    const dtos = await this.api.fetchTasks();\n    return dtos.map(TaskMapper.toDomain);\n  }\n  \n  async createTask(task: Omit<Task, 'id' | 'createdAt'>): Promise<Task> {\n    const dto = await this.api.createTask(task);\n    return TaskMapper.toDomain(dto);\n  }\n  \n  async updateTask(id: string, updates: Partial<Task>): Promise<Task> {\n    const dto = await this.api.updateTask(id, updates);\n    return TaskMapper.toDomain(dto);\n  }\n  \n  async deleteTask(id: string): Promise<void> {\n    await this.api.deleteTask(id);\n  }\n}\n\n// Presentation Layer (React components)\n// presentation/viewModels/TaskListViewModel.ts\nimport { useState, useEffect } from 'react';\nimport { GetTasksUseCase } from '../../domain/useCases/GetTasksUseCase';\nimport { Task } from '../../domain/entities/Task';\n\nexport const useTaskListViewModel = (getTasksUseCase: GetTasksUseCase) => {\n  const [tasks, setTasks] = useState<Task[]>([]);\n  const [loading, setLoading] = useState(true);\n  const [error, setError] = useState<string | null>(null);\n  \n  useEffect(() => {\n    loadTasks();\n  }, []);\n  \n  const loadTasks = async () => {\n    try {\n      setLoading(true);\n      const fetchedTasks = await getTasksUseCase.execute();\n      setTasks(fetchedTasks);\n      setError(null);\n    } catch (err) {\n      setError(err instanceof Error ? err.message : 'Failed to load tasks');\n    } finally {\n      setLoading(false);\n    }\n  };\n  \n  return { tasks, loading, error, refetch: loadTasks };\n};\n\n// presentation/screens/TaskListScreen.tsx\nimport React from 'react';\nimport { View, FlatList, Text } from 'react-native';\nimport { useTaskListViewModel } from '../viewModels/TaskListViewModel';\nimport { GetTasksUseCase } from '../../domain/useCases/GetTasksUseCase';\nimport { TaskRepositoryImpl } from '../../data/repositories/TaskRepositoryImpl';\nimport { TaskAPI } from '../../data/dataSources/remote/TaskAPI';\n\nconst TaskListScreen: React.FC = () => {\n  // Dependency injection\n  const api = new TaskAPI();\n  const repository = new TaskRepositoryImpl(api);\n  const getTasksUseCase = new GetTasksUseCase(repository);\n  const { tasks, loading, error, refetch } = useTaskListViewModel(getTasksUseCase);\n  \n  if (loading) return <LoadingSpinner />;\n  if (error) return <ErrorView message={error} onRetry={refetch} />;\n  \n  return (\n    <FlatList\n      data={tasks}\n      renderItem={({ item }) => <TaskCard task={item} />}\n      keyExtractor={item => item.id}\n      onRefresh={refetch}\n      refreshing={loading}\n    />\n  );\n};"
+    },
+
+    {
+      "type": "heading",
+      "value": "4. State Management Architecture"
+    },
+    {
+      "type": "text",
+      "value": "Choose state management based on app complexity. For 2026, the recommended stacks are: **Zustand** (simple to complex), **Redux Toolkit** (large teams, complex state), or **React Context + useReducer** (small apps)."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// store/store.ts – Redux Toolkit configuration\nimport { configureStore } from '@reduxjs/toolkit';\nimport { setupListeners } from '@reduxjs/toolkit/query';\nimport { persistStore, persistReducer } from 'redux-persist';\nimport AsyncStorage from '@react-native-async-storage/async-storage';\nimport rootReducer from './rootReducer';\nimport { api } from '../core/api/baseApi';\n\nconst persistConfig = {\n  key: 'root',\n  storage: AsyncStorage,\n  whitelist: ['auth', 'settings'], // Only persist these reducers\n  blacklist: ['navigation'] // Never persist these\n};\n\nconst persistedReducer = persistReducer(persistConfig, rootReducer);\n\nexport const store = configureStore({\n  reducer: persistedReducer,\n  middleware: (getDefaultMiddleware) =>\n    getDefaultMiddleware({\n      serializableCheck: {\n        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']\n      }\n    }).concat(api.middleware),\n  devTools: process.env.NODE_ENV !== 'production'\n});\n\nexport const persistor = persistStore(store);\nsetupListeners(store.dispatch);\n\nexport type RootState = ReturnType<typeof store.getState>;\nexport type AppDispatch = typeof store.dispatch;\n\n// store/slices/authSlice.ts\nimport { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';\nimport { authService } from '../../modules/auth/services/authService';\nimport { User } from '../../modules/auth/types/auth.types';\n\ninterface AuthState {\n  user: User | null;\n  token: string | null;\n  isLoading: boolean;\n  error: string | null;\n}\n\nconst initialState: AuthState = {\n  user: null,\n  token: null,\n  isLoading: false,\n  error: null\n};\n\nexport const login = createAsyncThunk(\n  'auth/login',\n  async ({ email, password }: { email: string; password: string }) => {\n    const response = await authService.login(email, password);\n    return response;\n  }\n);\n\nconst authSlice = createSlice({\n  name: 'auth',\n  initialState,\n  reducers: {\n    logout: (state) => {\n      state.user = null;\n      state.token = null;\n      state.error = null;\n    },\n    clearError: (state) => {\n      state.error = null;\n    }\n  },\n  extraReducers: (builder) => {\n    builder\n      .addCase(login.pending, (state) => {\n        state.isLoading = true;\n        state.error = null;\n      })\n      .addCase(login.fulfilled, (state, action) => {\n        state.isLoading = false;\n        state.user = action.payload.user;\n        state.token = action.payload.token;\n      })\n      .addCase(login.rejected, (state, action) => {\n        state.isLoading = false;\n        state.error = action.error.message || 'Login failed';\n      });\n  }\n});\n\nexport const { logout, clearError } = authSlice.actions;\nexport default authSlice.reducer;\n\n// hooks/useAppDispatch.ts (typed hooks)\nimport { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';\nimport type { RootState, AppDispatch } from '../store/store';\n\nexport const useAppDispatch = () => useDispatch<AppDispatch>();\nexport const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;\n\n// Usage in component\nimport { useAppDispatch, useAppSelector } from '../hooks/useAppDispatch';\nimport { login } from '../store/slices/authSlice';\n\nconst LoginScreen = () => {\n  const dispatch = useAppDispatch();\n  const { isLoading, error } = useAppSelector(state => state.auth);\n  \n  const handleLogin = () => {\n    dispatch(login({ email, password }));\n  };\n};"
+    },
+
+    {
+      "type": "heading",
+      "value": "5. Navigation Structure"
+    },
+    {
+      "type": "text",
+      "value": "Use **React Navigation 6+** with a clear separation of navigators. Define navigation types for type safety."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// src/app/navigation/types.ts\nexport type RootStackParamList = {\n  Auth: undefined;\n  Main: undefined;\n  Modal: { screen: string };\n};\n\nexport type AuthStackParamList = {\n  Login: undefined;\n  SignUp: undefined;\n  ForgotPassword: undefined;\n};\n\nexport type MainTabParamList = {\n  Dashboard: undefined;\n  Profile: undefined;\n  Settings: undefined;\n};\n\nexport type DashboardStackParamList = {\n  DashboardHome: undefined;\n  TaskDetail: { taskId: string };\n  CreateTask: undefined;\n};\n\ndeclare global {\n  namespace ReactNavigation {\n    interface RootParamList extends RootStackParamList {}\n  }\n}\n\n// src/app/navigation/RootNavigator.tsx\nimport React from 'react';\nimport { NavigationContainer } from '@react-navigation/native';\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { useAppSelector } from '../../hooks/useAppDispatch';\nimport { AuthNavigator } from './AuthNavigator';\nimport { MainNavigator } from './MainNavigator';\nimport { linking } from './linking';\n\nconst Stack = createNativeStackNavigator<RootStackParamList>();\n\nexport const RootNavigator: React.FC = () => {\n  const { token } = useAppSelector(state => state.auth);\n  const isAuthenticated = !!token;\n  \n  return (\n    <NavigationContainer linking={linking}>\n      <Stack.Navigator screenOptions={{ headerShown: false }}>\n        {!isAuthenticated ? (\n          <Stack.Screen name=\"Auth\" component={AuthNavigator} />\n        ) : (\n          <Stack.Screen name=\"Main\" component={MainNavigator} />\n        )}\n        <Stack.Group screenOptions={{ presentation: 'modal' }}>\n          <Stack.Screen name=\"Modal\" component={ModalScreen} />\n        </Stack.Group>\n      </Stack.Navigator>\n    </NavigationContainer>\n  );\n};\n\n// src/app/navigation/AuthNavigator.tsx\nimport { createNativeStackNavigator } from '@react-navigation/native-stack';\nimport { LoginScreen, SignUpScreen, ForgotPasswordScreen } from '../../modules/auth/screens';\n\nconst AuthStack = createNativeStackNavigator<AuthStackParamList>();\n\nexport const AuthNavigator = () => (\n  <AuthStack.Navigator>\n    <AuthStack.Screen name=\"Login\" component={LoginScreen} />\n    <AuthStack.Screen name=\"SignUp\" component={SignUpScreen} />\n    <AuthStack.Screen name=\"ForgotPassword\" component={ForgotPasswordScreen} />\n  </AuthStack.Navigator>\n);\n\n// src/app/navigation/MainNavigator.tsx\nimport { createBottomTabNavigator } from '@react-navigation/bottom-tabs';\nimport { DashboardNavigator } from '../../modules/dashboard/navigation/DashboardNavigator';\nimport { ProfileScreen } from '../../modules/profile/screens/ProfileScreen';\nimport { SettingsScreen } from '../../modules/settings/screens/SettingsScreen';\nimport { TabBarIcon } from '../../shared/navigation/TabBarIcon';\n\nconst Tab = createBottomTabNavigator<MainTabParamList>();\n\nexport const MainNavigator = () => (\n  <Tab.Navigator\n    screenOptions={({ route }) => ({\n      tabBarIcon: ({ color, size }) => (\n        <TabBarIcon routeName={route.name} color={color} size={size} />\n      ),\n      tabBarActiveTintColor: '#007AFF',\n      tabBarInactiveTintColor: 'gray',\n      headerShown: false\n    })}\n  >\n    <Tab.Screen name=\"Dashboard\" component={DashboardNavigator} />\n    <Tab.Screen name=\"Profile\" component={ProfileScreen} />\n    <Tab.Screen name=\"Settings\" component={SettingsScreen} />\n  </Tab.Navigator>\n);"
+    },
+
+    {
+      "type": "heading",
+      "value": "6. Environment Configuration"
+    },
+    {
+      "type": "text",
+      "value": "Manage multiple environments (development, staging, production) using `.env` files and react-native-config."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// .env.development\nAPI_URL=https://dev-api.example.com\nAPI_KEY=dev_key_123\nSENTRY_DSN=https://dev@sentry.io/123\nENVIRONMENT=development\n\n// .env.staging\nAPI_URL=https://staging-api.example.com\nAPI_KEY=staging_key_123\nSENTRY_DSN=https://staging@sentry.io/123\nENVIRONMENT=staging\n\n// .env.production\nAPI_URL=https://api.example.com\nAPI_KEY=prod_key_123\nSENTRY_DSN=https://prod@sentry.io/123\nENVIRONMENT=production\n\n// src/core/config/env.ts\nimport Config from 'react-native-config';\n\ninterface EnvConfig {\n  apiUrl: string;\n  apiKey: string;\n  sentryDsn: string;\n  environment: 'development' | 'staging' | 'production';\n  isDevelopment: boolean;\n  isProduction: boolean;\n  isStaging: boolean;\n}\n\nexport const env: EnvConfig = {\n  apiUrl: Config.API_URL || '',\n  apiKey: Config.API_KEY || '',\n  sentryDsn: Config.SENTRY_DSN || '',\n  environment: Config.ENVIRONMENT as EnvConfig['environment'],\n  isDevelopment: Config.ENVIRONMENT === 'development',\n  isProduction: Config.ENVIRONMENT === 'production',\n  isStaging: Config.ENVIRONMENT === 'staging'\n};\n\n// package.json scripts\n{\n  \"scripts\": {\n    \"start\": \"react-native start\",\n    \"ios:dev\": \"ENVFILE=.env.development react-native run-ios\",\n    \"ios:staging\": \"ENVFILE=.env.staging react-native run-ios --configuration Staging\",\n    \"ios:prod\": \"ENVFILE=.env.production react-native run-ios --configuration Release\",\n    \"android:dev\": \"ENVFILE=.env.development react-native run-android\",\n    \"android:staging\": \"ENVFILE=.env.staging react-native run-android --variant=stagingDebug\",\n    \"android:prod\": \"ENVFILE=.env.production react-native run-android --variant=release\"\n  }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "7. Testing Structure"
+    },
+    {
+      "type": "text",
+      "value": "Organize tests alongside source files with clear separation of unit, integration, and E2E tests."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "src/\n├── modules/\n│   └── auth/\n│       ├── __tests__/                 # Unit & integration tests\n│       │   ├── components/\n│       │   │   └── LoginForm.test.tsx\n│       │   ├── services/\n│       │   │   └── authService.test.ts\n│       │   └── hooks/\n│       │       └── useAuth.test.ts\n│       ├── components/\n│       └── screens/\n│\n__tests__/                             # Root-level test setup\n├── setup.ts                           # Jest setup\n├── mocks/                             # Global mocks\n│   ├── react-native.ts\n│   ├── asyncStorage.ts\n│   └── navigation.ts\n└── e2e/                               # Detox E2E tests\n    ├── config.json\n    ├── auth.spec.js\n    └── dashboard.spec.js\n\n// jest.config.js\nmodule.exports = {\n  preset: 'react-native',\n  setupFilesAfterEnv: ['<rootDir>/__tests__/setup.ts'],\n  transformIgnorePatterns: [\n    'node_modules/(?!(react-native|@react-native|@react-navigation)/)'\n  ],\n  moduleNameMapper: {\n    '^@/(.*)$': '<rootDir>/src/$1'\n  },\n  collectCoverageFrom: [\n    'src/**/*.{ts,tsx}',\n    '!src/**/*.d.ts',\n    '!src/**/*.styles.ts',\n    '!src/types/**'\n  ],\n  coverageThreshold: {\n    global: {\n      branches: 70,\n      functions: 70,\n      lines: 70,\n      statements: 70\n    }\n  }\n};"
+    },
+
+    {
+      "type": "heading",
+      "value": "8. Performance Optimization Structure"
+    },
+    {
+      "type": "text",
+      "value": "Organize performance-critical code and implement monitoring from the start."
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// src/core/performance/PerformanceMonitor.ts\nimport { InteractionManager } from 'react-native';\n\nclass PerformanceMonitor {\n  private marks: Map<string, number> = new Map();\n  \n  startMark(name: string) {\n    this.marks.set(name, performance.now());\n  }\n  \n  endMark(name: string) {\n    const start = this.marks.get(name);\n    if (start) {\n      const duration = performance.now() - start;\n      console.log(`⏱️ ${name}: ${duration.toFixed(2)}ms`);\n      this.marks.delete(name);\n      \n      // Send to analytics in production\n      if (env.isProduction) {\n        analytics.trackTiming(name, duration);\n      }\n    }\n  }\n  \n  // Defer non-critical work\n  async runAfterInteractions<T>(task: () => Promise<T>): Promise<T> {\n    return new Promise((resolve) => {\n      InteractionManager.runAfterInteractions(async () => {\n        resolve(await task());\n      });\n    });\n  }\n}\n\nexport const performanceMonitor = new PerformanceMonitor();\n\n// Usage in components\nconst TaskListScreen = () => {\n  useEffect(() => {\n    performanceMonitor.startMark('TaskListScreen:load');\n    loadTasks().finally(() => {\n      performanceMonitor.endMark('TaskListScreen:load');\n    });\n  }, []);\n};\n\n// src/core/performance/LazyLoad.tsx\nimport React, { Suspense, lazy, ComponentType } from 'react';\nimport { LoadingSpinner } from '../../shared/components/LoadingSpinner';\n\n// Code splitting for large components\nexport const lazyLoad = <T extends ComponentType<any>>(\n  factory: () => Promise<{ default: T }>\n) => {\n  const LazyComponent = lazy(factory);\n  \n  return (props: React.ComponentProps<T>) => (\n    <Suspense fallback={<LoadingSpinner />}>\n      <LazyComponent {...props} />\n    </Suspense>\n  );\n};\n\n// Usage\nconst HeavyDashboard = lazyLoad(() => import('./HeavyDashboardScreen'));"
+    },
+
+    {
+      "type": "heading",
+      "value": "9. Monorepo Structure (For Large Teams)"
+    },
+    {
+      "type": "text",
+      "value": "For apps with multiple React Native projects or shared code across web/mobile, use a monorepo with **Nx** or **Turborepo**."
+    },
+    {
+      "type": "code",
+      "language": "text",
+      "value": "my-monorepo/\n├── apps/\n│   ├── mobile/                       # React Native app\n│   │   ├── src/\n│   │   ├── android/\n│   │   ├── ios/\n│   │   └── package.json\n│   ├── web/                          # React web app\n│   │   ├── src/\n│   │   └── package.json\n│   └── backend/                      # Node.js backend\n│       └── src/\n│\n├── packages/                         # Shared packages\n│   ├── shared-ui/                    # Cross-platform UI components\n│   │   ├── src/\n│   │   └── package.json\n│   ├── shared-types/                 # TypeScript types\n│   │   ├── index.ts\n│   │   └── package.json\n│   ├── shared-hooks/                 # Shared React hooks\n│   │   └── package.json\n│   └── config-eslint/                # Shared ESLint config\n│       └── index.js\n│\n├── tools/                            # Build tools & scripts\n│   ├── generators/                   # Code generators (Plop)\n│   └── scripts/\n│\n├── turbo.json                        # Turborepo configuration\n├── nx.json                           # Nx configuration\n└── package.json                      # Root package.json\n\n// turbo.json example\n{\n  \"pipeline\": {\n    \"build\": {\n      \"dependsOn\": [\"^build\"],\n      \"outputs\": [\"dist/**\"]\n    },\n    \"test\": {\n      \"dependsOn\": [\"build\"],\n      \"inputs\": [\"src/**\", \"test/**\"]\n    },\n    \"lint\": {},\n    \"dev\": {\n      \"cache\": false\n    }\n  }\n}"
+    },
+
+    {
+      "type": "heading",
+      "value": "10. Best Practices & Code Organization Rules"
+    },
+    {
+      "type": "text",
+      "value": "**Naming Conventions:**\n- Components: PascalCase (`UserProfile.tsx`)\n- Hooks: camelCase with 'use' prefix (`useAuth.ts`)\n- Utils: camelCase (`formatDate.ts`)\n- Types: PascalCase with `.types.ts` suffix (`auth.types.ts`)\n- Constants: UPPER_SNAKE_CASE (`API_BASE_URL`)\n\n**File Organization Rules:**\n- Each file exports one main component/function\n- Keep files under 300 lines\n- Group related files in folders\n- Use barrel exports (`index.ts`) for clean imports\n\n**Import Order (enforced by ESLint):**\n1. React and React Native\n2. Third-party libraries\n3. Absolute imports (@/core, @/shared)\n4. Relative imports (./components, ../hooks)\n5. Styles and assets\n\n**Code Splitting Strategy:**\n- Lazy load screens not in the initial route\n- Lazy load heavy third-party libraries\n- Use InteractionManager for non-critical work\n\n**State Management Guidelines:**\n- Local UI state: useState/useReducer\n- Shared app state: Zustand/Redux\n- Server state: React Query (TanStack Query)\n- Form state: React Hook Form\n\n**Error Boundaries:**\n- Wrap each feature module with error boundary\n- Global error boundary at root\n- Log errors to monitoring service (Sentry)"
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "value": "// Example: Barrel exports pattern\n// src/shared/components/index.ts\nexport { Button } from './Button/Button';\nexport { Card } from './Card/Card';\nexport { Input } from './Input/Input';\nexport { Modal } from './Modal/Modal';\n\n// Usage in feature module\nimport { Button, Card, Input } from '@/shared/components';\n\n// Example: Absolute imports via tsconfig.json\n{\n  \"compilerOptions\": {\n    \"baseUrl\": \".\",\n    \"paths\": {\n      \"@/*\": [\"src/*\"],\n      \"@core/*\": [\"src/core/*\"],\n      \"@shared/*\": [\"src/shared/*\"],\n      \"@modules/*\": [\"src/modules/*\"],\n      \"@assets/*\": [\"src/assets/*\"]\n    }\n  }\n}\n\n// Example: ESLint rule for import order (package.json)\n{\n  \"eslintConfig\": {\n    \"rules\": {\n      \"import/order\": [\"error\", {\n        \"groups\": [\"builtin\", \"external\", \"internal\", \"parent\", \"sibling\", \"index\"],\n        \"pathGroups\": [\n          { \"pattern\": \"react\", \"group\": \"external\", \"position\": \"before\" },\n          { \"pattern\": \"@/**\", \"group\": \"internal\" }\n        ],\n        \"alphabetize\": { \"order\": \"asc\", \"caseInsensitive\": true }\n      }]\n    }\n  }\n}"
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "Should I use feature-based or layer-based folder structure?",
+      "answer": "**Feature-based** is preferred for large apps (10+ screens). It scales better because each feature is self-contained. **Layer-based** (components/, screens/, services/) works for small apps but becomes unwieldy as the app grows. For 2026, use feature-based with Clean Architecture layers inside each feature."
+    },
+    {
+      "question": "How do I handle dependency injection in React Native?",
+      "answer": "React Native doesn't have built-in DI. Use **Context API** for service dependencies, or libraries like `tsyringe` or `inversify`. For Clean Architecture, pass dependencies through constructors (manual DI) or use a simple Service Locator pattern. Example: `const useCase = new GetTasksUseCase(repository);`"
+    },
+    {
+      "question": "What's the best state management for large React Native apps?",
+      "answer": "**Zustand** is the current recommendation (2026) – simple, performant, and works great with React Native. **Redux Toolkit** is still excellent for very large teams with complex state logic. Avoid MobX for new projects. Use **React Query** for server state regardless of your client state choice."
+    },
+    {
+      "question": "How do I organize shared components?",
+      "answer": "Create a `shared/components/` folder with subfolders for each component. Each component should have its own folder with `.tsx`, `.styles.ts`, `.test.tsx`, and `index.ts` files. Export everything from a barrel file (`index.ts`). Avoid generic 'CommonComponents' – name them specifically."
+    }
+  ],
+
+  "quiz": [
+    {
+      "question": "Which architecture pattern separates Presentation, Domain, and Data layers within features?",
+      "options": ["MVC", "Clean Architecture", "MVVM", "Flux"],
+      "answer": 1
+    },
+    {
+      "question": "What should you use to manage server state (API data) in React Native?",
+      "options": ["Redux", "Zustand", "React Query", "Context API"],
+      "answer": 2
+    },
+    {
+      "question": "Which file extension should be used for TypeScript type definitions?",
+      "options": [".types.ts", ".d.ts", ".tsdef", ".model.ts"],
+      "answer": 0
+    },
+    {
+      "question": "What is the recommended way to lazy load screens for performance?",
+      "options": ["React.lazy + Suspense", "require()", "import() with useEffect", "AsyncComponent"],
+      "answer": 0
+    }
+  ],
+
+  "related": [
+    "react-native-components",
+    "react-native-state-management",
+    "react-native-navigation",
+    "react-native-performance",
+    "clean-architecture-mobile"
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "slug": "kotlin-variables-and-types",
+  "course": "Kotlin Development",
+  "title": "Kotlin Variables – Immutability and Type Safety",
+
+  "meta": {
+    "title": "Kotlin Variables Guide – Val vs Var, Null Safety & Lazy Loading (2026)",
+    "description": "Master variable declarations in Kotlin. Learn about val vs var, type inference, and how Kotlin's null safety protects your native Android code.",
+    "keywords": [
+      "kotlin variables",
+      "val vs var kotlin",
+      "kotlin null safety",
+      "lateinit kotlin",
+      "lazy initialization kotlin",
+      "kotlin data types"
+    ]
+  },
+
+  "content": [
+    {
+      "type": "heading",
+      "value": "Variable Declaration: val vs. var"
+    },
+    {
+      "type": "text",
+      "value": "In Kotlin, you explicitly choose between immutability and mutability at the moment of declaration. As an Engineering Manager, you should enforce a 'val-first' policy: always use `val` unless you are certain the value must change. This leads to safer, more predictable code in your concurrent Android modules."
+    },
+    
+    {
+      "type": "list",
+      "value": [
+        "**val (Value)**: Read-only references. Once assigned, the value cannot be changed. Equivalent to `final` in Dart.",
+        "**var (Variable)**: Mutable references. The value can be reassigned multiple times during the app's lifecycle."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Type inference is supported\nval projectId = \"revo_772\" \nvar widgetCount = 0\n\n// Explicit typing (if needed)\nval version: Double = 2.0\n\nwidgetCount = 1 // OK\n// projectId = \"new_id\" // Compilation Error"
+    },
+    {
+      "type": "heading",
+      "value": "1. Sound Null Safety"
+    },
+    {
+      "type": "text",
+      "value": "Kotlin's biggest strength is its built-in null safety. By default, variables cannot hold null values. To allow a variable to be null (e.g., a project description that might be empty), you must append a `?` to the type. This matches the behavior you are used to in modern Dart."
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "var name: String = \"Kishore\" \n// name = null // Error\n\nvar bio: String? = null // Nullable\n\n// Safe access using ?. (Safe Call)\nprintln(bio?.length)\n\n// Elvis operator (?:) for default values\nval bioLength = bio?.length ?: 0"
+    },
+    {
+      "type": "heading",
+      "value": "2. Advanced Initialization: lateinit and lazy"
+    },
+    {
+      "type": "text",
+      "value": "In complex Android components like Activities, you often can't initialize a variable at declaration. Kotlin provides two professional patterns for this:"
+    },
+    {
+      "type": "list",
+      "value": [
+        "**lateinit**: Used for non-nullable variables that will be initialized later (e.g., in `onCreate`). Use this for View references or dependency-injected services.",
+        "**lazy**: The variable is only initialized the first time it is accessed. This is perfect for heavy AI model loaders in Revochamp to save memory during startup."
+      ]
+    },
+    {
+      "type": "code",
+      "language": "kotlin",
+      "value": "// Late initialization\nlateinit var apiClient: RevoApiClient\n\n// Lazy initialization (only runs when 'config' is used)\nval config: String by lazy {\n    println(\"Loading heavy config file...\")\n    \"AI_MODEL_V1_SETTINGS\"\n}"
+    },
+    {
+      "type": "heading",
+      "value": "Variable Comparison: Kotlin vs. Dart"
+    },
+    {
+      "type": "table",
+      "value": {
+        "headers": ["Feature", "Kotlin", "Dart (Flutter)"],
+        "rows": [
+          ["Read-only", "val", "final / const"],
+          ["Mutable", "var", "var"],
+          ["Null Safety", "Type? (Explicit)", "Type? (Explicit)"],
+          ["Deferred Init", "lateinit", "late"],
+          ["Lazy Load", "by lazy { }", "late (with assignment)"],
+          ["Type Inference", "Supported", "Supported"]
+        ]
+      }
+    }
+  ],
+
+  "faq": [
+    {
+      "question": "What is the difference between val and const val?",
+      "answer": "'val' is a runtime constant (assigned while the app is running), while 'const val' is a compile-time constant. 'const val' can only be used at the top level or inside an object, and is used for values that never change, like API versions or base URLs."
+    },
+    {
+      "question": "Can I use 'lateinit' with primitive types like Int or Boolean?",
+      "answer": "No. 'lateinit' only works with reference types (classes). For primitives, you should use a standard nullable type or a default value."
+    },
+    {
+      "question": "Does Kotlin have 'dynamic' like Dart?",
+      "answer": "Kotlin has 'Any', which is the root of the type hierarchy (like Object in Java). However, it is not dynamic; you must cast it to a specific type before calling methods on it, ensuring strict type safety."
+    }
+  ],
+
+  "tryEditor": {
+    "enabled": false
+  },
+
+  "quiz": [
+    {
+      "question": "Which keyword is used to declare a variable that can be reassigned?",
+      "options": ["val", "var", "let", "const"],
+      "answer": 1
+    },
+    {
+      "question": "What is the correct way to declare a String variable that can hold a null value?",
+      "options": ["String name = null", "var name: String!", "var name: String?", "val name: String"],
+      "answer": 2
+    },
+    {
+      "question": "Which initialization pattern should be used for a heavy object that should only load when it is actually needed?",
+      "options": ["lateinit", "var", "by lazy", "init"],
+      "answer": 2
+    }
+  ],
+
+  "related": [
+    "kotlin-introduction",
+    "kotlin-functions",
+    "android-app-lifecycle",
+    "flutter-method-channels",
+    "clean-architecture-android"
+  ]
+}
