@@ -1,0 +1,238 @@
+{
+  "id": "null_safety_dart_mock_001",
+  "title": "Dart Null Safety Mastery Test",
+  "description": "Master Dart's null safety features including nullable and non-nullable types, assertion operators, late initialization, and sound null safety principles",
+  "category": "dart",
+  "passingScore": 70,
+  "timeLimitMinutes": 35,
+  "questions": [
+    {
+      "id": "ns1",
+      "text": "What symbol is used to declare a nullable variable in Dart?",
+      "options": [
+        "?",
+        "!",
+        "*",
+        "&"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "The '?' symbol is appended to the type to declare a nullable variable. Example: `String? name` means name can hold a String or null.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Put after the type name",
+        "Opposite of non-nullable types"
+      ],
+      "topic": "Nullable Types"
+    },
+    {
+      "id": "ns2",
+      "text": "What happens when you try to assign null to a non-nullable variable?",
+      "options": [
+        "Runtime error",
+        "Compile-time error",
+        "Null is assigned silently",
+        "Warning but runs"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Dart's sound null safety catches this at compile time. Non-nullable variables cannot be assigned null, preventing null pointer exceptions at runtime.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Happens before code runs",
+        "Prevents runtime crashes"
+      ],
+      "topic": "Non-Nullable Types"
+    },
+    {
+      "id": "ns3",
+      "text": "What does the '!' operator do in null safety?",
+      "options": [
+        "Makes a variable nullable",
+        "Asserts that an expression is non-null",
+        "Checks if value is null",
+        "Creates a late variable"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The '!' operator (bang operator) tells Dart that you're certain an expression isn't null. It converts a nullable type to non-nullable, but throws if null at runtime.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Use when you know value isn't null",
+        "Can cause runtime error if wrong"
+      ],
+      "topic": "Assertion Operators"
+    },
+    {
+      "id": "ns4",
+      "text": "What is the purpose of the 'late' keyword?",
+      "options": [
+        "To declare a variable that can be null",
+        "To defer initialization of a non-nullable variable",
+        "To create a runtime constant",
+        "To make a variable final"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "'late' defers initialization of a non-nullable variable until it's first accessed. It's useful for dependency injection or when initialization depends on 'this'.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "No initial value at declaration",
+        "Must be initialized before first use"
+      ],
+      "topic": "Late Initialization"
+    },
+    {
+      "id": "ns5",
+      "text": "What is the null-aware coalescing operator '??'?",
+      "options": [
+        "Returns left if null, otherwise right",
+        "Returns left if not null, otherwise right",
+        "Checks if both sides are null",
+        "Assigns value if null"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The '??' operator returns the left expression if it's NOT null, otherwise returns the right expression. Example: `name ?? 'Guest'`",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Provides default value",
+        "Short-circuit evaluation"
+      ],
+      "topic": "Null-Aware Operators"
+    },
+    {
+      "id": "ns6",
+      "text": "What does the null-aware assignment operator '??=' do?",
+      "options": [
+        "Assigns value only if variable is not null",
+        "Assigns value only if variable is null",
+        "Compares two values",
+        "Throws if variable is null"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "'??=' assigns the right-hand value only if the left-hand variable is currently null. Example: `name ??= 'Guest'` sets name only if it was null.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Conditional assignment",
+        "Preserves existing non-null values"
+      ],
+      "topic": "Null-Aware Operators"
+    },
+    {
+      "id": "ns7",
+      "text": "What is the null-aware access operator '?.'?",
+      "options": [
+        "Accesses property only if object is not null",
+        "Always accesses property",
+        "Throws if object is null",
+        "Makes property nullable"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "'?.' safely accesses a property or method: if the object is null, the expression returns null instead of throwing an error. Example: `person?.name`",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Prevents null pointer exceptions",
+        "Returns null for null objects"
+      ],
+      "topic": "Null-Aware Operators"
+    },
+    {
+      "id": "ns8",
+      "text": "What is the output?\n```dart\nString? name = null;\nString result = name ?? 'Default';\nprint(result);\n```",
+      "options": [
+        "null",
+        "Default",
+        "Error",
+        "Blank line"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "name is null, so the '??' operator returns the right expression 'Default'. The output is 'Default'.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Null-aware coalescing",
+        "Provides fallback value"
+      ],
+      "topic": "Null-Aware Operators"
+    },
+    {
+      "id": "ns9",
+      "text": "What happens if you use '!' on a null value?",
+      "options": [
+        "Returns null",
+        "Throws a runtime exception",
+        "Returns false",
+        "Compile-time error"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Using '!' on a null value throws a runtime exception (TypeError). The bang operator asserts the value isn't null, so null violates that assertion.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Dangerous if you're wrong",
+        "Use only when certain value isn't null"
+      ],
+      "topic": "Assertion Operators"
+    },
+    {
+      "id": "ns10",
+      "text": "Which of these is a valid non-nullable variable declaration?",
+      "options": [
+        "String? name = null;",
+        "String name = null;",
+        "String name = 'John';",
+        "String? name = 'John';"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Non-nullable variables cannot be assigned null. 'String name = 'John'' is valid. 'String name = null' would be a compile-time error.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Must always have a non-null value",
+        "No '?' on the type"
+      ],
+      "topic": "Non-Nullable Types"
+    },
+    {
+      "id": "ns11",
+      "text": "What is type promotion in null safety?",
+      "options": [
+        "Converting any type to another",
+        "Dart automatically treats nullable as non-nullable after null check",
+        "Making all variables nullable",
+        "Promoting variables to global scope"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "After checking that a nullable variable isn't null, Dart 'promotes' it to non-nullable within that scope, allowing safe access without '!'.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Follows null checks",
+        "No need for '!' after if (x != null)"
+      ],
+      "topic": "Type Promotion"
+    },
+    {
+      "id": "ns12",
+      "text": "What is the correct way to make a parameter required and nullable?",
+      "options": [
+        "required String? name",
+        "String? required name",
+        "required String name?",
+        "String required? name"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "The 'required' keyword comes first, then the type with '?' for nullable. Example: `required String? name` means name must be provided but can be null.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Order: required then type",
+        "? goes after the type"
+      ],
+      "topic": "Nullable Parameters"
+    }
+  ]
+}
