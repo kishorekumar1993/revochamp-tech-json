@@ -1,0 +1,580 @@
+{
+  "id": "flutter_mobile_specialist_mock_001",
+  "title": "Flutter Mobile Specialist Mock Test",
+  "description": "Expert-level assessment for Flutter Mobile Specialists covering native platform integration, mobile-specific optimizations, device features (camera, sensors, biometrics), deep linking, push notifications, background processing, and platform-specific UI/UX patterns.",
+  "category": "flutter",
+  "passingScore": 80,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "fms1",
+      "text": "You need to implement background location tracking that continues even when the app is terminated. Which combination of technologies is required?",
+      "options": [
+        "`Geolocator` package with `StreamBuilder`",
+        "Platform-specific background services: `ForegroundService` on Android and `Location Updates` capability on iOS with `BGTaskScheduler`",
+        "`Timer.periodic` in Dart",
+        "`WorkManager` package only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Background location requires native implementation. Android needs a Foreground Service with ongoing notification. iOS requires significant-change location service and BGTaskScheduler. The Flutter side communicates via method channels or uses packages that wrap these native APIs.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think beyond Dart isolate lifecycle",
+        "Platform-specific background execution limits"
+      ],
+      "topic": "Background Processing"
+    },
+    {
+      "id": "fms2",
+      "text": "What is the correct way to handle Android's permission model changes from API 33 (Tiramisu) for reading media files?",
+      "options": [
+        "Request `READ_EXTERNAL_STORAGE`",
+        "Use granular media permissions: `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_MEDIA_AUDIO`",
+        "Request `MANAGE_EXTERNAL_STORAGE`",
+        "Use `WRITE_EXTERNAL_STORAGE` only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Android 13+ replaces broad storage permissions with granular media types. A mobile specialist must handle this version-specific logic in the Android manifest and permission request flows using `permission_handler` or similar.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think Android 13+ changes",
+        "Deprecated permissions"
+      ],
+      "topic": "Platform Permissions"
+    },
+    {
+      "id": "fms3",
+      "text": "You are implementing biometric authentication (Face ID / Touch ID / Fingerprint). Which security consideration is critical for production apps?",
+      "options": [
+        "Showing a nice animation",
+        "Never trusting the `true/false` result from the biometric prompt alone; always validating with a server-side cryptographic challenge or re-validating the user's session",
+        "Storing the user's PIN locally",
+        "Using `local_auth` without any backend"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Biometrics on-device can be bypassed on rooted/jailbroken devices. A specialist ensures the biometric result is tied to a cryptographic operation (e.g., signing a challenge with a private key stored in Secure Enclave/Keystore) that the server verifies.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about security beyond the checkbox",
+        "Cryptographic attestation"
+      ],
+      "topic": "Biometric Security"
+    },
+    {
+      "id": "fms4",
+      "text": "You need to implement deep linking that works when the app is in the background, terminated, and handles custom URL schemes. What is the complete setup?",
+      "options": [
+        "Only add `intent-filter` in AndroidManifest",
+        "Configure `AndroidManifest.xml` (intent-filter) and `Info.plist` (CFBundleURLTypes), implement `getInitialLink()` AND listen to `onLink` stream, and handle `App Links` (Android) / `Universal Links` (iOS) for verified domains",
+        "Use `Navigator 2.0` only",
+        "Use `url_launcher` package"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Mobile deep linking requires platform configuration AND handling all app lifecycle states. Universal Links (iOS) and App Links (Android) provide secure, verified deep linking. The specialist ensures the assetlinks.json and apple-app-site-association files are correctly hosted.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about cold start vs warm start",
+        "Verified links vs custom schemes"
+      ],
+      "topic": "Deep Linking"
+    },
+    {
+      "id": "fms5",
+      "text": "You are optimizing a Flutter app for foldable devices (Samsung Fold, Pixel Fold). Which approach ensures proper layout on both folded and unfolded states?",
+      "options": [
+        "Use `MediaQuery.of(context).size.width` to switch layouts",
+        "Use `DisplayFeatureSubScreen` and `MediaQuery.displayFeatures` to detect hinge/seam position and avoid placing interactive elements under it",
+        "Lock orientation to portrait",
+        "Use a single layout for all sizes"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Foldables have physical hinges. The `displayFeatures` API provides the bounds of the hinge. A mobile specialist ensures buttons/text are not rendered under the hinge area and that layouts respond to posture changes (tabletop mode, book mode).",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think physical hardware constraints",
+        "Posture detection"
+      ],
+      "topic": "Form Factor Optimization"
+    },
+    {
+      "id": "fms6",
+      "text": "You need to implement a custom camera view with real-time face detection and overlay graphics. Which architecture provides the best performance?",
+      "options": [
+        "Use `camera` package with `Canvas` drawing over the preview",
+        "Use `CameraController` with ML Kit for Flutter and a `CustomPainter` that paints on a separate layer, or use a Platform View with native camera for lower latency",
+        "Take photos and analyze them periodically",
+        "Use `image_picker` repeatedly"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Face detection requires real-time frame analysis. The specialist chooses between `google_ml_kit` (which processes frames in Dart) or native solutions (which process on GPU) based on latency requirements. Overlays must use `CustomPainter` with `RepaintBoundary` to avoid jank.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think frame processing pipeline",
+        "Avoid UI thread blocking"
+      ],
+      "topic": "Camera & ML Integration"
+    },
+    {
+      "id": "fms7",
+      "text": "Your Flutter app's iOS build is rejected because it requests Bluetooth permissions but doesn't declare usage. Where must you add the description?",
+      "options": [
+        "In Dart code comments",
+        "In `ios/Runner/Info.plist` with keys like `NSBluetoothAlwaysUsageDescription`",
+        "In `pubspec.yaml`",
+        "In the App Store Connect notes"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "iOS requires explicit privacy descriptions in `Info.plist` for any sensitive permission. A mobile specialist knows the exact keys (`NSBluetoothAlwaysUsageDescription`, `NSBluetoothPeripheralUsageDescription`) and ensures they are present before submission.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "iOS-specific configuration",
+        "Privacy manifest files"
+      ],
+      "topic": "iOS Configuration"
+    },
+    {
+      "id": "fms8",
+      "text": "You need to implement silent push notifications that trigger a background data sync without showing a visible alert to the user. What is required?",
+      "options": [
+        "Send a normal notification payload",
+        "Send a payload with `content-available: 1` and implement `didReceiveRemoteNotification` with `fetchCompletionHandler` (iOS) / `onBackgroundMessage` (Android/FCM)",
+        "Use local notifications",
+        "Use WebSockets"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Silent pushes wake the app briefly. On iOS, they are throttled and not guaranteed. On Android, they require a `FirebaseMessagingService` and must complete within 10-30 seconds. The specialist understands these platform limitations.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think background execution limits",
+        "Different from alert notifications"
+      ],
+      "topic": "Push Notifications"
+    },
+    {
+      "id": "fms9",
+      "text": "What is the `SafeArea` widget, and why is it essential for mobile development?",
+      "options": [
+        "A widget that adds padding",
+        "A widget that insets its child to avoid system UI intrusions like notches, status bars, and home indicators",
+        "A widget for secure data storage",
+        "A widget for handling gestures"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`SafeArea` automatically pads the child to avoid the status bar, camera notch, and navigation bar. A mobile specialist uses it correctly, understanding `minimum` padding and `MediaQuery` padding fallbacks.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Think about iPhone notch",
+        "Avoid content under status bar"
+      ],
+      "topic": "Mobile UI"
+    },
+    {
+      "id": "fms10",
+      "text": "You are experiencing 'jank' (dropped frames) on Android when scrolling a list with complex images. Which combination of optimizations is most effective?",
+      "options": [
+        "Use `shrinkWrap: true`",
+        "Use `ListView.builder`, `ResizeImage` to downscale images to exact tile size, `cacheExtent` for preloading, and `RepaintBoundary` around complex tiles",
+        "Use `SingleChildScrollView` with a `Column`",
+        "Reduce the number of items"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Android devices have varying GPU capabilities. `ResizeImage` prevents decoding massive images into memory. `cacheExtent` renders off-screen items early. `RepaintBoundary` prevents the entire list from repainting when a single tile changes.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think Android hardware fragmentation",
+        "Image decoding is expensive"
+      ],
+      "topic": "Performance Optimization"
+    },
+    {
+      "id": "fms11",
+      "text": "You need to securely store an authentication token on the device. What is the most secure storage option?",
+      "options": [
+        "`SharedPreferences`",
+        "`flutter_secure_storage` which uses Keystore (Android) and Keychain (iOS)",
+        "A plain text file in app documents",
+        "SQLite database"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`SharedPreferences` and SQLite store data in plain text (unless encrypted separately). `flutter_secure_storage` leverages hardware-backed keystores, making it the standard for sensitive data on mobile.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think hardware-backed encryption",
+        "Keychain vs SharedPreferences"
+      ],
+      "topic": "Security"
+    },
+    {
+      "id": "fms12",
+      "text": "You are integrating Google Maps. The map flickers when other Flutter widgets overlay it. What is the cause and solution?",
+      "options": [
+        "Network latency",
+        "Platform View composition issue. Solution: Use `useAndroidViewSurface` (Android) or switch to the `google_maps_flutter` texture mode (if available) or manage z-index carefully",
+        "Incorrect API key",
+        "The phone is too slow"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Platform Views render in a separate layer. Overlaying Flutter widgets causes 'surfaceview flicker' on Android. A mobile specialist knows the trade-offs between Hybrid Composition and Texture Layer modes for maps.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think about View vs Texture rendering",
+        "Z-ordering conflicts"
+      ],
+      "topic": "Platform Views"
+    },
+    {
+      "id": "fms13",
+      "text": "What is the purpose of `WidgetsBinding.instance.addPostFrameCallback` in mobile context?",
+      "options": [
+        "To execute code before the first frame",
+        "To execute code after the current frame is rendered, commonly used to show overlays, measure widget sizes, or show SnackBars safely after navigation",
+        "To add a background task",
+        "To initialize plugins"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Mobile apps frequently show bottom sheets or measure widget dimensions. This callback ensures the layout pass is complete, preventing 'LayoutBuilder' infinite loops or incorrect size calculations.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think timing after build",
+        "Safe context usage"
+      ],
+      "topic": "Mobile UI Lifecycle"
+    },
+    {
+      "id": "fms14",
+      "text": "You are implementing haptic feedback. How do you provide a 'light impact' vs 'heavy impact' on iOS and Android?",
+      "options": [
+        "Use `vibrate()` with duration",
+        "Use `HapticFeedback.lightImpact()` and `HapticFeedback.heavyImpact()` which map to native Taptic Engine (iOS) and Vibration effects (Android)",
+        "Play a sound file",
+        "Use `SystemSound.play()`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Flutter's `HapticFeedback` class abstracts the platform differences. A mobile specialist knows to use appropriate feedback types for UI interactions (selection, impact, notification) to match native feel.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think platform-native feel",
+        "Taptic Engine on iOS"
+      ],
+      "topic": "Haptics & Sensors"
+    },
+    {
+      "id": "fms15",
+      "text": "You need to detect the device's network connectivity type (WiFi, Cellular, None) in real-time. Which approach is correct?",
+      "options": [
+        "Ping a server every second",
+        "Use the `connectivity_plus` package and listen to `onConnectivityChanged` stream",
+        "Check `Navigator.onLine`",
+        "Use `dart:io` InternetAddress lookup"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`connectivity_plus` wraps native reachability APIs. It provides the network type (WiFi, Mobile, Ethernet) efficiently without draining battery. A specialist knows that 'WiFi' doesn't guarantee internet access; you must still validate with an actual request.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think battery efficiency",
+        "Platform APIs vs active probing"
+      ],
+      "topic": "Connectivity"
+    },
+    {
+      "id": "fms16",
+      "text": "You are implementing App Shortcuts (Quick Actions) on the home screen icon. What is required for this feature?",
+      "options": [
+        "Add a widget to the home screen",
+        "Configure `AndroidManifest.xml` with `meta-data` for shortcuts and `Info.plist` with `UIApplicationShortcutItems`, and handle the intent/launch URL in Dart using `quick_actions` package",
+        "Use push notifications",
+        "Create a widget extension"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Home screen quick actions are platform-defined. A mobile specialist configures the native manifests and handles the `getLaunchAction` and `onAction` streams in Dart to route the user to specific app sections.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think 3D Touch / Long Press",
+        "Native configuration required"
+      ],
+      "topic": "Platform Features"
+    },
+    {
+      "id": "fms17",
+      "text": "You are optimizing battery usage for a Flutter app that uses location tracking. What is the most battery-efficient strategy?",
+      "options": [
+        "Request location every 10 seconds",
+        "Use `Geolocator.getCurrentPosition()` repeatedly",
+        "Use `Geolocator.getPositionStream()` with `distanceFilter` and `timeInterval` set to appropriate values, and prefer `LocationAccuracy.low` or `LocationAccuracy.balanced` when high precision isn't needed",
+        "Request high accuracy always"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Continuous GPS drains battery quickly. A mobile specialist uses distance filters to wake the CPU only when the user has moved significantly, and adjusts accuracy based on use case (navigation vs weather app).",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think hardware GPS chip usage",
+        "Distance filters save battery"
+      ],
+      "topic": "Power Optimization"
+    },
+    {
+      "id": "fms18",
+      "text": "You need to share an image from Flutter to Instagram Stories or WhatsApp. How is this accomplished?",
+      "options": [
+        "Use `share_plus` package",
+        "Use platform-specific intents/activities: On iOS, use UIActivityViewController; On Android, use Intent.ACTION_SEND with specific package names or use `flutter_sharing_intent` for deep integration",
+        "Save to gallery and tell user to share manually",
+        "Use a WebView"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Sharing to specific apps often requires custom MIME types and package names (e.g., `com.instagram.android`). A mobile specialist knows how to configure `share_plus` with specific parameters or write a custom platform channel for deep integration.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think Intent/Activity configuration",
+        "App-specific sharing contracts"
+      ],
+      "topic": "Platform Integration"
+    },
+    {
+      "id": "fms19",
+      "text": "You are implementing In-App Purchases (IAP). Why is it critical to verify receipts on a backend server rather than just on the device?",
+      "options": [
+        "To save battery",
+        "Client-side validation can be bypassed by modified APKs/IPAs or jailbroken devices. Server-side verification with Apple/Google APIs is the only secure method",
+        "To avoid network calls",
+        "It's faster"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Never trust the client. A mobile specialist ensures the purchase flow includes sending the raw receipt to a secure backend which validates it with Apple's `verifyReceipt` or Google's `purchases.products.get` endpoints before granting entitlements.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think security",
+        "Modified clients can fake purchases"
+      ],
+      "topic": "In-App Purchases"
+    },
+    {
+      "id": "fms20",
+      "text": "What is the `FlutterFragment` and when is it used?",
+      "options": [
+        "A UI widget for Flutter",
+        "An Android Fragment that hosts a Flutter experience, used for Add-to-App scenarios to embed Flutter screens in existing native Android apps",
+        "A plugin for fragmentation testing",
+        "A debugging tool"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`FlutterFragment` and `FlutterActivity` are the entry points for embedding Flutter in native Android apps. A mobile specialist understands the lifecycle implications (e.g., pausing the engine when fragment is detached).",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Add-to-App scenario",
+        "Native Android container"
+      ],
+      "topic": "Add-to-App"
+    },
+    {
+      "id": "fms21",
+      "text": "You are experiencing 'UIApplication.delegate' swizzling issues with Firebase on iOS. What is a common fix?",
+      "options": [
+        "Reinstall the app",
+        "Disable method swizzling by adding `FirebaseAppDelegateProxyEnabled` to `Info.plist` with value `NO` and manually forward callbacks",
+        "Use a different Firebase version",
+        "Ignore the warning"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Firebase uses method swizzling to hook into app lifecycle. If you have another plugin doing the same (e.g., FBSDK), conflicts occur. A mobile specialist knows how to disable swizzling and manually call Firebase handlers from `AppDelegate`.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think Objective-C runtime manipulation",
+        "Conflict resolution"
+      ],
+      "topic": "iOS Native Debugging"
+    },
+    {
+      "id": "fms22",
+      "text": "You need to support the new Android 14 (Upside Down Cake) predictive back gesture. What is required in Flutter?",
+      "options": [
+        "Nothing, it works automatically",
+        "Ensure `targetSdkVersion 34`, enable `enableOnBackInvokedCallback` in manifest, and use `Navigator 2.0` (Router) with `PopScope` or `BackButtonListener` for custom handling",
+        "Use `WillPopScope` only",
+        "Disable the gesture"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Predictive back shows a preview of the destination screen during the swipe. It requires migrating to `Navigator 2.0` because `WillPopScope` is deprecated. A mobile specialist ensures the app is ready for this system-level UI change.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think Android 14 features",
+        "Navigation 2.0 migration"
+      ],
+      "topic": "Platform Evolution"
+    },
+    {
+      "id": "fms23",
+      "text": "You are using `path_provider` to get the documents directory. What is the difference between `getApplicationDocumentsDirectory()` and `getExternalStorageDirectory()` on Android?",
+      "options": [
+        "No difference",
+        "Internal storage is private to the app; External storage (shared storage) is visible to other apps and the user, but is deprecated for general use on Android 11+ (Scoped Storage)",
+        "External is for SD cards only",
+        "Internal is faster"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Scoped Storage changed everything. A mobile specialist knows that `getExternalStorageDirectory` now points to an app-specific directory on shared storage (or is unavailable). Media files should be saved using `MediaStore` APIs or shared directories.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think Scoped Storage",
+        "Privacy changes"
+      ],
+      "topic": "File Storage"
+    },
+    {
+      "id": "fms24",
+      "text": "You need to lock the screen orientation to portrait for a specific screen, but allow landscape on others. How is this implemented?",
+      "options": [
+        "Set `SystemChrome.setPreferredOrientations` in `initState` and reset in `dispose`",
+        "Set it once in `main.dart`",
+        "Use `OrientationBuilder`",
+        "It's not possible"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "`SystemChrome.setPreferredOrientations` is applied globally but can be called per screen. A specialist ensures to reset the preferences when leaving the screen to avoid trapping the user in an orientation they can't escape.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Lifecycle management",
+        "Clean up on dispose"
+      ],
+      "topic": "UI Configuration"
+    },
+    {
+      "id": "fms25",
+      "text": "You are investigating why a Flutter iOS app crashes on startup only on iOS 12 devices. The log shows missing Swift libraries. What is the fix?",
+      "options": [
+        "Update the device to iOS 15",
+        "Ensure `use_frameworks!` is in the Podfile and that Swift standard libraries are embedded (Build Settings -> Always Embed Swift Standard Libraries = YES)",
+        "Rewrite the app in Objective-C",
+        "Disable bitcode"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Flutter plugins written in Swift require the Swift runtime. On iOS 12, this sometimes isn't automatically linked. A mobile specialist checks the `ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES` build setting and Podfile configuration.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think about Swift ABI stability",
+        "iOS 12 vs 13+"
+      ],
+      "topic": "iOS Build Debugging"
+    },
+    {
+      "id": "fms26",
+      "text": "What is the purpose of the `proguard-rules.pro` file in an Android Flutter project?",
+      "options": [
+        "It speeds up compilation",
+        "It defines rules for code shrinking and obfuscation, preventing R8/ProGuard from stripping necessary classes used by plugins (e.g., MethodChannel names, Gson models)",
+        "It manages permissions",
+        "It signs the APK"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Missing ProGuard rules cause runtime crashes (`ClassNotFoundException`). A mobile specialist maintains this file, adding `-keep` rules for each plugin that uses reflection or native method channels.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think about release build crashes",
+        "Reflection and native calls"
+      ],
+      "topic": "Android Build"
+    },
+    {
+      "id": "fms27",
+      "text": "You need to display a native advertisement (AdMob) that matches the surrounding Flutter UI. What is the most performant approach?",
+      "options": [
+        "Use `google_mobile_ads` with `AdWidget` which uses Platform Views",
+        "Build the ad in Flutter using Canvas",
+        "Use WebView to show ads",
+        "Use a third-party mediation SDK"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "`AdWidget` wraps the native ad view. While Platform Views have overhead, it's the only way to show real native ads. A mobile specialist optimizes by avoiding animating the area around the ad and using `PlatformViewLink` for advanced control.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think native SDK requirement",
+        "Platform View performance"
+      ],
+      "topic": "Ad Integration"
+    },
+    {
+      "id": "fms28",
+      "text": "You are implementing a custom keyboard extension for iOS. Can this be written in Flutter?",
+      "options": [
+        "Yes, fully in Flutter",
+        "No. iOS keyboard extensions have strict memory limits (~40MB) and require a native Xcode target (Swift/Obj-C). Flutter's engine footprint is too large for a keyboard extension",
+        "Yes, using `flutter create --template=extension`",
+        "Only on iPad"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Flutter's engine size violates iOS keyboard extension memory limits. A mobile specialist knows when NOT to use Flutter. This must be a native SwiftUI/UIKit component communicating back to the main app via App Groups.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think memory constraints",
+        "iOS Extension limitations"
+      ],
+      "topic": "Platform Limitations"
+    },
+    {
+      "id": "fms29",
+      "text": "You need to detect when the user takes a screenshot or screen recording on iOS/Android. Which approach works?",
+      "options": [
+        "Use `flutter_screen_recording` package",
+        "On iOS, observe `UIApplication.userDidTakeScreenshotNotification`. On Android, use `FileObserver` on screenshot directories. Both require Platform Channels",
+        "Use a periodic timer",
+        "It's impossible"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Screenshot detection is platform-specific and privacy-sensitive. A mobile specialist implements native listeners and communicates the event back to Dart via MethodChannel/EventChannel.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think native notifications",
+        "Privacy restrictions"
+      ],
+      "topic": "Security Features"
+    },
+    {
+      "id": "fms30",
+      "text": "You are optimizing the app startup time (Time to Interactive). The Flutter engine initialization is taking 800ms on a low-end Android device. What is the most effective optimization?",
+      "options": [
+        "Remove `MaterialApp`",
+        "Implement a Native Splash Screen (Android 12+ SplashScreen API) that remains visible until Flutter renders its first frame, and use `FlutterEngine` pre-warming in the native `Application` class",
+        "Reduce number of widgets on first screen",
+        "Use `compute` for everything"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The engine startup is fixed. Pre-warming the engine in `Application.onCreate()` shaves off ~200-400ms. The native splash screen API provides a seamless transition. A mobile specialist architects the native-to-Flutter handoff for perceived performance.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think engine pre-initialization",
+        "Native splash screen APIs"
+      ],
+      "topic": "Startup Optimization"
+    }
+  ]
+}
