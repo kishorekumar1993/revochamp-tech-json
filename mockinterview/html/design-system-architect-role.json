@@ -1,0 +1,475 @@
+{
+  "id": "design_system_architect_expert_001",
+  "title": "Design System Architect (HTML/CSS) Expert Assessment",
+  "description": "Elite-level evaluation for architects specializing in multi-platform design systems, CSS orchestration, accessibility governance, and component tokenization.",
+  "category": "frontend-architecture",
+  "passingScore": 90,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "dsa1",
+      "text": "When architecting a Design System for a multi-brand organization, what is the primary benefit of using 'CSS Cascading Layers' (@layer)?",
+      "options": [
+        "To minify the CSS output",
+        "To explicitly manage specificity hierarchies, ensuring theme overrides always defeat base component styles regardless of selector weight",
+        "To enable 3D hardware acceleration",
+        "To replace the need for CSS Variables"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@layer allows architects to define a 'base', 'component', and 'theme' stack where specificity only matters within a layer, not across them.",
+      "difficulty": "expert",
+      "points": 20,
+      "topic": "CSS Architecture"
+    },
+    {
+      "id": "dsa2",
+      "text": "Which 'Design Token' tier is most appropriate for defining a specific value like '#0055FF' that will be used across multiple brands with different names?",
+      "options": ["Component Tokens", "Alias/Semantic Tokens", "Global/Primitive Tokens", "Brand Tokens"],
+      "correctAnswerIndex": 2,
+      "explanation": "Primitive tokens (e.g., color-blue-500) serve as the raw values that feed into Semantic tokens (e.g., action-primary-background).",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Design Tokens"
+    },
+    {
+      "id": "dsa3",
+      "text": "What is the 'Subgrid' feature in CSS Grid primarily solving in a component-driven architecture?",
+      "options": [
+        "Allowing a nested component to align its internal elements to the grid defined by its parent, facilitating macro-to-micro alignment",
+        "Speeding up the rendering of simple grids",
+        "Making grids responsive without media queries",
+        "Removing the need for 'display: flex'"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Subgrid ensures that a card's header, body, and footer can align with the parent's row tracks even when the card is a nested item.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Layout"
+    },
+    {
+      "id": "dsa4",
+      "text": "In a robust Design System, how should 'HWB' (Hue, Whiteness, Blackness) color notation be utilized compared to 'HSL'?",
+      "options": [
+        "It shouldn't be used; it's not supported by browsers",
+        "It provides a more intuitive way for designers to create accessible color variants by adjusting 'whiteness' or 'blackness' directly",
+        "It is used exclusively for printing",
+        "It is faster for the GPU to render"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "HWB is often considered more human-readable for programmatic palette generation in design systems.",
+      "difficulty": "advanced",
+      "points": 10,
+      "topic": "Color Theory"
+    },
+    {
+      "id": "dsa5",
+      "text": "Which CSS property is essential for preventing 'Cumulative Layout Shift' (CLS) in an image-heavy system?",
+      "options": ["object-fit", "aspect-ratio", "will-change", "contain"],
+      "correctAnswerIndex": 1,
+      "explanation": "Setting 'aspect-ratio' allows the browser to reserve space for an image before it downloads, preventing the page from 'jumping'.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance"
+    },
+    {
+      "id": "dsa6",
+      "text": "What is 'CSS Scope' (@scope) intended to solve in modern component systems?",
+      "options": [
+        "Replacing CSS-in-JS entirely",
+        "Allowing styles to be scoped to a specific DOM subtree without the overhead or isolation of Shadow DOM",
+        "Making CSS variables global",
+        "Compiling CSS into a binary format"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@scope allows 'donut scoping' where styles apply to a component but can exclude nested 'slots' or 'holes'.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "CSS Architecture"
+    },
+    {
+      "id": "dsa7",
+      "text": "What is the 'Focus-Visible' pseudo-class used for in a high-quality UI library?",
+      "options": [
+        "To highlight every element that can be focused",
+        "To show a focus indicator only when the user interacts via keyboard, preventing 'ugly' rings for mouse users",
+        "To make focus rings invisible",
+        "To track user clicks"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It balances accessibility (keyboard users need rings) with design aesthetics (mouse users often find them distracting).",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Accessibility"
+    },
+    {
+      "id": "dsa8",
+      "text": "Which CSS strategy ensures that a component library's styles are 'Future-Proof' against global CSS changes in a host application?",
+      "options": ["Inline styles for everything", "Using Shadow DOM for strict encapsulation", "Using !important on all properties", "Using ID selectors for everything"],
+      "correctAnswerIndex": 1,
+      "explanation": "Shadow DOM provides a boundary that prevents both style leakage out and style 'pollution' in.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Encapsulation"
+    },
+    {
+      "id": "dsa9",
+      "text": "In 'Fluid Typography', what is the purpose of the `clamp()` function?",
+      "options": [
+        "To limit the number of characters in a line",
+        "To define a font size that scales between a min and max value relative to the viewport width",
+        "To lock the font to a specific pixel value",
+        "To detect the user's screen resolution"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "clamp(min, preferred, max) eliminates the need for multiple breakpoint-based font-size changes.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Responsive Design"
+    },
+    {
+      "id": "dsa10",
+      "text": "What is 'Logical Properties' (e.g., margin-block-start) primarily used for in an international system?",
+      "options": [
+        "Making the code shorter",
+        "Automatically adapting margins and padding to the writing mode (LTR vs RTL) without extra CSS",
+        "Enforcing logical order in HTML",
+        "Linking CSS to Javascript logic"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It transforms 'margin-left' to 'margin-inline-start', ensuring RTL layouts work out of the box.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Internationalization"
+    },
+    {
+      "id": "dsa11",
+      "text": "Which 'Contain' value should be applied to a component that has its size fixed but its content may change, to optimize paint cycles?",
+      "options": ["contain: size", "contain: layout", "contain: content", "contain: paint"],
+      "correctAnswerIndex": 2,
+      "explanation": "contain: content (layout + paint) informs the browser that the element's children do not affect the layout or paint outside of its box.",
+      "difficulty": "expert",
+      "points": 20,
+      "topic": "Performance"
+    },
+    {
+      "id": "dsa12",
+      "text": "What is the role of 'ARIA-Live' regions in a design system's notification/toast components?",
+      "options": [
+        "To animate the toast",
+        "To ensure screen readers announce dynamic updates to the user automatically",
+        "To keep the toast visible longer",
+        "To prevent the user from clicking the notification"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Aria-live='polite' or 'assertive' is mandatory for status updates in accessible systems.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Accessibility"
+    },
+    {
+      "id": "dsa13",
+      "text": "How does 'Container Queries' (@container) fundamentally change component architecture?",
+      "options": [
+        "It removes the need for viewport media queries entirely",
+        "It allows components to be self-responsive, adapting based on the width of their parent container rather than the entire screen",
+        "It forces all containers to be a certain size",
+        "It makes CSS faster to parse"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It allows a 'Card' component to look different in a narrow sidebar vs a wide main content area without parent-specific classes.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Responsive Design"
+    },
+    {
+      "id": "dsa14",
+      "text": "What is the primary architectural drawback of 'Atomic CSS' (like Tailwind) in a managed Design System?",
+      "options": [
+        "It makes the CSS bundle too large",
+        "It can lead to a 'disconnected' system where developers bypass system constraints by using arbitrary utility values",
+        "It doesn't work with React",
+        "It prevents the use of Flexbox"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Architects must enforce 'Design Tokens' within utility classes to maintain consistency.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Architecture"
+    },
+    {
+      "id": "dsa15",
+      "text": "When using 'Variable Fonts', what is the CSS property used to control custom axes (like 'Optical Sizing')?",
+      "options": ["font-weight", "font-variation-settings", "font-stretch", "font-style"],
+      "correctAnswerIndex": 1,
+      "explanation": "While standard properties map to axes, 'font-variation-settings' is the low-level API for custom font axes.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Typography"
+    },
+    {
+      "id": "dsa16",
+      "text": "In a design system, why is 'Relative Units' (rem/em) preferred over 'Pixels' (px)?",
+      "options": [
+        "They are faster to calculate",
+        "To support browser-level font-size zooming for accessibility",
+        "Because px is deprecated",
+        "To make the files smaller"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Rem scales with user settings; px is an absolute unit that ignores user font-size preferences.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Accessibility"
+    },
+    {
+      "id": "dsa17",
+      "text": "What is the 'System Font Stack' and why is it used as a fallback?",
+      "options": [
+        "A list of fonts that are only available on Windows",
+        "A prioritized list of native OS fonts to avoid 'Flash of Unstyled Text' (FOUT) and improve performance",
+        "A way to load Google Fonts faster",
+        "A legacy feature from the 90s"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Using system fonts provides an 'instant' feel by utilizing fonts already present on the user's device.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Typography"
+    },
+    {
+      "id": "dsa18",
+      "text": "What does the 'inert' attribute do for a component-based system?",
+      "options": [
+        "Makes an element invisible",
+        "Recursively disables all user interaction and hides content from the accessibility tree (ideal for background content during modals)",
+        "Speeds up the CPU",
+        "Validates the HTML"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Inert is a powerful A11y tool for focus management in complex UI components.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Accessibility"
+    },
+    {
+      "id": "dsa19",
+      "text": "Which CSS property allows you to define how an element should behave when it hits the edge of a scroll container (e.g., Pull-to-refresh behavior)?",
+      "options": ["scroll-behavior", "overscroll-behavior", "scroll-snap-type", "overflow"],
+      "correctAnswerIndex": 1,
+      "explanation": "overscroll-behavior allows architects to prevent 'scroll chaining' to the parent document.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "UX"
+    },
+    {
+      "id": "dsa20",
+      "text": "In the CSS Cascade, where does a 'User Agent !important' declaration rank?",
+      "options": [
+        "The absolute lowest priority",
+        "The absolute highest priority",
+        "Below Author styles",
+        "Above normal User Agent styles but below Author !important"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "To ensure browser-level accessibility and security, User Agent !important overrides everything.",
+      "difficulty": "expert",
+      "points": 20,
+      "topic": "CSS Core"
+    },
+    {
+      "id": "dsa21",
+      "text": "What is 'Content Visibility' (content-visibility: auto) intended for?",
+      "options": [
+        "Showing hidden elements",
+        "Improving initial load performance by skipping the rendering of off-screen components",
+        "Making content accessible to bots",
+        "Translating content automatically"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It's a huge win for design systems with long, data-heavy pages.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Performance"
+    },
+    {
+      "id": "dsa22",
+      "text": "What is the difference between 'opacity: 0' and 'visibility: hidden' for screen readers?",
+      "options": [
+        "Both hide content from screen readers",
+        "Opacity: 0 content is still detectable; visibility: hidden content is generally removed from the accessibility tree",
+        "Neither affects screen readers",
+        "Opacity is for images, visibility is for text"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Senior architects must know how visual hiding impacts the semantic accessibility tree.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Accessibility"
+    },
+    {
+      "id": "dsa23",
+      "text": "Which CSS unit should be used for 'Line Height' to ensure it scales correctly with font size changes?",
+      "options": ["px", "em", "Unitless (e.g., 1.5)", "%"],
+      "correctAnswerIndex": 2,
+      "explanation": "Unitless values are inherited by children as a multiplier of their own font-size, preventing compressed text.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Typography"
+    },
+    {
+      "id": "dsa24",
+      "text": "What is 'Style Dictionary' used for in a Design System workflow?",
+      "options": [
+        "A library of CSS styles",
+        "A build system that transforms design tokens into platform-specific formats (iOS, Android, Web)",
+        "A dictionary of UX terms",
+        "A tool for checking CSS syntax"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It is the industry standard for managing cross-platform design tokens.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Tooling"
+    },
+    {
+      "id": "dsa25",
+      "text": "In CSS, what is the 'Intrinsic Size' of an element?",
+      "options": [
+        "The size set by the width property",
+        "The size an element would be based solely on its own content, without external constraints",
+        "The size of the viewport",
+        "The size of the parent"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Properties like 'min-content' and 'max-content' utilize intrinsic sizing logic.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Layout"
+    },
+    {
+      "id": "dsa26",
+      "text": "What is the 'Priority Hints' API (fetchpriority) useful for in a component library?",
+      "options": [
+        "To prioritize JS over CSS",
+        "To tell the browser to prioritize the fetch of a hero image or critical font inside a component",
+        "To prioritize mobile users",
+        "To set the z-index of an element"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Setting fetchpriority='high' on a component's LCP asset can significantly improve load metrics.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Performance"
+    },
+    {
+      "id": "dsa27",
+      "text": "How does the 'prefers-reduced-motion' media query affect design system motion guidelines?",
+      "options": [
+        "It disables all animations automatically",
+        "It allows designers to provide alternative, non-moving transitions for users with vestibular disorders",
+        "It speeds up animations",
+        "It is only for mobile devices"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Architects should implement this to ensure the system is safe for all users.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Accessibility"
+    },
+    {
+      "id": "dsa28",
+      "text": "What is the 'Shadow Root' in a Web Component?",
+      "options": [
+        "The root of the document",
+        "The entry point to the encapsulated DOM tree of a custom element",
+        "A hidden part of the CSS file",
+        "The part of the component that is invisible"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It is the container for the component's internal styles and markup.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Web Components"
+    },
+    {
+      "id": "dsa29",
+      "text": "What is the 'BEM' naming convention's primary goal?",
+      "options": [
+        "To make selectors as long as possible",
+        "To prevent style leakage and make the relationship between HTML and CSS explicit/maintainable",
+        "To speed up CSS parsing",
+        "To replace ID selectors"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Block-Element-Modifier is a classic structural methodology for large systems.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "CSS Architecture"
+    },
+    {
+      "id": "dsa30",
+      "text": "Which CSS property controls how background images are sized to fit their containers?",
+      "options": ["background-fit", "background-size", "background-position", "object-fit"],
+      "correctAnswerIndex": 1,
+      "explanation": "Values like 'cover' and 'contain' are essential for responsive backgrounds.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "CSS Core"
+    },
+    {
+      "id": "dsa31",
+      "text": "What is the 'currentColor' keyword used for in CSS?",
+      "options": [
+        "To set the background to the user's primary color",
+        "To inherit the 'color' property value of the element (extremely useful for SVG icons)",
+        "To detect the color of the screen",
+        "To reset the color to black"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Allows icons to automatically match the text color of their parent component.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "CSS Features"
+    },
+    {
+      "id": "dsa32",
+      "text": "What is 'Speculative Rules API' and how does it benefit complex UIs?",
+      "options": [
+        "To predict code errors",
+        "To allow the system to prerender full pages or prefetch data before a user even clicks a link, based on probability",
+        "To validate design tokens",
+        "To optimize database speed"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Enables 'instant' page transitions in modern frontend architectures.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Performance"
+    },
+    {
+      "id": "dsa33",
+      "text": "What is the purpose of the '@font-face' 'font-display: swap' descriptor?",
+      "options": [
+        "To change the font color",
+        "To show a fallback font immediately and 'swap' it for the custom font once it loads, preventing invisible text",
+        "To swap fonts based on screen size",
+        "To encrypt font files"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Crucial for preventing FOIT (Flash of Invisible Text) and improving perceived performance.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance"
+    },
+    {
+      "id": "dsa34",
+      "text": "In a design system, what is the 'Source of Truth' for tokens usually represented as?",
+      "options": ["A CSS file", "A JSON or YAML file containing platform-agnostic key-value pairs", "An Excel sheet", "A Figma file only"],
+      "correctAnswerIndex": 1,
+      "explanation": "JSON is used as it is easily consumable by build tools like Style Dictionary.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Design Tokens"
+    }
+  ]
+}

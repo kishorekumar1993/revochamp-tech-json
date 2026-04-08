@@ -1,0 +1,160 @@
+{
+  "id": "email_developer_expert_001",
+  "title": "Email Developer & Marketing Automation Expert Assessment",
+  "description": "Professional-level evaluation for Email Developers focusing on HTML/CSS for email, cross-client compatibility (Outlook/Apple Mail), Dark Mode optimization, and deliverability best practices.",
+  "category": "email-development",
+  "passingScore": 85,
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "id": "edev1",
+      "text": "Which CSS layout method is the most reliable for ensuring multi-column layouts work across legacy versions of Outlook (2003-2019) on Windows?",
+      "options": [
+        "CSS Grid",
+        "Flexbox",
+        "HTML Tables with fixed widths and 'align' attributes",
+        "Floating <div> elements"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Outlook for Windows uses the Word rendering engine, which does not support Flexbox or Grid. HTML tables remain the industry standard for structural layout in email.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Layout"
+    },
+    {
+      "id": "edev2",
+      "text": "What is the primary purpose of using MSO (Microsoft Office) Conditional Comments in email code?",
+      "options": [
+        "To hide content from Gmail users",
+        "To provide specific CSS or HTML (like Ghost Tables) exclusively to Outlook on Windows",
+        "To track how many users open the email in Word",
+        "To bypass spam filters"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "MSO comments allow developers to target Outlook's unique rendering quirks without affecting other more standards-compliant clients.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Outlook"
+    },
+    {
+      "id": "edev3",
+      "text": "When implementing Dark Mode for email, which meta tag and media query combo is best practice for supporting Apple Mail and Outlook.com?",
+      "options": [
+        "color-scheme: light dark; and @media (prefers-color-scheme: dark)",
+        "dark-mode: true; and @media (dark-mode)",
+        "mode: dark; and @media (screen-dark)",
+        "It is not possible to target dark mode via CSS"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "The 'color-scheme' meta tag and 'prefers-color-scheme' media query are the standards for opting into system-level dark mode styles.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Dark Mode"
+    },
+    {
+      "id": "edev4",
+      "text": "What is 'Preheader Text' (Preview Text) in the context of an email client's inbox?",
+      "options": [
+        "The first <h1> tag in the email",
+        "The text shown after the subject line in the inbox, often pulled from the first hidden div in the body",
+        "The legal footer of the email",
+        "The Alt text of the header image"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Preheader text is crucial for open rates. It is usually implemented as a hidden div at the very top of the <body>.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Strategy"
+    },
+    {
+      "id": "edev5",
+      "text": "Which of the following is the most effective way to ensure images scale responsively in an email?",
+      "options": [
+        "width: 100%; height: auto; in a style attribute",
+        "Setting only the HTML width attribute (e.g., width='600')",
+        "Using a fluid container with a max-width and 'width: 100%' in CSS",
+        "Using JavaScript to detect screen size"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Fluid-hybrid design uses max-width to ensure images don't blow up larger than intended while remaining responsive on smaller screens.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Responsive Design"
+    },
+    {
+      "id": "edev6",
+      "text": "Why is it recommended to avoid using shorthand CSS properties (e.g., 'font: 12px/14px Arial') in email development?",
+      "options": [
+        "It makes the file size too large",
+        "Many email clients, including Gmail, often ignore shorthand properties or render them inconsistently",
+        "It is considered 'old' coding",
+        "It breaks the unsubscribe link"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Expanding shorthand properties to long-form (font-family, font-size, line-height) ensures much higher consistency across fragmented email clients.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "CSS"
+    },
+    {
+      "id": "edev7",
+      "text": "What does the 'Alt' attribute provide for an <img> tag in an email when images are blocked by default?",
+      "options": [
+        "A link to the image",
+        "Descriptive text that appears in place of the image, maintaining context for the user",
+        "A way to hide the image from spam filters",
+        "The caption below the image"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Since many clients block images by default, Alt text (and styled Alt text) is vital for accessibility and user experience.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Accessibility"
+    },
+    {
+      "id": "edev8",
+      "text": "How can a developer prevent Gmail from automatically converting phone numbers or dates into blue links?",
+      "options": [
+        "Using `target='_blank'`",
+        "Applying a specific class and using CSS to override the color with `!important`",
+        "Wrapping the text in a span with `pointer-events: none`",
+        "Gmail does not allow this"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Gmail adds its own styling to detected data. Targeting the specific selectors Gmail generates (like `.x-gmail-data-detectors`) is the standard fix.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Rendering"
+    },
+    {
+      "id": "edev9",
+      "text": "What is the '600px rule' in email design?",
+      "options": [
+        "Emails must be exactly 600px tall",
+        "The traditional maximum width for the main content container to ensure it fits in most desktop preview panes",
+        "The maximum number of characters allowed in the body",
+        "The minimum resolution for images"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "While modern emails are becoming wider, 600px remains the 'safe' standard to avoid horizontal scrolling in various inbox preview windows.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Layout"
+    },
+    {
+      "id": "edev10",
+      "text": "What is the primary risk of an email's HTML file size exceeding 102kb?",
+      "options": [
+        "It will be marked as spam immediately",
+        "Gmail will 'clip' the email, hiding the rest of the content behind a 'View entire message' link",
+        "The email will not load on mobile devices",
+        "Images will be converted to grayscale"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Gmail clipping occurs at roughly 102kb. This cuts off tracking pixels and critical content, often ruining the campaign's data and UX.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Deliverability"
+    }
+  ]
+}

@@ -1,0 +1,425 @@
+{
+  "id": "frontend_lead_expert_mock_001",
+  "title": "Frontend Lead Engineer Specialist Mock Test",
+  "description": "Elite-level assessment for Lead/Staff Engineers. Focuses on browser engine internals, macro-architectural patterns, web performance governance, and accessibility standards.",
+  "category": "frontend",
+  "passingScore": 90,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "fl1",
+      "text": "When managing a multi-team Design System, which CSS feature is most effective for ensuring that base styles don't inadvertently override component-specific overrides regardless of selector specificity?",
+      "options": ["CSS Modules", "CSS Cascading Layers (@layer)", "BEM Methodology", "Inline Styles"],
+      "correctAnswerIndex": 1,
+      "explanation": "Cascading Layers allow leads to define explicit order of precedence, where a lower layer's high-specificity selector will still lose to a higher layer's low-specificity selector.",
+      "difficulty": "expert",
+      "points": 20,
+      "topic": "CSS Architecture"
+    },
+    {
+      "id": "fl2",
+      "text": "In the context of the Critical Rendering Path, what is the 'Preload Scanner' and why is it vital for performance?",
+      "options": [
+        "A JavaScript library that pre-fetches images.",
+        "A browser optimization that parses the HTML in the background to find and start fetching high-priority resources before the main parser is blocked.",
+        "A tool that checks for dead CSS code.",
+        "A mechanism that prevents the page from rendering until all JS is loaded."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The Preload Scanner reduces the 'idle time' of the network by discovering assets while the main thread is busy parsing or executing scripts.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Browser Internals"
+    },
+    {
+      "id": "fl3",
+      "text": "What is the 'Back/Forward Cache' (bfcache) and how can developers accidentally disable it?",
+      "options": [
+        "A server-side cache for HTML; disabled by setting 'no-store' headers.",
+        "An in-memory browser cache that stores a complete snapshot of a page; disabled by 'unload' event listeners or 'Cache-Control: no-store'.",
+        "A DNS caching strategy; disabled by short TTL values.",
+        "A feature for offline PWA support."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Using 'unload' listeners prevents the browser from safely snapshotting the page state, leading to slower back/forward navigation.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Performance"
+    },
+    {
+      "id": "fl4",
+      "text": "Which 'contain' property value is most effective for a complex sidebar that updates independently, to prevent its layout changes from triggering a full page reflow?",
+      "options": ["contain: size", "contain: layout", "contain: content", "contain: strict"],
+      "correctAnswerIndex": 3,
+      "explanation": "'strict' applies size, layout, and paint containment, effectively telling the browser the element's subtree has no effect on the rest of the page.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Performance"
+    },
+    {
+      "id": "fl5",
+      "text": "What is 'Font Fingerprinting' and why is it a concern for Lead Engineers regarding privacy and security?",
+      "options": [
+        "A way to speed up font loading.",
+        "A technique used to uniquely identify a user based on the specific fonts installed on their system.",
+        "A method for encrypting web fonts.",
+        "A tool for detecting broken glyphs."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Leads must balance custom typography with user privacy, often preferring 'Variable Fonts' to reduce the surface area for tracking.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Security/Privacy"
+    },
+    {
+      "id": "fl6",
+      "text": "In CSS Grid, what does the 'subgrid' value for grid-template-rows/columns allow a nested component to do?",
+      "options": [
+        "Create its own independent grid system.",
+        "Adopt the tracks defined on its parent grid, allowing alignment with sibling elements outside the container.",
+        "Automatically calculate the size of child elements.",
+        "Inherit the colors of the parent grid."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Subgrid is essential for complex layouts where nested elements must align perfectly with a macro-grid.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Layout"
+    },
+    {
+      "id": "fl7",
+      "text": "What is the 'Main Thread' cost of 'CSS-in-JS' libraries that generate styles at runtime?",
+      "options": [
+        "There is no cost; CSS is always fast.",
+        "The CPU must parse, generate, and inject style tags during execution, which can block interaction and increase INP.",
+        "It only affects the initial download size.",
+        "It speeds up the Virtual DOM comparison."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Lead engineers often pivot to 'Zero-Runtime' CSS-in-JS (like Vanilla Extract) for high-performance applications to offload this work to the build step.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Architecture"
+    },
+    {
+      "id": "fl8",
+      "text": "Which HTTP header is used to prevent an external site from embedding your frontend in an <iframe> (Clickjacking protection)?",
+      "options": ["Access-Control-Allow-Origin", "X-Frame-Options (or CSP frame-ancestors)", "X-XSS-Protection", "Content-Type"],
+      "correctAnswerIndex": 1,
+      "explanation": "'X-Frame-Options: DENY' or 'SAMEORIGIN' is a standard security requirement for enterprise frontends.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Security"
+    },
+    {
+      "id": "fl9",
+      "text": "What is the 'Speculative Rules API' used for in modern frontend development?",
+      "options": [
+        "To define complex logic in CSS.",
+        "To provide the browser with JSON-based rules for prefetching or prerendering pages it predicts the user will visit.",
+        "To validate HTML syntax at runtime.",
+        "To optimize database queries from the frontend."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It allows leads to implement 'Instant Navigation' by prerendering full pages in the background.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Performance"
+    },
+    {
+      "id": "fl10",
+      "text": "How does the 'inert' attribute improve the accessibility of modal dialogs?",
+      "options": [
+        "It makes the modal invisible to search engines.",
+        "It programmatically removes the rest of the page from the tab order and accessibility tree while the modal is open.",
+        "It speeds up the animation of the modal.",
+        "It allows the modal to be dragged."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Using 'inert' on the background content is the most robust way to 'trap' a user's focus inside a modal.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Accessibility"
+    },
+    {
+      "id": "fl11",
+      "text": "What is 'Composite Thread' and which CSS properties are handled there for better performance?",
+      "options": [
+        "The thread that handles logic; handles 'display: none'.",
+        "A thread separate from the main thread that handles 'transform' and 'opacity' for smooth animations.",
+        "A thread for network requests.",
+        "A legacy concept for IE11 compatibility."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Moving animations to the compositor avoids main-thread jank caused by JS execution or layout recalculations.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Browser Internals"
+    },
+    {
+      "id": "fl12",
+      "text": "When implementing a 'Micro-frontend' architecture, what is the 'Shadow DOM's' role in style encapsulation?",
+      "options": [
+        "It combines all CSS into one file.",
+        "It ensures that a micro-app's styles do not leak out and the main host's styles do not leak in, providing true isolation.",
+        "It makes the app run in a background worker.",
+        "It replaces the need for an Nginx proxy."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Shadow DOM provides a 'Scoped' environment, which is vital when different teams use conflicting CSS frameworks on the same page.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Architecture"
+    },
+    {
+      "id": "fl13",
+      "text": "What is the significance of the 'Priority Hints' (fetchpriority) attribute for an LCP (Largest Contentful Paint) image?",
+      "options": [
+        "It tells the browser to compress the image more.",
+        "It instructs the browser to prioritize that specific image fetch over other resources, even before the parser discovers it.",
+        "It prevents the image from loading on slow connections.",
+        "It marks the image as a background asset."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Setting 'fetchpriority=high' on the LCP image can improve page load metrics by several hundred milliseconds.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Performance"
+    },
+    {
+      "id": "fl14",
+      "text": "Which CSS unit is most appropriate for creating 'Fluid Typography' that scales smoothly between two screen widths without media queries?",
+      "options": ["rem", "vw", "clamp() using a mix of rem and vw", "px"],
+      "correctAnswerIndex": 2,
+      "explanation": "clamp() allows you to set a minimum, maximum, and a dynamic preferred value based on viewport width.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Responsive Design"
+    },
+    {
+      "id": "fl15",
+      "text": "What is 'Cumulative Layout Shift' (CLS) and what is a common cause for a high CLS score?",
+      "options": [
+        "A measure of total JS execution time; caused by loops.",
+        "A measure of visual stability; caused by images without defined height/width attributes or dynamically injected content.",
+        "A measure of server response time.",
+        "A measure of how many files are downloaded."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Reserved space (using aspect-ratio) is the primary fix for CLS, which is a Core Web Vital.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance"
+    },
+    {
+      "id": "fl16",
+      "text": "In a distributed frontend, how should a Lead Engineer handle 'Third-party Scripts' (like Analytics) to minimize impact on Interaction to Next Paint (INP)?",
+      "options": [
+        "Load them in the <head> with 'async'.",
+        "Use 'Partytown' or similar to run them in a Web Worker, off the main thread.",
+        "Block them until the user scrolls.",
+        "Inline the full library code into the HTML."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Web workers allow heavy third-party code to run without competing with the UI for main-thread cycles.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Performance"
+    },
+    {
+      "id": "fl17",
+      "text": "What does the '@container' rule allow you to do in CSS?",
+      "options": [
+        "Style an element based on the size of its parent/ancestor container rather than the viewport.",
+        "Organize CSS into folders.",
+        "Set the maximum width of the body.",
+        "Create a grid container."
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Container queries enable 'intrinsic' component design, where components respond to their placement in the layout.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Responsive Design"
+    },
+    {
+      "id": "fl18",
+      "text": "What is 'Tree Shaking' and why does it require ES6 Modules (import/export)?",
+      "options": [
+        "It's a process of cleaning up folders.",
+        "It's dead-code elimination that relies on the static structure of ESM to determine which code is truly used.",
+        "It's a way to compress images.",
+        "It's a method for securing the DOM."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "CommonJS (require) is dynamic, making it nearly impossible for bundlers to safely remove unused functions compared to ESM.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Tooling"
+    },
+    {
+      "id": "fl19",
+      "text": "Which CSS property is used to prevent an element's text from being selectable by the user?",
+      "options": ["pointer-events: none", "user-select: none", "visibility: hidden", "content-visibility: hidden"],
+      "correctAnswerIndex": 1,
+      "explanation": "user-select: none is frequently used on interactive elements like buttons or icons to prevent accidental highlighting.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "CSS Features"
+    },
+    {
+      "id": "fl20",
+      "text": "What is the primary benefit of 'Variable Fonts' for a performance-focused Lead?",
+      "options": [
+        "They offer more colors.",
+        "A single file contains multiple weights and styles, reducing HTTP requests and total file size.",
+        "They are easier to read on small screens.",
+        "They don't require CSS to implement."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "One variable font file can replace 10+ individual font files, dramatically reducing network overhead.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance/Typography"
+    },
+    {
+      "id": "fl21",
+      "text": "Which HTML5 element is used to provide a set of different images for various screen resolutions and formats (like WebP vs JPEG)?",
+      "options": ["<figure>", "<picture>", "<canvas>", "<img> with only 'src'"],
+      "correctAnswerIndex": 1,
+      "explanation": "The <picture> element allows for art direction and providing optimized formats to browsers that support them.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Responsive Images"
+    },
+    {
+      "id": "fl22",
+      "text": "What is 'Logical Properties' in CSS (e.g., 'margin-inline-start')?",
+      "options": [
+        "A way to write CSS using Javascript logic.",
+        "Direction-agnostic properties that adapt to the writing mode (LTR vs RTL) of the document.",
+        "Properties that only work if a condition is met.",
+        "A new way to define grid areas."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Logical properties facilitate internationalization by replacing 'left' and 'right' with 'start' and 'end'.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Internationalization"
+    },
+    {
+      "id": "fl23",
+      "text": "In CSS, what does 'aspect-ratio: 16 / 9' do to a container?",
+      "options": [
+        "It sets the width to 16px.",
+        "It forces the container to maintain a consistent ratio, preventing layout shifts before the internal media (like a video) loads.",
+        "It rotates the element.",
+        "It only works on mobile devices."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This is a key property for modern CLS optimization.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "CSS Features"
+    },
+    {
+      "id": "fl24",
+      "text": "What is 'Content Visibility' (content-visibility: auto) and what does it optimize?",
+      "options": [
+        "It makes hidden content visible.",
+        "It skips rendering work for off-screen elements until they are needed, drastically improving initial load time for long pages.",
+        "It hides content from search bots.",
+        "It optimizes video playback."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It is essentially 'Lazy Rendering' for the DOM, reducing the work the browser does during the initial layout/paint.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Performance"
+    },
+    {
+      "id": "fl25",
+      "text": "What is the 'Stacking Context' and how can it be created without 'z-index'?",
+      "options": [
+        "A method for vertical alignment.",
+        "A 3D layer hierarchy; created by properties like 'opacity < 1', 'transform', or 'filter'.",
+        "A way to stack fonts.",
+        "A way to manage multiple background images."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Understanding how stacking contexts are formed is crucial for fixing bugs where z-index appears 'ignored'.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "CSS Internals"
+    },
+    {
+      "id": "fl26",
+      "text": "Which modern CSS function allows you to use the values of custom properties (variables)?",
+      "options": ["get()", "var()", "env()", "attr()"],
+      "correctAnswerIndex": 1,
+      "explanation": "CSS Variables (Custom Properties) enable dynamic, themeable styling at runtime.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "CSS Features"
+    },
+    {
+      "id": "fl27",
+      "text": "What is 'Hydration Mismatch' in a React/Next.js context from a Lead's perspective?",
+      "options": [
+        "When the CSS and HTML don't match.",
+        "When the server-rendered HTML differs from the first client-side render, often caused by browser-specific logic (e.g., window checks) running during render.",
+        "When the database is out of sync with the UI.",
+        "When a user is offline."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Mismatches lead to slower page loads as React must discard the server HTML and re-render from scratch.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "SSR/Architecture"
+    },
+    {
+      "id": "fl28",
+      "text": "What is the primary architectural benefit of 'Atomic CSS' (like Tailwind)?",
+      "options": [
+        "It makes the CSS file smaller by never duplicating property/value pairs in the final bundle.",
+        "It makes the code easier to read.",
+        "It removes the need for HTML.",
+        "It only works with React."
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "In large projects, Atomic CSS results in a CSS bundle that plateaus in size even as the number of components grows.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "CSS Architecture"
+    },
+    {
+      "id": "fl29",
+      "text": "What is 'Interaction to Next Paint' (INP) and why did it replace FID in Core Web Vitals?",
+      "options": [
+        "It measures how long a page stays open.",
+        "It measures the latency of all interactions during a page's life, providing a more comprehensive view of responsiveness than just the first interaction.",
+        "It measures how many times a user clicks.",
+        "It measures the speed of hover effects."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "INP is the current gold standard for measuring a page's 'feel' and runtime performance.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Performance"
+    },
+    {
+      "id": "fl30",
+      "text": "What is the 'View Transitions API' intended for?",
+      "options": [
+        "Moving between different websites.",
+        "Providing a simple way to animate transitions between DOM states (e.g., in an SPA) without complex JS libraries.",
+        "Recording user behavior.",
+        "Debugging CSS Grid."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It allows for 'App-like' smooth transitions between views with minimal code.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Modern APIs"
+    }
+  ]
+}
