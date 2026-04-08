@@ -1,0 +1,225 @@
+{
+  "id": "react_engineer_pro_mock_002",
+  "title": "React Senior Engineer Assessment",
+  "description": "Comprehensive evaluation for Senior React roles. Focuses on reconciliation internals, advanced hooks, architectural patterns, and performance bottlenecks.",
+  "category": "react",
+  "passingScore": 85,
+  "timeLimitMinutes": 75,
+  "questions": [
+    {
+      "id": "re_adv_11",
+      "text": "How does React Fiber change the reconciliation process compared to the old stack reconciler?",
+      "options": [
+        "It uses a recursive approach that cannot be interrupted",
+        "It enables incremental rendering by breaking work into units called 'fibers'",
+        "It removes the need for the Virtual DOM entirely",
+        "It forces all updates to be synchronous for better data integrity"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Fiber allows React to pause, reuse, or abort work based on priority, enabling features like Concurrent Mode.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Architecture"
+    },
+    {
+      "id": "re_adv_12",
+      "text": "What is the primary difference between `useMemo` and `useCallback`?",
+      "options": [
+        "useMemo returns a memoized function, useCallback returns a memoized value",
+        "useMemo returns a memoized value, useCallback returns a memoized function",
+        "useMemo is for side effects, useCallback is for state",
+        "There is no difference; they are aliases"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "useMemo caches the result of a function call; useCallback caches the function definition itself.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance"
+    },
+    {
+      "id": "re_adv_13",
+      "text": "When implementing a 'Portal' in React, what happens to event bubbling?",
+      "options": [
+        "Events bubble through the physical DOM tree",
+        "Events bubble through the React component tree (virtual tree)",
+        "Event bubbling is disabled for portals",
+        "Events only bubble if the portal is attached to the body"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Even though a portal can exist anywhere in the physical DOM, React maintains the event bubbling behavior through the component tree hierarchy.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Core Concepts"
+    },
+    {
+      "id": "re_adv_14",
+      "text": "What is the purpose of the `useId` hook introduced in React 18?",
+      "options": [
+        "To generate random keys for list items",
+        "To generate unique IDs that are stable across server and client",
+        "To track the ID of the current user session",
+        "To identify specific DOM nodes for testing"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "useId creates stable IDs for accessibility attributes, avoiding mismatches during hydration in SSR apps.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Hooks"
+    },
+    {
+      "id": "re_adv_15",
+      "text": "In a Redux toolkit setup, what is the 'ExtraReducers' field used for?",
+      "options": [
+        "Adding middleware to the store",
+        "Handling actions defined outside of the slice (e.g., async thunks)",
+        "Creating selectors automatically",
+        "Handling local component state"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "extraReducers allows a slice to respond to other action types besides those it has generated, commonly used with createAsyncThunk.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "State Management"
+    },
+    {
+      "id": "re_adv_16",
+      "text": "Which method is the modern replacement for `componentDidCatch` in functional components?",
+      "options": [
+        "useEffect with a try/catch",
+        "useErrorBoundary hook",
+        "There is currently no Hook equivalent; use a Class ErrorBoundary",
+        "useException"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "As of now, React does not have a hook equivalent for the getDerivedStateFromError or componentDidCatch lifecycle methods.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Error Handling"
+    },
+    {
+      "id": "re_adv_17",
+      "text": "What does the `startTransition` API do in React 18?",
+      "options": [
+        "It forces an immediate re-render",
+        "It marks an update as non-urgent, allowing urgent updates to interrupt it",
+        "It creates a CSS transition for the component",
+        "It delays the mounting of a component by a fixed time"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Transitions allow you to keep the UI responsive by deprioritizing heavy, non-essential rendering work.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Concurrent React"
+    },
+    {
+      "id": "re_adv_18",
+      "text": "How can you prevent a component from re-rendering when a Context value it doesn't use changes?",
+      "options": [
+        "Split the Context into smaller, more specific providers",
+        "Use React.memo on the consumer component",
+        "Wrap the consumer in useMemo to select specific data",
+        "All of the above"
+      ],
+      "correctAnswerIndex": 3,
+      "explanation": "Context optimization usually involves splitting providers or using memoization strategies to prevent unnecessary downstream renders.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Performance"
+    },
+    {
+      "id": "re_adv_19",
+      "text": "What is the 'Double Buffer' technique in React Fiber?",
+      "options": [
+        "Storing state in both localStorage and memory",
+        "Using a 'current' tree and a 'workInProgress' tree to prepare updates",
+        "Rendering two copies of every component for redundancy",
+        "A way to handle two simultaneous API calls"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "React Fiber uses two trees: one representing the UI currently on screen and another to prepare the next state off-screen.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Architecture"
+    },
+    {
+      "id": "re_adv_20",
+      "text": "Which Hook should be used if you need to read the layout from the DOM and synchronously re-render?",
+      "options": ["useEffect", "useLayoutEffect", "useInsertionEffect", "useMemo"],
+      "correctAnswerIndex": 1,
+      "explanation": "useLayoutEffect runs synchronously after DOM mutations, making it ideal for measuring elements before the paint.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Hooks"
+    },
+    {
+      "id": "re_adv_21",
+      "text": "What is the role of `useInsertionEffect`?",
+      "options": [
+        "Injecting dynamic styles for CSS-in-JS libraries",
+        "Inserting elements into the DOM",
+        "Handling form input insertions",
+        "Optimizing list rendering"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "useInsertionEffect is specifically for CSS-in-JS authors to inject styles before other effects run.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Hooks"
+    },
+    {
+      "id": "re_adv_22",
+      "text": "What occurs if you call a state update function with the same value as the current state?",
+      "options": [
+        "React re-renders the component anyway",
+        "React bails out without rendering the children or firing effects",
+        "React throws a warning",
+        "React clears the state"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "React uses Object.is comparison; if values are identical, it skips the render process (Bailout).",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "State Management"
+    },
+    {
+      "id": "re_adv_23",
+      "text": "Which pattern is used to pass data through many layers of components without props?",
+      "options": ["Prop Drilling", "Render Props", "Context API", "HOC"],
+      "correctAnswerIndex": 2,
+      "explanation": "Context provides a way to share values between components without having to explicitly pass a prop through every level.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Architecture"
+    },
+    {
+      "id": "re_adv_24",
+      "text": "In testing, why would you use `act()` from React Testing Library?",
+      "options": [
+        "To click on elements",
+        "To ensure all updates have been processed and applied to the DOM",
+        "To mock an API call",
+        "To generate a snapshot"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "act() guarantees that all updates related to the interaction have been resolved before making assertions.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Testing"
+    },
+    {
+      "id": "re_adv_25",
+      "text": "What is the 'Render-as-you-fetch' pattern facilitated by Suspense?",
+      "options": [
+        "Fetching data in useEffect after rendering",
+        "Starting to fetch data as soon as possible, before the component even renders",
+        "Fetching data on the server only",
+        "Waiting for all components to render before fetching"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This pattern allows components to 'suspend' rendering while data is being loaded, reducing waterfalls.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Data Fetching"
+    }
+  ]
+}

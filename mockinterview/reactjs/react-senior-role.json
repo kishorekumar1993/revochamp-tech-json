@@ -1,0 +1,385 @@
+{
+  "id": "react_senior_engineer_specialist_001",
+  "title": "Senior React Engineer Specialist Mock Test",
+  "description": "An advanced-level assessment focused on React 18+ architecture, fiber reconciliation, performance optimization, and complex state synchronization patterns.",
+  "category": "react",
+  "passingScore": 85,
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "id": "rs1",
+      "text": "How does React 18's 'Automatic Batching' handle state updates inside promises or setTimeouts compared to previous versions?",
+      "options": [
+        "It only batches updates inside React event handlers.",
+        "It batches all updates regardless of where they originate (promises, timeouts, native events).",
+        "It requires the use of flushSync to enable batching for async code.",
+        "It disables batching for async code to ensure data integrity."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "React 18 introduced automatic batching for all updates, reducing unnecessary re-renders in asynchronous contexts.",
+      "difficulty": "advanced",
+      "points": 10,
+      "topic": "Reconciliation"
+    },
+    {
+      "id": "rs2",
+      "text": "What is the primary purpose of the `useSyncExternalStore` hook?",
+      "options": [
+        "To synchronize local state with an API.",
+        "To subscribe to external data stores while ensuring compatibility with Concurrent Rendering (preventing 'tearing').",
+        "To provide a synchronous way to access the Context API.",
+        "To replace the Redux 'connect' function in functional components."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This hook is crucial for external state management libraries to remain consistent during concurrent updates.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rs3",
+      "text": "In the Fiber architecture, what is the 'Double Buffering' technique?",
+      "options": [
+        "Using two different versions of the Virtual DOM (current and workInProgress) to prepare updates off-screen.",
+        "Rendering components twice to detect side effects.",
+        "Storing state in both memory and local storage for persistence.",
+        "A mechanism for handling two simultaneous user inputs."
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "React uses a 'current' tree and a 'workInProgress' tree to perform non-blocking rendering without showing an incomplete UI.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Architecture"
+    },
+    {
+      "id": "rs4",
+      "text": "What does the `useDeferredValue` hook accomplish that a standard debounce function does not?",
+      "options": [
+        "It adds a fixed delay to every update.",
+        "It is interruptible and only triggers the update when the main thread is idle, yielding to urgent work.",
+        "It prevents the component from rendering until the value is ready.",
+        "It automatically memoizes the component tree."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Unlike debouncing, useDeferredValue is integrated into React's scheduler and yields to user interactions.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Performance"
+    },
+    {
+      "id": "rs5",
+      "text": "Which optimization is essential for a component wrapped in `React.memo` that receives a callback function as a prop?",
+      "options": [
+        "Using useMemo on the component's state.",
+        "Wrapping the callback in useCallback in the parent component.",
+        "Adding a key prop to the component.",
+        "Using useLayoutEffect inside the component."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "If the callback isn't memoized, its reference changes on every parent render, defeating the purpose of React.memo.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance"
+    },
+    {
+      "id": "rs6",
+      "text": "What occurs during the 'Commit' phase of the React lifecycle?",
+      "options": [
+        "React calculates the diff between the old and new tree.",
+        "React applies changes to the DOM and calls lifecycle methods/Layout Effects.",
+        "React decides which updates are high priority.",
+        "The browser paints the pixels on the screen."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The render phase is interruptible and side-effect free; the commit phase is where actual DOM changes occur and is synchronous.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Lifecycle"
+    },
+    {
+      "id": "rs7",
+      "text": "What is 'Hydration' in the context of React Server Components and SSR?",
+      "options": [
+        "Loading CSS files into the head of the document.",
+        "The process of attaching event listeners to server-rendered HTML to make it interactive.",
+        "Connecting the frontend to a GraphQL server.",
+        "Refreshing the data in a cache."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Hydration 'waters' the dry HTML sent from the server by attaching the React runtime logic.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "SSR"
+    },
+    {
+      "id": "rs8",
+      "text": "How can you prevent a 'Stale Closure' in a `useEffect` hook that uses a variable from the component scope?",
+      "options": [
+        "By using a useRef for the variable.",
+        "By including the variable in the effect's dependency array.",
+        "By removing the dependency array entirely.",
+        "Both A and B are valid strategies depending on the use case."
+      ],
+      "correctAnswerIndex": 3,
+      "explanation": "Including it in the array ensures the effect re-runs with new values; using a ref ensures the effect always sees the latest mutable value without re-running.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rs9",
+      "text": "What is the specific use case for `useInsertionEffect`?",
+      "options": [
+        "Inserting elements into a list efficiently.",
+        "Injecting dynamic styles for CSS-in-JS libraries before other layout effects run.",
+        "Optimizing the performance of portals.",
+        "Handling ref assignments during the render phase."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It fires before all layout effects and is primarily intended for library authors to inject <style> tags.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rs10",
+      "text": "In a Redux architecture, what is 'Normalized State'?",
+      "options": [
+        "Storing data in a flat structure (like a database) to avoid deeply nested objects.",
+        "Converting all numbers to strings.",
+        "Using a single state object for the entire app.",
+        "Ensuring state matches the backend schema exactly."
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Normalization makes updates more efficient and prevents data duplication across the state tree.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "State Management"
+    },
+    {
+      "id": "rs11",
+      "text": "What does the `flushSync` utility do?",
+      "options": [
+        "It clears the browser cache.",
+        "It forces React to exit automatic batching and apply updates immediately/synchronously.",
+        "It synchronizes the state across multiple browser tabs.",
+        "It performs a hard reload of the application."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Use flushSync sparingly when you need immediate DOM updates (e.g., for some third-party integrations).",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Reconciliation"
+    },
+    {
+      "id": "rs12",
+      "text": "Which pattern is best for avoiding 'Prop Drilling' in a complex application?",
+      "options": [
+        "State Lifting",
+        "Context API / State Management Libraries",
+        "Higher Order Components",
+        "Inline rendering"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Context allows data to be accessed at any level of the component tree without passing it through intermediate components.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Architecture"
+    },
+    {
+      "id": "rs13",
+      "text": "What is the 'Render-as-you-fetch' pattern enabled by Suspense?",
+      "options": [
+        "Fetching data in useEffect after the component renders.",
+        "Starting a fetch at the same time you start rendering, without waiting for the response to begin the render phase.",
+        "Fetching data only when the user scrolls to a component.",
+        "Using a server-side cache for all API calls."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This pattern reduces waterfalls by initiating requests as early as possible and letting React 'suspend' rendering while waiting.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Performance"
+    },
+    {
+      "id": "rs14",
+      "text": "When implementing a 'Custom Hook', why is it important to ensure its internal hooks follow the 'Rules of Hooks'?",
+      "options": [
+        "To make the code look cleaner.",
+        "Because custom hooks are just functions that inherit the rules of the React environment they are called in.",
+        "To allow the hook to be called inside loops.",
+        "Custom hooks don't actually have to follow the rules."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Hooks must be called at the top level to maintain consistent state association across renders.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rs15",
+      "text": "What is the role of `useTransition` in React 18?",
+      "options": [
+        "To animate route changes.",
+        "To mark certain state updates as non-urgent transitions, keeping the UI responsive.",
+        "To transition state between two different components.",
+        "To handle asynchronous CSS loading."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Updates marked as transitions can be interrupted by more urgent work like user input.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Concurrent React"
+    },
+    {
+      "id": "rs16",
+      "text": "What is a 'Portal' and when would you use it?",
+      "options": [
+        "A way to fetch data from another domain.",
+        "A method to render a component's children into a different DOM node (e.g., outside the parent's overflow:hidden).",
+        "A tool for creating multi-page applications.",
+        "A secure way to store passwords."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Portals are commonly used for modals, tooltips, and floating menus.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Core Concepts"
+    },
+    {
+      "id": "rs17",
+      "text": "What occurs if a component 'Suspends' but there is no `<Suspense>` boundary above it?",
+      "options": [
+        "The component renders as null.",
+        "React shows a console error and breaks the render tree.",
+        "React will look for the nearest boundary, and if none exists, it will crash the whole app/root.",
+        "React uses the default browser loading spinner."
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Suspense boundaries are required to catch suspended components; otherwise, the entire tree up to the root will fail to render.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Concurrent React"
+    },
+    {
+      "id": "rs18",
+      "text": "Which Profiler metric indicates how long a component took to render including its children?",
+      "options": [
+        "Actual Duration",
+        "Base Duration",
+        "Commit Time",
+        "Start Time"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "'Actual Duration' measures the time spent rendering the subtree for the current update.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Performance"
+    },
+    {
+      "id": "rs19",
+      "text": "What is the 'exhaustive-deps' lint rule intended to prevent?",
+      "options": [
+        "Infinite loops caused by state updates inside effects.",
+        "Stale closures and bugs where effects don't sync with the latest props/state.",
+        "Large bundle sizes.",
+        "Duplicate code."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Ensuring all used variables are in the dependency array keeps the effect synchronized with the component's render cycle.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Best Practices"
+    },
+    {
+      "id": "rs20",
+      "text": "How do 'React Server Components' (RSC) differ from 'Client Components'?",
+      "options": [
+        "RSCs run on the server and do not send JavaScript to the client.",
+        "RSCs are just class components.",
+        "Client components cannot use hooks.",
+        "RSCs can only be used with GraphQL."
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "RSCs reduce bundle size by keeping logic and dependencies on the server, sending only the UI structure to the client.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Architecture"
+    },
+    {
+      "id": "rs21",
+      "text": "What is the purpose of the `useId` hook?",
+      "options": [
+        "To track user IDs.",
+        "To generate unique, stable IDs for accessibility attributes that match between server and client.",
+        "To set the 'key' attribute for list items.",
+        "To identify the current component in the DevTools."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "useId prevents hydration mismatches when generating IDs for form labels and aria-attributes.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Accessibility"
+    },
+    {
+      "id": "rs22",
+      "text": "In a 'Compound Component' pattern, how is state typically shared between the parent and children?",
+      "options": [
+        "Through props passed to every child.",
+        "Through an internal Context created by the parent component.",
+        "By using global state like Redux.",
+        "It isn't shared; children are independent."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Context provides a clean way for sub-components (like Tabs.List and Tabs.Panel) to communicate without explicit prop-passing.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Design Patterns"
+    },
+    {
+      "id": "rs23",
+      "text": "What does the `useLayoutEffect` hook guarantee that `useEffect` does not?",
+      "options": [
+        "It runs asynchronously.",
+        "It fires before the browser has a chance to paint the screen.",
+        "It is faster than useEffect.",
+        "It can be used in server-side rendering."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "useLayoutEffect is synchronous with DOM mutations, preventing visual flickers when reading/writing layout.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rs24",
+      "text": "What is 'Tree Shaking' in the context of a React build process?",
+      "options": [
+        "Optimizing the DOM tree.",
+        "Removing unused code from the final JavaScript bundle.",
+        "Converting functional components to classes.",
+        "Deleting old files in the project."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Tree shaking relies on ES6 module syntax to prune dead code, reducing the load time for the user.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Tooling"
+    },
+    {
+      "id": "rs25",
+      "text": "What is the primary trade-off of using `useMemo` extensively?",
+      "options": [
+        "It makes the UI slower.",
+        "The overhead of memory usage and the cost of dependency comparison can sometimes outweigh the calculation savings.",
+        "It disables React's automatic batching.",
+        "It prevents hooks from working."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Memoization isn't free; it should be used for expensive calculations or to maintain referential identity for optimization props.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Performance"
+    }
+  ]
+}

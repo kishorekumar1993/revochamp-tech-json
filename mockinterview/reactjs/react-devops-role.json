@@ -1,0 +1,160 @@
+{
+  "id": "react_devops_specialist_mock_001",
+  "title": "React DevOps & Platform Engineering Mock Test",
+  "description": "Advanced assessment for engineers focusing on the build, deployment, and infrastructure lifecycle of React applications.",
+  "category": "react-devops",
+  "passingScore": 80,
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "id": "rd1",
+      "text": "Which build-time optimization technique is used to split a large JavaScript bundle into smaller chunks that are loaded on demand?",
+      "options": [
+        "Tree Shaking",
+        "Code Splitting",
+        "Minification",
+        "Brotli Compression"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Code splitting (often via React.lazy or Dynamic Imports) allows the browser to only download the code necessary for the current route, improving initial load time.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Build Optimization"
+    },
+    {
+      "id": "rd2",
+      "text": "In a Dockerized React environment, what is the best practice for serving the final production build?",
+      "options": [
+        "Run `npm start` inside the container",
+        "Use a multi-stage build to compile the app, then serve static files using Nginx or Alpine",
+        "Install the full Node.js devDependencies in the production image",
+        "Mount the local source code folder as a volume"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Multi-stage builds allow you to keep the final image small by only including the production assets and a lightweight web server like Nginx.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Containerization"
+    },
+    {
+      "id": "rd3",
+      "text": "What is the primary difference between 'Static Site Generation' (SSG) and 'Server Side Rendering' (SSR) regarding infrastructure?",
+      "options": [
+        "SSG requires a Node.js server at runtime; SSR does not",
+        "SSR requires a server to render pages on every request; SSG produces static files at build time",
+        "SSG is only for blogs; SSR is for dashboards",
+        "SSR is always faster for the global user base"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SSG can be served from a CDN (Edge), while SSR requires compute resources (Server/Lambda) to handle requests in real-time.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Deployment Strategies"
+    },
+    {
+      "id": "rd4",
+      "text": "How should 'Environment Variables' (e.g., API_URL) be handled for a React SPA that is built once but deployed to multiple environments (Dev/Staging/Prod)?",
+      "options": [
+        "Hardcode them in the source code",
+        "Use a script to inject variables into the static build files at container runtime or use a config endpoint",
+        "Rebuild the entire application for every environment",
+        "Store them in the browser's localStorage manually"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Since React is compiled to static JS, variables are 'baked in' at build time. To 'build once, deploy anywhere,' you must use runtime injection or a configuration fetch.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Configuration"
+    },
+    {
+      "id": "rd5",
+      "text": "What is 'Tree Shaking' in the context of a Webpack or Vite build?",
+      "options": [
+        "Deleting old files from the repository",
+        "Removing unused code (dead code) from the final bundle using ES6 module static analysis",
+        "Compressing images to reduce bundle size",
+        "Sorting components alphabetically"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Tree shaking relies on the static structure of ES6 modules to identify and exclude code that is never imported/used.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Build Optimization"
+    },
+    {
+      "id": "rd6",
+      "text": "Which HTTP header is most critical for ensuring that a React SPA's `index.html` is not cached indefinitely while its hashed assets (js/css) are?",
+      "options": [
+        "Cache-Control: no-cache",
+        "Content-Type: text/html",
+        "Access-Control-Allow-Origin: *",
+        "Strict-Transport-Security"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "You want the browser to always check the server for a new index.html so it can pick up new hashed filenames, while the assets themselves can be cached long-term.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Caching"
+    },
+    {
+      "id": "rd7",
+      "text": "What is the purpose of a 'Content Security Policy' (CSP) in a React application?",
+      "options": [
+        "To speed up the rendering of components",
+        "To prevent Cross-Site Scripting (XSS) and data injection attacks by restricting which resources can be loaded",
+        "To manage user permissions and roles",
+        "To minify the HTML output"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "CSP is a security layer that helps detect and mitigate certain types of attacks, including XSS and clickjacking.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Security"
+    },
+    {
+      "id": "rd8",
+      "text": "In a CI/CD pipeline for React, what is the 'Lockfile' (package-lock.json or yarn.lock) used for?",
+      "options": [
+        "To encrypt the source code",
+        "To ensure that the exact same versions of dependencies are installed across all environments",
+        "To prevent other developers from editing the project",
+        "To store the API keys"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Lockfiles ensure deterministic builds, preventing 'it works on my machine' issues caused by minor version updates in dependencies.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Dependency Management"
+    },
+    {
+      "id": "rd9",
+      "text": "Which metric provides the best insight into how long a user is blocked from interacting with the page due to heavy JavaScript execution?",
+      "options": [
+        "LCP (Largest Contentful Paint)",
+        "TBT (Total Blocking Time)",
+        "TTFB (Time to First Byte)",
+        "CLS (Cumulative Layout Shift)"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "TBT measures the total amount of time between First Contentful Paint and Time to Interactive where the main thread was blocked.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Performance Monitoring"
+    },
+    {
+      "id": "rd10",
+      "text": "What is a 'Blue-Green' deployment strategy?",
+      "options": [
+        "Changing the color scheme of the app",
+        "Running two identical production environments and switching traffic from the old (Blue) to the new (Green)",
+        "Deploying the app to two different cloud providers",
+        "Testing the app in dark mode and light mode"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This strategy reduces downtime and risk by allowing you to verify the new version in a live-like environment before switching traffic.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Deployment"
+    }
+  ]
+}

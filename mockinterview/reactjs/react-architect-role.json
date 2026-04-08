@@ -1,0 +1,440 @@
+{
+  "id": "react_architect_expert_eval_001",
+  "title": "React Solution Architect Assessment",
+  "description": "A high-stakes evaluation for Architect-level roles. Covers distributed frontend systems, core engine internals, design system governance, and enterprise-grade performance strategies.",
+  "category": "react",
+  "passingScore": 90,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "ra1",
+      "text": "In a Federated Micro-Frontend (MFE) architecture, how should global state (e.g., Auth) be shared while maintaining team autonomy?",
+      "options": [
+        "Shared Redux store with dynamic injection of reducers",
+        "Event-driven communication via a custom Event Bus or Window Dispatch",
+        "Prop-drilling through the shell container",
+        "Database-level synchronization only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Event-driven architecture decouples teams. Redux stores create tight coupling and versioning conflicts between MFEs.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Micro-Frontends"
+    },
+    {
+      "id": "ra2",
+      "text": "Which React 18 feature allows for the prioritization of 'Input' events over 'Data-driven' renders to improve INP (Interaction to Next Paint)?",
+      "options": ["useTransition", "useDeferredValue", "The internal 'Lanes' scheduling engine", "React.memo"],
+      "correctAnswerIndex": 2,
+      "explanation": "Lanes (bitmask-based priorities) allow React to interrupt low-priority rendering for discrete user input.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Performance"
+    },
+    {
+      "id": "ra3",
+      "text": "What is the primary risk of using 'Module Federation' for shared component libraries in a production environment?",
+      "options": [
+        "Bundle size increase",
+        "Version mismatch and breaking changes at runtime (Lack of compile-time safety)",
+        "Incompatibility with TypeScript",
+        "Increased latency in CSS loading"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Since MFEs are deployed independently, a shared 'remotes' library update can break consumers without build-time warnings.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Tooling"
+    },
+    {
+      "id": "ra4",
+      "text": "How does 'Selective Hydration' handle a user click on a non-hydrated component while the rest of the tree is still processing?",
+      "options": [
+        "It ignores the click until full hydration is complete",
+        "It prioritizes the clicked component's hydration and replays the event",
+        "It forces a full page reload",
+        "It crashes the React root"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "React 18's Selective Hydration uses 'Event Replay' to capture and re-fire clicks after prioritizing that specific chunk's hydration.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "SSR"
+    },
+    {
+      "id": "ra5",
+      "text": "When building an 'Atomic Design' system, which layer should strictly hold business logic according to architectural best practices?",
+      "options": ["Atoms", "Molecules", "Organisms", "Pages/Templates"],
+      "correctAnswerIndex": 3,
+      "explanation": "To maximize reuse, Atoms/Molecules/Organisms should be 'dumb' components; logic resides in Pages or Template-level containers.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Design Systems"
+    },
+    {
+      "id": "ra6",
+      "text": "What is the 'Double Buffer' strategy in the React Fiber reconciler?",
+      "options": [
+        "A way to render two versions of a component simultaneously for A/B testing",
+        "The use of 'current' and 'workInProgress' trees to manage non-blocking UI updates",
+        "Storing state in both memory and IndexedDB",
+        "A method for handling high-frequency window resizing"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Double buffering allows React to commit a complete tree only after calculating all changes in an off-screen 'workInProgress' tree.",
+      "difficulty": "expert",
+      "points": 20,
+      "topic": "Internals"
+    },
+    {
+      "id": "ra7",
+      "text": "In a large-scale application, why might an architect choose 'Zustand' over 'Redux Toolkit' for local-global state?",
+      "options": [
+        "Redux is inherently slower than Zustand",
+        "Zustand has a smaller footprint and significantly less boilerplate for mid-sized complexity",
+        "Zustand does not use the Context API",
+        "Redux cannot handle asynchronous logic"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Zustand provides a simpler API surface while still avoiding the 're-render all' pitfalls of standard Context.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "State Management"
+    },
+    {
+      "id": "ra8",
+      "text": "What is the 'Islands Architecture' primary advantage over standard SPA Hydration?",
+      "options": [
+        "Better SEO through server-only components",
+        "Zero JavaScript for static parts, reducing the TBT (Total Blocking Time)",
+        "Easier integration with GraphQL",
+        "Enhanced security through obfuscation"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It avoids 'Top-Down' hydration, which blocks the main thread, by only sending JS for the interactive 'islands'.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Architecture"
+    },
+    {
+      "id": "ra9",
+      "text": "How do 'React Server Components' (RSC) solve the 'Waterfall' problem in data fetching?",
+      "options": [
+        "By moving fetching to the server, where latency to the database is minimal",
+        "By automatically batching all client-side requests",
+        "By using WebSockets for all communication",
+        "RSCs do not solve waterfalls"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Since RSCs run on the server, they can fetch data and render to stream in a single RTT (Round Trip Time) to the client.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Next-Gen"
+    },
+    {
+      "id": "ra10",
+      "text": "Which hook is required to prevent 'tearing' in concurrent mode when subscribing to an external non-React store?",
+      "options": ["useEffect", "useSyncExternalStore", "useMemo", "useRef"],
+      "correctAnswerIndex": 1,
+      "explanation": "This hook forces a synchronous update when the store changes, maintaining consistency during time-slicing.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Hooks"
+    },
+    {
+      "id": "ra11",
+      "text": "What is the role of a 'Boundary component' (Error Boundary or Suspense) in an architectural sense?",
+      "options": [
+        "To enforce strict typing",
+        "To provide fault tolerance and declarative orchestration of async states",
+        "To act as a router",
+        "To handle CSS scoping"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Boundaries allow the system to remain partially interactive even when certain sub-modules fail or are loading.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "System Design"
+    },
+    {
+      "id": "ra12",
+      "text": "In the context of 'TBT' (Total Blocking Time), what is the impact of excessive 'React.memo' usage?",
+      "options": [
+        "It always decreases TBT",
+        "It can increase TBT if the overhead of prop comparison exceeds the cost of re-rendering",
+        "It has no impact on TBT",
+        "It only affects bundle size"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Memoization is a CPU-memory trade-off. Shallow comparing huge prop objects on every render can be more expensive than the render itself.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Performance"
+    },
+    {
+      "id": "ra13",
+      "text": "What is 'Partial Hydration'?",
+      "options": [
+        "Hydrating only the viewport",
+        "Hydrating only certain interactive components while leaving the rest as static HTML",
+        "Using only 50% of the CPU for hydration",
+        "Hydrating without CSS"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Partial hydration targets specific nodes, which is the core of architectures like Astro.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "SSR"
+    },
+    {
+      "id": "ra14",
+      "text": "Why does React 18 use 'Bitmasks' for Lanes?",
+      "options": [
+        "To save memory",
+        "To allow efficient checking of multiple priority levels in a single operation",
+        "To encrypt state",
+        "Because JavaScript only supports bitwise math"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Bitmasks allow the scheduler to determine if a lane is 'cluttered' or needs to be processed with extreme speed.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Internals"
+    },
+    {
+      "id": "ra15",
+      "text": "What is the primary benefit of 'Streaming SSR'?",
+      "options": [
+        "Faster TTFB (Time to First Byte)",
+        "Faster FP (First Paint) and LCP (Largest Contentful Paint) as the browser can render HTML chunks as they arrive",
+        "Security from XSS",
+        "Reduced server CPU usage"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Streaming allows the browser to progressively render the UI without waiting for the entire server-side string to be generated.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "SSR"
+    },
+    {
+      "id": "ra16",
+      "text": "What is 'Referential Identity' and why is it critical for architects to enforce its management?",
+      "options": [
+        "Assigning unique IDs to users",
+        "Ensuring objects/functions don't change pointers on re-render, preventing unnecessary downstream re-renders",
+        "A database indexing technique",
+        "Naming conventions for components"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Unstable identities (e.g., inlining functions) break optimizations like React.memo and useEffect dependencies.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Performance"
+    },
+    {
+      "id": "ra17",
+      "text": "How should an architect handle 'Transitive Dependencies' in a monorepo setup?",
+      "options": [
+        "Declare every dependency in the root package.json",
+        "Use 'Peer Dependencies' to ensure only one version of a library like React exists in the bundle",
+        "Duplicate libraries in every sub-package",
+        "Ignore them; the bundler will handle it"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "React requires a single instance. Duplicates (multiple versions) cause hook errors and context mismatches.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Tooling"
+    },
+    {
+      "id": "ra18",
+      "text": "What is the purpose of the `useInsertionEffect` hook?",
+      "options": [
+        "To insert elements into the DOM during the commit phase",
+        "To inject dynamic styles for CSS-in-JS libraries before layout is calculated",
+        "To handle form input",
+        "To optimize list rendering"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It fires before useLayoutEffect and is exclusively for library authors to inject <style> tags safely.",
+      "difficulty": "expert",
+      "points": 20,
+      "topic": "Hooks"
+    },
+    {
+      "id": "ra19",
+      "text": "What is a 'Pure Component' function in the context of React internals?",
+      "options": [
+        "A component with no state",
+        "A function that is idempotent and has no side effects during the render phase",
+        "A component with only HTML tags",
+        "A component that cannot be updated"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Purity allows React to safely restart or abort renders in concurrent mode.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Internals"
+    },
+    {
+      "id": "ra20",
+      "text": "In 'Render-as-you-fetch', where is the data request typically initiated?",
+      "options": [
+        "In the useEffect of the component",
+        "During the component's render function",
+        "Before the component even renders (e.g., on route change or event)",
+        "On the server only"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Starting the fetch 'early' avoids the waterfall where the component must mount before it knows what to fetch.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Data Fetching"
+    },
+    {
+      "id": "ra21",
+      "text": "Which metric is the best indicator of the success of a 'React Virtualization' implementation?",
+      "options": ["Bundle Size", "DOM Node Count", "Lines of Code", "Network Latency"],
+      "correctAnswerIndex": 1,
+      "explanation": "Virtualization keeps the DOM node count constant regardless of list size, preventing memory and layout overhead.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance"
+    },
+    {
+      "id": "ra22",
+      "text": "What is the primary difference between 'Bailout' and 'Eager State Updates' in React?",
+      "options": [
+        "Bailout skips the render; Eager updates apply the change before the render starts if the value is the same",
+        "Bailout is for errors; Eager is for speed",
+        "There is no difference",
+        "Eager updates are only for class components"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Eager updates are an optimization where React skips the whole render pass if it detects the new state is identical to current state using Object.is.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Internals"
+    },
+    {
+      "id": "ra23",
+      "text": "In a distributed React system, what is 'Hydration Mismatch' usually a symptom of?",
+      "options": [
+        "Low memory on the client",
+        "Inconsistent data or environment-specific values (e.g., dates/random) between server and client renders",
+        "A bug in the React library",
+        "Using too many fragments"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Mismatch occurs when the checksum of the server HTML doesn't match the client's first render, causing a full re-render.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "SSR"
+    },
+    {
+      "id": "ra24",
+      "text": "What is the 'Compound Component' pattern most helpful for?",
+      "options": [
+        "Combining two React apps",
+        "Creating flexible, highly customizable UI components with shared internal state",
+        "Improving SEO",
+        "Reducing the number of dependencies"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It allows complex components (like Accordions or Tabs) to have a highly readable and declarative structure.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Design Patterns"
+    },
+    {
+      "id": "ra25",
+      "text": "What is 'Tree Shaking' specifically looking for in React components?",
+      "options": [
+        "Unused state variables",
+        "Unused exports and dead code in the ESM import/export tree",
+        "Comments",
+        "Unused props"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Static analysis by bundlers (like Vite/Webpack) removes code that is never imported or used.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Tooling"
+    },
+    {
+      "id": "ra26",
+      "text": "What is the 'Prop-in-State' anti-pattern?",
+      "options": [
+        "Passing a state as a prop",
+        "Copying a prop into a local state variable, causing 'source of truth' sync issues",
+        "Using props to define state",
+        "There is no such anti-pattern"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "State should be derived from props if possible; mirroring them leads to components that don't update when props change.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "State Management"
+    },
+    {
+      "id": "ra27",
+      "text": "How does `useTransition` interact with `Suspense`?",
+      "options": [
+        "It disables Suspense",
+        "It prevents a UI from 're-suspending' to a fallback (loading) state when navigating, keeping the current UI visible",
+        "It forces the Suspense fallback to show",
+        "It ignores the Suspense boundary"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Transitions allow for 'seamless' navigation where the old page stays until the new page is ready, rather than showing a spinner.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Concurrent React"
+    },
+    {
+      "id": "ra28",
+      "text": "In system design, what is the 'Render-as-Static' (RSC) vs 'Hydrate' cost?",
+      "options": [
+        "RSCs have high CPU cost on client",
+        "RSCs have zero client-side bundle/execution cost; Client Components add hydration/JS overhead",
+        "Client components are always faster",
+        "There is no cost difference"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "RSCs are the first time React allows 'Zero-Bundle' components, moving the weight to the server and reducing client JS.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Architecture"
+    },
+    {
+      "id": "ra29",
+      "text": "What is the 'Render Phase' in React?",
+      "options": [
+        "When the pixels are drawn",
+        "The pure calculation phase where React identifies changes (may be paused/interrupted)",
+        "When event listeners are added",
+        "The phase where refs are assigned"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "In concurrent React, the render phase is detached from the commit phase to allow for non-blocking work.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Internals"
+    },
+    {
+      "id": "ra30",
+      "text": "What is the primary architectural goal of using 'Storybook' in a React project?",
+      "options": [
+        "To run unit tests",
+        "To provide a sandbox for developing components in isolation and improving consistency",
+        "To deploy the production app",
+        "To manage database schemas"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Storybook facilitates communication between design and engineering by documenting and testing UI states visually.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Tooling"
+    }
+  ]
+}

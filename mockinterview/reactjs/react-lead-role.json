@@ -1,0 +1,370 @@
+{
+  "id": "react_lead_engineer_expert_001",
+  "title": "React Lead Engineer Expert Assessment",
+  "description": "High-level evaluation for Lead/Staff roles. Focuses on system architecture, library design, reconciliation internals, and organizational performance strategies.",
+  "category": "react",
+  "passingScore": 90,
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "id": "rl1",
+      "text": "In React 18, how does the 'Lanes' model improve upon the previous expiration-based priority system?",
+      "options": [
+        "It uses a bitmask to allow multiple concurrent categories of work to be tracked and updated independently.",
+        "It forces all updates into a single linear queue to prevent race conditions.",
+        "It removes the concept of priority entirely in favor of first-in-first-out.",
+        "It only allows one lane per component subtree."
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Lanes allow React to be more granular, enabling 'entanglements' and the ability to skip certain types of work while processing others without losing track of their priority.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Reconciliation Internals"
+    },
+    {
+      "id": "rl2",
+      "text": "What is the primary technical trade-off when choosing between 'Runtime CSS-in-JS' (e.g., Styled Components) and 'Zero-Runtime CSS-in-JS' (e.g., Panda CSS, Vanilla Extract) for a Lead?",
+      "options": [
+        "Zero-runtime libraries have better dynamic theme support during runtime.",
+        "Runtime libraries simplify the build pipeline but add overhead to the 'main thread' during reconciliation.",
+        "Runtime libraries are faster for initial page load.",
+        "Zero-runtime libraries cannot use media queries."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Runtime libraries must parse and inject styles during execution, which can block the main thread during heavy re-renders, unlike zero-runtime which move that work to the build step.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Architecture & Performance"
+    },
+    {
+      "id": "rl3",
+      "text": "How does 'Selective Hydration' in React 18 improve Time to Interactive (TTI)?",
+      "options": [
+        "It hydrates the entire page at once but only after all images load.",
+        "It allows React to start hydrating parts of the page that the user interacts with first, even if other parts are still loading.",
+        "It disables hydration for mobile devices to save battery.",
+        "It converts client components to server components automatically."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "By wrapping components in Suspense, React can prioritize hydrating the specific chunk the user clicks on, rather than waiting for the full tree.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "SSR & Hydration"
+    },
+    {
+      "id": "rl4",
+      "text": "When designing a large-scale Design System, what is the 'Compound Component' pattern's primary architectural advantage?",
+      "options": [
+        "It reduces the total number of components in the library.",
+        "It provides a declarative API that manages internal state implicitly while allowing consumer flexibility in layout.",
+        "It makes the components render faster than standard props.",
+        "It prevents the use of the Context API."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Compound components (e.g., Select/Select.Option) share state via Context, allowing developers to reorder or wrap sub-elements without 'prop drilling' every configuration.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Design Patterns"
+    },
+    {
+      "id": "rl5",
+      "text": "What is the consequence of 'Tearing' in a React application?",
+      "options": [
+        "The CSS layout breaks and elements overlap.",
+        "Different components show different values for the same external state during a single render pass.",
+        "The application crashes with a 'Memory Leak' error.",
+        "The Virtual DOM fails to update the real DOM."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Tearing occurs in concurrent rendering when an external store is mutated mid-render, leading to visual inconsistency across the UI.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Concurrent React"
+    },
+    {
+      "id": "rl6",
+      "text": "Which 'Render Phase' Hook is specifically designed for library authors to read layout before any other effects run?",
+      "options": ["useEffect", "useLayoutEffect", "useInsertionEffect", "useMemo"],
+      "correctAnswerIndex": 2,
+      "explanation": "useInsertionEffect is the only hook that fires before useLayoutEffect, intended specifically for injecting dynamic styles.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rl7",
+      "text": "As a Lead, when would you recommend 'Micro-Frontends' over a Monolith React SPA?",
+      "options": [
+        "When you want the fastest possible performance for the end user.",
+        "When multiple autonomous teams need to deploy independent features without coordinating release cycles.",
+        "When the application has fewer than 5 routes.",
+        "When you want to share state between all components using a single Redux store."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Micro-frontends are an organizational solution for scaling teams, often at the cost of some performance and complexity.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "System Design"
+    },
+    {
+      "id": "rl8",
+      "text": "What is 'Partial Hydration' (Islands Architecture) as popularized by frameworks like Astro?",
+      "options": [
+        "Only hydrating the top 50% of the viewport.",
+        "Sending zero JavaScript to the client by default and only hydrating specific interactive components.",
+        "Using only half of the available CPU cores for rendering.",
+        "Hydrating the app only when the user is logged in."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Islands architecture minimizes JS by treating the page as static HTML with small 'islands' of interactivity.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Next-Gen Architecture"
+    },
+    {
+      "id": "rl9",
+      "text": "How does `useSyncExternalStore` solve the problem of tearing?",
+      "options": [
+        "By making all external stores asynchronous.",
+        "By forcing a synchronous re-render whenever the external store changes, bypassing concurrent features for that update.",
+        "By creating a deep clone of the store on every render.",
+        "By moving the store into the React state."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It provides a bridge that allows React to treat external data as a consistent source of truth, effectively opting out of time-slicing for that specific data.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rl10",
+      "text": "In a Staff/Lead role, what is the primary metric used to justify a large-scale React version upgrade to stakeholders?",
+      "options": [
+        "Developer Satisfaction scores.",
+        "Improvement in Core Web Vitals (LCP, INP) and maintenance cost reduction.",
+        "Number of lines of code deleted.",
+        "The release of new decorative JSX features."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Leads must tie technical debt and upgrades to business outcomes like user experience (Web Vitals) and velocity (maintenance).",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Leadership"
+    },
+    {
+      "id": "rl11",
+      "text": "What is the 'Offscreen' (now `Activity`) API intended for?",
+      "options": [
+        "Running code in a Web Worker.",
+        "Preserving component state and DOM while hiding the UI, similar to tab switching in a browser.",
+        "Tracking if a user has moved to a different tab.",
+        "Rendering components only when they are in the viewport."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It allows React to deprioritize rendering for hidden components while maintaining their state, enabling instant switching.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Concurrent React"
+    },
+    {
+      "id": "rl12",
+      "text": "Which design pattern is best for ensuring a heavy data-fetching component doesn't block the UI during initial mount?",
+      "options": [
+        "Fetch-on-render (useEffect).",
+        "Fetch-then-render (Promise.all).",
+        "Render-as-you-fetch (Suspense).",
+        "Client-side redirects."
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Render-as-you-fetch allows React to start rendering the skeleton/fallback immediately while the data request is in flight.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Data Fetching"
+    },
+    {
+      "id": "rl13",
+      "text": "What is the risk of using 'Index' as a key in a list that can be filtered or sorted?",
+      "options": [
+        "React will throw a runtime error.",
+        "It can cause incorrect component state to be mapped to the wrong UI elements after a reorder.",
+        "It makes the list immutable.",
+        "It increases the bundle size."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Since React uses keys to track identities, reusing the same index for different data items leads to 'ghost' state from the previous item.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Reconciliation"
+    },
+    {
+      "id": "rl14",
+      "text": "How do 'React Server Components' handle interactivity?",
+      "options": [
+        "They use the `onClick` prop directly on the server.",
+        "They don't; they must import and render 'Client Components' for any interactive parts.",
+        "They use a specialized 'server-click' attribute.",
+        "By automatically converting to client components when clicked."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "RSCs are zero-bundle-size and non-interactive. They act as the data-fetching layer that passes props to Client Components.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Architecture"
+    },
+    {
+      "id": "rl15",
+      "text": "What is the primary role of a 'Bailout' in the React render process?",
+      "options": [
+        "Canceling a render when an error occurs.",
+        "Skipping the rendering of a component and its subtree when its inputs (props/state) are identical.",
+        "Exiting the application when memory is low.",
+        "Reverting to the previous version of the app."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Bailouts are critical for performance, ensuring React doesn't waste CPU cycles on unchanged parts of the tree.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Reconciliation"
+    },
+    {
+      "id": "rl16",
+      "text": "Which standard is used by React Server Components to stream data to the client?",
+      "options": ["WebSockets", "HTTP/2 Server Push", "ReadableStreams (sending chunks of a JSON-like format)", "FTP"],
+      "correctAnswerIndex": 2,
+      "explanation": "RSCs use a specialized stream format that allows the client to begin rendering parts of the UI before the full response is received.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Architecture"
+    },
+    {
+      "id": "rl17",
+      "text": "In a large React project, why would a Lead implement a 'Custom Lint Rule' for the dependency array of useEffect?",
+      "options": [
+        "To enforce alphabetical order.",
+        "To prevent developers from omitting reactive values that cause stale closures.",
+        "To limit the number of dependencies to 3.",
+        "To force the use of refs only."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Stale closures are one of the most common and difficult-to-debug issues in React; automated linting is the best defense.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Best Practices"
+    },
+    {
+      "id": "rl18",
+      "text": "What is the 'Prop-in-State' anti-pattern?",
+      "options": [
+        "Passing a state setter as a prop.",
+        "Mirroring a prop in local state, which leads to the state becoming out of sync when the prop changes.",
+        "Using state to generate a prop.",
+        "Passing a prop to a child component."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Leads usually advocate for 'Derived State' instead of copying props into state to maintain a single source of truth.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "State Management"
+    },
+    {
+      "id": "rl19",
+      "text": "What does 'Yielding' mean in the context of the Fiber scheduler?",
+      "options": [
+        "The component returns a value.",
+        "React pauses its work to allow the browser to handle high-priority tasks like user input or animation.",
+        "The application gives up and shows an error.",
+        "Allowing a child component to update before its parent."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Time-slicing (yielding) is what makes the UI feel smooth even when React is performing heavy calculations.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Architecture"
+    },
+    {
+      "id": "rl20",
+      "text": "Which optimization technique involves rendering a component only when it enters the browser viewport?",
+      "options": ["Memoization", "Virtualization (Windowing)", "Code Splitting", "Hydration"],
+      "correctAnswerIndex": 1,
+      "explanation": "Virtualization keeps the DOM small by recycling nodes or only mounting what is visible.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance"
+    },
+    {
+      "id": "rl21",
+      "text": "What is the primary benefit of `useId` in a micro-frontend environment?",
+      "options": [
+        "It creates a globally unique ID across different applications on the same page.",
+        "It generates stable IDs that prevent collisions between different MFE instances during hydration.",
+        "It identifies which MFE is currently active.",
+        "It measures the performance of an MFE."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "useId is stable across SSR/CSR and prevents different MFEs from generating clashing IDs for forms/accessibility.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Architecture"
+    },
+    {
+      "id": "rl22",
+      "text": "In React 18, what is the default behavior of `Error Boundaries` regarding concurrent rendering?",
+      "options": [
+        "They stop the whole app immediately.",
+        "They can catch errors in the render phase, and React will attempt to 'recover' by rendering the fallback for that boundary.",
+        "They only work for class components.",
+        "They catch network errors automatically."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Error boundaries are integrated into the fiber loop, allowing React to discard 'bad' work and show an alternative UI gracefully.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Error Handling"
+    },
+    {
+      "id": "rl23",
+      "text": "What is 'Dead Code Elimination' (Tree Shaking) most dependent on in a React setup?",
+      "options": [
+        "The use of TypeScript.",
+        "ESM (import/export) static analysis by the bundler.",
+        "The number of comments in the code.",
+        "Using only functional components."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Static analysis allows tools like Webpack or Vite to determine which functions are never called and remove them from the production bundle.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Tooling"
+    },
+    {
+      "id": "rl24",
+      "text": "How should a Lead approach 'Large State Objects' in the Context API?",
+      "options": [
+        "Put everything in one large Context for simplicity.",
+        "Split into multiple providers or use a library with 'selectors' to prevent unnecessary re-renders.",
+        "Use local storage instead.",
+        "Convert the whole app to class components."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Context re-renders all consumers on any change; splitting providers is a standard lead-level architectural recommendation.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Architecture"
+    },
+    {
+      "id": "rl25",
+      "text": "What does the 'Interaction to Next Paint' (INP) metric primarily measure in a React application?",
+      "options": [
+        "How fast the first image appears.",
+        "The responsiveness of the page to all user interactions over its lifetime.",
+        "The time it takes to download the JS bundle.",
+        "The size of the HTML file."
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "INP replaced FID as a Core Web Vital, focusing on the latency of interactions—highly affected by React's rendering efficiency.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Performance"
+    }
+  ]
+}

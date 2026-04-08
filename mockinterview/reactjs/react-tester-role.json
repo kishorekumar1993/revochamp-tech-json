@@ -1,0 +1,150 @@
+{
+  "id": "react_tester_specialist_mock_001",
+  "title": "React Testing & QA Specialist Mock Test",
+  "description": "Foundational and intermediate assessment for QA engineers and developers focusing on Vitest/Jest, React Testing Library, Cypress, and Playwright.",
+  "category": "react-testing",
+  "passingScore": 80,
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "id": "rt1",
+      "text": "What is the primary philosophy of React Testing Library (RTL)?",
+      "options": [
+        "To test the internal state and methods of a component",
+        "To test components in a way that resembles how a user interacts with them",
+        "To provide 100% line-of-code coverage automatically",
+        "To replace the need for Jest or Vitest"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "RTL encourages testing behavior (what the user sees/does) rather than implementation details (state/props), making tests more resilient to refactoring.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Testing Philosophy"
+    },
+    {
+      "id": "rt2",
+      "text": "Which RTL query should be your first choice for finding an input field according to best practices?",
+      "options": ["getByTestId", "getByClassName", "getByRole", "querySelector"],
+      "correctAnswerIndex": 2,
+      "explanation": "getByRole (e.g., role='textbox') is preferred because it mimics how assistive technology perceives the page, promoting accessibility.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Queries"
+    },
+    {
+      "id": "rt3",
+      "text": "What is the difference between `queryBy...` and `getBy...` in React Testing Library?",
+      "options": [
+        "queryBy returns a promise, getBy is synchronous",
+        "getBy throws an error if the element is not found; queryBy returns null",
+        "queryBy is faster than getBy",
+        "getBy is only used for buttons"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Use getBy when you expect the element to exist. Use queryBy when you want to assert that an element is NOT in the document.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Queries"
+    },
+    {
+      "id": "rt4",
+      "text": "How do you handle testing a component that performs an asynchronous API call on mount?",
+      "options": [
+        "Use a `while` loop to wait",
+        "Use `findBy...` queries which return a promise and retry until the element appears",
+        "Wrap the render in a setTimeout",
+        "Async components cannot be tested"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "findBy queries are a combination of getBy and waitFor. They are the standard way to handle elements that appear asynchronously.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Async Testing"
+    },
+    {
+      "id": "rt5",
+      "text": "In Jest/Vitest, what is a 'Mock' function used for?",
+      "options": [
+        "To speed up the computer",
+        "To simulate a function and track calls, arguments, and return values",
+        "To style the component",
+        "To bypass the need for a browser"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Mocks (vi.fn() or jest.fn()) allow you to isolate the component by simulating external dependencies like API services or child component callbacks.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Mocking"
+    },
+    {
+      "id": "rt6",
+      "text": "Which tool is specifically designed for 'End-to-End' (E2E) testing of a React application in a real browser?",
+      "options": ["React Testing Library", "Playwright", "Redux DevTools", "ESLint"],
+      "correctAnswerIndex": 1,
+      "explanation": "Playwright (and Cypress) are E2E tools that run tests against a fully deployed app in actual browser engines.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Tooling"
+    },
+    {
+      "id": "rt7",
+      "text": "What is the purpose of the `act()` utility in React testing?",
+      "options": [
+        "To simulate a user acting on a button",
+        "To ensure all updates (state, effects) are processed and applied to the DOM before making assertions",
+        "To measure the performance of an action",
+        "To bypass security protocols"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "act() ensures that the 'unit' of work is finished. RTL wraps most calls in act() automatically, but manual usage is sometimes needed for custom hooks or complex async logic.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "React Internals"
+    },
+    {
+      "id": "rt8",
+      "text": "What is 'Regression Testing'?",
+      "options": [
+        "Testing only the new features",
+        "Re-running existing tests to ensure new changes haven't broken current functionality",
+        "Deleting old tests",
+        "Testing the app on older versions of Windows"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Regressions are bugs in previously working features. Automated suites are primarily designed to catch these.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "QA Concepts"
+    },
+    {
+      "id": "rt9",
+      "text": "When using `fireEvent` vs `user-event` library, why is `user-event` generally preferred?",
+      "options": [
+        "It is faster",
+        "It is built into React",
+        "It more accurately dispatches multiple events (like mouseover, mousedown, mouseup) to better simulate real interaction",
+        "fireEvent is deprecated"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "user-event is a higher-level abstraction that simulates full interactions (like typing a string instead of just a change event), leading to more realistic tests.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Interactions"
+    },
+    {
+      "id": "rt10",
+      "text": "What is the 'Testing Pyramid' recommendation for a React app?",
+      "options": [
+        "Mostly E2E tests, few unit tests",
+        "Equal amounts of all test types",
+        "Mostly Unit and Integration tests, with fewer E2E tests",
+        "Only Manual testing"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Unit and Integration tests are faster and cheaper to run. E2E tests are powerful but slow and brittle, so they should cover critical paths only.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Strategy"
+    }
+  ]
+}

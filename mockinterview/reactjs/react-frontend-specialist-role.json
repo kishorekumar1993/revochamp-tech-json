@@ -1,0 +1,420 @@
+{
+  "id": "react_frontend_specialist_mock_001",
+  "title": "React Frontend Specialist Mock Test",
+  "description": "Comprehensive assessment for frontend specialists covering architecture, hooks, state management, performance, and modern React 18 features.",
+  "category": "react",
+  "passingScore": 85,
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "id": "rfs1",
+      "text": "What is the primary difference between the 'Render Phase' and the 'Commit Phase' in React?",
+      "options": [
+        "Render is synchronous, Commit is asynchronous",
+        "Render identifies changes (can be paused), Commit applies changes to the DOM (cannot be paused)",
+        "Render phase is where effects run, Commit phase is for logic",
+        "There is no difference in React 18"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "In Concurrent React, the render phase is a pure calculation phase that React can interrupt. The commit phase is where React actually touches the DOM.",
+      "difficulty": "advanced",
+      "points": 10,
+      "topic": "Architecture"
+    },
+    {
+      "id": "rfs2",
+      "text": "Which hook is specifically designed to prevent 'tearing' in concurrent rendering when using external stores?",
+      "options": ["useEffect", "useLayoutEffect", "useSyncExternalStore", "useCallback"],
+      "correctAnswerIndex": 2,
+      "explanation": "useSyncExternalStore is the recommended hook for subscribing to external data sources to ensure consistency across concurrent updates.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rfs3",
+      "text": "What is the result of using 'className' instead of 'class' in JSX?",
+      "options": [
+        "It applies CSS classes to the rendered DOM element",
+        "It defines a JavaScript class for the component",
+        "It is ignored by the browser",
+        "It throws a syntax error in modern React"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "JSX uses 'className' because 'class' is a reserved keyword in JavaScript.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "JSX"
+    },
+    {
+      "id": "rfs4",
+      "text": "How can you optimize a component that re-renders frequently with the same props?",
+      "options": ["Wrap it in React.memo()", "Use the useMemo hook", "Use the useRef hook", "Move state to localStorage"],
+      "correctAnswerIndex": 0,
+      "explanation": "React.memo is a Higher Order Component that memoizes a component and skips re-rendering if props are shallowly equal.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance"
+    },
+    {
+      "id": "rfs5",
+      "text": "What does the 'key' prop do in a list of elements?",
+      "options": [
+        "It provides a unique ID for CSS targeting",
+        "It helps React identify which items have changed, been added, or removed for efficient DOM updates",
+        "It sets the index of the array automatically",
+        "It binds the element to a database record"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Keys are essential for React's reconciliation process to track stable identities of list items.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Reconciliation"
+    },
+    {
+      "id": "rfs6",
+      "text": "When using `useEffect`, what happens if you return a function?",
+      "options": [
+        "The function executes on every render",
+        "The function is used for state updates",
+        "The function acts as a cleanup mechanism (runs before unmount or next effect run)",
+        "It stops the effect from ever running again"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Returning a function from useEffect is the standard pattern for cleaning up subscriptions, timers, or event listeners.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rfs7",
+      "text": "What is the purpose of `useId` in React 18?",
+      "options": [
+        "To generate random keys for map() functions",
+        "To generate unique, stable IDs for accessibility attributes that match between server and client",
+        "To identify the current user session",
+        "To track the component's depth in the tree"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "useId provides stable IDs for ARIA attributes, preventing hydration mismatches in SSR apps.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Accessibility"
+    },
+    {
+      "id": "rfs8",
+      "text": "How do you define a 'Fragment' in React?",
+      "options": ["<Fragment />", "<> ... </>", "<React.Fragment> ... </React.Fragment>", "Both B and C"],
+      "correctAnswerIndex": 3,
+      "explanation": "Fragments can be defined using either the long form or the shorthand syntax.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "JSX"
+    },
+    {
+      "id": "rfs9",
+      "text": "Which hook should be used to store a mutable value that doesn't trigger a re-render when changed?",
+      "options": ["useState", "useRef", "useMemo", "useReducer"],
+      "correctAnswerIndex": 1,
+      "explanation": "useRef returns a plain JavaScript object that persists for the lifetime of the component and doesn't trigger updates when modified.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rfs10",
+      "text": "What is 'Lifting State Up'?",
+      "options": [
+        "Moving state to a global Redux store",
+        "Moving state to the closest common ancestor to share data between sibling components",
+        "Using a Higher Order Component to manage state",
+        "Updating the parent's state from a child component"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It is the standard pattern for sharing data between components that do not have a direct parent-child relationship.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "State Management"
+    },
+    {
+      "id": "rfs11",
+      "text": "In React 18, what does `startTransition` do?",
+      "options": [
+        "It marks a state update as a non-urgent transition",
+        "It forces an immediate re-render",
+        "It creates a CSS animation for the component",
+        "It initializes the routing state"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Transitions allow React to prioritize urgent updates (like typing) over non-urgent ones (like rendering a list).",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Concurrent React"
+    },
+    {
+      "id": "rfs12",
+      "text": "What is the 'Virtual DOM'?",
+      "options": [
+        "A physical copy of the browser DOM",
+        "A lightweight representation of the UI kept in memory and synced with the 'real' DOM",
+        "A tool for debugging styles",
+        "An alternative to the window object"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "React uses the Virtual DOM to calculate the minimum set of changes required to update the UI.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Core Concepts"
+    },
+    {
+      "id": "rfs13",
+      "text": "Which hook is most appropriate for complex state logic that involves multiple sub-values?",
+      "options": ["useState", "useReducer", "useContext", "useEffect"],
+      "correctAnswerIndex": 1,
+      "explanation": "useReducer is preferred over useState when state transitions are complex or depend on the previous state.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "State Management"
+    },
+    {
+      "id": "rfs14",
+      "text": "What is a 'Portal' in React?",
+      "options": [
+        "A way to fetch data from external APIs",
+        "A method to render children into a DOM node that exists outside the hierarchy of the parent component",
+        "A secure way to store API keys",
+        "An entry point for a micro-frontend"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Portals are commonly used for modals, tooltips, and floating menus.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Portals"
+    },
+    {
+      "id": "rfs15",
+      "text": "Which lifecycle method in class components is equivalent to `useEffect(() => {}, [])`?",
+      "options": ["componentDidUpdate", "componentDidMount", "componentWillUnmount", "render"],
+      "correctAnswerIndex": 1,
+      "explanation": "An empty dependency array in useEffect makes it run once after the initial mount, similar to componentDidMount.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rfs16",
+      "text": "What is 'Hydration' in React?",
+      "options": [
+        "Adding data to the cache",
+        "Attaching event listeners to server-rendered HTML on the client side",
+        "Cleaning up memory leaks",
+        "The process of loading CSS before JS"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Hydration turns static HTML from the server into an interactive application on the client.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "SSR"
+    },
+    {
+      "id": "rfs17",
+      "text": "What occurs during 'Tearing' in concurrent rendering?",
+      "options": [
+        "The screen flickers white",
+        "Different components show different values for the same state during a single render pass",
+        "The application crashes with a stack overflow",
+        "Styles fail to load correctly"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Tearing is an inconsistency where the UI shows 'multiple versions' of the same data simultaneously.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Concurrent React"
+    },
+    {
+      "id": "rfs18",
+      "text": "How does `useDeferredValue` improve performance?",
+      "options": [
+        "It delays the execution of a function by a fixed time",
+        "It lets you defer re-rendering a non-urgent part of the tree until after more urgent updates",
+        "It memoizes a value indefinitely",
+        "It fetches data in the background"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It is similar to debouncing but integrated into React's scheduling to prioritize user interaction.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Performance"
+    },
+    {
+      "id": "rfs19",
+      "text": "What is the purpose of the `forwardRef` function?",
+      "options": [
+        "To pass state to a child component",
+        "To allow a component to pass a ref it receives to a child DOM element",
+        "To create a reference to a functional component",
+        "To improve the performance of list rendering"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "forwardRef is necessary when a parent needs access to a DOM node inside a child functional component.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Refs"
+    },
+    {
+      "id": "rfs20",
+      "text": "Which tool is commonly used for 'Component Virtualization' in React?",
+      "options": ["React Router", "react-window / react-virtualized", "Redux", "Axios"],
+      "correctAnswerIndex": 1,
+      "explanation": "Virtualization libraries render only the visible items in a massive list, significantly improving performance.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance"
+    },
+    {
+      "id": "rfs21",
+      "text": "What is the 'Compound Component' pattern?",
+      "options": [
+        "Combining two React apps into one",
+        "Components that work together to share state implicitly (e.g., Select and Option)",
+        "A component that uses multiple hooks",
+        "A component that renders another component"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Compound components provide a declarative API where sub-components share logic via Context.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Design Patterns"
+    },
+    {
+      "id": "rfs22",
+      "text": "In React 18, what is the default behavior of 'Batching'?",
+      "options": [
+        "It only batches updates in React event handlers",
+        "It batches all state updates together, including inside Promises and timeouts",
+        "It disables batching for better debugging",
+        "It requires a manual flag to enable"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "React 18 introduced Automatic Batching for all updates, reducing the number of re-renders.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "State Management"
+    },
+    {
+      "id": "rfs23",
+      "text": "Which hook is used to perform side effects that require DOM measurements synchronously?",
+      "options": ["useEffect", "useLayoutEffect", "useInsertionEffect", "useMemo"],
+      "correctAnswerIndex": 1,
+      "explanation": "useLayoutEffect fires synchronously after all DOM mutations, making it safe for measuring layout.",
+      "difficulty": "advanced",
+      "points": 15,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rfs24",
+      "text": "What is a 'Controlled Component' in React forms?",
+      "options": [
+        "A component managed by the browser's native form handling",
+        "A component where the form data is handled by a React component's state",
+        "A component that cannot be edited by the user",
+        "A component that uses external libraries like Formik"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "In controlled components, the 'source of truth' for the input value is the React state.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Forms"
+    },
+    {
+      "id": "rfs25",
+      "text": "How do you provide a value to a Context at the top of a component tree?",
+      "options": [
+        "<MyContext.Consumer value={...} />",
+        "<MyContext.Provider value={...} />",
+        "<MyContext value={...} />",
+        "useContext(MyContext, value)"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The Provider component is used to wrap the subtree and provide the context value.",
+      "difficulty": "beginner",
+      "points": 5,
+      "topic": "Context API"
+    },
+    {
+      "id": "rfs26",
+      "text": "What does `React.lazy` allow you to do?",
+      "options": [
+        "Delay a state update",
+        "Load components dynamically (Code Splitting)",
+        "Optimize the Virtual DOM comparison",
+        "Cache API responses"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "React.lazy helps reduce the initial bundle size by loading components only when they are needed.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance"
+    },
+    {
+      "id": "rfs27",
+      "text": "What is 'Tree Shaking' in a React project?",
+      "options": [
+        "Removing old components from the folder",
+        "A build-time process that removes unused code from the final bundle",
+        "Reorganizing the folder structure for speed",
+        "Optimizing CSS selectors"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Modern bundlers use static analysis to exclude code that is never imported.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Tooling"
+    },
+    {
+      "id": "rfs28",
+      "text": "Which metric measures the visual stability of a page in React applications?",
+      "options": [
+        "LCP (Largest Contentful Paint)",
+        "CLS (Cumulative Layout Shift)",
+        "FID (First Input Delay)",
+        "TTFB (Time to First Byte)"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "CLS measures how much elements move around as the page loads, which is a key Core Web Vital.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Performance Monitoring"
+    },
+    {
+      "id": "rfs29",
+      "text": "What is the purpose of the 'Suspense' component?",
+      "options": [
+        "To handle errors in components",
+        "To show a fallback UI while children are loading (e.g., lazy components or data)",
+        "To pause a component's execution",
+        "To speed up state updates"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Suspense provides a declarative way to handle loading states for asynchronous work.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Core Concepts"
+    },
+    {
+      "id": "rfs30",
+      "text": "What does the `useCallback` hook return?",
+      "options": [
+        "The result of the function",
+        "A memoized version of the function that only changes if dependencies change",
+        "A promise that resolves to a function",
+        "Nothing (it is a side effect hook)"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "useCallback is used to maintain referential identity of functions passed as props to optimized child components.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "Hooks"
+    }
+  ]
+}

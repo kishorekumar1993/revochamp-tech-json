@@ -1,0 +1,210 @@
+{
+  "id": "react_junior_frontend_mock_001",
+  "title": "React Junior Developer Mock Test",
+  "description": "Foundational assessment for junior frontend roles covering JSX, Hooks, Props vs State, Component Lifecycle, and Virtual DOM concepts.",
+  "category": "react",
+  "passingScore": 80,
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "id": "rj1",
+      "text": "What is the primary purpose of the Virtual DOM in React?",
+      "options": [
+        "To directly manipulate the browser's DOM for speed",
+        "To provide a blueprint for the UI that minimizes expensive DOM updates",
+        "To replace HTML with JavaScript entirely",
+        "To store data in the browser's local storage"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "React uses the Virtual DOM to compare changes (diffing) and only update the specific parts of the real DOM that changed, improving performance.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Core Concepts"
+    },
+    {
+      "id": "rj2",
+      "text": "Which hook is used to handle side effects like API calls or subscriptions?",
+      "options": ["useState", "useContext", "useEffect", "useReducer"],
+      "correctAnswerIndex": 2,
+      "explanation": "The `useEffect` hook allows you to perform side effects in functional components, running after the render.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rj3",
+      "text": "How do you pass data from a parent component to a child component?",
+      "options": ["Using State", "Using Props", "Using Redux", "Using Context only"],
+      "correctAnswerIndex": 1,
+      "explanation": "Props (properties) are the standard way to pass data down the component tree.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Data Flow"
+    },
+    {
+      "id": "rj4",
+      "text": "What will happen if you update a component's state directly (e.g., `this.state.count = 1`)?",
+      "options": [
+        "The component will re-render immediately",
+        "The UI will update but the console will show a warning",
+        "The component will not re-render",
+        "React will throw a syntax error"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "State must be updated via `setState` or a state setter from `useState` to trigger React's reconciliation process and re-render the UI.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "State Management"
+    },
+    {
+      "id": "rj5",
+      "text": "In JSX, how do you embed a JavaScript expression?",
+      "options": ["Using {{ }}", "Using [ ]", "Using { }", "Using <% %>"],
+      "correctAnswerIndex": 2,
+      "explanation": "Curly braces `{}` are used to evaluate JavaScript expressions inside JSX.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "JSX"
+    },
+    {
+      "id": "rj6",
+      "text": "What is the 'key' prop used for when rendering a list of elements?",
+      "options": [
+        "To style specific elements",
+        "To help React identify which items have changed, been added, or removed",
+        "To set the ID of the HTML element",
+        "To bind a click event to the item"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Keys provide a stable identity to elements in a list, allowing React to re-order or update them efficiently without re-rendering the entire list.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Lists & Keys"
+    },
+    {
+      "id": "rj7",
+      "text": "Which of the following is a 'Rule of Hooks'?",
+      "options": [
+        "Hooks must be called inside loops",
+        "Hooks can be called in nested functions",
+        "Hooks must only be called at the top level of a functional component",
+        "Hooks must be called in Class components"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Hooks must be called at the top level to ensure they are called in the same order every time a component renders.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rj8",
+      "text": "What does the `useState` hook return?",
+      "options": [
+        "The current state value only",
+        "A function to update the state only",
+        "An array containing the current state and a setter function",
+        "An object with all state variables"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "`useState` returns a pair: the current state value and a function that lets you update it.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rj9",
+      "text": "How can you prevent a default action (like a form submission) in a React event handler?",
+      "options": [
+        "return false",
+        "event.stopPropagation()",
+        "event.preventDefault()",
+        "stopDefault()"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Just like in standard DOM, `event.preventDefault()` is used to prevent default browser behavior.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Events"
+    },
+    {
+      "id": "rj10",
+      "text": "What is a 'Fragment' in React?",
+      "options": [
+        "A piece of a state",
+        "A way to group multiple elements without adding extra nodes to the DOM",
+        "A tool for debugging",
+        "A legacy way of writing components"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Fragments (`<React.Fragment>` or `<>`) let you group a list of children without adding extra `div` tags to the HTML output.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "JSX"
+    },
+    {
+      "id": "rj11",
+      "text": "What is the correct syntax for an arrow function component?",
+      "options": [
+        "const MyComp = () => { return <h1>Hi</h1> }",
+        "function MyComp() => <h1>Hi</h1>",
+        "class MyComp extends ArrowComponent {}",
+        "const MyComp => <h1>Hi</h1>"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Functional components can be defined as standard functions or arrow functions that return JSX.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Components"
+    },
+    {
+      "id": "rj12",
+      "text": "What happens if the dependency array of a `useEffect` hook is empty `[]`?",
+      "options": [
+        "The effect runs on every render",
+        "The effect never runs",
+        "The effect runs only once after the initial mount",
+        "The effect runs only when the component unmounts"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "An empty dependency array tells React that the effect doesn't depend on any values from props or state, so it only runs once.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Hooks"
+    },
+    {
+      "id": "rj13",
+      "text": "Which command is commonly used to create a new React project using a modern build tool?",
+      "options": ["npm start react", "npx create-react-app my-app", "git init react", "react-new project"],
+      "correctAnswerIndex": 1,
+      "explanation": "`npx create-react-app` (or Vite's `npm create vite@latest`) are the standard ways to bootstrap a new React application.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Tooling"
+    },
+    {
+      "id": "rj14",
+      "text": "True or False: React components must start with a capital letter.",
+      "options": ["True", "False"],
+      "correctAnswerIndex": 0,
+      "explanation": "React treats components starting with lowercase letters as DOM tags (like `<div>`). Custom components must be capitalized.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Syntax"
+    },
+    {
+      "id": "rj15",
+      "text": "What is 'lifting state up' in React?",
+      "options": [
+        "Moving state to a global Redux store",
+        "Moving state to a common parent to share it between sibling components",
+        "Using the `useRef` hook",
+        "Increasing the performance of a component"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Lifting state up involves moving shared state to the closest common ancestor so both child components can access it via props.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Data Flow"
+    }
+  ]
+}
