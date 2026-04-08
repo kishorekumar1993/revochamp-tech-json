@@ -1,0 +1,460 @@
+{
+  "id": "python_de_expert_mock_005",
+  "title": "Professional Python Data Engineer Assessment",
+  "description": "Expert-level assessment for Data Engineers covering distributed computing, data modeling, ETL optimization, and pipeline orchestration.",
+  "category": "data_engineering",
+  "passingScore": 85,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "de1",
+      "text": "What is the primary difference between ETL and ELT architectures in modern data warehousing?",
+      "options": [
+        "ETL is faster than ELT",
+        "ETL transforms data before loading it into the warehouse; ELT loads raw data first and leverages the warehouse's compute power for transformation",
+        "ELT is only for NoSQL databases",
+        "ETL is deprecated and no longer used"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "ELT is popular with cloud warehouses like Snowflake or BigQuery because it allows for high-speed ingestion and scalable, SQL-based transformations later.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Architecture"
+    },
+    {
+      "id": "de2",
+      "text": "In Apache Spark, what is the difference between a 'Transformation' and an 'Action'?",
+      "options": [
+        "Transformations are fast; Actions are slow",
+        "Transformations are lazy (build an execution plan); Actions trigger the actual computation and return results",
+        "Actions are only for writing to disk",
+        "Transformations can only be done in SQL"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Spark uses lazy evaluation. A Transformation (like `map` or `filter`) doesn't run until an Action (like `collect` or `save`) is called.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Spark"
+    },
+    {
+      "id": "de3",
+      "text": "Which file format is 'columnar' and highly optimized for analytical queries in big data ecosystems?",
+      "options": [
+        "CSV",
+        "JSON",
+        "Apache Parquet",
+        "XML"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Parquet stores data by column rather than row, allowing for efficient compression and 'predicate pushdown' (skipping irrelevant data blocks).",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Data Formats"
+    },
+    {
+      "id": "de4",
+      "text": "What is 'Data Partitioning' in a distributed database or file system (like HDFS or S3)?",
+      "options": [
+        "Deleting old data",
+        "Dividing a large dataset into smaller, manageable chunks based on a key (e.g., date or region) to improve query performance",
+        "Encrypting parts of the data",
+        "Copying data to a different cloud provider"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Partitioning allows the query engine to skip entire directories of data that don't match the query criteria (partition pruning).",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Storage"
+    },
+    {
+      "id": "de5",
+      "text": "In Apache Airflow, what is a 'DAG'?",
+      "options": [
+        "A type of database",
+        "Directed Acyclic Graph; a collection of all the tasks you want to run, organized in a way that reflects their relationships and dependencies",
+        "A Python library for math",
+        "An authentication protocol"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "DAGs ensure that tasks run in the correct order and that there are no circular dependencies.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Orchestration"
+    },
+    {
+      "id": "de6",
+      "text": "What is the 'Lambda Architecture'?",
+      "options": [
+        "A way to write anonymous functions",
+        "A data-processing architecture designed to handle massive quantities of data by taking advantage of both batch and stream-processing methods",
+        "A serverless-only architecture",
+        "A type of neural network"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Lambda balances low-latency (speed layer) with comprehensive accuracy (batch layer).",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Architecture"
+    },
+    {
+      "id": "de7",
+      "text": "What is 'Idempotency' in a data pipeline, and why is it critical?",
+      "options": [
+        "The ability to run on any OS",
+        "The property where running a pipeline multiple times with the same input produces the same output without creating duplicates",
+        "The speed of data transfer",
+        "The ability to handle different data types"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "If a pipeline fails halfway and is restarted, an idempotent design ensures you don't end up with duplicate records in the target table.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Data Quality"
+    },
+    {
+      "id": "de8",
+      "text": "What is the difference between a 'Star Schema' and a 'Snowflake Schema' in data modeling?",
+      "options": [
+        "Star is for small data; Snowflake is for big data",
+        "Star has denormalized dimensions; Snowflake has normalized dimensions (where dimension tables link to other dimension tables)",
+        "Snowflake is only for the Snowflake database",
+        "Star uses NoSQL; Snowflake uses SQL"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Star schemas are generally faster for querying due to fewer joins, while Snowflake schemas save space through normalization.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Data Modeling"
+    },
+    {
+      "id": "de9",
+      "text": "In Spark, what is 'Data Skew' and how can 'Salting' fix it?",
+      "options": [
+        "Skew is when data is encrypted; Salting is the key",
+        "Skew is an uneven distribution of data across partitions; Salting adds a random prefix to keys to distribute them more evenly during a shuffle",
+        "Skew is a type of error; Salting is a backup method",
+        "Skew happens when the cluster is too small"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Skew causes some executors to work much harder than others. Salting breaks up large keys to balance the workload.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Spark Optimization"
+    },
+    {
+      "id": "de10",
+      "text": "What is 'CDC' (Change Data Capture)?",
+      "options": [
+        "A virus scanning tool",
+        "A set of software design patterns used to determine and track the data that has changed so that action can be taken using the changed data",
+        "A type of data compression",
+        "A data encryption standard"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "CDC allows you to sync databases in real-time by reading transaction logs (e.g., using Debezium) rather than bulk-querying tables.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Ingestion"
+    },
+    {
+      "id": "de11",
+      "text": "What is the purpose of a 'Dead Letter Queue' (DLQ)?",
+      "options": [
+        "To store deleted emails",
+        "To hold messages/records that cannot be processed successfully after multiple attempts, allowing for isolation and later analysis",
+        "To speed up the network",
+        "To store old data backups"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "DLQs prevent 'poison pills' from blocking a pipeline indefinitely while ensuring no data is lost.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Streaming"
+    },
+    {
+      "id": "de12",
+      "text": "What is 'SCD Type 2' (Slowly Changing Dimension)?",
+      "options": [
+        "Deleting old records",
+        "Storing the entire history of changes by creating a new row for every change with start/end dates or a version flag",
+        "Overwriting the old record with new data",
+        "Ignoring changes to dimensions"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SCD Type 2 is standard for auditing and historical reporting in data warehouses.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Data Modeling"
+    },
+    {
+      "id": "de13",
+      "text": "What is 'Backfilling' in data engineering?",
+      "options": [
+        "Backing up the database",
+        "The process of running a data pipeline on historical data that was either missed or needs to be recalculated",
+        "Cleaning up temporary files",
+        "Moving data to a lower-cost storage tier"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Backfilling is common when logic changes or when a system was down for a period.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Orchestration"
+    },
+    {
+      "id": "de14",
+      "text": "In a distributed system, what is the 'CAP Theorem'?",
+      "options": [
+        "Consistency, Accuracy, Performance",
+        "Consistency, Availability, and Partition Tolerance; a system can only guarantee two of these at once",
+        "Capacity, Availability, Parallelism",
+        "A rule for naming variables"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Data engineers must choose between Consistency and Availability when a network partition occurs.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Distributed Systems"
+    },
+    {
+      "id": "de15",
+      "text": "What is the function of the 'Broadcast Join' in Spark?",
+      "options": [
+        "To join tables over a radio frequency",
+        "Sending a small table to all worker nodes to avoid a large-scale data shuffle during a join with a much larger table",
+        "Joining tables across different clouds",
+        "A way to join tables without a key"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Broadcast joins are much faster than shuffle-sort-merge joins because they eliminate the need to move large amounts of data across the network.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Spark Optimization"
+    },
+    {
+      "id": "de16",
+      "text": "What is 'Data Lineage'?",
+      "options": [
+        "The age of the data",
+        "The lifecycle of data that includes the data's origins and where it moves over time, providing visibility into transformations",
+        "The size of the data rows",
+        "The family tree of the developers"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Lineage is crucial for troubleshooting, compliance (GDPR), and impact analysis when a source schema changes.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Governance"
+    },
+    {
+      "id": "de17",
+      "text": "What is an 'UPSERT' operation?",
+      "options": [
+        "Deleting and then inserting data",
+        "A combination of UPDATE and INSERT; it updates a record if it exists, otherwise inserts a new one",
+        "Converting data to uppercase",
+        "Uploading data to a server"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Upserts are vital for maintaining the current state of records without creating duplicates.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Database"
+    },
+    {
+      "id": "de18",
+      "text": "Which tool is best for 'Schema Registry' in a Kafka ecosystem?",
+      "options": [
+        "PostgreSQL",
+        "Confluent Schema Registry",
+        "Airflow",
+        "Excel"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "A Schema Registry ensures that producers and consumers agree on the data format (usually Avro or Protobuf), preventing pipeline breaks.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Streaming"
+    },
+    {
+      "id": "de19",
+      "text": "What is the purpose of 'Checkpointing' in Spark Streaming?",
+      "options": [
+        "To check the code for errors",
+        "Saving the state of a streaming query to reliable storage (like HDFS/S3) so it can recover from failures",
+        "To limit the speed of data ingestion",
+        "To count the number of records"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Without checkpointing, a streaming job would have to restart from the beginning of the stream upon failure.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Streaming"
+    },
+    {
+      "id": "de20",
+      "text": "In Data Warehousing, what is an 'OLAP' system vs an 'OLTP' system?",
+      "options": [
+        "OLAP is for transactions; OLTP is for analytics",
+        "OLAP is for complex analytical queries (Read-heavy); OLTP is for day-to-day transactional processing (Write-heavy)",
+        "There is no difference",
+        "OLAP is for local data; OLTP is for cloud data"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Data Warehouses (OLAP) are optimized for aggregation and scanning, while relational databases (OLTP) are optimized for row-level updates.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Database"
+    },
+    {
+      "id": "de21",
+      "text": "What is 'Windowing' in stream processing?",
+      "options": [
+        "Using a computer with Windows OS",
+        "Grouping stream data into finite chunks based on time or count to perform aggregations (e.g., average price over the last 5 minutes)",
+        "Creating a popup window for the user",
+        "Viewing data in a text editor"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Tumbling, Sliding, and Session windows are common techniques in Flink, Spark Streaming, or Kafka Streams.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Streaming"
+    },
+    {
+      "id": "de22",
+      "text": "What is the 'Medallion Architecture' in Databricks/Delta Lake?",
+      "options": [
+        "Bronze, Silver, and Gold layers representing raw, cleaned, and business-ready data",
+        "A way to award developers",
+        "A type of data encryption",
+        "A 3-server setup"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "This architecture provides a structured way to improve data quality as it moves through the pipeline.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Architecture"
+    },
+    {
+      "id": "de23",
+      "text": "What is 'Small File Problem' in HDFS/S3, and how do you solve it?",
+      "options": [
+        "Small files are too fast; use larger files",
+        "Too many small files cause overhead in metadata management; solve by compacting/coalescing data into larger files",
+        "Small files take up too much disk space",
+        "Small files cannot be encrypted"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Managing metadata for millions of small files overwhelms the NameNode (HDFS) or slows down listing operations (S3).",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Storage Optimization"
+    },
+    {
+      "id": "de24",
+      "text": "What does 'ACID' stand for in database systems?",
+      "options": [
+        "Accuracy, Completeness, Integrity, Durability",
+        "Atomicity, Consistency, Isolation, Durability",
+        "Availability, Control, Identity, Distribution",
+        "None of the above"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "ACID properties ensure that database transactions are processed reliably.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Database"
+    },
+    {
+      "id": "de25",
+      "text": "What is 'Schema Evolution'?",
+      "options": [
+        "Upgrading the database version",
+        "The ability of a data system to handle changes in data structure (like adding a column) over time without breaking downstream consumers",
+        "The process of deleting old tables",
+        "Automated documentation generation"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Formats like Avro and Parquet support schema evolution, allowing for backward and forward compatibility.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Data Quality"
+    },
+    {
+      "id": "de26",
+      "text": "In Airflow, what is an 'Operator'?",
+      "options": [
+        "A person who runs the code",
+        "A template for a single task in a DAG (e.g., PythonOperator, BashOperator, S3ToRedshiftOperator)",
+        "A mathematical symbol",
+        "A data type"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Operators define what actually gets done (executing Python, moving files, etc.).",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Orchestration"
+    },
+    {
+      "id": "de27",
+      "text": "What is 'Predicate Pushdown'?",
+      "options": [
+        "Moving data to a different table",
+        "An optimization where filtering logic is pushed as close to the data source as possible to reduce the amount of data read from disk",
+        "A way to sort data",
+        "Deleting data that doesn't match a condition"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "If you only need rows where `year=2023`, predicate pushdown ensures you don't even read the data for other years into memory.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Query Optimization"
+    },
+    {
+      "id": "de28",
+      "text": "What is the difference between 'Batch' and 'Micro-batch' processing?",
+      "options": [
+        "Batch is for SQL; Micro-batch is for NoSQL",
+        "Batch processes large volumes at scheduled intervals; Micro-batch (like Spark Streaming) processes small batches of data in near real-time",
+        "Micro-batch is always faster",
+        "Batch is deprecated"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Micro-batching bridges the gap between traditional batching and true record-at-a-time streaming.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Streaming"
+    },
+    {
+      "id": "de29",
+      "text": "What is 'Data Virtualization'?",
+      "options": [
+        "Creating a virtual machine for data",
+        "A data management approach that allows an application to retrieve and manipulate data without knowing the technical details or location of the data",
+        "Visualizing data in VR",
+        "Simulating data for testing"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Tools like Trino or Dremio allow you to query data across S3, Postgres, and Mongo as if they were a single database.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Architecture"
+    },
+    {
+      "id": "de30",
+      "text": "What is the purpose of 'Z-Ordering' (or multi-dimensional clustering)?",
+      "options": [
+        "To sort data alphabetically",
+        "To co-locate related information in the same set of files to improve query performance for multiple dimensions",
+        "To encrypt data in 3D",
+        "To manage the order of execution in Airflow"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Z-Ordering is an advanced data skipping technique used in Delta Lake and iceberg to speed up queries with multiple filters.",
+      "difficulty": "expert",
+      "points": 40,
+      "topic": "Storage Optimization"
+    }
+  ]
+}

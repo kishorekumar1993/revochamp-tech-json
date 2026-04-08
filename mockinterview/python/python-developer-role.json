@@ -1,0 +1,485 @@
+{
+  "id": "python_developer_mock_001",
+  "title": "Python Developer Mock Test",
+  "description": "Assess intermediate to advanced Python knowledge covering object-oriented programming, functional programming, decorators, generators, context managers, common libraries, and development best practices.",
+  "category": "python",
+  "passingScore": 75,
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "id": "pyd1",
+      "text": "What is the purpose of `__init__` method in a Python class?",
+      "options": [
+        "It destroys the object",
+        "It initializes the object's attributes when an instance is created",
+        "It creates a new class",
+        "It is a static method"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`__init__` is the constructor method. It is automatically called when a new instance of the class is created, initializing the object's state.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Called automatically on instantiation",
+        "Sets up initial state"
+      ],
+      "topic": "OOP"
+    },
+    {
+      "id": "pyd2",
+      "text": "What does the `self` parameter represent in a class method?",
+      "options": [
+        "The class itself",
+        "The instance of the class on which the method was called",
+        "The parent class",
+        "A static reference"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`self` refers to the specific instance of the class. It allows access to the instance's attributes and other methods.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "First parameter in instance methods",
+        "Refers to current object"
+      ],
+      "topic": "OOP"
+    },
+    {
+      "id": "pyd3",
+      "text": "What is the difference between a list and a tuple?",
+      "options": [
+        "Lists are ordered, tuples are unordered",
+        "Lists are mutable (can be changed), tuples are immutable (cannot be changed)",
+        "Lists can only contain numbers, tuples can contain any type",
+        "There is no difference"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Lists are mutable and can be modified after creation. Tuples are immutable and cannot be changed once created.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Think about modification ability",
+        "Lists use [], tuples use ()"
+      ],
+      "topic": "Data Structures"
+    },
+    {
+      "id": "pyd4",
+      "text": "What is a decorator in Python?",
+      "options": [
+        "A design pattern for creating classes",
+        "A function that modifies the behavior of another function without changing its source code",
+        "A type of loop",
+        "A way to style output"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Decorators are functions that take another function and extend its behavior without explicitly modifying it. They use the `@decorator_name` syntax.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Uses @ syntax",
+        "Wraps functions"
+      ],
+      "topic": "Advanced Functions"
+    },
+    {
+      "id": "pyd5",
+      "text": "What is the output of the following code?\n```python\ndef func(x, y=[]):\n    y.append(x)\n    return y\n\nprint(func(1))\nprint(func(2))\n```",
+      "options": [
+        "[1] and [2]",
+        "[1] and [1, 2]",
+        "Error",
+        "[] and [2]"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Default arguments are evaluated only once at function definition. The same list is reused across calls, accumulating values.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Mutable default arguments",
+        "Shared across function calls"
+      ],
+      "topic": "Functions"
+    },
+    {
+      "id": "pyd6",
+      "text": "What is the purpose of `__str__` method?",
+      "options": [
+        "To create a string representation for debugging",
+        "To return a human-readable string representation of an object",
+        "To convert an object to bytes",
+        "To parse strings"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`__str__` defines the informal, human-readable string representation. `__repr__` is for unambiguous, debug-friendly representation.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Used by print() and str()",
+        "User-friendly output"
+      ],
+      "topic": "OOP"
+    },
+    {
+      "id": "pyd7",
+      "text": "What is a generator in Python?",
+      "options": [
+        "A function that returns a list",
+        "A function that yields values one at a time using `yield`, maintaining state between calls",
+        "A class that creates objects",
+        "A type of loop"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Generators are functions that use `yield` to return values lazily, one at a time. They are memory-efficient for large sequences.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Uses yield keyword",
+        "Lazy evaluation"
+      ],
+      "topic": "Iterators & Generators"
+    },
+    {
+      "id": "pyd8",
+      "text": "What is the purpose of the `with` statement?",
+      "options": [
+        "To create a new variable",
+        "To ensure resources are properly acquired and released (context management)",
+        "To define a class",
+        "To import modules"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`with` implements context managers. It guarantees that setup (`__enter__`) and cleanup (`__exit__`) code runs, commonly used for file operations.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "File handling idiom",
+        "Automatic cleanup"
+      ],
+      "topic": "Context Managers"
+    },
+    {
+      "id": "pyd9",
+      "text": "What is the difference between `@staticmethod` and `@classmethod`?",
+      "options": [
+        "No difference",
+        "`@classmethod` receives the class as first argument; `@staticmethod` receives neither instance nor class",
+        "`@staticmethod` receives instance; `@classmethod` receives nothing",
+        "`@classmethod` cannot access class attributes"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`@classmethod` takes `cls` as first parameter and can access/modify class state. `@staticmethod` is independent of class and instance state.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "cls vs no implicit first arg",
+        "Factory methods use classmethod"
+      ],
+      "topic": "OOP"
+    },
+    {
+      "id": "pyd10",
+      "text": "What is the output of `[x**2 for x in range(5) if x % 2 == 0]`?",
+      "options": [
+        "[0, 2, 4]",
+        "[0, 4, 16]",
+        "[1, 9]",
+        "[0, 4]"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The list comprehension filters even numbers (0, 2, 4) from range(5), then squares each: 0²=0, 2²=4, 4²=16. Result: [0, 4, 16].",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Even numbers: 0, 2, 4",
+        "Square each"
+      ],
+      "topic": "List Comprehensions"
+    },
+    {
+      "id": "pyd11",
+      "text": "What is the purpose of `*args` and `**kwargs`?",
+      "options": [
+        "They are required parameter names",
+        "`*args` collects positional arguments into a tuple; `**kwargs` collects keyword arguments into a dictionary",
+        "They define default arguments",
+        "They are type hints"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`*args` allows passing a variable number of positional arguments. `**kwargs` allows passing a variable number of keyword arguments.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Variable number of arguments",
+        "Packing and unpacking"
+      ],
+      "topic": "Functions"
+    },
+    {
+      "id": "pyd12",
+      "text": "What is a lambda function?",
+      "options": [
+        "A named function with multiple statements",
+        "An anonymous, single-expression function defined using the `lambda` keyword",
+        "A recursive function",
+        "A function that only returns lambda"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Lambda functions are small, anonymous functions that can take any number of arguments but contain only a single expression.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "One-liner functions",
+        "Used with map, filter, sort"
+      ],
+      "topic": "Functional Programming"
+    },
+    {
+      "id": "pyd13",
+      "text": "What does `__name__ == '__main__'` check?",
+      "options": [
+        "If the file is imported",
+        "If the script is being run directly (not imported as a module)",
+        "If the function exists",
+        "If the class is defined"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This idiom checks if the Python file is executed as the main program. If imported, `__name__` is the module name instead.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Script vs module execution",
+        "Entry point guard"
+      ],
+      "topic": "Modules"
+    },
+    {
+      "id": "pyd14",
+      "text": "What is the difference between `is` and `==`?",
+      "options": [
+        "No difference",
+        "`is` checks identity (same object in memory); `==` checks equality (same value)",
+        "`is` checks value; `==` checks type",
+        "`is` is for strings only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`is` compares object identity (memory address). `==` compares values. `a is b` is True only if `a` and `b` reference the exact same object.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Identity vs equality",
+        "Use is for None comparisons"
+      ],
+      "topic": "Operators"
+    },
+    {
+      "id": "pyd15",
+      "text": "What does the `try...except...finally` block do?",
+      "options": [
+        "It defines a function",
+        "It handles exceptions: `try` contains risky code, `except` catches errors, `finally` always executes",
+        "It creates a loop",
+        "It imports modules"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Exception handling structure. `finally` block executes regardless of whether an exception occurred, useful for cleanup.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Error handling",
+        "Cleanup in finally"
+      ],
+      "topic": "Error Handling"
+    },
+    {
+      "id": "pyd16",
+      "text": "What is inheritance in Python?",
+      "options": [
+        "Copying code from another file",
+        "A mechanism where a class derives properties and behavior from a parent class",
+        "Creating multiple instances of a class",
+        "Importing a module"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Inheritance allows a child class to reuse, extend, or modify the behavior of a parent class, promoting code reuse.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "IS-A relationship",
+        "Code reuse mechanism"
+      ],
+      "topic": "OOP"
+    },
+    {
+      "id": "pyd17",
+      "text": "What is the purpose of the `pass` statement?",
+      "options": [
+        "It stops program execution",
+        "It does nothing; used as a placeholder where syntactically code is required",
+        "It passes arguments to a function",
+        "It skips the current iteration"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`pass` is a null operation. It's used for empty classes, functions, or conditional blocks during development.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Placeholder",
+        "No operation"
+      ],
+      "topic": "Syntax"
+    },
+    {
+      "id": "pyd18",
+      "text": "What is a set in Python?",
+      "options": [
+        "An ordered collection",
+        "An unordered collection of unique, immutable elements",
+        "A key-value pair collection",
+        "A mutable sequence"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Sets are unordered collections of unique elements. They support mathematical operations like union, intersection, and difference.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "No duplicates allowed",
+        "Curly braces {}"
+      ],
+      "topic": "Data Structures"
+    },
+    {
+      "id": "pyd19",
+      "text": "What does the `map()` function do?",
+      "options": [
+        "Creates a dictionary",
+        "Applies a function to every item in an iterable and returns an iterator of results",
+        "Filters items from an iterable",
+        "Sorts an iterable"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`map(func, iterable)` applies `func` to each element of the iterable, returning a map object (iterator) of results.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Transforms each element",
+        "Returns iterator"
+      ],
+      "topic": "Functional Programming"
+    },
+    {
+      "id": "pyd20",
+      "text": "What is the purpose of a virtual environment in Python?",
+      "options": [
+        "To run Python online",
+        "To create isolated Python environments with independent dependencies per project",
+        "To compile Python code",
+        "To debug Python programs"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Virtual environments (`venv`) isolate project dependencies, preventing version conflicts between different projects.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Dependency isolation",
+        "Project-specific packages"
+      ],
+      "topic": "Development Environment"
+    },
+    {
+      "id": "pyd21",
+      "text": "What is method overriding?",
+      "options": [
+        "Creating multiple methods with the same name but different parameters",
+        "Redefining a parent class method in a child class with the same signature",
+        "Hiding a method from outside access",
+        "Calling a method from another class"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Method overriding allows a subclass to provide a specific implementation of a method already defined in its parent class.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Same method name and parameters",
+        "Child replaces parent behavior"
+      ],
+      "topic": "OOP"
+    },
+    {
+      "id": "pyd22",
+      "text": "What does the `super()` function do?",
+      "options": [
+        "Creates a superclass",
+        "Returns a proxy object that delegates method calls to a parent or sibling class",
+        "Makes a variable global",
+        "Increases performance"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`super()` allows you to call methods from a parent class. It's commonly used in `__init__` to initialize the parent class.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Access parent methods",
+        "Used in inheritance"
+      ],
+      "topic": "OOP"
+    },
+    {
+      "id": "pyd23",
+      "text": "What is the output of `print(0.1 + 0.2 == 0.3)`?",
+      "options": [
+        "True",
+        "False",
+        "Error",
+        "None"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Due to floating-point precision limitations, 0.1 + 0.2 results in 0.30000000000000004, which is not exactly 0.3. Use `math.isclose()` for float comparisons.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Floating-point arithmetic",
+        "Precision issues"
+      ],
+      "topic": "Numeric Operations"
+    },
+    {
+      "id": "pyd24",
+      "text": "What is a property decorator (`@property`)?",
+      "options": [
+        "A way to create class properties",
+        "Allows defining methods that can be accessed like attributes, with optional getter/setter/deleter logic",
+        "A type of static method",
+        "A way to encrypt data"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`@property` turns a method into a 'getter' accessed like an attribute. Combined with `@x.setter`, it enables controlled attribute access.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Method behaves like attribute",
+        "Encapsulation with cleaner syntax"
+      ],
+      "topic": "OOP"
+    },
+    {
+      "id": "pyd25",
+      "text": "What does the `enumerate()` function do?",
+      "options": [
+        "Counts items in an iterable",
+        "Returns an iterator of tuples containing index and value from an iterable",
+        "Creates a numbered list",
+        "Sums all items"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`enumerate(iterable)` yields pairs of (index, value). It's commonly used in for loops when both the item and its position are needed.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Index and value together",
+        "Looping with counter"
+      ],
+      "topic": "Built-in Functions"
+    }
+  ]
+}

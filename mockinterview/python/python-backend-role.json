@@ -1,0 +1,460 @@
+{
+  "id": "python_backend_expert_mock_003",
+  "title": "Professional Python Backend Developer Assessment",
+  "description": "Expert-level assessment for Backend Developers covering REST/GraphQL, SQL/NoSQL optimization, Caching (Redis), Task Queues (Celery), and Scalability.",
+  "category": "python_backend",
+  "passingScore": 85,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "pbe1",
+      "text": "When designing a RESTful API, what is the 'Idempotency' property, and which HTTP methods must adhere to it?",
+      "options": [
+        "The ability to handle multiple users; GET only",
+        "The property where making multiple identical requests has the same effect as a single request; GET, PUT, DELETE, HEAD, and OPTIONS",
+        "The speed of the API response; POST and PATCH",
+        "A security feature that prevents CSRF; All methods"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Idempotency ensures that repeating a request doesn't change the state of the server beyond the initial application. POST is notably NOT idempotent as it usually creates new resources.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "API Design"
+    },
+    {
+      "id": "pbe2",
+      "text": "You are experiencing the 'N+1 Query Problem' in a Django or SQLAlchemy application. What is the most effective way to resolve this?",
+      "options": [
+        "Increase the database pool size",
+        "Use Eager Loading (e.g., `select_related` or `prefetch_related` in Django; `joinedload` in SQLAlchemy)",
+        "Implement a client-side cache",
+        "Switch to a NoSQL database"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "N+1 occurs when the code executes one query to fetch a list and then N additional queries to fetch related data. Eager loading joins the tables in the initial SQL query.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Database Optimization"
+    },
+    {
+      "id": "pbe3",
+      "text": "In a high-traffic system, you need to offload a heavy PDF generation task. Which architecture is standard for this?",
+      "options": [
+        "Run the logic in a standard `async` function",
+        "Use a Task Queue (e.g., Celery or RQ) with a Message Broker like RabbitMQ or Redis",
+        "Increase the Gunicorn worker timeout",
+        "Execute it on the frontend using JavaScript"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Long-running tasks should be decoupled from the request-response cycle to prevent blocking the web worker. Celery allows for asynchronous background processing.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Asynchronous Processing"
+    },
+    {
+      "id": "pbe4",
+      "text": "What is the primary difference between JWT (JSON Web Token) and Session-based authentication?",
+      "options": [
+        "JWTs are stored in a database; Sessions are stored on the client",
+        "Sessions are stateful (stored on server); JWTs are stateless (stored on client and verified via signature)",
+        "JWT is only for mobile apps",
+        "Sessions are more secure than JWTs in all scenarios"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "JWTs carry all necessary user info in the payload and are verified cryptographically, making them ideal for scaling across multiple servers without a shared session store.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Security"
+    },
+    {
+      "id": "pbe5",
+      "text": "When using Redis as a cache, what does the 'LRU' eviction policy do?",
+      "options": [
+        "Deletes the largest keys first",
+        "Deletes the Least Recently Used keys when the memory limit is reached",
+        "Deletes keys that have expired",
+        "Randomly deletes keys to free up space"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Least Recently Used (LRU) is a common caching strategy to keep frequently accessed data and discard 'stale' items.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Caching"
+    },
+    {
+      "id": "pbe6",
+      "text": "In PostgreSQL, what is the purpose of an 'Index', and what is the trade-off of having too many?",
+      "options": [
+        "Speeds up writes; slows down reads",
+        "Speeds up data retrieval (reads); slows down data modification (inserts/updates/deletes) and consumes disk space",
+        "It is only for primary keys",
+        "It encrypts the data"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "While indexes significantly speed up `SELECT` queries, the database must update the index every time data is modified, leading to write overhead.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Database"
+    },
+    {
+      "id": "pbe7",
+      "text": "What is a 'Race Condition' in a backend context, and how can it be prevented during a balance update?",
+      "options": [
+        "Two users logging in at once; use 2FA",
+        "Concurrent requests modifying the same record simultaneously; use Database Transactions with 'Select for Update' (Pessimistic Locking) or Optimistic Locking",
+        "A slow database query; use an index",
+        "High CPU usage; use multiprocessing"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Without locking, two requests could read a balance of $100, both subtract $10, and both write $90 back, losing one transaction.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Concurrency"
+    },
+    {
+      "id": "pbe8",
+      "text": "What does the 'S' in SOLID stand for, and how does it apply to a Backend Service?",
+      "options": [
+        "Secure Design; encrypting all traffic",
+        "Single Responsibility Principle; a class or module should have one, and only one, reason to change",
+        "Scalable Infrastructure; using Kubernetes",
+        "Speed Optimization; using C++ extensions"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SRP prevents 'God Objects' where a single service handles authentication, database logic, and email notifications all at once.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Design Principles"
+    },
+    {
+      "id": "pbe9",
+      "text": "In a Microservices architecture, what is the 'API Gateway' pattern?",
+      "options": [
+        "A firewall for the database",
+        "A single entry point for all clients that routes requests to the appropriate microservice and handles cross-cutting concerns (auth, rate limiting)",
+        "The same as a Load Balancer",
+        "A service that stores all API documentation"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The Gateway simplifies the client's job by providing a unified interface and abstracting the internal service structure.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Architecture"
+    },
+    {
+      "id": "pbe10",
+      "text": "Which Python library is the standard for 'Asynchronous Server Gateway Interface' (ASGI) applications?",
+      "options": [
+        "Gunicorn",
+        "Uvicorn",
+        "WSGI",
+        "Apache"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Uvicorn is a lightning-fast ASGI server implementation, often used with FastAPI and Starlette to handle asynchronous traffic.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Deployment"
+    },
+    {
+      "id": "pbe11",
+      "text": "What is 'Database Normalization'?",
+      "options": [
+        "Making all column names lowercase",
+        "Structuring a relational database to reduce data redundancy and improve data integrity",
+        "Converting NoSQL data to SQL",
+        "Backing up the database"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Normalization (1NF, 2NF, 3NF) ensures that data is stored logically and dependencies make sense, preventing update anomalies.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Database"
+    },
+    {
+      "id": "pbe12",
+      "text": "How does the 'Circuit Breaker' pattern improve system resilience?",
+      "options": [
+        "It shuts down the server if it gets too hot",
+        "It prevents a service from attempting an operation that is likely to fail, allowing the system to recover without cascading failures",
+        "It encrypts database connections",
+        "It speeds up network requests"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "If an external service is down, the 'circuit' opens and returns an error immediately instead of waiting for a timeout and hogging resources.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Architecture"
+    },
+    {
+      "id": "pbe13",
+      "text": "What is 'SQL Injection', and how do modern ORMs prevent it?",
+      "options": [
+        "A way to speed up queries; using raw strings",
+        "A vulnerability where malicious SQL is executed; ORMs use Parameterized Queries/Prepared Statements",
+        "A database backup method; using JSON",
+        "A type of NoSQL database"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "By separating the query structure from the data, parameterized queries ensure that user input is never executed as code.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Security"
+    },
+    {
+      "id": "pbe14",
+      "text": "What is the difference between `PUT` and `PATCH` in a REST API?",
+      "options": [
+        "PUT is for small updates; PATCH is for large ones",
+        "PUT replaces the entire resource; PATCH applies a partial update to the resource",
+        "They are identical",
+        "PUT is only for creating new items"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Following REST standards, PUT is for full replacement (idempotent), while PATCH is for partial modifications.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "API Design"
+    },
+    {
+      "id": "pbe15",
+      "text": "What is the purpose of a 'Health Check' endpoint (e.g., /health)?",
+      "options": [
+        "To check the developer's activity",
+        "To allow orchestrators (like Kubernetes) to monitor the service's status and restart it if it becomes unresponsive",
+        "To provide documentation for the API",
+        "To measure the server's temperature"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Liveness and Readiness probes use these endpoints to manage service traffic and self-healing.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "DevOps"
+    },
+    {
+      "id": "pbe16",
+      "text": "When should you choose a NoSQL database (like MongoDB) over a Relational database (like PostgreSQL)?",
+      "options": [
+        "When you need strict ACID compliance",
+        "When dealing with unstructured data, rapidly changing schemas, or massive horizontal scaling needs",
+        "When the application is small",
+        "Always, as NoSQL is newer"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "NoSQL offers flexibility and scale at the cost of the strict relational integrity found in SQL databases.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Database"
+    },
+    {
+      "id": "pbe17",
+      "text": "What is 'Horizontal Scaling'?",
+      "options": [
+        "Adding more RAM/CPU to a single server",
+        "Adding more machines/instances to your pool of resources",
+        "Making the code run faster",
+        "Adding more tables to a database"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Horizontal scaling involves adding more nodes (e.g., web servers behind a load balancer), whereas vertical scaling is making one node 'bigger'.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Infrastructure"
+    },
+    {
+      "id": "pbe18",
+      "text": "What is 'CORS' (Cross-Origin Resource Sharing)?",
+      "options": [
+        "A database optimization",
+        "A browser security mechanism that restricts web pages from making requests to a different domain than the one that served the web page",
+        "A Python library for math",
+        "A type of cloud storage"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Backend developers must configure CORS headers (e.g., `Access-Control-Allow-Origin`) to allow their frontend to communicate with the API.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Security"
+    },
+    {
+      "id": "pbe19",
+      "text": "What is the 'Database Connection Pool'?",
+      "options": [
+        "A group of databases",
+        "A cache of database connections maintained so that connections can be reused when future requests to the database are required",
+        "A shared database for all users",
+        "A tool for migrating data"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Opening a new DB connection is expensive. Pooling keeps a set of open connections ready to use, significantly improving performance.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Performance"
+    },
+    {
+      "id": "pbe20",
+      "text": "In Django, what is the role of 'Middleware'?",
+      "options": [
+        "To connect the database",
+        "A framework of hooks into Django's request/response processing; it's a light, low-level 'plugin' system for globally altering input or output",
+        "To render HTML templates",
+        "To store static files"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Middleware is used for tasks like authentication, session management, and GZip compression.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Frameworks"
+    },
+    {
+      "id": "pbe21",
+      "text": "What is 'Twelve-Factor App' methodology?",
+      "options": [
+        "A guide for building SaaS apps that are scalable, maintainable, and portable",
+        "A math book for programmers",
+        "A list of 12 Python libraries",
+        "A security checklist"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "It covers best practices like environment-based config, statelessness, and dev/prod parity.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Architecture"
+    },
+    {
+      "id": "pbe22",
+      "text": "How do you protect against 'Brute Force' attacks on a login endpoint?",
+      "options": [
+        "Use a longer password",
+        "Implement Rate Limiting and Account Lockout policies",
+        "Disable the login page",
+        "Use a NoSQL database"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Tools like Redis or Nginx can be used to limit the number of attempts from a single IP or for a single username.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Security"
+    },
+    {
+      "id": "pbe23",
+      "text": "What is the 'Repository Pattern' in backend development?",
+      "options": [
+        "A way to store code on GitHub",
+        "An abstraction layer between the domain logic and data mapping layers to isolate the application from database details",
+        "A method for backing up files",
+        "A type of Git branch"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It allows you to switch data sources (e.g., from SQL to a Mock for testing) without changing the business logic.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Design Patterns"
+    },
+    {
+      "id": "pbe24",
+      "text": "In a Message Queue system, what is an 'Idempotent Consumer'?",
+      "options": [
+        "A consumer that runs very fast",
+        "A consumer that can process the same message multiple times without unintended side effects",
+        "A consumer that only reads messages once",
+        "A consumer that deletes messages"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Due to network issues, messages might be delivered twice. Consumers must check if the work has already been done (e.g., via a unique transaction ID).",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Distributed Systems"
+    },
+    {
+      "id": "pbe25",
+      "text": "What is 'Greenlet' or 'Event Loop' concurrency (as seen in Gevent or Asyncio)?",
+      "options": [
+        "Multiprocessing",
+        "Cooperative multitasking where the execution of tasks is managed by an event loop rather than the OS kernel",
+        "Hardware-level threading",
+        "A way to speed up the GPU"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This allows a single thread to handle thousands of concurrent I/O connections by 'yielding' when waiting for data.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Concurrency"
+    },
+    {
+      "id": "pbe26",
+      "text": "What is the purpose of 'Database Migrations'?",
+      "options": [
+        "To move data from one country to another",
+        "To version control the database schema changes alongside the application code",
+        "To delete old data",
+        "To speed up the database"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Tools like Alembic (SQLAlchemy) or Django Migrations ensure all developers and production environments have the same table structure.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Database"
+    },
+    {
+      "id": "pbe27",
+      "text": "What is 'Structured Logging', and why is it preferred over plain text logs in production?",
+      "options": [
+        "Logging in alphabetical order",
+        "Logging data in a machine-readable format (like JSON) so it can be easily parsed and searched by tools like ELK or Datadog",
+        "Using colors in logs",
+        "Writing logs to a database"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "JSON logs allow for complex queries (e.g., 'Find all logs with status=500 and user_id=123') that are impossible with raw strings.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Observability"
+    },
+    {
+      "id": "pbe28",
+      "text": "What is 'Deadlock' in a database transaction?",
+      "options": [
+        "When the database crashes",
+        "A situation where two or more transactions are waiting for each other to release locks, causing them to wait indefinitely",
+        "When a user forgets their password",
+        "When a query takes too long"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Databases usually detect deadlocks and kill one of the transactions to resolve the conflict.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Database"
+    },
+    {
+      "id": "pbe29",
+      "text": "In FastAPI, what is the 'Dependency Injection' system used for?",
+      "options": [
+        "To install libraries",
+        "To share logic (like DB sessions or auth) across multiple routes in a clean, testable way",
+        "To inject data into the frontend",
+        "To connect to the internet"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It allows routes to 'depend' on a function (e.g., `get_current_user`), which FastAPI evaluates before running the route logic.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Frameworks"
+    },
+    {
+      "id": "pbe30",
+      "text": "What is 'Service Discovery'?",
+      "options": [
+        "Finding new APIs to use",
+        "A system (like Consul or Kubernetes DNS) that allows microservices to find the network location (IP/Port) of other services dynamically",
+        "A way to search for files",
+        "A marketing tool"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "In dynamic cloud environments, IPs change constantly. Service discovery ensures your 'order-service' can always find the 'payment-service'.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Distributed Systems"
+    }
+  ]
+}

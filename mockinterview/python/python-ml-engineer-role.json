@@ -1,0 +1,460 @@
+{
+  "id": "python_mle_expert_mock_006",
+  "title": "Professional Machine Learning Engineer Assessment",
+  "description": "Expert-level assessment for ML Engineers covering model deployment, MLOps, scalability, distributed training, and model monitoring.",
+  "category": "ml_engineering",
+  "passingScore": 85,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "mle1",
+      "text": "What is the primary difference between a Data Scientist and an ML Engineer regarding the 'Model Lifecycle'?",
+      "options": [
+        "Data Scientists build models; ML Engineers only clean data",
+        "Data Scientists focus on research and model performance (metrics like AUC/F1); ML Engineers focus on productionization, scalability, and deployment (latency, throughput, MLOps)",
+        "There is no difference between the roles",
+        "ML Engineers only write Python, while Data Scientists use R"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "An MLE ensures that the 'black box' created by a Data Scientist can run efficiently in a production environment, handling real-time traffic and infrastructure constraints.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Role & Responsibility"
+    },
+    {
+      "id": "mle2",
+      "text": "In model serving, what is the 'Cold Start' problem for serverless ML deployments?",
+      "options": [
+        "The model is too cold to run",
+        "The latency overhead incurred when a serverless function (like AWS Lambda) initializes the container and loads a large ML model into memory for the first time",
+        "A problem with the GPU cooling system",
+        "When the training data is missing"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Loading large weights (e.g., from a BERT model) can take seconds, which is unacceptable for real-time APIs. MLEs solve this by using 'warm' instances or lightweight model formats.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Deployment"
+    },
+    {
+      "id": "mle3",
+      "text": "What is 'Model Drift' (specifically Concept Drift) and how should an MLE detect it?",
+      "options": [
+        "When the model file gets corrupted; detected by checksums",
+        "When the statistical properties of the target variable change over time, making the model less accurate; detected by monitoring performance metrics over time",
+        "When the model runs too slow; detected by profiling",
+        "When the developer changes the code"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Concept drift occurs when the relationship between input data and output labels changes (e.g., consumer behavior changing during a pandemic).",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Monitoring"
+    },
+    {
+      "id": "mle4",
+      "text": "What is the purpose of a 'Feature Store' (e.g., Feast or Tecton) in an MLE pipeline?",
+      "options": [
+        "To buy pre-made features",
+        "A centralized repository to store, document, and serve consistent features for both training (offline) and inference (online)",
+        "A database for storing raw images",
+        "A git repository for ML code"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Feature stores prevent 'Training-Serving Skew' by ensuring the exact same feature engineering logic is applied in both environments.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Infrastructure"
+    },
+    {
+      "id": "mle5",
+      "text": "What is 'Training-Serving Skew'?",
+      "options": [
+        "The difference in performance between the training and test sets",
+        "A discrepancy between the performance of a model during training and its performance in production, often caused by differences in data handling or feature engineering",
+        "When the training takes too long",
+        "When the model is deployed on a different OS"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "If your training code uses a future value that isn't available during real-time inference, the model will fail to perform in production.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "MLOps"
+    },
+    {
+      "id": "mle6",
+      "text": "Which technique is used to reduce the size of a Deep Learning model for mobile deployment without significantly losing accuracy?",
+      "options": [
+        "Adding more layers",
+        "Quantization (e.g., converting 32-bit floats to 8-bit integers)",
+        "Increasing the learning rate",
+        "Using more training data"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Quantization and Pruning are essential techniques for deploying models to edge devices with limited memory and compute.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Model Compression"
+    },
+    {
+      "id": "mle7",
+      "text": "What is 'A/B Testing' for ML models vs 'Canary Deployment'?",
+      "options": [
+        "A/B compares performance of two models on users; Canary rolls out a new model to a small subset of traffic to check for technical stability before full release",
+        "They are the same thing",
+        "A/B is for data; Canary is for code",
+        "Canary is only for mobile apps"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "A/B testing measures business value (click-through rate), while Canary is a DevOps strategy to mitigate risk during deployment.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Deployment"
+    },
+    {
+      "id": "mle8",
+      "text": "What is 'Data Validation' in an ML pipeline (e.g., using TFX or Great Expectations)?",
+      "options": [
+        "Checking if the labels are correct",
+        "Automatically checking incoming data for schema changes, missing values, or statistical anomalies (anomalies in distribution) before training",
+        "Manually looking at Excel sheets",
+        "Checking if the data is encrypted"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "If the range of an input feature suddenly shifts from [0, 1] to [0, 100], data validation should trigger an alert to stop the pipeline.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Data Engineering"
+    },
+    {
+      "id": "mle9",
+      "text": "What is the purpose of 'ONNX' (Open Neural Network Exchange)?",
+      "options": [
+        "A new programming language",
+        "An open format built to represent machine learning models, allowing them to be moved between different frameworks (e.g., PyTorch to TensorFlow or TensorRT)",
+        "A type of GPU",
+        "A cloud provider"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "ONNX allows an MLE to train in PyTorch but deploy on specialized hardware like Nvidia's TensorRT for maximum performance.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Interoperability"
+    },
+    {
+      "id": "mle10",
+      "text": "What is 'Horizontal vs Vertical Scaling' for ML training?",
+      "options": [
+        "Horizontal is adding more GPUs to one machine; Vertical is adding more machines",
+        "Vertical is upgrading the hardware of a single node (e.g., more VRAM); Horizontal is distributed training across multiple nodes/clusters",
+        "They are the same",
+        "Horizontal is for inference; Vertical is for training"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Distributed training (Horizontal) is required for Large Language Models (LLMs) that cannot fit on a single machine's memory.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Scalability"
+    },
+    {
+      "id": "mle11",
+      "text": "In distributed training, what is 'Data Parallelism'?",
+      "options": [
+        "Splitting the model across multiple GPUs",
+        "Replicating the model on multiple GPUs and feeding different subsets of the data to each, then synchronizing gradients",
+        "Running multiple models at once",
+        "Sorting data alphabetically"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Data Parallelism is the most common form of distributed training, supported by tools like Horovod or PyTorch DistributedDataParallel (DDP).",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Distributed Computing"
+    },
+    {
+      "id": "mle12",
+      "text": "What is 'Model Lineage' and why is it part of MLOps?",
+      "options": [
+        "The family tree of the model",
+        "The tracking of which dataset, code version, and hyperparameters were used to produce a specific model artifact",
+        "The speed of the model",
+        "The number of layers in a model"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Lineage is vital for reproducibility and compliance. If a model starts behaving poorly, you must be able to trace it back to the exact data it was trained on.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "MLOps"
+    },
+    {
+      "id": "mle13",
+      "text": "What is 'Shadow Deployment'?",
+      "options": [
+        "Deploying a model at night",
+        "Routing production traffic to a new model but ignoring its output, allowing you to evaluate its performance on real data without affecting users",
+        "A model that is hidden from the public",
+        "Deploying a model on a backup server"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Shadowing is the safest way to test a model's performance and latency on real-world traffic before 'going live'.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Deployment"
+    },
+    {
+      "id": "mle14",
+      "text": "What is 'Hyperparameter Tuning' in a production pipeline (e.g., using Ray Tune or Optuna)?",
+      "options": [
+        "Manually changing values until it works",
+        "An automated process of searching for the optimal set of hyperparameters to maximize model performance",
+        "Cleaning the data",
+        "Optimizing the SQL queries"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Automated tuning (Bayesian Optimization) is more efficient than Grid Search for complex models.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Optimization"
+    },
+    {
+      "id": "mle15",
+      "text": "What is 'Inference Latency' and how is it measured?",
+      "options": [
+        "The time it takes to train a model",
+        "The time taken for a model to produce a prediction once it receives input data (usually measured in milliseconds)",
+        "The size of the model file",
+        "The accuracy of the model"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Low latency is critical for user-facing applications like search or recommendation engines.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Performance"
+    },
+    {
+      "id": "mle16",
+      "text": "What is 'Batch Inference' vs 'Online Inference'?",
+      "options": [
+        "Batch is for fast models; Online is for slow ones",
+        "Batch processes a large group of inputs at once (usually offline/scheduled); Online processes single requests in real-time",
+        "Online is only for web browsers",
+        "Batch is only for images"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Recommendation emails are often Batch (calculated overnight), while autocomplete is Online (real-time).",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Serving"
+    },
+    {
+      "id": "mle17",
+      "text": "What is 'DVC' (Data Version Control)?",
+      "options": [
+        "A way to version Python code",
+        "An open-source tool for data science and ML projects that versions large data files and models, acting like 'Git for Data'",
+        "A database",
+        "A video compression tool"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "DVC tracks data metadata in Git while storing the actual large files in S3 or other cloud storage.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "MLOps"
+    },
+    {
+      "id": "mle18",
+      "text": "What is a 'DAG' in an ML Pipeline (e.g., Kubeflow or Airflow)?",
+      "options": [
+        "A data type",
+        "Directed Acyclic Graph; represents the sequence and dependencies of ML steps (data prep -> train -> eval -> deploy)",
+        "A type of model",
+        "A visualization of neurons"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "DAGs ensure that the training step doesn't start until the data preprocessing step is successfully completed.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Orchestration"
+    },
+    {
+      "id": "mle19",
+      "text": "What is the 'Kernel' in a CNN and what is 'Padding'?",
+      "options": [
+        "The OS; adding extra memory",
+        "A small matrix of weights (filter) that slides over the input; Padding adds extra pixels around the edge to maintain spatial dimensions",
+        "A type of data; cleaning the data",
+        "The center of the model; removing features"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Padding prevents the output feature map from shrinking after every convolutional layer.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Deep Learning"
+    },
+    {
+      "id": "mle20",
+      "text": "What is 'Transfer Learning'?",
+      "options": [
+        "Transferring data between servers",
+        "Taking a pre-trained model on a large dataset and fine-tuning it on a smaller, specific dataset",
+        "Learning from other developers",
+        "Moving a model from Dev to Prod"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This is standard for NLP and Computer Vision, where models like ResNet or BERT are used as foundations.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Modeling"
+    },
+    {
+      "id": "mle21",
+      "text": "What is 'Weight Pruning'?",
+      "options": [
+        "Reducing the number of training samples",
+        "Removing redundant or near-zero weight connections in a neural network to reduce model size and improve inference speed",
+        "Decreasing the learning rate",
+        "Deleting the model"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Pruning can significantly compress a model with minimal impact on accuracy.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Model Compression"
+    },
+    {
+      "id": "mle22",
+      "text": "What is 'Distributed Data Parallel' (DDP) vs 'Model Parallelism'?",
+      "options": [
+        "DDP copies the model; Model Parallelism splits the model layers across different GPUs",
+        "DDP is only for CPU",
+        "They are the same",
+        "Model Parallelism is for data"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Model Parallelism is necessary when a single model is too large to fit in the VRAM of a single GPU.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Distributed Computing"
+    },
+    {
+      "id": "mle23",
+      "text": "What is 'Kubeflow'?",
+      "options": [
+        "A brand of coffee",
+        "An open-source ML platform dedicated to making deployments of machine learning workflows on Kubernetes simple, portable, and scalable",
+        "A type of cloud database",
+        "A Python math library"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Kubeflow is the industry standard for running end-to-end ML pipelines in a cloud-native environment.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Infrastructure"
+    },
+    {
+      "id": "mle24",
+      "text": "What is 'Gradient Clipping' and why is it used?",
+      "options": [
+        "Deleting low gradients",
+        "Limiting the maximum value of gradients during backpropagation to prevent 'exploding gradients' that make training unstable",
+        "Speeding up the GPU",
+        "Cleaning the data"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Commonly used in RNNs to maintain stable training by preventing massive weight updates.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Deep Learning"
+    },
+    {
+      "id": "mle25",
+      "text": "What is 'Model Quantization' (e.g., FP16 or INT8)?",
+      "options": [
+        "Counting the number of neurons",
+        "Reducing the precision of the weights and biases of a model to save memory and increase speed",
+        "Improving model accuracy",
+        "Adding more data"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Moving from FP32 to INT8 can reduce model size by 4x and speed up inference on compatible hardware.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Model Compression"
+    },
+    {
+      "id": "mle26",
+      "text": "What is 'TFServing' or 'TorchServe'?",
+      "options": [
+        "Training frameworks",
+        "High-performance specialized serving systems for ML models that handle versioning, concurrent requests, and batching automatically",
+        "Data cleaning tools",
+        "Visualization libraries"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "These are preferred over raw Flask/FastAPI for production serving due to optimized performance and native support for model versioning.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Serving"
+    },
+    {
+      "id": "mle27",
+      "text": "What is the purpose of 'Docker' in an MLE's workflow?",
+      "options": [
+        "To ship physical items",
+        "To containerize the ML environment (code, libraries, OS dependencies) to ensure 'it works on my machine' applies to production",
+        "To edit Python code",
+        "To store data"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Containers are the foundation of modern ML deployment, ensuring consistency across Dev, Staging, and Prod.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Infrastructure"
+    },
+    {
+      "id": "mle28",
+      "text": "What is 'Mixed Precision Training'?",
+      "options": [
+        "Using different data types for different models",
+        "Using both 16-bit and 32-bit floating-point types during training to speed up computation and reduce memory usage without losing precision",
+        "Guessing the weights",
+        "Training on images and text"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Modern GPUs have specialized hardware (Tensor Cores) to accelerate mixed-precision math.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Distributed Computing"
+    },
+    {
+      "id": "mle29",
+      "text": "What is the 'F1 Score' and when is it preferred over Accuracy?",
+      "options": [
+        "A racing score",
+        "The harmonic mean of Precision and Recall; preferred in cases of class imbalance where accuracy can be misleading",
+        "The speed of the model",
+        "The number of features"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "F1 is a balanced metric that penalizes models for both false positives and false negatives.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Model Evaluation"
+    },
+    {
+      "id": "mle30",
+      "text": "What is 'MLflow' used for?",
+      "options": [
+        "Cleaning water",
+        "An open-source platform to manage the ML lifecycle, including experimentation, reproducibility, deployment, and a central model registry",
+        "A Python library for math",
+        "A visualization tool for neurons"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "MLflow is widely used to track experiment parameters and metrics during the research phase.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "MLOps"
+    }
+  ]
+}
