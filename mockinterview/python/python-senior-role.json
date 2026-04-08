@@ -1,0 +1,460 @@
+{
+  "id": "python_senior_expert_mock_007",
+  "title": "Senior Python Engineer Assessment",
+  "description": "Expert-level assessment for Senior Developers covering CPython internals, complex concurrency, architectural patterns, and system performance.",
+  "category": "python_senior",
+  "passingScore": 85,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "psr1",
+      "text": "How does CPython's 'Pymalloc' allocator optimize memory management for small objects?",
+      "options": [
+        "By allocating all memory on the stack instead of the heap",
+        "By using a hierarchy of arenas, pools, and blocks to reduce the overhead of system-level malloc calls for objects smaller than 512 bytes",
+        "By bypassing the GIL for all memory operations",
+        "By compressing objects in memory automatically"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Pymalloc is a specialized allocator for small objects. It organizes memory into 256KB 'Arenas', which contain 4KB 'Pools', which are further divided into 'Blocks' of specific sizes to mitigate fragmentation.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Internals"
+    },
+    {
+      "id": "psr2",
+      "text": "In the context of the GIL, what changed in the 'New GIL' implementation introduced in Python 3.2?",
+      "options": [
+        "The GIL was completely removed",
+        "It switched from a 'tick-based' preemption (based on instruction count) to a 'time-based' preemption (using a 5ms timeout) to reduce 'convoy effects'",
+        "It allowed multiple threads to run bytecode in parallel on a single core",
+        "It only applies to I/O operations now"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The original GIL used an instruction count ('ticks'). The 3.2+ implementation uses a fixed time interval, which prevents CPU-bound threads from starving I/O-bound threads.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Concurrency"
+    },
+    {
+      "id": "psr3",
+      "text": "What is the primary architectural benefit of using a 'Sans-I/O' implementation for a network protocol library?",
+      "options": [
+        "It makes the library run faster on Linux",
+        "It separates the protocol parsing logic from the network transport, allowing the same code to be used in synchronous, threaded, or asynchronous (asyncio/curio/trio) environments",
+        "It removes the need for unit testing",
+        "It automatically encrypts all traffic"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Sans-I/O libraries (like `h11` or `wsproto`) handle only the state machine and bytes of a protocol, leaving the 'how' of I/O (sockets, SSL) to the user.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Architecture"
+    },
+    {
+      "id": "psr4",
+      "text": "How does Python handle 'Integer Interning'?",
+      "options": [
+        "It interns all integers used in the program",
+        "It pre-allocates and caches integers in the range of -5 to 256 for performance and memory reuse",
+        "Integers are interned only if they are larger than 1024",
+        "It doesn't intern integers, only strings"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "To save memory and time, CPython maintains an array of integer objects for small integers. Every time you 'create' an int in that range, it points to the same object in memory.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Internals"
+    },
+    {
+      "id": "psr5",
+      "text": "When implementing a custom decorator that can be used both with and without arguments, what is the standard pattern?",
+      "options": [
+        "Create two separate decorators",
+        "Check if the first argument is callable; if so, return the wrapped function immediately, otherwise return a partial that accepts the function",
+        "It is not possible to do this in Python",
+        "Use a global variable to track state"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This is often handled by checking `if func is None` or using `functools.partial` to handle the 'optional' call with arguments.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Advanced Syntax"
+    },
+    {
+      "id": "psr6",
+      "text": "What is the purpose of the 'C3 Linearization' algorithm in Python?",
+      "options": [
+        "To speed up mathematical calculations",
+        "To determine the Method Resolution Order (MRO) in the presence of multiple inheritance while maintaining monotonicity",
+        "To optimize list comprehensions",
+        "To manage database connections"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "C3 Linearization ensures that a class always appears before its parents and that the relative order of parents is preserved.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "OOP"
+    },
+    {
+      "id": "psr7",
+      "text": "Which method is called during an object's 'unpickling' process to allow for custom state restoration?",
+      "options": [
+        "__init__",
+        "__setstate__",
+        "__restore__",
+        "__dict__"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`__setstate__` allows you to define how a pickled dictionary of attributes is reapplied to a new instance.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Serialization"
+    },
+    {
+      "id": "psr8",
+      "text": "What is the 'Double underscore' (mangling) rule for class attributes (e.g., __attribute)?",
+      "options": [
+        "It makes the attribute completely private and inaccessible",
+        "It triggers name mangling where the interpreter replaces the name with `_ClassName__attribute` to avoid collisions in subclasses",
+        "It is just a naming convention with no functional effect",
+        "It makes the attribute a static variable"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Mangling is designed to prevent accidental overrides in deep inheritance hierarchies, not to enforce security/privacy.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "OOP"
+    },
+    {
+      "id": "psr9",
+      "text": "How do 'Weak References' (weakref) help in preventing memory leaks in cache implementations?",
+      "options": [
+        "They delete the object immediately",
+        "They allow the garbage collector to reclaim an object even if it is still referenced by the cache",
+        "They compress the data in the cache",
+        "They speed up dictionary lookups"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "A weak reference does not increase the reference count. If no strong references remain, the object is collected, and the weak reference automatically becomes None.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Memory Management"
+    },
+    {
+      "id": "psr10",
+      "text": "What is the difference between `asyncio.create_task()` and `loop.run_in_executor()`?",
+      "options": [
+        "`create_task` is for threads; `run_in_executor` is for coroutines",
+        "`create_task` schedules a coroutine on the event loop; `run_in_executor` runs a blocking/CPU-bound function in a separate thread or process to avoid blocking the event loop",
+        "They are the same",
+        "`create_task` is deprecated"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Senior devs use executors to prevent long-running synchronous code from 'freezing' the entire asynchronous application.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Concurrency"
+    },
+    {
+      "id": "psr11",
+      "text": "What is a 'Context-local' variable (contextvars module), and why is it preferred over thread-local storage in async apps?",
+      "options": [
+        "It is faster",
+        "It correctly tracks state across asynchronous execution flows (task-local), whereas thread-locals are shared by all coroutines running on that thread",
+        "It is only for Python 2.7",
+        "It manages database transactions automatically"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "In `asyncio`, many tasks share the same thread. `contextvars` ensures that a variable (like a request ID) stays isolated to the specific task.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Concurrency"
+    },
+    {
+      "id": "psr12",
+      "text": "What does the `__prepare__` method on a metaclass do?",
+      "options": [
+        "It compiles the class bytecode",
+        "It returns the namespace dictionary (or another mapping) that will be used to execute the class body",
+        "It initializes the class attributes",
+        "It is called before `__new__` to allocate memory"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This allows metaclasses to use something other than a standard `dict` for the class namespace (e.g., an `OrderedDict` in older Python versions).",
+      "difficulty": "expert",
+      "points": 40,
+      "topic": "Metaprogramming"
+    },
+    {
+      "id": "psr13",
+      "text": "Which PEP introduced 'Type Hints' to Python?",
+      "options": [
+        "PEP 8",
+        "PEP 484",
+        "PEP 20",
+        "PEP 443"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "PEP 484 introduced a standard syntax for type annotations, though the `typing` module continues to evolve.",
+      "difficulty": "intermediate",
+      "points": 10,
+      "topic": "History/Standards"
+    },
+    {
+      "id": "psr14",
+      "text": "What is the behavior of a 're-entrant lock' (threading.RLock)?",
+      "options": [
+        "It cannot be acquired more than once",
+        "It can be acquired multiple times by the same thread without causing a deadlock, provided it is released the same number of times",
+        "It is a lock that works across multiple processes",
+        "It is a lock that never expires"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "RLocks are essential when a thread needs to call multiple methods that all require the same lock.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Concurrency"
+    },
+    {
+      "id": "psr15",
+      "text": "How would you implement a 'Property' using the descriptor protocol manually?",
+      "options": [
+        "By using a for-loop",
+        "By defining a class with `__get__`, `__set__`, and `__delete__` methods",
+        "By inheriting from `list`",
+        "By using the `property` keyword inside a function"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The `@property` decorator is actually a shorthand for a class that implements the descriptor protocol.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Internals"
+    },
+    {
+      "id": "psr16",
+      "text": "What is the performance impact of using `sys.setrecursionlimit()`?",
+      "options": [
+        "It speeds up the program",
+        "It allows deeper recursion but risks a stack overflow / segmentation fault because Python's stack is not infinite",
+        "It has no impact",
+        "It optimizes tail-call recursion"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Python does not have tail-call optimization. Increasing the limit just defers the inevitable crash if the logic is truly infinite.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Performance"
+    },
+    {
+      "id": "psr17",
+      "text": "What is 'String Interning' and when should it be done manually with `sys.intern()`?",
+      "options": [
+        "Interning makes strings lowercase; always do it",
+        "It stores only one copy of a string in memory; use it manually for strings used as keys or identifiers to speed up equality checks (pointer comparison)",
+        "It is a way to encrypt strings",
+        "It is only for Python 2.x"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Comparing interned strings is `O(1)` (pointer comparison) instead of `O(n)` (character comparison).",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Performance"
+    },
+    {
+      "id": "psr18",
+      "text": "In a high-concurrency network service, why might you choose `uvloop` over the default asyncio event loop?",
+      "options": [
+        "It is written in Pure Python",
+        "It is a fast, drop-in replacement for the asyncio loop implemented in Cython on top of libuv",
+        "It supports Python 2.x",
+        "It allows for multi-threaded bytecode execution"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "uvloop can make asyncio twice as fast, bringing performance closer to Node.js or Go.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Performance"
+    },
+    {
+      "id": "psr19",
+      "text": "What is the 'Flyweight' design pattern and how is it implemented in Python?",
+      "options": [
+        "Using as many objects as possible",
+        "Reducing memory usage by sharing as much data as possible with similar objects (e.g., using `__slots__` or a central factory)",
+        "A way to write fast functions",
+        "A way to deploy code to the cloud"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Flyweight is about minimizing memory footprint by sharing common parts of state among multiple objects.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Design Patterns"
+    },
+    {
+      "id": "psr20",
+      "text": "What is the purpose of the `inspect` module for a Senior Developer?",
+      "options": [
+        "To check for security vulnerabilities",
+        "To perform introspection on live objects (getting source code, examining arguments, or walking the stack)",
+        "To format the code",
+        "To run unit tests"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Senior devs use `inspect` to build advanced frameworks, dependency injection systems, or debugging tools.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Standard Library"
+    },
+    {
+      "id": "psr21",
+      "text": "How do 'Abstract Base Classes' (ABCs) differ from 'Protocols' (PEP 544)?",
+      "options": [
+        "ABCs use nominal subtyping (explicit inheritance); Protocols use structural subtyping (duck typing verified by static type checkers)",
+        "ABCs are faster than Protocols",
+        "Protocols are only for network code",
+        "There is no difference"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Protocols allow you to define an interface that a class implements without needing to inherit from a specific base class.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Typing"
+    },
+    {
+      "id": "psr22",
+      "text": "What is the 'Frame Object' in Python's execution model?",
+      "options": [
+        "A UI element",
+        "An object representing the state of execution in a specific scope (local variables, return address, etc.)",
+        "A type of list",
+        "A security boundary"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Python's stack is composed of frame objects. Accessing `sys._getframe()` allows for powerful but dangerous runtime manipulations.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Internals"
+    },
+    {
+      "id": "psr23",
+      "text": "What is the significance of the `PyObject` struct in the Python C-API?",
+      "options": [
+        "It is a specific type of list",
+        "It is the base structure that every Python object header starts with, containing the reference count and a pointer to the type object",
+        "It is for math operations",
+        "It is only used in Python 3.11+"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Everything in Python is a `PyObject` at the C level, enabling the language's uniform object model.",
+      "difficulty": "expert",
+      "points": 40,
+      "topic": "Internals"
+    },
+    {
+      "id": "psr24",
+      "text": "In the `threading` module, what is a 'Semaphore' used for?",
+      "options": [
+        "To stop a thread",
+        "To limit the number of threads that can access a specific resource simultaneously",
+        "To encrypt data",
+        "To communicate between processes"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Semaphores are useful for rate-limiting or controlling access to a pool of connections.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Concurrency"
+    },
+    {
+      "id": "psr25",
+      "text": "What is the 'Global' vs 'Nonlocal' name resolution rule?",
+      "options": [
+        "Global is for strings; Nonlocal is for ints",
+        "Global looks in the module-level scope; Nonlocal looks in the nearest enclosing function scope (closure)",
+        "They are interchangeable",
+        "Global is faster"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Senior developers must understand lexical scoping to build complex closures and stateful decorators.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Scoping"
+    },
+    {
+      "id": "psr26",
+      "text": "What does the `dis` module allow you to do?",
+      "options": [
+        "Disable a function",
+        "Disassemble Python source code into its underlying bytecode instructions",
+        "Discard unused memory",
+        "Distribute code to multiple servers"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Using `dis.dis()` is essential for performance tuning and understanding how the interpreter executes your code.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Internals"
+    },
+    {
+      "id": "psr27",
+      "text": "What is 'Partial Function Application' (functools.partial)?",
+      "options": [
+        "Running only half of a function",
+        "Creating a new function with some of the arguments of the original function pre-filled",
+        "A way to handle errors",
+        "A type of recursive call"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Partial application is a key functional programming technique used to simplify callback signatures.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Functional Programming"
+    },
+    {
+      "id": "psr28",
+      "text": "How does the 'Buffer Protocol' work in Python?",
+      "options": [
+        "It caches output to the console",
+        "It allows C extensions to access the internal raw memory of Python objects (like bytes or arrays) without copying them",
+        "It is used for streaming video",
+        "It is a security feature for web servers"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The Buffer Protocol is what makes libraries like NumPy and memoryview extremely efficient at handling large datasets.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Performance"
+    },
+    {
+      "id": "psr29",
+      "text": "What is the purpose of `__init_subclass__`?",
+      "options": [
+        "To initialize an object",
+        "To allow a base class to customize the creation of its subclasses without using a metaclass",
+        "To prevent inheritance",
+        "To speed up class instantiation"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Introduced in Python 3.6, it provides a simpler alternative to metaclasses for tracking or registering subclasses.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "OOP"
+    },
+    {
+      "id": "psr30",
+      "text": "What is the 'Ast' module used for in Python development?",
+      "options": [
+        "To generate random numbers",
+        "To parse and manipulate the Abstract Syntax Tree of Python source code",
+        "To connect to databases",
+        "To create command-line interfaces"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Senior engineers use `ast` for static analysis tools, code transpilers, or building custom linters.",
+      "difficulty": "expert",
+      "points": 40,
+      "topic": "Metaprogramming"
+    }
+  ]
+}

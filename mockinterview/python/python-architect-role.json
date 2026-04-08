@@ -1,0 +1,460 @@
+{
+  "id": "python_architect_expert_mock_008",
+  "title": "Python Solutions Architect Assessment",
+  "description": "Architect-level evaluation focusing on distributed systems, multi-tenant architecture, polyglot persistence, security patterns, and cloud-native Python scaling.",
+  "category": "python_architect",
+  "passingScore": 85,
+  "timeLimitMinutes": 120,
+  "questions": [
+    {
+      "id": "par1",
+      "text": "When designing a high-concurrency Python backend, when would you choose an Event-Driven Architecture (EDA) over a standard Request-Response model?",
+      "options": [
+        "When the application needs to be simple to debug",
+        "When you need to decouple services, handle high-volume asynchronous tasks, and improve system resilience through eventual consistency",
+        "When the database is the primary bottleneck",
+        "When using a monolithic architecture"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "EDA allows for better scalability and fault tolerance by using message brokers (Kafka/RabbitMQ) to decouple the producer from the consumer, allowing services to scale independently.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "System Design"
+    },
+    {
+      "id": "par2",
+      "text": "In a Microservices environment, what is the 'Saga Pattern' used for?",
+      "options": [
+        "To manage long-running database migrations",
+        "To manage distributed transactions and maintain data consistency across multiple services without using 2PC (Two-Phase Commit)",
+        "To speed up API response times",
+        "To encrypt data at rest"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Sagas manage consistency via a sequence of local transactions and compensating transactions in case of failure, which is critical for Python services where distributed locking is expensive.",
+      "difficulty": "expert",
+      "points": 40,
+      "topic": "Distributed Systems"
+    },
+    {
+      "id": "par3",
+      "text": "What are the architectural implications of the 'Twelve-Factor App' rule regarding 'Statelessness' for Python web clusters?",
+      "options": [
+        "You must store all user sessions in local memory",
+        "The application must share nothing; any persistent data must be stored in a stateful backing service (Redis, Postgres, etc.) to allow for seamless horizontal scaling",
+        "Python is naturally stateless, so no action is required",
+        "It prevents the use of asynchronous programming"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Statelessness ensures that any instance can handle any incoming request, which is the foundation of containerized orchestration like Kubernetes.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Cloud Native"
+    },
+    {
+      "id": "par4",
+      "text": "Which pattern would you implement to prevent a slow downstream service from causing a cascading failure in your Python API?",
+      "options": [
+        "Retry Pattern",
+        "Circuit Breaker Pattern",
+        "Singleton Pattern",
+        "Proxy Pattern"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Circuit breakers (like Hystrix or custom middleware) 'trip' when a service fails repeatedly, returning an immediate error to the user and saving upstream resources.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Resilience"
+    },
+    {
+      "id": "par5",
+      "text": "When should an architect recommend 'BFF' (Backend for Frontend) over a single 'One-Size-Fits-All' API?",
+      "options": [
+        "To reduce the number of microservices",
+        "When different clients (Mobile, Web, IoT) require significantly different data shapes, security protocols, or performance optimizations",
+        "To simplify the database schema",
+        "When the team size is small"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "BFF allows you to tailor the API response to the specific needs of a UI, reducing over-fetching and improving mobile performance.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "API Architecture"
+    },
+    {
+      "id": "par6",
+      "text": "What is 'Polyglot Persistence' and why is it common in Python-based architectures?",
+      "options": [
+        "Using multiple programming languages for one database",
+        "Using different database technologies (e.g., Postgres for relational data, Redis for caching, Neo4j for graphs) within the same system based on data needs",
+        "Storing data in multiple languages (English, Spanish, etc.)",
+        "Backing up data in multiple regions"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Python's rich ecosystem of drivers makes it easy to integrate various specialized databases to solve specific storage problems efficiently.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Data Strategy"
+    },
+    {
+      "id": "par7",
+      "text": "How does 'Database Sharding' differ from 'Read Replicas'?",
+      "options": [
+        "Sharding is for reads; Replicas are for writes",
+        "Read Replicas copy the whole database to distribute read load; Sharding splits data horizontally across multiple servers to distribute both read and write load",
+        "Sharding is a security feature",
+        "Replicas are only for NoSQL databases"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Sharding is a scaling strategy for when a single master node can no longer handle the write volume or total data size.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Scalability"
+    },
+    {
+      "id": "par8",
+      "text": "What is 'CQRS' (Command Query Responsibility Segregation) and when is it applicable?",
+      "options": [
+        "A way to sort code folders",
+        "An architectural pattern that separates the models for reading data from the models for updating data, often used in high-traffic or complex domain systems",
+        "A type of encryption",
+        "A deployment strategy"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "CQRS allows for independent scaling of read and write workloads, often paired with Event Sourcing.",
+      "difficulty": "expert",
+      "points": 40,
+      "topic": "Design Patterns"
+    },
+    {
+      "id": "par9",
+      "text": "In a multi-tenant Python SaaS application, what is the 'Silo' vs 'Pool' isolation model?",
+      "options": [
+        "Silo is for storage; Pool is for compute",
+        "Silo gives each tenant their own infrastructure/database; Pool shares infrastructure across all tenants using logical separation (e.g., Tenant_ID columns)",
+        "Silo is faster; Pool is more secure",
+        "They are the same thing"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Silo provides maximum isolation (compliance), while Pool provides maximum cost-efficiency and ease of management.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "SaaS Architecture"
+    },
+    {
+      "id": "par10",
+      "text": "What is 'API Rate Limiting' (Throttling) and what are the standard algorithms used?",
+      "options": [
+        "Limiting the speed of the internet; FIFO",
+        "Limiting the number of requests a user can make; Token Bucket, Leaky Bucket, and Fixed Window",
+        "Deleting old API keys; Random selection",
+        "Limiting the size of JSON payloads; Binary search"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Throttling protects your backend from 'Noisy Neighbors' and DDoS attacks. Token Bucket is widely used for its flexibility with 'bursts'.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Security"
+    },
+    {
+      "id": "par11",
+      "text": "What is 'Zero Trust Architecture' in a Python backend context?",
+      "options": [
+        "A system that doesn't trust the developers",
+        "A security model that requires strict identity verification for every person and device trying to access resources, regardless of whether they are inside or outside the network perimeter",
+        "A system without passwords",
+        "An air-gapped server"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Zero Trust assumes the network is compromised and enforces granular 'Least Privilege' access at every service hop.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Security"
+    },
+    {
+      "id": "par12",
+      "text": "How does 'GRPC' compare to 'REST' for internal microservices communication?",
+      "options": [
+        "REST is faster because it uses JSON",
+        "GRPC uses Protocol Buffers (binary) and HTTP/2, offering lower latency, smaller payloads, and bi-directional streaming compared to REST/JSON",
+        "GRPC is only for frontend-to-backend calls",
+        "REST is more secure"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Architects favor gRPC for internal 'service-to-service' talk to reduce network overhead and enforce strongly-typed contracts.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Communication"
+    },
+    {
+      "id": "par13",
+      "text": "What is 'Blue-Green Deployment' and how does it mitigate risk?",
+      "options": [
+        "A way to color-code servers",
+        "Running two identical production environments; you switch traffic from the old (Blue) to the new (Green) only after Green is fully tested, allowing for instant rollback",
+        "Deploying half of the code on Monday and half on Friday",
+        "Using two different cloud providers"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It eliminates downtime during deployment and provides a 'safety net' if the new version contains critical bugs.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "DevOps"
+    },
+    {
+      "id": "par14",
+      "text": "In Python, why might an architect choose 'Multiprocessing' over 'Threading' for a CPU-intensive task despite the higher memory overhead?",
+      "options": [
+        "Threading is deprecated in Python 3",
+        "To bypass the Global Interpreter Lock (GIL) and achieve true parallelism on multi-core systems",
+        "Multiprocessing is easier to write",
+        "Threading only works on Windows"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Because each process has its own Python interpreter and memory space, they don't compete for the GIL, enabling parallel CPU work.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Concurrency"
+    },
+    {
+      "id": "par15",
+      "text": "What is the 'Strangler Fig Pattern'?",
+      "options": [
+        "A way to delete code",
+        "A migration strategy to replace a legacy system by gradually creating new services and 'strangling' the old functionality over time",
+        "A data compression algorithm",
+        "A type of cyber attack"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This is the preferred way to migrate a Monolith to Microservices without a 'Big Bang' rewrite.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Legacy Migration"
+    },
+    {
+      "id": "par16",
+      "text": "What is 'Log Aggregation' (e.g., ELK Stack) and why is it essential for distributed architectures?",
+      "options": [
+        "Storing logs on each server locally",
+        "Collecting logs from all services into a central searchable dashboard to enable cross-service troubleshooting and monitoring",
+        "Deleting logs to save space",
+        "Encrypting logs"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Tracing a single transaction across 5 microservices is impossible without a centralized logging and tracing system (like OpenTelemetry).",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Observability"
+    },
+    {
+      "id": "par17",
+      "text": "What is 'Edge Computing' in the context of a Python-based IoT architecture?",
+      "options": [
+        "Putting servers on the edge of a table",
+        "Processing data closer to where it is generated (e.g., on the device or a local gateway) to reduce latency and bandwidth usage",
+        "Using a specific web browser",
+        "The final stage of the development lifecycle"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "By running Python scripts on edge nodes, you can filter and process data before sending only the important bits to the cloud.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "IoT"
+    },
+    {
+      "id": "par18",
+      "text": "How do 'JWT' (JSON Web Tokens) handle 'Revocation' or 'Logouts' in a stateless architecture?",
+      "options": [
+        "They can't be revoked; you just wait for them to expire",
+        "By using short-lived tokens and refresh tokens, or maintaining a 'Denylist' in a fast store like Redis",
+        "By deleting the token from the user's computer",
+        "By changing the server password"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Revocation is the biggest challenge of stateless JWTs. A Denylist allows you to invalidate a token before its expiry date.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Security"
+    },
+    {
+      "id": "par19",
+      "text": "What is 'Semantic Versioning' (SemVer) and why is it important for an architect to enforce it?",
+      "options": [
+        "Naming versions after colors",
+        "A system (Major.Minor.Patch) that communicates the level of change in an API or library to prevent breaking downstream dependencies",
+        "A way to count lines of code",
+        "A documentation standard"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Enforcing SemVer ensures that users know when an update is safe (Patch) vs. when it requires code changes (Major).",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Governance"
+    },
+    {
+      "id": "par20",
+      "text": "What is 'Infrastructure as Code' (IaC) and which tools are commonly used with Python environments?",
+      "options": [
+        "Writing code on a server",
+        "Managing and provisioning infrastructure through machine-readable definition files (e.g., Terraform, Pulumi, Ansible) rather than manual configuration",
+        "Using a specific type of hard drive",
+        "Building a data center"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "IaC allows you to treat your infrastructure exactly like your code: versioned, tested, and reproducible.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Infrastructure"
+    },
+    {
+      "id": "par21",
+      "text": "What is the 'Clean Architecture' (Hexagonal/Onion) and its primary goal?",
+      "options": [
+        "Making the code look pretty",
+        "To separate the business logic from external concerns (DB, UI, Frameworks), making the core application testable and independent of technical details",
+        "Using only standard libraries",
+        "Writing code without comments"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Clean architecture ensures that you can swap your database or web framework without touching your core business rules.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Architecture"
+    },
+    {
+      "id": "par22",
+      "text": "What is 'Data Sovereignty' and how does it affect cloud-based Python architectures?",
+      "options": [
+        "The power of the data",
+        "The legal requirement that data is subject to the laws of the country in which it is located (e.g., GDPR), requiring regional data isolation",
+        "A type of data ownership",
+        "A way to encrypt data"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Architects must design 'Multi-Region' setups to ensure data for German users stays in Germany, etc.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Compliance"
+    },
+    {
+      "id": "par23",
+      "text": "What is 'Graceful Degradation'?",
+      "options": [
+        "The server slowly getting older",
+        "A design philosophy where a system maintains limited functionality even when a portion of it fails, rather than crashing completely",
+        "The code becoming harder to read",
+        "A slow network connection"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Example: If the recommendation engine is down, the website still shows the main products instead of a 500 error.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Resilience"
+    },
+    {
+      "id": "par24",
+      "text": "What is 'Service Level Objective' (SLO) vs 'Service Level Agreement' (SLA)?",
+      "options": [
+        "SLO is a goal; SLA is a legal contract with consequences for failing to meet the SLO",
+        "They are the same",
+        "SLA is for internal use; SLO is for customers",
+        "SLO is for speed; SLA is for uptime"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Architects design systems to meet the SLO (e.g., 99.9% uptime) to satisfy the SLA.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Operations"
+    },
+    {
+      "id": "par25",
+      "text": "What is 'Optimistic Locking' and when is it preferred over 'Pessimistic Locking'?",
+      "options": [
+        "Thinking the lock will work; always preferred",
+        "A strategy where you check if a record has changed before saving (using a version column); preferred in low-contention environments to avoid long-held DB locks",
+        "Locking the database for 10 minutes",
+        "A security feature"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Optimistic locking improves performance by avoiding the overhead of row-level database locks when conflicts are rare.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Database"
+    },
+    {
+      "id": "par26",
+      "text": "What is 'Cache Invalidation' and why is it considered a 'Hard Problem'?",
+      "options": [
+        "Deleting the cache; it takes too long",
+        "Ensuring the cache is consistent with the source data; it is difficult to determine exactly when data becomes stale across distributed nodes",
+        "Encrypting the cache",
+        "Setting the cache size"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Stale data can lead to business errors. Choosing between 'Write-Through', 'Write-Back', and 'TTL' is a key architect decision.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Caching"
+    },
+    {
+      "id": "par27",
+      "text": "What is 'Mutation Testing'?",
+      "options": [
+        "Testing for viruses",
+        "A type of software testing where small changes (mutations) are introduced to the source code to see if the existing unit tests catch them",
+        "Testing code on different OS",
+        "Testing how fast code runs"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It measures the 'quality' of your tests, not just the coverage. If a mutant lives, your tests are weak.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Quality Assurance"
+    },
+    {
+      "id": "par28",
+      "text": "What is 'Content Delivery Network' (CDN) and what is 'Cache Hit Ratio'?",
+      "options": [
+        "A network for videos; how many people watch them",
+        "A distributed network of servers that serves content from the nearest location to the user; the percentage of requests served by the cache vs. the origin",
+        "A way to send emails; how many are opened",
+        "A backup system"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "A high Cache Hit Ratio means your CDN is effectively offloading traffic from your main Python application.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Infrastructure"
+    },
+    {
+      "id": "par29",
+      "text": "What is 'Shadow IT' and how can an architect mitigate it?",
+      "options": [
+        "Using IT at night",
+        "The use of systems or software without explicit organizational approval; mitigated by providing flexible, well-documented, and easy-to-use internal platforms",
+        "Hacking",
+        "Using dark mode in the IDE"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Architects must ensure the approved tools are better/easier than the ones developers might secretly use (e.g., unauthorized SaaS).",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Governance"
+    },
+    {
+      "id": "par30",
+      "text": "What is 'Serverless' (FaaS) and what are its 'No-Ops' limitations for Python developers?",
+      "options": [
+        "A server that doesn't work; it can't run Python",
+        "An execution model where the cloud provider manages the server; limitations include execution time limits, cold starts, and restricted local file access",
+        "Building your own server",
+        "Using Python without a computer"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Architects must weigh the cost savings of serverless against the architectural constraints it imposes on long-running or memory-heavy Python tasks.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Infrastructure"
+    }
+  ]
+}

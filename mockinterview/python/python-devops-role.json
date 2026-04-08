@@ -1,0 +1,460 @@
+{
+  "id": "python_devops_expert_mock_009",
+  "title": "Professional Python DevOps Engineer Assessment",
+  "description": "Expert-level assessment for DevOps Engineers focusing on CI/CD automation, IaC with Python, Kubernetes orchestration, and cloud-native systems monitoring.",
+  "category": "devops",
+  "passingScore": 85,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "pde1",
+      "text": "What is the primary advantage of using a 'Python-based IaC' tool like Pulumi over domain-specific languages like HCL (Terraform)?",
+      "options": [
+        "Python is faster at provisioning hardware",
+        "It allows developers to use standard programming constructs (loops, classes, functions) and existing Python libraries for infrastructure logic and testing",
+        "HCL is deprecated in cloud environments",
+        "Python requires no authentication to cloud providers"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Using Python for IaC enables complex logic, better modularity, and the ability to use standard testing frameworks like `pytest` for infrastructure code.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Infrastructure as Code"
+    },
+    {
+      "id": "pde2",
+      "text": "In a CI/CD pipeline, what is the 'Shift Left' security principle?",
+      "options": [
+        "Moving security checks to the end of the pipeline",
+        "Integrating security testing (SAST/DAST) early in the development lifecycle to catch vulnerabilities before code is merged",
+        "Restricting developer access to the left side of the dashboard",
+        "Using only open-source security tools"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Shifting left reduces the cost and risk of fixing vulnerabilities by identifying them during the coding or build phase rather than in production.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "DevSecOps"
+    },
+    {
+      "id": "pde3",
+      "text": "When containerizing a Python application, why is it best practice to use a 'Multi-stage Build' in Docker?",
+      "options": [
+        "To make the build process slower but safer",
+        "To separate the build environment (compilers, build-tools) from the runtime environment, resulting in a significantly smaller and more secure final image",
+        "To run the app in multiple containers simultaneously",
+        "To bypass the need for a requirements.txt file"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "By discarding build-time dependencies (like GCC or dev libraries) in the final stage, you reduce the attack surface and image transfer time.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Containerization"
+    },
+    {
+      "id": "pde4",
+      "text": "What is the role of a 'Sidecar Container' in a Kubernetes Pod for a Python microservice?",
+      "options": [
+        "It is a backup of the main container",
+        "A secondary container that runs alongside the main app to handle cross-cutting concerns like logging, proxying (Envoy), or configuration syncing",
+        "It is used to store data locally",
+        "It is a container that only runs at night"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Sidecars allow the main application to remain focused on business logic while the sidecar handles operational tasks like shipping logs to ELK.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Kubernetes"
+    },
+    {
+      "id": "pde5",
+      "text": "How does 'GitOps' (using tools like ArgoCD or Flux) differ from traditional CI/CD push deployments?",
+      "options": [
+        "GitOps uses email to trigger builds",
+        "In GitOps, the cluster 'pulls' the desired state from Git and automatically reconciles differences, ensuring Git remains the single source of truth",
+        "GitOps is only for frontend applications",
+        "Traditional CI/CD is more secure than GitOps"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "GitOps ensures that the live state of the cluster always matches the configuration in Git, preventing 'configuration drift'.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Deployment Patterns"
+    },
+    {
+      "id": "pde6",
+      "text": "Which Python library is widely used for automating remote systems administration and configuration management via SSH?",
+      "options": [
+        "Pandas",
+        "Paramiko / Fabric",
+        "Requests",
+        "TensorFlow"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Paramiko is a low-level SSH2 protocol library, while Fabric provides a higher-level API for executing shell commands over SSH.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Automation"
+    },
+    {
+      "id": "pde7",
+      "text": "What is a 'Helm Chart' in the context of Kubernetes?",
+      "options": [
+        "A chart showing server temperature",
+        "A package manager for Kubernetes that uses templates to define, install, and upgrade complex Kubernetes applications",
+        "A type of database schema",
+        "A security certificate"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Helm allows DevOps engineers to manage Kubernetes manifests as reusable packages with versioning and rollbacks.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Kubernetes"
+    },
+    {
+      "id": "pde8",
+      "text": "What is 'Immutable Infrastructure'?",
+      "options": [
+        "Infrastructure that never changes its IP address",
+        "A practice where servers are never modified after deployment; if a change is needed, new servers are built from a common image and the old ones are replaced",
+        "Servers that are physically locked in a room",
+        "Infrastructure that uses only one cloud provider"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Immutable infrastructure prevents 'Snowflake Servers' and ensures consistency across environments.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Architecture"
+    },
+    {
+      "id": "pde9",
+      "text": "In Prometheus monitoring, what is the difference between a 'Counter' and a 'Gauge' metric?",
+      "options": [
+        "They are the same",
+        "A Counter only increases (e.g., total requests); a Gauge can go up and down (e.g., current memory usage)",
+        "A Gauge is for errors; a Counter is for success",
+        "Counters are for Python; Gauges are for Go"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "DevOps engineers must choose the right metric type to create accurate alerts and dashboards.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Monitoring"
+    },
+    {
+      "id": "pde10",
+      "text": "What is 'Canary Releasing'?",
+      "options": [
+        "Deploying code to a server in a cage",
+        "Rolling out a new version of an app to a small subset of users to test stability and performance before deploying to the entire population",
+        "A way to encrypt passwords",
+        "Testing the app on a mobile device"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Canary releases allow for real-world testing with minimal impact if something goes wrong.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Deployment"
+    },
+    {
+      "id": "pde11",
+      "text": "What is 'Chaos Engineering' (e.g., using Chaos Mesh or Gremlin)?",
+      "options": [
+        "Writing messy code",
+        "The discipline of experimenting on a system in order to build confidence in the system's capability to withstand turbulent conditions in production",
+        "Deleting the database by accident",
+        "A type of cyber attack"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Chaos engineering helps identify weak points in a distributed system before they cause real outages.",
+      "difficulty": "advanced",
+      "points": 30,
+      "topic": "Resilience"
+    },
+    {
+      "id": "pde12",
+      "text": "When using Python for 'Boto3' scripts, what is the best way to manage AWS credentials for a script running on an EC2 instance?",
+      "options": [
+        "Hardcode them in the script",
+        "Use an IAM Role assigned to the EC2 instance; Boto3 will automatically retrieve the temporary credentials",
+        "Store them in a .env file on the disk",
+        "Pass them as command-line arguments"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "IAM Roles are the most secure way to grant permissions to AWS resources without managing static access keys.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Cloud Security"
+    },
+    {
+      "id": "pde13",
+      "text": "What is the purpose of 'Horizontal Pod Autoscaler' (HPA) in Kubernetes?",
+      "options": [
+        "To make pods larger (more CPU)",
+        "To automatically scale the number of pod replicas based on observed CPU utilization or other custom metrics",
+        "To move pods to different servers",
+        "To restart pods when they crash"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "HPA ensures that the application can handle traffic spikes without manual intervention.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Kubernetes"
+    },
+    {
+      "id": "pde14",
+      "text": "What is 'Blue-Green Deployment'?",
+      "options": [
+        "Color-coding your servers",
+        "A deployment strategy that uses two identical production environments to minimize downtime and risk; only one (Blue) is live at a time",
+        "Using two different cloud providers",
+        "Deploying on Mondays and Fridays"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It allows for near-zero downtime and instant rollbacks by switching a load balancer between environments.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Deployment"
+    },
+    {
+      "id": "pde15",
+      "text": "What is the function of an 'Ingress Controller' in Kubernetes?",
+      "options": [
+        "To manage pod memory",
+        "An API object that manages external access to the services in a cluster, typically HTTP, providing load balancing, SSL termination, and name-based virtual hosting",
+        "To encrypt the database",
+        "To monitor node health"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Ingress controllers (like Nginx or Traefik) act as the 'front door' for traffic entering the cluster.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Networking"
+    },
+    {
+      "id": "pde16",
+      "text": "What is 'SRE' (Site Reliability Engineering)?",
+      "options": [
+        "Another name for IT support",
+        "A discipline that incorporates aspects of software engineering and applies them to infrastructure and operations problems to create scalable and reliable systems",
+        "A type of security certification",
+        "A Python library for math"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SREs use automation and code to manage large-scale systems, focusing on reliability and availability.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Operations"
+    },
+    {
+      "id": "pde17",
+      "text": "In Ansible, what is a 'Playbook'?",
+      "options": [
+        "A list of games",
+        "A YAML file that defines a set of tasks to be executed on a specific group of hosts to achieve a desired state",
+        "A log of all actions taken",
+        "A script that only runs once"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Playbooks are the core of Ansible's configuration management and orchestration capabilities.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Configuration Management"
+    },
+    {
+      "id": "pde18",
+      "text": "What is 'Terraform State' and why is it important?",
+      "options": [
+        "The country where the server is located",
+        "A file that keeps track of the metadata and IDs of the resources created by Terraform, mapping your configuration to real-world resources",
+        "A list of all users",
+        "The current speed of the network"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Without state, Terraform wouldn't know which resources it is managing or what changes need to be applied.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Infrastructure as Code"
+    },
+    {
+      "id": "pde19",
+      "text": "What is 'Log Rotation'?",
+      "options": [
+        "Spinning the hard drive",
+        "An automated process that removes or archives old log files to prevent the server from running out of disk space",
+        "Changing the color of the logs",
+        "Sending logs to a different server"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Proper log rotation is essential for maintaining system stability and ensuring logs are available for troubleshooting.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Operations"
+    },
+    {
+      "id": "pde20",
+      "text": "What is 'Grafana' used for in a DevOps stack?",
+      "options": [
+        "To write code",
+        "A multi-platform open-source analytics and interactive visualization web application that provides charts, graphs, and alerts for various data sources",
+        "To store data",
+        "To manage Kubernetes clusters"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Grafana is the standard tool for creating operational dashboards that visualize metrics from Prometheus, InfluxDB, etc.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Monitoring"
+    },
+    {
+      "id": "pde21",
+      "text": "What is 'Liveness' vs 'Readiness' probe in Kubernetes?",
+      "options": [
+        "Liveness checks if the pod is running; Readiness checks if it is ready to accept traffic",
+        "They are the same",
+        "Readiness is for the database; Liveness is for the app",
+        "Liveness is for the developer; Readiness is for the user"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "If a Liveness probe fails, Kubernetes restarts the pod. If a Readiness probe fails, Kubernetes stops sending traffic to the pod.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Kubernetes"
+    },
+    {
+      "id": "pde22",
+      "text": "What is 'Semantic Versioning' (SemVer)?",
+      "options": [
+        "Naming versions after animals",
+        "A versioning system (Major.Minor.Patch) that conveys meaning about the underlying changes and ensures compatibility",
+        "A way to count lines of code",
+        "A documentation standard"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SemVer helps developers and DevOps engineers manage dependencies and understand the impact of updates.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Software Lifecycle"
+    },
+    {
+      "id": "pde23",
+      "text": "What is 'Service Mesh' (e.g., Istio or Linkerd)?",
+      "options": [
+        "A network of computers",
+        "A dedicated infrastructure layer for facilitating service-to-service communications between services or microservices, often providing load balancing, encryption, and observability",
+        "A way to connect to the internet",
+        "A type of database"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Service meshes simplify complex microservices management by abstracting networking and security logic away from the application code.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Networking"
+    },
+    {
+      "id": "pde24",
+      "text": "What is 'Infrastructure as Code' (IaC) drift?",
+      "options": [
+        "When the servers move to a different data center",
+        "A situation where the actual state of the infrastructure in the cloud differs from the state defined in the IaC configuration files",
+        "When the code becomes harder to read",
+        "When the network speed decreases"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Drift usually happens when someone makes manual changes in the cloud console. DevOps engineers must use IaC tools to detect and correct it.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Infrastructure as Code"
+    },
+    {
+      "id": "pde25",
+      "text": "What is 'Dark Launching'?",
+      "options": [
+        "Launching an app at night",
+        "The practice of releasing a new feature to production but not making it visible to users, allowing for testing and performance evaluation on live systems",
+        "A way to hide code from hackers",
+        "A failed release"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Dark launching often uses 'Feature Toggles' to enable the code only for certain users or testers.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Deployment"
+    },
+    {
+      "id": "pde26",
+      "text": "What is 'Secret Management' (e.g., HashiCorp Vault or AWS Secrets Manager)?",
+      "options": [
+        "A way to hide your identity",
+        "The practice of securely storing and managing sensitive information like API keys, passwords, and certificates, ensuring they are not hardcoded in the application",
+        "A way to encrypt emails",
+        "A type of database"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Proper secret management is a cornerstone of DevSecOps, preventing sensitive data leaks.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Security"
+    },
+    {
+      "id": "pde27",
+      "text": "What is 'Log Aggregation'?",
+      "options": [
+        "Writing logs in alphabetical order",
+        "The process of collecting, centralizing, and indexing logs from various sources (servers, containers, apps) to make them searchable and analyzable",
+        "Deleting old logs",
+        "Compressing logs"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Tools like Fluentd or Logstash are used to aggregate logs into a central store like Elasticsearch.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "Monitoring"
+    },
+    {
+      "id": "pde28",
+      "text": "What is the purpose of 'Docker Compose'?",
+      "options": [
+        "To write Docker images",
+        "A tool for defining and running multi-container Docker applications using a single YAML file",
+        "To manage Kubernetes clusters",
+        "To monitor server health"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Docker Compose is primarily used for local development environments to spin up an entire stack (app, DB, cache) with one command.",
+      "difficulty": "beginner",
+      "points": 10,
+      "topic": "Containerization"
+    },
+    {
+      "id": "pde29",
+      "text": "What is 'Continuous Deployment' vs 'Continuous Delivery'?",
+      "options": [
+        "Deployment is automatic to production; Delivery is automatic to a staging environment and requires a manual trigger for production",
+        "They are the same",
+        "Delivery is faster than Deployment",
+        "Deployment is for the frontend; Delivery is for the backend"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Continuous Deployment represents the highest level of maturity, where every successful change is automatically pushed to live users.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "CI/CD"
+    },
+    {
+      "id": "pde30",
+      "text": "What is 'Cost Optimization' in a cloud DevOps context?",
+      "options": [
+        "Buying cheaper computers",
+        "The practice of monitoring and managing cloud resources to ensure maximum performance for the lowest possible cost (e.g., using Spot Instances, right-sizing)",
+        "Not using the cloud",
+        "Sharing servers with other companies"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "DevOps engineers often use Python scripts to identify underutilized resources and automatically scale down during off-peak hours.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "topic": "FinOps"
+    }
+  ]
+}
