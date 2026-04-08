@@ -1,0 +1,580 @@
+{
+  "id": "flutter_tester_mock_001",
+  "title": "Flutter Tester / QA Engineer Mock Test",
+  "description": "Comprehensive assessment for Flutter QA Engineers covering widget testing, integration testing, golden tests, performance profiling, debugging techniques, test automation, and quality assurance best practices.",
+  "category": "flutter",
+  "passingScore": 75,
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "id": "ft1",
+      "text": "Which package is used for writing widget tests in Flutter?",
+      "options": [
+        "flutter_driver",
+        "flutter_test",
+        "integration_test",
+        "test"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The `flutter_test` package provides utilities for widget testing, including `testWidgets()`, `WidgetTester`, and `Finder` classes. It's included by default in Flutter projects.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Included in the default flutter_test dependency",
+        "Contains WidgetTester class"
+      ],
+      "topic": "Widget Testing"
+    },
+    {
+      "id": "ft2",
+      "text": "What is the purpose of `pump()` in widget tests?",
+      "options": [
+        "To simulate a user gesture",
+        "To rebuild the widget tree after state changes or advance a single frame",
+        "To run asynchronous operations",
+        "To dispose the widget"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`pump()` triggers a rebuild of the widget tree and advances the clock by a single frame duration. It's essential after calling `setState` or triggering events that change the UI.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Think about frame advancement",
+        "Used after state changes"
+      ],
+      "topic": "Widget Testing"
+    },
+    {
+      "id": "ft3",
+      "text": "What is the difference between `pump()` and `pumpAndSettle()`?",
+      "options": [
+        "There is no difference",
+        "`pump()` advances one frame; `pumpAndSettle()` repeatedly pumps until no more frames are scheduled (animations complete)",
+        "`pumpAndSettle()` is for integration tests only",
+        "`pump()` is deprecated"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`pumpAndSettle()` automatically advances frames until all animations and pending timers are complete. It's ideal after navigation or when waiting for loading indicators to disappear.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Think about animations completing",
+        "Useful for navigation transitions"
+      ],
+      "topic": "Widget Testing"
+    },
+    {
+      "id": "ft4",
+      "text": "Which `Finder` method locates a widget by its text content?",
+      "options": [
+        "find.byType()",
+        "find.byKey()",
+        "find.text()",
+        "find.byIcon()"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "`find.text()` locates widgets containing specific text. It matches `Text` widgets and widgets with `Text` descendants matching the string.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Searches for string content",
+        "Case sensitive"
+      ],
+      "topic": "Finders"
+    },
+    {
+      "id": "ft5",
+      "text": "What is the recommended package for writing integration tests (end-to-end) in Flutter?",
+      "options": [
+        "flutter_driver",
+        "integration_test",
+        "flutter_gherkin",
+        "appium_flutter"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`integration_test` is the modern, recommended package for integration testing. It supersedes `flutter_driver` and can run on real devices, emulators, and in Firebase Test Lab.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Replaces the older flutter_driver",
+        "Part of the Flutter SDK"
+      ],
+      "topic": "Integration Testing"
+    },
+    {
+      "id": "ft6",
+      "text": "How do you simulate a tap on a widget in a widget test?",
+      "options": [
+        "widget.tap()",
+        "tester.tap(find.byType(ElevatedButton))",
+        "GestureDetector.simulate()",
+        "tester.press()"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`WidgetTester.tap()` simulates a tap gesture on the widget found by the Finder. It must be followed by `await tester.pump()` or `pumpAndSettle()` to process the gesture.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Use WidgetTester instance",
+        "Follow with pump()"
+      ],
+      "topic": "Widget Testing"
+    },
+    {
+      "id": "ft7",
+      "text": "What is a Golden Test (Screenshot Test) in Flutter?",
+      "options": [
+        "A test that validates app performance",
+        "A test that compares the rendered output of a widget against a reference image to detect visual regressions",
+        "A test for premium features",
+        "A test that runs only on iOS"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Golden tests capture the pixel-perfect rendering of a widget and compare it against a pre-approved 'golden' image. They detect unintended visual changes.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think visual regression testing",
+        "Uses `matchesGoldenFile()`"
+      ],
+      "topic": "Golden Testing"
+    },
+    {
+      "id": "ft8",
+      "text": "What is the primary challenge with Golden Tests in CI/CD environments?",
+      "options": [
+        "They are too fast",
+        "Slight rendering differences across operating systems, font rendering engines, or Flutter versions cause false positives",
+        "They don't work on Linux",
+        "They require internet connection"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Golden tests are brittle across environments. A tester must generate golden files on the same OS (usually Linux for CI) and manage tolerance thresholds to avoid false failures.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think about cross-platform pixel differences",
+        "CI requires consistent environment"
+      ],
+      "topic": "Golden Testing"
+    },
+    {
+      "id": "ft9",
+      "text": "You need to test a widget that depends on `MediaQuery` (e.g., responsive layout). How do you provide a specific screen size in a test?",
+      "options": [
+        "Change the emulator settings",
+        "Wrap the widget in `MaterialApp` and use `tester.binding.window.physicalSizeTestValue` or `MediaQuery` with custom data",
+        "Use `SizedBox` around the widget",
+        "It's not possible"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`tester.binding.window.physicalSizeTestValue` allows overriding the physical device size for testing. Alternatively, wrapping the widget in a custom `MediaQuery` with specific size data works.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Override window properties",
+        "Use `TestWidgetsFlutterBinding`"
+      ],
+      "topic": "Widget Testing"
+    },
+    {
+      "id": "ft10",
+      "text": "What is the purpose of `expect()` in Flutter tests?",
+      "options": [
+        "To throw an exception",
+        "To assert that a value matches an expected condition",
+        "To log debug information",
+        "To skip a test"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`expect()` is the core assertion function from the `test` package. It verifies that the actual value matches the expected matcher (e.g., `findsOneWidget`, `equals(42)`).",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Core assertion function",
+        "Used with matchers"
+      ],
+      "topic": "Testing Basics"
+    },
+    {
+      "id": "ft11",
+      "text": "Which matcher verifies that exactly one widget is found?",
+      "options": [
+        "findsWidget",
+        "findsOneWidget",
+        "findsNothing",
+        "findsAny"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`findsOneWidget` asserts that the Finder locates exactly one widget. `findsNothing` verifies zero widgets, and `findsNWidgets(n)` verifies a specific count.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Singular match",
+        "Fails if count is 0 or >1"
+      ],
+      "topic": "Matchers"
+    },
+    {
+      "id": "ft12",
+      "text": "How do you mock dependencies (e.g., API services) in widget tests?",
+      "options": [
+        "Use `Mockito` or `mocktail` to create mock implementations",
+        "Use real API calls with a test server",
+        "Flutter doesn't support mocking",
+        "Use `@override` on the real class"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Mocking frameworks like `mockito` or `mocktail` generate fake implementations of dependencies. These are injected into the widget tree to isolate the UI from external factors.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think dependency injection",
+        "Prevents network calls in tests"
+      ],
+      "topic": "Testing Best Practices"
+    },
+    {
+      "id": "ft13",
+      "text": "What is the purpose of `setUp()` and `tearDown()` in a test file?",
+      "options": [
+        "To organize imports",
+        "`setUp()` runs before each test to initialize common state; `tearDown()` runs after each test to clean up resources",
+        "To define test groups",
+        "To skip tests conditionally"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`setUp()` ensures each test starts with a clean, consistent environment. `tearDown()` disposes controllers or mocks to prevent memory leaks between tests.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Runs per test",
+        "Prevents test pollution"
+      ],
+      "topic": "Test Organization"
+    },
+    {
+      "id": "ft14",
+      "text": "You are testing a `FutureBuilder` that shows a loading indicator then displays data. How do you test the loading state?",
+      "options": [
+        "Use `tester.pump()` to advance time and check for `CircularProgressIndicator` before the future resolves",
+        "Use `sleep()` in the test",
+        "Wait for the data to load and check loading wasn't shown",
+        "Loading state cannot be tested"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "By controlling the async gap with `pump()` and `pump(Duration.zero)`, you can verify the loading widget appears *before* `pumpAndSettle()` resolves the future.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Control the frame pump timing",
+        "Check state before future resolves"
+      ],
+      "topic": "Async Testing"
+    },
+    {
+      "id": "ft15",
+      "text": "What command runs all widget tests in a Flutter project?",
+      "options": [
+        "flutter test",
+        "flutter run test",
+        "flutter analyze",
+        "flutter drive"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "`flutter test` discovers and executes all files ending in `_test.dart` within the `test/` directory.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Basic Flutter CLI command",
+        "Runs unit and widget tests"
+      ],
+      "topic": "Test Execution"
+    },
+    {
+      "id": "ft16",
+      "text": "How do you test an exception is thrown in a Dart/Flutter test?",
+      "options": [
+        "Use try-catch and fail() if not caught",
+        "Use `expect(() => operation(), throwsA(isA<SpecificException>()))`",
+        "Use `assertThrows()`",
+        "Use `@Test(expected=...)`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The `throwsA` matcher is the correct Dart idiom for testing exceptions. It wraps the function call to catch and verify the exception type and message.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Uses a closure () => ...",
+        "Can match specific exception types"
+      ],
+      "topic": "Exception Testing"
+    },
+    {
+      "id": "ft17",
+      "text": "What is the difference between `test()` and `testWidgets()`?",
+      "options": [
+        "`test()` is for Dart VM only; `testWidgets()` is for Flutter framework tests",
+        "`test()` is for unit tests (no widgets); `testWidgets()` provides the `WidgetTester` environment to pump widgets",
+        "They are the same",
+        "`testWidgets()` is for integration tests only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`test()` is pure Dart unit testing. `testWidgets()` initializes the Flutter binding and provides a `WidgetTester` for rendering and interacting with widgets.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "One requires Flutter environment",
+        "`testWidgets` callback has `WidgetTester` parameter"
+      ],
+      "topic": "Testing Basics"
+    },
+    {
+      "id": "ft18",
+      "text": "You need to test a widget that uses `Navigator.push`. How do you provide a `Navigator` in a widget test?",
+      "options": [
+        "Wrap the widget in `MaterialApp` or `Navigator` widget",
+        "Use `tester.navigate()`",
+        "Use `MockNavigator`",
+        "It's automatically available"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Widgets that call `Navigator.of(context)` need an ancestor `Navigator`. Wrapping the test widget in `MaterialApp` (which creates a Navigator) or a direct `Navigator` widget provides the context.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Navigation depends on ancestor",
+        "MaterialApp includes Navigator"
+      ],
+      "topic": "Widget Testing"
+    },
+    {
+      "id": "ft19",
+      "text": "What is the primary use case for `flutter_driver` (legacy) or `integration_test`?",
+      "options": [
+        "Unit testing business logic",
+        "Testing the fully assembled app running on a real device or emulator, simulating user journeys",
+        "Testing widget layout only",
+        "Linting code"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Integration tests verify the complete app, including backend calls, native plugins, and multi-screen flows. They run on actual hardware and can be automated in CI.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "End-to-end testing",
+        "Runs on real device"
+      ],
+      "topic": "Integration Testing"
+    },
+    {
+      "id": "ft20",
+      "text": "You are writing a test that involves a `Stream`. How do you wait for a specific value to be emitted?",
+      "options": [
+        "Use `await for` loop",
+        "Use `expectLater(stream, emits(expectedValue))`",
+        "Use `stream.listen()` and `setState`",
+        "Use `Future.delayed`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`expectLater` with `emits()` or `emitsInOrder()` creates a future that completes when the stream emits the expected value(s). This is the idiomatic way to test Streams in Dart.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Part of the test package",
+        "Stream matchers"
+      ],
+      "topic": "Async Testing"
+    },
+    {
+      "id": "ft21",
+      "text": "What is 'Test Coverage' and how is it generated in Flutter?",
+      "options": [
+        "The number of bugs found",
+        "A metric showing which lines of code were executed during tests, generated using `flutter test --coverage`",
+        "The number of tests written",
+        "A measure of app performance"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Coverage reports (LCov format) show which parts of the codebase are exercised by tests. They help QA identify untested edge cases and dead code.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Run with `--coverage` flag",
+        "Generates `lcov.info` file"
+      ],
+      "topic": "Test Metrics"
+    },
+    {
+      "id": "ft22",
+      "text": "You are testing a form with validation. How do you enter text into a `TextFormField`?",
+      "options": [
+        "tester.typeText()",
+        "tester.enterText(find.byType(TextFormField), 'Hello World')",
+        "tester.input(find.byType(TextField), 'Hello')",
+        "widget.controller.text = 'Hello'"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`tester.enterText()` simulates the user typing into a text field. It automatically triggers rebuilds so validation errors can be asserted immediately.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Simulates keyboard input",
+        "Updates the controller"
+      ],
+      "topic": "Widget Testing"
+    },
+    {
+      "id": "ft23",
+      "text": "What is a `RepaintBoundary` and how does it help in performance testing?",
+      "options": [
+        "It prevents a widget from being painted",
+        "It isolates a widget subtree so that repaints in other areas don't cause this widget to repaint, improving scroll performance",
+        "It is a test matcher",
+        "It caches network images"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "QA should recognize `RepaintBoundary` as a performance optimization. In performance profiling, you check if heavy widgets are wrapped with it to prevent jank.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Used for performance isolation",
+        "Prevents unnecessary repaints"
+      ],
+      "topic": "Performance Testing"
+    },
+    {
+      "id": "ft24",
+      "text": "Which DevTools tab is most useful for identifying memory leaks during QA testing?",
+      "options": [
+        "Widget Inspector",
+        "Performance",
+        "Memory",
+        "Logging"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "The Memory tab shows heap allocation over time. QA can perform a specific flow, trigger garbage collection, and see if memory returns to baseline. If it keeps rising, there's a leak.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Look at the heap graph",
+        "Check after GC"
+      ],
+      "topic": "Debugging & Profiling"
+    },
+    {
+      "id": "ft25",
+      "text": "You need to test that a deep link opens the correct screen. Which approach is correct for an integration test?",
+      "options": [
+        "Use `app` command line tool",
+        "Use `integration_test` with `Process.run` to simulate `adb shell am start` or use `app_links` testing utilities",
+        "Manually click the link",
+        "Use widget tests only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Deep link testing requires interacting with the OS intent system. In CI, this is done via ADB commands for Android or `xcrun simctl` for iOS. The test script wraps the integration test app launch with the appropriate intent URL.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Involves platform-specific commands",
+        "Usually scripted in CI"
+      ],
+      "topic": "Integration Testing"
+    },
+    {
+      "id": "ft26",
+      "text": "You are investigating a bug where a widget is not visible on screen. Which `Finder` strategy helps debug visibility issues?",
+      "options": [
+        "find.byType()",
+        "find.ancestor() and find.descendant()",
+        "tester.getTopLeft(find.byKey(key)) to check if position is off-screen",
+        "find.visible()"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Calculating the widget's rendered position (`tester.getTopLeft`) reveals if it's positioned outside the viewport bounds (negative coordinates or > screen size). This confirms overflow/offstage issues.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Check the offset coordinates",
+        "Use `getRect()` for size and position"
+      ],
+      "topic": "Debugging"
+    },
+    {
+      "id": "ft27",
+      "text": "What is the purpose of `@Tags` in Dart tests?",
+      "options": [
+        "To categorize tests (e.g., 'slow', 'integration') so you can filter which tests to run",
+        "To tag bugs in Jira",
+        "To organize code coverage",
+        "To mark deprecated tests"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Tags allow selective test execution. For example, `flutter test --tags golden` runs only screenshot tests. This is crucial for CI pipelines to separate fast unit tests from slow integration tests.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Used with `--tags` CLI flag",
+        "Helps parallelize test suites"
+      ],
+      "topic": "Test Organization"
+    },
+    {
+      "id": "ft28",
+      "text": "You need to test a widget that uses `Future.delayed` to show a tooltip after 2 seconds. How do you test this without actually waiting 2 seconds?",
+      "options": [
+        "Use `sleep(Duration(seconds: 2))`",
+        "Use `tester.pump(Duration(seconds: 2))`",
+        "Use `Future.timeout`",
+        "It's impossible"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`tester.pump()` advances the fake test clock. By calling `pump(const Duration(seconds: 2))`, the timer triggers instantly in test time, allowing fast verification of time-based behavior.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Fake async clock",
+        "Control time in tests"
+      ],
+      "topic": "Async Testing"
+    },
+    {
+      "id": "ft29",
+      "text": "What is the correct way to test accessibility (Semantics) in Flutter?",
+      "options": [
+        "Use `tester.semantics` to find `Semantics` nodes and verify labels/actions",
+        "Use VoiceOver/TalkBack manually only",
+        "Use `find.bySemanticsLabel()`",
+        "Accessibility cannot be automated"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Flutter's testing framework allows querying the semantics tree via `tester.getSemantics()`. QA can verify that buttons have correct labels and the tree structure matches accessibility guidelines.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Semantics tree inspection",
+        "Verify `Semantics` properties"
+      ],
+      "topic": "Accessibility Testing"
+    },
+    {
+      "id": "ft30",
+      "text": "You are using `integration_test` and the test fails with 'Timed out waiting for...' error. What is the most robust way to handle flaky timing issues?",
+      "options": [
+        "Increase the default timeout",
+        "Use `pumpAndSettle()` generously, and implement `waitFor` conditions that check for specific widget existence rather than arbitrary delays",
+        "Run the test again until it passes",
+        "Disable animations"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Arbitrary timeouts mask root causes. A professional QA engineer implements explicit `waitFor` conditions that poll for a state change (e.g., `finder.evaluate().isNotEmpty`). This makes tests deterministic regardless of device speed.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Deterministic over arbitrary",
+        "Poll for UI state changes"
+      ],
+      "topic": "Test Reliability"
+    }
+  ]
+}

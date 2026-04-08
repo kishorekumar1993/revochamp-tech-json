@@ -1,0 +1,580 @@
+{
+  "id": "flutter_devops_mock_001",
+  "title": "Flutter DevOps Engineer Mock Test",
+  "description": "Comprehensive assessment for Flutter DevOps Engineers covering CI/CD pipelines, build automation, code signing, app distribution, infrastructure as code, monitoring, and release management for Flutter applications.",
+  "category": "flutter",
+  "passingScore": 75,
+  "timeLimitMinutes": 75,
+  "questions": [
+    {
+      "id": "fd1",
+      "text": "Which CI/CD platform provides first-class Flutter support with pre-installed Flutter SDK on all runners?",
+      "options": [
+        "Jenkins",
+        "GitHub Actions",
+        "Codemagic",
+        "CircleCI"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Codemagic is specifically designed for Flutter and offers pre-installed Flutter SDKs, iOS code signing automation, and seamless App Store Connect/Google Play integration out of the box.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Built specifically for Flutter",
+        "Neverware company product"
+      ],
+      "topic": "CI/CD Platforms"
+    },
+    {
+      "id": "fd2",
+      "text": "What is the correct GitHub Actions workflow step to install Flutter on a Ubuntu runner?",
+      "options": [
+        "`apt-get install flutter`",
+        "`uses: subosito/flutter-action@v2`",
+        "`flutter upgrade`",
+        "`git clone https://github.com/flutter/flutter`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`subosito/flutter-action` is the community-standard GitHub Action that downloads, installs, and caches the Flutter SDK with specific version/channel support.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "It's a GitHub Action",
+        "Caches the SDK automatically"
+      ],
+      "topic": "GitHub Actions"
+    },
+    {
+      "id": "fd3",
+      "text": "You need to build an iOS IPA file on a Linux CI runner. What is required?",
+      "options": [
+        "Use `flutter build ios --no-codesign`",
+        "It's impossible; iOS builds require macOS with Xcode installed",
+        "Use Docker with Xcode image",
+        "Use a cross-compiler toolchain"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "iOS builds strictly require Xcode and macOS. The Apple toolchain is not available on Linux or Windows. DevOps engineers must use macOS runners (self-hosted Mac Mini/Mac Studio or cloud services like MacStadium) for iOS builds.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Xcode is macOS-only",
+        "No cross-compilation for iOS"
+      ],
+      "topic": "Build Infrastructure"
+    },
+    {
+      "id": "fd4",
+      "text": "What is the purpose of `flutter build ipa --export-method ad-hoc`?",
+      "options": [
+        "Creates an IPA for App Store submission",
+        "Creates an IPA for limited distribution to registered test devices (ad-hoc provisioning)",
+        "Builds for development only",
+        "Creates a debug IPA"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`ad-hoc` export method signs the app with a distribution certificate but restricts installation to devices listed in the provisioning profile. This is for internal testing via services like Firebase App Distribution or TestFlight external testing.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think about device registration limits",
+        "Alternative to TestFlight for pre-release"
+      ],
+      "topic": "iOS Build Configuration"
+    },
+    {
+      "id": "fd5",
+      "text": "You are setting up Android code signing for CI. Where should the `keystore.jks` file and passwords be stored securely?",
+      "options": [
+        "Commit to the Git repository",
+        "Store as Base64-encoded secrets in CI/CD variables, decode during build, and use environment variables for passwords",
+        "Email to the team",
+        "Store in Google Drive"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Never commit signing keys to Git. The standard practice is to encode the keystore file as Base64, store it as a secret environment variable, decode it in the CI pipeline, and inject passwords via environment variables.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Secrets management",
+        "Base64 encoding for binary files"
+      ],
+      "topic": "Code Signing Security"
+    },
+    {
+      "id": "fd6",
+      "text": "What is Fastlane, and why is it used in Flutter DevOps pipelines?",
+      "options": [
+        "A Flutter plugin for animations",
+        "An open-source automation tool for iOS and Android deployment tasks (screenshots, beta distribution, App Store submission)",
+        "A CI/CD platform",
+        "A testing framework"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Fastlane automates tedious mobile DevOps tasks. Flutter projects use it to manage provisioning profiles, take screenshots, upload to TestFlight, and submit to app stores without manual intervention.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Ruby-based automation",
+        "Common in native mobile DevOps"
+      ],
+      "topic": "Automation Tools"
+    },
+    {
+      "id": "fd7",
+      "text": "You need to run integration tests on 5 different Android emulators in parallel to verify compatibility. Which service provides this infrastructure?",
+      "options": [
+        "GitHub Actions",
+        "Firebase Test Lab",
+        "Codemagic Unity",
+        "App Center"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Firebase Test Lab provides a device farm of physical and virtual Android/iOS devices. You can upload an APK/IPA and test script, and it executes tests on multiple device models concurrently, reporting results.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Google Cloud device farm",
+        "Matrix testing"
+      ],
+      "topic": "Testing Infrastructure"
+    },
+    {
+      "id": "fd8",
+      "text": "What is the purpose of `--split-debug-info` flag in release builds?",
+      "options": [
+        "Enables source maps",
+        "Extracts Dart debug symbols to a separate file, reducing binary size and allowing symbolication of crash reports",
+        "Splits the APK by architecture",
+        "Enables ProGuard"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`--split-debug-info` reduces app size and is essential for symbolicating obfuscated stack traces. The DevOps engineer must archive these symbol files for each release to debug production crashes later.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Creates .symbols files",
+        "Required for crash reporting tools"
+      ],
+      "topic": "Build Optimization"
+    },
+    {
+      "id": "fd9",
+      "text": "You are implementing automated semantic versioning. How can you extract the version from `pubspec.yaml` in a shell script?",
+      "options": [
+        "`cat pubspec.yaml | grep version`",
+        "`grep '^version:' pubspec.yaml | sed 's/version: //'`",
+        "`yaml get version`",
+        "`flutter --version`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The version is on a line starting with `version:`. Using `grep` and `sed` (or `yq` for YAML parsing) extracts the value. This is used in CI to tag releases and name artifacts.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Simple text extraction",
+        "Useful for artifact naming"
+      ],
+      "topic": "Build Scripting"
+    },
+    {
+      "id": "fd10",
+      "text": "What is the purpose of `flutter precache` in CI?",
+      "options": [
+        "Downloads the Flutter SDK",
+        "Pre-downloads development binaries and artifacts required for the target platforms, speeding up subsequent builds",
+        "Clears the build cache",
+        "Pre-compiles Dart code"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`flutter precache` fetches platform-specific engine artifacts (iOS tools, Android SDK components) that Flutter needs. Running this once and caching the Flutter directory dramatically reduces CI build times.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "CI optimization",
+        "Pre-warms the engine cache"
+      ],
+      "topic": "CI Optimization"
+    },
+    {
+      "id": "fd11",
+      "text": "You need to deploy a Flutter web app to a CDN on every merge to main. What is the correct build command for optimal performance?",
+      "options": [
+        "`flutter build web`",
+        "`flutter build web --web-renderer canvaskit --release --source-maps`",
+        "`flutter run -d chrome`",
+        "`flutter build web --profile`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`--release` enables optimizations. `--web-renderer canvaskit` uses the faster WebGL renderer. `--source-maps` generates source maps for error tracking. The DevOps pipeline should then upload these files to a CDN (e.g., Firebase Hosting, Cloudflare Pages).",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think production optimization",
+        "Source maps for debugging"
+      ],
+      "topic": "Flutter Web Deployment"
+    },
+    {
+      "id": "fd12",
+      "text": "You are building a Flutter app with multiple flavors (dev, staging, prod). How do you pass different API endpoints at build time?",
+      "options": [
+        "Create three separate `main.dart` files",
+        "Use `--dart-define=API_URL=https://api.example.com` and read via `String.fromEnvironment`",
+        "Use `.env` files committed to Git",
+        "Modify the code before building"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`--dart-define` injects compile-time constants into the Dart code. This is secure (not in the binary strings table in plain text) and allows different configurations per build flavor in CI.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Compile-time environment variables",
+        "Accessible via `const String.fromEnvironment`"
+      ],
+      "topic": "Build Configuration"
+    },
+    {
+      "id": "fd13",
+      "text": "What is the purpose of the `flutter pub global activate cider` tool?",
+      "options": [
+        "To make iOS builds",
+        "To manage Flutter SDK versions per project (like nvm for Node.js)",
+        "To clean the build cache",
+        "To run tests"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`cider` (or `fvm` - Flutter Version Management) allows locking specific Flutter SDK versions per project. DevOps engineers use this to ensure reproducible builds across developer machines and CI servers.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think version pinning",
+        "FVM is the more common tool"
+      ],
+      "topic": "SDK Management"
+    },
+    {
+      "id": "fd14",
+      "text": "You are automating TestFlight uploads. What is required for authentication besides an Apple ID?",
+      "options": [
+        "Two-factor authentication code every time",
+        "An App Store Connect API Key (JSON) with 'Developer' or 'App Manager' role",
+        "The user's iCloud password",
+        "A physical iPhone"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "App Store Connect API Keys are the modern, secure way to authenticate CI pipelines without exposing Apple ID credentials or dealing with 2FA. The key is a JSON file with a private key.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Headless authentication",
+        "Replace username/password flow"
+      ],
+      "topic": "App Store Automation"
+    },
+    {
+      "id": "fd15",
+      "text": "What is the primary advantage of building Android App Bundles (`.aab`) over APKs in CI?",
+      "options": [
+        "AAB files are smaller to store",
+        "Google Play uses AAB to generate optimized APKs per device configuration (density, architecture, language), reducing download size for users",
+        "AAB builds faster",
+        "AAB can be installed directly on devices"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "App Bundles enable Google Play's dynamic delivery. The store generates device-specific APKs, dramatically reducing user download size. DevOps pipelines should always build AAB for production releases.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Dynamic delivery",
+        "Optimized per device"
+      ],
+      "topic": "Android Deployment"
+    },
+    {
+      "id": "fd16",
+      "text": "You want to automatically increment the build number (version code) on every CI build. Which pattern achieves this?",
+      "options": [
+        "Use a fixed number in pubspec.yaml",
+        "Use a script that sets the build number to the CI job ID (e.g., `GITHUB_RUN_NUMBER`) and updates `pubspec.yaml` before build",
+        "Let the store handle it",
+        "Use the current date as build number"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Using the CI run number ensures a unique, monotonically increasing integer for every build. This satisfies Android version code requirements without manual intervention.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "CI injects build metadata",
+        "`GITHUB_RUN_NUMBER` or `BUILD_NUMBER`"
+      ],
+      "topic": "Build Automation"
+    },
+    {
+      "id": "fd17",
+      "text": "You are caching dependencies in CI to speed up `flutter pub get`. Which directories should be cached?",
+      "options": [
+        "Only `build/` directory",
+        "`$FLUTTER_HOME/.pub-cache` and `$HOME/.pub-cache`",
+        "`lib/` directory",
+        "`android/` directory"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The pub cache stores downloaded packages. Caching these directories prevents re-downloading hundreds of MB of dependencies on every build, saving 30-60 seconds per pipeline run.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think about where packages live",
+        "Avoids network calls"
+      ],
+      "topic": "CI Optimization"
+    },
+    {
+      "id": "fd18",
+      "text": "You need to set up monitoring for production Flutter app crashes and ANRs. Which tool provides detailed Dart stack traces?",
+      "options": [
+        "Google Analytics",
+        "Firebase Crashlytics",
+        "Flutter DevTools",
+        "Sentry"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Both Firebase Crashlytics and Sentry integrate with Flutter. They capture Dart exceptions, native crashes, and provide symbolicated stack traces when you upload the `--split-debug-info` symbol files during CI.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Crash reporting SDK",
+        "Requires symbol upload step"
+      ],
+      "topic": "Monitoring & Observability"
+    },
+    {
+      "id": "fd19",
+      "text": "What is the `pubspec.lock` file, and why is it important to commit it in application projects?",
+      "options": [
+        "It is a temporary cache file",
+        "It locks the exact versions of all dependencies (including transitive), ensuring reproducible builds across CI and developer machines",
+        "It contains secret keys",
+        "It is generated by `flutter run`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Committing `pubspec.lock` ensures that CI and all developers use the exact same dependency versions. This eliminates 'works on my machine' bugs caused by version drift.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Reproducible builds",
+        "Dependency pinning"
+      ],
+      "topic": "Dependency Management"
+    },
+    {
+      "id": "fd20",
+      "text": "You need to run `dart analyze` and fail the CI build if there are issues. What is the correct severity flag?",
+      "options": [
+        "`dart analyze`",
+        "`dart analyze --fatal-infos --fatal-warnings`",
+        "`dart analyze --no-hints`",
+        "`flutter analyze --watch`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "By default, `dart analyze` exits with code 0 even with warnings. Adding `--fatal-infos` or `--fatal-warnings` ensures the build fails on quality violations, enforcing code standards.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Make CI strict",
+        "Enforce quality gates"
+      ],
+      "topic": "Quality Gates"
+    },
+    {
+      "id": "fd21",
+      "text": "You are using Firebase App Distribution for internal testing. How do you automate uploading the APK/IPA in CI?",
+      "options": [
+        "Manually upload via web console",
+        "Use `firebase appdistribution:distribute` CLI command with service account authentication",
+        "Email the file to testers",
+        "Use `flutter install`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The Firebase CLI allows headless uploads to App Distribution. The DevOps engineer sets up a service account key as a CI secret and runs the CLI command to distribute to tester groups automatically.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Headless automation",
+        "Service account credentials"
+      ],
+      "topic": "App Distribution"
+    },
+    {
+      "id": "fd22",
+      "text": "What is a 'GitHub Actions Self-Hosted Runner' and when is it necessary for Flutter CI?",
+      "options": [
+        "A runner running in a different region",
+        "A physical Mac Mini or Mac Studio in your office/cloud running the GitHub Actions agent, required for iOS builds and accessing internal resources",
+        "A Docker container",
+        "A faster GitHub-provided runner"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "GitHub's macOS runners are expensive and limited in availability. For frequent iOS builds or large teams, self-hosted Mac runners provide unlimited build minutes and faster performance (cached Xcode, local artifacts).",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Think about iOS build economics",
+        "Hardware ownership vs rental"
+      ],
+      "topic": "Infrastructure Management"
+    },
+    {
+      "id": "fd23",
+      "text": "You need to generate screenshots for App Store listings in multiple languages and device sizes automatically. Which tool is designed for this?",
+      "options": [
+        "Flutter Driver",
+        "Fastlane Snapshot / Screenshot Lane",
+        "Flutter test --update-goldens",
+        "flutter screenshot"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Fastlane's `snapshot` automates taking screenshots in every required locale and device frame. It integrates with Flutter via the `integration_test` package to programmatically navigate to specific screens before capturing.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Localization + Screenshots",
+        "Store listing automation"
+      ],
+      "topic": "Store Automation"
+    },
+    {
+      "id": "fd24",
+      "text": "You are setting up a CI pipeline that runs `flutter test` and generates a coverage report. What is the next step to enforce coverage thresholds?",
+      "options": [
+        "Manually check the report",
+        "Use a tool like `lcov` to parse `coverage/lcov.info` and fail the build if coverage is below a threshold (e.g., 80%)",
+        "Commit the report to Git",
+        "Print the report in console"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "DevOps enforces quality gates. Tools like `coverde` or simple Bash scripts can parse the LCov report and compare against a threshold. If coverage drops, the build fails, preventing untested code from reaching production.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Automated enforcement",
+        "Prevent coverage regression"
+      ],
+      "topic": "Quality Gates"
+    },
+    {
+      "id": "fd25",
+      "text": "What is the purpose of `flutter build appbundle --obfuscate`?",
+      "options": [
+        "Compresses the app bundle",
+        "Renames Dart classes and methods to short, meaningless names, making reverse engineering harder",
+        "Encrypts the source code",
+        "Removes unused code"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Obfuscation is a security measure that mangles symbol names in the Dart AOT snapshot. It makes decompiled code much harder to understand. Note: It does NOT hide string literals or API keys; that requires separate encryption.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Security feature",
+        "Symbol renaming"
+      ],
+      "topic": "Security"
+    },
+    {
+      "id": "fd26",
+      "text": "You are using `melos` to manage a Flutter monorepo with 15 packages. How does `melos` help in CI?",
+      "options": [
+        "It compiles the app",
+        "It orchestrates running scripts (test, analyze, build) across all packages in dependency order, and can filter only packages affected by a PR",
+        "It manages Git branches",
+        "It deploys to stores"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Melos is a monorepo orchestration tool. In CI, `melos run test:affected` runs tests only in packages changed by the current PR, drastically reducing build time while maintaining safety.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Monorepo management",
+        "Affected package detection"
+      ],
+      "topic": "Monorepo Management"
+    },
+    {
+      "id": "fd27",
+      "text": "You need to store iOS Distribution Certificates (.p12) and Provisioning Profiles securely for CI. What is the modern, recommended approach?",
+      "options": [
+        "Store them in a private Git repository",
+        "Use Fastlane Match, which stores encrypted certificates/profiles in a private Git repo or cloud storage (S3/Google Cloud), decrypting only during CI build",
+        "Commit them to the main repository",
+        "Regenerate them on every build"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Fastlane Match is the industry standard. It uses a single shared code signing identity across the team and CI, eliminating 'provisioning profile hell' while keeping secrets encrypted at rest.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Shared code signing identity",
+        "Encrypted storage"
+      ],
+      "topic": "iOS Code Signing"
+    },
+    {
+      "id": "fd28",
+      "text": "You are implementing a Blue/Green deployment strategy for a Flutter web app hosted on Firebase Hosting. How is this achieved?",
+      "options": [
+        "Deploy to two separate Firebase projects",
+        "Use Firebase Hosting Preview Channels for each PR, and deploy the 'live' channel only after verification",
+        "Use different domains",
+        "Use feature flags"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Firebase Hosting creates a unique preview URL for every PR/channel. This allows testing the exact production build before merging to main and deploying to the live channel. This is a native blue/green pattern for static hosting.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Preview URLs are the key",
+        "Promote channel to live"
+      ],
+      "topic": "Deployment Strategies"
+    },
+    {
+      "id": "fd29",
+      "text": "What is a 'Flutter Module' in the context of Add-to-App, and how does it affect DevOps pipelines?",
+      "options": [
+        "A separate Flutter project that can be embedded in existing native iOS/Android apps",
+        "A Dart package",
+        "A plugin",
+        "A widget library"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "A Flutter Module produces an AAR (Android) and XCFramework (iOS) that native apps consume. DevOps for modules involves building these artifacts and publishing them to private Maven/CocoaPods repositories for the native teams to integrate.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Think artifact generation",
+        "Integration with native build systems"
+      ],
+      "topic": "Add-to-App"
+    },
+    {
+      "id": "fd30",
+      "text": "You discover that your CI pipeline's `flutter build ios` step takes 15 minutes. Which optimization provides the largest speed improvement?",
+      "options": [
+        "Buy a faster Mac",
+        "Cache the `Pods` directory and `Flutter.framework` build artifacts, and use `flutter precache --ios`",
+        "Remove `pub get` step",
+        "Build in Debug mode"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "iOS builds spend significant time compiling Pods and linking the Flutter engine. Caching `ios/Pods` and `ios/Flutter/Flutter.framework` (or the entire `build/ios` directory) skips this work entirely on subsequent builds.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "Think about what takes time: Compilation of native dependencies",
+        "Cache derived data and Pods"
+      ],
+      "topic": "CI Optimization"
+    }
+  ]
+}

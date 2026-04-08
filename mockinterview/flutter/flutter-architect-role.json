@@ -1,0 +1,580 @@
+{
+  "id": "flutter_architect_mock_001",
+  "title": "Flutter Architect / Principal Engineer Mock Test",
+  "description": "Expert-level assessment for Flutter Architects covering system design, enterprise architecture patterns, multi-platform strategy, custom engine modifications, build infrastructure, and large-scale organizational impact.",
+  "category": "flutter",
+  "passingScore": 85,
+  "timeLimitMinutes": 120,
+  "questions": [
+    {
+      "id": "fa1",
+      "text": "You are designing the architecture for a Fortune 500 company adopting Flutter across 12 independent product teams. The requirement is strict isolation of feature development with shared design system, networking, and analytics. Which monorepo strategy scales best?",
+      "options": [
+        "Single Flutter project with feature folders and code ownership files",
+        "Melos-managed monorepo with independent Flutter packages for each feature, a `core_ui` package, a `core_network` package, and a `core_analytics` package, all published to a private pub server with semantic versioning",
+        "Separate Git repositories per feature with Git submodules",
+        "Federated Flutter modules loaded at runtime"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Melos provides orchestration for Dart/Flutter monorepos. Semantic versioning of core packages allows teams to upgrade dependencies on their schedule. This pattern (used by Google internally for large Flutter apps) balances autonomy with consistency and prevents 'dependency hell'.",
+      "difficulty": "expert",
+      "points": 35,
+      "hints": [
+        "Think about independent release cycles for core components",
+        "Versioning prevents breaking changes across 12 teams"
+      ],
+      "topic": "Enterprise Monorepo Architecture"
+    },
+    {
+      "id": "fa2",
+      "text": "Your organization requires a single Flutter codebase to deploy to iOS, Android, Web, Windows, macOS, and an embedded Linux kiosk. Each platform requires unique navigation patterns (drawer on mobile, sidebar on desktop, hamburger menu on kiosk). What is the most maintainable architecture?",
+      "options": [
+        "Using `Platform.isAndroid` conditionals scattered throughout widgets",
+        "Responsive Layout Builder with `Breakpoint`-based injection of `NavigationStrategy` implementations",
+        "Creating 6 separate branches for each platform",
+        "Using `kIsWeb` flag to switch logic"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Hardcoding platform checks violates Open/Closed principle and creates unmaintainable code. An architect abstracts navigation into a strategy pattern injected via dependency injection based on screen size class and input type (touch vs mouse). This scales to 20+ form factors without changing core business logic.",
+      "difficulty": "expert",
+      "points": 35,
+      "hints": [
+        "Think beyond 'mobile vs web'",
+        "Design patterns over flag checks"
+      ],
+      "topic": "Multi-Platform Architecture"
+    },
+    {
+      "id": "fa3",
+      "text": "You observe that Flutter web's initial load time (Time to Interactive) is 4.2 seconds on 3G networks. Your team has already deferred all non-essential libraries and compressed assets. Which architectural change yields the next significant reduction?",
+      "options": [
+        "Switching from CanvasKit to HTML renderer",
+        "Implementing Server-Side Rendering (SSR) of the initial route using a custom Dart backend or `flutter_web_bootstrap` pre-rendering service workers",
+        "Enabling PWA offline mode",
+        "Removing all animations"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The fundamental problem is the Flutter engine (WASM/JS) must download and execute before rendering the first pixel. SSR solves this by serving pre-rendered HTML/CSS for the initial view (hydration), showing content immediately while the Flutter engine boots in the background. This is an advanced architectural pattern for enterprise web deployment.",
+      "difficulty": "expert",
+      "points": 40,
+      "hints": [
+        "Think about what the browser sees before Flutter loads",
+        "Hydration pattern"
+      ],
+      "topic": "Flutter Web Performance"
+    },
+    {
+      "id": "fa4",
+      "text": "You need to fork the Flutter Engine to add support for a proprietary hardware codec on embedded devices. After modifying the C++ engine source, what is the correct process to distribute this custom engine to 50+ developer machines?",
+      "options": [
+        "Commit the compiled `libflutter.so` to the main Git repo",
+        "Set up a CI pipeline that builds the custom engine for host platforms (macOS, Windows, Linux) and publishes artifacts to a private Cloud Storage bucket, referenced via `FLUTTER_ENGINE` environment variable or `flutter config --local-engine`",
+        "Copy the engine files via USB to each developer",
+        "Use `flutter channel master`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Maintaining a custom engine fork requires infrastructure. An Architect sets up a build pipeline (often using `et` build tool from the engine repo) to produce engine artifacts. Developers then use `--local-engine` or `--local-engine-host` flags pointing to cached downloads, ensuring deterministic builds.",
+      "difficulty": "expert",
+      "points": 40,
+      "hints": [
+        "Think about reproducibility across 50 machines",
+        "Binary distribution infrastructure"
+      ],
+      "topic": "Custom Engine Distribution"
+    },
+    {
+      "id": "fa5",
+      "text": "Your enterprise app processes sensitive financial data. The security team mandates that all business logic and data transformation must run in an isolated environment that cannot be inspected by memory dumps or debuggers. What is the appropriate Flutter architecture?",
+      "options": [
+        "Obfuscate the Dart code using `--obfuscate`",
+        "Isolate sensitive computation to a background Isolate with restricted `ReceivePort` access and enforce release-mode-only execution",
+        "Write the logic in C++ and call via FFI",
+        "Store the logic in a SQLite database as encrypted SQL"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Dart Isolates have their own memory heap, isolated from the main isolate. While not a hardware enclave, it provides a strong memory boundary. Combined with compile-time obfuscation and anti-debugging checks, this is the standard Flutter approach for separating sensitive logic. Note: FFI in C++ does not inherently prevent memory dumps either.",
+      "difficulty": "expert",
+      "points": 35,
+      "hints": [
+        "Think about memory isolation within Dart VM",
+        "Defense in depth"
+      ],
+      "topic": "Security Architecture"
+    },
+    {
+      "id": "fa6",
+      "text": "You are designing the state management strategy for an application with complex forms (50+ fields), undo/redo capabilities, and optimistic updates to a GraphQL backend. Which pattern provides the required predictability and time-travel debugging?",
+      "options": [
+        "Provider with ChangeNotifier",
+        "BLoC with multiple Cubits",
+        "Redux or `flutter_bloc` with event-sourcing and middleware for side effects",
+        "GetX reactive variables"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Undo/redo and optimistic rollback require immutable state transitions and a single source of truth. Redux (or Bloc with event replay) provides an audit trail of actions. Middleware can persist the action queue for crash recovery. This level of complexity justifies the boilerplate of Redux patterns.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think 'Event Sourcing'",
+        "Need to replay user inputs"
+      ],
+      "topic": "Complex State Management"
+    },
+    {
+      "id": "fa7",
+      "text": "You are implementing a custom build pipeline using `build_runner`. You need to generate Dart code based on JSON schemas fetched from a live API at build time. What is the correct approach?",
+      "options": [
+        "Write a shell script to run `curl` before `flutter pub run build_runner build`",
+        "Implement a custom `Builder` that fetches the schema during the `build` phase, caching it using `AssetId` and `BuildStep` dependencies",
+        "Commit the JSON schema to the repo manually",
+        "Use `pub global activate` to fetch the schema"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Custom `Builder`s have access to the `BuildStep` which can resolve assets and perform network requests (if allowed). The key is declaring the correct `buildExtensions` and using `Resolver` to manage dependencies so that changes to the remote schema invalidate the cache correctly.",
+      "difficulty": "expert",
+      "points": 35,
+      "hints": [
+        "Think about build cache invalidation",
+        "Custom code generation"
+      ],
+      "topic": "Build System & Code Generation"
+    },
+    {
+      "id": "fa8",
+      "text": "In a complex animation system built with `CustomPainter`, you notice dropped frames only on the first run of the animation. The DevTools timeline shows 'Shader Compilation' spikes. What is the permanent architectural solution?",
+      "options": [
+        "Call `precachePicture` on the assets",
+        "Use `SkSL` warm-up (Shader Shader Language precompilation) exported from a real device and bundled with the app",
+        "Reduce the animation complexity",
+        "Use `RepaintBoundary`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SkSL warm-up captures the compiled GPU shaders on a reference device during testing and bundles them as a binary asset. The engine then pre-warms these shaders at startup, eliminating runtime compilation jank. This is the only guaranteed way to fix first-run animation stutters on complex paths and gradients.",
+      "difficulty": "expert",
+      "points": 35,
+      "hints": [
+        "Impeller solves this partially, but SkSL is the classic fix",
+        "Think GPU shader caching"
+      ],
+      "topic": "Rendering Performance"
+    },
+    {
+      "id": "fa9",
+      "text": "You are migrating an existing native iOS (Swift) and Android (Kotlin) app to Flutter incrementally. The product team wants to keep existing native authentication screens and slowly replace features with Flutter. What is the most robust integration strategy?",
+      "options": [
+        "Rewrite the whole app in Flutter immediately",
+        "Use `FlutterFragment` (Android) and `FlutterViewController` (iOS) to embed Flutter modules, passing authentication tokens via `MethodChannel` and sharing a common SQLite database via Platform Channels",
+        "Use `flutter attach` to live-edit the native parts",
+        "Convert native code to Dart using a transpiler"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Add-to-App (Flutter Module integration) allows gradual migration. The Architect ensures the token refresh mechanism is synchronized across the native and Flutter layers (often via shared `UserDefaults`/`SharedPreferences` encrypted with the same keychain). This prevents logout loops during the migration phase.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about hybrid navigation stacks",
+        "Shared authentication state"
+      ],
+      "topic": "Add-to-App / Migration"
+    },
+    {
+      "id": "fa10",
+      "text": "You need to enforce that all network requests go through a custom `HttpClient` that logs metrics to a performance dashboard. How do you intercept *all* HTTP traffic including those from third-party packages (e.g., CachedNetworkImage) without forking the packages?",
+      "options": [
+        "Wrap every `http.get` call manually",
+        "Override the `HttpOverrides.global` with a custom `HttpClient` factory that returns a logging client",
+        "Use Charles Proxy",
+        "Modify the Flutter engine"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`HttpOverrides` is a Dart SDK feature that allows intercepting all socket/HTTP connections at the platform level. Any package using `dart:io` HttpClient will pass through this override. This is an architect-level pattern for cross-cutting concerns like logging, certificate pinning, or mocking.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about AOP (Aspect Oriented Programming) in Dart",
+        "Global interceptors"
+      ],
+      "topic": "Networking Architecture"
+    },
+    {
+      "id": "fa11",
+      "text": "What is the primary limitation of using `PlatformView` (AndroidView/UiKitView) for embedding a complex native map (Google Maps) in a Flutter scrolling list?",
+      "options": [
+        "It requires internet permission",
+        "It renders in a separate texture layer, causing 'surfaceview flicker' or 'overlay clipping' during scroll animations due to composition ordering",
+        "It is not supported on iOS",
+        "It crashes the app"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Platform Views are composited differently than Flutter widgets. They exist in a separate view hierarchy (or texture layer with Hybrid Composition). This causes rendering artifacts when Flutter widgets (like AppBars) try to draw *over* the native view during scroll transitions. An Architect knows to avoid nesting native views in animated lists or to use `useAndroidViewSurface` controls.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think about the View/Texture layer fight",
+        "Performance overhead of composition"
+      ],
+      "topic": "Platform Views"
+    },
+    {
+      "id": "fa12",
+      "text": "Your team is experiencing flaky `flutter drive` integration tests. The tests fail sporadically because the UI hasn't settled before the next action. What is the robust architectural solution for test stability?",
+      "options": [
+        "Add `sleep(Duration(seconds: 2))` everywhere",
+        "Implement a `FlutterDriver.waitFor` or `WidgetTester.pumpAndSettle` strategy that polls for specific 'idle' semantic markers or animation completion",
+        "Run the tests slower",
+        "Disable animations in tests"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`sleep` is brittle and slow. An architect designs the app to be testable, potentially exposing a global `ValueNotifier<bool>` for 'isBusy' or using `Semantics` nodes to signal loading states. `pumpAndSettle` is the correct API, but it works best when the app's async work is properly wired into the frame scheduler.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Never use fixed delays in tests",
+        "Design for testability"
+      ],
+      "topic": "Testing Strategy"
+    },
+    {
+      "id": "fa13",
+      "text": "You are implementing a design system where `ThemeData` is generated dynamically based on a remote configuration (Dark Mode, Brand Color, Font Scale fetched from an API). What is the challenge with simply calling `setState` on `MaterialApp`?",
+      "options": [
+        "It causes a full app restart, losing all navigation state and ephemeral scroll positions",
+        "It doesn't update the font",
+        "It only works on iOS",
+        "It throws a null safety error"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Changing `ThemeData` *does not* require an app restart. You can wrap `MaterialApp` in a `Theme` widget or use a `StreamBuilder` on the `theme` property. However, naive `setState` on `MyApp` rebuilds the root widget but preserves the `Navigator` state. The challenge is *not* losing state; it's ensuring all dependent widgets (which use `Theme.of(context)`) update. Architects use `InheritedTheme` patterns to ensure granular reactivity.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about state retention",
+        "Dynamic theming without restart"
+      ],
+      "topic": "Dynamic Theming"
+    },
+    {
+      "id": "fa14",
+      "text": "You are evaluating whether to adopt the `Impeller` rendering backend for a production app today. What is the current (2025+) status and recommendation?",
+      "options": [
+        "Impeller is experimental and should be avoided",
+        "Impeller is now the default rendering engine on iOS and is being rolled out on high-end Android devices. It provides significant shader compilation improvements but may have minor visual fidelity differences with specific blend modes compared to Skia",
+        "Impeller is only for games",
+        "Impeller replaces Dart"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "As of recent Flutter versions, Impeller is default on iOS and in preview on Android. An Architect understands the trade-off: it eliminates shader compilation jank completely but may render certain anti-aliased paths slightly differently. The recommendation is to enable Impeller on Android for testing and rely on it for iOS production.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "It's the future of Flutter rendering",
+        "Status is platform-dependent"
+      ],
+      "topic": "Rendering Engine Evolution"
+    },
+    {
+      "id": "fa15",
+      "text": "You need to ensure that critical business logic (e.g., tax calculation) is executed deterministically and cannot be overridden by a junior developer accidentally. What Dart feature enforces this at compile time?",
+      "options": [
+        "`@visibleForTesting` annotation",
+        "`@internal` annotation combined with custom lint rules that block imports of the `src` directory",
+        "`@protected` keyword",
+        "`@sealed` class"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Dart's privacy is library-level (`_`). For internal packages, the convention is to put implementation in `lib/src/` and export only the public interface. Architects enforce this by using `dart_code_metrics` or `import_lint` to prevent other packages from importing `lib/src/` directly.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about architectural boundaries",
+        "Compiler/analyzer enforcement"
+      ],
+      "topic": "Architecture Enforcement"
+    },
+    {
+      "id": "fa16",
+      "text": "You are designing a large form with 100+ text fields. `TextField` widgets currently rebuild the entire form on every keystroke. Which architectural pattern solves this while maintaining a single `FormState`?",
+      "options": [
+        "Use `StatefulBuilder` for each field",
+        "Use `flutter_hooks` with `useTextEditingController`",
+        "Use BLoC/Cubit for the form state, and `BlocSelector` or `context.select` to listen to specific field values, preventing rebuild of the whole form",
+        "Use `const` TextField"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "`context.select` or `BlocSelector` filters state changes to only those affecting the specific field. This ensures that typing in 'Field A' does not rebuild the widget for 'Field B'. This is a critical performance pattern for complex data entry screens.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Granular rebuilds",
+        "Selector pattern"
+      ],
+      "topic": "Performance Patterns"
+    },
+    {
+      "id": "fa17",
+      "text": "You want to generate API client code (Dio/Retrofit) from an OpenAPI spec *and* ensure that any breaking changes in the spec fail the CI build. What is the correct setup?",
+      "options": [
+        "Run `dart run build_runner build` manually",
+        "Use `swagger_dart_code_generator` in a CI step with `--input-url` and check the exit code. Fail the build if spec is incompatible or codegen changes exist",
+        "Copy-paste the spec to a file and commit it",
+        "Use Postman to test the API"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "An architect automates client generation. If the backend team changes an endpoint, the `build_runner` step in CI will fail because the generated code doesn't match the new spec. This forces a PR update on the Flutter side before merging, preventing runtime crashes.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Shift left on breaking changes",
+        "Contract testing via codegen"
+      ],
+      "topic": "API Integration & CI"
+    },
+    {
+      "id": "fa18",
+      "text": "You are implementing an A/B testing framework that must change UI layouts significantly without shipping new app versions. Which architectural pattern enables this?",
+      "options": [
+        "Remote Config flags combined with a `WidgetFactory` pattern that returns different widget implementations based on experiment assignment",
+        "Using `eval()` on remote Dart code",
+        "WebView fallback",
+        "Shorebird code push"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Sending executable code is dangerous and often violates store policies. The correct approach is to compile multiple UI variants into the app and use a `WidgetBuilder` factory keyed by experiment names. Remote Config simply flips a switch to choose which factory to use.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think 'Feature Flags on steroids'",
+        "Compile-time inclusion, runtime selection"
+      ],
+      "topic": "Experimentation Architecture"
+    },
+    {
+      "id": "fa19",
+      "text": "You discover a memory leak where `ImageStream` listeners are not being cleared. Which tool provides the heap snapshot comparison to definitively prove the leak is fixed?",
+      "options": [
+        "Flutter Inspector",
+        "Dart DevTools Memory view (Heap Snapshot diff)",
+        "flutter analyze",
+        "Android Studio Logcat"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "DevTools allows taking a heap snapshot before and after a navigation event. Comparing the two (Diff) shows exactly which objects increased in count but were not garbage collected. This is the definitive proof required by senior architects for memory leak fixes.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Think about proving a negative (no leak)",
+        "Use the 'Allocated Since Last GC' view"
+      ],
+      "topic": "Debugging & Profiling"
+    },
+    {
+      "id": "fa20",
+      "text": "You are designing the error handling strategy for a banking app. What is the correct hierarchy of error types for a `Result<T, E>` pattern?",
+      "options": [
+        "Catch `Exception` and show a generic message",
+        "Define `sealed class AppFailure` with subclasses: `NetworkFailure`, `ValidationFailure`, `SessionExpiredFailure`, `UnexpectedFailure`. Map UI responses based on type, not string message",
+        "Throw Strings",
+        "Use `try-catch` and show `e.toString()`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Typed failures (using sealed classes) enforce exhaustive handling. This prevents the 'Unknown Error' popup. The UI layer can safely route `SessionExpiredFailure` to a login screen without relying on brittle string matching of exception messages.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think type safety",
+        "Exhaustive checking with `switch`"
+      ],
+      "topic": "Error Handling"
+    },
+    {
+      "id": "fa21",
+      "text": "You need to benchmark the performance impact of a new animation library. What is the correct metric to measure?",
+      "options": [
+        "Frames Per Second (FPS) in Profile Mode",
+        "Frame Rasterization Time (UI Thread + Raster Thread) in the Timeline view",
+        "CPU Usage",
+        "Memory Footprint"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "FPS is a symptom, not the metric. 60 FPS can be achieved with 16ms/frame or 5ms/frame. Rasterization time tells you how much 'headroom' you have. An architect aims for < 6ms frame times to ensure smooth 120fps on ProMotion devices.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Look at the Timeline tab, not just the counter",
+        "Budget is ~8ms for 120fps"
+      ],
+      "topic": "Performance Metrics"
+    },
+    {
+      "id": "fa22",
+      "text": "You are using `go_router` for navigation. How do you ensure that deep links containing sensitive data (e.g., password reset tokens) are not logged to analytics or browser history?",
+      "options": [
+        "Use `Router.neglect`",
+        "Configure `GoRouter` with `redirect` to strip sensitive query parameters before they enter the state, and use `replace` navigation for the target page",
+        "Disable deep linking",
+        "Encrypt the URL"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Analytics libraries often log the full route path. An architect sanitizes the route via `redirect` to remove the token from the URL string and passes the token to the destination screen via `extra` (which is not in the URL) or via a secure ephemeral cache.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Sanitize at the router level",
+        "Prevent token leakage in analytics"
+      ],
+      "topic": "Navigation & Security"
+    },
+    {
+      "id": "fa23",
+      "text": "You are adopting `Riverpod` at scale. What is the risk of using `ref.watch` inside a `build` method for a provider that depends on `FutureProvider` that throws an error?",
+      "options": [
+        "Nothing, it's safe",
+        "It causes the widget to rebuild infinitely if not handled correctly",
+        "It causes the app to crash with a red screen unless wrapped in `AsyncValue` handling or `ProviderScope` error boundary",
+        "It logs the user out"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Uncaught errors in providers propagate and break the widget tree. An architect ensures every `AsyncValue` is pattern-matched (`.when`) and that a global error handler is registered with `ProviderContainer.onError` to prevent red screens in production.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Think about production crashes",
+        "Always handle loading and error states"
+      ],
+      "topic": "State Management Safety"
+    },
+    {
+      "id": "fa24",
+      "text": "You are optimizing the Android build. The APK size is 45MB. You have already used `--split-per-abi` and ProGuard. What is the next advanced step to reduce size further?",
+      "options": [
+        "Delete unused Dart files",
+        "Use `--obfuscate` and `--split-debug-info` (already assumed), and then use `--target-platform android-arm64 --build-bundle` to generate App Bundles, relying on Google Play's app signing to further optimize dex code",
+        "Remove all images",
+        "Use Android Studio's APK Analyzer to identify and remove specific large asset files"
+      ],
+      "correctAnswerIndex": 3,
+      "explanation": "APK Analyzer shows the exact composition (Dart AOT snapshot, assets, native libs). Often, a single high-res splash screen image or an unused font file is 5-10MB. An architect uses the analyzer to surgically remove bloat before resorting to more complex engine patches.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Analyze before optimizing",
+        "Look for asset bloat"
+      ],
+      "topic": "Size Optimization"
+    },
+    {
+      "id": "fa25",
+      "text": "You are building a white-label app where the `AndroidManifest.xml` and `Info.plist` must change per client (e.g., different app names, bundle IDs). What is the scalable solution?",
+      "options": [
+        "Manually edit files before building",
+        "Use Flutter Flavors with separate `android/app/src/{flavor}` directories and `ios/Flutter/{flavor}.xcconfig` files",
+        "Use a Python script to replace strings",
+        "Use different Git branches"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Flutter Flavors are the official mechanism. They allow for different resource directories at the native level. Combining this with `--dart-define-from-file` for Dart-level config provides a complete, automated white-label build system.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Think configuration over modification",
+        "Use `flutter run --flavor`"
+      ],
+      "topic": "Build Configuration"
+    },
+    {
+      "id": "fa26",
+      "text": "You need to share 500MB of machine learning models (TensorFlow Lite) with the Flutter app. Bundling them in the APK/IPA violates store size limits. What is the correct architecture?",
+      "options": [
+        "Download the models on first launch from a CDN",
+        "Split the app into multiple APKs",
+        "Use on-device training to avoid shipping models",
+        "Compress the models more"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Store limits are strict (200MB for Android AAB, 4GB uncompressed but slow downloads). For large assets, an architect implements a background download service (using `flutter_downloader`) that fetches the models *after* installation, caching them in the app's documents directory.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Defer asset loading",
+        "Use Application Support directory"
+      ],
+      "topic": "Asset Management"
+    },
+    {
+      "id": "fa27",
+      "text": "What is the purpose of the `ShaderMask` widget's `blendMode` property?",
+      "options": [
+        "To change the opacity of a widget",
+        "To apply visual effects like gradients or alpha masks to a widget subtree using GPU composition blending",
+        "To blur the widget",
+        "To rotate the widget"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`ShaderMask` applies a `Shader` (e.g., `LinearGradient.createShader`) to the pixels of its child based on the `BlendMode`. This is a fundamental GPU-composited effect for creating gradients on text or images without expensive `CustomPaint`.",
+      "difficulty": "beginner",
+      "points": 15,
+      "hints": [
+        "Think gradient text",
+        "Uses Skia/Impeller shaders"
+      ],
+      "topic": "Rendering Basics"
+    },
+    {
+      "id": "fa28",
+      "text": "You need to ensure that all `MaterialApp` routes have analytics tracking. What is the cleanest architectural approach?",
+      "options": [
+        "Add `logEvent` to every `onPressed`",
+        "Create a custom `NavigatorObserver` that overrides `didPush`, `didPop`, and `didReplace`, and inject it into `MaterialApp.navigatorObservers`",
+        "Use a global `RouteAware` mixin",
+        "Parse the URL manually"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`NavigatorObserver` is the official, lifecycle-aware way to intercept navigation. It catches all navigation regardless of how it's triggered (deep links, back button, programmatic push). This is a separation of concerns pattern that keeps analytics logic out of UI widgets.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Think cross-cutting concern",
+        "Avoid UI code pollution"
+      ],
+      "topic": "Analytics Architecture"
+    },
+    {
+      "id": "fa29",
+      "text": "You are creating a custom `RenderBox` to layout children in a circle. During `performLayout`, you encounter a `'!parentUsesSize'` assertion when a child tries to use its own size. What does this mean?",
+      "options": [
+        "The child is too big",
+        "You called `child.layout` without passing the `parentUsesSize` parameter as `true` or `false` correctly, violating the RenderBox protocol",
+        "The parent is null",
+        "The child is not a RenderBox"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The `layout` method requires a `parentUsesSize` flag. If `true`, the parent is allowed to read the child's size after layout. If `false`, reading the child's size will assert. This optimization allows Flutter to skip relaying out the parent if only the child's intrinsic dimensions change. An architect understands the RenderBox contract deeply.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think about layout efficiency",
+        "Protocol enforcement"
+      ],
+      "topic": "Custom Render Objects"
+    },
+    {
+      "id": "fa30",
+      "text": "You are evaluating Flutter for a project that requires absolute control over the display refresh rate (VRR/GSync). Which layer provides this control?",
+      "options": [
+        "Dart's `Ticker` class",
+        "`ui.window` (now `PlatformDispatcher`) and the Engine's `Animator` class via FFI",
+        "`AnimationController`",
+        "`MediaQuery`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`Ticker` schedules frames based on `SchedulerBinding`. For VRR sync, you need to interface with the platform's display link (iOS) or Choreographer (Android). This requires accessing the `PlatformDispatcher.onBeginFrame` and `onDrawFrame` callbacks directly, potentially bypassing the standard widget tree for custom game loop integrations.",
+      "difficulty": "expert",
+      "points": 35,
+      "hints": [
+        "Think below the widget layer",
+        "Game engine integration"
+      ],
+      "topic": "Advanced Rendering Control"
+    }
+  ]
+}
