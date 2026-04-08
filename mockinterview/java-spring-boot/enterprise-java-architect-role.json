@@ -1,0 +1,385 @@
+{
+  "id": "enterprise_java_architect_mock_001",
+  "title": "Enterprise Java Architect Assessment",
+  "description": "Architect-level evaluation focusing on enterprise Java patterns, system design, performance tuning, integration architectures (JMS, Kafka, SOAP/REST), legacy modernization (Struts/EJB to Spring Boot), distributed transactions, caching strategies, and cloud-native Java deployments.",
+  "category": "enterprise_java_architect",
+  "passingScore": 85,
+  "timeLimitMinutes": 120,
+  "questions": [
+    {
+      "id": "eja1",
+      "text": "When would you choose Apache Kafka over traditional JMS (ActiveMQ/RabbitMQ) in an enterprise Java architecture?",
+      "options": [
+        "For request-reply synchronous communication",
+        "For high-throughput event streaming, event sourcing, and when message replay is required",
+        "For small-scale deployments with < 10 messages per second",
+        "When exactly-once delivery is not important"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Kafka excels at high-throughput persistent event storage, replayability, and stream processing. JMS is better for traditional point-to-point and pub-sub with lower throughput requirements.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Integration Architecture"
+    },
+    {
+      "id": "eja2",
+      "text": "What is the primary architectural difference between stateful session beans (SFSB) and stateless session beans (SLSB) in Jakarta EE?",
+      "options": [
+        "SFSB are faster than SLSB",
+        "SFSB maintain conversational state across multiple client calls; SLSB are stateless and pooled, making them more scalable",
+        "SLSB cannot use JPA",
+        "SFSB are deprecated in Jakarta EE 10"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SFSB preserves state across calls but limits scalability. SLSB are stateless, pooled, and can handle many clients, making them the default choice for scalable enterprise apps.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Jakarta EE"
+    },
+    {
+      "id": "eja3",
+      "text": "What is the 'Strangler Fig Pattern' and how is it applied to modernizing legacy Java applications (e.g., Struts/EJB to Spring Boot)?",
+      "options": [
+        "Delete the legacy system immediately",
+        "Gradually replace specific functionalities with new microservices, routing traffic between legacy and new systems until full replacement",
+        "Rewrite everything from scratch in one release",
+        "Keep both systems running permanently without integration"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The Strangler pattern incrementally migrates legacy systems by intercepting requests and routing to new services, eventually strangling the old system. Minimizes risk and allows continuous delivery.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Legacy Modernization"
+    },
+    {
+      "id": "eja4",
+      "text": "In a distributed transaction across multiple microservices, why would you choose the 'Saga Pattern' over XA (Two-Phase Commit)?",
+      "options": [
+        "XA is always faster",
+        "Saga provides ACID guarantees; XA provides eventual consistency",
+        "XA requires distributed transaction coordinator and locks resources; Saga uses compensating transactions for better scalability and availability",
+        "Saga is only for NoSQL databases"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "XA transactions lock resources and reduce availability. Saga provides eventual consistency without locks, using compensating transactions, better suited for microservices where long-lived transactions are problematic.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Distributed Transactions"
+    },
+    {
+      "id": "eja5",
+      "text": "What is the purpose of 'Application-Level Caching' (e.g., Caffeine, Ehcache) vs 'Distributed Caching' (e.g., Redis, Hazelcast)?",
+      "options": [
+        "No difference; both are the same",
+        "Application cache is local to each JVM (fast but not shared); distributed cache is shared across JVMs (slower but consistent)",
+        "Distributed cache is always better",
+        "Application cache requires a separate server"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Local caches (Caffeine) provide sub-microsecond access but each node has its own copy, causing inconsistency. Distributed caches (Redis) provide consistency across nodes with network overhead.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Caching Strategy"
+    },
+    {
+      "id": "eja6",
+      "text": "How does 'Read-Through' caching differ from 'Cache-Aside' pattern?",
+      "options": [
+        "No difference",
+        "Cache-Aside: app checks cache, then DB; Read-Through: cache sits between app and DB, cache loads missing data automatically",
+        "Read-Through is faster but less reliable",
+        "Cache-Aside is only for write operations"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Cache-Aside (lazy loading) gives app control. Read-Through delegates loading responsibility to cache library, simplifying code but reducing flexibility.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Caching Strategy"
+    },
+    {
+      "id": "eja7",
+      "text": "What is the 'CQRS' pattern and when is it appropriate in enterprise Java systems?",
+      "options": [
+        "A database optimization technique",
+        "Separating read and write models (different data structures/databases) for high-performance systems with different read/write scalability needs",
+        "A replacement for ORM",
+        "A logging framework"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "CQRS allows read and write models to scale independently. Useful when read/write ratios are extreme (e.g., 1000:1) or when read model needs denormalized views for complex queries.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Architectural Patterns"
+    },
+    {
+      "id": "eja8",
+      "text": "What is 'Database Sharding' and what are the common sharding strategies in enterprise Java?",
+      "options": [
+        "Copying data to multiple servers for reads",
+        "Horizontal partitioning of data across multiple databases based on a shard key (hash, range, or directory-based)",
+        "Vertical partitioning of columns",
+        "Using multiple database vendors"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Sharding distributes data across databases to scale beyond single-node limits. Strategies: hash (even distribution), range (ordered data), or directory (lookup service).",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Scalability"
+    },
+    {
+      "id": "eja9",
+      "text": "In a high-traffic enterprise Java application, what is the purpose of a 'Connection Pool' (e.g., HikariCP) and what are optimal settings?",
+      "options": [
+        "To cache SQL queries",
+        "To reuse database connections, reducing overhead; optimal pool size = (core_count * 2) + effective_spindle_count, typically 10-20 connections per instance",
+        "To encrypt database traffic",
+        "To log SQL statements"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Connection pooling avoids expensive connection creation. HikariCP is default in Spring Boot. Formula: pool_size = Tn * (Cm - 1) + 1. Too large causes contention; too small causes waits.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Performance"
+    },
+    {
+      "id": "eja10",
+      "text": "What is the 'Outbox Pattern' and which problem does it solve in event-driven architectures?",
+      "options": [
+        "Sending emails asynchronously",
+        "Ensuring reliable event publication alongside database writes without using distributed transactions (stores events in outbox table, published by separate process)",
+        "Storing event logs",
+        "Caching event payloads"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The Outbox pattern solves dual-write problem (DB write + event publish). Events stored in same transaction, then published via poller or CDC (Debezium), ensuring at-least-once delivery.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Event-Driven Architecture"
+    },
+    {
+      "id": "eja11",
+      "text": "What are the trade-offs between 'Containerization (Docker)' and 'Traditional VMs' for enterprise Java deployments?",
+      "options": [
+        "Containers are always better",
+        "Containers share host OS kernel (lightweight, fast startup) but less isolation; VMs provide full isolation (better security) with more overhead",
+        "VMs are faster than containers",
+        "Java cannot run in containers"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Containers share kernel, reducing overhead and startup time. VMs have stronger isolation boundaries but higher resource usage. Java container awareness (memory limits) requires -XX:+UseContainerSupport (Java 10+).",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Cloud-Native"
+    },
+    {
+      "id": "eja12",
+      "text": "What is 'Blue-Green Deployment' and how does it enable zero-downtime releases for Java applications?",
+      "options": [
+        "Deploying half the code on Monday, half on Friday",
+        "Running two identical production environments (blue=current, green=new); switching router traffic after validation allows instant rollback",
+        "Using two different cloud providers",
+        "A color-coded logging system"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Blue-green eliminates downtime by maintaining two environments. Switch traffic via load balancer. Rollback is instantaneous by switching back to blue.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Deployment"
+    },
+    {
+      "id": "eja13",
+      "text": "What is 'Circuit Breaker' pattern and which Java libraries implement it (e.g., Resilience4j)?",
+      "options": [
+        "A physical electrical component",
+        "A pattern preventing cascading failures; states: CLOSED → OPEN → HALF-OPEN; Resilience4j, Hystrix (legacy), Spring Cloud Circuit Breaker",
+        "A logging mechanism",
+        "A deployment strategy"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Circuit breaker wraps external calls. OPEN fails fast, HALF-OPEN tests recovery. Resilience4j is modern replacement for Netflix Hystrix.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Resilience"
+    },
+    {
+      "id": "eja14",
+      "text": "What is the 'Bulkhead Pattern' and how does it isolate failures in enterprise Java?",
+      "options": [
+        "A ship compartment",
+        "Isolating resources (thread pools, connection pools) per service/tenant to prevent one failure from exhausting all resources",
+        "A database schema design",
+        "A security pattern"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Bulkhead partitions resources. Resilience4j provides bulkhead (semaphore or thread pool). Prevents slow downstream service from consuming all application threads.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Resilience"
+    },
+    {
+      "id": "eja15",
+      "text": "What is the purpose of 'Java Flight Recorder (JFR)' and 'Java Mission Control (JMC)' in production troubleshooting?",
+      "options": [
+        "To compile Java code faster",
+        "To continuously collect low-overhead JVM telemetry (CPU, memory, locks, GC) for post-mortem or live analysis with minimal performance impact (<1%)",
+        "To deploy applications",
+        "To manage database connections"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "JFR provides production-safe, always-on profiling. JMC visualizes JFR recordings. Essential for diagnosing performance issues in production without restarting JVM.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Observability"
+    },
+    {
+      "id": "eja16",
+      "text": "When would you choose 'gRPC' over 'REST' for internal microservice communication in Java?",
+      "options": [
+        "For browser-to-backend communication",
+        "For low-latency, high-throughput service-to-service calls with strong contract (Protobuf) and bidirectional streaming support",
+        "When JSON is required",
+        "For public APIs"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "gRPC uses Protobuf (binary) and HTTP/2, offering lower latency, smaller payloads, multiplexing, and bidirectional streaming. REST (JSON/HTTP/1.1) is better for public APIs and browser clients.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Integration"
+    },
+    {
+      "id": "eja17",
+      "text": "What is 'Service Mesh' (Istio/Linkerd) and what problems does it solve for Java microservices?",
+      "options": [
+        "A database mesh for sharding",
+        "A dedicated infrastructure layer for service-to-service communication (observability, security, traffic management) without changing application code",
+        "A replacement for Spring Cloud",
+        "A logging aggregator"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Service mesh offloads network concerns (retries, timeouts, mTLS, tracing, canary routing) to sidecar proxies. Allows Java developers to focus on business logic, not infrastructure.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Cloud-Native"
+    },
+    {
+      "id": "eja18",
+      "text": "What is the 'Ambassador Pattern' and how is it used for legacy Java system integration?",
+      "options": [
+        "A diplomatic service",
+        "A helper service that handles cross-cutting concerns (retry, auth, monitoring) on behalf of a consumer when calling external/legacy systems",
+        "A database migration tool",
+        "A UI framework"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Ambassador pattern creates an intermediary that handles network issues, authentication, and protocol translation when connecting to legacy systems or external APIs.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Integration Patterns"
+    },
+    {
+      "id": "eja19",
+      "text": "What is the difference between '@Async' in Spring and 'Reactive Programming (WebFlux)' for handling concurrency?",
+      "options": [
+        "No difference",
+        "@Async uses thread pools (one thread per request); WebFlux uses event loop (few threads handling many requests) for higher concurrency with less memory",
+        "WebFlux is slower than @Async",
+        "@Async is only for database calls"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Async blocks threads (thread-per-request model). WebFlux uses non-blocking I/O with event loop, handling more concurrent connections with fewer threads, ideal for I/O-heavy workloads.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Concurrency"
+    },
+    {
+      "id": "eja20",
+      "text": "What is the 'Sidecar Pattern' and how does it differ from 'Ambassador Pattern'?",
+      "options": [
+        "Same pattern, different name",
+        "Sidecar runs alongside main container (attached); Ambassador is a proxy that sits between client and service (may be separate deployment)",
+        "Sidecar is for databases; Ambassador is for HTTP",
+        "No difference in cloud-native architectures"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Sidecar is co-located with main application (same pod in K8s). Ambassador is a proxy that handles communication to external services and can be deployed separately.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Cloud-Native"
+    },
+    {
+      "id": "eja21",
+      "text": "What is 'Polyglot Persistence' and why would an enterprise Java architect choose it?",
+      "options": [
+        "Using multiple programming languages",
+        "Using different database technologies (PostgreSQL for relational, MongoDB for documents, Redis for cache, Neo4j for graphs) within same system based on data access patterns",
+        "Storing data in multiple regions",
+        "Using multiple ORM frameworks"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Polyglot persistence matches database technology to workload. Relational for ACID transactions, document for flexible schemas, graph for relationships, timeseries for metrics.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Data Architecture"
+    },
+    {
+      "id": "eja22",
+      "text": "What is 'Event Sourcing' and what are its implications for audit and debugging?",
+      "options": [
+        "Storing only current state",
+        "Storing all state changes as immutable events; enables full audit trail, time travel debugging, and rebuilding state at any point in time",
+        "A logging framework",
+        "A deployment pattern"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Event Sourcing persists every change as an event. Current state derived by replaying events. Provides complete audit history and enables temporal queries.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Event-Driven Architecture"
+    },
+    {
+      "id": "eja23",
+      "text": "What is the 'Two-General's Problem' and why does it affect distributed transactions?",
+      "options": [
+        "A military strategy problem",
+        "The impossibility of guaranteeing exactly-once delivery in unreliable networks; affects distributed commit protocols (2PC can block indefinitely on coordinator failure)",
+        "A database deadlock scenario",
+        "A concurrency issue in JVM"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Two Generals' Problem proves that reliable communication over unreliable networks cannot guarantee agreement. This is why distributed systems use at-least-once with idempotency or exactly-once with consensus protocols.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Distributed Systems"
+    },
+    {
+      "id": "eja24",
+      "text": "What is 'Infrastructure as Code (IaC)' and which tools are common in Java enterprise environments?",
+      "options": [
+        "Writing Java code on servers",
+        "Managing infrastructure via version-controlled definition files; Terraform, Pulumi (Java SDK), AWS CDK, Ansible",
+        "A Java deployment framework",
+        "A configuration management tool only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "IaC treats infrastructure (VMs, networks, load balancers) as code. Pulumi allows Java developers to write infrastructure in Java, leveraging type safety and IDE features.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "DevOps"
+    },
+    {
+      "id": "eja25",
+      "text": "What is 'Garbage Collection (GC) Tuning' and when should an architect intervene in default GC settings?",
+      "options": [
+        "Always leave default settings",
+        "When experiencing pause time issues (latency) or throughput degradation; selecting GC algorithm (G1, ZGC, Shenandoah) and tuning heap sizes based on application characteristics",
+        "GC cannot be tuned",
+        "Only for Java 8 applications"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Default GC may not suit all workloads. G1GC is default for low-pause. ZGC/Shenandoah for sub-millisecond pauses. Tune heap size (-Xms/-Xmx), GC threads, and region sizes based on metrics.",
+      "difficulty": "expert",
+      "points": 35,
+      "topic": "Performance"
+    }
+  ]
+}

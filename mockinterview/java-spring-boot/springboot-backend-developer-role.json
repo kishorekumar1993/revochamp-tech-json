@@ -1,5 +1,5 @@
 {
-  "id": "springboot_backend_developer_mock_001",
+  "id": "springboot_backend_developer_mock_002",
   "title": "Spring Boot Backend Developer Assessment",
   "description": "Practical evaluation focusing on Spring Boot development, REST API implementation, Spring Data JPA, validation, exception handling, unit/integration testing, logging, and common backend development patterns.",
   "category": "springboot_backend_developer",
@@ -19,6 +19,10 @@
       "explanation": "spring-boot-starter-web includes Spring MVC, Tomcat, and REST support. This is the essential starter for building web/REST backends.",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Contains embedded Tomcat server",
+        "Includes Spring MVC framework"
+      ],
       "topic": "Dependencies"
     },
     {
@@ -34,6 +38,10 @@
       "explanation": "@RestController is the preferred way for REST APIs as it automatically applies @ResponseBody to all handler methods, converting return objects to JSON.",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Introduced in Spring 4.0",
+        "Combines two common annotations"
+      ],
       "topic": "REST API"
     },
     {
@@ -49,6 +57,10 @@
       "explanation": "@Autowired tells Spring to inject the dependency. Constructor injection is recommended as it makes dependencies explicit and helps with unit testing.",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Spring IoC container manages this",
+        "Constructor injection is the recommended approach"
+      ],
       "topic": "Dependency Injection"
     },
     {
@@ -64,6 +76,10 @@
       "explanation": "@PostMapping is the specialized annotation for POST requests. @RequestMapping with method=POST also works but @PostMapping is cleaner.",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Specifically for creating new resources",
+        "Often used with @RequestBody"
+      ],
       "topic": "REST API"
     },
     {
@@ -79,6 +95,10 @@
       "explanation": "@RequestParam binds query parameters. Example: @GetMapping(\"/users\") public List<User> getUsers(@RequestParam int page).",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Used for non-URI parameters",
+        "Can set required=false or defaultValue"
+      ],
       "topic": "REST API"
     },
     {
@@ -94,6 +114,10 @@
       "explanation": "@Entity marks a POJO as a JPA entity. Combined with @Id and optionally @Table, it defines the mapping to a database table.",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Required for ORM mapping",
+        "Usually paired with @Id and @Table"
+      ],
       "topic": "Spring Data JPA"
     },
     {
@@ -109,6 +133,10 @@
       "explanation": "Extending CrudRepository (or JpaRepository) gives you methods like save(), findById(), findAll(), delete(), etc., without writing implementations.",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Spring Data JPA provides this",
+        "JpaRepository adds additional JPA-specific methods"
+      ],
       "topic": "Spring Data JPA"
     },
     {
@@ -124,6 +152,10 @@
       "explanation": "@RequestBody tells Spring to deserialize the HTTP request body (usually JSON) into a Java object using HttpMessageConverter.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "Used with POST/PUT requests",
+        "Often paired with @PostMapping"
+      ],
       "topic": "REST API"
     },
     {
@@ -139,6 +171,10 @@
       "explanation": "Spring Boot returns 200 OK by default for successful GET requests. You can customize with @ResponseStatus if needed.",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Standard HTTP success code",
+        "Body usually contains requested resource"
+      ],
       "topic": "REST API"
     },
     {
@@ -154,6 +190,10 @@
       "explanation": "Adding server.port=8081 (or any port) to application.properties overrides the default 8080. Environment variables can also override it.",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Default is 8080",
+        "Can also use command line: --server.port=8081"
+      ],
       "topic": "Configuration"
     },
     {
@@ -169,6 +209,10 @@
       "explanation": "@Valid (from javax.validation) triggers validation on a method parameter. Combined with @NotNull, @Size, @Email annotations on fields.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "Part of Bean Validation API (JSR-303)",
+        "Often used with @RequestBody in controllers"
+      ],
       "topic": "Validation"
     },
     {
@@ -184,6 +228,10 @@
       "explanation": "@ExceptionHandler inside a controller handles exceptions thrown by handler methods in that controller. For global handling, use @ControllerAdvice.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "Can return custom error responses",
+        "For global handling, combine with @ControllerAdvice"
+      ],
       "topic": "Exception Handling"
     },
     {
@@ -199,6 +247,10 @@
       "explanation": "spring-boot-starter-test brings in JUnit Jupiter, Mockito, AssertJ, Hamcrest, and Spring Test utilities for comprehensive testing.",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Includes testing frameworks",
+        "Auto-configures test utilities"
+      ],
       "topic": "Testing"
     },
     {
@@ -214,6 +266,10 @@
       "explanation": "For unit tests, @ExtendWith(MockitoExtension.class) with @Mock and @InjectMocks is sufficient. @SpringBootTest is for integration tests.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "No Spring context needed",
+        "@Mock for dependencies, @InjectMocks for service under test"
+      ],
       "topic": "Testing"
     },
     {
@@ -229,6 +285,10 @@
       "explanation": "@Sql (org.springframework.test.context.jdbc.Sql) executes SQL scripts before or after test methods to set up test data.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "Can execute multiple scripts",
+        "Supports inline SQL statements"
+      ],
       "topic": "Testing"
     },
     {
@@ -244,6 +304,10 @@
       "explanation": "@Transactional wraps the method in a transaction. If a runtime exception occurs, Spring rolls back changes; otherwise commits on normal completion.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "Default rollback on RuntimeException",
+        "Can specify propagation and isolation levels"
+      ],
       "topic": "Database"
     },
     {
@@ -259,6 +323,10 @@
       "explanation": "Actuator adds endpoints for health checks, metrics, environment info, and more. Essential for monitoring Spring Boot apps in production.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "Adds /health endpoint for readiness probes",
+        "Requires spring-boot-starter-actuator dependency"
+      ],
       "topic": "Monitoring"
     },
     {
@@ -274,6 +342,10 @@
       "explanation": "Spring Boot uses Logback by default. Configure logging levels per package via logging.level.package.name=DEBUG in application.properties.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "Use logging.level.* properties",
+        "Can also use logback-spring.xml for advanced config"
+      ],
       "topic": "Logging"
     },
     {
@@ -289,6 +361,10 @@
       "explanation": "@Data is a Lombok annotation that generates getters, setters, toString, equals, hashCode, and a required args constructor.",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Bundle of multiple Lombok annotations",
+        "Reduces boilerplate code significantly"
+      ],
       "topic": "Developer Tools"
     },
     {
@@ -304,6 +380,10 @@
       "explanation": "In a bidirectional one-to-many, the parent uses @OneToMany(mappedBy=\"parent\") and the child uses @ManyToOne with @JoinColumn.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "mappedBy attribute points to child's field",
+        "Child side owns the foreign key"
+      ],
       "topic": "Spring Data JPA"
     },
     {
@@ -319,6 +399,10 @@
       "explanation": "@Query allows you to write custom JPQL or native SQL queries directly in the repository interface. Example: @Query(\"SELECT u FROM User u WHERE u.email = ?1\").",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "JPQL is object-oriented, not plain SQL",
+        "Set nativeQuery=true for raw SQL"
+      ],
       "topic": "Spring Data JPA"
     },
     {
@@ -334,6 +418,10 @@
       "explanation": "@Value reads configuration from application.properties or environment variables and injects them into Spring-managed beans.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "Supports SpEL expressions",
+        "Can have default values: @Value(\"${app.name:default}\")"
+      ],
       "topic": "Configuration"
     },
     {
@@ -349,6 +437,10 @@
       "explanation": "DevTools provides automatic restarts when files change in development, improving productivity. Disabled automatically in production.",
       "difficulty": "junior",
       "points": 10,
+      "hints": [
+        "Only for development environment",
+        "Works with live reload"
+      ],
       "topic": "Developer Tools"
     },
     {
@@ -364,6 +456,10 @@
       "explanation": "201 Created is the standard response for POST that creates a resource. Include a Location header pointing to the new resource.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "REST convention for resource creation",
+        "Often includes Location header"
+      ],
       "topic": "REST API"
     },
     {
@@ -379,6 +475,10 @@
       "explanation": "You can set required=false or use java.util.Optional as the parameter type. Both make the parameter optional. Default value can be set with defaultValue attribute.",
       "difficulty": "intermediate",
       "points": 15,
+      "hints": [
+        "required=false is older approach",
+        "Optional is Java 8+ style"
+      ],
       "topic": "REST API"
     }
   ]

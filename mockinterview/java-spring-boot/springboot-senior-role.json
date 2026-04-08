@@ -1,0 +1,485 @@
+{
+  "id": "springboot_senior_role_mock_001",
+  "title": "Spring Boot Senior Engineer Assessment",
+  "description": "Senior-level evaluation focusing on advanced Spring Boot concepts: auto-configuration internals, conditional beans, AOP, transaction propagation, security configurations, testing strategies (slice tests), event handling, custom starters, performance tuning, and production-grade considerations.",
+  "category": "springboot_senior",
+  "passingScore": 75,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "ssr1",
+      "text": "What is the mechanism behind Spring Boot's auto-configuration and how does @ConditionalOnMissingBean work?",
+      "options": [
+        "Auto-configuration uses reflection to scan all classes; @ConditionalOnMissingBean always creates a new bean",
+        "Auto-configuration uses spring.factories files; @ConditionalOnMissingBean only creates a bean if no other bean of same type exists in context, allowing custom overrides",
+        "Auto-configuration only works with XML configuration",
+        "@ConditionalOnMissingBean is deprecated in Spring Boot 3.x"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Spring Boot auto-configuration classes are listed in META-INF/spring.factories or META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports. @ConditionalOnMissingBean allows developers to override defaults by defining their own beans.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "Think about how Spring Boot knows which configuration to apply",
+        "This annotation lets you replace the default DataSource with your own"
+      ],
+      "topic": "Auto-Configuration"
+    },
+    {
+      "id": "ssr2",
+      "text": "What is the difference between @ComponentScan and @EntityScan in Spring Boot?",
+      "options": [
+        "No difference; they are aliases",
+        "@ComponentScan scans Spring-managed beans (@Component, @Service, @Repository); @EntityScan scans JPA entities (@Entity) for EntityManagerFactory creation",
+        "@EntityScan is for MongoDB; @ComponentScan is for JPA",
+        "@ComponentScan is deprecated"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@ComponentScan finds Spring beans. @EntityScan finds JPA entities and is often used when entities are in different packages than the main application class.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "One is for dependency injection, one is for ORM mapping",
+        "Used together in multi-module projects"
+      ],
+      "topic": "Configuration"
+    },
+    {
+      "id": "ssr3",
+      "text": "What is the purpose of @ConditionalOnClass and @ConditionalOnMissingClass annotations?",
+      "options": [
+        "To conditionally create beans based on environment variables",
+        "To conditionally create beans based on presence or absence of specific classes in the classpath (e.g., DataSource if HikariCP is present)",
+        "To conditionally log messages",
+        "To conditionally load properties files"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "These are core auto-configuration annotations. @ConditionalOnClass ensures configuration only loads when a library (e.g., Kafka, Redis) is on classpath. @ConditionalOnMissingClass does the opposite.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Used extensively in Spring Boot starters",
+        "Powers optional dependencies"
+      ],
+      "topic": "Conditional Configuration"
+    },
+    {
+      "id": "ssr4",
+      "text": "How does Spring Boot determine which DataSource to use when multiple are present (e.g., H2, PostgreSQL, Oracle)?",
+      "options": [
+        "It fails with ambiguous error and requires explicit configuration",
+        "It uses @Primary annotation on the preferred DataSource",
+        "It uses spring.datasource.url prefix to detect driver (jdbc:h2:, jdbc:postgresql:, etc.) and auto-configures the matching one",
+        "It always uses H2 by default"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Spring Boot auto-configuration uses ConnectionFactory to detect database type from JDBC URL. It also checks for specific driver classes to determine the appropriate DataSource implementation.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "The JDBC URL contains hints about database type",
+        "Each database has unique driver class"
+      ],
+      "topic": "Auto-Configuration"
+    },
+    {
+      "id": "ssr5",
+      "text": "What is the difference between @Transactional with Propagation.REQUIRED vs Propagation.REQUIRES_NEW?",
+      "options": [
+        "No difference",
+        "REQUIRED joins existing transaction or creates new; REQUIRES_NEW always suspends current transaction and starts new independent one",
+        "REQUIRED is for reads; REQUIRES_NEW is for writes",
+        "REQUIRES_NEW does not support rollback"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "REQUIRED (default) participates in existing transaction. REQUIRES_NEW suspends any current transaction, creates new one. Failure in REQUIRES_NEW does not rollback outer transaction.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Think about nested transaction behavior",
+        "REQUIRES_NEW creates independent transaction boundary"
+      ],
+      "topic": "Transaction Management"
+    },
+    {
+      "id": "ssr6",
+      "text": "What is the difference between @Transactional on public vs private methods in Spring?",
+      "options": [
+        "No difference; works on both",
+        "@Transactional only works on public methods because Spring AOP uses proxies (JDK dynamic proxies or CGLIB) which cannot intercept private methods",
+        "Private methods have higher transaction priority",
+        "@Transactional works on private methods in Spring Boot 3.x only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Spring uses proxy-based AOP. Only public methods are intercepted. Private method calls bypass proxy entirely, making @Transactional ineffective. Use self-injection as workaround.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "AOP proxies cannot see private methods",
+        "Same limitation applies to @Cacheable, @Async"
+      ],
+      "topic": "AOP"
+    },
+    {
+      "id": "ssr7",
+      "text": "How would you implement a custom Spring Boot Starter?",
+      "options": [
+        "Create a module with auto-configuration class, spring.factories file, and optional @ConfigurationProperties",
+        "Extend SpringBootApplication class",
+        "Use @EnableAutoConfiguration annotation only",
+        "Cannot create custom starters; only Spring team can"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "A custom starter requires: auto-configuration class, configuration properties class (optional), and META-INF/spring.factories (or AutoConfiguration.imports for Spring Boot 2.7+) referencing the auto-configuration.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "Follow the pattern of existing starters like spring-boot-starter-web",
+        "Need to declare your configuration in spring.factories"
+      ],
+      "topic": "Custom Starters"
+    },
+    {
+      "id": "ssr8",
+      "text": "What is the purpose of @ConfigurationProperties validation using JSR-303 annotations?",
+      "options": [
+        "To validate properties at compile time",
+        "To validate property values at application startup (e.g., @NotNull, @Min, @Max on configuration fields) using @Validated",
+        "To encrypt configuration values",
+        "To generate property documentation"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Add @Validated to @ConfigurationProperties class and use validation annotations. Spring Boot validates properties during binding, failing fast if constraints violated.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Prevents misconfiguration at runtime",
+        "Requires spring-boot-starter-validation"
+      ],
+      "topic": "Configuration"
+    },
+    {
+      "id": "ssr9",
+      "text": "What is the difference between @MockBean and @MockitoBean (Spring Boot 3.4+)?",
+      "options": [
+        "No difference; name change only",
+        "@MockBean replaces real bean with Mockito mock; @MockitoBean is similar but integrates better with Spring Boot 3.4+ test slice improvements",
+        "@MockBean is for integration tests; @MockitoBean is for unit tests",
+        "@MockitoBean does not support verification"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@MockitoBean (and @MockitoSpyBean) were introduced in Spring Boot 3.4 as improved alternatives to @MockBean, better handling of bean replacement and clean-up between tests.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "New in Spring Boot 3.4",
+        "Better test isolation than @MockBean"
+      ],
+      "topic": "Testing"
+    },
+    {
+      "id": "ssr10",
+      "text": "What is a 'Slice Test' in Spring Boot (e.g., @DataJpaTest, @WebMvcTest, @JsonTest)?",
+      "options": [
+        "A test that runs only a portion of the application",
+        "A test that loads only a specific part of the application context (JPA, MVC, JSON) for faster, focused integration tests",
+        "A test that slices database tables",
+        "A performance test that measures execution time"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Slice tests load only beans relevant to the test layer. @DataJpaTest loads JPA components, @WebMvcTest loads MVC controllers only, significantly faster than @SpringBootTest.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Reduces test execution time",
+        "Each slice focuses on one layer of application"
+      ],
+      "topic": "Testing"
+    },
+    {
+      "id": "ssr11",
+      "text": "How do you test @ControllerAdvice (global exception handler) with @WebMvcTest?",
+      "options": [
+        "@WebMvcTest automatically loads @ControllerAdvice beans",
+        "Use @Import(GlobalExceptionHandler.class) with @WebMvcTest",
+        "@ControllerAdvice cannot be tested with slice tests",
+        "Only @SpringBootTest works"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@WebMvcTest only loads controllers by default. Use @Import(YourControllerAdvice.class) to explicitly add global exception handlers to test context.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "@ControllerAdvice is not auto-scanned in slice tests",
+        "Need to manually import your advice class"
+      ],
+      "topic": "Testing"
+    },
+    {
+      "id": "ssr12",
+      "text": "What is the purpose of @TestConfiguration and how does it differ from @Configuration in tests?",
+      "options": [
+        "No difference",
+        "@TestConfiguration defines beans only for test context, not loaded in production; can be static inner class or top-level with @Import",
+        "@TestConfiguration replaces all production configuration",
+        "@TestConfiguration is deprecated"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@TestConfiguration beans are only registered in test ApplicationContext. Unlike @Configuration, they are not auto-detected; must be explicitly imported or declared as static inner class.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Test-specific bean definitions",
+        "Often used to provide mock dependencies"
+      ],
+      "topic": "Testing"
+    },
+    {
+      "id": "ssr13",
+      "text": "What is the difference between @SpyBean and @MockBean in Spring Boot tests?",
+      "options": [
+        "No difference",
+        "@MockBean creates complete mock; @SpyBean wraps real bean and allows partial mocking (real method calls unless stubbed)",
+        "@SpyBean is for final classes only",
+        "@MockBean cannot be used with @WebMvcTest"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@SpyBean delegates to real implementation by default, allowing you to stub only specific methods. @MockBean stubs all methods. Use spies to test real behavior with selective overrides.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "One calls real methods by default",
+        "Use when you need most real behavior but want to mock one method"
+      ],
+      "topic": "Testing"
+    },
+    {
+      "id": "ssr14",
+      "text": "What is the purpose of 'spring-boot:build-info' Maven/Gradle goal?",
+      "options": [
+        "To compile the application",
+        "To generate build-info.properties file with build metadata (version, timestamp, artifact) accessible via /actuator/info",
+        "To create Docker image",
+        "To run integration tests"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This goal generates build-info.properties. With Actuator's /info endpoint, you can expose version, build time, and custom properties for monitoring and support.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Works with Actuator info endpoint",
+        "Useful for knowing which version is deployed"
+      ],
+      "topic": "Build & Deployment"
+    },
+    {
+      "id": "ssr15",
+      "text": "What are the different strategies for external configuration in Spring Boot (order of precedence)?",
+      "options": [
+        "application.properties only",
+        "Command line arguments → Environment variables → application-{profile}.properties → application.properties",
+        "application.properties → application-{profile}.properties → Environment variables",
+        "Only environment variables"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Spring Boot external config precedence (highest to lowest): command line args → SPRING_APPLICATION_JSON → env variables → application-{profile}.properties → application.properties → defaults.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Command line overrides everything",
+        "Profile-specific files override default"
+      ],
+      "topic": "Configuration"
+    },
+    {
+      "id": "ssr16",
+      "text": "How do you implement graceful shutdown in Spring Boot 2.3+?",
+      "options": [
+        "Not possible",
+        "Set server.shutdown=graceful and spring.lifecycle.timeout-per-shutdown-phase=20s; allows in-flight requests to complete before shutdown",
+        "Use @PreDestroy on all beans",
+        "Set server.shutdown=immediate"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Graceful shutdown waits for active requests to complete within timeout. Configure server.shutdown=graceful and spring.lifecycle.timeout-per-shutdown-phase. Works with Tomcat, Jetty, Undertow.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "Prevents request failures during deployment",
+        "Requires embedded web server support"
+      ],
+      "topic": "Operations"
+    },
+    {
+      "id": "ssr17",
+      "text": "What is the purpose of @DirtiesContext in Spring Boot tests?",
+      "options": [
+        "To delete database tables",
+        "To mark ApplicationContext as dirty, forcing context reload before next test (used when tests modify shared state)",
+        "To clear log files",
+        "To clean temporary directories"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@DirtiesContext tells Spring to close and recreate the context. Use when test modifies context (e.g., changing system properties, mocking static state). Adds overhead, use sparingly.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Prevents test pollution across test classes",
+        "Increases test execution time"
+      ],
+      "topic": "Testing"
+    },
+    {
+      "id": "ssr18",
+      "text": "What is the difference between @DynamicPropertySource and Testcontainers?",
+      "options": [
+        "No difference",
+        "@DynamicPropertySource injects dynamic properties into Spring Environment from containers; Testcontainers manages container lifecycle; they are often used together",
+        "Testcontainers is only for unit tests",
+        "@DynamicPropertySource is deprecated"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Testcontainers starts containers. @DynamicPropertySource reads container info (host, port) and adds to Spring Environment. Used together for real integration tests.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "One manages containers, one injects connection properties",
+        "Common pattern for database integration tests"
+      ],
+      "topic": "Testing"
+    },
+    {
+      "id": "ssr19",
+      "text": "What is the purpose of @ApplicationTest with @SpringBootTest's webEnvironment = RANDOM_PORT?",
+      "options": [
+        "To run tests on random port to avoid port conflicts in parallel test execution",
+        "To disable web server",
+        "To use mock MVC",
+        "To test security only"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "RANDOM_PORT starts embedded web server on random available port, accessed via @LocalServerPort. Essential for parallel test execution and CI/CD pipelines.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Prevents 'port already in use' errors",
+        "Use @LocalServerPort to get assigned port"
+      ],
+      "topic": "Testing"
+    },
+    {
+      "id": "ssr20",
+      "text": "How does Spring Boot handle circular dependencies between beans?",
+      "options": [
+        "Never allows circular dependencies",
+        "Allows setter injection circular dependencies but not constructor injection; can use @Lazy on one side to break cycle",
+        "Allows all circular dependencies",
+        "Circular dependencies cause compilation error"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Constructor injection circular dependencies cause BeanCurrentlyInCreationException. Use setter/field injection or @Lazy on one dependency to break the cycle.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Constructor injection is safer but stricter",
+        "@Lazy delays bean initialization"
+      ],
+      "topic": "Dependency Injection"
+    },
+    {
+      "id": "ssr21",
+      "text": "What is the purpose of 'spring-boot-starter-parent' in Maven?",
+      "options": [
+        "To add all Spring dependencies",
+        "To provide default dependency versions, plugin configurations, and Java version (17/21) via parent POM inheritance",
+        "To generate Spring Boot documentation",
+        "To deploy to production"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Starter parent provides dependency management (Bill of Materials), plugin management (spring-boot-maven-plugin), and default Java version. Simplifies POM files significantly.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Parent POM pattern in Maven",
+        "Manages versions of all Spring dependencies"
+      ],
+      "topic": "Build"
+    },
+    {
+      "id": "ssr22",
+      "text": "What is the difference between @SpringBootApplication and @EnableAutoConfiguration?",
+      "options": [
+        "No difference",
+        "@SpringBootApplication = @Configuration + @EnableAutoConfiguration + @ComponentScan; @EnableAutoConfiguration only enables auto-configuration",
+        "@SpringBootApplication is deprecated",
+        "@EnableAutoConfiguration disables component scanning"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@SpringBootApplication is convenience annotation combining three essential annotations. Use @EnableAutoConfiguration when you need finer control over component scanning.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "One is three annotations in one",
+        "Most applications use the combined annotation"
+      ],
+      "topic": "Core Annotations"
+    },
+    {
+      "id": "ssr23",
+      "text": "How do you exclude a specific auto-configuration class in Spring Boot?",
+      "options": [
+        "Using @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)",
+        "Using spring.autoconfigure.exclude property in application.properties",
+        "Both of the above",
+        "Cannot exclude auto-configurations"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Exclude auto-configuration using @SpringBootApplication's exclude attribute or spring.autoconfigure.exclude property. Useful when you want custom configuration for specific component.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Prevents unwanted auto-configuration",
+        "Two different ways (annotation and property)"
+      ],
+      "topic": "Auto-Configuration"
+    },
+    {
+      "id": "ssr24",
+      "text": "What is the purpose of @EventListener's condition attribute (SpEL)?",
+      "options": [
+        "To log events conditionally",
+        "To conditionally execute event handler based on event properties (e.g., @EventListener(condition = \"#event.userId == 'admin'\")",
+        "To filter events by type",
+        "To set event priority"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SpEL condition allows filtering events before handler execution. Access event properties via #event variable. Useful for selective processing.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "Spring Expression Language powers this",
+        "Evaluated before method execution"
+      ],
+      "topic": "Event Handling"
+    },
+    {
+      "id": "ssr25",
+      "text": "What is the difference between @Async with proxy mode and @Async with AspectJ mode?",
+      "options": [
+        "No difference",
+        "Proxy mode (default) uses Spring AOP (only public methods, external calls); AspectJ mode uses compile-time/load-time weaving (can intercept private and internal calls)",
+        "AspectJ mode is faster",
+        "Proxy mode is only for @Component classes"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Proxy mode limitations: only public methods, calls within same class bypass proxy. AspectJ mode (requires @EnableAsync(mode = AdviceMode.ASPECTJ)) weaves bytecode, enabling any method.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "Proxy mode has limitations with self-invocation",
+        "AspectJ requires compilation weaving or load-time weaving"
+      ],
+      "topic": "Concurrency"
+    }
+  ]
+}

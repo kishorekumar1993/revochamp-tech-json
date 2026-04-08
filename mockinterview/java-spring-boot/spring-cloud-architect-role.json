@@ -1,0 +1,485 @@
+{
+  "id": "spring_cloud_architect_mock_001",
+  "title": "Spring Cloud Architect Assessment",
+  "description": "Architect-level evaluation focusing on Spring Cloud ecosystem for microservices: service discovery (Eureka), API Gateway (Spring Cloud Gateway), distributed configuration (Config Server), circuit breakers (Resilience4j), distributed tracing (Sleuth/Zipkin), messaging (Spring Cloud Stream), and cloud-native patterns (circuit breaker, retry, bulkhead).",
+  "category": "spring_cloud_architect",
+  "passingScore": 80,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "sca1",
+      "text": "In Spring Cloud Netflix Eureka, what is the difference between a Eureka Server and a Eureka Client?",
+      "options": [
+        "Eureka Server is for production; Eureka Client is for development",
+        "Eureka Server acts as service registry; Eureka Client registers itself with the server and discovers other services",
+        "Eureka Server handles load balancing; Eureka Client handles authentication",
+        "There is no difference; they are the same component"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Eureka Server is the registry where services register. Eureka Client (each microservice) registers itself, sends heartbeats, and discovers other services via the server.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Think of a phone book: server = directory, client = person listing their number",
+        "Client sends periodic heartbeats to renew lease"
+      ],
+      "topic": "Service Discovery"
+    },
+    {
+      "id": "sca2",
+      "text": "What is the purpose of @EnableDiscoveryClient vs @EnableEurekaClient in Spring Cloud?",
+      "options": [
+        "No difference; they are interchangeable",
+        "@EnableEurekaClient is specific to Eureka; @EnableDiscoveryClient works with any service registry (Consul, Zookeeper, Eureka)",
+        "@EnableDiscoveryClient is deprecated",
+        "@EnableEurekaClient is for server-side only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@EnableDiscoveryClient is the generic annotation that works with any Spring Cloud Discovery implementation. @EnableEurekaClient is Eureka-specific and only works when Eureka is on classpath.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "One is implementation-agnostic, the other is vendor-specific",
+        "Most modern apps use the generic version"
+      ],
+      "topic": "Service Discovery"
+    },
+    {
+      "id": "sca3",
+      "text": "What is the 'Self-Preservation' mode in Netflix Eureka and why is it important?",
+      "options": [
+        "A security feature that encrypts service registrations",
+        "When Eureka Server stops expiring registrations if too many heartbeats fail, preventing service wipe-out during network issues",
+        "A backup mode when database is down",
+        "A performance optimization for high-traffic scenarios"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Self-preservation mode activates when renewal threshold drops below 85%. Eureka stops expiring instances, preventing false service unavailability during temporary network partitions.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "Prevents 'cascading failure' during network blips",
+        "Can cause 'zombie' services if misconfigured"
+      ],
+      "topic": "Service Discovery"
+    },
+    {
+      "id": "sca4",
+      "text": "In Spring Cloud Gateway, what is the correct order of execution for a request?",
+      "options": [
+        "Route → Predicate → Filter",
+        "Predicate → Route → Filter",
+        "Filter → Predicate → Route",
+        "GlobalFilter → RoutePredicate → WebHandler"
+      ],
+      "correctAnswerIndex": 3,
+      "explanation": "Correct order: GlobalFilters (pre) → RoutePredicate matching → Route → GlobalFilters (post). Predicates determine which route handles request; filters modify request/response.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "Predicates run first to find matching route",
+        "Filters wrap the request and response"
+      ],
+      "topic": "API Gateway"
+    },
+    {
+      "id": "sca5",
+      "text": "How does Spring Cloud Gateway implement circuit breaking compared to Zuul 1.x?",
+      "options": [
+        "Gateway has no circuit breaking support",
+        "Gateway uses Resilience4j integration via Spring Cloud Circuit Breaker (supports reactive, non-blocking)",
+        "Gateway uses Hystrix (same as Zuul)",
+        "Gateway relies on external load balancer only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Spring Cloud Gateway integrates with Resilience4j (reactive) via spring-cloud-starter-circuitbreaker-reactor-resilience4j. Zuul 1.x used Hystrix (blocking).",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Reactive programming model requires reactive circuit breaker",
+        "Hystrix is in maintenance mode"
+      ],
+      "topic": "API Gateway"
+    },
+    {
+      "id": "sca6",
+      "text": "What is the purpose of Spring Cloud Config Server's 'encryption' support?",
+      "options": [
+        "To encrypt the entire configuration file at rest",
+        "To encrypt sensitive property values (e.g., passwords, API keys) using symmetric or asymmetric keys",
+        "To encrypt network traffic between Config Server and clients",
+        "To encrypt Git repository credentials only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Config Server can encrypt sensitive values using {cipher} prefix. Values are decrypted before sending to clients. Supports AES symmetric and RSA asymmetric encryption.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Values are prefixed with {cipher}",
+        "Requires JCE Unlimited Strength Jurisdiction Policy"
+      ],
+      "topic": "Distributed Configuration"
+    },
+    {
+      "id": "sca7",
+      "text": "What is the difference between 'spring.cloud.config.uri' and 'spring.cloud.config.discovery.enabled'?",
+      "options": [
+        "No difference",
+        "uri points directly to Config Server URL; discovery.enabled uses service discovery to locate Config Server by service ID",
+        "uri is for production; discovery is for development",
+        "discovery.enabled is deprecated"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "uri = hardcoded Config Server address (brittle). discovery.enabled = true allows client to find Config Server via Eureka/service registry using 'configserver' service ID.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "One is hardcoded, the other is dynamic",
+        "Works with service discovery for resilience"
+      ],
+      "topic": "Distributed Configuration"
+    },
+    {
+      "id": "sca8",
+      "text": "What is the 'Circuit Breaker' pattern and which states does Resilience4j implement?",
+      "options": [
+        "Two states: ON and OFF",
+        "Three states: CLOSED (normal), OPEN (failing fast), HALF_OPEN (testing recovery)",
+        "Four states: CLOSED, OPEN, HALF_OPEN, DISABLED",
+        "Resilience4j does not implement circuit breaker"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Resilience4j circuit breaker has CLOSED (requests pass), OPEN (fail fast), HALF-OPEN (single test request to check recovery). Transition based on failure rate threshold.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "HALF_OPEN allows one test request",
+        "Configuration includes failure rate threshold and wait duration"
+      ],
+      "topic": "Resilience"
+    },
+    {
+      "id": "sca9",
+      "text": "How do you configure Resilience4j retry with Spring Cloud Circuit Breaker?",
+      "options": [
+        "Using @Retryable annotation only",
+        "Using resilience4j.retry.* properties and @CircuitBreaker with fallback method",
+        "Using spring.cloud.circuitbreaker.resilience4j.retry.* properties",
+        "Retry is separate; combine @Retry with @CircuitBreaker"
+      ],
+      "correctAnswerIndex": 3,
+      "explanation": "Resilience4j retry and circuit breaker are separate modules. Configure RetryRegistry and CircuitBreakerRegistry, or use annotations @Retry and @CircuitBreaker together.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "Retry tries again; circuit breaker fails fast",
+        "Often used together with different configurations"
+      ],
+      "topic": "Resilience"
+    },
+    {
+      "id": "sca10",
+      "text": "What is the 'Bulkhead' pattern and which types does Resilience4j support?",
+      "options": [
+        "Only thread pool bulkhead",
+        "Only semaphore bulkhead",
+        "Both semaphore (limit concurrent calls) and thread pool (limit concurrent threads) bulkheads",
+        "Resilience4j does not support bulkhead"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Resilience4j supports SemaphoreBulkhead (limits concurrent calls, non-blocking) and ThreadPoolBulkhead (limits concurrent threads, blocking). Prevents resource exhaustion.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "Semaphore is non-blocking (reactive-friendly)",
+        "Thread pool is blocking (traditional)"
+      ],
+      "topic": "Resilience"
+    },
+    {
+      "id": "sca11",
+      "text": "What is Spring Cloud Sleuth's primary responsibility in a distributed system?",
+      "options": [
+        "To encrypt service-to-service communication",
+        "To add trace and span IDs to logs and headers for distributed tracing",
+        "To manage service health checks",
+        "To load balance requests"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Sleuth adds a Trace ID (across whole request) and Span ID (per service) to logs and propagates them via headers. Integrates with Zipkin for visualization.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Trace ID is the same across all services",
+        "Span ID changes per service hop"
+      ],
+      "topic": "Distributed Tracing"
+    },
+    {
+      "id": "sca12",
+      "text": "How do you export Spring Cloud Sleuth traces to Zipkin?",
+      "options": [
+        "Add spring-cloud-sleuth-zipkin dependency and configure zipkin.baseUrl",
+        "Sleuth automatically exports to Zipkin without configuration",
+        "Use @EnableZipkinServer annotation",
+        "Sleuth cannot export to Zipkin"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Add spring-cloud-sleuth-zipkin dependency. Configure spring.zipkin.baseUrl (default http://localhost:9411). Traces are sampled and sent asynchronously.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Requires additional dependency",
+        "Uses HTTP or RabbitMQ for transport"
+      ],
+      "topic": "Distributed Tracing"
+    },
+    {
+      "id": "sca13",
+      "text": "What is the purpose of 'spring.cloud.sleuth.sampler.probability' configuration?",
+      "options": [
+        "To set the probability of errors being logged",
+        "To set the percentage of requests to trace (e.g., 0.1 = 10%) to reduce overhead",
+        "To encrypt trace data",
+        "To set trace retention period"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Tracing all requests adds overhead. Probability sampler (default 0.1 = 10%) randomly selects which requests to trace. Use 1.0 for 100% tracing in development.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Higher value = more traces = more overhead",
+        "Range is 0.0 to 1.0"
+      ],
+      "topic": "Distributed Tracing"
+    },
+    {
+      "id": "sca14",
+      "text": "What is Spring Cloud Stream's 'Binder' abstraction?",
+      "options": [
+        "A way to bind HTTP requests to controllers",
+        "An abstraction over message brokers (Kafka, RabbitMQ) that provides consistent programming model",
+        "A tool for binding configuration properties",
+        "A security binding for OAuth2"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Binder abstracts message broker details. Same code works with Kafka (KafkaBinder) or RabbitMQ (RabbitBinder). Only dependency and configuration changes.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Write once, run on any broker",
+        "KafkaBinder, RabbitBinder, KinesisBinder available"
+      ],
+      "topic": "Messaging"
+    },
+    {
+      "id": "sca15",
+      "text": "What is the difference between @StreamListener (deprecated) and functional @Bean (Supplier/Function/Consumer) in Spring Cloud Stream?",
+      "options": [
+        "No difference",
+        "@StreamListener uses annotation-based binding; functional uses Java 8+ functional interfaces with spring.cloud.stream.function.definition",
+        "Functional beans are slower",
+        "@StreamListener is only for Kafka"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Functional programming model is newer (Spring Cloud Stream 3+). Define @Bean Supplier (source), Function (processor), or Consumer (sink). More testable and concise.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "Functional model is reactive-friendly",
+        "Uses java.util.function package"
+      ],
+      "topic": "Messaging"
+    },
+    {
+      "id": "sca16",
+      "text": "What is the purpose of 'spring.cloud.stream.bindings.<bindingName>.destination' property?",
+      "options": [
+        "Sets the IP address of the broker",
+        "Sets the topic/queue/exchange name in the message broker",
+        "Sets the consumer group name",
+        "Sets the serialization format"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "'destination' maps to broker-specific destination: Kafka topic, RabbitMQ exchange/queue. For Kafka, binding name 'output' → destination 'orders-topic'.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Broker-agnostic naming",
+        "Different brokers use different terminology"
+      ],
+      "topic": "Messaging"
+    },
+    {
+      "id": "sca17",
+      "text": "What is 'Spring Cloud LoadBalancer' and how does it differ from Netflix Ribbon?",
+      "options": [
+        "No difference",
+        "Spring Cloud LoadBalancer is the reactive, non-blocking replacement for Ribbon (which is in maintenance mode)",
+        "Ribbon is reactive; LoadBalancer is blocking",
+        "LoadBalancer is only for Zuul"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Ribbon is deprecated and blocking. Spring Cloud LoadBalancer is the modern, reactive client-side load balancer built on WebClient, better for non-blocking stacks.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Ribbon uses Apache HTTP Client (blocking)",
+        "Newer uses WebClient (reactive)"
+      ],
+      "topic": "Load Balancing"
+    },
+    {
+      "id": "sca18",
+      "text": "How do you implement custom load balancing strategy with Spring Cloud LoadBalancer?",
+      "options": [
+        "Cannot customize",
+        "Implement ReactiveLoadBalancer interface or extend RoundRobinLoadBalancer and configure via ServiceInstanceListSupplier",
+        "Use @LoadBalancerClient annotation only",
+        "Only round-robin is supported"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Implement ServiceInstanceListSupplier for instance filtering/caching. Implement ReactorLoadBalancer for custom selection algorithm (weighted, least connections, etc.).",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "ServiceInstanceListSupplier provides instance list",
+        "ReactorLoadBalancer chooses instance"
+      ],
+      "topic": "Load Balancing"
+    },
+    {
+      "id": "sca19",
+      "text": "What is the purpose of @RefreshScope in Spring Cloud Config clients?",
+      "options": [
+        "To refresh the entire application context",
+        "To refresh specific @Bean or @Component when configuration changes (via /actuator/refresh)",
+        "To reload property files",
+        "To restart the application"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@RefreshScope marks beans whose properties can be updated without restart. POST to /actuator/refresh triggers property reload and bean re-initialization.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Only beans with this annotation are updated",
+        "Requires spring-boot-starter-actuator"
+      ],
+      "topic": "Distributed Configuration"
+    },
+    {
+      "id": "sca20",
+      "text": "What is the difference between Spring Cloud Bus and Spring Cloud Config?",
+      "options": [
+        "No difference",
+        "Config Server provides configuration; Bus propagates refresh events across all instances (broadcast via message broker)",
+        "Bus is for logging; Config is for properties",
+        "Config Server is deprecated"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Config Server centralizes config. Spring Cloud Bus uses message broker (Kafka/RabbitMQ) to send refresh events to all services, avoiding individual /actuator/refresh calls.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Bus = 'refresh all' capability",
+        "Works with /actuator/busrefresh"
+      ],
+      "topic": "Distributed Configuration"
+    },
+    {
+      "id": "sca21",
+      "text": "What is the 'Fallback' pattern in Spring Cloud Circuit Breaker and how is it implemented?",
+      "options": [
+        "Using try-catch blocks",
+        "Using @CircuitBreaker's fallbackMethod attribute pointing to a method with same signature + Throwable parameter",
+        "Using @ExceptionHandler",
+        "Fallback is automatic"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@CircuitBreaker(name = \"serviceA\", fallbackMethod = \"fallback\"). Fallback method must be in same class and accept Throwable as optional last parameter.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Fallback runs when circuit is OPEN or method throws exception",
+        "Must return same type as original method"
+      ],
+      "topic": "Resilience"
+    },
+    {
+      "id": "sca22",
+      "text": "What is the purpose of 'spring.cloud.gateway.discovery.locator.enabled'?",
+      "options": [
+        "To enable service discovery for Gateway routes",
+        "To auto-create routes based on registered services (e.g., /SERVICE-NAME/**)",
+        "To disable all routes",
+        "To encrypt discovery traffic"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "When enabled, Gateway auto-creates routes for each Eureka service: /{serviceId}/**. Useful for development but requires careful security in production.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Auto-routes based on service ID",
+        "Path pattern: /SERVICE-NAME/**"
+      ],
+      "topic": "API Gateway"
+    },
+    {
+      "id": "sca23",
+      "text": "What is the 'Time Limiter' pattern in Resilience4j?",
+      "options": [
+        "Limits the total execution time of a method call",
+        "Limits database query time",
+        "Limits network latency",
+        "Limits CPU usage"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "TimeLimiter wraps calls with timeout. If execution exceeds timeout (e.g., 2 seconds), throws TimeoutException. Works with both synchronous and asynchronous calls.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Prevents hanging calls",
+        "Separate from circuit breaker timeout"
+      ],
+      "topic": "Resilience"
+    },
+    {
+      "id": "sca24",
+      "text": "How do you configure Spring Cloud Gateway to route based on request headers?",
+      "options": [
+        "Using HeaderRoutePredicateFactory: - Header=X-User-Role,Admin",
+        "Using QueryPredicateFactory",
+        "Using MethodPredicateFactory",
+        "Cannot route by headers"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "HeaderRoutePredicateFactory matches request headers. Example: routes: - id: admin_route predicates: - Header=X-User-Role, Admin. Supports regex patterns.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Predicate starts with 'Header='",
+        "Supports multiple values comma-separated"
+      ],
+      "topic": "API Gateway"
+    },
+    {
+      "id": "sca25",
+      "text": "What is the 'Retry' filter in Spring Cloud Gateway and how does it differ from Resilience4j retry?",
+      "options": [
+        "Same functionality",
+        "Gateway's Retry filter retries failed HTTP responses (status codes); Resilience4j retries method execution including exceptions",
+        "Gateway retry is for all errors",
+        "Resilience4j retry is only for network errors"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Gateway's Retry filter operates on HTTP response status codes (e.g., retry on 500). Resilience4j retries on exceptions within method execution.",
+      "difficulty": "expert",
+      "points": 25,
+      "hints": [
+        "One works at HTTP layer, one at application layer",
+        "Can combine both for different purposes"
+      ],
+      "topic": "API Gateway"
+    }
+  ]
+}
