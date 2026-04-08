@@ -1,0 +1,238 @@
+{
+  "id": "flutter_engineer_mock_001",
+  "title": "Flutter Software Engineer Mock Test",
+  "description": "Evaluate advanced Flutter skills for software engineers covering architecture patterns, state management solutions, performance optimization, platform channels, and testing.",
+  "category": "flutter",
+  "passingScore": 75,
+  "timeLimitMinutes": 45,
+  "questions": [
+    {
+      "id": "fse1",
+      "text": "Which statement best describes the 'BuildContext' in Flutter?",
+      "options": [
+        "It is a global variable storing app configuration",
+        "It is a handle to the location of a widget in the widget tree",
+        "It is a utility class for parsing JSON",
+        "It is the rendering engine's reference to the GPU layer"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "BuildContext is a reference to the widget's position in the tree. It is used for looking up inherited widgets, navigation, themes, and media queries.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "It's an argument in the build() method",
+        "Used with Navigator.of(context) or Theme.of(context)"
+      ],
+      "topic": "Widget Tree & Context"
+    },
+    {
+      "id": "fse2",
+      "text": "You are tasked with choosing a state management solution for a large-scale enterprise application requiring high testability and strict separation of business logic from UI. Which is the most appropriate architectural pattern?",
+      "options": [
+        "setState with StatefulWidget",
+        "Provider with ChangeNotifier",
+        "BLoC (Business Logic Component) using Streams/Cubits",
+        "GetX for everything"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "BLoC (or Cubit) strictly enforces separation of UI and logic, making the business logic highly testable without relying on the Flutter framework. It scales well for enterprise teams.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Emphasizes separation of concerns",
+        "Relies heavily on Streams/Observables"
+      ],
+      "topic": "Architecture & State Management"
+    },
+    {
+      "id": "fse3",
+      "text": "What is the primary purpose of the `WidgetsFlutterBinding.ensureInitialized()` call in the `main()` function?",
+      "options": [
+        "To enable hot reload during development",
+        "To initialize the Flutter engine binding before calling native plugins or asynchronous methods that interact with the platform",
+        "To pre-compile all assets for faster startup",
+        "To set the default text direction"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "It ensures the Flutter framework binding is ready. This is required when calling `SystemChrome.setPreferredOrientations()` or using `SharedPreferences.getInstance()` before `runApp()`.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Often used with Firebase.initializeApp()",
+        "Deals with the underlying engine communication"
+      ],
+      "topic": "Platform Integration"
+    },
+    {
+      "id": "fse4",
+      "text": "When implementing infinite scrolling with `ListView.builder`, what is the correct way to trigger loading the next page of data without causing jank?",
+      "options": [
+        "Call the API inside the `itemBuilder` when index == length - 10",
+        "Add a `ScrollController` listener and check `position.pixels >= position.maxScrollExtent - 500`, throttling the callback",
+        "Use `FutureBuilder` with a static list",
+        "Wrap the entire ListView in a `SingleChildScrollView`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "A throttled/debounced listener on ScrollController checking proximity to the bottom is the standard performant way to implement pagination. Fetching inside `itemBuilder` causes excessive and unpredictable network calls.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Avoid side effects in build/rendering methods",
+        "Use a listener on the scroll position"
+      ],
+      "topic": "Performance & Lists"
+    },
+    {
+      "id": "fse5",
+      "text": "Which of the following widgets implicitly rebuilds when the keyboard visibility changes?",
+      "options": [
+        "StatelessWidget",
+        "SafeArea",
+        "MediaQuery (when using viewInsets)",
+        "Container"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "MediaQuery rebuilds when the keyboard opens because `viewInsets.bottom` changes, affecting the available screen space. Widgets depending on `MediaQuery.of(context)` will react accordingly.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think about what defines screen boundaries",
+        "Used to avoid overflow when keyboard appears"
+      ],
+      "topic": "Layout & Responsiveness"
+    },
+    {
+      "id": "fse6",
+      "text": "How does Flutter's rendering engine achieve 60/120fps performance?",
+      "options": [
+        "By using a WebView bridge to native components",
+        "By drawing directly to the screen using Skia (or Impeller) and avoiding OEM widget bridges",
+        "By translating Flutter widgets to native Android Views and iOS UIViews",
+        "By running JavaScript code on a dedicated thread"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Flutter does not use platform native UI components. It renders everything on its own canvas using Skia/Impeller, bypassing the platform's UI tree and allowing consistent 60/120fps animations.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "It's a game engine approach to UI",
+        "Uses AOT compilation for native performance"
+      ],
+      "topic": "Under the Hood"
+    },
+    {
+      "id": "fse7",
+      "text": "In the context of `Platform Channels`, what is the correct sequence of execution when sending a method call from Flutter (Client) to Native (Host)?",
+      "options": [
+        "Flutter -> MethodChannel.invokeMethod -> (Platform Thread) -> Result.success",
+        "Flutter -> EventChannel -> Stream -> Native",
+        "Flutter -> FFI -> C++ -> Java/Kotlin",
+        "Flutter -> Widget -> RenderObject -> Native"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Platform Channels use asynchronous message passing. `MethodChannel.invokeMethod` sends a message over the platform bridge, handled on the native main/UI thread, returning a Future on the Flutter side.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Asynchronous by nature",
+        "Uses MethodChannel class"
+      ],
+      "topic": "Platform Channels"
+    },
+    {
+      "id": "fse8",
+      "text": "You need to ensure a specific `Ticker` is disposed of properly when the state is no longer in use. Which lifecycle method is the correct place for this cleanup?",
+      "options": [
+        "initState()",
+        "build()",
+        "didUpdateWidget()",
+        "dispose()"
+      ],
+      "correctAnswerIndex": 3,
+      "explanation": "`dispose()` is the required method for cleaning up resources like AnimationControllers, ScrollControllers, and StreamSubscriptions to prevent memory leaks.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Opposite of initState",
+        "Prevents memory leaks"
+      ],
+      "topic": "Lifecycle & Memory"
+    },
+    {
+      "id": "fse9",
+      "text": "What is the advantage of using `const` constructors with widgets?",
+      "options": [
+        "It makes the code shorter",
+        "It tells the Flutter framework that the widget will never change, allowing the framework to optimize rebuilding performance and reduce memory usage",
+        "It allows the widget to change state without calling setState",
+        "It is required for all custom widgets"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`const` widgets are canonicalized (only one instance exists per configuration). During rebuilds, Flutter can skip the entire subtree because it knows the instance is identical and immutable.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Improves rebuild performance",
+        "Compile-time constant"
+      ],
+      "topic": "Performance Optimization"
+    },
+    {
+      "id": "fse10",
+      "text": "You are writing a unit test for a BLoC/Cubit. Which package allows you to 'fake' the passage of time to test debounce logic without actually waiting for the specified duration?",
+      "options": [
+        "mockito",
+        "fake_async",
+        "integration_test",
+        "flutter_driver"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`fake_async` allows you to control the passage of time in tests. This is crucial for testing debouncers or animations without slow, real-time waits in unit tests.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Part of the 'clock' package ecosystem",
+        "Moves time forward instantly in test logic"
+      ],
+      "topic": "Testing"
+    },
+    {
+      "id": "fse11",
+      "text": "Which statement is true regarding `InheritedWidget`?",
+      "options": [
+        "It is deprecated in favor of Provider",
+        "It is an abstract class that allows efficient propagation of information down the widget tree",
+        "It is a widget that manages navigation stacks",
+        "It is only used for Material Design themes"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`InheritedWidget` is a fundamental Flutter mechanism for sharing data down the tree efficiently. Packages like Provider and even Theme.of(context) are built on top of it.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Provider is syntactic sugar built on top of this",
+        "Allows descendants to find ancestors"
+      ],
+      "topic": "Core Framework"
+    },
+    {
+      "id": "fse12",
+      "text": "What does the `--split-debug-info` flag do when building a release APK or App Bundle?",
+      "options": [
+        "Enables ProGuard obfuscation",
+        "Reduces the app size by extracting Dart debug symbols into a separate file",
+        "Splits the APK by screen density",
+        "Enables multi-dex"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "This flag moves debugging information out of the compiled Dart code into a separate .symbols file. This significantly reduces the final binary size and is often required when uploading to stores that reject large binaries.",
+      "difficulty": "advanced",
+      "points": 20,
+      "hints": [
+        "Used for Play Store/App Store compliance",
+        "Makes crash logs human-readable later"
+      ],
+      "topic": "Deployment & Build"
+    }
+  ]
+}

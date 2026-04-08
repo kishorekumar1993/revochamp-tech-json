@@ -1,0 +1,238 @@
+{
+  "id": "flutter_senior_mock_001",
+  "title": "Flutter Senior Developer Mock Test",
+  "description": "Validate senior-level Flutter expertise covering architectural patterns, custom rendering, deep performance analysis, build tooling, and complex platform integrations.",
+  "category": "flutter",
+  "passingScore": 80,
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "id": "fs1",
+      "text": "In a large modular Flutter app, you notice the first frame render time is over 2 seconds. Which technique is most effective for reducing initial load time on the main isolate?",
+      "options": [
+        "Using `compute()` for all JSON parsing",
+        "Deferring non-essential widget initialization and asset loading using `Isolate` or `compute()` for heavy startup logic",
+        "Removing all `const` constructors",
+        "Increasing the `timeDilation` value"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Blocking the main UI isolate during app startup with heavy synchronous work (e.g., parsing large JSON files, initializing databases) causes jank. Moving that logic to a separate isolate allows the UI to build immediately.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about main thread blocking",
+        "Dart is single-threaded unless you spawn another"
+      ],
+      "topic": "Performance & Isolates"
+    },
+    {
+      "id": "fs2",
+      "text": "You are designing a custom paint operation that needs to repeatedly redraw a complex waveform 60 times per second. What is the optimal way to implement this?",
+      "options": [
+        "Call `setState()` on a `CustomPaint` every 16ms",
+        "Use a `Ticker` and `CustomPainter` with `shouldRepaint` returning `true`, driving repaints via an `AnimationController`",
+        "Use `RepaintBoundary` and call `markNeedsPaint()` manually",
+        "Wrap the widget in a `FutureBuilder`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Using `setState` for continuous animation rebuilds the entire widget subtree unnecessarily. The correct approach is to pass an `AnimationController` (via `Listenable`) to `CustomPainter` and use `RepaintBoundary` to isolate the paint area. The painter will repaint efficiently without triggering a full widget rebuild.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "CustomPaint has a `repaint` argument that accepts a Listenable",
+        "Avoid `setState` for continuous rendering"
+      ],
+      "topic": "Custom Rendering & Canvas"
+    },
+    {
+      "id": "fs3",
+      "text": "You need to expose a new native API (e.g., a Bluetooth library written in C++) to Flutter. Which approach provides the lowest latency and highest bandwidth?",
+      "options": [
+        "MethodChannel",
+        "EventChannel",
+        "Dart FFI (Foreign Function Interface)",
+        "Platform Views"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Dart FFI allows Dart code to call directly into C/C++ code without passing through the platform message codec and threading constraints of Platform Channels. It is significantly faster for high-frequency data transfer (like audio/Bluetooth streams).",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Bypasses the Java/Kotlin and Obj-C/Swift bridge",
+        "Uses `dart:ffi` and `dylib`"
+      ],
+      "topic": "Native Interoperability"
+    },
+    {
+      "id": "fs4",
+      "text": "You discover a memory leak caused by a `BuildContext` being stored in a singleton after the widget is disposed. What is the underlying technical reason for this leak?",
+      "options": [
+        "Dart's garbage collector cannot collect objects that have circular references",
+        "The `Element` (mounted state) associated with that `BuildContext` retains a reference to the State object, preventing it from being marked for GC",
+        "`BuildContext` is a primitive and cannot be stored",
+        "Singletons are never garbage collected"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "A `BuildContext` is actually an `Element`. If you store it globally, you are holding a reference to the entire `Element` tree node (including its `State` and `Widget`). This prevents the `Element` from being `unmount()`ed correctly, causing a memory leak even after the route is popped.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Context is an interface implemented by Element",
+        "Think about the widget lifecycle: mounted -> unmounted"
+      ],
+      "topic": "Framework Internals"
+    },
+    {
+      "id": "fs5",
+      "text": "You are tasked with migrating a monolithic Flutter app to a Clean Architecture with feature-first modularization. Which combination ensures maximum build speed and strict dependency inversion?",
+      "options": [
+        "Single main.dart file, using `part` directives",
+        "Multiple Dart packages (local `path` dependencies) separating Data, Domain, and Presentation layers per feature",
+        "Using `GetX` for navigation and state only",
+        "Putting everything inside `lib/src`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Local Dart packages (monorepo style) enforce compile-time boundaries. The Domain layer has zero dependencies on Data or Flutter, ensuring pure business logic. This also allows Dart analyzer to rebuild only the packages that changed, significantly speeding up CI/CD and development builds.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about 'pubspec.yaml' boundaries",
+        "Separation by layer within features"
+      ],
+      "topic": "Architecture & Modularization"
+    },
+    {
+      "id": "fs6",
+      "text": "When should you use `WidgetsBinding.instance.addPostFrameCallback`?",
+      "options": [
+        "To schedule work before the build phase",
+        "To execute code after the current frame has been rendered and the widget tree is fully laid out",
+        "To call `setState` safely during `initState`",
+        "To register a new isolate"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`addPostFrameCallback` executes after the frame is painted. It is essential for safely showing overlays, dialogs, or taking size measurements of widgets that depend on `LayoutBuilder` output, as the layout pass must be complete.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Use it to show SnackBars immediately after navigation",
+        "Avoids 'LayoutBuilder' constraints infinite loops"
+      ],
+      "topic": "Widget Lifecycle & Scheduler"
+    },
+    {
+      "id": "fs7",
+      "text": "You need to optimize a heavy list that contains both complex rich text and high-resolution images, leading to scroll jank on mid-range Android devices. Which two optimizations are most appropriate?",
+      "options": [
+        "Use `shrinkWrap: true` and `NeverScrollableScrollPhysics`",
+        "Pre-cache images with `precacheImage` and use `RepaintBoundary` around complex list items",
+        "Use `Opacity` widget with value 0.99",
+        "Disable GPU rendering"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`RepaintBoundary` isolates the repainting of a list tile so scrolling doesn't trigger a full repaint of the tile's contents. `precacheImage` ensures images are decoded and ready in memory before they scroll onto screen, preventing frame drops during decoding.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Avoid `shrinkWrap` for infinite lists (it defeats lazy loading)",
+        "Think about jank caused by image IO thread"
+      ],
+      "topic": "Performance Tuning"
+    },
+    {
+      "id": "fs8",
+      "text": "What is the primary limitation of using Dart's `compute()` function for heavy lifting?",
+      "options": [
+        "It cannot return a value",
+        "It only runs on the main thread",
+        "It creates a new short-lived `Isolate` each time, incurring overhead of copying memory and loading the Dart runtime into the new isolate",
+        "It does not support null safety"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "While `compute` is convenient, it spawns and kills an Isolate per call. For recurring heavy tasks (e.g., real-time data processing), it's better to manage a long-lived `Isolate` manually to avoid the latency of repeated isolate startup and memory transfer.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Great for one-time JSON parsing, bad for streaming",
+        "Isolate.spawn is the long-lived alternative"
+      ],
+      "topic": "Concurrency"
+    },
+    {
+      "id": "fs9",
+      "text": "You need to ensure a feature flag state is accessible across the entire widget tree, changes rarely, but must trigger a UI rebuild when updated manually in settings. Which is the most efficient pattern?",
+      "options": [
+        "Global `ChangeNotifier` with `Consumer` everywhere",
+        "`InheritedNotifier` or a custom `InheritedWidget` that holds the flag value",
+        "Passing the flag down as a constructor parameter 10 levels deep",
+        "Using a `StreamBuilder` wrapping `MaterialApp`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "A custom `InheritedWidget`/`InheritedNotifier` is the most efficient O(1) lookup method. It avoids rebuilding the whole app (which `StreamBuilder` on root might do) and avoids the boilerplate of prop-drilling or wrapping every widget in a `Consumer`.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Provider is built on top of this",
+        "Efficient ancestor lookup in the Element tree"
+      ],
+      "topic": "State Propagation"
+    },
+    {
+      "id": "fs10",
+      "text": "During a code review, you see `BuildContext` being passed into an asynchronous gap and used after an `await`. Why is this a red flag for a senior developer?",
+      "options": [
+        "It causes a compile-time error",
+        "The widget might be 'unmounted' (disposed) by the time the Future completes, leading to 'Looking up a deactivated widget's ancestor is unsafe' errors or leaks",
+        "`BuildContext` cannot be used with async functions",
+        "It breaks hot reload"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "If the user navigates away while the `await` is pending, the widget is removed from the tree (`mounted == false`). Using `context` after that point (e.g., `Navigator.of(context).pop()`) will throw an exception or cause undefined behavior. Always check `mounted` after an async gap.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Think about 'Route popped while loading data'",
+        "Check `if (!mounted) return;`"
+      ],
+      "topic": "Asynchronous Safety"
+    },
+    {
+      "id": "fs11",
+      "text": "You are building a custom `RenderObject` to implement a unique layout algorithm (e.g., a radial menu). Which two methods must you override to define its size and child positions?",
+      "options": [
+        "`performLayout()` and `paint()`",
+        "`createElement()` and `update()`",
+        "`initState()` and `dispose()`",
+        "`build()` and `didUpdateWidget()`"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "`performLayout` is where you apply constraints, size the render object, and assign `parentData` to children. `paint` is where you draw the visual representation. This is the lowest level of the Flutter rendering pipeline.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "This is below the Widget layer",
+        "Think about the RenderTree"
+      ],
+      "topic": "Render Objects"
+    },
+    {
+      "id": "fs12",
+      "text": "You are asked to reduce the APK size of a Flutter app from 45MB to under 20MB. Which specific build flag combination is most impactful for size reduction?",
+      "options": [
+        "`flutter build apk --debug`",
+        "`flutter build apk --split-per-abi --target-platform android-arm64 --obfuscate --split-debug-info=./symbols`",
+        "`flutter run --profile`",
+        "`flutter clean`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Splitting per ABI removes unused native libraries for other architectures (x86, armv7). Obfuscation shortens symbol names, and extracting debug info removes large metadata blocks from the binary. This is the standard senior-level approach for store-ready builds.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Don't ship all CPU architectures in one APK",
+        "Use `--split-debug-info` to offload symbols"
+      ],
+      "topic": "Deployment & Size Optimization"
+    }
+  ]
+}

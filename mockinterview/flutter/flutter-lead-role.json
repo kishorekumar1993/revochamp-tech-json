@@ -1,0 +1,1163 @@
+{
+  "id": "flutter_lead_mock_001",
+  "title": "Flutter Lead / Principal Engineer Mock Test",
+  "description": "Comprehensive assessment for Flutter Lead roles covering architectural strategy, framework internals, performance profiling, team workflows, CI/CD pipelines, and production-grade decision-making.",
+  "category": "flutter",
+  "passingScore": 80,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "fl1",
+      "text": "You are leading a team of 8 Flutter developers across 3 feature squads. Which architectural approach best enables parallel development, independent testing, and minimal merge conflicts?",
+      "options": [
+        "Monolithic feature folders under lib/features",
+        "Micro-frontend style with separate Flutter Engine instances per feature",
+        "Package-based modularization with local path dependencies and a shared core package",
+        "Single global BLoC managing all app state"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Package-based modularization creates clear ownership boundaries. Each feature package has its own pubspec.yaml, allowing teams to work independently, version dependencies separately, and run isolated tests. This scales well for large teams.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think about team autonomy and CI speed",
+        "Avoids merge conflicts in root files"
+      ],
+      "topic": "Team Architecture Strategy"
+    },
+    {
+      "id": "fl2",
+      "text": "Your production Flutter app has a crash rate of 2.3% on specific Xiaomi devices with Android 11. The stack trace shows 'signal 11 (SIGSEGV), code 1 (SEGV_MAPERR)' in libflutter.so. What is the most likely root cause?",
+      "options": [
+        "Null pointer exception in Dart code",
+        "Incompatible custom engine build or Skia shader compilation failure on Mali GPUs",
+        "Using incorrect BuildContext after async gap",
+        "Missing internet permission"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SIGSEGV in libflutter.so indicates a native crash in the Flutter engine, not Dart code. Mali GPUs on Xiaomi/MediaTek devices are notorious for shader compilation issues. Senior leads recognize this requires either engine patches, Impeller migration, or disabling specific rendering features.",
+      "difficulty": "expert",
+      "points": 35,
+      "hints": [
+        "Dart code crashes show Dart stack traces, not native signals",
+        "Think GPU vendor fragmentation"
+      ],
+      "topic": "Production Debugging"
+    },
+    {
+      "id": "fl3",
+      "text": "You need to implement a design system used across 4 Flutter apps and 2 web dashboards (React). Which strategy ensures maximum consistency and minimal duplication?",
+      "options": [
+        "Copy-paste ThemeData between projects",
+        "Create a separate Dart package with ThemeData and share internally only",
+        "Use a design token system (JSON/YAML) that generates Flutter ThemeData and CSS variables",
+        "Use Figma Mirror plugin for Flutter"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "A platform-agnostic token system (like Style Dictionary or Theo) allows a single source of truth for colors, spacing, and typography. The tokens compile to Flutter ThemeData and CSS/SCSS, ensuring the design system is truly cross-platform.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think cross-framework consistency",
+        "Single source of truth for design decisions"
+      ],
+      "topic": "Design Systems"
+    },
+    {
+      "id": "fl4",
+      "text": "You observe excessive garbage collection pauses (jank) in a Flutter game loop using CustomPaint. What is the underlying mechanism causing this?",
+      "options": [
+        "Dart's garbage collector is stop-the-world",
+        "Allocating new objects inside the animation callback triggers frequent GC sweeps",
+        "The GPU is running out of VRAM",
+        "The CustomPainter is not disposed"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Flutter's rendering loop aims for 60/120fps. Creating new objects (e.g., `Offset`, `Rect`, `Path`) inside `paint` or Ticker callbacks fills the young generation heap, forcing frequent minor GC cycles that block the UI thread. Leads must enforce object reuse patterns.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think about allocations per frame",
+        "Reuse objects instead of instantiating"
+      ],
+      "topic": "Performance & GC"
+    },
+    {
+      "id": "fl5",
+      "text": "You are evaluating whether to adopt Riverpod, BLoC, or GetX for a 2-year enterprise project. Which evaluation criterion is most critical for long-term maintainability?",
+      "options": [
+        "GitHub stars and popularity",
+        "Testability of business logic without Flutter dependencies and adherence to unidirectional data flow",
+        "Fewest lines of code to implement",
+        "Built-in navigation utilities"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Lead engineers prioritize architectural purity. BLoC and Riverpod enforce separation of concerns, making business logic unit-testable in pure Dart (no Flutter import). This allows easy migration between Flutter versions and reduces tech debt accumulation over years.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about 5 years from now",
+        "Can the logic survive a Flutter rewrite?"
+      ],
+      "topic": "Technology Selection"
+    },
+    {
+      "id": "fl6",
+      "text": "During a security audit, it's found that API keys and client secrets are hardcoded in the Flutter app bundle. What is the industry-standard mitigation for this?",
+      "options": [
+        "Use ProGuard to obfuscate the strings",
+        "Store keys in SharedPreferences",
+        "Move all secrets to a backend proxy (BFF - Backend for Frontend) and use OAuth PKCE",
+        "Use `.env` files"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Anything in the client binary can be extracted. `.env` files and obfuscation only slow down basic attackers. The only secure method is never to ship secrets; use a BFF to hold third-party API keys and use secure token exchange flows (PKCE) with your own auth server.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Client-side secrets are never safe",
+        "Think server-side proxy"
+      ],
+      "topic": "Security"
+    },
+    {
+      "id": "fl7",
+      "text": "You are planning a migration from Flutter 2.x to 3.x with a team of 10. What is the correct rollout strategy to minimize downtime and risk?",
+      "options": [
+        "Create a single PR with all changes, merge when ready",
+        "Use dependency overrides and migrate incrementally, merging to main frequently with feature flags",
+        "Freeze development for 2 weeks to migrate",
+        "Stay on 2.x until the next LTS release"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Incremental migration with `dependency_overrides` allows the team to update packages one by one without blocking feature work. Feature flags enable testing the new engine version with a subset of users (staged rollout).",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Avoid long-lived branches",
+        "Use percentage-based rollouts"
+      ],
+      "topic": "Migration Strategy"
+    },
+    {
+      "id": "fl8",
+      "text": "What is the purpose of the `--source-maps` flag when building a Flutter web app in production?",
+      "options": [
+        "To reduce JavaScript bundle size",
+        "To enable readable stack traces in error monitoring tools like Sentry",
+        "To enable hot reload in production",
+        "To improve initial load time"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Source maps map minified/compiled JavaScript back to the original Dart code. Without them, production error reports show unreadable JS stack traces. A lead ensures source maps are uploaded to Sentry/Firebase but never deployed to public servers.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Critical for debugging production errors",
+        "Should be stored privately"
+      ],
+      "topic": "Observability"
+    },
+    {
+      "id": "fl9",
+      "text": "You are implementing a white-label solution where the same Flutter codebase must produce 5 different branded apps with different themes, assets, and API endpoints. Which approach is most scalable?",
+      "options": [
+        "Create 5 separate Git branches",
+        "Use `--dart-define` environment variables and dependency injection for flavor-specific configurations",
+        "Create 5 copies of the `lib` folder",
+        "Use platform channels to fetch config at runtime"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Using `--dart-define-from-file` with separate `.env` files per flavor allows compile-time configuration. This ensures unused assets are tree-shaken per build, and API endpoints are injected without runtime overhead. This is the standard for white-label Flutter apps.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think compile-time configuration",
+        "Avoid runtime if/else for brands"
+      ],
+      "topic": "White-Label Solutions"
+    },
+    {
+      "id": "fl10",
+      "text": "You are architecting offline-first functionality for a field service app used in remote areas. Which combination ensures data consistency and conflict resolution?",
+      "options": [
+        "HTTP cache and `FutureBuilder`",
+        "Local SQLite (Drift) with a sync engine using vector clocks or CRDTs",
+        "SharedPreferences for all data",
+        "Firestore with `PersistenceEnabled`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Firestore offline works for simple cases but struggles with complex relational conflicts. A custom sync engine with Drift (SQLite) and a strategy like 'Last Write Wins' with timestamps or CRDTs gives full control over sync logic and bandwidth usage.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think beyond simple key-value",
+        "Conflict resolution is the hard part"
+      ],
+      "topic": "Offline Architecture"
+    },
+    {
+      "id": "fl11",
+      "text": "In a mono-repo with 20+ Flutter packages, you want to enforce that no UI package imports a Data package directly. Which tool enforces this architectural boundary?",
+      "options": [
+        "flutter analyze",
+        "dart_code_metrics with custom lint rules",
+        "dart format",
+        "pub global activate dependency_validator"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Standard `flutter analyze` doesn't catch layer violations. `dart_code_metrics` allows defining custom lint rules to prevent specific imports (e.g., `lib/features/*/ui` cannot import `lib/features/*/data`). This is essential for maintaining Clean Architecture at scale.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about static analysis beyond linting",
+        "Prevents layer dependency inversion"
+      ],
+      "topic": "Tooling & Linting"
+    },
+    {
+      "id": "fl12",
+      "text": "What is the `BuildOwner` in Flutter's rendering pipeline?",
+      "options": [
+        "The widget that owns the build context",
+        "The manager class that tracks dirty elements and orchestrates the build/layout/paint phases",
+        "A lint rule for widget construction",
+        "The developer who wrote the widget"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`BuildOwner` is a core framework class that manages the dirty list of `Element`s. When `setState` is called, the element is added to `BuildOwner`'s dirty list, and the `WidgetsBinding` scheduler processes them in the next frame.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "It's internal to the framework",
+        "Manages the 'rebuild' process"
+      ],
+      "topic": "Framework Internals"
+    },
+    {
+      "id": "fl13",
+      "text": "You need to optimize CI build times. Currently, `flutter pub get` takes 45 seconds on a clean runner. Which strategy reduces this significantly?",
+      "options": [
+        "Use `pub global` instead",
+        "Cache the `.pub-cache` directory and `$FLUTTER_ROOT/.pub-cache` in CI between runs",
+        "Delete `pubspec.lock` before running",
+        "Use `flutter pub upgrade` instead"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Caching the pub cache across CI runs avoids re-downloading packages from the internet. This can save 30-60 seconds per build. Combining this with cached build artifacts (AOT snapshots) further reduces time.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Think about what takes time: Network + Compilation",
+        "CI runners are stateless by default"
+      ],
+      "topic": "CI/CD Optimization"
+    },
+    {
+      "id": "fl14",
+      "text": "What is the primary risk of using `MediaQuery.of(context).size` directly inside a `build` method?",
+      "options": [
+        "It causes a memory leak",
+        "It rebuilds the entire subtree whenever the keyboard opens or orientation changes, even if the logic doesn't need it",
+        "It is deprecated",
+        "It returns incorrect values on iOS"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`MediaQuery` changes when the keyboard appears (`viewInsets` change) or orientation flips. If a widget only needs orientation and not keyboard visibility, it will still rebuild unnecessarily. Leads use `MediaQuery.sizeOf(context)` (Flutter 3.16+) to limit rebuild scope.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Use the specific `*Of` methods in newer Flutter",
+        "Think about unnecessary rebuilds"
+      ],
+      "topic": "Performance Optimization"
+    },
+    {
+      "id": "fl15",
+      "text": "You are deciding between Code Push (Shorebird) and traditional App Store releases for a banking app. What is the regulatory/compliance issue with Code Push?",
+      "options": [
+        "It increases app size",
+        "It bypasses App Store review for code changes, potentially violating financial regulations or app store guidelines",
+        "It only works on Android",
+        "It requires an internet connection"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Apple's guidelines and many banking regulations prohibit downloading executable code that changes the app's core functionality without a formal review. Shorebird patches modify the Dart snapshot, which can be seen as circumventing review. A Lead must weigh this risk.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think about App Store Review Guidelines section 3.3.2",
+        "Consider financial compliance (PCI DSS, SOC2)"
+      ],
+      "topic": "Compliance & Deployment"
+    },
+    {
+      "id": "fl16",
+      "text": "You are implementing deep linking. When the app is opened from a terminated state, `getInitialLink()` works. When the app is backgrounded, `onLink` works. Which lifecycle scenario do developers often miss?",
+      "options": [
+        "When the app is installed fresh",
+        "When the app is in the background but the link is clicked from a different app",
+        "When the user force-quits the app",
+        "When using Android 12"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The common edge case is `getInitialLink` being called but the link not being consumed because the app was already in memory (warm start) but not listening. Robust deep linking requires handling `getInitialLink` AND setting up the `onLink` stream before `runApp`.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Warm start vs Cold start",
+        "Stream subscription timing matters"
+      ],
+      "topic": "Deep Linking"
+    },
+    {
+      "id": "fl17",
+      "text": "What is the correct way to benchmark UI performance on a specific low-end Android device?",
+      "options": [
+        "Use `flutter run --release`",
+        "Use `flutter drive` with `traceAction` or the DevTools Performance overlay in Profile mode",
+        "Use `print` statements with `DateTime.now()`",
+        "Use Android Studio's CPU Profiler in Debug mode"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Debug mode is slow and not representative. `Profile mode` is optimized but retains tracing capabilities. `flutter drive` with timeline tracing captures the exact frame render times and rasterization costs.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Never benchmark in Debug mode",
+        "Profile mode is the source of truth"
+      ],
+      "topic": "Performance Profiling"
+    },
+    {
+      "id": "fl18",
+      "text": "You want to ensure that every `dispose` method in a specific directory overrides the super method correctly. Which tool enforces this?",
+      "options": [
+        "flutter analyze",
+        "custom_lint with a visitor that checks `super.dispose` is called in `dispose` methods",
+        "dart format",
+        "flutter test --coverage"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Missing `super.dispose()` is a common source of memory leaks. Standard lints catch this for built-in widgets, but for custom base classes, a `custom_lint` rule can scan the AST to ensure every override of `dispose` contains a `super.dispose()` call.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about custom linting rules",
+        "Prevents memory leaks at scale"
+      ],
+      "topic": "Tooling & Linting"
+    },
+    {
+      "id": "fl19",
+      "text": "You need to display 5,000 items in a grid with complex image-heavy tiles. `GridView.builder` causes jank when scrolling fast due to image decoding. What is the optimal solution?",
+      "options": [
+        "Use `shrinkWrap: true`",
+        "Use `cacheExtent` to pre-load items and `ResizeImage` to downsample images to target tile size",
+        "Use `SingleChildScrollView` with a `Column`",
+        "Use `Opacity` widget to hide items off-screen"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`cacheExtent` tells Flutter to render items slightly before they enter the viewport. `ResizeImage` instructs the image cache to decode the image at the exact display resolution, saving massive amounts of memory and decoding time.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Don't decode 4K images for 80x80 thumbnails",
+        "Think about memory footprint"
+      ],
+      "topic": "List/Grid Performance"
+    },
+    {
+      "id": "fl20",
+      "text": "You are migrating a project to null safety. Some files depend on legacy non-null-safe packages. What is the correct command to migrate while allowing those legacy packages?",
+      "options": [
+        "dart migrate",
+        "dart pub outdated --mode=null-safety",
+        "dart pub get --no-sound-null-safety",
+        "flutter run --no-sound-null-safety"
+      ],
+      "correctAnswerIndex": 3,
+      "explanation": "The `--no-sound-null-safety` flag runs the app with weak null safety, allowing non-migrated packages to run alongside migrated code. This is a temporary state; a Lead plans the full migration timeline.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "It's a runtime flag, not a migration tool",
+        "Allows gradual migration"
+      ],
+      "topic": "Null Safety"
+    },
+    {
+      "id": "fl21",
+      "text": "What is the `Layer` tree in Flutter rendering?",
+      "options": [
+        "A widget tree visualization tool",
+        "The retained rendering instructions sent to the engine for composition",
+        "The Dart isolate stack trace",
+        "The network interceptor"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The `Layer` tree is the output of the painting phase. It contains drawing operations (textures, paths, clips) that the `SceneBuilder` composes. Understanding Layers is crucial for debugging `RepaintBoundary` and rasterization issues.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "It's after Widget and Element, before Engine",
+        "Think about the painting phase"
+      ],
+      "topic": "Rendering Pipeline"
+    },
+    {
+      "id": "fl22",
+      "text": "You are using `Freezed` for data classes. What is the primary advantage of using `freezed` over just a plain Dart class with a manual `copyWith`?",
+      "options": [
+        "It compiles faster",
+        "It generates `copyWith`, `==`, `hashCode`, `toString`, and union types/sealed classes automatically, reducing boilerplate and human error",
+        "It reduces app size",
+        "It improves JSON serialization speed"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Freezed is a code generator for immutable data classes. It ensures all equality checks are correct and deep copy logic is bug-free. For leads, this enforces immutable state management patterns across the team.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Think about boilerplate reduction",
+        "Union types are powerful for state modeling"
+      ],
+      "topic": "Code Generation"
+    },
+    {
+      "id": "fl23",
+      "text": "In Flutter Web, the `CanvasKit` renderer provides better performance than `HTML` renderer but increases download size by ~2MB. What is the best strategy for production deployment?",
+      "options": [
+        "Force CanvasKit always",
+        "Force HTML always",
+        "Use `auto` renderer and preload CanvasKit only for modern desktop browsers, falling back to HTML for mobile browsers",
+        "Use CanvasKit only in development"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "`auto` selects CanvasKit for desktop and HTML for mobile. This balances performance and bandwidth. A Lead may configure server-side logic (User-Agent detection) to decide which `flutter.js` entrypoint to serve.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about mobile data plans vs desktop power",
+        "User-Agent sniffing is necessary here"
+      ],
+      "topic": "Flutter Web"
+    },
+    {
+      "id": "fl24",
+      "text": "You are setting up Golden Tests (screenshot tests) for a component library. What is the critical CI dependency?",
+      "options": [
+        "An emulator with GPU acceleration",
+        "Flutter Gold (or similar) for managing baseline images and diff tolerance",
+        "A real iOS device",
+        "Integration_test package"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Golden tests are brittle if not managed. A system like Flutter Gold is required to approve/reject visual changes. Without it, any minor anti-aliasing difference breaks the CI. Leads ensure the team has a process for updating goldens.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about visual regression testing",
+        "False positives are a major issue"
+      ],
+      "topic": "Testing Strategy"
+    },
+    {
+      "id": "fl25",
+      "text": "A junior developer asks why `flutter clean` fixes their build error. What is the technical explanation?",
+      "options": [
+        "It restarts the Dart Analysis Server",
+        "It deletes the `build/` and `.dart_tool/` directories, clearing stale AOT snapshots and cached asset manifests that may be out of sync",
+        "It reboots the emulator",
+        "It resets the pub cache"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Flutter caches compiled kernel files and asset bundles. If a native dependency changes or an asset path is moved, the cache doesn't invalidate properly. `clean` removes the cache, forcing a full rebuild.",
+      "difficulty": "beginner",
+      "points": 15,
+      "hints": [
+        "Think about the `build` folder",
+        "It doesn't touch `pub-cache`"
+      ],
+      "topic": "Tooling"
+    },
+    {
+      "id": "fl26",
+      "text": "What is the purpose of `WidgetsFlutterBinding.ensureInitialized()` when using `Firebase.initializeApp()` in `main()`?",
+      "options": [
+        "It initializes Firebase Core",
+        "It binds the Flutter engine to the platform channel system before async native calls are made",
+        "It sets the status bar color",
+        "It is required for Hot Restart"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`runApp` initializes the binding automatically. But if you need to call a native plugin (like Firebase) *before* `runApp`, you must call `ensureInitialized` to set up the method channel plumbing first.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Required for async work before runApp",
+        "Binds the Dart VM to the host platform"
+      ],
+      "topic": "Initialization"
+    },
+    {
+      "id": "fl27",
+      "text": "You need to monitor user flows and performance metrics (FPS, load time) across the entire app. Which solution provides this level of insight?",
+      "options": [
+        "Google Analytics for Firebase (Event logging)",
+        "Firebase Performance Monitoring (Traces) and Custom User Timing metrics",
+        "Sentry (Crash Reporting)",
+        "Flutter Error Widget"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Firebase Performance Monitoring automatically captures traces for `_appStart` and allows manual tracing for any `Future` or screen transition. This is standard for production monitoring of app health.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Go beyond clicks and crashes",
+        "Measure screen load latency"
+      ],
+      "topic": "Observability"
+    },
+    {
+      "id": "fl28",
+      "text": "You are using `Equatable` in a BLoC state class. Why is `Equatable` or `==` operator override critical for `BlocBuilder` performance?",
+      "options": [
+        "It prevents state from changing",
+        "`BlocBuilder` compares the previous and current state using `==`; without `Equatable`, every emission triggers a rebuild even if data is identical",
+        "It serializes the state",
+        "It deep clones the object"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "BLoC relies on `==` to skip redundant rebuilds. If you emit a new instance of the same data without overriding `==`, `BlocBuilder` treats it as a new state and rebuilds unnecessarily, causing performance issues.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Think about state comparison",
+        "Prevents unnecessary UI work"
+      ],
+      "topic": "BLoC / State Management"
+    },
+    {
+      "id": "fl29",
+      "text": "You are integrating a third-party SDK that only provides a Java/Kotlin AAR library. You need to call its methods from Flutter. What is the correct sequence?",
+      "options": [
+        "Call the AAR directly from Dart using FFI",
+        "Create a Flutter Plugin with a MethodChannel, implement the Java side to call the AAR, and expose Dart APIs",
+        "Use `flutter create --template=package`",
+        "Use `dart:ffi` to load the AAR"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Dart FFI only works with C/C++ libraries. For Java/Kotlin AARs, you must use a standard Flutter Plugin project structure and communicate via Platform Channels.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "FFI is for C code, not Java",
+        "Think about the Native -> Flutter bridge"
+      ],
+      "topic": "Plugin Development"
+    },
+    {
+      "id": "fl30",
+      "text": "What is the `Impeller` rendering engine, and why is it significant for Flutter's future?",
+      "options": [
+        "A new widget library",
+        "A new runtime rendering engine that pre-compiles shaders to eliminate runtime shader compilation jank (the 'first frame' lag on iOS/Android)",
+        "A state management library",
+        "A tool for generating assets"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Impeller solves one of Flutter's oldest issues: shader compilation jank. By using AOT shader compilation and a custom render backend, Impeller (now default on iOS) provides butter-smooth animations even on complex screens with custom paths.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Replaces Skia on some platforms",
+        "Eliminates 'shader compilation' stutters"
+      ],
+      "topic": "Engine & Future of Flutter"
+    }
+  ]
+}
+```Here's a comprehensive JSON mock test for a **Flutter Lead / Principal Engineer** role with 30 questions covering architecture, team leadership, framework internals, CI/CD, and production-grade decision-making.
+
+```json
+{
+  "id": "flutter_lead_mock_001",
+  "title": "Flutter Lead / Principal Engineer Mock Test",
+  "description": "Comprehensive assessment for Flutter Lead roles covering architectural strategy, framework internals, performance profiling, team workflows, CI/CD pipelines, and production-grade decision-making.",
+  "category": "flutter",
+  "passingScore": 80,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "fl1",
+      "text": "You are leading a team of 8 Flutter developers across 3 feature squads. Which architectural approach best enables parallel development, independent testing, and minimal merge conflicts?",
+      "options": [
+        "Monolithic feature folders under lib/features",
+        "Micro-frontend style with separate Flutter Engine instances per feature",
+        "Package-based modularization with local path dependencies and a shared core package",
+        "Single global BLoC managing all app state"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Package-based modularization creates clear ownership boundaries. Each feature package has its own pubspec.yaml, allowing teams to work independently, version dependencies separately, and run isolated tests. This scales well for large teams.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think about team autonomy and CI speed",
+        "Avoids merge conflicts in root files"
+      ],
+      "topic": "Team Architecture Strategy"
+    },
+    {
+      "id": "fl2",
+      "text": "Your production Flutter app has a crash rate of 2.3% on specific Xiaomi devices with Android 11. The stack trace shows 'signal 11 (SIGSEGV), code 1 (SEGV_MAPERR)' in libflutter.so. What is the most likely root cause?",
+      "options": [
+        "Null pointer exception in Dart code",
+        "Incompatible custom engine build or Skia shader compilation failure on Mali GPUs",
+        "Using incorrect BuildContext after async gap",
+        "Missing internet permission"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SIGSEGV in libflutter.so indicates a native crash in the Flutter engine, not Dart code. Mali GPUs on Xiaomi/MediaTek devices are notorious for shader compilation issues. Senior leads recognize this requires either engine patches, Impeller migration, or disabling specific rendering features.",
+      "difficulty": "expert",
+      "points": 35,
+      "hints": [
+        "Dart code crashes show Dart stack traces, not native signals",
+        "Think GPU vendor fragmentation"
+      ],
+      "topic": "Production Debugging"
+    },
+    {
+      "id": "fl3",
+      "text": "You need to implement a design system used across 4 Flutter apps and 2 web dashboards (React). Which strategy ensures maximum consistency and minimal duplication?",
+      "options": [
+        "Copy-paste ThemeData between projects",
+        "Create a separate Dart package with ThemeData and share internally only",
+        "Use a design token system (JSON/YAML) that generates Flutter ThemeData and CSS variables",
+        "Use Figma Mirror plugin for Flutter"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "A platform-agnostic token system (like Style Dictionary or Theo) allows a single source of truth for colors, spacing, and typography. The tokens compile to Flutter ThemeData and CSS/SCSS, ensuring the design system is truly cross-platform.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think cross-framework consistency",
+        "Single source of truth for design decisions"
+      ],
+      "topic": "Design Systems"
+    },
+    {
+      "id": "fl4",
+      "text": "You observe excessive garbage collection pauses (jank) in a Flutter game loop using CustomPaint. What is the underlying mechanism causing this?",
+      "options": [
+        "Dart's garbage collector is stop-the-world",
+        "Allocating new objects inside the animation callback triggers frequent GC sweeps",
+        "The GPU is running out of VRAM",
+        "The CustomPainter is not disposed"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Flutter's rendering loop aims for 60/120fps. Creating new objects (e.g., `Offset`, `Rect`, `Path`) inside `paint` or Ticker callbacks fills the young generation heap, forcing frequent minor GC cycles that block the UI thread. Leads must enforce object reuse patterns.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think about allocations per frame",
+        "Reuse objects instead of instantiating"
+      ],
+      "topic": "Performance & GC"
+    },
+    {
+      "id": "fl5",
+      "text": "You are evaluating whether to adopt Riverpod, BLoC, or GetX for a 2-year enterprise project. Which evaluation criterion is most critical for long-term maintainability?",
+      "options": [
+        "GitHub stars and popularity",
+        "Testability of business logic without Flutter dependencies and adherence to unidirectional data flow",
+        "Fewest lines of code to implement",
+        "Built-in navigation utilities"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Lead engineers prioritize architectural purity. BLoC and Riverpod enforce separation of concerns, making business logic unit-testable in pure Dart (no Flutter import). This allows easy migration between Flutter versions and reduces tech debt accumulation over years.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about 5 years from now",
+        "Can the logic survive a Flutter rewrite?"
+      ],
+      "topic": "Technology Selection"
+    },
+    {
+      "id": "fl6",
+      "text": "During a security audit, it's found that API keys and client secrets are hardcoded in the Flutter app bundle. What is the industry-standard mitigation for this?",
+      "options": [
+        "Use ProGuard to obfuscate the strings",
+        "Store keys in SharedPreferences",
+        "Move all secrets to a backend proxy (BFF - Backend for Frontend) and use OAuth PKCE",
+        "Use `.env` files"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Anything in the client binary can be extracted. `.env` files and obfuscation only slow down basic attackers. The only secure method is never to ship secrets; use a BFF to hold third-party API keys and use secure token exchange flows (PKCE) with your own auth server.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Client-side secrets are never safe",
+        "Think server-side proxy"
+      ],
+      "topic": "Security"
+    },
+    {
+      "id": "fl7",
+      "text": "You are planning a migration from Flutter 2.x to 3.x with a team of 10. What is the correct rollout strategy to minimize downtime and risk?",
+      "options": [
+        "Create a single PR with all changes, merge when ready",
+        "Use dependency overrides and migrate incrementally, merging to main frequently with feature flags",
+        "Freeze development for 2 weeks to migrate",
+        "Stay on 2.x until the next LTS release"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Incremental migration with `dependency_overrides` allows the team to update packages one by one without blocking feature work. Feature flags enable testing the new engine version with a subset of users (staged rollout).",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Avoid long-lived branches",
+        "Use percentage-based rollouts"
+      ],
+      "topic": "Migration Strategy"
+    },
+    {
+      "id": "fl8",
+      "text": "What is the purpose of the `--source-maps` flag when building a Flutter web app in production?",
+      "options": [
+        "To reduce JavaScript bundle size",
+        "To enable readable stack traces in error monitoring tools like Sentry",
+        "To enable hot reload in production",
+        "To improve initial load time"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Source maps map minified/compiled JavaScript back to the original Dart code. Without them, production error reports show unreadable JS stack traces. A lead ensures source maps are uploaded to Sentry/Firebase but never deployed to public servers.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Critical for debugging production errors",
+        "Should be stored privately"
+      ],
+      "topic": "Observability"
+    },
+    {
+      "id": "fl9",
+      "text": "You are implementing a white-label solution where the same Flutter codebase must produce 5 different branded apps with different themes, assets, and API endpoints. Which approach is most scalable?",
+      "options": [
+        "Create 5 separate Git branches",
+        "Use `--dart-define` environment variables and dependency injection for flavor-specific configurations",
+        "Create 5 copies of the `lib` folder",
+        "Use platform channels to fetch config at runtime"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Using `--dart-define-from-file` with separate `.env` files per flavor allows compile-time configuration. This ensures unused assets are tree-shaken per build, and API endpoints are injected without runtime overhead. This is the standard for white-label Flutter apps.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think compile-time configuration",
+        "Avoid runtime if/else for brands"
+      ],
+      "topic": "White-Label Solutions"
+    },
+    {
+      "id": "fl10",
+      "text": "You are architecting offline-first functionality for a field service app used in remote areas. Which combination ensures data consistency and conflict resolution?",
+      "options": [
+        "HTTP cache and `FutureBuilder`",
+        "Local SQLite (Drift) with a sync engine using vector clocks or CRDTs",
+        "SharedPreferences for all data",
+        "Firestore with `PersistenceEnabled`"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Firestore offline works for simple cases but struggles with complex relational conflicts. A custom sync engine with Drift (SQLite) and a strategy like 'Last Write Wins' with timestamps or CRDTs gives full control over sync logic and bandwidth usage.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think beyond simple key-value",
+        "Conflict resolution is the hard part"
+      ],
+      "topic": "Offline Architecture"
+    },
+    {
+      "id": "fl11",
+      "text": "In a mono-repo with 20+ Flutter packages, you want to enforce that no UI package imports a Data package directly. Which tool enforces this architectural boundary?",
+      "options": [
+        "flutter analyze",
+        "dart_code_metrics with custom lint rules",
+        "dart format",
+        "pub global activate dependency_validator"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Standard `flutter analyze` doesn't catch layer violations. `dart_code_metrics` allows defining custom lint rules to prevent specific imports (e.g., `lib/features/*/ui` cannot import `lib/features/*/data`). This is essential for maintaining Clean Architecture at scale.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about static analysis beyond linting",
+        "Prevents layer dependency inversion"
+      ],
+      "topic": "Tooling & Linting"
+    },
+    {
+      "id": "fl12",
+      "text": "What is the `BuildOwner` in Flutter's rendering pipeline?",
+      "options": [
+        "The widget that owns the build context",
+        "The manager class that tracks dirty elements and orchestrates the build/layout/paint phases",
+        "A lint rule for widget construction",
+        "The developer who wrote the widget"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`BuildOwner` is a core framework class that manages the dirty list of `Element`s. When `setState` is called, the element is added to `BuildOwner`'s dirty list, and the `WidgetsBinding` scheduler processes them in the next frame.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "It's internal to the framework",
+        "Manages the 'rebuild' process"
+      ],
+      "topic": "Framework Internals"
+    },
+    {
+      "id": "fl13",
+      "text": "You need to optimize CI build times. Currently, `flutter pub get` takes 45 seconds on a clean runner. Which strategy reduces this significantly?",
+      "options": [
+        "Use `pub global` instead",
+        "Cache the `.pub-cache` directory and `$FLUTTER_ROOT/.pub-cache` in CI between runs",
+        "Delete `pubspec.lock` before running",
+        "Use `flutter pub upgrade` instead"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Caching the pub cache across CI runs avoids re-downloading packages from the internet. This can save 30-60 seconds per build. Combining this with cached build artifacts (AOT snapshots) further reduces time.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Think about what takes time: Network + Compilation",
+        "CI runners are stateless by default"
+      ],
+      "topic": "CI/CD Optimization"
+    },
+    {
+      "id": "fl14",
+      "text": "What is the primary risk of using `MediaQuery.of(context).size` directly inside a `build` method?",
+      "options": [
+        "It causes a memory leak",
+        "It rebuilds the entire subtree whenever the keyboard opens or orientation changes, even if the logic doesn't need it",
+        "It is deprecated",
+        "It returns incorrect values on iOS"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`MediaQuery` changes when the keyboard appears (`viewInsets` change) or orientation flips. If a widget only needs orientation and not keyboard visibility, it will still rebuild unnecessarily. Leads use `MediaQuery.sizeOf(context)` (Flutter 3.16+) to limit rebuild scope.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Use the specific `*Of` methods in newer Flutter",
+        "Think about unnecessary rebuilds"
+      ],
+      "topic": "Performance Optimization"
+    },
+    {
+      "id": "fl15",
+      "text": "You are deciding between Code Push (Shorebird) and traditional App Store releases for a banking app. What is the regulatory/compliance issue with Code Push?",
+      "options": [
+        "It increases app size",
+        "It bypasses App Store review for code changes, potentially violating financial regulations or app store guidelines",
+        "It only works on Android",
+        "It requires an internet connection"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Apple's guidelines and many banking regulations prohibit downloading executable code that changes the app's core functionality without a formal review. Shorebird patches modify the Dart snapshot, which can be seen as circumventing review. A Lead must weigh this risk.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Think about App Store Review Guidelines section 3.3.2",
+        "Consider financial compliance (PCI DSS, SOC2)"
+      ],
+      "topic": "Compliance & Deployment"
+    },
+    {
+      "id": "fl16",
+      "text": "You are implementing deep linking. When the app is opened from a terminated state, `getInitialLink()` works. When the app is backgrounded, `onLink` works. Which lifecycle scenario do developers often miss?",
+      "options": [
+        "When the app is installed fresh",
+        "When the app is in the background but the link is clicked from a different app",
+        "When the user force-quits the app",
+        "When using Android 12"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The common edge case is `getInitialLink` being called but the link not being consumed because the app was already in memory (warm start) but not listening. Robust deep linking requires handling `getInitialLink` AND setting up the `onLink` stream before `runApp`.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Warm start vs Cold start",
+        "Stream subscription timing matters"
+      ],
+      "topic": "Deep Linking"
+    },
+    {
+      "id": "fl17",
+      "text": "What is the correct way to benchmark UI performance on a specific low-end Android device?",
+      "options": [
+        "Use `flutter run --release`",
+        "Use `flutter drive` with `traceAction` or the DevTools Performance overlay in Profile mode",
+        "Use `print` statements with `DateTime.now()`",
+        "Use Android Studio's CPU Profiler in Debug mode"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Debug mode is slow and not representative. `Profile mode` is optimized but retains tracing capabilities. `flutter drive` with timeline tracing captures the exact frame render times and rasterization costs.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Never benchmark in Debug mode",
+        "Profile mode is the source of truth"
+      ],
+      "topic": "Performance Profiling"
+    },
+    {
+      "id": "fl18",
+      "text": "You want to ensure that every `dispose` method in a specific directory overrides the super method correctly. Which tool enforces this?",
+      "options": [
+        "flutter analyze",
+        "custom_lint with a visitor that checks `super.dispose` is called in `dispose` methods",
+        "dart format",
+        "flutter test --coverage"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Missing `super.dispose()` is a common source of memory leaks. Standard lints catch this for built-in widgets, but for custom base classes, a `custom_lint` rule can scan the AST to ensure every override of `dispose` contains a `super.dispose()` call.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about custom linting rules",
+        "Prevents memory leaks at scale"
+      ],
+      "topic": "Tooling & Linting"
+    },
+    {
+      "id": "fl19",
+      "text": "You need to display 5,000 items in a grid with complex image-heavy tiles. `GridView.builder` causes jank when scrolling fast due to image decoding. What is the optimal solution?",
+      "options": [
+        "Use `shrinkWrap: true`",
+        "Use `cacheExtent` to pre-load items and `ResizeImage` to downsample images to target tile size",
+        "Use `SingleChildScrollView` with a `Column`",
+        "Use `Opacity` widget to hide items off-screen"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`cacheExtent` tells Flutter to render items slightly before they enter the viewport. `ResizeImage` instructs the image cache to decode the image at the exact display resolution, saving massive amounts of memory and decoding time.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Don't decode 4K images for 80x80 thumbnails",
+        "Think about memory footprint"
+      ],
+      "topic": "List/Grid Performance"
+    },
+    {
+      "id": "fl20",
+      "text": "You are migrating a project to null safety. Some files depend on legacy non-null-safe packages. What is the correct command to migrate while allowing those legacy packages?",
+      "options": [
+        "dart migrate",
+        "dart pub outdated --mode=null-safety",
+        "dart pub get --no-sound-null-safety",
+        "flutter run --no-sound-null-safety"
+      ],
+      "correctAnswerIndex": 3,
+      "explanation": "The `--no-sound-null-safety` flag runs the app with weak null safety, allowing non-migrated packages to run alongside migrated code. This is a temporary state; a Lead plans the full migration timeline.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "It's a runtime flag, not a migration tool",
+        "Allows gradual migration"
+      ],
+      "topic": "Null Safety"
+    },
+    {
+      "id": "fl21",
+      "text": "What is the `Layer` tree in Flutter rendering?",
+      "options": [
+        "A widget tree visualization tool",
+        "The retained rendering instructions sent to the engine for composition",
+        "The Dart isolate stack trace",
+        "The network interceptor"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The `Layer` tree is the output of the painting phase. It contains drawing operations (textures, paths, clips) that the `SceneBuilder` composes. Understanding Layers is crucial for debugging `RepaintBoundary` and rasterization issues.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "It's after Widget and Element, before Engine",
+        "Think about the painting phase"
+      ],
+      "topic": "Rendering Pipeline"
+    },
+    {
+      "id": "fl22",
+      "text": "You are using `Freezed` for data classes. What is the primary advantage of using `freezed` over just a plain Dart class with a manual `copyWith`?",
+      "options": [
+        "It compiles faster",
+        "It generates `copyWith`, `==`, `hashCode`, `toString`, and union types/sealed classes automatically, reducing boilerplate and human error",
+        "It reduces app size",
+        "It improves JSON serialization speed"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Freezed is a code generator for immutable data classes. It ensures all equality checks are correct and deep copy logic is bug-free. For leads, this enforces immutable state management patterns across the team.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Think about boilerplate reduction",
+        "Union types are powerful for state modeling"
+      ],
+      "topic": "Code Generation"
+    },
+    {
+      "id": "fl23",
+      "text": "In Flutter Web, the `CanvasKit` renderer provides better performance than `HTML` renderer but increases download size by ~2MB. What is the best strategy for production deployment?",
+      "options": [
+        "Force CanvasKit always",
+        "Force HTML always",
+        "Use `auto` renderer and preload CanvasKit only for modern desktop browsers, falling back to HTML for mobile browsers",
+        "Use CanvasKit only in development"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "`auto` selects CanvasKit for desktop and HTML for mobile. This balances performance and bandwidth. A Lead may configure server-side logic (User-Agent detection) to decide which `flutter.js` entrypoint to serve.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about mobile data plans vs desktop power",
+        "User-Agent sniffing is necessary here"
+      ],
+      "topic": "Flutter Web"
+    },
+    {
+      "id": "fl24",
+      "text": "You are setting up Golden Tests (screenshot tests) for a component library. What is the critical CI dependency?",
+      "options": [
+        "An emulator with GPU acceleration",
+        "Flutter Gold (or similar) for managing baseline images and diff tolerance",
+        "A real iOS device",
+        "Integration_test package"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Golden tests are brittle if not managed. A system like Flutter Gold is required to approve/reject visual changes. Without it, any minor anti-aliasing difference breaks the CI. Leads ensure the team has a process for updating goldens.",
+      "difficulty": "advanced",
+      "points": 25,
+      "hints": [
+        "Think about visual regression testing",
+        "False positives are a major issue"
+      ],
+      "topic": "Testing Strategy"
+    },
+    {
+      "id": "fl25",
+      "text": "A junior developer asks why `flutter clean` fixes their build error. What is the technical explanation?",
+      "options": [
+        "It restarts the Dart Analysis Server",
+        "It deletes the `build/` and `.dart_tool/` directories, clearing stale AOT snapshots and cached asset manifests that may be out of sync",
+        "It reboots the emulator",
+        "It resets the pub cache"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Flutter caches compiled kernel files and asset bundles. If a native dependency changes or an asset path is moved, the cache doesn't invalidate properly. `clean` removes the cache, forcing a full rebuild.",
+      "difficulty": "beginner",
+      "points": 15,
+      "hints": [
+        "Think about the `build` folder",
+        "It doesn't touch `pub-cache`"
+      ],
+      "topic": "Tooling"
+    },
+    {
+      "id": "fl26",
+      "text": "What is the purpose of `WidgetsFlutterBinding.ensureInitialized()` when using `Firebase.initializeApp()` in `main()`?",
+      "options": [
+        "It initializes Firebase Core",
+        "It binds the Flutter engine to the platform channel system before async native calls are made",
+        "It sets the status bar color",
+        "It is required for Hot Restart"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "`runApp` initializes the binding automatically. But if you need to call a native plugin (like Firebase) *before* `runApp`, you must call `ensureInitialized` to set up the method channel plumbing first.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Required for async work before runApp",
+        "Binds the Dart VM to the host platform"
+      ],
+      "topic": "Initialization"
+    },
+    {
+      "id": "fl27",
+      "text": "You need to monitor user flows and performance metrics (FPS, load time) across the entire app. Which solution provides this level of insight?",
+      "options": [
+        "Google Analytics for Firebase (Event logging)",
+        "Firebase Performance Monitoring (Traces) and Custom User Timing metrics",
+        "Sentry (Crash Reporting)",
+        "Flutter Error Widget"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Firebase Performance Monitoring automatically captures traces for `_appStart` and allows manual tracing for any `Future` or screen transition. This is standard for production monitoring of app health.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Go beyond clicks and crashes",
+        "Measure screen load latency"
+      ],
+      "topic": "Observability"
+    },
+    {
+      "id": "fl28",
+      "text": "You are using `Equatable` in a BLoC state class. Why is `Equatable` or `==` operator override critical for `BlocBuilder` performance?",
+      "options": [
+        "It prevents state from changing",
+        "`BlocBuilder` compares the previous and current state using `==`; without `Equatable`, every emission triggers a rebuild even if data is identical",
+        "It serializes the state",
+        "It deep clones the object"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "BLoC relies on `==` to skip redundant rebuilds. If you emit a new instance of the same data without overriding `==`, `BlocBuilder` treats it as a new state and rebuilds unnecessarily, causing performance issues.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "Think about state comparison",
+        "Prevents unnecessary UI work"
+      ],
+      "topic": "BLoC / State Management"
+    },
+    {
+      "id": "fl29",
+      "text": "You are integrating a third-party SDK that only provides a Java/Kotlin AAR library. You need to call its methods from Flutter. What is the correct sequence?",
+      "options": [
+        "Call the AAR directly from Dart using FFI",
+        "Create a Flutter Plugin with a MethodChannel, implement the Java side to call the AAR, and expose Dart APIs",
+        "Use `flutter create --template=package`",
+        "Use `dart:ffi` to load the AAR"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Dart FFI only works with C/C++ libraries. For Java/Kotlin AARs, you must use a standard Flutter Plugin project structure and communicate via Platform Channels.",
+      "difficulty": "intermediate",
+      "points": 20,
+      "hints": [
+        "FFI is for C code, not Java",
+        "Think about the Native -> Flutter bridge"
+      ],
+      "topic": "Plugin Development"
+    },
+    {
+      "id": "fl30",
+      "text": "What is the `Impeller` rendering engine, and why is it significant for Flutter's future?",
+      "options": [
+        "A new widget library",
+        "A new runtime rendering engine that pre-compiles shaders to eliminate runtime shader compilation jank (the 'first frame' lag on iOS/Android)",
+        "A state management library",
+        "A tool for generating assets"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Impeller solves one of Flutter's oldest issues: shader compilation jank. By using AOT shader compilation and a custom render backend, Impeller (now default on iOS) provides butter-smooth animations even on complex screens with custom paths.",
+      "difficulty": "expert",
+      "points": 30,
+      "hints": [
+        "Replaces Skia on some platforms",
+        "Eliminates 'shader compilation' stutters"
+      ],
+      "topic": "Engine & Future of Flutter"
+    }
+  ]
+}

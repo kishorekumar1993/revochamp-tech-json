@@ -1,0 +1,295 @@
+{
+  "id": "flutter_junior_mock_001",
+  "title": "Flutter Junior Developer Mock Test",
+  "description": "Assess foundational Flutter knowledge for junior developers covering widgets, state, navigation, layouts, assets, and core framework concepts.",
+  "category": "flutter",
+  "passingScore": 100,
+  "timeLimitMinutes": 15,
+  "questions": [
+    {
+      "id": "fj1",
+      "text": "Which widget is the root of a typical Flutter application?",
+      "options": [
+        "MaterialApp",
+        "Scaffold",
+        "Container",
+        "MyApp"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "MaterialApp is usually the root widget that configures the top-level Navigator, theme, and routes.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "It wraps the whole app",
+        "Provides Material Design styling"
+      ],
+      "topic": "App Structure"
+    },
+    {
+      "id": "fj2",
+      "text": "What is the difference between a StatelessWidget and a StatefulWidget?",
+      "options": [
+        "StatelessWidget can have mutable state, StatefulWidget cannot",
+        "StatefulWidget can rebuild when its internal state changes; StatelessWidget cannot",
+        "There is no difference",
+        "StatelessWidget is only for layout, StatefulWidget for logic"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "StatefulWidget maintains a State object that can change over time, triggering rebuilds. StatelessWidget is immutable.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Think 'setState'",
+        "Which one holds data that can change?"
+      ],
+      "topic": "Widgets"
+    },
+    {
+      "id": "fj3",
+      "text": "How do you update the UI when the internal state of a StatefulWidget changes?",
+      "options": [
+        "Call rebuild()",
+        "Call setState()",
+        "Call updateUI()",
+        "The UI updates automatically"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Calling setState() marks the widget as dirty and schedules a rebuild of the subtree.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "It's a method inside State<T>",
+        "Accepts a callback where you change variables"
+      ],
+      "topic": "State Management"
+    },
+    {
+      "id": "fj4",
+      "text": "Which widget provides a basic visual layout structure with an app bar, body, and floating action button?",
+      "options": [
+        "Container",
+        "Scaffold",
+        "Material",
+        "Column"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Scaffold implements the basic Material Design visual layout structure and provides slots for appBar, body, FAB, drawer, etc.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "It's the 'canvas' for a screen",
+        "Has appBar and body properties"
+      ],
+      "topic": "Material Design"
+    },
+    {
+      "id": "fj5",
+      "text": "What does the `pubspec.yaml` file contain?",
+      "options": [
+        "Only the app's name and description",
+        "Project metadata, dependencies, assets, and fonts",
+        "Dart analysis options",
+        "Flutter widget tree configuration"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "pubspec.yaml defines the package name, version, dependencies (like flutter SDK), dev dependencies, assets, fonts, and other metadata.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "It's required in every Flutter project",
+        "You add image paths here"
+      ],
+      "topic": "Project Configuration"
+    },
+    {
+      "id": "fj6",
+      "text": "How do you display an image stored in the `assets/images/` folder?",
+      "options": [
+        "Image.network('assets/images/pic.png')",
+        "Image.file('assets/images/pic.png')",
+        "Image.asset('assets/images/pic.png')",
+        "Image.memory('assets/images/pic.png')"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Image.asset loads an image from the app's asset bundle. The asset must be declared in pubspec.yaml.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "It uses the asset bundle",
+        "Must be listed in pubspec.yaml under assets"
+      ],
+      "topic": "Assets"
+    },
+    {
+      "id": "fj7",
+      "text": "Which widget is used to create a scrollable list of children?",
+      "options": [
+        "Row",
+        "Column",
+        "ListView",
+        "Stack"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "ListView is a scrollable list of widgets arranged linearly. It can be used for both small and large lists.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "It's scrollable",
+        "Useful for displaying many items"
+      ],
+      "topic": "Layout"
+    },
+    {
+      "id": "fj8",
+      "text": "What is the purpose of the `build` method in a widget?",
+      "options": [
+        "To construct the widget's state object",
+        "To describe the widget's UI in terms of other widgets",
+        "To initialize the widget's lifecycle",
+        "To handle user input"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The build method returns a widget tree that describes the UI. It is called whenever the widget needs to be rendered or rebuilt.",
+      "difficulty": "beginner",
+      "points": 10,
+      "hints": [
+        "Returns a Widget",
+        "Called when the widget is first created and after setState"
+      ],
+      "topic": "Widget Lifecycle"
+    },
+    {
+      "id": "fj9",
+      "text": "What is the difference between hot reload and hot restart?",
+      "options": [
+        "Hot reload preserves state, hot restart resets the app to initial state",
+        "Hot restart is faster",
+        "There is no difference",
+        "Hot reload restarts the whole VM, hot restart only updates UI"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Hot reload injects updated code into the running Dart VM while preserving app state. Hot restart fully resets the app state.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "One keeps your variables, the other doesn't",
+        "Think about what happens to text fields when you press each"
+      ],
+      "topic": "Development Workflow"
+    },
+    {
+      "id": "fj10",
+      "text": "Which method is called only once when a StatefulWidget's State object is created?",
+      "options": [
+        "build()",
+        "initState()",
+        "didChangeDependencies()",
+        "dispose()"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "initState() is called exactly once when the State object is inserted into the tree. It is used for one-time initializations.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Use it to initialize controllers or subscriptions",
+        "Called before build"
+      ],
+      "topic": "Lifecycle"
+    },
+    {
+      "id": "fj11",
+      "text": "How do you navigate to a new screen and back in Flutter?",
+      "options": [
+        "Navigator.push() and Navigator.pop()",
+        "Router.go() and Router.back()",
+        "ScreenManager.open() and ScreenManager.close()",
+        "Intent.start() and finish()"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Navigator manages a stack of routes. push adds a route, pop removes the current route.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think stack of screens",
+        "Uses MaterialPageRoute or CupertinoPageRoute"
+      ],
+      "topic": "Navigation"
+    },
+    {
+      "id": "fj12",
+      "text": "What is the purpose of a `FutureBuilder` widget?",
+      "options": [
+        "To build widgets that depend on the result of a Future",
+        "To create asynchronous functions",
+        "To handle HTTP requests",
+        "To delay widget rendering"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "FutureBuilder takes a Future and a builder function. It rebuilds when the Future completes, showing appropriate UI for loading/error/data states.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Useful for network data",
+        "Has ConnectionState"
+      ],
+      "topic": "Async UI"
+    },
+    {
+      "id": "fj13",
+      "text": "Which widget would you use to add space between widgets in a Column?",
+      "options": [
+        "Padding",
+        "SizedBox",
+        "Container",
+        "All of the above"
+      ],
+      "correctAnswerIndex": 3,
+      "explanation": "SizedBox(height: 20) is common, but Padding around a child or a Container with margin also adds space. All can be used depending on the context.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Think about white space",
+        "SizedBox with width/height is explicit"
+      ],
+      "topic": "Layout"
+    },
+    {
+      "id": "fj14",
+      "text": "In Dart (and Flutter), how do you make a variable non-nullable?",
+      "options": [
+        "Add a '?' after the type",
+        "Add a '!' after the variable name",
+        "Declare it without '?' and initialize it with a non-null value",
+        "Use the 'late' keyword only"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "By default, types are non-nullable. You must either initialize the variable or use the 'late' keyword to promise initialization before use.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Opposite of nullable (?)",
+        "Ensures no null value"
+      ],
+      "topic": "Null Safety"
+    },
+    {
+      "id": "fj15",
+      "text": "What is the purpose of `dispose()` method in a State class?",
+      "options": [
+        "To free up resources when the widget is removed from the tree",
+        "To initialize state variables",
+        "To rebuild the widget",
+        "To handle errors"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "dispose() is called when the State object is permanently removed. Use it to cancel streams, dispose controllers, etc.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "hints": [
+        "Opposite of initState",
+        "Clean up animations and controllers"
+      ],
+      "topic": "Lifecycle"
+    }
+  ]
+}
