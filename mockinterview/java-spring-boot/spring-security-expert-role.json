@@ -1,0 +1,385 @@
+{
+  "id": "spring_security_expert_mock_001",
+  "title": "Spring Security Expert Assessment",
+  "description": "Expert-level evaluation focusing on Spring Security architecture, authentication providers, OAuth2/OIDC, JWT handling, method-level security, security filter chain, CORS/CSRF protection, session management, and common security vulnerabilities (OWASP).",
+  "category": "spring_security_expert",
+  "passingScore": 80,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "sse1",
+      "text": "What is the correct order of filters in Spring Security's default filter chain?",
+      "options": [
+        "UsernamePasswordAuthenticationFilter → BasicAuthenticationFilter → ExceptionTranslationFilter → AuthorizationFilter",
+        "AuthorizationFilter → ExceptionTranslationFilter → UsernamePasswordAuthenticationFilter",
+        "ExceptionTranslationFilter → AuthorizationFilter → UsernamePasswordAuthenticationFilter",
+        "BasicAuthenticationFilter → UsernamePasswordAuthenticationFilter → AuthorizationFilter → ExceptionTranslationFilter"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Standard order: SecurityContextPersistenceFilter → UsernamePasswordAuthenticationFilter → BasicAuthenticationFilter → ExceptionTranslationFilter → AuthorizationFilter (formerly FilterSecurityInterceptor).",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Security Architecture"
+    },
+    {
+      "id": "sse2",
+      "text": "Which interface must you implement to create a custom authentication mechanism in Spring Security?",
+      "options": [
+        "UserDetailsService",
+        "AuthenticationProvider",
+        "GrantedAuthority",
+        "AuthenticationManager"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "AuthenticationProvider interface with authenticate() and supports() methods. It processes authentication requests and returns fully populated Authentication object.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Authentication"
+    },
+    {
+      "id": "sse3",
+      "text": "What is the difference between UserDetailsService and AuthenticationProvider?",
+      "options": [
+        "No difference; they are interchangeable",
+        "UserDetailsService loads user data by username; AuthenticationProvider performs actual authentication logic (password verification, etc.)",
+        "UserDetailsService is for OAuth2 only",
+        "AuthenticationProvider is deprecated"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "UserDetailsService is a DAO interface for retrieving user data. AuthenticationProvider validates credentials and can delegate to UserDetailsService. DaoAuthenticationProvider combines both.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Authentication"
+    },
+    {
+      "id": "sse4",
+      "text": "How do you configure Spring Security to use a custom password encoder that wraps BCrypt with a pepper?",
+      "options": [
+        "Extend BCryptPasswordEncoder and override encode() method",
+        "Create a DelegatingPasswordEncoder with BCrypt as default",
+        "Implement PasswordEncoder interface and combine BCrypt with pepper (secret added to password before hashing)",
+        "Use Pbkdf2PasswordEncoder only"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Implement PasswordEncoder interface. A pepper (application-wide secret) is added to the password before hashing. Store pepper in environment variable, not in code or database.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Authentication"
+    },
+    {
+      "id": "sse5",
+      "text": "What is the purpose of SecurityContextHolder in Spring Security?",
+      "options": [
+        "To store application configuration",
+        "To hold the current security context (Authentication object) for the current thread",
+        "To log security events",
+        "To cache user permissions"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SecurityContextHolder stores SecurityContext (containing Authentication) using ThreadLocal. Strategy can be MODE_THREADLOCAL, MODE_INHERITABLETHREADLOCAL, or MODE_GLOBAL.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Security Architecture"
+    },
+    {
+      "id": "sse6",
+      "text": "How do you propagate SecurityContext to child threads in async processing?",
+      "options": [
+        "It propagates automatically",
+        "Use @Async with DelegatingSecurityContextRunnable or SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL)",
+        "Cannot propagate security context to threads",
+        "Use @EnableAsync with default configuration"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Set MODE_INHERITABLETHREADLOCAL or use DelegatingSecurityContextRunnable/TaskDecorator. Spring's @Async with proper configuration wraps tasks with security context.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Security Architecture"
+    },
+    {
+      "id": "sse7",
+      "text": "What is the correct way to implement stateless JWT authentication in Spring Security?",
+      "options": [
+        "Use HttpSession to store JWT",
+        "Configure session management as STATELESS and add custom JwtAuthenticationFilter before UsernamePasswordAuthenticationFilter",
+        "Use JSESSIONID cookie with JWT",
+        "Configure session management as ALWAYS"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Set sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS). Add custom OncePerRequestFilter that extracts JWT from Authorization header and sets Authentication in SecurityContext.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "JWT"
+    },
+    {
+      "id": "sse8",
+      "text": "How do you handle JWT revocation (logout) in a stateless architecture?",
+      "options": [
+        "Clear client-side token only",
+        "Maintain a denylist (blacklist) of revoked JWTs in Redis until token expiration",
+        "JWTs cannot be revoked",
+        "Delete the user account"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Maintain a denylist of JWT IDs (jti) or token hashes in fast storage (Redis). On each request, check if token is revoked. Use short-lived tokens with refresh tokens.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "JWT"
+    },
+    {
+      "id": "sse9",
+      "text": "What does @PreAuthorize(\"hasPermission(#id, 'document', 'read')\") do?",
+      "options": [
+        "It checks if user has role ADMIN",
+        "It uses a custom PermissionEvaluator to check permission on a domain object",
+        "It validates method parameters",
+        "It caches the authorization result"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "hasPermission() calls a custom PermissionEvaluator with targetId (#id), targetType ('document'), and permission ('read'). Used for fine-grained ACL-style authorization.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Method Security"
+    },
+    {
+      "id": "sse10",
+      "text": "How do you enable method-level security with @PreAuthorize in Spring Security?",
+      "options": [
+        "Add @EnableMethodSecurity to any @Configuration class",
+        "Add @EnableWebSecurity only",
+        "Add @EnableGlobalMethodSecurity(prePostEnabled = true) (pre Spring Security 6) or @EnableMethodSecurity (Spring Security 6+)",
+        "No annotation needed, it's automatic"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Spring Security 6+ uses @EnableMethodSecurity. Older versions used @EnableGlobalMethodSecurity(prePostEnabled=true). Without these, @PreAuthorize/@PostAuthorize are ignored.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Method Security"
+    },
+    {
+      "id": "sse11",
+      "text": "What is the difference between @PreAuthorize and @PostAuthorize?",
+      "options": [
+        "No difference",
+        "@PreAuthorize checks before method execution; @PostAuthorize checks after method execution (using returnObject)",
+        "@PreAuthorize is for service layer; @PostAuthorize for controllers",
+        "@PreAuthorize uses roles; @PostAuthorize uses permissions"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@PreAuthorize prevents method entry if condition fails. @PostAuthorize executes method but throws AccessDeniedException if condition fails. Useful for checking ownership based on return value.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Method Security"
+    },
+    {
+      "id": "sse12",
+      "text": "How does Spring Security protect against CSRF attacks by default?",
+      "options": [
+        "By requiring HTTPS only",
+        "By generating a CSRF token and requiring it in state-changing requests (POST, PUT, DELETE)",
+        "By validating Origin header only",
+        "CSRF protection is disabled by default"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "CSRF protection is enabled by default. Spring Security generates a token stored in HttpSession or cookie. State-changing requests must include token as header (X-XSRF-TOKEN) or form parameter.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "CSRF"
+    },
+    {
+      "id": "sse13",
+      "text": "When should you disable CSRF protection in Spring Security?",
+      "options": [
+        "Always disable for performance",
+        "Only for stateless REST APIs where clients (mobile/SPA) don't use browser cookies for authentication (e.g., JWT in Authorization header)",
+        "Never disable CSRF protection",
+        "Disable for all POST requests"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Disable CSRF for stateless REST APIs where authentication uses Authorization header (Bearer token) instead of cookies. Browser-based apps with sessions should keep CSRF enabled.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "CSRF"
+    },
+    {
+      "id": "sse14",
+      "text": "What is the correct CORS configuration for a REST API that serves a SPA on localhost:4200?",
+      "options": [
+        "@CrossOrigin(origins = \"http://localhost:4200\") on controllers or global CorsConfigurationSource",
+        "Set allowedOrigins(\"*\") for all origins",
+        "CORS is not needed for localhost",
+        "Set allowedOrigins(\"http://localhost:8080\")"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Specific origin (http://localhost:4200) is correct. Allowing all origins (*) with credentials is unsafe and not allowed. Use @CrossOrigin on controllers or configure globally.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "CORS"
+    },
+    {
+      "id": "sse15",
+      "text": "How does Spring Security prevent Session Fixation attacks?",
+      "options": [
+        "By disabling sessions entirely",
+        "By creating a new session ID on authentication (session fixation protection)",
+        "By encrypting session cookies",
+        "By using URL rewriting"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SessionFixationProtectionStrategy (default) creates a new session ID or migrates session attributes to a new session on authentication, preventing attacker from fixing session ID.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Session Management"
+    },
+    {
+      "id": "sse16",
+      "text": "What is the purpose of SecurityContextRepository?",
+      "options": [
+        "To store user passwords",
+        "To load and save SecurityContext between requests (e.g., HttpSessionSecurityContextRepository for session, RequestAttributeSecurityContextRepository for stateless)",
+        "To log security events",
+        "To manage user roles"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SecurityContextRepository loads SecurityContext before filter chain and saves it after. Default is HttpSessionSecurityContextRepository. For stateless JWT, use custom implementation or NullSecurityContextRepository.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Security Architecture"
+    },
+    {
+      "id": "sse17",
+      "text": "How do you integrate OAuth2 Resource Server with JWT in Spring Boot?",
+      "options": [
+        "Add spring-boot-starter-oauth2-resource-server and configure jwt issuer URI or public key",
+        "Add spring-boot-starter-security only",
+        "Manually validate JWT in each controller",
+        "Use spring-boot-starter-oauth2-client"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Add spring-boot-starter-oauth2-resource-server. Configure spring.security.oauth2.resourceserver.jwt.issuer-uri or jwk-set-uri. Spring Security automatically validates JWT and extracts authentication.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "OAuth2"
+    },
+    {
+      "id": "sse18",
+      "text": "What is the difference between authorization_code and client_credentials OAuth2 grant types?",
+      "options": [
+        "No difference",
+        "authorization_code is for user delegation (user logs in); client_credentials is for machine-to-machine (no user)",
+        "client_credentials is more secure",
+        "authorization_code is deprecated"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Authorization code grant involves user authentication and consent, returning code exchanged for token. Client credentials uses only client ID/secret for server-to-server communication without user context.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "OAuth2"
+    },
+    {
+      "id": "sse19",
+      "text": "How do you extract user roles from a JWT claim (e.g., 'roles' claim) in Spring Security?",
+      "options": [
+        "Parse JWT manually in each controller",
+        "Implement JwtAuthenticationConverter and map claims to GrantedAuthority",
+        "Use @RolesAllowed annotation only",
+        "Cannot extract custom claims"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Implement JwtAuthenticationConverter, override convert() to extract claims and create JwtAuthenticationToken with authorities from 'roles' or 'authorities' claim.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "JWT"
+    },
+    {
+      "id": "sse20",
+      "text": "What is the purpose of SecurityFilterChain bean in modern Spring Security configuration?",
+      "options": [
+        "To replace web.xml",
+        "To define which security filters apply to which request paths (allowing multiple filter chains)",
+        "To configure database connections",
+        "To manage session timeouts"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "SecurityFilterChain allows multiple filter chains for different request patterns. Example: /api/** uses stateless JWT chain, /admin/** uses different authentication.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Security Architecture"
+    },
+    {
+      "id": "sse21",
+      "text": "How do you prevent the 'Remember Me' token from being stolen and replayed?",
+      "options": [
+        "Use secure flag on cookie",
+        "Implement PersistentTokenBasedRememberMeServices with database-stored series and token values (validation on each request)",
+        "Disable Remember Me",
+        "Use short-lived tokens only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "PersistentTokenBasedRememberMeServices stores (series, token) pairs. On each auto-login, token is validated and new token generated. Stolen token becomes invalid after use.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Session Management"
+    },
+    {
+      "id": "sse22",
+      "text": "What is the vulnerability that Spring Security's HTTP Strict Transport Security (HSTS) prevents?",
+      "options": [
+        "SQL Injection",
+        "SSL stripping attacks (forcing HTTPS by telling browser to always use HTTPS)",
+        "Cross-site scripting (XSS)",
+        "CSRF attacks"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "HSTS adds Strict-Transport-Security header, instructing browser to always use HTTPS for the domain, preventing man-in-the-middle downgrade to HTTP.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Security Headers"
+    },
+    {
+      "id": "sse23",
+      "text": "How do you configure Spring Security to return 401 instead of redirecting to login page for REST APIs?",
+      "options": [
+        "Set sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)",
+        "Configure AuthenticationEntryPoint to send 401 response instead of redirect",
+        "Disable formLogin()",
+        "Both B and C (disable formLogin + custom AuthenticationEntryPoint)"
+      ],
+      "correctAnswerIndex": 3,
+      "explanation": "For REST APIs, disable formLogin() to remove login page redirect, and configure custom AuthenticationEntryPoint that returns 401 with WWW-Authenticate header.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "REST Security"
+    },
+    {
+      "id": "sse24",
+      "text": "What is the purpose of the 'X-Content-Type-Options: nosniff' header?",
+      "options": [
+        "Prevents MIME type sniffing, reducing XSS risk",
+        "Enables content compression",
+        "Sets content encoding",
+        "Disables caching"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "X-Content-Type-Options: nosniff prevents browser from guessing MIME type when server declares Content-Type. Prevents drive-by download attacks and XSS via malformed responses.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Security Headers"
+    },
+    {
+      "id": "sse25",
+      "text": "How do you implement brute force protection (account lockout) in Spring Security?",
+      "options": [
+        "Use @PreAuthorize with attempts counter",
+        "Implement custom AuthenticationFailureHandler that tracks failed attempts in cache/database and locks account after threshold",
+        "Spring Security has built-in brute force protection",
+        "Use maximum password age configuration"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Implement AuthenticationFailureHandler to increment failed attempts counter (e.g., in Redis). When threshold reached, update UserDetails to lock account or add to blocklist.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Security"
+    }
+  ]
+}

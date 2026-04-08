@@ -1,0 +1,385 @@
+{
+  "id": "springboot_backend_developer_mock_001",
+  "title": "Spring Boot Backend Developer Assessment",
+  "description": "Practical evaluation focusing on Spring Boot development, REST API implementation, Spring Data JPA, validation, exception handling, unit/integration testing, logging, and common backend development patterns.",
+  "category": "springboot_backend_developer",
+  "passingScore": 70,
+  "timeLimitMinutes": 75,
+  "questions": [
+    {
+      "id": "sbd1",
+      "text": "Which dependency is required to build a REST API with Spring Boot?",
+      "options": [
+        "spring-boot-starter-data-jpa",
+        "spring-boot-starter-web",
+        "spring-boot-starter-security",
+        "spring-boot-starter-thymeleaf"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "spring-boot-starter-web includes Spring MVC, Tomcat, and REST support. This is the essential starter for building web/REST backends.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Dependencies"
+    },
+    {
+      "id": "sbd2",
+      "text": "What is the correct way to create a REST endpoint that returns JSON in Spring Boot?",
+      "options": [
+        "Use @Controller with @ResponseBody on each method",
+        "Use @RestController (which combines @Controller and @ResponseBody)",
+        "Use @Component only",
+        "Use @Service only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@RestController is the preferred way for REST APIs as it automatically applies @ResponseBody to all handler methods, converting return objects to JSON.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "REST API"
+    },
+    {
+      "id": "sbd3",
+      "text": "How do you inject a dependency into a Spring Boot service?",
+      "options": [
+        "Using new keyword",
+        "Using @Autowired on constructor, field, or setter",
+        "Using @InjectAnnotation",
+        "Using dependency injection is not possible in Spring Boot"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Autowired tells Spring to inject the dependency. Constructor injection is recommended as it makes dependencies explicit and helps with unit testing.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Dependency Injection"
+    },
+    {
+      "id": "sbd4",
+      "text": "Which annotation maps HTTP POST requests to a controller method?",
+      "options": [
+        "@GetMapping",
+        "@PutMapping",
+        "@PostMapping",
+        "@RequestMapping(method = RequestMethod.POST) only"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "@PostMapping is the specialized annotation for POST requests. @RequestMapping with method=POST also works but @PostMapping is cleaner.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "REST API"
+    },
+    {
+      "id": "sbd5",
+      "text": "How do you extract a query parameter like '?page=2' in a Spring Boot controller?",
+      "options": [
+        "@PathVariable(\"page\")",
+        "@RequestParam(\"page\")",
+        "@QueryParam(\"page\")",
+        "@Param(\"page\")"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@RequestParam binds query parameters. Example: @GetMapping(\"/users\") public List<User> getUsers(@RequestParam int page).",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "REST API"
+    },
+    {
+      "id": "sbd6",
+      "text": "What is the purpose of @Entity annotation in Spring Boot JPA?",
+      "options": [
+        "It creates a database table automatically",
+        "It marks a class as a JPA entity to be mapped to a database table",
+        "It validates entity fields",
+        "It creates an index on the primary key"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Entity marks a POJO as a JPA entity. Combined with @Id and optionally @Table, it defines the mapping to a database table.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Spring Data JPA"
+    },
+    {
+      "id": "sbd7",
+      "text": "Which interface should your repository extend to get basic CRUD methods for an entity?",
+      "options": [
+        "List",
+        "ArrayList",
+        "CrudRepository or JpaRepository",
+        "EntityManager"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Extending CrudRepository (or JpaRepository) gives you methods like save(), findById(), findAll(), delete(), etc., without writing implementations.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Spring Data JPA"
+    },
+    {
+      "id": "sbd8",
+      "text": "What does the @RequestBody annotation do in a controller method?",
+      "options": [
+        "It reads data from URL query parameters",
+        "It binds the HTTP request body to a method parameter (e.g., JSON to Java object)",
+        "It writes the response body",
+        "It logs the request body"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@RequestBody tells Spring to deserialize the HTTP request body (usually JSON) into a Java object using HttpMessageConverter.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "REST API"
+    },
+    {
+      "id": "sbd9",
+      "text": "What is the default HTTP response status code for a successful GET request in Spring Boot?",
+      "options": [
+        "201 Created",
+        "200 OK",
+        "204 No Content",
+        "302 Found"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Spring Boot returns 200 OK by default for successful GET requests. You can customize with @ResponseStatus if needed.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "REST API"
+    },
+    {
+      "id": "sbd10",
+      "text": "How do you change the server port in Spring Boot?",
+      "options": [
+        "Change the port in the Java code",
+        "Set server.port=8081 in application.properties",
+        "Use a different JDK",
+        "It cannot be changed"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Adding server.port=8081 (or any port) to application.properties overrides the default 8080. Environment variables can also override it.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Configuration"
+    },
+    {
+      "id": "sbd11",
+      "text": "Which annotation is used to validate Java beans (e.g., checking @NotNull, @Size) in Spring Boot?",
+      "options": [
+        "@Validate",
+        "@Valid",
+        "@Validation",
+        "@Assert"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Valid (from javax.validation) triggers validation on a method parameter. Combined with @NotNull, @Size, @Email annotations on fields.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Validation"
+    },
+    {
+      "id": "sbd12",
+      "text": "What does the @ExceptionHandler annotation do?",
+      "options": [
+        "It logs all exceptions globally",
+        "It defines a method to handle specific exceptions within a controller",
+        "It throws exceptions automatically",
+        "It suppresses exceptions"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@ExceptionHandler inside a controller handles exceptions thrown by handler methods in that controller. For global handling, use @ControllerAdvice.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Exception Handling"
+    },
+    {
+      "id": "sbd13",
+      "text": "What is the purpose of the spring-boot-starter-test dependency?",
+      "options": [
+        "To deploy the application",
+        "To provide JUnit, Mockito, AssertJ, and other testing libraries",
+        "To generate test data",
+        "To run performance benchmarks"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "spring-boot-starter-test brings in JUnit Jupiter, Mockito, AssertJ, Hamcrest, and Spring Test utilities for comprehensive testing.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Testing"
+    },
+    {
+      "id": "sbd14",
+      "text": "How do you write a simple unit test for a Spring Boot service using Mockito?",
+      "options": [
+        "Use @SpringBootTest to load full context",
+        "Use @ExtendWith(MockitoExtension.class) and @Mock for dependencies, then @InjectMocks for the service",
+        "Use @DataJpaTest only",
+        "Use @WebMvcTest only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "For unit tests, @ExtendWith(MockitoExtension.class) with @Mock and @InjectMocks is sufficient. @SpringBootTest is for integration tests.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Testing"
+    },
+    {
+      "id": "sbd15",
+      "text": "Which annotation is used to run SQL scripts before integration tests?",
+      "options": [
+        "@Sql",
+        "@Script",
+        "@TestSql",
+        "@DatabaseSetup"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "@Sql (org.springframework.test.context.jdbc.Sql) executes SQL scripts before or after test methods to set up test data.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Testing"
+    },
+    {
+      "id": "sbd16",
+      "text": "What does the @Transactional annotation do in a service method?",
+      "options": [
+        "It logs the method execution",
+        "It ensures the method runs within a database transaction; any RuntimeException triggers rollback",
+        "It caches the method result",
+        "It encrypts the method parameters"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Transactional wraps the method in a transaction. If a runtime exception occurs, Spring rolls back changes; otherwise commits on normal completion.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Database"
+    },
+    {
+      "id": "sbd17",
+      "text": "What is the purpose of Spring Boot Actuator?",
+      "options": [
+        "To deploy applications to production",
+        "To provide production-ready monitoring endpoints like /health, /info, /metrics",
+        "To generate API documentation",
+        "To manage database migrations"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Actuator adds endpoints for health checks, metrics, environment info, and more. Essential for monitoring Spring Boot apps in production.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Monitoring"
+    },
+    {
+      "id": "sbd18",
+      "text": "How do you enable logging for a specific package in Spring Boot?",
+      "options": [
+        "Using System.out.println",
+        "Add logging.level.com.yourpackage=DEBUG in application.properties",
+        "Using @Slf4j is enough",
+        "It cannot be configured"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Spring Boot uses Logback by default. Configure logging levels per package via logging.level.package.name=DEBUG in application.properties.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Logging"
+    },
+    {
+      "id": "sbd19",
+      "text": "Which annotation simplifies using Lombok to generate getters, setters, toString, equals, and hashCode?",
+      "options": [
+        "@GetterSetter",
+        "@Data",
+        "@AllArgsConstructor",
+        "@UtilityClass"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Data is a Lombok annotation that generates getters, setters, toString, equals, hashCode, and a required args constructor.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Developer Tools"
+    },
+    {
+      "id": "sbd20",
+      "text": "What is the correct way to define a one-to-many relationship in JPA?",
+      "options": [
+        "@OneToMany on the parent side, @ManyToOne on the child side",
+        "@ManyToMany only",
+        "@OneToOne only",
+        "@JoinTable is required for all relationships"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "In a bidirectional one-to-many, the parent uses @OneToMany(mappedBy=\"parent\") and the child uses @ManyToOne with @JoinColumn.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Spring Data JPA"
+    },
+    {
+      "id": "sbd21",
+      "text": "How do you create a custom query in Spring Data JPA repository?",
+      "options": [
+        "Using @Query annotation with JPQL or native SQL",
+        "Writing SQL in a separate file",
+        "Using @NamedQuery in entity class",
+        "Implementing the method manually"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "@Query allows you to write custom JPQL or native SQL queries directly in the repository interface. Example: @Query(\"SELECT u FROM User u WHERE u.email = ?1\").",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Spring Data JPA"
+    },
+    {
+      "id": "sbd22",
+      "text": "What does the @Value annotation do in Spring Boot?",
+      "options": [
+        "It sets the value of a primitive variable",
+        "It injects values from properties files into fields (e.g., @Value(\"${app.name}\"))",
+        "It validates numeric ranges",
+        "It creates a new instance of a class"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Value reads configuration from application.properties or environment variables and injects them into Spring-managed beans.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Configuration"
+    },
+    {
+      "id": "sbd23",
+      "text": "What is the purpose of spring-boot-devtools?",
+      "options": [
+        "To debug production issues",
+        "To enable automatic application restarts during development",
+        "To generate UML diagrams",
+        "To profile database queries"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "DevTools provides automatic restarts when files change in development, improving productivity. Disabled automatically in production.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Developer Tools"
+    },
+    {
+      "id": "sbd24",
+      "text": "Which HTTP status code should you return for a successful POST request that creates a new resource?",
+      "options": [
+        "200 OK",
+        "201 Created",
+        "202 Accepted",
+        "204 No Content"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "201 Created is the standard response for POST that creates a resource. Include a Location header pointing to the new resource.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "REST API"
+    },
+    {
+      "id": "sbd25",
+      "text": "How do you make a field optional in a Spring Boot @RequestParam?",
+      "options": [
+        "Set required = false (e.g., @RequestParam(value = \"page\", required = false))",
+        "Use Optional type",
+        "Both of the above are valid approaches",
+        "Use @Nullable annotation only"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "You can set required=false or use java.util.Optional as the parameter type. Both make the parameter optional. Default value can be set with defaultValue attribute.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "REST API"
+    }
+  ]
+}

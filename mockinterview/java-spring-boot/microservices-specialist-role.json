@@ -1,0 +1,385 @@
+{
+  "id": "microservices_specialist_mock_001",
+  "title": "Microservices Specialist Assessment",
+  "description": "Specialist-level evaluation focusing on microservices architecture patterns, service discovery, API gateways, distributed transactions, resilience, container orchestration (Kubernetes), service mesh (Istio/Linkerd), event-driven communication, and observability in distributed systems.",
+  "category": "microservices_specialist",
+  "passingScore": 80,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "ms1",
+      "text": "In a microservices architecture, what is the primary responsibility of an API Gateway?",
+      "options": [
+        "Database connection pooling",
+        "Request routing, authentication, rate limiting, and aggregating responses from multiple services",
+        "Compiling Java code to bytecode",
+        "Storing user session data permanently"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "API Gateway acts as the single entry point for clients, handling cross-cutting concerns like auth, rate limiting, request routing, response aggregation, and protocol translation.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "API Gateway"
+    },
+    {
+      "id": "ms2",
+      "text": "Which service discovery pattern allows a client to query a registry and then directly call a service instance?",
+      "options": [
+        "Server-side discovery (via load balancer)",
+        "Client-side discovery (e.g., Netflix Eureka + Ribbon)",
+        "DNS-based discovery only",
+        "Hardcoded IP addresses"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "In client-side discovery, the client retrieves service instance locations from a registry (like Eureka or Consul) and then selects an instance, typically using a load balancer like Ribbon.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Service Discovery"
+    },
+    {
+      "id": "ms3",
+      "text": "What is the 'Circuit Breaker' pattern and which state allows a service to attempt recovery?",
+      "options": [
+        "Always open; never recovers",
+        "Three states: CLOSED (normal), OPEN (failing), HALF-OPEN (testing recovery)",
+        "Two states: ON and OFF",
+        "Only logging failures without blocking"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Circuit breaker has CLOSED (requests pass), OPEN (requests fail fast), and HALF-OPEN (test request allowed to check if service recovered). HALF-OPEN is the recovery attempt state.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Resilience"
+    },
+    {
+      "id": "ms4",
+      "text": "In the 'Saga' pattern for distributed transactions, what is a 'compensating transaction'?",
+      "options": [
+        "A transaction that runs faster",
+        "A transaction that undoes the effects of a previous transaction when a failure occurs",
+        "A transaction that logs errors only",
+        "A transaction that retries indefinitely"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "A compensating transaction reverses the changes made by a previous step in a saga when a subsequent step fails, ensuring eventual consistency without two-phase commit.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Distributed Transactions"
+    },
+    {
+      "id": "ms5",
+      "text": "What is the difference between 'Orchestration' and 'Choreography' in Saga implementation?",
+      "options": [
+        "No difference; they are synonyms",
+        "Orchestration uses a central coordinator; Choreography uses event-driven coordination without a central controller",
+        "Orchestration is slower; Choreography is faster",
+        "Orchestration is for databases; Choreography is for APIs"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Orchestration has a central orchestrator telling services what to do. Choreography uses events where each service listens and reacts, with no single point of control.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Distributed Transactions"
+    },
+    {
+      "id": "ms6",
+      "text": "What is 'sticky session' and why is it problematic in horizontally scaled microservices?",
+      "options": [
+        "Sessions that never expire; it improves security",
+        "A load balancing technique that routes a user to the same instance; it breaks statelessness and complicates scaling",
+        "A database caching strategy",
+        "A logging mechanism for user actions"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Sticky sessions (session affinity) tie a client to a specific instance, preventing true statelessness. If that instance fails, the user loses session data, and auto-scaling becomes complex.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Scalability"
+    },
+    {
+      "id": "ms7",
+      "text": "In Kubernetes, what is a 'Service' resource used for?",
+      "options": [
+        "Running a container",
+        "Providing stable network endpoint to a set of pods with load balancing",
+        "Storing configuration data",
+        "Managing secrets"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "A Kubernetes Service provides a stable IP and DNS name that load-balances traffic across a dynamic set of pods, which can be scaled or replaced without changing client configuration.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Container Orchestration"
+    },
+    {
+      "id": "ms8",
+      "text": "What problem does a 'Service Mesh' (like Istio or Linkerd) solve?",
+      "options": [
+        "Code compilation speed",
+        "Observability, traffic management, and security between services without changing application code",
+        "Database migration",
+        "Frontend UI rendering"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Service mesh offloads network concerns (retries, timeouts, mTLS, tracing, metrics) to a sidecar proxy, allowing developers to focus on business logic.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Service Mesh"
+    },
+    {
+      "id": "ms9",
+      "text": "What is 'distributed tracing' and which standard is commonly used (e.g., in Jaeger or Zipkin)?",
+      "options": [
+        "Logging all errors in one file",
+        "Tracking a request across multiple services using trace IDs and spans; OpenTelemetry standard",
+        "Monitoring CPU usage",
+        "Checking database indexes"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Distributed tracing follows a request end-to-end across service boundaries. Trace ID is propagated via headers. OpenTelemetry is the CNCF standard for traces, metrics, and logs.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Observability"
+    },
+    {
+      "id": "ms10",
+      "text": "What is the 'Strangler Fig Pattern' in the context of monolith to microservices migration?",
+      "options": [
+        "Deleting the monolith immediately",
+        "Gradually replacing specific functionalities with microservices while the monolith still handles other requests",
+        "Rewriting everything from scratch",
+        "Keeping both systems permanently"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The strangler pattern incrementally replaces parts of a monolith with microservices. A facade routes requests to either the monolith or new services until the monolith is fully replaced.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Migration"
+    },
+    {
+      "id": "ms11",
+      "text": "What is 'CQRS' (Command Query Responsibility Segregation) and why use it in microservices?",
+      "options": [
+        "A way to write SQL queries",
+        "Separating write (command) models from read (query) models, allowing independent scaling and optimization",
+        "A logging framework",
+        "A deployment strategy"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "CQRS splits data modification (commands) from data retrieval (queries). This allows different models, databases, or scaling strategies for reads vs. writes, often paired with Event Sourcing.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Design Patterns"
+    },
+    {
+      "id": "ms12",
+      "text": "What is 'Event Sourcing' and how does it relate to microservices audit requirements?",
+      "options": [
+        "Storing only the current state of an entity",
+        "Storing all changes to an entity as an immutable sequence of events, providing full audit trail and time travel",
+        "Deleting old events to save space",
+        "Storing events in JSON files only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Event Sourcing persists every state change as an event. The current state is derived by replaying events. This provides complete audit history and enables temporal queries.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Event-Driven Architecture"
+    },
+    {
+      "id": "ms13",
+      "text": "What is the 'Idempotency Key' pattern used for in REST APIs?",
+      "options": [
+        "To make APIs faster",
+        "To safely retry requests without duplicate side effects (e.g., double payment)",
+        "To encrypt request bodies",
+        "To compress responses"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Clients send a unique idempotency key (e.g., UUID) with requests. The server stores the key with the response and rejects duplicate keys, ensuring retries don't cause duplicates.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Resilience"
+    },
+    {
+      "id": "ms14",
+      "text": "In Kubernetes, what is a 'ConfigMap' and what is a 'Secret'?",
+      "options": [
+        "ConfigMap stores non-sensitive config; Secret stores sensitive data (both encoded, not encrypted by default)",
+        "Both are identical",
+        "ConfigMap is for secrets; Secret is for config",
+        "Both are encrypted automatically"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "ConfigMap holds non-confidential configuration (base64 encoded). Secret holds sensitive data like passwords/tokens (also base64 encoded, but can be encrypted at rest with proper configuration).",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Container Orchestration"
+    },
+    {
+      "id": "ms15",
+      "text": "What is the 'Bulkhead' pattern in microservices resilience?",
+      "options": [
+        "A ship compartment; isolates failures by partitioning resources (thread pools, connection pools) per service",
+        "A type of database index",
+        "A logging pattern",
+        "A deployment strategy"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "Bulkhead isolates failures by allocating separate resource pools (e.g., thread pools, connection pools) to different services or tenants, preventing one failure from exhausting all resources.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Resilience"
+    },
+    {
+      "id": "ms16",
+      "text": "What is the 'Ambassador' pattern?",
+      "options": [
+        "A diplomatic service between countries",
+        "A helper service that handles cross-cutting concerns (retry, monitoring, routing) on behalf of a consumer service",
+        "A database migration tool",
+        "A UI framework"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The Ambassador pattern creates a helper service that sits between a consumer and external services, handling network concerns like retries, circuit breaking, and monitoring without changing consumer code.",
+      "difficulty": "expert",
+      "points": 25,
+      "topic": "Design Patterns"
+    },
+    {
+      "id": "ms17",
+      "text": "What is the 'Outbox Pattern' used for in event-driven microservices?",
+      "options": [
+        "Sending emails",
+        "Ensuring reliable event publication alongside database writes without using distributed transactions",
+        "Storing logs",
+        "Caching query results"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The Outbox pattern stores events in an 'outbox' table within the same database transaction as business data. A separate publisher reads the outbox and sends events, ensuring at-least-once delivery.",
+      "difficulty": "expert",
+      "points": 30,
+      "topic": "Event-Driven Architecture"
+    },
+    {
+      "id": "ms18",
+      "text": "What is the 'Sidecar' pattern in Kubernetes and service meshes?",
+      "options": [
+        "A motorcycle attachment",
+        "A helper container that runs alongside the main application container, providing enhanced functionality (logging, networking, monitoring)",
+        "A type of load balancer",
+        "A database schema"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The Sidecar pattern deploys an additional container (e.g., Envoy proxy) alongside the main application container. This is how service meshes inject proxies without changing application code.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Container Orchestration"
+    },
+    {
+      "id": "ms19",
+      "text": "What is the difference between 'Horizontal Pod Autoscaler (HPA)' and 'Vertical Pod Autoscaler (VPA)' in Kubernetes?",
+      "options": [
+        "HPA adds/removes pod replicas; VPA adjusts CPU/memory requests of existing pods",
+        "HPA is for storage; VPA is for networking",
+        "No difference",
+        "HPA is deprecated; VPA is preferred"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "HPA scales the number of pod replicas based on metrics like CPU. VPA adjusts resource requests/limits of existing pods, which may require pod restart. Both serve different scaling needs.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Container Orchestration"
+    },
+    {
+      "id": "ms20",
+      "text": "What is 'mTLS' (mutual TLS) and why is it important in zero-trust microservices architectures?",
+      "options": [
+        "A faster encryption algorithm",
+        "Two-way authentication where both client and server verify each other's certificates; prevents unauthorized service-to-service communication",
+        "A logging format",
+        "A load balancing algorithm"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "mTLS ensures that both the calling service (client) and receiving service (server) authenticate each other using certificates. This is fundamental to zero-trust security models in service meshes.",
+      "difficulty": "advanced",
+      "points": 25,
+      "topic": "Security"
+    },
+    {
+      "id": "ms21",
+      "text": "What is 'gRPC' and what advantage does it have over REST for internal microservices communication?",
+      "options": [
+        "It uses XML instead of JSON",
+        "It uses Protocol Buffers (binary) and HTTP/2, providing lower latency, smaller payloads, and bidirectional streaming",
+        "It is only for mobile apps",
+        "It is slower than REST"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "gRPC uses binary serialization (Protobuf) and HTTP/2, enabling multiplexed streaming, header compression, and strongly typed contracts via .proto files. Preferred for high-performance internal communication.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Communication"
+    },
+    {
+      "id": "ms22",
+      "text": "What is 'Rate Limiting' at the API Gateway level and which algorithm is commonly used?",
+      "options": [
+        "Limiting database queries; FIFO",
+        "Limiting requests per client over time; Token Bucket or Leaky Bucket",
+        "Limiting response sizes; Binary search",
+        "Limiting concurrent users; Round robin"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Rate limiting protects downstream services from excessive traffic. Token Bucket is popular because it allows burst traffic up to a limit while maintaining average rate.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "API Gateway"
+    },
+    {
+      "id": "ms23",
+      "text": "What is 'Canary Deployment' in microservices?",
+      "options": [
+        "Deploying to all servers at once",
+        "Gradually routing a small percentage of traffic to a new version before full rollout",
+        "A bird-watching technique",
+        "Deleting old versions immediately"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Canary deployment reduces risk by sending a small portion of real traffic to the new version, monitoring for errors, and gradually increasing traffic if successful.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Deployment"
+    },
+    {
+      "id": "ms24",
+      "text": "What is 'Blue-Green Deployment' and how does it enable instant rollback?",
+      "options": [
+        "Two color-coded servers",
+        "Two identical environments (blue=current, green=new); switching router traffic allows instant rollback by switching back",
+        "Deploying half on Monday, half on Friday",
+        "Using two clouds"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Blue-green deployment maintains two production environments. After testing green, traffic is switched from blue to green. If issues occur, switching back to blue provides instant rollback.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Deployment"
+    },
+    {
+      "id": "ms25",
+      "text": "What are the 'Three Pillars of Observability' in microservices?",
+      "options": [
+        "Coding, testing, debugging",
+        "Metrics, logs, traces",
+        "CPU, memory, disk",
+        "Auth, rate limiting, caching"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Metrics (quantitative data like request rate), Logs (discrete events/errors), and Traces (request flow across services) form the three pillars needed to understand system behavior.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Observability"
+    }
+  ]
+}

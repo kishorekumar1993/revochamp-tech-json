@@ -1,0 +1,385 @@
+{
+  "id": "java_spring_engineer_mock_001",
+  "title": "Java Spring Engineer Assessment",
+  "description": "Mid-to-senior level evaluation focusing on Spring Framework fundamentals, Spring Boot auto-configuration, Spring Data JPA, Spring Security, REST API design, transaction management, AOP, testing strategies, and common Spring integration patterns.",
+  "category": "java_spring_engineer",
+  "passingScore": 75,
+  "timeLimitMinutes": 90,
+  "questions": [
+    {
+      "id": "jse1",
+      "text": "What is the Spring Framework's Inversion of Control (IoC) container?",
+      "options": [
+        "A database connection pool manager",
+        "A container that manages object creation, configuration, and lifecycle through dependency injection",
+        "A web server for Spring applications",
+        "A testing framework for Spring components"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "The IoC container (ApplicationContext) is responsible for instantiating, configuring, and assembling beans, managing their entire lifecycle from creation to destruction.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Core Spring"
+    },
+    {
+      "id": "jse2",
+      "text": "Which annotation is used to mark a class as a configuration class that defines Spring beans?",
+      "options": [
+        "@Component",
+        "@Service",
+        "@Configuration",
+        "@SpringBootApplication"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "@Configuration indicates that a class declares bean definitions via @Bean-annotated methods. It's processed by the Spring container to generate beans.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Core Spring"
+    },
+    {
+      "id": "jse3",
+      "text": "What is the difference between @Component and @Bean?",
+      "options": [
+        "No difference; they are interchangeable",
+        "@Component is used on classes with component scanning; @Bean is used on methods in @Configuration classes for explicit bean registration",
+        "@Component is for XML configuration only; @Bean is for annotations",
+        "@Component is for singletons; @Bean is for prototypes only"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Component (and its specializations @Service, @Repository, @Controller) are class-level annotations for auto-detection. @Bean is a method-level annotation used to explicitly declare beans, often for third-party classes.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Core Spring"
+    },
+    {
+      "id": "jse4",
+      "text": "What does the @Autowired annotation do when placed on a constructor?",
+      "options": [
+        "It creates a new instance of the dependency",
+        "It tells Spring to inject dependencies via that constructor (constructor injection)",
+        "It throws an exception at runtime",
+        "It only works with primitive types"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Constructor injection is the recommended approach for mandatory dependencies. Spring calls the constructor with the required beans, making the class immutable and testable.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Dependency Injection"
+    },
+    {
+      "id": "jse5",
+      "text": "What is the default scope of a Spring bean?",
+      "options": [
+        "Prototype",
+        "Request",
+        "Session",
+        "Singleton"
+      ],
+      "correctAnswerIndex": 3,
+      "explanation": "Singleton is the default scope, meaning one instance is created and shared across the entire Spring container. For web apps, request/session scopes are also available.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Core Spring"
+    },
+    {
+      "id": "jse6",
+      "text": "What is Spring Boot's auto-configuration?",
+      "options": [
+        "Automatic code generation for all classes",
+        "Spring Boot automatically configures beans based on dependencies in the classpath (e.g., DataSource if H2 is present)",
+        "A tool for database migration",
+        "A way to bypass application.properties"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@EnableAutoConfiguration (included in @SpringBootApplication) automatically configures Spring based on jar dependencies added to the classpath, reducing boilerplate configuration.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Spring Boot"
+    },
+    {
+      "id": "jse7",
+      "text": "Which file is commonly used to externalize configuration in Spring Boot?",
+      "options": [
+        "pom.xml or build.gradle",
+        "application.properties or application.yml",
+        "web.xml",
+        "spring-config.xml"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "application.properties (or application.yml) is the primary configuration file for Spring Boot, supporting property externalization, profiles, and environment-specific overrides.",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Spring Boot"
+    },
+    {
+      "id": "jse8",
+      "text": "What is the purpose of @SpringBootTest annotation?",
+      "options": [
+        "To deploy the application to production",
+        "To load the full application context for integration testing",
+        "To generate API documentation",
+        "To profile application performance"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@SpringBootTest boots the entire Spring context for integration testing, allowing real dependency injection and full application behavior validation.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Testing"
+    },
+    {
+      "id": "jse9",
+      "text": "Which JPA annotation specifies the mapping between an entity and a database table?",
+      "options": [
+        "@Column",
+        "@Entity",
+        "@Table",
+        "@Id"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "@Table defines the table name in the database. @Entity marks the class as an entity, but @Table provides specific table mapping details (name, schema, catalog).",
+      "difficulty": "junior",
+      "points": 10,
+      "topic": "Spring Data JPA"
+    },
+    {
+      "id": "jse10",
+      "text": "What does the @Transactional annotation do in Spring?",
+      "options": [
+        "It logs all SQL queries",
+        "It ensures a method executes within a database transaction, with automatic rollback on runtime exceptions",
+        "It caches query results",
+        "It encrypts database data"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Transactional declares transactional boundaries. Spring wraps the method with a proxy that begins, commits, or rolls back transactions based on exception type.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Transaction Management"
+    },
+    {
+      "id": "jse11",
+      "text": "What is the propagation level of @Transactional(propagation = Propagation.REQUIRES_NEW)?",
+      "options": [
+        "Suspends current transaction and starts a new one",
+        "Joins existing transaction",
+        "Throws exception if no transaction exists",
+        "Runs without any transaction"
+      ],
+      "correctAnswerIndex": 0,
+      "explanation": "REQUIRES_NEW always starts a new transaction, suspending any existing one. The outer and inner transactions are independent; failure in one doesn't affect the other.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Transaction Management"
+    },
+    {
+      "id": "jse12",
+      "text": "What is the purpose of Spring Data JPA's derived query methods?",
+      "options": [
+        "To write SQL manually",
+        "To automatically generate queries based on method naming conventions (e.g., findByEmail(String email))",
+        "To create database schemas",
+        "To validate entity relationships"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "Derived query methods parse method names at startup and generate JPQL queries automatically, reducing boilerplate code for common queries.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Spring Data JPA"
+    },
+    {
+      "id": "jse13",
+      "text": "What is the difference between @RequestParam and @PathVariable?",
+      "options": [
+        "No difference; they are synonyms",
+        "@RequestParam extracts query parameters (?id=123); @PathVariable extracts URI template variables (/users/{id})",
+        "@RequestParam is for POST; @PathVariable is for GET",
+        "@RequestParam is required; @PathVariable is optional"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@RequestParam binds to query parameters or form data. @PathVariable binds to placeholders in the URI pattern. Both support required/optional settings.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Spring MVC"
+    },
+    {
+      "id": "jse14",
+      "text": "What does @ResponseBody annotation do in a Spring Controller?",
+      "options": [
+        "It returns an HTML view name",
+        "It writes the return value directly to the HTTP response body (e.g., JSON/XML) instead of resolving to a view",
+        "It logs the response body",
+        "It compresses the response"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@ResponseBody tells Spring to skip view resolution and directly serialize the return object to the response body using HttpMessageConverters (e.g., MappingJackson2HttpMessageConverter for JSON).",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Spring MVC"
+    },
+    {
+      "id": "jse15",
+      "text": "What is the purpose of @ControllerAdvice?",
+      "options": [
+        "To define a controller's base path",
+        "To handle exceptions globally across multiple controllers",
+        "To inject dependencies into controllers",
+        "To map HTTP requests to controller methods"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@ControllerAdvice centralizes exception handling, binding, and model attributes for all controllers, reducing duplicate @ExceptionHandler code.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Spring MVC"
+    },
+    {
+      "id": "jse16",
+      "text": "What is Spring AOP (Aspect-Oriented Programming) used for?",
+      "options": [
+        "Database migrations",
+        "Separating cross-cutting concerns (logging, security, transactions) from business logic",
+        "Generating REST API documentation",
+        "Managing database connections"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "AOP allows defining aspects (e.g., @Transactional, @Cacheable) that apply behavior across multiple methods without modifying their code, improving modularity.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "AOP"
+    },
+    {
+      "id": "jse17",
+      "text": "What is the @Profile annotation used for in Spring?",
+      "options": [
+        "To profile method performance",
+        "To conditionally enable beans based on active Spring profiles (e.g., dev, test, prod)",
+        "To generate code coverage reports",
+        "To log user activity"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Profile allows you to register beans only when specific profiles are active, enabling environment-specific configurations (e.g., H2 for dev, PostgreSQL for prod).",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Spring Boot"
+    },
+    {
+      "id": "jse18",
+      "text": "What does Spring Security's @PreAuthorize annotation do?",
+      "options": [
+        "It pre-authorizes HTTP requests before sending to the client",
+        "It defines method-level security using SpEL expressions (e.g., @PreAuthorize(\"hasRole('ADMIN')\"))",
+        "It pre-loads user roles from database",
+        "It encrypts method return values"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@PreAuthorize evaluates a SpEL expression before method execution. If false, AccessDeniedException is thrown. Requires @EnableGlobalMethodSecurity.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Spring Security"
+    },
+    {
+      "id": "jse19",
+      "text": "What is the default password encoding strategy in modern Spring Security (5.0+)?",
+      "options": [
+        "Plain text",
+        "MD5",
+        "BCrypt (BCryptPasswordEncoder) with adaptive strength",
+        "SHA-256"
+      ],
+      "correctAnswerIndex": 2,
+      "explanation": "Spring Security 5+ defaults to BCryptPasswordEncoder, which uses a computationally expensive, salt-embedded hash that resists brute-force attacks.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Spring Security"
+    },
+    {
+      "id": "jse20",
+      "text": "What is the purpose of the @Cacheable annotation?",
+      "options": [
+        "To cache HTTP responses",
+        "To cache the result of a method invocation, so subsequent calls return cached value without re-execution",
+        "To clear the cache",
+        "To cache database connections"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Cacheable caches method results. On invocation, Spring checks the cache first. If present, returns cached value; otherwise executes method and stores result.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Caching"
+    },
+    {
+      "id": "jse21",
+      "text": "What is the difference between @RestController and @Controller?",
+      "options": [
+        "No difference",
+        "@Controller is for traditional web apps returning views; @RestController combines @Controller and @ResponseBody for REST APIs",
+        "@RestController is for mobile apps only",
+        "@Controller cannot handle JSON responses"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@RestController is a convenience annotation that automatically adds @ResponseBody to every handler method, making it ideal for stateless REST APIs returning JSON/XML.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Spring MVC"
+    },
+    {
+      "id": "jse22",
+      "text": "What is the purpose of Spring's @EventListener annotation?",
+      "options": [
+        "To listen to HTTP requests",
+        "To listen to application events (published via ApplicationEventPublisher) for loosely coupled communication",
+        "To log SQL statements",
+        "To monitor thread pools"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@EventListener marks a method to handle application events. Combined with @Async, it enables asynchronous, decoupled event handling within the Spring context.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Spring Events"
+    },
+    {
+      "id": "jse23",
+      "text": "What is the difference between @MockBean and @Mock in Spring Boot tests?",
+      "options": [
+        "No difference",
+        "@Mock is from Mockito; @MockBean creates a mock and replaces any existing bean of the same type in the Spring context",
+        "@MockBean is for final classes only",
+        "@Mock is only for interfaces"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Mock (Mockito) creates a plain mock without Spring integration. @MockBean (Spring Boot test) creates a mock and replaces the real bean in the ApplicationContext for integration tests.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Testing"
+    },
+    {
+      "id": "jse24",
+      "text": "What does the @Lazy annotation do in Spring?",
+      "options": [
+        "It slows down method execution",
+        "It delays bean initialization until first requested instead of at application startup",
+        "It lazy loads database queries",
+        "It defers transaction commits"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Lazy prevents eager initialization of a bean. The bean is created only when first requested, reducing startup time and avoiding circular dependency issues.",
+      "difficulty": "intermediate",
+      "points": 15,
+      "topic": "Core Spring"
+    },
+    {
+      "id": "jse25",
+      "text": "What is the purpose of the @Conditional annotation family (e.g., @ConditionalOnProperty)?",
+      "options": [
+        "To create conditional loops",
+        "To conditionally include beans only when specific conditions are met (e.g., a property exists)",
+        "To compile code conditionally",
+        "To validate method inputs"
+      ],
+      "correctAnswerIndex": 1,
+      "explanation": "@Conditional annotations (Spring Boot) control bean registration based on conditions like classpath presence, property values, or bean existence. Core to auto-configuration.",
+      "difficulty": "advanced",
+      "points": 20,
+      "topic": "Spring Boot"
+    }
+  ]
+}
