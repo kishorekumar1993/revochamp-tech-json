@@ -1,0 +1,475 @@
+{
+  "journeyName": "Motor Insurance Journey",
+  "version": "1.0.0",
+  "description": "",
+  "category": "Onboarding",
+  "locale": "English (US)",
+  "platform": "All Devices",
+  "steps": [
+    {
+      "id": "personal",
+      "title": "Personal Details",
+      "description": "Please provide your basic information",
+      "nextStep": "vehicle",
+      "fields": [
+        {
+          "id": "fullName",
+          "label": "Full Name",
+          "type": "text",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Enter full name",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "dob",
+          "label": "Date of Birth",
+          "type": "date",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "DD/MM/YYYY",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "mobile",
+          "label": "Mobile Number",
+          "type": "phone",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Enter mobile number",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "email",
+          "label": "Email Address",
+          "type": "text",
+          "required": false,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Enter email address",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "gender",
+          "label": "Gender",
+          "type": "radio",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "options": [
+            "Male",
+            "Female",
+            "Other"
+          ],
+          "defaultValue": "Male",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "maritalStatus",
+          "label": "Marital Status",
+          "type": "dropdown",
+          "required": false,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Select marital status",
+          "options": [
+            "Single",
+            "Married",
+            "Divorced",
+            "Widowed"
+          ],
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "address",
+          "label": "Address",
+          "type": "textarea",
+          "required": false,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Enter your current address",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "fullName",
+          "message": "Full Name is required"
+        },
+        {
+          "type": "required",
+          "field": "mobile",
+          "message": "Mobile number is required"
+        },
+        {
+          "type": "required",
+          "field": "dob",
+          "message": "Date of Birth is required"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "visibleIf",
+          "field": "gender",
+          "operator": "equals",
+          "value": "Female"
+        },
+        {
+          "type": "enableIf",
+          "field": "email",
+          "operator": "contains",
+          "value": "@"
+        }
+      ],
+      "apiCalls": [
+        {
+          "method": "POST",
+          "url": "/api/v1/personal-info",
+          "description": "Save personal details info"
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "apiCall",
+          "details": "Submit personal details"
+        }
+      ]
+    },
+    {
+      "id": "vehicle",
+      "title": "Vehicle Details",
+      "description": "Please provide vehicle information",
+      "nextStep": "nominee",
+      "fields": [
+        {
+          "id": "vehicleNum",
+          "label": "Vehicle Number",
+          "type": "text",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "e.g. MH-12-AB-1234",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "vehicleMake",
+          "label": "Make",
+          "type": "dropdown",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Select manufacturer",
+          "options": [
+            "Toyota",
+            "Honda",
+            "Hyundai",
+            "Suzuki",
+            "Tata"
+          ],
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "vehicleModel",
+          "label": "Model",
+          "type": "text",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Enter vehicle model",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "regYear",
+          "label": "Registration Year",
+          "type": "dropdown",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Select registration year",
+          "options": [
+            "2026",
+            "2025",
+            "2024",
+            "2023",
+            "2022",
+            "2021",
+            "2020"
+          ],
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        }
+      ],
+      "validations": [],
+      "conditions": [],
+      "apiCalls": [],
+      "actions": []
+    },
+    {
+      "id": "nominee",
+      "title": "Nominee Details",
+      "description": "Provide nominee description for coverage",
+      "nextStep": "documents",
+      "fields": [
+        {
+          "id": "nomineeName",
+          "label": "Nominee Full Name",
+          "type": "text",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Enter nominee name",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "nomineeRelation",
+          "label": "Relationship",
+          "type": "dropdown",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Select relationship",
+          "options": [
+            "Spouse",
+            "Father",
+            "Mother",
+            "Son",
+            "Daughter"
+          ],
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        }
+      ],
+      "validations": [],
+      "conditions": [],
+      "apiCalls": [],
+      "actions": []
+    },
+    {
+      "id": "documents",
+      "title": "Upload Documents",
+      "description": "Upload necessary documents",
+      "nextStep": "review",
+      "fields": [
+        {
+          "id": "panDoc",
+          "label": "PAN Card",
+          "type": "file",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "drivingLicense",
+          "label": "Driving License",
+          "type": "file",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        }
+      ],
+      "validations": [],
+      "conditions": [],
+      "apiCalls": [],
+      "actions": []
+    },
+    {
+      "id": "review",
+      "title": "Review & Confirm",
+      "description": "Review your submitted data",
+      "nextStep": "payment",
+      "fields": [
+        {
+          "id": "termsAccepted",
+          "label": "I accept the policy terms and declarations",
+          "type": "switch",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "defaultValue": "false",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        }
+      ],
+      "validations": [],
+      "conditions": [],
+      "apiCalls": [],
+      "actions": []
+    },
+    {
+      "id": "payment",
+      "title": "Payment",
+      "description": "Enter premium payment details",
+      "nextStep": "success",
+      "fields": [
+        {
+          "id": "paymentMethod",
+          "label": "Select Payment Mode",
+          "type": "radio",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "options": [
+            "Credit Card",
+            "Debit Card",
+            "UPI",
+            "Net Banking"
+          ],
+          "defaultValue": "Credit Card",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "otpVerify",
+          "label": "Verification Code",
+          "type": "otp",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Enter 6-digit OTP",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        }
+      ],
+      "validations": [],
+      "conditions": [],
+      "apiCalls": [],
+      "actions": []
+    },
+    {
+      "id": "success",
+      "title": "Success",
+      "description": "Your policy generated successfully!",
+      "fields": [
+        {
+          "id": "successDiv",
+          "label": "Congratulations! Policy PDF has been sent to your email.",
+          "type": "divider",
+          "required": false,
+          "visible": true,
+          "readOnly": false,
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        }
+      ],
+      "validations": [],
+      "conditions": [],
+      "apiCalls": [],
+      "actions": []
+    }
+  ]
+}

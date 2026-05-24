@@ -1,0 +1,177 @@
+{
+  "journeyName": "User KYC Onboarding",
+  "version": "1.0.0",
+  "description": "",
+  "category": "Onboarding",
+  "locale": "English (US)",
+  "platform": "All Devices",
+  "steps": [
+    {
+      "id": "personal",
+      "title": "Identity Details",
+      "description": "Provide personal identification details",
+      "nextStep": "documents",
+      "fields": [
+        {
+          "id": "firstName",
+          "label": "First Name",
+          "type": "text",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Enter first name",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "lastName",
+          "label": "Last Name",
+          "type": "text",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "Enter last name",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "panNumber",
+          "label": "PAN Card Number",
+          "type": "text",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "placeholder": "e.g. ABCDE1234F",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "firstName",
+          "message": "First Name is required"
+        },
+        {
+          "type": "required",
+          "field": "panNumber",
+          "message": "PAN Number is required"
+        }
+      ],
+      "conditions": [],
+      "apiCalls": [],
+      "actions": []
+    },
+    {
+      "id": "documents",
+      "title": "Upload KYC Proofs",
+      "description": "Upload necessary documents for scanning validation",
+      "nextStep": "selfie",
+      "fields": [
+        {
+          "id": "panDoc",
+          "label": "PAN Card Image",
+          "type": "file",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        },
+        {
+          "id": "aadhaarFront",
+          "label": "Aadhaar Card Front",
+          "type": "file",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        }
+      ],
+      "validations": [],
+      "conditions": [],
+      "apiCalls": [],
+      "actions": []
+    },
+    {
+      "id": "selfie",
+      "title": "Facial Verification Selfie",
+      "description": "Upload a clear picture matching your documents",
+      "nextStep": "confirmation",
+      "fields": [
+        {
+          "id": "selfieDoc",
+          "label": "Facial Selfie Image",
+          "type": "file",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        }
+      ],
+      "validations": [],
+      "conditions": [],
+      "apiCalls": [],
+      "actions": []
+    },
+    {
+      "id": "confirmation",
+      "title": "Review & Sign Checklist",
+      "description": "Verify declarations before final submission",
+      "fields": [
+        {
+          "id": "kycChecked",
+          "label": "I verify that the details provided are correct",
+          "type": "switch",
+          "required": true,
+          "visible": true,
+          "readOnly": false,
+          "defaultValue": "false",
+          "useStaticOptions": false,
+          "disable": false,
+          "hidden": false,
+          "api": false,
+          "obscureText": false,
+          "autocorrect": true,
+          "enableSuggestions": true
+        }
+      ],
+      "validations": [],
+      "conditions": [],
+      "apiCalls": [],
+      "actions": []
+    }
+  ]
+}
