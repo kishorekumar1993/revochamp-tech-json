@@ -1,0 +1,508 @@
+{
+  "journeyName": "CRM Sales Lifecycle",
+  "version": "1.0.0",
+  "description": "End-to-end sales journey from lead capture to customer onboarding",
+  "category": "CRM",
+  "locale": "English (US)",
+  "platform": "All Devices",
+  "steps": [
+    {
+      "id": "step_lead_capture",
+      "title": "Lead Capture",
+      "description": "Enter new lead information",
+      "nextStep": "step_qualification",
+      "fields": [
+        {
+          "id": "first_name",
+          "label": "First Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "last_name",
+          "label": "Last Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "company",
+          "label": "Company",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "email",
+          "label": "Email Address",
+          "type": "text",
+          "required": true,
+          "keyboardType": "email",
+          "validationPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        },
+        {
+          "id": "phone",
+          "label": "Phone Number",
+          "type": "phone",
+          "required": true
+        },
+        {
+          "id": "source",
+          "label": "Lead Source",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "website", "value": "Website" },
+            { "key": "referral", "value": "Referral" },
+            { "key": "social_media", "value": "Social Media" },
+            { "key": "event", "value": "Event" },
+            { "key": "cold_call", "value": "Cold Call" }
+          ]
+        },
+        {
+          "id": "notes",
+          "label": "Initial Notes",
+          "type": "textarea",
+          "required": false
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "email",
+          "message": "Email is required"
+        },
+        {
+          "type": "regex",
+          "field": "email",
+          "message": "Invalid email format",
+          "regexPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "api",
+          "details": "POST /leads"
+        }
+      ]
+    },
+    {
+      "id": "step_qualification",
+      "title": "Lead Qualification",
+      "description": "Assess lead fitness (BANT criteria)",
+      "nextStep": "step_proposal",
+      "fields": [
+        {
+          "id": "budget_confirmed",
+          "label": "Budget Availability",
+          "type": "radio",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "yes", "value": "Yes" },
+            { "key": "no", "value": "No" },
+            { "key": "unknown", "value": "Unknown" }
+          ]
+        },
+        {
+          "id": "authority_confirmed",
+          "label": "Decision Maker Authority",
+          "type": "radio",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "yes", "value": "Yes" },
+            { "key": "no", "value": "No" }
+          ]
+        },
+        {
+          "id": "need_confirmed",
+          "label": "Clear Need Identified",
+          "type": "radio",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "yes", "value": "Yes" },
+            { "key": "no", "value": "No" }
+          ]
+        },
+        {
+          "id": "timeline",
+          "label": "Expected Purchase Timeline",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "immediate", "value": "Immediate (0-1 month)" },
+            { "key": "short", "value": "Short (1-3 months)" },
+            { "key": "medium", "value": "Medium (3-6 months)" },
+            { "key": "long", "value": "Long (6+ months)" }
+          ]
+        },
+        {
+          "id": "qualification_status",
+          "label": "Qualification Outcome",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "qualified", "value": "Qualified" },
+            { "key": "disqualified", "value": "Disqualified" },
+            { "key": "nurture", "value": "Nurture" }
+          ]
+        },
+        {
+          "id": "qualification_notes",
+          "label": "Qualification Notes",
+          "type": "textarea",
+          "required": false
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "qualification_status",
+          "message": "Select qualification outcome"
+        }
+      ],
+      "conditions": [
+        {
+          "type": "visibleIf",
+          "field": "qualification_status",
+          "operator": "equals",
+          "value": "disqualified",
+          "targetStep": "step_closed_lost"
+        }
+      ]
+    },
+    {
+      "id": "step_proposal",
+      "title": "Proposal Generation",
+      "description": "Create and send proposal to lead",
+      "nextStep": "step_negotiation",
+      "fields": [
+        {
+          "id": "product_interest",
+          "label": "Products / Services of Interest",
+          "type": "multiSelect",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "crm", "value": "CRM Module" },
+            { "key": "erp", "value": "ERP Module" },
+            { "key": "analytics", "value": "Analytics" },
+            { "key": "support", "value": "Support Services" },
+            { "key": "implementation", "value": "Implementation" }
+          ]
+        },
+        {
+          "id": "proposal_amount",
+          "label": "Proposal Amount (USD)",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "proposal_document",
+          "label": "Proposal Document",
+          "type": "file",
+          "required": true,
+          "hintText": "Upload PDF or DOCX"
+        },
+        {
+          "id": "valid_until",
+          "label": "Valid Until",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "proposal_notes",
+          "label": "Cover Note / Summary",
+          "type": "textarea",
+          "required": false
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "proposal_document",
+          "message": "Attach the proposal document"
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "api",
+          "details": "POST /proposals"
+        }
+      ]
+    },
+    {
+      "id": "step_negotiation",
+      "title": "Negotiation",
+      "description": "Track negotiation history and final terms",
+      "nextStep": "step_approval",
+      "fields": [
+        {
+          "id": "initial_offer",
+          "label": "Initial Offer (USD)",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "counter_offers",
+          "label": "Counter Offers",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 0,
+            "max": 10,
+            "addLabel": "Add Counter Offer"
+          },
+          "nestedFields": [
+            {
+              "id": "counter_amount",
+              "label": "Counter Amount (USD)",
+              "type": "number",
+              "required": true
+            },
+            {
+              "id": "counter_date",
+              "label": "Date",
+              "type": "date",
+              "required": true
+            },
+            {
+              "id": "counter_notes",
+              "label": "Notes",
+              "type": "text",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "final_agreed_amount",
+          "label": "Final Agreed Amount (USD)",
+          "type": "number",
+          "required": false
+        },
+        {
+          "id": "discount_offered",
+          "label": "Discount Offered (%)",
+          "type": "number",
+          "required": false,
+          "minLength": 0,
+          "maxLength": 100
+        },
+        {
+          "id": "negotiation_status",
+          "label": "Negotiation Status",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "in_progress", "value": "In Progress" },
+            { "key": "agreed", "value": "Agreed" },
+            { "key": "stalled", "value": "Stalled" },
+            { "key": "dead", "value": "Dead" }
+          ]
+        },
+        {
+          "id": "negotiation_notes",
+          "label": "Negotiation Summary",
+          "type": "textarea",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "step_approval",
+      "title": "Internal Approval",
+      "description": "Manager / finance approval for the deal",
+      "nextStep": "step_onboarding",
+      "fields": [
+        {
+          "id": "approver_name",
+          "label": "Approver Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "approver_email",
+          "label": "Approver Email",
+          "type": "text",
+          "required": true,
+          "keyboardType": "email"
+        },
+        {
+          "id": "approval_status",
+          "label": "Approval Status",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "pending", "value": "Pending" },
+            { "key": "approved", "value": "Approved" },
+            { "key": "rejected", "value": "Rejected" },
+            { "key": "needs_revision", "value": "Needs Revision" }
+          ]
+        },
+        {
+          "id": "approval_date",
+          "label": "Approval Date",
+          "type": "date",
+          "required": false
+        },
+        {
+          "id": "approval_comments",
+          "label": "Comments",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "id": "approval_document",
+          "label": "Approval Document (if any)",
+          "type": "file",
+          "required": false
+        }
+      ],
+      "conditions": [
+        {
+          "type": "visibleIf",
+          "field": "approval_status",
+          "operator": "equals",
+          "value": "rejected",
+          "targetStep": "step_closed_lost"
+        }
+      ]
+    },
+    {
+      "id": "step_onboarding",
+      "title": "Customer Onboarding",
+      "description": "Transition closed won deal into active customer",
+      "fields": [
+        {
+          "id": "account_manager",
+          "label": "Assigned Account Manager",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "onboarding_start_date",
+          "label": "Onboarding Start Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "services_activated",
+          "label": "Services to Activate",
+          "type": "multiSelect",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "crm", "value": "CRM Module" },
+            { "key": "erp", "value": "ERP Module" },
+            { "key": "support", "value": "Support Portal" },
+            { "key": "training", "value": "Training" }
+          ]
+        },
+        {
+          "id": "onboarding_checklist",
+          "label": "Onboarding Tasks",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 0,
+            "max": 20,
+            "addLabel": "Add Task"
+          },
+          "nestedFields": [
+            {
+              "id": "task_name",
+              "label": "Task",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "task_status",
+              "label": "Status",
+              "type": "dropdown",
+              "required": true,
+              "useStaticOptions": true,
+              "staticOptions": [
+                { "key": "pending", "value": "Pending" },
+                { "key": "in_progress", "value": "In Progress" },
+                { "key": "completed", "value": "Completed" }
+              ]
+            },
+            {
+              "id": "due_date",
+              "label": "Due Date",
+              "type": "date",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "go_live_date",
+          "label": "Target Go-Live Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "onboarding_notes",
+          "label": "Additional Notes",
+          "type": "textarea",
+          "required": false
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "account_manager",
+          "message": "Account manager is required"
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "api",
+          "details": "POST /customers/onboard"
+        }
+      ]
+    },
+    {
+      "id": "step_closed_lost",
+      "title": "Deal Closed (Lost / Disqualified)",
+      "description": "Capture loss reason and archive",
+      "fields": [
+        {
+          "id": "loss_reason",
+          "label": "Reason for Loss/Disqualification",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "budget", "value": "Budget" },
+            { "key": "competitor", "value": "Chose Competitor" },
+            { "key": "no_need", "value": "No Need" },
+            { "key": "timeline", "value": "Timeline Too Long" },
+            { "key": "other", "value": "Other" }
+          ]
+        },
+        {
+          "id": "detailed_reason",
+          "label": "Detailed Reason",
+          "type": "textarea",
+          "required": false
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "api",
+          "details": "POST /deals/close-lost"
+        }
+      ]
+    }
+  ]
+}

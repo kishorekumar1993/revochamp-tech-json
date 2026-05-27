@@ -1,0 +1,292 @@
+{
+  "journeyName": "E-Commerce Seller Onboarding",
+  "version": "1.0.0",
+  "description": "Onboard as a seller on the marketplace – register business, upload KYC, verify bank, set up products and go live",
+  "category": "E-Commerce",
+  "locale": "English (US)",
+  "platform": "All Devices",
+  "steps": [
+    {
+      "id": "step_business",
+      "title": "Business Registration",
+      "description": "Tell us about your business",
+      "nextStep": "step_kyc",
+      "fields": [
+        {
+          "id": "business_name",
+          "label": "Business Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "business_type",
+          "label": "Business Type",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "individual", "value": "Individual / Sole Proprietorship" },
+            { "key": "partnership", "value": "Partnership" },
+            { "key": "llp", "value": "LLP" },
+            { "key": "pvt_ltd", "value": "Private Limited" },
+            { "key": "other", "value": "Other" }
+          ]
+        },
+        {
+          "id": "registered_address",
+          "label": "Registered Address",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "id": "business_phone",
+          "label": "Business Phone",
+          "type": "phone",
+          "required": true
+        },
+        {
+          "id": "business_email",
+          "label": "Business Email",
+          "type": "text",
+          "keyboardType": "email",
+          "required": true,
+          "validationPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "business_name",
+          "message": "Business name is required"
+        },
+        {
+          "type": "regex",
+          "field": "business_email",
+          "message": "Enter a valid email",
+          "regexPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        }
+      ]
+    },
+    {
+      "id": "step_kyc",
+      "title": "GST / KYC Documents",
+      "description": "Upload tax and identity documents",
+      "nextStep": "step_bank",
+      "fields": [
+        {
+          "id": "gstin",
+          "label": "GST Number (if applicable)",
+          "type": "text",
+          "required": false,
+          "hintText": "15-digit GSTIN"
+        },
+        {
+          "id": "gst_certificate",
+          "label": "GST Registration Certificate",
+          "type": "file",
+          "required": false
+        },
+        {
+          "id": "pan_number",
+          "label": "PAN Number",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "pan_card",
+          "label": "Upload PAN Card",
+          "type": "image",
+          "required": true
+        },
+        {
+          "id": "address_proof",
+          "label": "Address Proof (Electricity Bill / Rent Agreement)",
+          "type": "file",
+          "required": true
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "pan_number",
+          "message": "PAN number is mandatory"
+        },
+        {
+          "type": "regex",
+          "field": "gstin",
+          "message": "Invalid GST format (15 alphanumeric)",
+          "regexPattern": "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
+        }
+      ]
+    },
+    {
+      "id": "step_bank",
+      "title": "Bank Account Verification",
+      "description": "Link your bank account for settlements",
+      "nextStep": "step_products",
+      "fields": [
+        {
+          "id": "account_holder",
+          "label": "Account Holder Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "account_number",
+          "label": "Account Number",
+          "type": "text",
+          "required": true,
+          "obscureText": true
+        },
+        {
+          "id": "confirm_account_number",
+          "label": "Confirm Account Number",
+          "type": "text",
+          "required": true,
+          "obscureText": true,
+          "validationPattern": "^[0-9]{9,18}$"
+        },
+        {
+          "id": "ifsc",
+          "label": "IFSC Code",
+          "type": "text",
+          "required": true,
+          "hintText": "e.g., SBIN0001234"
+        },
+        {
+          "id": "cancelled_cheque",
+          "label": "Upload Cancelled Cheque / Bank Statement",
+          "type": "image",
+          "required": true
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "account_number",
+          "message": "Account number is required"
+        },
+        {
+          "type": "match",
+          "field": "confirm_account_number",
+          "dependentField": "account_number",
+          "message": "Account numbers do not match"
+        }
+      ]
+    },
+    {
+      "id": "step_products",
+      "title": "Product Catalog Setup",
+      "description": "Add your products to the marketplace",
+      "nextStep": "step_approval",
+      "fields": [
+        {
+          "id": "product_list",
+          "label": "Products",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 1,
+            "max": 50,
+            "addLabel": "Add Another Product"
+          },
+          "nestedFields": [
+            {
+              "id": "product_name",
+              "label": "Product Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "category",
+              "label": "Category",
+              "type": "dropdown",
+              "required": true,
+              "useStaticOptions": true,
+              "staticOptions": [
+                { "key": "electronics", "value": "Electronics" },
+                { "key": "fashion", "value": "Fashion" },
+                { "key": "home", "value": "Home & Kitchen" },
+                { "key": "books", "value": "Books" },
+                { "key": "beauty", "value": "Beauty & Personal Care" }
+              ]
+            },
+            {
+              "id": "price",
+              "label": "Price (₹)",
+              "type": "number",
+              "required": true,
+              "minLength": 1
+            },
+            {
+              "id": "stock",
+              "label": "Stock Quantity",
+              "type": "number",
+              "required": true,
+              "minLength": 0
+            },
+            {
+              "id": "product_image",
+              "label": "Product Image",
+              "type": "image",
+              "required": true
+            },
+            {
+              "id": "description",
+              "label": "Product Description",
+              "type": "textarea",
+              "required": false,
+              "maxLength": 500
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step_approval",
+      "title": "Approval & Go-Live",
+      "description": "Review your details and submit for verification",
+      "fields": [
+        {
+          "id": "summary_text",
+          "label": "Seller Profile Summary",
+          "type": "formula",
+          "readOnly": true,
+          "formula": "CONCAT(business_name, ' – ', business_type, ' | Products: ', COUNT(product_list))",
+          "componentConfig": { "displayAs": "text" }
+        },
+        {
+          "id": "accept_terms",
+          "label": "I accept the marketplace seller agreement",
+          "type": "checkbox",
+          "required": true
+        },
+        {
+          "id": "accept_policy",
+          "label": "I agree to the fair trade & returns policy",
+          "type": "checkbox",
+          "required": true
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "accept_terms",
+          "message": "You must accept the seller agreement"
+        },
+        {
+          "type": "required",
+          "field": "accept_policy",
+          "message": "You must agree to the policies"
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "api",
+          "details": "POST /seller/onboard"
+        }
+      ]
+    }
+  ]
+}
