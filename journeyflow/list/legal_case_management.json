@@ -1,0 +1,368 @@
+{
+  "journeyName": "Legal Case Management",
+  "version": "1.0.0",
+  "description": "Law firm automation workflow covering client onboarding, case creation, evidence upload, hearing tracking, billing, and document generation",
+  "category": "Legal",
+  "locale": "English (US)",
+  "platform": "All Devices",
+  "steps": [
+    {
+      "id": "step_client_onboarding",
+      "title": "Client Onboarding",
+      "description": "Capture client information and engagement details",
+      "nextStep": "step_case_creation",
+      "fields": [
+        {
+          "id": "client_name",
+          "label": "Client Full Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "client_type",
+          "label": "Client Type",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "individual", "value": "Individual" },
+            { "key": "corporate", "value": "Corporate / Organization" }
+          ]
+        },
+        {
+          "id": "contact_email",
+          "label": "Email Address",
+          "type": "text",
+          "required": true,
+          "keyboardType": "email",
+          "validationPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        },
+        {
+          "id": "contact_phone",
+          "label": "Phone Number",
+          "type": "phone",
+          "required": true
+        },
+        {
+          "id": "address",
+          "label": "Address",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "id": "engagement_letter",
+          "label": "Signed Engagement Letter",
+          "type": "file",
+          "required": true,
+          "hintText": "Upload signed engagement/retainer agreement"
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "client_name",
+          "message": "Client name is required"
+        },
+        {
+          "type": "regex",
+          "field": "contact_email",
+          "message": "Invalid email format",
+          "regexPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        }
+      ]
+    },
+    {
+      "id": "step_case_creation",
+      "title": "Case Creation",
+      "description": "Set up new case with basic details",
+      "nextStep": "step_evidence_upload",
+      "fields": [
+        {
+          "id": "case_title",
+          "label": "Case Title / Matter",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "case_type",
+          "label": "Case Type",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "civil", "value": "Civil" },
+            { "key": "criminal", "value": "Criminal" },
+            { "key": "family", "value": "Family" },
+            { "key": "corporate", "value": "Corporate" },
+            { "key": "property", "value": "Property" }
+          ]
+        },
+        {
+          "id": "court_name",
+          "label": "Court / Forum",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "judge",
+          "label": "Presiding Judge (if known)",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "case_number",
+          "label": "Case Number",
+          "type": "text",
+          "required": false
+        },
+        {
+          "id": "filing_date",
+          "label": "Filing Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "case_description",
+          "label": "Case Summary",
+          "type": "textarea",
+          "required": true
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "case_title",
+          "message": "Case title is required"
+        }
+      ]
+    },
+    {
+      "id": "step_evidence_upload",
+      "title": "Evidence Upload",
+      "description": "Upload and organize case evidence",
+      "nextStep": "step_hearing_tracking",
+      "fields": [
+        {
+          "id": "evidence_items",
+          "label": "Evidence",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 1,
+            "max": 200,
+            "addLabel": "Add Evidence"
+          },
+          "nestedFields": [
+            {
+              "id": "evidence_title",
+              "label": "Evidence Title",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "evidence_type",
+              "label": "Type",
+              "type": "dropdown",
+              "required": true,
+              "useStaticOptions": true,
+              "staticOptions": [
+                { "key": "document", "value": "Document" },
+                { "key": "photo", "value": "Photo" },
+                { "key": "video", "value": "Video" },
+                { "key": "audio", "value": "Audio" },
+                { "key": "witness_statement", "value": "Witness Statement" }
+              ]
+            },
+            {
+              "id": "description",
+              "label": "Description",
+              "type": "textarea",
+              "required": false
+            },
+            {
+              "id": "file_upload",
+              "label": "Upload File",
+              "type": "file",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step_hearing_tracking",
+      "title": "Hearing Tracking",
+      "description": "Schedule and track court hearings",
+      "nextStep": "step_billing",
+      "fields": [
+        {
+          "id": "hearings",
+          "label": "Hearings",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 0,
+            "max": 50,
+            "addLabel": "Add Hearing"
+          },
+          "nestedFields": [
+            {
+              "id": "hearing_date",
+              "label": "Hearing Date",
+              "type": "date",
+              "required": true
+            },
+            {
+              "id": "hearing_time",
+              "label": "Time",
+              "type": "time",
+              "required": true
+            },
+            {
+              "id": "court_name_hearing",
+              "label": "Court Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "judge_name",
+              "label": "Judge Name",
+              "type": "text",
+              "required": false
+            },
+            {
+              "id": "outcome",
+              "label": "Outcome / Notes",
+              "type": "textarea",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step_billing",
+      "title": "Billing & Invoicing",
+      "description": "Track billable hours and generate invoices",
+      "nextStep": "step_document_generation",
+      "fields": [
+        {
+          "id": "billable_hours",
+          "label": "Billable Hours Entry",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 1,
+            "max": 500,
+            "addLabel": "Add Billable Entry"
+          },
+          "nestedFields": [
+            {
+              "id": "date",
+              "label": "Date",
+              "type": "date",
+              "required": true
+            },
+            {
+              "id": "activity",
+              "label": "Activity Description",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "hours",
+              "label": "Hours",
+              "type": "number",
+              "required": true
+            },
+            {
+              "id": "rate",
+              "label": "Rate per Hour (₹)",
+              "type": "number",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "expenses",
+          "label": "Additional Expenses",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 0,
+            "max": 200,
+            "addLabel": "Add Expense"
+          },
+          "nestedFields": [
+            {
+              "id": "expense_desc",
+              "label": "Expense Description",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "expense_amount",
+              "label": "Amount (₹)",
+              "type": "number",
+              "required": true
+            },
+            {
+              "id": "expense_receipt",
+              "label": "Receipt (optional)",
+              "type": "file",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "total_amount",
+          "label": "Total Invoice Amount (₹)",
+          "type": "formula",
+          "readOnly": true,
+          "formula": "SUM(billable_hours, 'hours', 'rate') + SUM(expenses, 'expense_amount')",
+          "componentConfig": {
+            "displayAs": "text"
+          }
+        }
+      ]
+    },
+    {
+      "id": "step_document_generation",
+      "title": "Document Generation",
+      "description": "Generate case-related legal documents",
+      "fields": [
+        {
+          "id": "document_type",
+          "label": "Document to Generate",
+          "type": "multiSelect",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "case_summary", "value": "Case Summary" },
+            { "key": "affidavit", "value": "Affidavit" },
+            { "key": "pleading", "value": "Pleading" },
+            { "key": "notice", "value": "Legal Notice" },
+            { "key": "invoice", "value": "Final Invoice" }
+          ]
+        },
+        {
+          "id": "generated_document",
+          "label": "Generated Document",
+          "type": "formula",
+          "readOnly": true,
+          "formula": "CONCAT('Documents will be generated for case: ', case_title, ' upon submission.')",
+          "componentConfig": {
+            "displayAs": "text"
+          }
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "api",
+          "details": "POST /cases/generate-documents"
+        }
+      ]
+    }
+  ]
+}

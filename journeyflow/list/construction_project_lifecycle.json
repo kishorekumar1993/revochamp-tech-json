@@ -1,0 +1,391 @@
+{
+  "journeyName": "Construction Project Lifecycle",
+  "version": "1.0.0",
+  "description": "Manage a construction project from site inspection to final handover",
+  "category": "Construction",
+  "locale": "English (US)",
+  "platform": "All Devices",
+  "steps": [
+    {
+      "id": "step_site_inspection",
+      "title": "Site Inspection",
+      "description": "Initial inspection and documentation of the construction site",
+      "nextStep": "step_material_approval",
+      "fields": [
+        {
+          "id": "project_name",
+          "label": "Project Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "site_address",
+          "label": "Site Address",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "id": "inspection_date",
+          "label": "Inspection Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "inspector_name",
+          "label": "Inspector Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "site_photos",
+          "label": "Site Photographs",
+          "type": "image",
+          "required": true,
+          "hintText": "Upload multiple photos of the site"
+        },
+        {
+          "id": "inspection_notes",
+          "label": "Inspection Notes",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "id": "site_condition",
+          "label": "Site Condition",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "ready", "value": "Ready for construction" },
+            { "key": "needs_clearance", "value": "Needs clearing/leveling" },
+            { "key": "environmental_concern", "value": "Environmental concern" }
+          ]
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "site_address",
+          "message": "Site address is required"
+        }
+      ]
+    },
+    {
+      "id": "step_material_approval",
+      "title": "Material Approval",
+      "description": "Approve construction materials and specifications",
+      "nextStep": "step_vendor_management",
+      "fields": [
+        {
+          "id": "materials_list",
+          "label": "Materials",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 1,
+            "max": 100,
+            "addLabel": "Add Material"
+          },
+          "nestedFields": [
+            {
+              "id": "material_name",
+              "label": "Material Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "quantity",
+              "label": "Quantity",
+              "type": "number",
+              "required": true
+            },
+            {
+              "id": "unit",
+              "label": "Unit",
+              "type": "dropdown",
+              "required": true,
+              "useStaticOptions": true,
+              "staticOptions": [
+                { "key": "kg", "value": "Kg" },
+                { "key": "ton", "value": "Ton" },
+                { "key": "bag", "value": "Bag" },
+                { "key": "m3", "value": "Cubic Meter" },
+                { "key": "piece", "value": "Piece" }
+              ]
+            },
+            {
+              "id": "specification",
+              "label": "Specification / Grade",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "material_approval_status",
+              "label": "Approval Status",
+              "type": "dropdown",
+              "required": true,
+              "useStaticOptions": true,
+              "staticOptions": [
+                { "key": "pending", "value": "Pending" },
+                { "key": "approved", "value": "Approved" },
+                { "key": "rejected", "value": "Rejected" }
+              ]
+            }
+          ]
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "material_name",
+          "message": "At least one material must be added"
+        }
+      ]
+    },
+    {
+      "id": "step_vendor_management",
+      "title": "Vendor Management",
+      "description": "Select and manage vendors/suppliers",
+      "nextStep": "step_progress_tracking",
+      "fields": [
+        {
+          "id": "vendor_details",
+          "label": "Vendors",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 1,
+            "max": 50,
+            "addLabel": "Add Vendor"
+          },
+          "nestedFields": [
+            {
+              "id": "vendor_name",
+              "label": "Vendor Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "contact_person",
+              "label": "Contact Person",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "phone",
+              "label": "Phone Number",
+              "type": "phone",
+              "required": true
+            },
+            {
+              "id": "scope",
+              "label": "Scope of Work / Material Supply",
+              "type": "textarea",
+              "required": true
+            },
+            {
+              "id": "contract_document",
+              "label": "Upload Contract / Agreement",
+              "type": "file",
+              "required": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step_progress_tracking",
+      "title": "Progress Tracking",
+      "description": "Update daily/weekly progress of construction",
+      "nextStep": "step_billing",
+      "fields": [
+        {
+          "id": "milestone",
+          "label": "Milestone",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 1,
+            "max": 100,
+            "addLabel": "Add Milestone"
+          },
+          "nestedFields": [
+            {
+              "id": "milestone_name",
+              "label": "Milestone Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "planned_start",
+              "label": "Planned Start Date",
+              "type": "date",
+              "required": true
+            },
+            {
+              "id": "planned_end",
+              "label": "Planned End Date",
+              "type": "date",
+              "required": true
+            },
+            {
+              "id": "actual_start",
+              "label": "Actual Start Date",
+              "type": "date",
+              "required": false
+            },
+            {
+              "id": "actual_end",
+              "label": "Actual End Date",
+              "type": "date",
+              "required": false
+            },
+            {
+              "id": "completion_percent",
+              "label": "Completion %",
+              "type": "number",
+              "required": false,
+              "minLength": 0,
+              "maxLength": 100
+            },
+            {
+              "id": "progress_photo",
+              "label": "Progress Photo",
+              "type": "image",
+              "required": false
+            },
+            {
+              "id": "remarks",
+              "label": "Remarks",
+              "type": "textarea",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step_billing",
+      "title": "Billing / Invoicing",
+      "description": "Track project expenses and generate bills",
+      "nextStep": "step_handover",
+      "fields": [
+        {
+          "id": "total_budget",
+          "label": "Total Project Budget (₹)",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "expenses",
+          "label": "Expenses",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 0,
+            "max": 200,
+            "addLabel": "Add Expense"
+          },
+          "nestedFields": [
+            {
+              "id": "expense_desc",
+              "label": "Expense Description",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "amount",
+              "label": "Amount (₹)",
+              "type": "number",
+              "required": true
+            },
+            {
+              "id": "invoice_date",
+              "label": "Date",
+              "type": "date",
+              "required": true
+            },
+            {
+              "id": "invoice_upload",
+              "label": "Upload Invoice",
+              "type": "file",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "total_budget",
+          "message": "Total budget is required"
+        }
+      ]
+    },
+    {
+      "id": "step_handover",
+      "title": "Final Handover",
+      "description": "Hand over the completed project to the owner/client",
+      "fields": [
+        {
+          "id": "handover_date",
+          "label": "Handover Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "client_name",
+          "label": "Client / Owner Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "handover_checklist",
+          "label": "Handover Checklist",
+          "type": "multiSelect",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "keys", "value": "All keys handed over" },
+            { "key": "documents", "value": "As-built drawings & manuals delivered" },
+            { "key": "training", "value": "Operator training completed" },
+            { "key": "defects", "value": "All defects rectified" },
+            { "key": "cleanup", "value": "Site cleanup completed" }
+          ]
+        },
+        {
+          "id": "handover_document",
+          "label": "Signed Handover Certificate",
+          "type": "file",
+          "required": true
+        },
+        {
+          "id": "client_signature",
+          "label": "Client Digital Signature",
+          "type": "image",
+          "required": true
+        },
+        {
+          "id": "final_remarks",
+          "label": "Final Remarks",
+          "type": "textarea",
+          "required": false
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "client_signature",
+          "message": "Client signature is mandatory for handover"
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "api",
+          "details": "POST /project/handover"
+        }
+      ]
+    }
+  ]
+}
