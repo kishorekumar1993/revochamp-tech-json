@@ -1,0 +1,354 @@
+{
+  "journeyName": "Hospital Patient Journey",
+  "version": "1.0.0",
+  "description": "Comprehensive patient flow from appointment to follow-up",
+  "category": "Healthcare",
+  "locale": "English (US)",
+  "platform": "All Devices",
+  "steps": [
+    {
+      "id": "step_appointment",
+      "title": "Appointment Booking",
+      "description": "Schedule your consultation",
+      "fields": [
+        {
+          "id": "department",
+          "label": "Department",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "cardiology", "value": "Cardiology" },
+            { "key": "orthopedics", "value": "Orthopedics" },
+            { "key": "ent", "value": "ENT" },
+            { "key": "dermatology", "value": "Dermatology" },
+            { "key": "general", "value": "General Medicine" }
+          ]
+        },
+        {
+          "id": "doctor",
+          "label": "Preferred Doctor",
+          "type": "dropdown",
+          "required": false,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "dr_smith", "value": "Dr. Smith" },
+            { "key": "dr_jones", "value": "Dr. Jones" },
+            { "key": "dr_patel", "value": "Dr. Patel" }
+          ]
+        },
+        {
+          "id": "appointment_date",
+          "label": "Preferred Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "appointment_time",
+          "label": "Preferred Time",
+          "type": "time",
+          "required": true
+        },
+        {
+          "id": "reason",
+          "label": "Reason for Visit",
+          "type": "textarea",
+          "required": true,
+          "maxLength": 300
+        },
+        {
+          "id": "is_emergency",
+          "label": "Is this an emergency?",
+          "type": "switchType",
+          "required": false
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "reason",
+          "message": "Please describe the reason for your visit"
+        }
+      ]
+    },
+    {
+      "id": "step_consultation",
+      "title": "Consultation",
+      "description": "Doctor consultation and initial assessment",
+      "fields": [
+        {
+          "id": "vitals_section",
+          "label": "Vitals",
+          "type": "section",
+          "componentConfig": { "collapsed": false },
+          "nestedFields": [
+            {
+              "id": "blood_pressure",
+              "label": "Blood Pressure (mmHg)",
+              "type": "text",
+              "required": false
+            },
+            {
+              "id": "heart_rate",
+              "label": "Heart Rate (bpm)",
+              "type": "number",
+              "required": false
+            },
+            {
+              "id": "temperature",
+              "label": "Temperature (°F)",
+              "type": "number",
+              "required": false
+            }
+          ]
+        },
+        {
+          "id": "symptoms",
+          "label": "Symptoms",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "id": "diagnosis",
+          "label": "Preliminary Diagnosis",
+          "type": "textarea",
+          "required": true
+        },
+        {
+          "id": "needs_lab_test",
+          "label": "Requires Lab Tests?",
+          "type": "radio",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "yes", "value": "Yes" },
+            { "key": "no", "value": "No" }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "type": "visibleIf",
+          "field": "needs_lab_test",
+          "operator": "equals",
+          "value": "yes",
+          "targetStep": "step_lab"
+        }
+      ]
+    },
+    {
+      "id": "step_lab",
+      "title": "Lab Tests",
+      "description": "Order and review laboratory tests",
+      "fields": [
+        {
+          "id": "test_type",
+          "label": "Test Type",
+          "type": "multiSelect",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "cbc", "value": "Complete Blood Count (CBC)" },
+            { "key": "lipid", "value": "Lipid Profile" },
+            { "key": "lft", "value": "Liver Function Test" },
+            { "key": "xray", "value": "X-Ray" },
+            { "key": "mri", "value": "MRI" },
+            { "key": "urine", "value": "Urine Analysis" }
+          ]
+        },
+        {
+          "id": "lab_notes",
+          "label": "Additional Notes for Lab",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "id": "lab_report",
+          "label": "Upload Lab Report",
+          "type": "file",
+          "required": false,
+          "hintText": "If results available, attach here"
+        }
+      ]
+    },
+    {
+      "id": "step_prescription",
+      "title": "Prescription",
+      "description": "Prescribe medications and instructions",
+      "fields": [
+        {
+          "id": "medications",
+          "label": "Medications",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 0,
+            "max": 20,
+            "addLabel": "Add Medication"
+          },
+          "nestedFields": [
+            {
+              "id": "drug_name",
+              "label": "Drug Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "dosage",
+              "label": "Dosage (e.g., 500mg)",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "frequency",
+              "label": "Frequency",
+              "type": "dropdown",
+              "required": true,
+              "useStaticOptions": true,
+              "staticOptions": [
+                { "key": "od", "value": "Once Daily" },
+                { "key": "bd", "value": "Twice Daily" },
+                { "key": "tid", "value": "Thrice Daily" },
+                { "key": "qid", "value": "Four Times Daily" },
+                { "key": "prn", "value": "As Needed" }
+              ]
+            },
+            {
+              "id": "duration",
+              "label": "Duration (Days)",
+              "type": "number",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "additional_instructions",
+          "label": "Special Instructions",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Diet, rest, follow-up notes..."
+        }
+      ]
+    },
+    {
+      "id": "step_billing",
+      "title": "Billing & Payment",
+      "description": "Insurance and payment details",
+      "fields": [
+        {
+          "id": "has_insurance",
+          "label": "Do you have health insurance?",
+          "type": "radio",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "yes", "value": "Yes" },
+            { "key": "no", "value": "No" }
+          ]
+        },
+        {
+          "id": "insurance_provider",
+          "label": "Insurance Provider",
+          "type": "dropdown",
+          "required": false,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "aetna", "value": "Aetna" },
+            { "key": "cigna", "value": "Cigna" },
+            { "key": "bluecross", "value": "Blue Cross" },
+            { "key": "medicare", "value": "Medicare" },
+            { "key": "other", "value": "Other" }
+          ],
+          "visibleIf": {
+            "field": "has_insurance",
+            "operator": "equals",
+            "value": "yes"
+          }
+        },
+        {
+          "id": "insurance_id",
+          "label": "Policy / Member ID",
+          "type": "text",
+          "required": false,
+          "visibleIf": {
+            "field": "has_insurance",
+            "operator": "equals",
+            "value": "yes"
+          }
+        },
+        {
+          "id": "payment_method",
+          "label": "Payment Method",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "cash", "value": "Cash" },
+            { "key": "card", "value": "Credit/Debit Card" },
+            { "key": "upi", "value": "UPI" },
+            { "key": "insurance_direct", "value": "Direct Insurance Billing" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step_followup",
+      "title": "Follow-up Tracking",
+      "description": "Schedule follow-up and reminders",
+      "fields": [
+        {
+          "id": "followup_needed",
+          "label": "Follow-up Required?",
+          "type": "radio",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "yes", "value": "Yes" },
+            { "key": "no", "value": "No" }
+          ]
+        },
+        {
+          "id": "followup_date",
+          "label": "Follow-up Date",
+          "type": "date",
+          "required": false,
+          "visibleIf": {
+            "field": "followup_needed",
+            "operator": "equals",
+            "value": "yes"
+          }
+        },
+        {
+          "id": "followup_time",
+          "label": "Follow-up Time",
+          "type": "time",
+          "required": false,
+          "visibleIf": {
+            "field": "followup_needed",
+            "operator": "equals",
+            "value": "yes"
+          }
+        },
+        {
+          "id": "followup_notes",
+          "label": "Follow-up Instructions",
+          "type": "textarea",
+          "required": false
+        },
+        {
+          "id": "discharge_summary",
+          "label": "Discharge Summary",
+          "type": "file",
+          "required": false
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "api",
+          "details": "POST /complete-patient-visit"
+        }
+      ]
+    }
+  ]
+}

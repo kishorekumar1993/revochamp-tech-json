@@ -1,0 +1,323 @@
+{
+  "journeyName": "Employee Recruitment",
+  "version": "1.0.0",
+  "description": "Standard recruitment and onboarding journey for new hires",
+  "category": "HR",
+  "locale": "English (US)",
+  "platform": "All Devices",
+  "steps": [
+    {
+      "id": "step_personal_info",
+      "title": "Personal Information",
+      "description": "Basic details about the candidate",
+      "fields": [
+        {
+          "id": "first_name",
+          "label": "First Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "last_name",
+          "label": "Last Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "email",
+          "label": "Email Address",
+          "type": "text",
+          "required": true,
+          "keyboardType": "email",
+          "validationPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        },
+        {
+          "id": "phone",
+          "label": "Phone Number",
+          "type": "phone",
+          "required": true
+        },
+        {
+          "id": "dob",
+          "label": "Date of Birth",
+          "type": "date",
+          "required": false
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "first_name",
+          "message": "First name is required"
+        },
+        {
+          "type": "required",
+          "field": "email",
+          "message": "Email is required"
+        },
+        {
+          "type": "regex",
+          "field": "email",
+          "message": "Enter a valid email",
+          "regexPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        }
+      ]
+    },
+    {
+      "id": "step_job_details",
+      "title": "Job Details",
+      "description": "Position being applied for",
+      "fields": [
+        {
+          "id": "position",
+          "label": "Position Applied For",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "department",
+          "label": "Department",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "engineering", "value": "Engineering" },
+            { "key": "marketing", "value": "Marketing" },
+            { "key": "sales", "value": "Sales" },
+            { "key": "hr", "value": "Human Resources" },
+            { "key": "finance", "value": "Finance" }
+          ]
+        },
+        {
+          "id": "expected_salary",
+          "label": "Expected Salary (Monthly)",
+          "type": "number",
+          "required": false
+        },
+        {
+          "id": "start_date",
+          "label": "Earliest Start Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "work_type",
+          "label": "Preferred Work Type",
+          "type": "radio",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "onsite", "value": "On-site" },
+            { "key": "remote", "value": "Remote" },
+            { "key": "hybrid", "value": "Hybrid" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step_experience",
+      "title": "Work Experience",
+      "description": "Your professional background",
+      "fields": [
+        {
+          "id": "total_experience",
+          "label": "Total Work Experience (Years)",
+          "type": "number",
+          "required": true
+        },
+        {
+          "id": "repeater_experience",
+          "label": "Previous Employments",
+          "type": "repeater",
+          "repeatableGroup": true,
+          "repeatConfig": {
+            "min": 0,
+            "max": 10,
+            "addLabel": "Add Experience"
+          },
+          "nestedFields": [
+            {
+              "id": "company",
+              "label": "Company Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "job_title",
+              "label": "Job Title",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "from_date",
+              "label": "From",
+              "type": "date",
+              "required": true
+            },
+            {
+              "id": "to_date",
+              "label": "To",
+              "type": "date",
+              "required": true
+            },
+            {
+              "id": "current_job",
+              "label": "Current Job?",
+              "type": "checkbox",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step_education",
+      "title": "Education",
+      "description": "Academic qualifications",
+      "fields": [
+        {
+          "id": "highest_degree",
+          "label": "Highest Degree",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "highschool", "value": "High School" },
+            { "key": "associate", "value": "Associate's" },
+            { "key": "bachelor", "value": "Bachelor's" },
+            { "key": "master", "value": "Master's" },
+            { "key": "doctorate", "value": "Doctorate" }
+          ]
+        },
+        {
+          "id": "institution",
+          "label": "Institution Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "graduation_year",
+          "label": "Year of Graduation",
+          "type": "number",
+          "required": true,
+          "minLength": 1950,
+          "maxLength": 2030
+        }
+      ]
+    },
+    {
+      "id": "step_skills",
+      "title": "Skills & Certifications",
+      "description": "Your relevant skills and certificates",
+      "fields": [
+        {
+          "id": "skills",
+          "label": "Key Skills",
+          "type": "multiSelect",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "javascript", "value": "JavaScript" },
+            { "key": "python", "value": "Python" },
+            { "key": "project_mgmt", "value": "Project Management" },
+            { "key": "salesforce", "value": "Salesforce" },
+            { "key": "data_analysis", "value": "Data Analysis" }
+          ]
+        },
+        {
+          "id": "certifications",
+          "label": "Certifications (if any)",
+          "type": "textarea",
+          "required": false,
+          "hintText": "List any relevant certifications"
+        },
+        {
+          "id": "languages",
+          "label": "Languages Known",
+          "type": "multiSelect",
+          "required": false,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "english", "value": "English" },
+            { "key": "hindi", "value": "Hindi" },
+            { "key": "mandarin", "value": "Mandarin" },
+            { "key": "spanish", "value": "Spanish" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step_documents",
+      "title": "Upload Documents",
+      "description": "Attach your resume and supporting documents",
+      "fields": [
+        {
+          "id": "resume",
+          "label": "Resume / CV",
+          "type": "file",
+          "required": true
+        },
+        {
+          "id": "cover_letter",
+          "label": "Cover Letter",
+          "type": "file",
+          "required": false
+        },
+        {
+          "id": "photo",
+          "label": "Passport Size Photo",
+          "type": "image",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "step_review",
+      "title": "Review Application",
+      "description": "Review your details before submission",
+      "fields": [
+        {
+          "id": "app_summary",
+          "label": "Application Summary",
+          "type": "formula",
+          "readOnly": true,
+          "formula": "CONCAT(first_name, ' ', last_name, ' – ', position, ' at ', department)",
+          "componentConfig": {
+            "displayAs": "text"
+          }
+        },
+        {
+          "id": "agree_background",
+          "label": "I consent to background verification",
+          "type": "checkbox",
+          "required": true
+        },
+        {
+          "id": "agree_privacy",
+          "label": "I agree to the privacy policy",
+          "type": "checkbox",
+          "required": true
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "agree_background",
+          "message": "You must consent to background verification"
+        },
+        {
+          "type": "required",
+          "field": "agree_privacy",
+          "message": "You must agree to the privacy policy"
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "api",
+          "details": "POST /submit-application"
+        }
+      ]
+    }
+  ]
+}

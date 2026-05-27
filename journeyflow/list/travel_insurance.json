@@ -1,0 +1,274 @@
+{
+  "journeyName": "Travel Insurance",
+  "version": "1.0.0",
+  "description": "Get covered for your upcoming trip with comprehensive travel insurance",
+  "category": "Insurance",
+  "locale": "English (US)",
+  "platform": "All Devices",
+  "steps": [
+    {
+      "id": "step_personal_info",
+      "title": "Personal Information",
+      "description": "Tell us about yourself",
+      "fields": [
+        {
+          "id": "full_name",
+          "label": "Full Name",
+          "type": "text",
+          "required": true,
+          "placeholder": "As per passport"
+        },
+        {
+          "id": "dob",
+          "label": "Date of Birth",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "email",
+          "label": "Email Address",
+          "type": "text",
+          "required": true,
+          "keyboardType": "email",
+          "validationPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        },
+        {
+          "id": "phone",
+          "label": "Mobile Number",
+          "type": "phone",
+          "required": true
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "full_name",
+          "message": "Please enter your full name"
+        },
+        {
+          "type": "regex",
+          "field": "email",
+          "message": "Enter a valid email",
+          "regexPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        }
+      ]
+    },
+    {
+      "id": "step_trip_details",
+      "title": "Trip Details",
+      "description": "Where and when are you travelling?",
+      "fields": [
+        {
+          "id": "destination",
+          "label": "Destination",
+          "type": "text",
+          "required": true,
+          "placeholder": "Country / City"
+        },
+        {
+          "id": "departure_date",
+          "label": "Departure Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "return_date",
+          "label": "Return Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "trip_type",
+          "label": "Trip Type",
+          "type": "radio",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "single", "value": "Single Trip" },
+            { "key": "annual", "value": "Annual Multi-trip" }
+          ]
+        },
+        {
+          "id": "num_travellers",
+          "label": "Number of Travellers",
+          "type": "number",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 10
+        }
+      ]
+    },
+    {
+      "id": "step_coverage",
+      "title": "Coverage Selection",
+      "description": "Choose the right plan for you",
+      "fields": [
+        {
+          "id": "plan_type",
+          "label": "Plan Type",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "basic", "value": "Basic" },
+            { "key": "standard", "value": "Standard" },
+            { "key": "premium", "value": "Premium" }
+          ]
+        },
+        {
+          "id": "add_ons",
+          "label": "Optional Add-ons",
+          "type": "multiSelect",
+          "required": false,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "cancellation", "value": "Trip Cancellation" },
+            { "key": "baggage", "value": "Lost Baggage" },
+            { "key": "adventure", "value": "Adventure Sports Cover" },
+            { "key": "pre_existing", "value": "Pre‑existing Condition Cover" }
+          ]
+        },
+        {
+          "id": "coverage_amount",
+          "label": "Coverage Amount (USD)",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "50k", "value": "50,000" },
+            { "key": "100k", "value": "100,000" },
+            { "key": "250k", "value": "250,000" },
+            { "key": "500k", "value": "500,000" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step_medical_history",
+      "title": "Medical History",
+      "description": "Any pre‑existing medical conditions?",
+      "fields": [
+        {
+          "id": "has_pre_existing",
+          "label": "Do you have any pre‑existing medical conditions?",
+          "type": "radio",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "yes", "value": "Yes" },
+            { "key": "no", "value": "No" }
+          ]
+        },
+        {
+          "id": "condition_details",
+          "label": "Please describe your condition(s)",
+          "type": "textarea",
+          "required": true,
+          "maxLength": 500,
+          "visible": false,
+          "visibleIf": {
+            "field": "has_pre_existing",
+            "operator": "equals",
+            "value": "yes"
+          }
+        }
+      ]
+    },
+    {
+      "id": "step_emergency_contact",
+      "title": "Emergency Contact",
+      "description": "Who should we contact in case of emergency?",
+      "fields": [
+        {
+          "id": "ec_name",
+          "label": "Contact Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "ec_phone",
+          "label": "Contact Phone",
+          "type": "phone",
+          "required": true
+        },
+        {
+          "id": "ec_relationship",
+          "label": "Relationship",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "spouse", "value": "Spouse" },
+            { "key": "parent", "value": "Parent" },
+            { "key": "child", "value": "Child" },
+            { "key": "friend", "value": "Friend" },
+            { "key": "other", "value": "Other" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "step_documents",
+      "title": "Required Documents",
+      "description": "Upload supporting documents",
+      "fields": [
+        {
+          "id": "passport",
+          "label": "Passport Copy",
+          "type": "image",
+          "required": true,
+          "hintText": "Clear photo of the main page"
+        },
+        {
+          "id": "visa",
+          "label": "Visa (if applicable)",
+          "type": "file",
+          "required": false
+        },
+        {
+          "id": "itinerary",
+          "label": "Flight / Hotel Itinerary",
+          "type": "file",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "step_review",
+      "title": "Review & Purchase",
+      "description": "Review your travel insurance policy",
+      "fields": [
+        {
+          "id": "policy_summary",
+          "label": "Policy Summary",
+          "type": "formula",
+          "readOnly": true,
+          "formula": "CONCAT('Policy: ', plan_type, ' | Trip to ', destination, ' from ', departure_date, ' to ', return_date)",
+          "componentConfig": {
+            "displayAs": "text"
+          }
+        },
+        {
+          "id": "terms",
+          "label": "I accept the policy terms & conditions",
+          "type": "checkbox",
+          "required": true
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "terms",
+          "message": "You must accept the terms to proceed"
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "api",
+          "details": "POST /purchase-travel-insurance"
+        }
+      ]
+    }
+  ]
+}

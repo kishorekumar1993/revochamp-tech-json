@@ -1,0 +1,250 @@
+{
+  "journeyName": "Medical Insurance Claim",
+  "version": "1.0.0",
+  "description": "Submit a medical insurance claim with supporting documents",
+  "category": "Insurance",
+  "locale": "English (US)",
+  "platform": "All Devices",
+  "steps": [
+    {
+      "id": "step_personal_info",
+      "title": "Personal Information",
+      "description": "Provide your basic personal details",
+      "fields": [
+        {
+          "id": "full_name",
+          "label": "Full Name",
+          "type": "text",
+          "required": true,
+          "placeholder": "Enter your full legal name",
+          "maxLength": 100
+        },
+        {
+          "id": "dob",
+          "label": "Date of Birth",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "gender",
+          "label": "Gender",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "male", "value": "Male" },
+            { "key": "female", "value": "Female" },
+            { "key": "other", "value": "Other" }
+          ]
+        },
+        {
+          "id": "phone",
+          "label": "Phone Number",
+          "type": "phone",
+          "required": true
+        },
+        {
+          "id": "email",
+          "label": "Email Address",
+          "type": "text",
+          "required": true,
+          "keyboardType": "email",
+          "validationPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "full_name",
+          "message": "Full name is required"
+        },
+        {
+          "type": "regex",
+          "field": "email",
+          "message": "Please enter a valid email",
+          "regexPattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+        }
+      ]
+    },
+    {
+      "id": "step_incident",
+      "title": "Incident Details",
+      "description": "Tell us about the medical incident",
+      "fields": [
+        {
+          "id": "incident_date",
+          "label": "Incident Date",
+          "type": "date",
+          "required": true
+        },
+        {
+          "id": "incident_type",
+          "label": "Type of Incident",
+          "type": "dropdown",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "accident", "value": "Accident" },
+            { "key": "illness", "value": "Illness" },
+            { "key": "injury", "value": "Injury" },
+            { "key": "routine", "value": "Routine Checkup" }
+          ]
+        },
+        {
+          "id": "description",
+          "label": "Description",
+          "type": "textarea",
+          "required": true,
+          "maxLength": 500
+        },
+        {
+          "id": "work_related",
+          "label": "Was this work-related?",
+          "type": "radio",
+          "required": true,
+          "useStaticOptions": true,
+          "staticOptions": [
+            { "key": "yes", "value": "Yes" },
+            { "key": "no", "value": "No" }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "type": "visibleIf",
+          "field": "work_related",
+          "operator": "equals",
+          "value": "yes",
+          "targetStep": "step_employer"
+        }
+      ]
+    },
+    {
+      "id": "step_employer",
+      "title": "Employer Information",
+      "description": "Provide your employer details (if work-related)",
+      "fields": [
+        {
+          "id": "employer_name",
+          "label": "Employer Name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "id": "employer_phone",
+          "label": "Employer Phone",
+          "type": "phone",
+          "required": true
+        },
+        {
+          "id": "employer_address",
+          "label": "Employer Address",
+          "type": "textarea",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "step_provider",
+      "title": "Medical Provider",
+      "description": "Information about the medical facility or doctor",
+      "fields": [
+        {
+          "id": "provider_section",
+          "label": "Provider Details",
+          "type": "section",
+          "nestedFields": [
+            {
+              "id": "provider_name",
+              "label": "Provider Name",
+              "type": "text",
+              "required": true
+            },
+            {
+              "id": "provider_address",
+              "label": "Provider Address",
+              "type": "textarea",
+              "required": true
+            },
+            {
+              "id": "provider_phone",
+              "label": "Provider Phone",
+              "type": "phone",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "provider_name",
+          "message": "Provider name is required"
+        }
+      ]
+    },
+    {
+      "id": "step_documents",
+      "title": "Upload Documents",
+      "description": "Attach supporting medical documents",
+      "fields": [
+        {
+          "id": "medical_report",
+          "label": "Medical Report",
+          "type": "file",
+          "required": true
+        },
+        {
+          "id": "id_proof",
+          "label": "ID Proof",
+          "type": "image",
+          "required": true
+        },
+        {
+          "id": "bills",
+          "label": "Bills & Receipts",
+          "type": "file",
+          "required": false,
+          "hintText": "Upload any pharmacy bills or receipts"
+        }
+      ]
+    },
+    {
+      "id": "step_review",
+      "title": "Review & Submit",
+      "description": "Review your claim before submission",
+      "fields": [
+        {
+          "id": "summary",
+          "label": "Claim Summary",
+          "type": "formula",
+          "readOnly": true,
+          "formula": "CONCAT('Claim for ', full_name, ' on ', incident_date, ' - ', incident_type)",
+          "componentConfig": {
+            "displayAs": "text"
+          }
+        },
+        {
+          "id": "agree_terms",
+          "label": "I agree to the terms and conditions",
+          "type": "checkbox",
+          "required": true
+        }
+      ],
+      "validations": [
+        {
+          "type": "required",
+          "field": "agree_terms",
+          "message": "You must agree to the terms to submit"
+        }
+      ],
+      "actions": [
+        {
+          "trigger": "onSubmit",
+          "actionType": "api",
+          "details": "POST /submit-claim"
+        }
+      ]
+    }
+  ]
+}
