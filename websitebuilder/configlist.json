@@ -1,0 +1,71 @@
+{
+  "defaults": {
+    "companyName": "RevoCorp",
+    "title": "Smart Solutions for Tomorrow",
+    "subtitle": "Leading innovations in product engineering",
+    "desc": "We help companies scale systems, deploy smart automations, and build resilient modern infrastructures.",
+    "typeKeyword": { "source": "websiteType", "fallback": "saas" }
+  },
+  "industryOverride": {
+    "condition": "industry != null && industry.isNotEmpty",
+    "action": { "companyName": "${industry[0].toUpperCase()}${industry.substring(1)} Pro" }
+  },
+  "rules": [
+    {
+      "rule": "medical",
+      "match": {
+        "typeKeyword": ["medical"],
+        "cleanPromptContains": ["hospital", "doctor", "medical", "dentist", "clinic"]
+      },
+      "output": {
+        "typeKeyword": "medical",
+        "companyName": { "ifEqualsRevoCorp": "Apex Dental Clinic", "elseKeepOriginal": true },
+        "title": "Perfect Smiles Built on Excellent Care",
+        "subtitle": "Premium Cosmetic and Family Dentistry",
+        "desc": "We offer state-of-the-art dental services from routine checkups to professional implants. Experience pain-free treatments with our expert dental surgeons."
+      }
+    },
+    {
+      "rule": "portfolio",
+      "match": {
+        "typeKeyword": ["portfolio"],
+        "cleanPromptContains": ["portfolio", "resume", "personal"]
+      },
+      "output": {
+        "typeKeyword": "portfolio",
+        "companyName": { "ifEqualsRevoCorp": "Emma Watson Designs", "elseKeepOriginal": true },
+        "title": "Designing Interfaces That Tell Compelling Stories",
+        "subtitle": "Visual Designer & Art Director",
+        "desc": "I am a visual storyteller specializing in digital branding, interactions, and responsive design systems. Browse through my recent projects and client success records."
+      }
+    },
+    {
+      "rule": "real_estate",
+      "match": {
+        "typeKeyword": ["real_estate"],
+        "cleanPromptContains": ["real estate", "property", "house"]
+      },
+      "output": {
+        "typeKeyword": "real_estate",
+        "companyName": { "ifEqualsRevoCorp": "Prime Realty Agency", "elseKeepOriginal": true },
+        "title": "Discover Properties That Match Your Lifestyle",
+        "subtitle": "Find Your Dream Home Today",
+        "desc": "Search verified listings, speak with local neighborhood agents, and schedule immersive virtual tours. We make buying and renting transparent and simple."
+      }
+    },
+    {
+      "rule": "saas",
+      "match": {
+        "typeKeyword": ["saas"],
+        "cleanPromptContains": ["saas", "software", "startup"]
+      },
+      "output": {
+        "typeKeyword": "saas",
+        "companyName": { "ifEqualsRevoCorp": "LeadGen AI", "elseKeepOriginal": true },
+        "title": "Automate Your Sales Pipelines with AI Agents",
+        "subtitle": "Intelligent B2B Prospecting & Scheduling",
+        "desc": "LeadGen AI queries open networks to identify verified buyers, drafts hyper-targeted cold emails, and books qualification meetings directly onto calendar schedules."
+      }
+    }
+  ]
+}
