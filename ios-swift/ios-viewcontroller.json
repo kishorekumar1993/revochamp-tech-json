@@ -2,7 +2,6 @@
   "slug": "ios-uiviewcontroller-lifecycle",
   "course": "iOS Development",
   "title": "UIViewController – The Heart of iOS Logic",
-
   "meta": {
     "title": "iOS UIViewController Guide – Lifecycle, Roles & Management (2026)",
     "description": "Master the UIViewController. Learn about the view lifecycle methods, from viewDidLoad to viewDidDisappear, and how to manage native views.",
@@ -15,7 +14,6 @@
       "native ios development"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -33,7 +31,6 @@
       "type": "text",
       "value": "Unlike Flutter widgets which are rebuilt constantly, a View Controller is an object with a persistent lifecycle. Understanding the sequence of events is critical for performance—for example, you should fetch data from your Python API in `viewDidLoad`, but update the UI visibility in `viewWillAppear`."
     },
-    
     {
       "type": "list",
       "value": [
@@ -72,18 +69,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "UIViewController (Native)", "StatefulWidget (Flutter)"],
+        "headers": [
+          "Feature",
+          "UIViewController (Native)",
+          "StatefulWidget (Flutter)"
+        ],
         "rows": [
-          ["Nature", "Persistent Object", "Immutable/Rebuilt"],
-          ["Logic Placement", "Methods (viewDidLoad, etc.)", "initState / build"],
-          ["UI Definition", "Imperative (addSubview)", "Declarative (Widget Tree)"],
-          ["Memory", "Managed via ARC", "Managed via Dart GC"],
-          ["Layout", "Auto Layout / Constraints", "Flexbox / Box Constraints"]
+          [
+            "Nature",
+            "Persistent Object",
+            "Immutable/Rebuilt"
+          ],
+          [
+            "Logic Placement",
+            "Methods (viewDidLoad, etc.)",
+            "initState / build"
+          ],
+          [
+            "UI Definition",
+            "Imperative (addSubview)",
+            "Declarative (Widget Tree)"
+          ],
+          [
+            "Memory",
+            "Managed via ARC",
+            "Managed via Dart GC"
+          ],
+          [
+            "Layout",
+            "Auto Layout / Constraints",
+            "Flexbox / Box Constraints"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is the difference between loadView and viewDidLoad?",
@@ -98,34 +118,43 @@
       "answer": "This is usually caused by a **Strong Reference Cycle**. If a closure or a delegate holds a 'strong' reference back to the controller, it will never be deallocated. Always use '[weak self]' in closures to prevent this."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which lifecycle method is called exactly once when the controller's view is first created?",
-      "options": ["viewWillAppear", "viewDidAppear", "viewDidLoad", "viewWillLayoutSubviews"],
+      "options": [
+        "viewWillAppear",
+        "viewDidAppear",
+        "viewDidLoad",
+        "viewWillLayoutSubviews"
+      ],
       "answer": 2
     },
     {
       "question": "What is the root property that every UIViewController uses to host its visual content?",
-      "options": ["rootView", "container", "view", "window"],
+      "options": [
+        "rootView",
+        "container",
+        "view",
+        "window"
+      ],
       "answer": 2
     },
     {
       "question": "Which method should be used to stop a repeating timer when the user leaves a screen?",
-      "options": ["viewDidLoad", "viewWillAppear", "viewWillDisappear", "didReceiveMemoryWarning"],
+      "options": [
+        "viewDidLoad",
+        "viewWillAppear",
+        "viewWillDisappear",
+        "didReceiveMemoryWarning"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "ios-project-structure",
-    "ios-app-lifecycle",
-    "ios-navigation-controller",
-    "flutter-method-channels",
-    "clean-architecture-native"
+    "ios-app-lifecycle"
   ]
 }

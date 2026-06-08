@@ -2,7 +2,6 @@
   "slug": "swift-classes-vs-structs",
   "course": "Swift",
   "title": "Swift Classes vs. Structs – Choosing the Right Tool",
-
   "meta": {
     "title": "Swift Classes and Structs Guide – Value vs Reference Types (2026)",
     "description": "Learn the fundamental differences between Classes and Structs in Swift. Master memory management, inheritance, and when to use each in your iOS apps.",
@@ -15,7 +14,6 @@
       "ios memory management"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "The primary difference lies in how they are stored in memory. A **Struct** is a Value Type: when you assign it to a new variable, the entire data is copied. A **Class** is a Reference Type: when you assign it, you are just creating a new pointer to the same instance in memory. As an Engineering Manager, you should enforce 'Structs by default' to avoid the 'hidden state' bugs common in shared-reference architectures."
     },
-    
     {
       "type": "heading",
       "value": "1. Structs: The Lightweight Choice"
@@ -59,18 +56,45 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Struct (Value Type)", "Class (Reference Type)"],
+        "headers": [
+          "Feature",
+          "Struct (Value Type)",
+          "Class (Reference Type)"
+        ],
         "rows": [
-          ["Storage", "Stack (Fast)", "Heap (Slower)"],
-          ["Assignment", "Deep Copy", "Shared Reference"],
-          ["Inheritance", "No", "Yes"],
-          ["Mutability", "Controlled by 'let' or 'var'", "Can modify even if constant"],
-          ["Deinitializers", "No", "Yes (deinit method)"],
-          ["Use Case", "Data models, UI State", "Services, Managers, UI Controllers"]
+          [
+            "Storage",
+            "Stack (Fast)",
+            "Heap (Slower)"
+          ],
+          [
+            "Assignment",
+            "Deep Copy",
+            "Shared Reference"
+          ],
+          [
+            "Inheritance",
+            "No",
+            "Yes"
+          ],
+          [
+            "Mutability",
+            "Controlled by 'let' or 'var'",
+            "Can modify even if constant"
+          ],
+          [
+            "Deinitializers",
+            "No",
+            "Yes (deinit method)"
+          ],
+          [
+            "Use Case",
+            "Data models, UI State",
+            "Services, Managers, UI Controllers"
+          ]
         ]
       }
     },
-    
     {
       "type": "heading",
       "value": "4. Identity vs. Equality"
@@ -80,7 +104,6 @@
       "value": "With Structs, we care about **Equality** (is the data the same?). With Classes, we care about **Identity** (is this the exact same object?). In Swift, you use `==` to check if values are equal and `===` to check if two references point to the same class instance."
     }
   ],
-
   "faq": [
     {
       "question": "Does Swift copy Structs every single time?",
@@ -95,15 +118,18 @@
       "answer": "Classes use Reference Counting. When the last reference to a class instance is gone, 'deinit' is called to clean up resources (like closing a database). Structs are simply popped off the stack when they go out of scope, so they don't need a formal deinitializer."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which type should you use by default for data modeling in Swift?",
-      "options": ["Class", "Protocol", "Struct", "Enum"],
+      "options": [
+        "Class",
+        "Protocol",
+        "Struct",
+        "Enum"
+      ],
       "answer": 2
     },
     {
@@ -118,16 +144,17 @@
     },
     {
       "question": "Which of these features is EXCLUSIVE to Classes in Swift?",
-      "options": ["Methods", "Properties", "Inheritance", "Initializers"],
+      "options": [
+        "Methods",
+        "Properties",
+        "Inheritance",
+        "Initializers"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
-    "swift-oop-fundamentals",
     "swift-protocols",
-    "swift-variables",
-    "flutter-method-channels",
-    "clean-architecture-native"
+    "swift-variables"
   ]
 }

@@ -2,7 +2,6 @@
   "slug": "ios-engineering-best-practices",
   "course": "iOS Development",
   "title": "iOS Best Practices – Professional Engineering Standards",
-
   "meta": {
     "title": "iOS Development Best Practices – Architecture, Security & Clean Code (2026)",
     "description": "Master the professional standards for iOS development. Learn about Protocol-Oriented Programming, Dependency Injection, and thread safety in native Swift.",
@@ -15,7 +14,6 @@
       "swift code style"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -33,7 +31,6 @@
       "type": "text",
       "value": "In Swift, Protocols are the primary way to define interfaces. Unlike Java or Dart interfaces, Swift protocols can have 'Default Implementations' via Extensions. This allows you to create highly reusable traits (like `Searchable` or `Generatable`) that can be applied to both Structs and Classes."
     },
-    
     {
       "type": "code",
       "language": "swift",
@@ -60,7 +57,6 @@
       "type": "text",
       "value": "With Swift 6's strict concurrency checks, managing threads is no longer optional. Always mark your ViewModels or UI-updating classes with `@MainActor`. This guarantees that any code modifying the UI will execute on the Main Thread, preventing the most common cause of native iOS crashes."
     },
-    
     {
       "type": "heading",
       "value": "4. Security: The 'Never Store' Rule"
@@ -76,18 +72,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Pattern", "Recommended Practice", "Anti-Pattern (Avoid)"],
+        "headers": [
+          "Pattern",
+          "Recommended Practice",
+          "Anti-Pattern (Avoid)"
+        ],
         "rows": [
-          ["UI Logic", "SwiftUI / ViewModels", "Massive View Controllers"],
-          ["Data Models", "Structs (Value Types)", "Classes (Reference Types)"],
-          ["Networking", "URLSession + async/await", "Singleton-based closures"],
-          ["State", "Single Source of Truth (SSOT)", "Scattered mutable state"],
-          ["Dependencies", "Dependency Injection", "Singletons / Global variables"]
+          [
+            "UI Logic",
+            "SwiftUI / ViewModels",
+            "Massive View Controllers"
+          ],
+          [
+            "Data Models",
+            "Structs (Value Types)",
+            "Classes (Reference Types)"
+          ],
+          [
+            "Networking",
+            "URLSession + async/await",
+            "Singleton-based closures"
+          ],
+          [
+            "State",
+            "Single Source of Truth (SSOT)",
+            "Scattered mutable state"
+          ],
+          [
+            "Dependencies",
+            "Dependency Injection",
+            "Singletons / Global variables"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Should I use Singletons in iOS?",
@@ -102,15 +121,18 @@
       "answer": "Architects recommend using 'Enums' that conform to the 'LocalizedError' protocol. This allows you to define user-friendly error strings in one place, which can then be easily displayed in the UI or passed back through a Method Channel."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which programming paradigm is central to Swift's design, favoring composition over deep inheritance?",
-      "options": ["Object-Oriented", "Protocol-Oriented", "Functional-Only", "Imperative"],
+      "options": [
+        "Object-Oriented",
+        "Protocol-Oriented",
+        "Functional-Only",
+        "Imperative"
+      ],
       "answer": 1
     },
     {
@@ -125,16 +147,17 @@
     },
     {
       "question": "Which attribute ensures that a class or method always runs on the main UI thread?",
-      "options": ["@MainThread", "@UIOnly", "@MainActor", "@Foreground"],
+      "options": [
+        "@MainThread",
+        "@UIOnly",
+        "@MainActor",
+        "@Foreground"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "swift-protocols",
-    "ios-debugging-xcode-tools",
-    "ios-security-privacy",
-    "swift-async-await",
-    "clean-architecture-native"
+    "swift-async-await"
   ]
 }

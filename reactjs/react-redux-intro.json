@@ -2,7 +2,6 @@
   "slug": "react-redux-intro",
   "course": "React",
   "title": "Introduction to Redux – Predictable State Management",
-
   "meta": {
     "title": "Redux for Beginners – Understanding the Global Store (2026)",
     "description": "Master the fundamentals of Redux. Learn about Actions, Reducers, the Store, and how to use Redux Toolkit (RTK) for efficient state management in React apps.",
@@ -15,7 +14,6 @@
       "dispatch"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -78,18 +76,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Context API", "Redux Toolkit"],
+        "headers": [
+          "Feature",
+          "Context API",
+          "Redux Toolkit"
+        ],
         "rows": [
-          ["Purpose", "Dependency Injection", "State Management"],
-          ["Performance", "Re-renders all consumers", "Selective re-renders (Selectors)"],
-          ["Debugging", "Basic (React DevTools)", "Powerful (Redux DevTools)"],
-          ["Boilerplate", "Very Low", "Moderate"],
-          ["Middlewares", "No native support", "Excellent (Thunk, Saga)"]
+          [
+            "Purpose",
+            "Dependency Injection",
+            "State Management"
+          ],
+          [
+            "Performance",
+            "Re-renders all consumers",
+            "Selective re-renders (Selectors)"
+          ],
+          [
+            "Debugging",
+            "Basic (React DevTools)",
+            "Powerful (Redux DevTools)"
+          ],
+          [
+            "Boilerplate",
+            "Very Low",
+            "Moderate"
+          ],
+          [
+            "Middlewares",
+            "No native support",
+            "Excellent (Thunk, Saga)"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "When should I use Redux?",
@@ -104,12 +125,10 @@
       "answer": "It's a browser extension that lets you track when, where, why, and how your application's state changed, with features like 'time-travel debugging'."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import React from 'react';\nimport { Provider, useSelector, useDispatch } from 'react-redux';\nimport { configureStore, createSlice } from '@reduxjs/toolkit';\n\n// Step 1: Create Slice\nconst themeSlice = createSlice({\n  name: 'theme',\n  initialState: { isDark: false },\n  reducers: {\n    toggleTheme: (state) => { state.isDark = !state.isDark; }\n  }\n});\n\n// Step 2: Configure Store\nconst store = configureStore({ reducer: { theme: themeSlice.reducer } });\nconst { toggleTheme } = themeSlice.actions;\n\n// Step 3: UI Component\nfunction ThemeSwitcher() {\n  const isDark = useSelector(state => state.theme.isDark);\n  const dispatch = useDispatch();\n\n  return (\n    <div style={{ \n      background: isDark ? '#333' : '#fff', \n      color: isDark ? '#fff' : '#000', \n      padding: '20px' \n    }}>\n      <h3>Redux Theme Demo</h3>\n      <button onClick={() => dispatch(toggleTheme())}>\n        Switch to {isDark ? 'Light' : 'Dark'} Mode\n      </button>\n    </div>\n  );\n}\n\nexport default function App() {\n  return (\n    <Provider store={store}>\n      <ThemeSwitcher />\n    </Provider>\n  );\n}"
   },
-
   "quiz": [
     {
       "question": "What is the function of a 'Dispatch' in Redux?",
@@ -123,20 +142,27 @@
     },
     {
       "question": "Which Redux Toolkit function is used to create both actions and reducers at once?",
-      "options": ["createReducer", "createAction", "createSlice", "configureStore"],
+      "options": [
+        "createReducer",
+        "createAction",
+        "createSlice",
+        "configureStore"
+      ],
       "answer": 2
     },
     {
       "question": "Which hook is used to access data from the Redux store?",
-      "options": ["useStore", "useDispatch", "useSelector", "useState"],
+      "options": [
+        "useStore",
+        "useDispatch",
+        "useSelector",
+        "useState"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "react-context-api",
-    "react-state-management",
-    "redux-thunk-async",
     "react-performance",
     "react-hooks-intro"
   ]

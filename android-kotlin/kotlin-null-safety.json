@@ -2,7 +2,6 @@
   "slug": "kotlin-null-safety",
   "course": "Kotlin Development",
   "title": "Kotlin Null Safety – Eliminating the Billion Dollar Mistake",
-
   "meta": {
     "title": "Kotlin Null Safety Guide – Safe Calls, Elvis Operator & Non-Null Assertions (2026)",
     "description": "Master Kotlin's null safety system. Learn about nullable types, safe call operators, the Elvis operator, and how to avoid NullPointerExceptions in Android.",
@@ -15,7 +14,6 @@
       "kotlin vs dart null safety"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "In Kotlin, the type system distinguishes between references that can hold 'null' and those that cannot. By default, all types are non-nullable. If you attempt to assign 'null' to a standard variable, the code will not compile. As an Engineering Manager, this provides a massive safety net for your native Android modules, ensuring that 'null' crashes are caught during development in Chennai, not in production."
     },
-    
     {
       "type": "heading",
       "value": "1. Nullable Types (?)"
@@ -60,7 +57,6 @@
       "type": "text",
       "value": "The Elvis operator allows you to provide a default value in case an expression evaluates to null. It is the Kotlin equivalent of the `??` operator in Dart. For Revochamp, this is perfect for setting default widget properties when the AI returns incomplete data."
     },
-    
     {
       "type": "code",
       "language": "kotlin",
@@ -81,19 +77,46 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Kotlin", "Dart (Flutter)"],
+        "headers": [
+          "Feature",
+          "Kotlin",
+          "Dart (Flutter)"
+        ],
         "rows": [
-          ["Non-nullable by default", "Yes", "Yes (since Dart 2.12)"],
-          ["Nullable indicator", "Type?", "Type?"],
-          ["Safe Call", "variable?.property", "variable?.property"],
-          ["Fallback / Elvis", "variable ?: default", "variable ?? default"],
-          ["Forced Assertion", "variable!!", "variable!"],
-          ["Late Initialization", "lateinit var", "late Type"]
+          [
+            "Non-nullable by default",
+            "Yes",
+            "Yes (since Dart 2.12)"
+          ],
+          [
+            "Nullable indicator",
+            "Type?",
+            "Type?"
+          ],
+          [
+            "Safe Call",
+            "variable?.property",
+            "variable?.property"
+          ],
+          [
+            "Fallback / Elvis",
+            "variable ?: default",
+            "variable ?? default"
+          ],
+          [
+            "Forced Assertion",
+            "variable!!",
+            "variable!"
+          ],
+          [
+            "Late Initialization",
+            "lateinit var",
+            "late Type"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is 'Smart Casting' in Kotlin null safety?",
@@ -108,15 +131,18 @@
       "answer": "Use 'lateinit' for variables that are guaranteed to be initialized before use (like a View in an Activity). Use a nullable type ('?') for variables that legitimately might not have a value during their entire lifecycle."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which operator is used to provide a default value when a variable is null?",
-      "options": ["?.", "!!", "?:", "??"],
+      "options": [
+        "?.",
+        "!!",
+        "?:",
+        "??"
+      ],
       "answer": 2
     },
     {
@@ -131,16 +157,16 @@
     },
     {
       "question": "Which operator allows you to call a method on a nullable object safely?",
-      "options": ["?.", "!!", "?:", "."],
+      "options": [
+        "?.",
+        "!!",
+        "?:",
+        "."
+      ],
       "answer": 0
     }
   ],
-
   "related": [
-    "kotlin-variables-and-types",
-    "kotlin-functions",
-    "android-app-lifecycle",
-    "flutter-method-channels",
-    "clean-architecture-android"
+    "kotlin-functions"
   ]
 }

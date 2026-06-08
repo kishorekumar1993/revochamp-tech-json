@@ -2,7 +2,6 @@
   "slug": "android-permissions-and-security",
   "course": "Android Development",
   "title": "Android Permissions – Security and User Privacy",
-
   "meta": {
     "title": "Android Permissions Guide – Manifest, Runtime & Best Practices (2026)",
     "description": "Master the Android permission model. Learn about normal vs. dangerous permissions, requesting runtime consent, and the new privacy dashboard requirements.",
@@ -15,7 +14,6 @@
       "checkselfpermission"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "Android categorizes permissions into different types based on the level of risk they pose to user privacy. As an Architect, your goal is to follow the 'Principle of Least Privilege'—only requesting what is strictly necessary for Revochamp to function. In 2026, the system is more aggressive about revoking unused permissions for apps that haven't been opened in months."
     },
-    
     {
       "type": "list",
       "value": [
@@ -55,7 +52,6 @@
       "type": "text",
       "value": "For dangerous permissions, simply declaring them isn't enough. In 2026, we use the **ActivityResultLauncher** for a type-safe, lifecycle-aware way to request permissions. You must check if the permission is already granted, show a rationale if the user previously denied it, and then request it."
     },
-    
     {
       "type": "code",
       "language": "kotlin",
@@ -76,19 +72,46 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Android Native", "Flutter (permission_handler)"],
+        "headers": [
+          "Feature",
+          "Android Native",
+          "Flutter (permission_handler)"
+        ],
         "rows": [
-          ["Manifest Entry", "Required (XML)", "Required (XML)"],
-          ["Request Logic", "registerForActivityResult", "permission.request()"],
-          ["Status Check", "checkSelfPermission", "permission.status"],
-          ["Rationale", "shouldShowRequestPermissionRationale", "shouldShowRequestRationale"],
-          ["Storage Access", "Scoped Storage / Media API", "Platform-specific implementation"],
-          ["Security Level", "OS-enforced sandbox", "Wrapper around native APIs"]
+          [
+            "Manifest Entry",
+            "Required (XML)",
+            "Required (XML)"
+          ],
+          [
+            "Request Logic",
+            "registerForActivityResult",
+            "permission.request()"
+          ],
+          [
+            "Status Check",
+            "checkSelfPermission",
+            "permission.status"
+          ],
+          [
+            "Rationale",
+            "shouldShowRequestPermissionRationale",
+            "shouldShowRequestRationale"
+          ],
+          [
+            "Storage Access",
+            "Scoped Storage / Media API",
+            "Platform-specific implementation"
+          ],
+          [
+            "Security Level",
+            "OS-enforced sandbox",
+            "Wrapper around native APIs"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What happens if I forget to declare a permission in the Manifest?",
@@ -103,20 +126,28 @@
       "answer": "Introduced in Android 11, users can grant 'Only this time' for sensitive permissions like Camera or Location. The permission is revoked as soon as the user closes the app, so you must always check for the permission every time you launch a feature."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which type of permission is automatically granted by the system if it's declared in the Manifest?",
-      "options": ["Dangerous Permissions", "Normal Permissions", "Special Permissions", "Signature Permissions"],
+      "options": [
+        "Dangerous Permissions",
+        "Normal Permissions",
+        "Special Permissions",
+        "Signature Permissions"
+      ],
       "answer": 1
     },
     {
       "question": "What is the recommended modern API for requesting runtime permissions in 2026?",
-      "options": ["startActivityForResult", "RequestPermission Intent", "ActivityResultLauncher", "SystemBroadcast"],
+      "options": [
+        "startActivityForResult",
+        "RequestPermission Intent",
+        "ActivityResultLauncher",
+        "SystemBroadcast"
+      ],
       "answer": 2
     },
     {
@@ -130,12 +161,5 @@
       "answer": 1
     }
   ],
-
-  "related": [
-    "android-manifest-fundamentals",
-    "android-activity-lifecycle",
-    "flutter-method-channels",
-    "android-security-best-practices",
-    "android-scoped-storage"
-  ]
+  "related": []
 }

@@ -2,7 +2,6 @@
   "slug": "react-lifecycle",
   "course": "React",
   "title": "React Component Lifecycle – Mounting, Updating & Unmounting",
-
   "meta": {
     "title": "React Lifecycle Guide – Mastering the Component Journey (2026)",
     "description": "Understand the three phases of the React component lifecycle: Mounting, Updating, and Unmounting. Learn how to use lifecycle methods and the useEffect hook.",
@@ -15,7 +14,6 @@
       "react hooks"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -71,12 +69,32 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Lifecycle Event", "Class Method", "Functional Hook (useEffect)"],
+        "headers": [
+          "Lifecycle Event",
+          "Class Method",
+          "Functional Hook (useEffect)"
+        ],
         "rows": [
-          ["Mount", "componentDidMount", "useEffect(() => {}, [])"],
-          ["Update", "componentDidUpdate", "useEffect(() => {}, [deps])"],
-          ["Unmount", "componentWillUnmount", "return () => { /* cleanup */ }"],
-          ["Should Update?", "shouldComponentUpdate", "React.memo()"]
+          [
+            "Mount",
+            "componentDidMount",
+            "useEffect(() => {}, [])"
+          ],
+          [
+            "Update",
+            "componentDidUpdate",
+            "useEffect(() => {}, [deps])"
+          ],
+          [
+            "Unmount",
+            "componentWillUnmount",
+            "return () => { /* cleanup */ }"
+          ],
+          [
+            "Should Update?",
+            "shouldComponentUpdate",
+            "React.memo()"
+          ]
         ]
       }
     },
@@ -94,7 +112,6 @@
       ]
     }
   ],
-
   "faq": [
     {
       "question": "Does useEffect run on every render?",
@@ -109,35 +126,45 @@
       "answer": "No. You must define an async function inside the effect and call it, because `useEffect` expects a cleanup function or nothing as a return value, not a Promise."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import React, { useState, useEffect } from 'react';\n\nfunction LifecycleDemo() {\n  const [count, setCount] = useState(0);\n  const [showChild, setShowChild] = useState(true);\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h2>Lifecycle Demo</h2>\n      <button onClick={() => setShowChild(!showChild)}>\n        {showChild ? 'Unmount Child' : 'Mount Child'}\n      </button>\n      <button onClick={() => setCount(c => c + 1)}>Update Parent (Count: {count})</button>\n      \n      <hr />\n      {showChild && <Child count={count} />}\n    </div>\n  );\n}\n\nfunction Child({ count }) {\n  useEffect(() => {\n    console.log('👶 Child: I have arrived (Mounted)');\n\n    return () => {\n      console.log('💀 Child: Goodbye world (Unmounted)');\n    };\n  }, []);\n\n  useEffect(() => {\n    console.log('🔄 Child: Prop updated to', count);\n  }, [count]);\n\n  return (\n    <div style={{ background: '#f0f0f0', padding: '10px' }}>\n      <h3>I am the Child Component</h3>\n      <p>Parent count: {count}</p>\n      <p>Check the console to see lifecycle logs!</p>\n    </div>\n  );\n}\n\nexport default LifecycleDemo;"
   },
-
   "quiz": [
     {
       "question": "Which hook is used to handle lifecycle events in functional components?",
-      "options": ["useState", "useContext", "useEffect", "useReducer"],
+      "options": [
+        "useState",
+        "useContext",
+        "useEffect",
+        "useReducer"
+      ],
       "answer": 2
     },
     {
       "question": "How do you run an effect only once on mount?",
-      "options": ["Pass no dependency array", "Pass an empty dependency array []", "Pass [null]", "Use useOnce hook"],
+      "options": [
+        "Pass no dependency array",
+        "Pass an empty dependency array []",
+        "Pass [null]",
+        "Use useOnce hook"
+      ],
       "answer": 1
     },
     {
       "question": "When does the cleanup function in useEffect run?",
-      "options": ["Only when the page reloads", "Right after the component mounts", "Before unmounting and before re-running the effect", "Every second"],
+      "options": [
+        "Only when the page reloads",
+        "Right after the component mounts",
+        "Before unmounting and before re-running the effect",
+        "Every second"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "react-hooks-intro",
     "react-use-effect",
-    "react-state",
-    "react-re-renders",
-    "react-memo"
+    "react-state"
   ]
 }

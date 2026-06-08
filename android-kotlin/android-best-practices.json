@@ -2,7 +2,6 @@
   "slug": "android-best-practices-architecture",
   "course": "Android Development",
   "title": "Android Best Practices – Architecture and Modern Standards",
-
   "meta": {
     "title": "Android Best Practices Guide – UDF, Clean Architecture & MAD (2026)",
     "description": "Master the industry standards for Android development. Learn about Unidirectional Data Flow, Repository patterns, and performance-first engineering.",
@@ -15,7 +14,6 @@
       "android ui state management"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "In 2026, Android development is governed by **Modern Android Development (MAD)**. As a Lead Architect, your primary goal is 'Separation of Concerns.' By decoupling your UI from your business logic and your data sources, you ensure that Revochamp can scale from a simple builder to a full-scale IDE without becoming a 'Big Ball of Mud.'"
     },
-    
     {
       "type": "heading",
       "value": "1. Unidirectional Data Flow (UDF)"
@@ -34,7 +31,6 @@
       "type": "text",
       "value": "UDF is the mandatory pattern for state management in 2026. State flows down from the ViewModel to the UI, and Events flow up from the UI to the ViewModel. This prevents 'State Inconsistency' bugs where the UI shows one thing while the underlying AI model holds another. This is the native equivalent of the BLoC or Riverpod patterns you use in Flutter."
     },
-    
     {
       "type": "heading",
       "value": "2. The Repository Pattern (SSOT)"
@@ -71,19 +67,46 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Category", "Old Way (Legacy)", "Best Practice (2026)"],
+        "headers": [
+          "Category",
+          "Old Way (Legacy)",
+          "Best Practice (2026)"
+        ],
         "rows": [
-          ["UI Toolkit", "XML Layouts", "Jetpack Compose (Material 3)"],
-          ["State", "Multiple LiveData variables", "Single StateFlow (UDF)"],
-          ["Concurrency", "AsyncTasks / Callbacks", "Kotlin Coroutines & Flow"],
-          ["Data Storage", "SharedPreferences", "Jetpack DataStore / Room"],
-          ["DI", "Manual Singleton / Factories", "Hilt / Koin"],
-          ["Navigation", "Intent/FragmentTransaction", "Navigation Component / Compose Nav"]
+          [
+            "UI Toolkit",
+            "XML Layouts",
+            "Jetpack Compose (Material 3)"
+          ],
+          [
+            "State",
+            "Multiple LiveData variables",
+            "Single StateFlow (UDF)"
+          ],
+          [
+            "Concurrency",
+            "AsyncTasks / Callbacks",
+            "Kotlin Coroutines & Flow"
+          ],
+          [
+            "Data Storage",
+            "SharedPreferences",
+            "Jetpack DataStore / Room"
+          ],
+          [
+            "DI",
+            "Manual Singleton / Factories",
+            "Hilt / Koin"
+          ],
+          [
+            "Navigation",
+            "Intent/FragmentTransaction",
+            "Navigation Component / Compose Nav"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Should I use Kotlin Multiplatform (KMP) for Best Practices?",
@@ -98,20 +121,28 @@
       "answer": "Use 'SavedStateHandle' in your ViewModels. This ensures that even if the OS kills your app in the background, you can restore the user's specific AI prompt or configuration when they return."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which pattern ensures that the UI only receives data updates from a single source of truth?",
-      "options": ["Singleton Pattern", "Repository Pattern", "Factory Pattern", "Adapter Pattern"],
+      "options": [
+        "Singleton Pattern",
+        "Repository Pattern",
+        "Factory Pattern",
+        "Adapter Pattern"
+      ],
       "answer": 1
     },
     {
       "question": "In Unidirectional Data Flow (UDF), what flows from the UI to the ViewModel?",
-      "options": ["State", "Data", "Events/Intents", "UI Logic"],
+      "options": [
+        "State",
+        "Data",
+        "Events/Intents",
+        "UI Logic"
+      ],
       "answer": 2
     },
     {
@@ -125,12 +156,8 @@
       "answer": 2
     }
   ],
-
   "related": [
-    "android-viewmodel-architecture",
-    "android-performance-optimization",
     "kotlin-coroutines",
-    "android-project-structure",
-    "clean-architecture-native"
+    "android-project-structure"
   ]
 }

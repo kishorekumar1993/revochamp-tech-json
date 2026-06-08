@@ -2,7 +2,6 @@
   "slug": "ios-networking-urlsession",
   "course": "iOS Development",
   "title": "iOS Networking – Mastering URLSession",
-
   "meta": {
     "title": "iOS Networking Guide – URLSession, Tasks & JSON Parsing (2026)",
     "description": "Learn professional networking in iOS. Master URLSession, asynchronous data fetching, and the Codable protocol for native API integration.",
@@ -16,7 +15,6 @@
       "native api calls"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -26,7 +24,6 @@
       "type": "text",
       "value": "In iOS, all networking is managed through **URLSession**. It is a highly optimized, system-wide service that handles connection pooling, cache management, and cookie storage. As an Architect, you should view URLSession as a manager that coordinates multiple **URLSessionTasks**. These tasks are asynchronous by nature and do not block the main UI thread."
     },
-    
     {
       "type": "heading",
       "value": "1. Types of Network Tasks"
@@ -64,7 +61,6 @@
       "type": "text",
       "value": "Swift's **Codable** protocol is a powerful feature that allows for automatic conversion between JSON and Swift Structs. Unlike Dart, which often requires code generation (like `json_serializable`), Swift's compiler handles the mapping natively, reducing boilerplate in your native modules."
     },
-    
     {
       "type": "heading",
       "value": "Networking: Native vs. Flutter"
@@ -72,18 +68,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "URLSession (Native)", "Dio / Http (Flutter)"],
+        "headers": [
+          "Feature",
+          "URLSession (Native)",
+          "Dio / Http (Flutter)"
+        ],
         "rows": [
-          ["Platform Integration", "Deep (Supports OS-level caching)", "High-level abstraction"],
-          ["Background Support", "Native system-level downloads", "Requires native plugins"],
-          ["Parsing", "Codable (Compiler-level)", "Manual or build_runner"],
-          ["Configuration", "Via URLSessionConfiguration", "Via Interceptors"],
-          ["Security", "Native App Transport Security (ATS)", "Standard certificate handling"]
+          [
+            "Platform Integration",
+            "Deep (Supports OS-level caching)",
+            "High-level abstraction"
+          ],
+          [
+            "Background Support",
+            "Native system-level downloads",
+            "Requires native plugins"
+          ],
+          [
+            "Parsing",
+            "Codable (Compiler-level)",
+            "Manual or build_runner"
+          ],
+          [
+            "Configuration",
+            "Via URLSessionConfiguration",
+            "Via Interceptors"
+          ],
+          [
+            "Security",
+            "Native App Transport Security (ATS)",
+            "Standard certificate handling"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is App Transport Security (ATS)?",
@@ -98,34 +117,43 @@
       "answer": "You set the 'timeoutInterval' property on your URLRequest object. In an enterprise environment, a common standard is 30 seconds for data tasks and much longer for upload tasks."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which URLSessionTask type should be used to download a large file that continues even if the app enters the background?",
-      "options": ["Data Task", "Download Task", "Upload Task", "Stream Task"],
+      "options": [
+        "Data Task",
+        "Download Task",
+        "Upload Task",
+        "Stream Task"
+      ],
       "answer": 1
     },
     {
       "question": "Which Swift protocol is used to make a Struct easily decodable from a JSON response?",
-      "options": ["Encodable", "Decodable", "Codable", "JsonMap"],
+      "options": [
+        "Encodable",
+        "Decodable",
+        "Codable",
+        "JsonMap"
+      ],
       "answer": 2
     },
     {
       "question": "Which object in iOS is responsible for managing networking configurations like timeouts and caching policies?",
-      "options": ["URLRequest", "URLSessionConfiguration", "URLResponse", "HTTPHeader"],
+      "options": [
+        "URLRequest",
+        "URLSessionConfiguration",
+        "URLResponse",
+        "HTTPHeader"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
     "swift-async-await",
-    "swift-classes-vs-structs",
-    "ios-app-lifecycle",
-    "flutter-method-channels",
-    "clean-architecture-native"
+    "ios-app-lifecycle"
   ]
 }

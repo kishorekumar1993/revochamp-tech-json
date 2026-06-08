@@ -2,7 +2,6 @@
   "slug": "react-jsx",
   "course": "React",
   "title": "React JSX – JavaScript XML Deep Dive",
-
   "meta": {
     "title": "React JSX – Complete Guide to JavaScript XML (2026)",
     "description": "Master JSX in React - syntax, expressions, conditional rendering, lists, fragments, and best practices. Learn how JSX transforms to React elements.",
@@ -14,7 +13,6 @@
       "jsx vs javascript"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -133,7 +131,6 @@
       "value": "JSX is a powerful syntax extension that makes React code more readable and maintainable. It combines the power of JavaScript with the familiarity of HTML. Understanding JSX fundamentals, expressions, conditional rendering, and common patterns is essential for effective React development."
     }
   ],
-
   "faq": [
     {
       "question": "What does JSX stand for?",
@@ -152,40 +149,55 @@
       "answer": "No, JSX must be compiled to JavaScript using Babel or TypeScript."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import { useState } from 'react';\n\n// JSX Demo Component\nfunction JSXDemonstration() {\n  const [count, setCount] = useState(0);\n  const [isVisible, setIsVisible] = useState(true);\n  const items = ['Apple', 'Banana', 'Orange', 'Grape'];\n  const user = { name: 'John', age: 25, isAdmin: true };\n\n  // JSX expressions, conditionals, and lists\n  return (\n    <div style={{ padding: '20px', fontFamily: 'Arial' }}>\n      <h1>JSX Features Demo</h1>\n      \n      {/* Expressions */}\n      <div className=\"demo-section\">\n        <h2>1. JavaScript Expressions</h2>\n        <p>Hello, {user.name}!</p>\n        <p>You are {user.age} years old</p>\n        <p>Next year you'll be {user.age + 1}</p>\n        <p>Uppercase name: {user.name.toUpperCase()}</p>\n      </div>\n\n      {/* Conditional Rendering */}\n      <div className=\"demo-section\">\n        <h2>2. Conditional Rendering</h2>\n        <button onClick={() => setIsVisible(!isVisible)}>\n          Toggle Content\n        </button>\n        \n        {/* Ternary operator */}\n        {isVisible ? (\n          <div style={{ marginTop: '10px', padding: '10px', background: '#f0f0f0' }}>\n            This content is visible!\n          </div>\n        ) : (\n          <div style={{ marginTop: '10px', padding: '10px', background: '#e0e0e0' }}>\n            This content is hidden\n          </div>\n        )}\n        \n        {/* Logical && operator */}\n        {user.isAdmin && (\n          <div style={{ marginTop: '10px', color: 'blue' }}>\n            ⭐ Admin privileges active\n          </div>\n        )}\n      </div>\n\n      {/* Lists and Keys */}\n      <div className=\"demo-section\">\n        <h2>3. Rendering Lists</h2>\n        <ul>\n          {items.map((item, index) => (\n            <li key={index}>\n              {item}\n            </li>\n          ))}\n        </ul>\n      </div>\n\n      {/* Events and State */}\n      <div className=\"demo-section\">\n        <h2>4. Events and State</h2>\n        <p>Count: {count}</p>\n        <button onClick={() => setCount(count + 1)}>\n          Increment\n        </button>\n        <button onClick={() => setCount(count - 1)} style={{ marginLeft: '10px' }}>\n          Decrement\n        </button>\n        <button onClick={() => setCount(0)} style={{ marginLeft: '10px' }}>\n          Reset\n        </button>\n      </div>\n\n      {/* Inline Styles */}\n      <div className=\"demo-section\">\n        <h2>5. Inline Styles</h2>\n        <div style={{\n          backgroundColor: '#4CAF50',\n          color: 'white',\n          padding: '10px',\n          borderRadius: '4px',\n          textAlign: 'center'\n        }}>\n          Styled with JSX inline styles\n        </div>\n      </div>\n\n      {/* Fragments Example */}\n      <div className=\"demo-section\">\n        <h2>6. Fragments (no extra div)</h2>\n        <>\n          <p>This</p>\n          <p>is</p>\n          <p>wrapped</p>\n          <p>in a fragment</p>\n        </>\n      </div>\n    </div>\n  );\n}\n\nexport default JSXDemonstration;"
   },
-
   "quiz": [
     {
       "question": "What is the correct way to add a CSS class in JSX?",
-      "options": ["class", "cssClass", "className", "classname"],
+      "options": [
+        "class",
+        "cssClass",
+        "className",
+        "classname"
+      ],
       "answer": 2
     },
     {
       "question": "How do you embed JavaScript expressions in JSX?",
-      "options": ["${expression}", "{{expression}}", "{expression}", "[expression]"],
+      "options": [
+        "${expression}",
+        "{{expression}}",
+        "{expression}",
+        "[expression]"
+      ],
       "answer": 2
     },
     {
       "question": "What fragment syntax was introduced in React 16.2?",
-      "options": ["<fragment>", "<React.Fragment>", "<> </>", "<div>"],
+      "options": [
+        "<fragment>",
+        "<React.Fragment>",
+        "<> </>",
+        "<div>"
+      ],
       "answer": 2
     },
     {
       "question": "What is the correct way to write inline styles in JSX?",
-      "options": ["style=\"color: red\"", "style={{ color: 'red' }}", "style={color: 'red'}", "styles={{ color: 'red' }}"],
+      "options": [
+        "style=\"color: red\"",
+        "style={{ color: 'red' }}",
+        "style={color: 'red'}",
+        "styles={{ color: 'red' }}"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
     "react-introduction",
     "react-components",
-    "react-events",
-    "react-conditional-rendering",
-    "react-lists"
+    "react-events"
   ]
 }

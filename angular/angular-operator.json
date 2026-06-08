@@ -2,7 +2,6 @@
   "slug": "angular-rxjs-operators",
   "course": "Angular",
   "title": "RxJS Operators – Transforming Data Streams",
-
   "meta": {
     "title": "Angular RxJS Operators Guide – Map, Filter & SwitchMap (2026)",
     "description": "Master RxJS operators in Angular. Learn how to pipe, transform, and combine asynchronous data streams for high-performance reactive applications.",
@@ -16,7 +15,6 @@
       "angular reactive programming"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -34,7 +32,6 @@
       "type": "text",
       "value": "Since RxJS 6+, operators are used inside the `.pipe()` method. This assembly-line approach makes the code readable and ensures that unused operators can be 'tree-shaken' out of your production bundle, keeping your Flutter-to-Web engine lightweight."
     },
-    
     {
       "type": "code",
       "language": "typescript",
@@ -65,16 +62,35 @@
       "type": "text",
       "value": "Choosing between these is often an interview question for Senior Roles. They decide how to handle a new request when a previous one is still pending."
     },
-    
     {
       "type": "table",
       "value": {
-        "headers": ["Operator", "Behavior", "Best Use Case"],
+        "headers": [
+          "Operator",
+          "Behavior",
+          "Best Use Case"
+        ],
         "rows": [
-          ["switchMap", "Cancels the previous inner Observable", "Search boxes / Type-ahead"],
-          ["mergeMap", "Runs all inner Observables in parallel", "Parallel deletes or independent saves"],
-          ["concatMap", "Queues inner Observables to run in order", "Serial updates where order matters"],
-          ["exhaustMap", "Ignores new values until current one finishes", "Login buttons (prevent double-clicks)"]
+          [
+            "switchMap",
+            "Cancels the previous inner Observable",
+            "Search boxes / Type-ahead"
+          ],
+          [
+            "mergeMap",
+            "Runs all inner Observables in parallel",
+            "Parallel deletes or independent saves"
+          ],
+          [
+            "concatMap",
+            "Queues inner Observables to run in order",
+            "Serial updates where order matters"
+          ],
+          [
+            "exhaustMap",
+            "Ignores new values until current one finishes",
+            "Login buttons (prevent double-clicks)"
+          ]
         ]
       }
     },
@@ -87,7 +103,6 @@
       "value": "The `tap` operator is unique because it doesn't modify the stream. It's used for 'side effects' like logging or triggering a loading spinner without changing the data passing through the pipe."
     }
   ],
-
   "faq": [
     {
       "question": "What is a 'Pure' Operator?",
@@ -102,34 +117,43 @@
       "answer": "Yes. A custom operator is just a function that takes an Observable and returns a new one. You can compose multiple existing operators into a single reusable function to keep your architecture DRY."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which operator would you use to cancel an ongoing API request if the user triggers a new one?",
-      "options": ["mergeMap", "switchMap", "concatMap", "tap"],
+      "options": [
+        "mergeMap",
+        "switchMap",
+        "concatMap",
+        "tap"
+      ],
       "answer": 1
     },
     {
       "question": "Which operator is best for performing side effects like console logging without changing the stream data?",
-      "options": ["map", "filter", "tap", "scan"],
+      "options": [
+        "map",
+        "filter",
+        "tap",
+        "scan"
+      ],
       "answer": 2
     },
     {
       "question": "Which operator allows you to wait for a specific amount of time after the last emission before passing the value?",
-      "options": ["delay", "debounceTime", "throttleTime", "timer"],
+      "options": [
+        "delay",
+        "debounceTime",
+        "throttleTime",
+        "timer"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
-    "angular-rxjs-observables",
     "angular-http-client",
-    "angular-services-di",
-    "angular-observables",
-    "clean-architecture-frontend"
+    "angular-observables"
   ]
 }

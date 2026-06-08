@@ -2,7 +2,6 @@
   "slug": "ts-performance",
   "course": "TypeScript",
   "title": "TypeScript Performance – Optimize Your Code",
-
   "meta": {
     "title": "TypeScript Performance – Optimization Tips & Best Practices (2026)",
     "description": "Learn how to write high-performance TypeScript code. Discover compiler options, optimization techniques, and common performance pitfalls.",
@@ -14,7 +13,6 @@
       "typescript best practices"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -103,12 +101,32 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Technique", "Compile Time Impact", "Runtime Impact"],
+        "headers": [
+          "Technique",
+          "Compile Time Impact",
+          "Runtime Impact"
+        ],
         "rows": [
-          ["Incremental builds", "⬇️ -70%", "➖ None"],
-          ["Skip lib check", "⬇️ -30%", "➖ None"],
-          ["Const assertions", "➖ None", "⬆️ +5%"],
-          ["Project refs", "⬇️ -50%", "➖ None"]
+          [
+            "Incremental builds",
+            "⬇️ -70%",
+            "➖ None"
+          ],
+          [
+            "Skip lib check",
+            "⬇️ -30%",
+            "➖ None"
+          ],
+          [
+            "Const assertions",
+            "➖ None",
+            "⬆️ +5%"
+          ],
+          [
+            "Project refs",
+            "⬇️ -50%",
+            "➖ None"
+          ]
         ]
       }
     },
@@ -159,7 +177,6 @@
       "value": "TypeScript performance optimization balances compile-time speed, bundle size, and runtime efficiency. Use compiler flags, project references, and type design patterns to keep your TypeScript code fast and maintainable."
     }
   ],
-
   "faq": [
     {
       "question": "How to speed up TypeScript compilation?",
@@ -178,40 +195,54 @@
       "answer": "Use --generateTrace or --extendedDiagnostics flags."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "// Measure type inference performance\ninterface User {\n  id: number;\n  name: string;\n  email: string;\n  createdAt: Date;\n}\n\n// ❌ Slow with large unions\ntype Status = 'pending' | 'active' | 'inactive' | 'deleted' | 'banned' | 'suspended';\n\n// ✅ Fast with enums for many values\nenum StatusEnum {\n  PENDING = 'pending',\n  ACTIVE = 'active',\n  INACTIVE = 'inactive',\n  DELETED = 'deleted',\n  BANNED = 'banned',\n  SUSPENDED = 'suspended'\n}\n\n// Test performance\nconst users: User[] = [];\nfor (let i = 0; i < 1000; i++) {\n  users.push({\n    id: i,\n    name: `User ${i}`,\n    email: `user${i}@example.com`,\n    createdAt: new Date()\n  });\n}\n\nconsole.log(`Created ${users.length} users`);"
   },
-
   "quiz": [
     {
       "question": "Which compiler option enables incremental builds?",
-      "options": ["fastBuild", "cache", "incremental", "watchMode"],
+      "options": [
+        "fastBuild",
+        "cache",
+        "incremental",
+        "watchMode"
+      ],
       "answer": 2
     },
     {
       "question": "What do project references improve?",
-      "options": ["Runtime speed", "Compilation speed", "Bundle size", "Type safety"],
+      "options": [
+        "Runtime speed",
+        "Compilation speed",
+        "Bundle size",
+        "Type safety"
+      ],
       "answer": 1
     },
     {
       "question": "Which operator provides type-safe inference without losing literal types?",
-      "options": ["as const", "satisfies", "implements", "extends"],
+      "options": [
+        "as const",
+        "satisfies",
+        "implements",
+        "extends"
+      ],
       "answer": 1
     },
     {
       "question": "What is a common performance pitfall with types?",
-      "options": ["Using primitive types", "Deep nested generics", "Using interfaces", "Explicit typing"],
+      "options": [
+        "Using primitive types",
+        "Deep nested generics",
+        "Using interfaces",
+        "Explicit typing"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
-    "ts-compiler",
-    "ts-advanced-types",
     "ts-config",
-    "ts-optimization",
     "ts-best-practices"
   ]
 }

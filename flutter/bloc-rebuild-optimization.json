@@ -72,11 +72,12 @@
       "type": "text",
       "value": "Place `BlocBuilder` widgets as deep in the widget tree as possible. Instead of rebuilding the entire screen, rebuild only the part that depends on the state."
     },
-{
-  "type": "code",
-  "language": "dart",
-  "value": "// ❌ Bad: Rebuilds entire screen on any state change\nBlocBuilder<CartBloc, CartState>(\n  builder: (context, state) => Scaffold(\n    appBar: AppBar(title: Text('Cart')),\n    body: Column(\n      children: [\n        Text('Total: \\${state.total}'),\n        ListView.builder(...),\n      ],\n    ),\n  ),\n);\n\n// ✅ Good: Isolate rebuild to only the price\nScaffold(\n  appBar: AppBar(title: Text('Cart')),\n  body: Column(\n    children: [\n      BlocBuilder<CartBloc, CartState>(\n        buildWhen: (previous, current) => previous.total != current.total,\n        builder: (context, state) => Text('Total: \\${state.total}'),\n      ),\n      ListView.builder(...),\n    ],\n  ),\n);"
-},    {
+    {
+      "type": "code",
+      "language": "dart",
+      "value": "// ❌ Bad: Rebuilds entire screen on any state change\nBlocBuilder<CartBloc, CartState>(\n  builder: (context, state) => Scaffold(\n    appBar: AppBar(title: Text('Cart')),\n    body: Column(\n      children: [\n        Text('Total: \\${state.total}'),\n        ListView.builder(...),\n      ],\n    ),\n  ),\n);\n\n// ✅ Good: Isolate rebuild to only the price\nScaffold(\n  appBar: AppBar(title: Text('Cart')),\n  body: Column(\n    children: [\n      BlocBuilder<CartBloc, CartState>(\n        buildWhen: (previous, current) => previous.total != current.total,\n        builder: (context, state) => Text('Total: \\${state.total}'),\n      ),\n      ListView.builder(...),\n    ],\n  ),\n);"
+    },
+    {
       "type": "heading",
       "value": "Using buildWhen to Control Rebuilds"
     },
@@ -196,12 +197,22 @@
   "quiz": [
     {
       "question": "Which package is commonly used to simplify state equality in BLoC?",
-      "options": ["bloc_concurrency", "equatable", "flutter_bloc", "rxdart"],
+      "options": [
+        "bloc_concurrency",
+        "equatable",
+        "flutter_bloc",
+        "rxdart"
+      ],
       "answer": 1
     },
     {
       "question": "What method allows you to listen to a specific part of the BLoC state without rebuilding on unrelated changes?",
-      "options": ["BlocBuilder", "context.select", "buildWhen", "BlocListener"],
+      "options": [
+        "BlocBuilder",
+        "context.select",
+        "buildWhen",
+        "BlocListener"
+      ],
       "answer": 1
     },
     {
@@ -216,8 +227,6 @@
     }
   ],
   "related": [
-    "flutter-bloc-introduction",
-    "bloc-state-management",
     "bloc-concurrency",
     "bloc-error-handling",
     "flutter-performance"

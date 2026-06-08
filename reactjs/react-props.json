@@ -2,7 +2,6 @@
   "slug": "react-props",
   "course": "React",
   "title": "React Props – Component Communication",
-
   "meta": {
     "title": "React Props – Complete Guide to Passing Data (2026)",
     "description": "Master React props for component communication. Learn prop types, default props, children prop, prop drilling, and best practices.",
@@ -14,7 +13,6 @@
       "react children"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -94,14 +92,42 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Pattern", "Description", "Example"],
+        "headers": [
+          "Pattern",
+          "Description",
+          "Example"
+        ],
         "rows": [
-          ["Default Props", "Fallback values", "variant = 'primary'"],
-          ["Required Props", "Must be provided", "name: string.isRequired"],
-          ["Optional Props", "May be omitted", "age?: number"],
-          ["Children Prop", "Nested content", "children: ReactNode"],
-          ["Render Props", "Function as child", "render={(data) => ...}"],
-          ["Component Composition", "Pass components", "header={<Header />}"]
+          [
+            "Default Props",
+            "Fallback values",
+            "variant = 'primary'"
+          ],
+          [
+            "Required Props",
+            "Must be provided",
+            "name: string.isRequired"
+          ],
+          [
+            "Optional Props",
+            "May be omitted",
+            "age?: number"
+          ],
+          [
+            "Children Prop",
+            "Nested content",
+            "children: ReactNode"
+          ],
+          [
+            "Render Props",
+            "Function as child",
+            "render={(data) => ...}"
+          ],
+          [
+            "Component Composition",
+            "Pass components",
+            "header={<Header />}"
+          ]
         ]
       }
     },
@@ -138,13 +164,37 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Aspect", "Props", "State"],
+        "headers": [
+          "Aspect",
+          "Props",
+          "State"
+        ],
         "rows": [
-          ["Mutability", "Immutable (read-only)", "Mutable (via setter)"],
-          ["Ownership", "Parent component", "Component itself"],
-          ["Purpose", "Pass data/behavior", "Track changes"],
-          ["Changes trigger re-render?", "Yes (if parent changes)", "Yes"],
-          ["Default values", "Can have defaults", "Initial values"]
+          [
+            "Mutability",
+            "Immutable (read-only)",
+            "Mutable (via setter)"
+          ],
+          [
+            "Ownership",
+            "Parent component",
+            "Component itself"
+          ],
+          [
+            "Purpose",
+            "Pass data/behavior",
+            "Track changes"
+          ],
+          [
+            "Changes trigger re-render?",
+            "Yes (if parent changes)",
+            "Yes"
+          ],
+          [
+            "Default values",
+            "Can have defaults",
+            "Initial values"
+          ]
         ]
       }
     },
@@ -157,7 +207,6 @@
       "value": "Props are essential for React component communication. They make components reusable and predictable. Use TypeScript or PropTypes for type safety, children for composition, and lift state up when needed. Avoid prop drilling by using Context or component composition."
     }
   ],
-
   "faq": [
     {
       "question": "Can props be changed?",
@@ -176,40 +225,55 @@
       "answer": "Use destructuring default values: function Button({ size = 'medium' })"
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import { useState } from 'react';\n\n// Define prop types with defaults\nfunction ProductCard({ name, price, image, onBuy, discount = 0 }) {\n  const discountedPrice = price * (1 - discount / 100);\n  \n  return (\n    <div style={{ border: '1px solid #ddd', padding: '1rem', borderRadius: '8px' }}>\n      <img src={image} alt={name} style={{ width: '100%', height: 'auto' }} />\n      <h3>{name}</h3>\n      <p>Original: ${price}</p>\n      {discount > 0 && <p style={{ color: 'green' }}>Discounted: ${discountedPrice.toFixed(2)} ({discount}% off)</p>}\n      <button onClick={() => onBuy({ name, price: discountedPrice })}>Buy Now</button>\n    </div>\n  );\n}\n\n// Component using children prop\nfunction ProductGrid({ children, title }) {\n  return (\n    <div>\n      <h2>{title}</h2>\n      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>\n        {children}\n      </div>\n    </div>\n  );\n}\n\n// Main app\nfunction App() {\n  const [cart, setCart] = useState([]);\n  \n  const addToCart = (product) => {\n    setCart([...cart, product]);\n    alert(`Added ${product.name} to cart!`);\n  };\n  \n  return (\n    <div>\n      <h1>Product Store</h1>\n      <ProductGrid title=\"Featured Products\">\n        <ProductCard\n          name=\"Laptop\"\n          price={999}\n          image=\"https://via.placeholder.com/150\"\n          onBuy={addToCart}\n          discount={10}\n        />\n        <ProductCard\n          name=\"Mouse\"\n          price={29}\n          image=\"https://via.placeholder.com/150\"\n          onBuy={addToCart}\n        />\n        <ProductCard\n          name=\"Keyboard\"\n          price={79}\n          image=\"https://via.placeholder.com/150\"\n          onBuy={addToCart}\n          discount={15}\n        />\n      </ProductGrid>\n      \n      <div style={{ marginTop: '2rem' }}>\n        <h3>Shopping Cart ({cart.length} items)</h3>\n        <ul>\n          {cart.map((item, idx) => (\n            <li key={idx}>{item.name} - ${item.price.toFixed(2)}</li>\n          ))}\n        </ul>\n      </div>\n    </div>\n  );\n}\n\nexport default App;"
   },
-
   "quiz": [
     {
       "question": "Are props mutable?",
-      "options": ["Yes", "No", "Only in class components", "Only with hooks"],
+      "options": [
+        "Yes",
+        "No",
+        "Only in class components",
+        "Only with hooks"
+      ],
       "answer": 1
     },
     {
       "question": "How do you access children passed to a component?",
-      "options": ["this.children", "props.children", "props.child", "this.props.child"],
+      "options": [
+        "this.children",
+        "props.children",
+        "props.child",
+        "this.props.child"
+      ],
       "answer": 1
     },
     {
       "question": "What is prop drilling?",
-      "options": ["Passing props down multiple levels", "Mutating props", "Creating new props", "Deleting props"],
+      "options": [
+        "Passing props down multiple levels",
+        "Mutating props",
+        "Creating new props",
+        "Deleting props"
+      ],
       "answer": 0
     },
     {
       "question": "How to set a default value for a prop?",
-      "options": ["prop.default = value", "defaultProps", "destructuring: { prop = value }", "Both B and C"],
+      "options": [
+        "prop.default = value",
+        "defaultProps",
+        "destructuring: { prop = value }",
+        "Both B and C"
+      ],
       "answer": 3
     }
   ],
-
   "related": [
     "react-introduction",
     "react-state",
-    "react-context",
-    "react-typescript",
     "react-components"
   ]
 }

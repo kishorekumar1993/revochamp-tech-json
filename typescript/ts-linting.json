@@ -2,7 +2,6 @@
   "slug": "ts-linting",
   "course": "TypeScript",
   "title": "TypeScript Linting – ESLint & Code Quality Tools",
-
   "meta": {
     "title": "TypeScript Linting – ESLint, Prettier & Best Practices (2026)",
     "description": "Master TypeScript linting with ESLint, Prettier, and other code quality tools. Learn to enforce coding standards and catch errors early.",
@@ -14,7 +13,6 @@
       "typescript code quality"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -58,16 +56,52 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Rule", "Description", "Recommended"],
+        "headers": [
+          "Rule",
+          "Description",
+          "Recommended"
+        ],
         "rows": [
-          ["@typescript-eslint/no-explicit-any", "Disallow 'any' type", "error"],
-          ["@typescript-eslint/no-unsafe-assignment", "Prevent unsafe type assignments", "error"],
-          ["@typescript-eslint/explicit-function-return-type", "Require return type annotations", "warn"],
-          ["@typescript-eslint/consistent-type-definitions", "Enforce interface over type", "warn"],
-          ["@typescript-eslint/no-unused-vars", "Catch unused variables", "error"],
-          ["@typescript-eslint/no-non-null-assertion", "Disallow '!' assertions", "warn"],
-          ["@typescript-eslint/ban-ts-comment", "Ban @ts-ignore comments", "warn"],
-          ["@typescript-eslint/array-type", "Enforce consistent array types", "warn"]
+          [
+            "@typescript-eslint/no-explicit-any",
+            "Disallow 'any' type",
+            "error"
+          ],
+          [
+            "@typescript-eslint/no-unsafe-assignment",
+            "Prevent unsafe type assignments",
+            "error"
+          ],
+          [
+            "@typescript-eslint/explicit-function-return-type",
+            "Require return type annotations",
+            "warn"
+          ],
+          [
+            "@typescript-eslint/consistent-type-definitions",
+            "Enforce interface over type",
+            "warn"
+          ],
+          [
+            "@typescript-eslint/no-unused-vars",
+            "Catch unused variables",
+            "error"
+          ],
+          [
+            "@typescript-eslint/no-non-null-assertion",
+            "Disallow '!' assertions",
+            "warn"
+          ],
+          [
+            "@typescript-eslint/ban-ts-comment",
+            "Ban @ts-ignore comments",
+            "warn"
+          ],
+          [
+            "@typescript-eslint/array-type",
+            "Enforce consistent array types",
+            "warn"
+          ]
         ]
       }
     },
@@ -158,7 +192,6 @@
       "value": "Linting is essential for maintaining TypeScript code quality. Use ESLint with typescript-eslint for code rules, Prettier for formatting, and tools like Husky to enforce standards before commits. Start with recommended configurations and customize based on your team's needs."
     }
   ],
-
   "faq": [
     {
       "question": "ESLint vs Prettier?",
@@ -177,40 +210,56 @@
       "answer": "Rules that use TypeScript's type information for deeper analysis."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "// Try linting this code - many rules would trigger warnings!\n\n// ❌ Using 'any' (no-explicit-any)\nfunction processData(data: any) {\n  return data.value;\n}\n\n// ❌ Unused variable (no-unused-vars)\nconst unusedVariable = 'hello';\n\n// ❌ Missing return type (explicit-function-return-type)\nfunction calculateSum(a: number, b: number) {\n  return a + b;\n}\n\n// ❌ Non-null assertion (no-non-null-assertion)\nconst element = document.getElementById('app')!;\n\n// ✅ Fixed version\ninterface Data {\n  value: string;\n}\n\nfunction processDataFixed(data: Data): string {\n  return data.value;\n}\n\nfunction calculateSumFixed(a: number, b: number): number {\n  return a + b;\n}\n\nconst elementFixed = document.getElementById('app');\nif (elementFixed) {\n  console.log('Element found!');\n}\n\nconsole.log('Linting would catch the issues above!');"
   },
-
   "quiz": [
     {
       "question": "Which package allows ESLint to lint TypeScript?",
-      "options": ["@typescript/eslint", "typescript-eslint", "eslint-typescript", "tslint"],
+      "options": [
+        "@typescript/eslint",
+        "typescript-eslint",
+        "eslint-typescript",
+        "tslint"
+      ],
       "answer": 1
     },
     {
       "question": "What is the purpose of Prettier?",
-      "options": ["Type checking", "Code formatting", "Bundling", "Testing"],
+      "options": [
+        "Type checking",
+        "Code formatting",
+        "Bundling",
+        "Testing"
+      ],
       "answer": 1
     },
     {
       "question": "Which tool runs linters on staged git files?",
-      "options": ["Husky", "lint-staged", "pre-commit", "eslint-staged"],
+      "options": [
+        "Husky",
+        "lint-staged",
+        "pre-commit",
+        "eslint-staged"
+      ],
       "answer": 1
     },
     {
       "question": "What does '@typescript-eslint/no-explicit-any' do?",
-      "options": ["Allows any type", "Disallows any type", "Converts any to unknown", "Ignores any"],
+      "options": [
+        "Allows any type",
+        "Disallows any type",
+        "Converts any to unknown",
+        "Ignores any"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
     "ts-best-practices",
     "ts-config",
     "ts-performance",
-    "ts-advanced-types",
     "ts-functions"
   ]
 }

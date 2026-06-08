@@ -2,7 +2,6 @@
   "slug": "swift-closures",
   "course": "Swift",
   "title": "Swift Closures – Master Anonymous Functions",
-
   "meta": {
     "title": "Swift Closures Guide – Syntax, Escaping & Capture Lists (2026)",
     "description": "Learn Swift closures for professional iOS development. Master trailing closure syntax, escaping closures, and memory management with capture lists.",
@@ -15,7 +14,6 @@
       "arc memory management"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -46,7 +44,6 @@
       "type": "text",
       "value": "If a closure is the final argument to a function, Swift allows you to 'pop' it out of the parentheses. This makes the code look much cleaner and more like a standard block of code, which is a common pattern in SwiftUI."
     },
-    
     {
       "type": "code",
       "language": "swift",
@@ -68,14 +65,12 @@
       "type": "text",
       "value": "Closures can cause **Strong Reference Cycles** (Memory Leaks) because they hold onto the objects they use. To prevent this, Architects use 'Capture Lists' to define how the closure should interact with the surrounding scope, usually by marking `self` as `weak` or `unowned`."
     },
-    
     {
       "type": "code",
       "language": "swift",
       "value": "class ProjectUploader {\n    var onComplete: (() -> Void)?\n\n    func start() {\n        // Use [weak self] to prevent a memory leak\n        onComplete = { [weak self] in\n            self?.notifyUser()\n        }\n    }\n    \n    func notifyUser() { print(\"Upload finished\") }\n}"
     }
   ],
-
   "faq": [
     {
       "question": "What are shorthand argument names like $0 and $1?",
@@ -90,20 +85,28 @@
       "answer": "Use 'weak' when the captured reference might become nil (it becomes an Optional). Use 'unowned' only when you are 100% certain the reference will never be nil while the closure exists; it's faster but crashes if the reference is gone."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which keyword separates a closure's signature from its body?",
-      "options": ["do", "then", "in", "where"],
+      "options": [
+        "do",
+        "then",
+        "in",
+        "where"
+      ],
       "answer": 2
     },
     {
       "question": "Which attribute is required for a closure that is called after the function it was passed to has already returned?",
-      "options": ["@escaping", "@autoclosure", "@discardableResult", "@async"],
+      "options": [
+        "@escaping",
+        "@autoclosure",
+        "@discardableResult",
+        "@async"
+      ],
       "answer": 0
     },
     {
@@ -117,12 +120,8 @@
       "answer": 1
     }
   ],
-
   "related": [
     "swift-functions",
-    "swift-async-await",
-    "swift-classes-vs-structs",
-    "flutter-method-channels",
-    "clean-architecture-native"
+    "swift-async-await"
   ]
 }

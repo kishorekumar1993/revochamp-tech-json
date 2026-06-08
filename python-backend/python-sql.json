@@ -2,7 +2,6 @@
   "slug": "python-sql",
   "course": "Python",
   "title": "Python & SQL – Interacting with Relational Databases",
-
   "meta": {
     "title": "Python SQL Tutorial – SQLite, MySQL & Parameterized Queries (2026)",
     "description": "Learn how to execute SQL queries in Python. Master the standard DB-API 2.0, handle transactions, and prevent SQL injection using SQLite and other RDBMS.",
@@ -15,7 +14,6 @@
       "db-api python"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -70,19 +68,46 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Method", "Purpose", "Returns"],
+        "headers": [
+          "Method",
+          "Purpose",
+          "Returns"
+        ],
         "rows": [
-          ["execute()", "Runs a single SQL command", "Cursor object"],
-          ["executemany()", "Runs a command against a list of data", "None"],
-          ["fetchone()", "Retrieves the next row of a query result", "Tuple or None"],
-          ["fetchall()", "Retrieves all remaining rows", "List of Tuples"],
-          ["commit()", "Saves all current changes to the DB", "None"],
-          ["rollback()", "Undoes changes since the last commit", "None"]
+          [
+            "execute()",
+            "Runs a single SQL command",
+            "Cursor object"
+          ],
+          [
+            "executemany()",
+            "Runs a command against a list of data",
+            "None"
+          ],
+          [
+            "fetchone()",
+            "Retrieves the next row of a query result",
+            "Tuple or None"
+          ],
+          [
+            "fetchall()",
+            "Retrieves all remaining rows",
+            "List of Tuples"
+          ],
+          [
+            "commit()",
+            "Saves all current changes to the DB",
+            "None"
+          ],
+          [
+            "rollback()",
+            "Undoes changes since the last commit",
+            "None"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "When should I use SQLite vs. a server-based SQL like PostgreSQL?",
@@ -97,35 +122,46 @@
       "answer": "Yes. In SQLite, you can set 'conn.row_factory = sqlite3.Row'. This allows you to access columns by name (e.g., row['name']) instead of index (e.g., row[0])."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import sqlite3\n\n# Create an in-memory database for testing\nconn = sqlite3.connect(':memory:')\ncur = conn.cursor()\n\ncur.execute(\"CREATE TABLE dev(name, lang)\")\ncur.execute(\"INSERT INTO dev VALUES (?, ?)\", (\"Kishore\", \"Python\"))\n\n# Query data\ncur.execute(\"SELECT * FROM dev\")\nrow = cur.fetchone()\n\nprint(f\"Developer: {row[0]}, Language: {row[1]}\")"
   },
-
   "quiz": [
     {
       "question": "Which object is responsible for executing SQL commands and fetching results?",
-      "options": ["Connection", "Cursor", "Driver", "ORM"],
+      "options": [
+        "Connection",
+        "Cursor",
+        "Driver",
+        "ORM"
+      ],
       "answer": 1
     },
     {
       "question": "Which placeholder does SQLite use for parameterized queries?",
-      "options": ["%s", ":val", "?", "$1"],
+      "options": [
+        "%s",
+        ":val",
+        "?",
+        "$1"
+      ],
       "answer": 2
     },
     {
       "question": "What command must be called to ensure data changes are saved to the database?",
-      "options": ["save()", "push()", "commit()", "close()"],
+      "options": [
+        "save()",
+        "push()",
+        "commit()",
+        "close()"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "python-postgresql",
     "python-orm",
     "python-json-handling",
-    "python-security-best-practices",
     "django-models"
   ]
 }

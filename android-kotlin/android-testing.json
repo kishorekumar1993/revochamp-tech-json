@@ -2,7 +2,6 @@
   "slug": "android-testing-fundamentals",
   "course": "Android Development",
   "title": "Android Testing – Unit, Integration, and UI Tests",
-
   "meta": {
     "title": "Android Testing Guide – JUnit 5, MockK, Espresso & Compose Test (2026)",
     "description": "Master the Android testing pyramid. Learn how to write local unit tests with MockK and instrumented UI tests for native Android components.",
@@ -15,7 +14,6 @@
       "android integration tests"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "An effective testing strategy for an Architect follows the 'Testing Pyramid' model. For Revochamp, this means having a massive base of fast-running Unit Tests, a middle layer of Integration Tests (to verify Method Channel data flow), and a thin top layer of end-to-end UI tests."
     },
-    
     {
       "type": "heading",
       "value": "1. Local Unit Tests (test/)"
@@ -55,7 +52,6 @@
       "type": "text",
       "value": "For legacy XML views, we use **Espresso**. For modern native modules in Revochamp, we use the **Compose Testing library**. Unlike Espresso, which uses 'View IDs', Compose testing uses 'Semantics' to find elements, making tests more robust and accessible."
     },
-    
     {
       "type": "code",
       "language": "kotlin",
@@ -68,19 +64,46 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Android Native", "Flutter"],
+        "headers": [
+          "Feature",
+          "Android Native",
+          "Flutter"
+        ],
         "rows": [
-          ["Unit Framework", "JUnit 5", "test package"],
-          ["Mocking Library", "MockK / Mockito", "Mockito / Mocktail"],
-          ["UI Testing", "Espresso / Compose Test", "WidgetTester / Patrol"],
-          ["Execution Path", "JVM (Unit) / Dalvik (UI)", "Dart VM / Flutter Engine"],
-          ["Async Testing", "Coroutines (runTest)", "Future (await)"],
-          ["Isolation", "Hilt / Koin", "Provider / Riverpod Overrides"]
+          [
+            "Unit Framework",
+            "JUnit 5",
+            "test package"
+          ],
+          [
+            "Mocking Library",
+            "MockK / Mockito",
+            "Mockito / Mocktail"
+          ],
+          [
+            "UI Testing",
+            "Espresso / Compose Test",
+            "WidgetTester / Patrol"
+          ],
+          [
+            "Execution Path",
+            "JVM (Unit) / Dalvik (UI)",
+            "Dart VM / Flutter Engine"
+          ],
+          [
+            "Async Testing",
+            "Coroutines (runTest)",
+            "Future (await)"
+          ],
+          [
+            "Isolation",
+            "Hilt / Koin",
+            "Provider / Riverpod Overrides"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is the difference between 'test' and 'androidTest' folders?",
@@ -95,15 +118,18 @@
       "answer": "To test a Method Channel, you should create an integration test that uses 'MethodChannel.setMockMethodCallHandler' on the Flutter side or 'MethodCallHandler' mocks on the Android side to verify that the correct data is serialized and sent across the bridge."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which testing library is the standard for modern declarative UI in 2026?",
-      "options": ["Espresso", "Robolectric", "Compose Testing Library", "Appium"],
+      "options": [
+        "Espresso",
+        "Robolectric",
+        "Compose Testing Library",
+        "Appium"
+      ],
       "answer": 2
     },
     {
@@ -118,16 +144,17 @@
     },
     {
       "question": "Which annotation is used in MockK to mock a suspending function?",
-      "options": ["every", "coEvery", "suspendEvery", "mockEvery"],
+      "options": [
+        "every",
+        "coEvery",
+        "suspendEvery",
+        "mockEvery"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
-    "android-viewmodel-architecture",
     "kotlin-coroutines",
-    "flutter-method-channels",
-    "clean-architecture-native",
     "android-project-structure"
   ]
 }

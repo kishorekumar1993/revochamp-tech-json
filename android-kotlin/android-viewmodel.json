@@ -2,7 +2,6 @@
   "slug": "android-viewmodel-architecture",
   "course": "Android Development",
   "title": "Android ViewModel – Persistent UI State Management",
-
   "meta": {
     "title": "Android ViewModel Guide – Lifecycle, State Restoration & Best Practices (2026)",
     "description": "Master the Android ViewModel component. Learn how to persist UI state during configuration changes and separate business logic from UI in native Android.",
@@ -15,7 +14,6 @@
       "native android architecture"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "In the Android Architecture Components, the ViewModel's primary job is to store and manage UI-related data. Its unique power lies in its **Lifecycle Awareness**: it remains in memory during an Activity's destruction and recreation (e.g., rotation) and only clears itself when the Activity is actually finished. For an Engineering Manager, this is the key to 'Separation of Concerns'—keeping the Activity focused on rendering while the ViewModel handles the data logic."
     },
-    
     {
       "type": "heading",
       "value": "1. ViewModel vs. Activity State"
@@ -55,7 +52,6 @@
       "type": "text",
       "value": "Fragments within the same Activity can share a single ViewModel. This is a common pattern for 'Master-Detail' views in Revochamp, where one fragment updates a value and another fragment observes that change instantly, without the need for complex interface callbacks."
     },
-    
     {
       "type": "heading",
       "value": "State Management Comparison"
@@ -63,19 +59,46 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Android ViewModel", "Flutter Riverpod (Notifier)"],
+        "headers": [
+          "Feature",
+          "Android ViewModel",
+          "Flutter Riverpod (Notifier)"
+        ],
         "rows": [
-          ["Persistence", "Survives Rotation", "Survives Widget Rebuilds"],
-          ["Lifecycle Aware", "Yes (Cleared on Finish)", "Manual (ref.onDispose)"],
-          ["Scope", "Activity/Fragment Scope", "Global or Widget Scope"],
-          ["Concurrency", "viewModelScope (Coroutines)", "Async/Await"],
-          ["Process Death", "SavedStateHandle", "Hydrated Bloc / Manual Save"],
-          ["UI Binding", "LiveData / StateFlow", "ref.watch() / Consumer"]
+          [
+            "Persistence",
+            "Survives Rotation",
+            "Survives Widget Rebuilds"
+          ],
+          [
+            "Lifecycle Aware",
+            "Yes (Cleared on Finish)",
+            "Manual (ref.onDispose)"
+          ],
+          [
+            "Scope",
+            "Activity/Fragment Scope",
+            "Global or Widget Scope"
+          ],
+          [
+            "Concurrency",
+            "viewModelScope (Coroutines)",
+            "Async/Await"
+          ],
+          [
+            "Process Death",
+            "SavedStateHandle",
+            "Hydrated Bloc / Manual Save"
+          ],
+          [
+            "UI Binding",
+            "LiveData / StateFlow",
+            "ref.watch() / Consumer"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Can I pass a Context into a ViewModel?",
@@ -90,11 +113,9 @@
       "answer": "'onCleared()' is called right before the ViewModel is destroyed. This is the perfect place to manually close sockets, cancel observers, or release heavy resources that aren't tied to the viewModelScope."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "What happens to a ViewModel when the screen is rotated?",
@@ -108,7 +129,12 @@
     },
     {
       "question": "Which component is used to persist ViewModel data specifically through system-initiated process death?",
-      "options": ["LiveData", "SavedStateHandle", "SharedPreferences", "Intent Extras"],
+      "options": [
+        "LiveData",
+        "SavedStateHandle",
+        "SharedPreferences",
+        "Intent Extras"
+      ],
       "answer": 1
     },
     {
@@ -122,12 +148,7 @@
       "answer": 1
     }
   ],
-
   "related": [
-    "android-activity-lifecycle",
-    "android-livedata-lifecycle-aware",
-    "kotlin-coroutines",
-    "flutter-riverpod-basics",
-    "clean-architecture-native"
+    "kotlin-coroutines"
   ]
 }

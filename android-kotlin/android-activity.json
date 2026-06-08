@@ -2,7 +2,6 @@
   "slug": "android-activity-lifecycle",
   "course": "Android Development",
   "title": "Android Activity – The UI Entry Point & Lifecycle",
-
   "meta": {
     "title": "Android Activity Guide – Lifecycle, Intent and Context (2026)",
     "description": "Master the Android Activity. Learn about the lifecycle states (onCreate, onResume, etc.), launching activities with Intents, and managing UI state.",
@@ -15,7 +14,6 @@
       "flutter host activity"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -33,7 +31,6 @@
       "type": "text",
       "value": "As a user navigates through, leaves, and returns to your app, the `Activity` instances in your app transition through different states in their lifecycle. Managing these transitions is critical to prevent memory leaks and ensure a smooth user experience in Chennai's diverse device ecosystem."
     },
-    
     {
       "type": "list",
       "value": [
@@ -66,7 +63,6 @@
       "type": "text",
       "value": "By default, Android destroys and recreates your Activity when a 'Configuration Change' occurs (like rotating the screen). For Revochamp, you must handle this by either using **ViewModels** to persist data or by overriding `onSaveInstanceState()` to store the current state of the AI builder."
     },
-    
     {
       "type": "heading",
       "value": "Activity Role Comparison"
@@ -74,18 +70,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Scenario", "Activity Usage", "Flutter Equivalent"],
+        "headers": [
+          "Scenario",
+          "Activity Usage",
+          "Flutter Equivalent"
+        ],
         "rows": [
-          ["Main Entry", "MainActivity (Launcher)", "main.dart"],
-          ["New Screen", "Start new Activity via Intent", "Navigator.push()"],
-          ["Data Persistence", "onSaveInstanceState / ViewModel", "Hydrated Bloc / Riverpod"],
-          ["Resource Cleanup", "onStop() / onDestroy()", "dispose() method"],
-          ["Background Task", "Start a Service from Activity", "WorkManager / Isolates"]
+          [
+            "Main Entry",
+            "MainActivity (Launcher)",
+            "main.dart"
+          ],
+          [
+            "New Screen",
+            "Start new Activity via Intent",
+            "Navigator.push()"
+          ],
+          [
+            "Data Persistence",
+            "onSaveInstanceState / ViewModel",
+            "Hydrated Bloc / Riverpod"
+          ],
+          [
+            "Resource Cleanup",
+            "onStop() / onDestroy()",
+            "dispose() method"
+          ],
+          [
+            "Background Task",
+            "Start a Service from Activity",
+            "WorkManager / Isolates"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is the 'Context' in an Activity?",
@@ -100,34 +119,43 @@
       "answer": "In 2026, we use the 'Activity Result API' (registerForActivityResult). This replaces the deprecated 'startActivityForResult' and provides a type-safe way to receive data back from a native screen."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which lifecycle method is called when the Activity is no longer visible to the user but not yet destroyed?",
-      "options": ["onPause()", "onStop()", "onDetach()", "onHide()"],
+      "options": [
+        "onPause()",
+        "onStop()",
+        "onDetach()",
+        "onHide()"
+      ],
       "answer": 1
     },
     {
       "question": "What object is used to request the launch of another Activity?",
-      "options": ["Context", "Messenger", "Intent", "Router"],
+      "options": [
+        "Context",
+        "Messenger",
+        "Intent",
+        "Router"
+      ],
       "answer": 2
     },
     {
       "question": "In which lifecycle method should you initialize your UI and set the content view?",
-      "options": ["onStart()", "onResume()", "onCreate()", "onAttach()"],
+      "options": [
+        "onStart()",
+        "onResume()",
+        "onCreate()",
+        "onAttach()"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
-    "android-manifest-fundamentals",
     "android-project-structure",
-    "kotlin-introduction",
-    "flutter-method-channels",
-    "android-viewmodel-architecture"
+    "kotlin-introduction"
   ]
 }

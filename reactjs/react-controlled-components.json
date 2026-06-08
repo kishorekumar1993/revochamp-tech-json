@@ -2,7 +2,6 @@
   "slug": "react-controlled-components",
   "course": "React",
   "title": "Controlled Components – Managing Form State in React",
-
   "meta": {
     "title": "React Controlled Components Guide – Single Source of Truth (2026)",
     "description": "Master controlled components in React. Learn how to sync form inputs with component state for instant validation, conditional UI, and predictable data flow.",
@@ -14,7 +13,6 @@
       "react input binding"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -64,7 +62,6 @@
       "value": "const [formData, setFormData] = useState({\n  username: '',\n  email: ''\n});\n\nconst handleInputChange = (e) => {\n  const { name, value } = e.target;\n  setFormData({\n    ...formData,\n    [name]: value // Computed property name\n  });\n};"
     }
   ],
-
   "faq": [
     {
       "question": "Is it slow to re-render on every keystroke?",
@@ -75,35 +72,44 @@
       "answer": "The input will become read-only in the browser because React is forcing the value to match the state, but there is no mechanism to update that state."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import React, { useState } from 'react';\n\nfunction LivePreview() {\n  const [text, setText] = useState('');\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h3>Controlled Input Demo</h3>\n      <input \n        type=\"text\" \n        value={text} \n        onChange={(e) => setText(e.target.value)} \n        placeholder=\"Type something...\"\n        style={{ padding: '8px', width: '200px' }}\n      />\n      <div style={{ marginTop: '20px', color: '#666' }}>\n        <strong>Live Preview:</strong> {text || '(empty)'}\n      </div>\n      {text.length > 10 && (\n        <p style={{ color: 'red' }}>Warning: Text is getting long!</p>\n      )}\n    </div>\n  );\n}\n\nexport default LivePreview;"
   },
-
   "quiz": [
     {
       "question": "In a controlled component, what is the 'single source of truth'?",
-      "options": ["The DOM", "The Browser Cache", "React State", "The URL parameters"],
+      "options": [
+        "The DOM",
+        "The Browser Cache",
+        "React State",
+        "The URL parameters"
+      ],
       "answer": 2
     },
     {
       "question": "Which prop is required to link an input's display to React state?",
-      "options": ["name", "id", "value", "ref"],
+      "options": [
+        "name",
+        "id",
+        "value",
+        "ref"
+      ],
       "answer": 2
     },
     {
       "question": "How do you handle updates in a controlled component?",
-      "options": ["Through the onSubmit event only", "Using the onChange event handler", "Using a direct DOM query", "React handles it automatically without code"],
+      "options": [
+        "Through the onSubmit event only",
+        "Using the onChange event handler",
+        "Using a direct DOM query",
+        "React handles it automatically without code"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
     "react-forms",
-    "react-uncontrolled-components",
-    "react-state-management",
-    "react-events-handling",
-    "react-hook-form"
+    "react-uncontrolled-components"
   ]
 }

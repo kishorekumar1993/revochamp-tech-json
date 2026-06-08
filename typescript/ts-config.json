@@ -2,7 +2,6 @@
   "slug": "ts-config",
   "course": "TypeScript",
   "title": "TypeScript Config – tsconfig.json Mastery",
-
   "meta": {
     "title": "TypeScript Config – Complete tsconfig.json Guide (2026)",
     "description": "Master TypeScript configuration with tsconfig.json. Learn all compiler options, project references, and best practices for different project types.",
@@ -14,7 +13,6 @@
       "typescript setup"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -40,25 +38,115 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Category", "Option", "Description", "Recommended"],
+        "headers": [
+          "Category",
+          "Option",
+          "Description",
+          "Recommended"
+        ],
         "rows": [
-          ["Language", "target", "JS version output", "ES2020+"],
-          ["Language", "lib", "Runtime libraries", "ES2020, DOM"],
-          ["Language", "jsx", "JSX support", "react-jsx"],
-          ["Modules", "module", "Module system", "ESNext/CommonJS"],
-          ["Modules", "moduleResolution", "Module resolution", "bundler/node10"],
-          ["Modules", "resolveJsonModule", "Import JSON", "true"],
-          ["Output", "outDir", "Output directory", "./dist"],
-          ["Output", "rootDir", "Source root", "./src"],
-          ["Output", "declaration", "Generate .d.ts", "true (libraries)"],
-          ["Output", "sourceMap", "Source maps", "true"],
-          ["Strict", "strict", "All strict flags", "true"],
-          ["Strict", "noImplicitAny", "Disallow any", "true"],
-          ["Strict", "strictNullChecks", "Null safety", "true"],
-          ["Interop", "esModuleInterop", "ES interop", "true"],
-          ["Interop", "allowSyntheticDefaultImports", "Default imports", "true"],
-          ["Performance", "skipLibCheck", "Skip .d.ts check", "true"],
-          ["Performance", "incremental", "Incremental builds", "true"]
+          [
+            "Language",
+            "target",
+            "JS version output",
+            "ES2020+"
+          ],
+          [
+            "Language",
+            "lib",
+            "Runtime libraries",
+            "ES2020, DOM"
+          ],
+          [
+            "Language",
+            "jsx",
+            "JSX support",
+            "react-jsx"
+          ],
+          [
+            "Modules",
+            "module",
+            "Module system",
+            "ESNext/CommonJS"
+          ],
+          [
+            "Modules",
+            "moduleResolution",
+            "Module resolution",
+            "bundler/node10"
+          ],
+          [
+            "Modules",
+            "resolveJsonModule",
+            "Import JSON",
+            "true"
+          ],
+          [
+            "Output",
+            "outDir",
+            "Output directory",
+            "./dist"
+          ],
+          [
+            "Output",
+            "rootDir",
+            "Source root",
+            "./src"
+          ],
+          [
+            "Output",
+            "declaration",
+            "Generate .d.ts",
+            "true (libraries)"
+          ],
+          [
+            "Output",
+            "sourceMap",
+            "Source maps",
+            "true"
+          ],
+          [
+            "Strict",
+            "strict",
+            "All strict flags",
+            "true"
+          ],
+          [
+            "Strict",
+            "noImplicitAny",
+            "Disallow any",
+            "true"
+          ],
+          [
+            "Strict",
+            "strictNullChecks",
+            "Null safety",
+            "true"
+          ],
+          [
+            "Interop",
+            "esModuleInterop",
+            "ES interop",
+            "true"
+          ],
+          [
+            "Interop",
+            "allowSyntheticDefaultImports",
+            "Default imports",
+            "true"
+          ],
+          [
+            "Performance",
+            "skipLibCheck",
+            "Skip .d.ts check",
+            "true"
+          ],
+          [
+            "Performance",
+            "incremental",
+            "Incremental builds",
+            "true"
+          ]
         ]
       }
     },
@@ -136,13 +224,37 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Use Case", "tsconfig.json", "CLI Flag"],
+        "headers": [
+          "Use Case",
+          "tsconfig.json",
+          "CLI Flag"
+        ],
         "rows": [
-          ["Project-wide settings", "✅ Best", "❌ Cumbersome"],
-          ["One-off builds", "❌ Overkill", "✅ Quick"],
-          ["Team consistency", "✅ Required", "❌ Not shared"],
-          ["CI/CD pipelines", "✅ Best", "⚠️ Possible"],
-          ["Watch mode", "✅ tsc --watch", "✅ tsc --watch"]
+          [
+            "Project-wide settings",
+            "✅ Best",
+            "❌ Cumbersome"
+          ],
+          [
+            "One-off builds",
+            "❌ Overkill",
+            "✅ Quick"
+          ],
+          [
+            "Team consistency",
+            "✅ Required",
+            "❌ Not shared"
+          ],
+          [
+            "CI/CD pipelines",
+            "✅ Best",
+            "⚠️ Possible"
+          ],
+          [
+            "Watch mode",
+            "✅ tsc --watch",
+            "✅ tsc --watch"
+          ]
         ]
       }
     },
@@ -195,7 +307,6 @@
       "value": "tsconfig.json is the heart of every TypeScript project. Understanding compiler options enables you to optimize builds, enforce coding standards, and configure TypeScript for any environment. Start with strict mode and customize based on your project needs."
     }
   ],
-
   "faq": [
     {
       "question": "What is tsconfig.json?",
@@ -214,37 +325,53 @@
       "answer": "Run `tsc --showConfig` to see the resolved configuration."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "// This code demonstrates tsconfig.json settings\n\n// With strictNullChecks: true, this would error if not handled\nfunction getValue(value: string | null): string {\n  // Without strictNullChecks, this would be allowed\n  // With strictNullChecks, we need proper handling\n  return value ?? 'default value';\n}\n\n// With noUnusedLocals: true, this would cause a warning\n// const unusedVariable = 'this would trigger a warning';\n\n// With noImplicitAny: true, this would error\n// function processData(data) {  // 'data' would have implicit any\n//   return data.value;\n// }\n\n// Proper typing\ninterface Data {\n  value: string;\n}\n\nfunction processData(data: Data): string {\n  return data.value;\n}\n\n// With resolveJsonModule: true\nimport packageJson from './package.json' assert { type: 'json' };\nconsole.log('TypeScript version:', packageJson.devDependencies?.typescript);\n\n// Check your tsconfig.json settings!\nconsole.log('Configuration affects how this code is checked');"
   },
-
   "quiz": [
     {
       "question": "Which option enables all strict type checking flags?",
-      "options": ["noImplicitAny", "strict", "strictNullChecks", "forceConsistentCasingInFileNames"],
+      "options": [
+        "noImplicitAny",
+        "strict",
+        "strictNullChecks",
+        "forceConsistentCasingInFileNames"
+      ],
       "answer": 1
     },
     {
       "question": "What does 'outDir' specify?",
-      "options": ["Source directory", "Output directory", "Type directory", "Config directory"],
+      "options": [
+        "Source directory",
+        "Output directory",
+        "Type directory",
+        "Config directory"
+      ],
       "answer": 1
     },
     {
       "question": "Which flag generates declaration files?",
-      "options": ["emitDeclaration", "declaration", "dts", "types"],
+      "options": [
+        "emitDeclaration",
+        "declaration",
+        "dts",
+        "types"
+      ],
       "answer": 1
     },
     {
       "question": "How to extend another tsconfig.json?",
-      "options": ["extends", "inherit", "base", "parent"],
+      "options": [
+        "extends",
+        "inherit",
+        "base",
+        "parent"
+      ],
       "answer": 0
     }
   ],
-
   "related": [
-    "ts-compiler",
     "ts-build",
     "ts-performance",
     "ts-best-practices",

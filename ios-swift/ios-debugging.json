@@ -2,7 +2,6 @@
   "slug": "ios-debugging-xcode-tools",
   "course": "iOS Development",
   "title": "iOS Debugging – Mastering the Xcode Toolset",
-
   "meta": {
     "title": "iOS Debugging Guide – Breakpoints, LLDB & Instruments (2026)",
     "description": "Professional debugging strategies for iOS. Learn to use the LLDB debugger, memory inspectors, and Instruments to optimize native Swift modules.",
@@ -15,7 +14,6 @@
       "view hierarchy debugger"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -33,7 +31,6 @@
       "type": "text",
       "value": "Breakpoints allow you to stop code execution at a specific line. Once paused, you use the **LLDB (Low Level Debugger)** console to interact with the app's state. For a Lead Developer, the `po` (print object) command is the most frequently used tool to inspect complex Swift structs or JSON payloads."
     },
-    
     {
       "type": "code",
       "language": "bash",
@@ -54,7 +51,6 @@
         "**Debug Memory Graph**: Shows every object currently in memory and the references between them. This is the primary tool for finding **Retain Cycles** (Memory Leaks) in your closures."
       ]
     },
-    
     {
       "type": "heading",
       "value": "3. Instruments: Performance Profiling"
@@ -66,13 +62,37 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Instrument", "Purpose", "Metric Tracked"],
+        "headers": [
+          "Instrument",
+          "Purpose",
+          "Metric Tracked"
+        ],
         "rows": [
-          ["Time Profiler", "Find CPU bottlenecks", "Thread CPU usage %"],
-          ["Leaks", "Find memory that isn't freed", "Object allocation/deallocation"],
-          ["Core Animation", "Debug scroll stutter (Jank)", "Frames Per Second (FPS)"],
-          ["Network", "Monitor API traffic", "Request/Response size & latency"],
-          ["Energy Log", "Monitor battery impact", "GPU/CPU/Radio power draw"]
+          [
+            "Time Profiler",
+            "Find CPU bottlenecks",
+            "Thread CPU usage %"
+          ],
+          [
+            "Leaks",
+            "Find memory that isn't freed",
+            "Object allocation/deallocation"
+          ],
+          [
+            "Core Animation",
+            "Debug scroll stutter (Jank)",
+            "Frames Per Second (FPS)"
+          ],
+          [
+            "Network",
+            "Monitor API traffic",
+            "Request/Response size & latency"
+          ],
+          [
+            "Energy Log",
+            "Monitor battery impact",
+            "GPU/CPU/Radio power draw"
+          ]
         ]
       }
     },
@@ -85,7 +105,6 @@
       "value": "When debugging Method Channels, you should set breakpoints in *both* VS Code (Dart) and Xcode (Swift). If the data is correct in Dart but wrong in Swift, the issue lies in the serialization or the native implementation logic. Use the 'Console' app in macOS to see system-level logs if the app crashes before the debugger attaches."
     }
   ],
-
   "faq": [
     {
       "question": "What is an 'Exception Breakpoint'?",
@@ -100,20 +119,28 @@
       "answer": "This usually means your code tried to access a piece of memory that has already been deallocated. In modern Swift, this is rare, but it can still happen when working with low-level C-APIs or unowned references."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which LLDB command is used to print a human-readable description of an object?",
-      "options": ["print", "show", "po", "echo"],
+      "options": [
+        "print",
+        "show",
+        "po",
+        "echo"
+      ],
       "answer": 2
     },
     {
       "question": "Which tool would you use to identify a memory leak caused by a retain cycle between two classes?",
-      "options": ["Time Profiler", "Debug Memory Graph", "View Hierarchy Debugger", "Instruments Network"],
+      "options": [
+        "Time Profiler",
+        "Debug Memory Graph",
+        "View Hierarchy Debugger",
+        "Instruments Network"
+      ],
       "answer": 1
     },
     {
@@ -127,12 +154,9 @@
       "answer": 1
     }
   ],
-
   "related": [
     "ios-project-structure",
     "ios-app-lifecycle",
-    "swift-async-await",
-    "flutter-method-channels",
-    "ios-testing-xctest"
+    "swift-async-await"
   ]
 }

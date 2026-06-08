@@ -2,7 +2,6 @@
   "slug": "ts-build",
   "course": "TypeScript",
   "title": "TypeScript Build – Compilation & Build Tools",
-
   "meta": {
     "title": "TypeScript Build – Compilation & Build Tool Setup (2026)",
     "description": "Learn how to build TypeScript projects with different tools: tsc, webpack, esbuild, swc, and Vite. Optimize your build pipeline.",
@@ -15,7 +14,6 @@
       "ts build tools"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -102,14 +100,49 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Tool", "Speed", "Config Complexity", "Best For"],
+        "headers": [
+          "Tool",
+          "Speed",
+          "Config Complexity",
+          "Best For"
+        ],
         "rows": [
-          ["tsc", "Slow", "Simple", "Node.js, libraries"],
-          ["Webpack", "Medium", "Complex", "Complex SPAs, legacy"],
-          ["esbuild", "Very Fast", "Simple", "Fast builds, modern apps"],
-          ["SWC", "Very Fast", "Simple", "Rust-based compilation"],
-          ["Vite", "Fast", "Simple", "Modern SPAs, HMR"],
-          ["Parcel", "Medium", "Zero-config", "Quick prototypes"]
+          [
+            "tsc",
+            "Slow",
+            "Simple",
+            "Node.js, libraries"
+          ],
+          [
+            "Webpack",
+            "Medium",
+            "Complex",
+            "Complex SPAs, legacy"
+          ],
+          [
+            "esbuild",
+            "Very Fast",
+            "Simple",
+            "Fast builds, modern apps"
+          ],
+          [
+            "SWC",
+            "Very Fast",
+            "Simple",
+            "Rust-based compilation"
+          ],
+          [
+            "Vite",
+            "Fast",
+            "Simple",
+            "Modern SPAs, HMR"
+          ],
+          [
+            "Parcel",
+            "Medium",
+            "Zero-config",
+            "Quick prototypes"
+          ]
         ]
       }
     },
@@ -158,13 +191,31 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Issue", "Solution"],
+        "headers": [
+          "Issue",
+          "Solution"
+        ],
         "rows": [
-          ["Out of memory", "Increase Node memory: NODE_OPTIONS=--max-old-space-size=4096"],
-          ["Slow builds", "Use incremental: true and skipLibCheck"],
-          ["Declaration file conflicts", "Use consistent typesVersions in package.json"],
-          ["Path resolution errors", "Set baseUrl and paths in tsconfig.json"],
-          ["Circular dependencies", "Use circular-dependency-plugin or madge"]
+          [
+            "Out of memory",
+            "Increase Node memory: NODE_OPTIONS=--max-old-space-size=4096"
+          ],
+          [
+            "Slow builds",
+            "Use incremental: true and skipLibCheck"
+          ],
+          [
+            "Declaration file conflicts",
+            "Use consistent typesVersions in package.json"
+          ],
+          [
+            "Path resolution errors",
+            "Set baseUrl and paths in tsconfig.json"
+          ],
+          [
+            "Circular dependencies",
+            "Use circular-dependency-plugin or madge"
+          ]
         ]
       }
     },
@@ -177,7 +228,6 @@
       "value": "Choose your TypeScript build tool based on project requirements. Use tsc for simplicity, esbuild/SWC for speed, Webpack for complex SPAs, or Vite for modern frontend development. Optimize builds with incremental compilation, caching, and proper configuration."
     }
   ],
-
   "faq": [
     {
       "question": "tsc vs esbuild?",
@@ -196,40 +246,56 @@
       "answer": "Vite is faster for development with HMR; Webpack is more mature with extensive plugin ecosystem."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "// Build tool comparison example\n\n// This code would be processed differently by each tool\n\ninterface BuildConfig {\n  name: string;\n  speed: 'fast' | 'medium' | 'slow';\n  output: string;\n}\n\nconst configs: BuildConfig[] = [\n  { name: 'tsc', speed: 'slow', output: 'dist/' },\n  { name: 'esbuild', speed: 'fast', output: 'dist/' },\n  { name: 'swc', speed: 'fast', output: 'dist/' },\n  { name: 'webpack', speed: 'medium', output: 'dist/' },\n];\n\nfunction buildProject(config: BuildConfig): Promise<string> {\n  console.log(`Building with ${config.name} (${config.speed})...`);\n  return Promise.resolve(`Output: ${config.output}`);\n}\n\n// Simulate build process\nPromise.all(configs.map(buildProject)).then(results => {\n  console.log('\\nAll builds completed!');\n  results.forEach(result => console.log(result));\n});\n\n// Export for module builds\nexport { BuildConfig, buildProject };"
   },
-
   "quiz": [
     {
       "question": "Which build tool is fastest for TypeScript compilation?",
-      "options": ["tsc", "Webpack", "esbuild", "Babel"],
+      "options": [
+        "tsc",
+        "Webpack",
+        "esbuild",
+        "Babel"
+      ],
       "answer": 2
     },
     {
       "question": "What flag generates declaration files?",
-      "options": ["--types", "--declaration", "--emit", "--dts"],
+      "options": [
+        "--types",
+        "--declaration",
+        "--emit",
+        "--dts"
+      ],
       "answer": 1
     },
     {
       "question": "Which tool is known for zero-configuration builds?",
-      "options": ["Webpack", "esbuild", "Parcel", "Rollup"],
+      "options": [
+        "Webpack",
+        "esbuild",
+        "Parcel",
+        "Rollup"
+      ],
       "answer": 2
     },
     {
       "question": "How to enable incremental compilation in tsc?",
-      "options": ["--cache", "--fast", "--incremental", "--watch"],
+      "options": [
+        "--cache",
+        "--fast",
+        "--incremental",
+        "--watch"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "ts-config",
     "ts-performance",
     "ts-modules",
-    "ts-compiler",
     "ts-linting"
   ]
 }

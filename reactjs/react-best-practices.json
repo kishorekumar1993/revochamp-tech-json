@@ -2,7 +2,6 @@
   "slug": "react-best-practices",
   "course": "React",
   "title": "React Best Practices – Writing Clean & Scalable Code",
-
   "meta": {
     "title": "Professional React Best Practices – Clean Code & Patterns (2026)",
     "description": "Master the industry standards for React development. Learn about component composition, custom hooks, performance patterns, and maintainable project structures.",
@@ -14,7 +13,6 @@
       "react security"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -85,18 +83,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Area", "Old Way (Avoid)", "Modern Way (2026)"],
+        "headers": [
+          "Area",
+          "Old Way (Avoid)",
+          "Modern Way (2026)"
+        ],
         "rows": [
-          ["Logic", "Mixed in Component body", "Abstracted into Custom Hooks"],
-          ["API Calls", "Inside every component", "Centralized services + React Query"],
-          ["Styling", "Global CSS files", "Tailwind CSS or CSS Modules"],
-          ["Props", "Deep Prop Drilling", "Context API or State Libraries"],
-          ["Updates", "Direct State Mutation", "Functional updates: `set(c => c + 1)`"]
+          [
+            "Logic",
+            "Mixed in Component body",
+            "Abstracted into Custom Hooks"
+          ],
+          [
+            "API Calls",
+            "Inside every component",
+            "Centralized services + React Query"
+          ],
+          [
+            "Styling",
+            "Global CSS files",
+            "Tailwind CSS or CSS Modules"
+          ],
+          [
+            "Props",
+            "Deep Prop Drilling",
+            "Context API or State Libraries"
+          ],
+          [
+            "Updates",
+            "Direct State Mutation",
+            "Functional updates: `set(c => c + 1)`"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Is it okay to use 'index' as a key in a list?",
@@ -107,30 +128,35 @@
       "answer": "Yes, unless you need an Error Boundary, which currently requires a Class Component. Functional components with Hooks are the modern standard."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import React, { useState, useEffect } from 'react';\n\n// BEST PRACTICE: Separate Logic into a Custom Hook\nfunction useCounter(initial = 0) {\n  const [count, setCount] = useState(initial);\n  const increment = () => setCount(prev => prev + 1);\n  const decrement = () => setCount(prev => prev - 1);\n  return { count, increment, decrement };\n}\n\n// BEST PRACTICE: Descriptive, Small Component\nconst CounterDisplay = ({ value }) => (\n  <h2 style={{ color: value < 0 ? 'red' : 'green' }}>\n    Value: {value}\n  </h2>\n);\n\nexport default function BestPracticesApp() {\n  const { count, increment, decrement } = useCounter(10);\n\n  return (\n    <div style={{ padding: '20px', textAlign: 'center' }}>\n      <h3>Clean Code Demo</h3>\n      <CounterDisplay value={count} />\n      <button onClick={decrement}>-</button>\n      <button onClick={increment} style={{ marginLeft: '10px' }}>+</button>\n      <p>Logic is separated, UI is composed!</p>\n    </div>\n  );\n}"
   },
-
   "quiz": [
     {
       "question": "What is the primary benefit of 'Composition' in React?",
-      "options": ["It makes the code run faster", "It allows components to be more flexible and reusable by nesting", "It replaces the need for state", "It hides the source code"],
+      "options": [
+        "It makes the code run faster",
+        "It allows components to be more flexible and reusable by nesting",
+        "It replaces the need for state",
+        "It hides the source code"
+      ],
       "answer": 1
     },
     {
       "question": "Why should you use functional updates like 'setCount(c => c + 1)'?",
-      "options": ["It is less code to write", "It ensures you are working with the most current state value", "It prevents the component from rendering", "It is required by TypeScript"],
+      "options": [
+        "It is less code to write",
+        "It ensures you are working with the most current state value",
+        "It prevents the component from rendering",
+        "It is required by TypeScript"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
     "react-hooks-intro",
     "react-performance",
-    "react-state-management",
-    "react-clean-architecture",
     "react-testing"
   ]
 }

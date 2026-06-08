@@ -2,7 +2,6 @@
   "slug": "react-testing",
   "course": "React",
   "title": "React Testing – Vitest & React Testing Library",
-
   "meta": {
     "title": "Professional React Testing Guide – RTL & Vitest (2026)",
     "description": "Master React testing. Learn the philosophy of testing components like a user, mocking APIs, and ensuring robust UI with Vitest and React Testing Library.",
@@ -15,7 +14,6 @@
       "integration testing"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -71,17 +69,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Test Type", "Tool", "Scope", "Speed"],
+        "headers": [
+          "Test Type",
+          "Tool",
+          "Scope",
+          "Speed"
+        ],
         "rows": [
-          ["Unit", "Vitest", "Individual functions/hooks", "Instant"],
-          ["Integration", "RTL + Vitest", "Groups of components working together", "Fast"],
-          ["E2E", "Playwright", "Full app in a real browser", "Slow"],
-          ["Static", "ESLint / TS", "Syntax and type checking", "Real-time"]
+          [
+            "Unit",
+            "Vitest",
+            "Individual functions/hooks",
+            "Instant"
+          ],
+          [
+            "Integration",
+            "RTL + Vitest",
+            "Groups of components working together",
+            "Fast"
+          ],
+          [
+            "E2E",
+            "Playwright",
+            "Full app in a real browser",
+            "Slow"
+          ],
+          [
+            "Static",
+            "ESLint / TS",
+            "Syntax and type checking",
+            "Real-time"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Why use 'screen.getByRole' instead of 'container.querySelector'?",
@@ -96,16 +118,19 @@
       "answer": "Use `renderHook` from `@testing-library/react`. It allows you to call the hook and assert its return values without building a dummy component."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import React, { useState } from 'react';\n\n// Imagine we are testing this Toggle component\nfunction Toggle() {\n  const [isOn, setIsOn] = useState(false);\n  return (\n    <div>\n      <p>Status: {isOn ? 'Active' : 'Inactive'}</p>\n      <button onClick={() => setIsOn(!isOn)}>\n        Toggle State\n      </button>\n    </div>\n  );\n}\n\n// This is how a Vitest + RTL test would look like:\n/*\n  test('toggles status on click', () => {\n    render(<Toggle />);\n    const button = screen.getByText('Toggle State');\n    fireEvent.click(button);\n    expect(screen.getByText('Status: Active')).toBeInTheDocument();\n  });\n*/\n\nexport default Toggle;"
   },
-
   "quiz": [
     {
       "question": "Which Testing Library query should you use for elements that aren't immediately in the DOM?",
-      "options": ["getBy", "queryBy", "findBy", "selectBy"],
+      "options": [
+        "getBy",
+        "queryBy",
+        "findBy",
+        "selectBy"
+      ],
       "answer": 2
     },
     {
@@ -129,12 +154,5 @@
       "answer": 1
     }
   ],
-
-  "related": [
-    "react-vitest-setup",
-    "react-integration-testing",
-    "react-msw-mocking",
-    "react-playwright-e2e",
-    "react-testing-hooks"
-  ]
+  "related": []
 }

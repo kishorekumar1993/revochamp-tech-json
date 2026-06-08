@@ -2,7 +2,6 @@
   "slug": "react-redux-toolkit",
   "course": "React",
   "title": "Redux Toolkit (RTK) – The Modern Standard",
-
   "meta": {
     "title": "Mastering Redux Toolkit – Slices, Store & Async Thunks (2026)",
     "description": "Deep dive into Redux Toolkit. Learn how to use createSlice, configureStore, and createAsyncThunk to build scalable and maintainable React applications.",
@@ -15,7 +14,6 @@
       "immer js react"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -62,17 +60,36 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Standard RTK", "RTK Query"],
+        "headers": [
+          "Feature",
+          "Standard RTK",
+          "RTK Query"
+        ],
         "rows": [
-          ["Data Management", "Manual (Slices/Thunks)", "Automated (Hooks)"],
-          ["Caching", "Manual implementation", "Automatic based on endpoints"],
-          ["Loading States", "Manual (extraReducers)", "Provided automatically (isLoading)"],
-          ["Boilerplate", "Moderate", "Minimal"]
+          [
+            "Data Management",
+            "Manual (Slices/Thunks)",
+            "Automated (Hooks)"
+          ],
+          [
+            "Caching",
+            "Manual implementation",
+            "Automatic based on endpoints"
+          ],
+          [
+            "Loading States",
+            "Manual (extraReducers)",
+            "Provided automatically (isLoading)"
+          ],
+          [
+            "Boilerplate",
+            "Moderate",
+            "Minimal"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Can I use RTK with existing 'Vanilla' Redux?",
@@ -87,35 +104,45 @@
       "answer": "Immer is a library that RTK uses to allow you to write code that looks like you're mutating state (e.g., state.push()), but it creates a brand new immutable state object under the hood."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import React from 'react';\nimport { Provider, useSelector, useDispatch } from 'react-redux';\nimport { configureStore, createSlice } from '@reduxjs/toolkit';\n\n// 1. Create Slice\nconst todoSlice = createSlice({\n  name: 'todos',\n  initialState: { list: [] },\n  reducers: {\n    addTodo: (state, action) => {\n      state.list.push(action.payload);\n    }\n  }\n});\n\n// 2. Configure Store\nconst store = configureStore({ reducer: { todos: todoSlice.reducer } });\nconst { addTodo } = todoSlice.actions;\n\n// 3. UI Component\nfunction TodoApp() {\n  const todos = useSelector(state => state.todos.list);\n  const dispatch = useDispatch();\n\n  const handleAdd = () => {\n    const text = prompt('Enter Task:');\n    if (text) dispatch(addTodo(text));\n  };\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h3>RTK Todo List</h3>\n      <button onClick={handleAdd}>Add Item</button>\n      <ul>\n        {todos.map((todo, i) => <li key={i}>{todo}</li>)}\n      </ul>\n    </div>\n  );\n}\n\nexport default function App() {\n  return (\n    <Provider store={store}>\n      <TodoApp />\n    </Provider>\n  );\n}"
   },
-
   "quiz": [
     {
       "question": "Which RTK function is used to set up the Redux Store with middleware and DevTools?",
-      "options": ["createStore", "configureStore", "setupStore", "initStore"],
+      "options": [
+        "createStore",
+        "configureStore",
+        "setupStore",
+        "initStore"
+      ],
       "answer": 1
     },
     {
       "question": "What library does RTK use to allow 'mutative' logic in reducers?",
-      "options": ["Axios", "Zod", "Immer", "Lodash"],
+      "options": [
+        "Axios",
+        "Zod",
+        "Immer",
+        "Lodash"
+      ],
       "answer": 2
     },
     {
       "question": "Where do you handle createAsyncThunk actions in a slice?",
-      "options": ["reducers", "extraReducers", "initialState", "actions"],
+      "options": [
+        "reducers",
+        "extraReducers",
+        "initialState",
+        "actions"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
     "react-redux-intro",
     "react-context-api",
-    "react-state-management",
-    "rtk-query-basics",
     "react-performance"
   ]
 }

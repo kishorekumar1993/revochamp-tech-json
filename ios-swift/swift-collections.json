@@ -2,7 +2,6 @@
   "slug": "swift-collections",
   "course": "Swift",
   "title": "Swift Collections – Mastering Arrays, Sets, and Dictionaries",
-
   "meta": {
     "title": "Swift Collections Guide: Arrays, Sets, Dictionaries Explained (2026)",
     "description": "Deep dive into Swift's collection types: Arrays (ordered lists), Sets (unique unordered), Dictionaries (key-value). Learn mutability, performance, Hashable requirements, and functional transformations for production iOS apps.",
@@ -16,7 +15,6 @@
       "swift copy on write"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -26,7 +24,6 @@
       "type": "text",
       "value": "Swift provides three primary collection types. Choosing the wrong one leads to messy code or performance issues. Use this rule of thumb:\n\n- **Array**: You care about **order** (list of dashboard widgets, chat messages).\n- **Set**: You care about **uniqueness** and fast lookups (user IDs in a room, tags on a post).\n- **Dictionary**: You need to **look up values by an identifier** (user profiles by ID, configuration flags).\n\n> **For Flutter developers:** `Array` = `List<T>`, `Set` = `Set<T>`, `Dictionary` = `Map<K,V>`."
     },
-    
     {
       "type": "heading",
       "value": "1. Arrays – Ordered, Indexed, Duplicate-Allowed"
@@ -101,7 +98,6 @@
       "value": "| Use Case | Recommended Collection | Why |\n|----------|----------------------|-----|\n| List of dashboard widgets (order matters) | **Array** | Preserves display order, allows duplicates |\n| User session store (lookup by userID) | **Dictionary** | O(1) lookup by ID, no order needed |\n| Set of permissions for a user | **Set** | Fast contains() check, ensures uniqueness |\n| Chat message history | **Array** | Ordered, indexed access, supports pagination |\n| Tags on a blog post | **Set** | No duplicates, fast to check if tag exists |\n| Configuration flags (key: flag name, value: enabled) | **Dictionary** | Natural key-value mapping |"
     }
   ],
-
   "faq": [
     {
       "question": "Why does dictionary access return an Optional?",
@@ -120,15 +116,18 @@
       "answer": "**Set.contains()** is dramatically faster – O(1) vs Array's O(n). If you frequently check membership and don't need order, convert your Array to a Set first (or store as Set from the beginning)."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "You need to store a list of high scores that must remain in the order they were achieved, but duplicates are allowed. Which collection do you use?",
-      "options": ["Set", "Array", "Dictionary", "Tuple"],
+      "options": [
+        "Set",
+        "Array",
+        "Dictionary",
+        "Tuple"
+      ],
       "answer": 1
     },
     {
@@ -153,16 +152,19 @@
     },
     {
       "question": "Which functional method would you use to transform each element of an array into a new array of the same length?",
-      "options": ["reduce", "filter", "compactMap", "map"],
+      "options": [
+        "reduce",
+        "filter",
+        "compactMap",
+        "map"
+      ],
       "answer": 3
     }
   ],
-
   "related": [
     "swift-variables",
     "swift-control-flow",
     "swift-functions",
-    "swift-optionals",
-    "clean-architecture-native"
+    "swift-optionals"
   ]
 }

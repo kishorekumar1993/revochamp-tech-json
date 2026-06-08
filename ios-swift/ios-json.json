@@ -2,7 +2,6 @@
   "slug": "swift-json-codable",
   "course": "iOS Development",
   "title": "JSON in Swift – Data Parsing with Codable",
-
   "meta": {
     "title": "Swift JSON Guide – Codable, JSONDecoder & Custom Keys (2026)",
     "description": "Master JSON parsing in Swift. Learn how to use the Codable protocol, handle custom snake_case mapping, and manage optional nested data.",
@@ -16,7 +15,6 @@
       "api integration ios"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -26,7 +24,6 @@
       "type": "text",
       "value": "In modern Swift, we use the `Codable` protocol (a typealias for `Encodable & Decodable`) to handle JSON. It allows you to convert between your native Swift types and a JSON representation without writing manual parsing logic. As an Architect, you should prioritize **Structs** for your JSON models to leverage value semantics and thread safety."
     },
-    
     {
       "type": "heading",
       "value": "1. Decoding JSON to Structs"
@@ -61,7 +58,6 @@
       "type": "text",
       "value": "Encoding is the reverse process. You use `JSONEncoder` to turn your Swift objects back into JSON Data, which can then be sent to your backend or passed through a Method Channel to Flutter."
     },
-    
     {
       "type": "heading",
       "value": "JSON Management Comparison"
@@ -69,18 +65,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Swift (Codable)", "Dart (Flutter)"],
+        "headers": [
+          "Feature",
+          "Swift (Codable)",
+          "Dart (Flutter)"
+        ],
         "rows": [
-          ["Code Gen", "Not required (Built into compiler)", "Required (build_runner / json_serializable)"],
-          ["Mapping", "CodingKeys enum", "Annotations (@JsonKey)"],
-          ["Null Safety", "Via Optionals (?)", "Via Null-safe types"],
-          ["Performance", "High (Native binary)", "High (AOT Compiled)"],
-          ["Snake Case", "keyDecodingStrategy", "Manual or generator config"]
+          [
+            "Code Gen",
+            "Not required (Built into compiler)",
+            "Required (build_runner / json_serializable)"
+          ],
+          [
+            "Mapping",
+            "CodingKeys enum",
+            "Annotations (@JsonKey)"
+          ],
+          [
+            "Null Safety",
+            "Via Optionals (?)",
+            "Via Null-safe types"
+          ],
+          [
+            "Performance",
+            "High (Native binary)",
+            "High (AOT Compiled)"
+          ],
+          [
+            "Snake Case",
+            "keyDecodingStrategy",
+            "Manual or generator config"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "How do I handle nested JSON objects?",
@@ -95,20 +114,28 @@
       "answer": "Yes. You simply decode as an array of your type: 'try decoder.decode([Project].self, from: data)'. This is much cleaner than the manual mapping often seen in older Swift code."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which protocol must a Swift Struct adopt to support both JSON encoding and decoding?",
-      "options": ["Jsonable", "Codable", "Convertible", "Encodable"],
+      "options": [
+        "Jsonable",
+        "Codable",
+        "Convertible",
+        "Encodable"
+      ],
       "answer": 1
     },
     {
       "question": "Which object is responsible for converting JSON Data into a native Swift Struct instance?",
-      "options": ["JSONEncoder", "JSONDecoder", "CodableParser", "UrlSession"],
+      "options": [
+        "JSONEncoder",
+        "JSONDecoder",
+        "CodableParser",
+        "UrlSession"
+      ],
       "answer": 1
     },
     {
@@ -122,12 +149,7 @@
       "answer": 1
     }
   ],
-
   "related": [
-    "ios-networking-urlsession",
-    "swift-optionals",
-    "swift-classes-vs-structs",
-    "flutter-method-channels",
-    "clean-architecture-native"
+    "swift-optionals"
   ]
 }

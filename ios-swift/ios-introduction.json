@@ -2,7 +2,6 @@
   "slug": "ios-ecosystem-introduction",
   "course": "iOS Development",
   "title": "The iOS Ecosystem – Architecture and Core Concepts",
-
   "meta": {
     "title": "iOS Development Introduction – Architecture, SDKs & App Lifecycle (2026)",
     "description": "A professional introduction to the iOS ecosystem for architects. Learn about the Cocoa Touch layer, App Lifecycle, and the relationship between Flutter and Native iOS.",
@@ -15,7 +14,6 @@
       "xcode architecture"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "iOS is built on a solid foundation of four abstraction layers. As a Lead Engineer, understanding these layers helps you diagnose where a performance bottleneck or a native crash is occurring. When you write a Flutter Method Channel, you are typically interacting with the top two layers: Cocoa Touch and Media."
     },
-    
     {
       "type": "list",
       "value": [
@@ -43,7 +40,6 @@
       "type": "text",
       "value": "In iOS, an app is more than just a running process; it is a state machine managed by the system. The OS determines when your app is 'Active,' 'Backgrounded,' or 'Suspended' to preserve battery and memory. For your Revochamp engine, handling the transition from 'Inactive' to 'Active' is crucial for resuming the AI generation state correctly."
     },
-    
     {
       "type": "heading",
       "value": "2. Frameworks: SwiftUI vs. UIKit"
@@ -60,7 +56,6 @@
       "type": "text",
       "value": "When you run a Flutter app on iOS, it lives inside a single native view called the `FlutterViewController`. Communication happens through **Binary Messages**. This means that whenever you call native Swift code from Dart, the data is serialized, sent across the bridge, and processed on the native side. Minimizing these crossings is the key to maintaining 120 FPS performance."
     },
-    
     {
       "type": "heading",
       "value": "iOS Development Comparison"
@@ -68,18 +63,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Native iOS (Swift)", "Flutter (iOS Runner)"],
+        "headers": [
+          "Feature",
+          "Native iOS (Swift)",
+          "Flutter (iOS Runner)"
+        ],
         "rows": [
-          ["Language", "Swift", "Dart"],
-          ["UI Engine", "SwiftUI / UIKit", "Skia / Impeller"],
-          ["Entry Point", "@main (App Struct)", "main.dart -> AppDelegate"],
-          ["Binary Size", "Smaller (Shared SDKs)", "Larger (Bundled Engine)"],
-          ["Hardware Access", "Direct", "Via Method Channels"]
+          [
+            "Language",
+            "Swift",
+            "Dart"
+          ],
+          [
+            "UI Engine",
+            "SwiftUI / UIKit",
+            "Skia / Impeller"
+          ],
+          [
+            "Entry Point",
+            "@main (App Struct)",
+            "main.dart -> AppDelegate"
+          ],
+          [
+            "Binary Size",
+            "Smaller (Shared SDKs)",
+            "Larger (Bundled Engine)"
+          ],
+          [
+            "Hardware Access",
+            "Direct",
+            "Via Method Channels"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is the AppDelegate?",
@@ -94,15 +112,18 @@
       "answer": "Every iOS app lives in its own 'Sandbox.' It cannot access files, photos, or the camera unless the user explicitly grants permission. This security model is enforced at the Core OS level."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which iOS layer is responsible for the user interface and high-level interaction frameworks?",
-      "options": ["Core OS", "Media", "Core Services", "Cocoa Touch"],
+      "options": [
+        "Core OS",
+        "Media",
+        "Core Services",
+        "Cocoa Touch"
+      ],
       "answer": 3
     },
     {
@@ -117,16 +138,17 @@
     },
     {
       "question": "In 2026, which declarative framework is recommended for building modern iOS user interfaces?",
-      "options": ["Objective-C", "UIKit", "SwiftUI", "Interface Builder"],
+      "options": [
+        "Objective-C",
+        "UIKit",
+        "SwiftUI",
+        "Interface Builder"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "swift-introduction",
-    "ios-app-lifecycle",
-    "flutter-method-channels",
-    "ios-security-privacy",
-    "clean-architecture-native"
+    "ios-app-lifecycle"
   ]
 }

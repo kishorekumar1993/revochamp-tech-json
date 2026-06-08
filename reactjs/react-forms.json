@@ -2,7 +2,6 @@
   "slug": "react-forms",
   "course": "React",
   "title": "React Forms – Handling Form Inputs & Validation",
-
   "meta": {
     "title": "React Forms – Complete Guide to Form Handling (2026)",
     "description": "Master forms in React. Learn controlled vs uncontrolled components, form validation, custom hooks, and best practices for handling user input.",
@@ -14,7 +13,6 @@
       "react form handling"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -95,12 +93,42 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Library", "Bundle Size", "Performance", "Features", "Learning Curve"],
+        "headers": [
+          "Library",
+          "Bundle Size",
+          "Performance",
+          "Features",
+          "Learning Curve"
+        ],
         "rows": [
-          ["React Hook Form", "~9KB", "Excellent", "Uncontrolled by default, minimal re-renders", "Low"],
-          ["Formik", "~12KB", "Good", "Full-featured, controlled", "Low"],
-          ["React Final Form", "~8KB", "Good", "Subscription-based, performant", "Medium"],
-          ["React Forms (native)", "0KB", "Good", "Basic, requires custom code", "Low"]
+          [
+            "React Hook Form",
+            "~9KB",
+            "Excellent",
+            "Uncontrolled by default, minimal re-renders",
+            "Low"
+          ],
+          [
+            "Formik",
+            "~12KB",
+            "Good",
+            "Full-featured, controlled",
+            "Low"
+          ],
+          [
+            "React Final Form",
+            "~8KB",
+            "Good",
+            "Subscription-based, performant",
+            "Medium"
+          ],
+          [
+            "React Forms (native)",
+            "0KB",
+            "Good",
+            "Basic, requires custom code",
+            "Low"
+          ]
         ]
       }
     },
@@ -122,7 +150,6 @@
       "value": "Forms are a critical part of most React applications. Controlled components give you full control over form state and validation. For complex forms, consider using libraries like React Hook Form for better performance and developer experience. Always implement proper validation, error handling, and accessibility."
     }
   ],
-
   "faq": [
     {
       "question": "Controlled vs uncontrolled components?",
@@ -141,40 +168,55 @@
       "answer": "Use uncontrolled input with type='file' and FormData API."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import { useState } from 'react';\n\nfunction RegistrationForm() {\n  const [formData, setFormData] = useState({\n    fullName: '',\n    email: '',\n    password: '',\n    confirmPassword: '',\n    role: 'user',\n    newsletter: false\n  });\n  \n  const [errors, setErrors] = useState({});\n  const [submitted, setSubmitted] = useState(false);\n\n  const validateForm = () => {\n    const newErrors = {};\n    \n    if (!formData.fullName.trim()) {\n      newErrors.fullName = 'Full name is required';\n    } else if (formData.fullName.length < 2) {\n      newErrors.fullName = 'Name must be at least 2 characters';\n    }\n    \n    if (!formData.email) {\n      newErrors.email = 'Email is required';\n    } else if (!/\\S+@\\S+\\.\\S+/.test(formData.email)) {\n      newErrors.email = 'Email is invalid';\n    }\n    \n    if (!formData.password) {\n      newErrors.password = 'Password is required';\n    } else if (formData.password.length < 6) {\n      newErrors.password = 'Password must be at least 6 characters';\n    }\n    \n    if (formData.password !== formData.confirmPassword) {\n      newErrors.confirmPassword = 'Passwords do not match';\n    }\n    \n    setErrors(newErrors);\n    return Object.keys(newErrors).length === 0;\n  };\n\n  const handleChange = (e) => {\n    const { name, value, type, checked } = e.target;\n    setFormData({\n      ...formData,\n      [name]: type === 'checkbox' ? checked : value\n    });\n    // Clear error for this field when user starts typing\n    if (errors[name]) {\n      setErrors({ ...errors, [name]: '' });\n    }\n  };\n\n  const handleSubmit = (e) => {\n    e.preventDefault();\n    if (validateForm()) {\n      console.log('Form submitted:', formData);\n      setSubmitted(true);\n      // Reset form after 3 seconds\n      setTimeout(() => {\n        setFormData({\n          fullName: '',\n          email: '',\n          password: '',\n          confirmPassword: '',\n          role: 'user',\n          newsletter: false\n        });\n        setSubmitted(false);\n      }, 3000);\n    }\n  };\n\n  if (submitted) {\n    return (\n      <div style={{ textAlign: 'center', padding: '40px' }}>\n        <h2>🎉 Registration Successful!</h2>\n        <p>Welcome, {formData.fullName}!</p>\n        <p>Check your email at {formData.email} for confirmation.</p>\n      </div>\n    );\n  }\n\n  return (\n    <form onSubmit={handleSubmit} style={{ maxWidth: '500px', margin: '0 auto' }}>\n      <h2>Register</h2>\n      \n      <div style={{ marginBottom: '15px' }}>\n        <label>Full Name *</label>\n        <input\n          type=\"text\"\n          name=\"fullName\"\n          value={formData.fullName}\n          onChange={handleChange}\n          style={{\n            width: '100%',\n            padding: '8px',\n            border: errors.fullName ? '1px solid red' : '1px solid #ddd',\n            borderRadius: '4px'\n          }}\n        />\n        {errors.fullName && <span style={{ color: 'red', fontSize: '14px' }}>{errors.fullName}</span>}\n      </div>\n\n      <div style={{ marginBottom: '15px' }}>\n        <label>Email *</label>\n        <input\n          type=\"email\"\n          name=\"email\"\n          value={formData.email}\n          onChange={handleChange}\n          style={{\n            width: '100%',\n            padding: '8px',\n            border: errors.email ? '1px solid red' : '1px solid #ddd',\n            borderRadius: '4px'\n          }}\n        />\n        {errors.email && <span style={{ color: 'red', fontSize: '14px' }}>{errors.email}</span>}\n      </div>\n\n      <div style={{ marginBottom: '15px' }}>\n        <label>Password *</label>\n        <input\n          type=\"password\"\n          name=\"password\"\n          value={formData.password}\n          onChange={handleChange}\n          style={{\n            width: '100%',\n            padding: '8px',\n            border: errors.password ? '1px solid red' : '1px solid #ddd',\n            borderRadius: '4px'\n          }}\n        />\n        {errors.password && <span style={{ color: 'red', fontSize: '14px' }}>{errors.password}</span>}\n      </div>\n\n      <div style={{ marginBottom: '15px' }}>\n        <label>Confirm Password *</label>\n        <input\n          type=\"password\"\n          name=\"confirmPassword\"\n          value={formData.confirmPassword}\n          onChange={handleChange}\n          style={{\n            width: '100%',\n            padding: '8px',\n            border: errors.confirmPassword ? '1px solid red' : '1px solid #ddd',\n            borderRadius: '4px'\n          }}\n        />\n        {errors.confirmPassword && <span style={{ color: 'red', fontSize: '14px' }}>{errors.confirmPassword}</span>}\n      </div>\n\n      <div style={{ marginBottom: '15px' }}>\n        <label>Role</label>\n        <select\n          name=\"role\"\n          value={formData.role}\n          onChange={handleChange}\n          style={{ width: '100%', padding: '8px' }}\n        >\n          <option value=\"user\">User</option>\n          <option value=\"admin\">Admin</option>\n          <option value=\"moderator\">Moderator</option>\n        </select>\n      </div>\n\n      <div style={{ marginBottom: '20px' }}>\n        <label>\n          <input\n            type=\"checkbox\"\n            name=\"newsletter\"\n            checked={formData.newsletter}\n            onChange={handleChange}\n          />\n          Subscribe to newsletter\n        </label>\n      </div>\n\n      <button\n        type=\"submit\"\n        style={{\n          width: '100%',\n          padding: '10px',\n          backgroundColor: '#007bff',\n          color: 'white',\n          border: 'none',\n          borderRadius: '4px',\n          cursor: 'pointer'\n        }}\n      >\n        Register\n      </button>\n    </form>\n  );\n}\n\nexport default RegistrationForm;"
   },
-
   "quiz": [
     {
       "question": "What is a controlled component?",
-      "options": ["Component with internal state", "Component controlled by parent via props", "Component where form data is handled by React state", "Component with refs"],
+      "options": [
+        "Component with internal state",
+        "Component controlled by parent via props",
+        "Component where form data is handled by React state",
+        "Component with refs"
+      ],
       "answer": 2
     },
     {
       "question": "How do you access form values in uncontrolled components?",
-      "options": ["State", "Props", "Refs", "Context"],
+      "options": [
+        "State",
+        "Props",
+        "Refs",
+        "Context"
+      ],
       "answer": 2
     },
     {
       "question": "Which library is recommended for complex forms?",
-      "options": ["Redux Form", "React Hook Form", "React Router", "Axios"],
+      "options": [
+        "Redux Form",
+        "React Hook Form",
+        "React Router",
+        "Axios"
+      ],
       "answer": 1
     },
     {
       "question": "How to prevent form submission page reload?",
-      "options": ["return false", "event.stopPropagation()", "event.preventDefault()", "event.stopReload()"],
+      "options": [
+        "return false",
+        "event.stopPropagation()",
+        "event.preventDefault()",
+        "event.stopReload()"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "react-introduction",
     "react-state",
-    "react-events",
-    "react-hooks",
-    "react-validation"
+    "react-events"
   ]
 }

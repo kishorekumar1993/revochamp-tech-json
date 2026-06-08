@@ -2,7 +2,6 @@
   "slug": "angular-shared-modules",
   "course": "Angular",
   "title": "Angular Shared Modules – Reusable UI & Utilities",
-
   "meta": {
     "title": "Angular Shared Modules Guide – Reexporting & UI Libraries (2026)",
     "description": "Learn the Shared Module pattern in Angular. Master how to organize reusable components, directives, and pipes to keep your feature modules lean and DRY.",
@@ -15,7 +14,6 @@
       "reusable pipes"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -33,7 +31,6 @@
       "type": "text",
       "value": "The unique characteristic of a Shared Module is that it **exports** what it imports. When a feature module imports the `SharedModule`, it automatically gains access to everything in the `exports` array, even if those items weren't declared locally in the Shared Module."
     },
-    
     {
       "type": "code",
       "language": "typescript",
@@ -71,17 +68,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Shared Module", "Core Module", "Feature Module"],
+        "headers": [
+          "Feature",
+          "Shared Module",
+          "Core Module",
+          "Feature Module"
+        ],
         "rows": [
-          ["Components", "Reusable / UI only", "None (usually)", "Domain specific"],
-          ["Services", "Avoid (No providers)", "Global Singletons", "Feature specific"],
-          ["Imported by", "Multiple Feature Modules", "Root Module only", "Root (Eager) or Router (Lazy)"],
-          ["Goal", "DRY UI & Utilities", "App-wide Infrastructure", "Business Logic / Workflow"]
+          [
+            "Components",
+            "Reusable / UI only",
+            "None (usually)",
+            "Domain specific"
+          ],
+          [
+            "Services",
+            "Avoid (No providers)",
+            "Global Singletons",
+            "Feature specific"
+          ],
+          [
+            "Imported by",
+            "Multiple Feature Modules",
+            "Root Module only",
+            "Root (Eager) or Router (Lazy)"
+          ],
+          [
+            "Goal",
+            "DRY UI & Utilities",
+            "App-wide Infrastructure",
+            "Business Logic / Workflow"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Does SharedModule make the app bundle larger?",
@@ -96,11 +117,9 @@
       "answer": "CommonModule is an Angular-provided module with core directives (*ngIf, *ngFor). SharedModule is a custom module you create to group CommonModule and your own reusable assets together for easier importing."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "What is the primary purpose of the 'exports' array in a Shared Module?",
@@ -133,12 +152,10 @@
       "answer": 2
     }
   ],
-
   "related": [
     "angular-modules",
     "angular-feature-modules",
     "angular-components",
-    "angular-pipes",
-    "clean-architecture-frontend"
+    "angular-pipes"
   ]
 }

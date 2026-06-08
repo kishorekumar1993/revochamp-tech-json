@@ -2,7 +2,6 @@
   "slug": "ios-native-authentication",
   "course": "iOS Development",
   "title": "iOS Authentication – Biometrics and Secure Identity",
-
   "meta": {
     "title": "iOS Authentication Guide – FaceID, TouchID & Sign in with Apple (2026)",
     "description": "Master native iOS authentication. Learn to implement LocalAuthentication for biometrics and the AuthenticationServices framework for Sign in with Apple.",
@@ -15,7 +14,6 @@
       "secure enclave ios"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -33,7 +31,6 @@
       "type": "text",
       "value": "Using the `LocalAuthentication` framework, you can request the system to verify the user's identity. The actual biometric data never leaves the device; the 'Secure Enclave' simply returns a boolean success or failure. You must add the `NSFaceIDUsageDescription` key to your **Info.plist** to use this feature."
     },
-    
     {
       "type": "code",
       "language": "swift",
@@ -47,7 +44,6 @@
       "type": "text",
       "value": "If your app offers any third-party login (like Google or Facebook), Apple requires you to also offer **Sign in with Apple**. It provides a consistent UI and allows users to hide their real email address, sharing a unique, relay address with your Python backend instead."
     },
-    
     {
       "type": "heading",
       "value": "3. The Keychain for Token Storage"
@@ -63,18 +59,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "LocalAuthentication (Biometric)", "Sign in with Apple (Identity)"],
+        "headers": [
+          "Feature",
+          "LocalAuthentication (Biometric)",
+          "Sign in with Apple (Identity)"
+        ],
         "rows": [
-          ["Purpose", "Quick unlock / re-auth", "Account creation / Login"],
-          ["Data Privacy", "Stored in Secure Enclave", "Managed by Apple ID"],
-          ["Network Required", "No (Offline)", "Yes (Online)"],
-          ["Setup", "Info.plist description", "Capability in Xcode"],
-          ["Flutter Bridge", "Via local_auth plugin", "Via sign_in_with_apple plugin"]
+          [
+            "Purpose",
+            "Quick unlock / re-auth",
+            "Account creation / Login"
+          ],
+          [
+            "Data Privacy",
+            "Stored in Secure Enclave",
+            "Managed by Apple ID"
+          ],
+          [
+            "Network Required",
+            "No (Offline)",
+            "Yes (Online)"
+          ],
+          [
+            "Setup",
+            "Info.plist description",
+            "Capability in Xcode"
+          ],
+          [
+            "Flutter Bridge",
+            "Via local_auth plugin",
+            "Via sign_in_with_apple plugin"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is the Secure Enclave?",
@@ -89,35 +108,42 @@
       "answer": "Yes. Apple provides a JS-based version for web and Android, which you can integrate into the non-iOS versions of your Revochamp app for a unified cross-platform account system."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which framework is used for FaceID and TouchID authentication in Swift?",
-      "options": ["SecurityServices", "LocalAuthentication", "BiometricKit", "IdentityUI"],
+      "options": [
+        "SecurityServices",
+        "LocalAuthentication",
+        "BiometricKit",
+        "IdentityUI"
+      ],
       "answer": 1
     },
     {
       "question": "Where should sensitive tokens and passwords be stored on an iOS device?",
-      "options": ["UserDefaults", "Info.plist", "Keychain", "CoreData"],
+      "options": [
+        "UserDefaults",
+        "Info.plist",
+        "Keychain",
+        "CoreData"
+      ],
       "answer": 2
     },
     {
       "question": "Which Info.plist key is required to use FaceID?",
-      "options": ["NSCameraUsageDescription", "NSFaceIDUsageDescription", "NSBiometricUsageDescription", "NSIdentityUsageDescription"],
+      "options": [
+        "NSCameraUsageDescription",
+        "NSFaceIDUsageDescription",
+        "NSBiometricUsageDescription",
+        "NSIdentityUsageDescription"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
-    "ios-permissions-and-privacy",
-    "ios-app-lifecycle",
-    "flutter-method-channels",
-    "ios-security-privacy",
-    "clean-architecture-native"
+    "ios-app-lifecycle"
   ]
 }
-

@@ -2,7 +2,6 @@
   "slug": "ios-performance-optimization",
   "course": "iOS Development",
   "title": "iOS Performance – Beyond 120 FPS",
-
   "meta": {
     "title": "iOS Performance Guide – CPU, Memory & Battery Optimization (2026)",
     "description": "Master professional iOS performance tuning. Learn about the 'Golden Rules' of 120Hz scrolling, memory management with ARC, and energy efficiency.",
@@ -15,7 +14,6 @@
       "xcode instruments"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -33,7 +31,6 @@
       "type": "text",
       "value": "The Golden Rule: **Never block the Main Thread.** The Main Thread handles all UI rendering and user interactions. If a heavy task (like parsing a massive JSON from your Python backend) runs on the main thread, the app will 'hitch' or freeze, dropping frames on ProMotion (120Hz) displays."
     },
-    
     {
       "type": "list",
       "value": [
@@ -50,7 +47,6 @@
       "type": "text",
       "value": "Swift uses **Automatic Reference Counting (ARC)**. While it manages memory for you, it is not a 'Garbage Collector.' Memory is only freed when the reference count hits zero. For an Engineering Manager, the biggest performance risk is a **Retain Cycle**, where two objects point to each other, preventing memory from ever being released."
     },
-    
     {
       "type": "code",
       "language": "swift",
@@ -67,13 +63,37 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Operation", "Cost", "Optimization Strategy"],
+        "headers": [
+          "Operation",
+          "Cost",
+          "Optimization Strategy"
+        ],
         "rows": [
-          ["Network Request", "High (Radio Power)", "Batch requests & use caching"],
-          ["Location Tracking", "Extreme (GPS)", "Use 'Significant Change' or lower accuracy"],
-          ["AI Model Processing", "High (CPU/NPU)", "Run on the Neural Engine (CoreML)"],
-          ["UI Animation", "Medium (GPU)", "Use standard SwiftUI/UIKit animations"],
-          ["Disk I/O", "Low", "Avoid frequent small writes; use buffering"]
+          [
+            "Network Request",
+            "High (Radio Power)",
+            "Batch requests & use caching"
+          ],
+          [
+            "Location Tracking",
+            "Extreme (GPS)",
+            "Use 'Significant Change' or lower accuracy"
+          ],
+          [
+            "AI Model Processing",
+            "High (CPU/NPU)",
+            "Run on the Neural Engine (CoreML)"
+          ],
+          [
+            "UI Animation",
+            "Medium (GPU)",
+            "Use standard SwiftUI/UIKit animations"
+          ],
+          [
+            "Disk I/O",
+            "Low",
+            "Avoid frequent small writes; use buffering"
+          ]
         ]
       }
     },
@@ -86,7 +106,6 @@
       "value": "Modern iPhones run at 120Hz, meaning you have only **8.3ms** to prepare a frame. If your native code takes longer, the user will see 'Jank.' Use the **Time Profiler** in Instruments to identify methods taking more than 5ms and refactor them into smaller, asynchronous tasks."
     }
   ],
-
   "faq": [
     {
       "question": "What is the 'Dirty Memory' limit?",
@@ -101,20 +120,28 @@
       "answer": "In most cases, yes. SwiftUI is highly optimized for the modern render loop and handles 'Diffing' (identifying what changed in the UI) more efficiently than manual UIKit updates, though complex custom views may still require UIKit for raw speed."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "How much time do you have to render a single frame on a 120Hz ProMotion display?",
-      "options": ["16.6ms", "8.3ms", "33.3ms", "1ms"],
+      "options": [
+        "16.6ms",
+        "8.3ms",
+        "33.3ms",
+        "1ms"
+      ],
       "answer": 1
     },
     {
       "question": "Which keyword should be used to prevent a 'Strong Reference Cycle' in a relationship between two classes?",
-      "options": ["strong", "unowned", "weak", "static"],
+      "options": [
+        "strong",
+        "unowned",
+        "weak",
+        "static"
+      ],
       "answer": 2
     },
     {
@@ -128,12 +155,8 @@
       "answer": 1
     }
   ],
-
   "related": [
-    "ios-debugging-xcode-tools",
     "swift-async-await",
-    "ios-app-lifecycle",
-    "flutter-method-channels",
-    "ios-networking-urlsession"
+    "ios-app-lifecycle"
   ]
 }

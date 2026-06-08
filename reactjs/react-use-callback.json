@@ -2,7 +2,6 @@
   "slug": "react-use-callback",
   "course": "React",
   "title": "React useCallback Hook – Memoizing Functions",
-
   "meta": {
     "title": "React useCallback Hook – Complete Guide to Function Memoization (2026)",
     "description": "Master the useCallback hook in React. Learn how to prevent unnecessary child re-renders by memoizing function instances and maintaining referential integrity.",
@@ -14,7 +13,6 @@
       "referential integrity react"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -61,10 +59,22 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Hook", "Returns", "Primary Use Case"],
+        "headers": [
+          "Hook",
+          "Returns",
+          "Primary Use Case"
+        ],
         "rows": [
-          ["useCallback", "The function itself (memoized)", "Preventing function recreation for props/deps"],
-          ["useMemo", "The result of a function (memoized value)", "Expensive calculations or object/array stability"]
+          [
+            "useCallback",
+            "The function itself (memoized)",
+            "Preventing function recreation for props/deps"
+          ],
+          [
+            "useMemo",
+            "The result of a function (memoized value)",
+            "Expensive calculations or object/array stability"
+          ]
         ]
       }
     },
@@ -89,7 +99,6 @@
       ]
     }
   ],
-
   "faq": [
     {
       "question": "Why is my child component still re-rendering?",
@@ -104,35 +113,45 @@
       "answer": "No, it actually adds a tiny bit of overhead. Its purpose is to skip re-renders of *other* components or prevent unnecessary effect triggers."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import React, { useState, useCallback } from 'react';\n\n// A memoized child component\nconst ExpensiveList = React.memo(({ onItemClick }) => {\n  console.log('--- Child Rendering ---');\n  const items = [1, 2, 3, 4, 5];\n  return (\n    <ul>\n      {items.map(i => (\n        <li key={i} onClick={() => onItemClick(i)} style={{ cursor: 'pointer' }}>\n          Item {i} (Click me)\n        </li>\n      ))}\n    </ul>\n  );\n});\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  const [input, setInput] = useState('');\n\n  // Try removing 'useCallback' and wrapping only the arrow function.\n  // You'll notice the Child renders on every keystroke in the input!\n  const handleItemClick = useCallback((id) => {\n    alert('Clicked item ' + id);\n  }, []);\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h2>useCallback & React.memo</h2>\n      <p>Count: {count} <button onClick={() => setCount(c => c + 1)}>+</button></p>\n      \n      <input \n        placeholder=\"Type to re-render parent...\" \n        value={input} \n        onChange={e => setInput(e.target.value)} \n      />\n      \n      <p>Open the console. Notice the child doesn't re-render when you type, thanks to useCallback!</p>\n      <ExpensiveList onItemClick={handleItemClick} />\n    </div>\n  );\n}\n\nexport default App;"
   },
-
   "quiz": [
     {
       "question": "What does useCallback return?",
-      "options": ["A boolean value", "The result of the callback function", "A memoized version of the function itself", "A promise"],
+      "options": [
+        "A boolean value",
+        "The result of the callback function",
+        "A memoized version of the function itself",
+        "A promise"
+      ],
       "answer": 2
     },
     {
       "question": "When is useCallback most effective?",
-      "options": ["When the function contains a loop", "When passing props to a component wrapped in React.memo", "To make API calls faster", "To replace useState"],
+      "options": [
+        "When the function contains a loop",
+        "When passing props to a component wrapped in React.memo",
+        "To make API calls faster",
+        "To replace useState"
+      ],
       "answer": 1
     },
     {
       "question": "If you use a variable inside useCallback but leave it out of the dependency array, what happens?",
-      "options": ["The code crashes", "The function uses the 'stale' value from the first render", "React automatically adds it for you", "The function updates every time anyway"],
+      "options": [
+        "The code crashes",
+        "The function uses the 'stale' value from the first render",
+        "React automatically adds it for you",
+        "The function updates every time anyway"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
     "react-use-memo",
-    "react-memo",
     "react-hooks-intro",
-    "react-re-renders",
     "react-use-effect"
   ]
 }

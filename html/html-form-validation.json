@@ -40,16 +40,61 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Attribute", "Type", "Description", "Example"],
+        "headers": [
+          "Attribute",
+          "Type",
+          "Description",
+          "Example"
+        ],
         "rows": [
-          ["`required`", "Boolean", "Field cannot be empty", "`<input required>`"],
-          ["`minlength`", "Number", "Minimum character length", "`<input minlength=\"3\">`"],
-          ["`maxlength`", "Number", "Maximum character length", "`<input maxlength=\"20\">`"],
-          ["`min`", "Number/Date", "Minimum numeric/date value", "`<input type=\"number\" min=\"18\">`"],
-          ["`max`", "Number/Date", "Maximum numeric/date value", "`<input type=\"date\" max=\"2026-12-31\">`"],
-          ["`step`", "Number", "Increment/decrement step", "`<input type=\"number\" step=\"5\">`"],
-          ["`pattern`", "Regex", "Custom validation using regex", "`<input pattern=\"[A-Za-z]{3}\">`"],
-          ["`multiple`", "Boolean", "Multiple values (email/file)", "`<input type=\"email\" multiple>`"]
+          [
+            "`required`",
+            "Boolean",
+            "Field cannot be empty",
+            "`<input required>`"
+          ],
+          [
+            "`minlength`",
+            "Number",
+            "Minimum character length",
+            "`<input minlength=\"3\">`"
+          ],
+          [
+            "`maxlength`",
+            "Number",
+            "Maximum character length",
+            "`<input maxlength=\"20\">`"
+          ],
+          [
+            "`min`",
+            "Number/Date",
+            "Minimum numeric/date value",
+            "`<input type=\"number\" min=\"18\">`"
+          ],
+          [
+            "`max`",
+            "Number/Date",
+            "Maximum numeric/date value",
+            "`<input type=\"date\" max=\"2026-12-31\">`"
+          ],
+          [
+            "`step`",
+            "Number",
+            "Increment/decrement step",
+            "`<input type=\"number\" step=\"5\">`"
+          ],
+          [
+            "`pattern`",
+            "Regex",
+            "Custom validation using regex",
+            "`<input pattern=\"[A-Za-z]{3}\">`"
+          ],
+          [
+            "`multiple`",
+            "Boolean",
+            "Multiple values (email/file)",
+            "`<input type=\"email\" multiple>`"
+          ]
         ]
       }
     },
@@ -60,13 +105,37 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Input Type", "Built-in Validation", "Example"],
+        "headers": [
+          "Input Type",
+          "Built-in Validation",
+          "Example"
+        ],
         "rows": [
-          ["`email`", "Requires `@` and domain (e.g., `name@domain.com`)", "`<input type=\"email\">`"],
-          ["`url`", "Requires valid protocol + domain (e.g., `https://example.com`)", "`<input type=\"url\">`"],
-          ["`number`", "Only numeric characters, respects `min`/`max`", "`<input type=\"number\">`"],
-          ["`tel`", "No automatic format — use `pattern` for phone numbers", "`<input type=\"tel\" pattern=\"[0-9]{10}\">`"],
-          ["`date`", "Valid date format (`YYYY-MM-DD`)", "`<input type=\"date\">`"]
+          [
+            "`email`",
+            "Requires `@` and domain (e.g., `name@domain.com`)",
+            "`<input type=\"email\">`"
+          ],
+          [
+            "`url`",
+            "Requires valid protocol + domain (e.g., `https://example.com`)",
+            "`<input type=\"url\">`"
+          ],
+          [
+            "`number`",
+            "Only numeric characters, respects `min`/`max`",
+            "`<input type=\"number\">`"
+          ],
+          [
+            "`tel`",
+            "No automatic format — use `pattern` for phone numbers",
+            "`<input type=\"tel\" pattern=\"[0-9]{10}\">`"
+          ],
+          [
+            "`date`",
+            "Valid date format (`YYYY-MM-DD`)",
+            "`<input type=\"date\">`"
+          ]
         ]
       }
     },
@@ -134,16 +203,52 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Property", "Description", "Example Use"],
+        "headers": [
+          "Property",
+          "Description",
+          "Example Use"
+        ],
         "rows": [
-          ["`validity.valueMissing`", "Field is required but empty", "Show 'This field is required'"],
-          ["`validity.typeMismatch`", "Wrong type (email/url format)", "Show 'Enter a valid email'"],
-          ["`validity.tooShort`", "Below `minlength`", "Show minimum character count"],
-          ["`validity.tooLong`", "Above `maxlength`", "Show maximum character limit"],
-          ["`validity.rangeUnderflow`", "Below `min` value", "Show minimum value allowed"],
-          ["`validity.rangeOverflow`", "Above `max` value", "Show maximum value allowed"],
-          ["`validity.patternMismatch`", "Regex pattern fails", "Show format instructions"],
-          ["`validity.valid`", "All constraints pass", "Enable submit button"]
+          [
+            "`validity.valueMissing`",
+            "Field is required but empty",
+            "Show 'This field is required'"
+          ],
+          [
+            "`validity.typeMismatch`",
+            "Wrong type (email/url format)",
+            "Show 'Enter a valid email'"
+          ],
+          [
+            "`validity.tooShort`",
+            "Below `minlength`",
+            "Show minimum character count"
+          ],
+          [
+            "`validity.tooLong`",
+            "Above `maxlength`",
+            "Show maximum character limit"
+          ],
+          [
+            "`validity.rangeUnderflow`",
+            "Below `min` value",
+            "Show minimum value allowed"
+          ],
+          [
+            "`validity.rangeOverflow`",
+            "Above `max` value",
+            "Show maximum value allowed"
+          ],
+          [
+            "`validity.patternMismatch`",
+            "Regex pattern fails",
+            "Show format instructions"
+          ],
+          [
+            "`validity.valid`",
+            "All constraints pass",
+            "Enable submit button"
+          ]
         ]
       }
     },
@@ -163,11 +268,27 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Validation Layer", "Best For", "Limitations"],
+        "headers": [
+          "Validation Layer",
+          "Best For",
+          "Limitations"
+        ],
         "rows": [
-          ["**HTML attributes**", "Basic required, type, length, simple patterns", "No async checks, limited regex, browser differences"],
-          ["**JavaScript**", "Complex rules, async (username availability), real-time hints", "Can be bypassed (disable JS in browser)"],
-          ["**Server-side**", "Security-critical checks, database lookups, business logic", "Slower feedback, extra network request"]
+          [
+            "**HTML attributes**",
+            "Basic required, type, length, simple patterns",
+            "No async checks, limited regex, browser differences"
+          ],
+          [
+            "**JavaScript**",
+            "Complex rules, async (username availability), real-time hints",
+            "Can be bypassed (disable JS in browser)"
+          ],
+          [
+            "**Server-side**",
+            "Security-critical checks, database lookups, business logic",
+            "Slower feedback, extra network request"
+          ]
         ]
       }
     },
@@ -186,13 +307,31 @@
     {
       "type": "table",
       "value": {
-        "headers": ["❌ Mistake", "✅ Fix"],
+        "headers": [
+          "❌ Mistake",
+          "✅ Fix"
+        ],
         "rows": [
-          ["Using `pattern` without `title` attribute", "Always add `title` to explain the required format"],
-          ["No server-side validation", "Always validate on server — never trust the client"],
-          ["Vague error messages ('Invalid input')", "Be specific ('Phone number must be 10 digits')"],
-          ["Blocking form submission without explanation", "Use `:invalid` CSS + custom messages to guide users"],
-          ["Using `alert()` for validation errors", "Use inline validation messages near the field"]
+          [
+            "Using `pattern` without `title` attribute",
+            "Always add `title` to explain the required format"
+          ],
+          [
+            "No server-side validation",
+            "Always validate on server — never trust the client"
+          ],
+          [
+            "Vague error messages ('Invalid input')",
+            "Be specific ('Phone number must be 10 digits')"
+          ],
+          [
+            "Blocking form submission without explanation",
+            "Use `:invalid` CSS + custom messages to guide users"
+          ],
+          [
+            "Using `alert()` for validation errors",
+            "Use inline validation messages near the field"
+          ]
         ]
       }
     },
@@ -257,37 +396,57 @@
   "quiz": [
     {
       "question": "Which HTML attribute enables custom regex-based validation?",
-      "options": ["regex", "match", "pattern", "validate"],
+      "options": [
+        "regex",
+        "match",
+        "pattern",
+        "validate"
+      ],
       "answer": 2
     },
     {
       "question": "True or false: HTML form validation is sufficient for security.",
-      "options": ["True", "False", "Only for login forms", "Only for search forms"],
+      "options": [
+        "True",
+        "False",
+        "Only for login forms",
+        "Only for search forms"
+      ],
       "answer": 1
     },
     {
       "question": "Which CSS pseudo-class styles an invalid input field?",
-      "options": [":error", ":invalid", ":wrong", ":bad"],
+      "options": [
+        ":error",
+        ":invalid",
+        ":wrong",
+        ":bad"
+      ],
       "answer": 1
     },
     {
       "question": "What attribute disables browser validation for an entire form?",
-      "options": ["nocheck", "disable-validation", "novalidate", "skip-validation"],
+      "options": [
+        "nocheck",
+        "disable-validation",
+        "novalidate",
+        "skip-validation"
+      ],
       "answer": 2
     },
     {
       "question": "Which JavaScript method customizes browser validation messages?",
-      "options": ["setErrorMessage()", "setCustomValidity()", "setValidationMessage()", "setError()"],
+      "options": [
+        "setErrorMessage()",
+        "setCustomValidity()",
+        "setValidationMessage()",
+        "setError()"
+      ],
       "answer": 1
     }
   ],
   "related": [
     "html-forms",
-    "html-input-types",
-    "javascript-form-validation",
-    "css-pseudo-classes",
-    "regex-for-beginners",
-    "server-side-validation",
-    "web-security-basics"
+    "html-input-types"
   ]
 }

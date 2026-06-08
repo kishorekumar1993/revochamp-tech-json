@@ -2,7 +2,6 @@
   "slug": "android-lifecycle-management",
   "course": "Android Development",
   "title": "Android Lifecycle – Activity & Process Management",
-
   "meta": {
     "title": "Android Lifecycle Guide – States, Transitions & Best Practices (2026)",
     "description": "Master the Android Activity and Process lifecycles. Learn how to handle state changes, prevent memory leaks, and manage background tasks in native Android.",
@@ -15,7 +14,6 @@
       "flutter app lifecycle"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "The Android OS manages the lifecycle of every Activity using a 'stack' approach. As the user moves between screens or receives a phone call, the OS moves your Activity through a series of callback methods. For a Lead Architect, the goal is to ensure that heavy resources (like AI model listeners) are only active when the user can actually see the screen."
     },
-    
     {
       "type": "heading",
       "value": "1. The Visible Lifecycle (onStart to onStop)"
@@ -66,7 +63,6 @@
       "type": "text",
       "value": "In Chennai's competitive mid-range device market, RAM management is strict. If a user backgrounds Revochamp to check a message, the OS might kill the process. To handle this, you must use **SavedStateHandle** in your ViewModels to store 'Transient State' so the user can pick up exactly where they left off in the AI builder."
     },
-    
     {
       "type": "heading",
       "value": "Lifecycle Mapping: Native vs. Flutter"
@@ -74,18 +70,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Android Native State", "Description", "Flutter AppLifecycleState"],
+        "headers": [
+          "Android Native State",
+          "Description",
+          "Flutter AppLifecycleState"
+        ],
         "rows": [
-          ["onResume()", "App is focused and interactive.", "AppLifecycleState.resumed"],
-          ["onPause()", "App is partially visible / losing focus.", "AppLifecycleState.inactive"],
-          ["onStop()", "App is completely in the background.", "AppLifecycleState.hidden / paused"],
-          ["onDestroy()", "App is being terminated.", "AppLifecycleState.detached"],
-          ["Process Death", "OS kills app for memory.", "N/A (Requires manual persistence)"]
+          [
+            "onResume()",
+            "App is focused and interactive.",
+            "AppLifecycleState.resumed"
+          ],
+          [
+            "onPause()",
+            "App is partially visible / losing focus.",
+            "AppLifecycleState.inactive"
+          ],
+          [
+            "onStop()",
+            "App is completely in the background.",
+            "AppLifecycleState.hidden / paused"
+          ],
+          [
+            "onDestroy()",
+            "App is being terminated.",
+            "AppLifecycleState.detached"
+          ],
+          [
+            "Process Death",
+            "OS kills app for memory.",
+            "N/A (Requires manual persistence)"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Does onPause() mean the user is definitely closing the app?",
@@ -100,15 +119,18 @@
       "answer": "In Android Studio, you can use the 'Stop' icon or the 'Fill RAM' command in the emulator. You can also use ADB to kill the app process while it's in the background to verify that your state restoration logic works."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which lifecycle method is the last one guaranteed to be called before the OS might kill the process without further warning?",
-      "options": ["onStop()", "onPause()", "onDestroy()", "onFinish()"],
+      "options": [
+        "onStop()",
+        "onPause()",
+        "onDestroy()",
+        "onFinish()"
+      ],
       "answer": 1
     },
     {
@@ -123,16 +145,16 @@
     },
     {
       "question": "Which component is designed to survive configuration changes like screen rotation?",
-      "options": ["Activity", "Fragment", "ViewModel", "Intent"],
+      "options": [
+        "Activity",
+        "Fragment",
+        "ViewModel",
+        "Intent"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
-    "android-activity-lifecycle",
-    "android-viewmodel-architecture",
-    "android-project-structure",
-    "flutter-method-channels",
-    "clean-architecture-native"
+    "android-project-structure"
   ]
 }

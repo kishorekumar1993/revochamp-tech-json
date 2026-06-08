@@ -2,7 +2,6 @@
   "slug": "react-state",
   "course": "React",
   "title": "React State Management – useState, useReducer & More",
-
   "meta": {
     "title": "React State Management – Complete Guide (2026)",
     "description": "Master state management in React. Learn useState, useReducer, Context API, and advanced patterns for managing application state effectively.",
@@ -14,7 +13,6 @@
       "state management react"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -94,15 +92,55 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Solution", "Best For", "Complexity", "Bundle Size"],
+        "headers": [
+          "Solution",
+          "Best For",
+          "Complexity",
+          "Bundle Size"
+        ],
         "rows": [
-          ["useState", "Simple local state", "Low", "0 KB (built-in)"],
-          ["useReducer", "Complex local state logic", "Low", "0 KB (built-in)"],
-          ["Context API", "Global state (low frequency)", "Low", "0 KB (built-in)"],
-          ["Redux", "Large apps with complex state", "High", "~12 KB"],
-          ["Zustand", "Simple global state", "Medium", "~3 KB"],
-          ["Jotai", "Atomic state management", "Medium", "~3 KB"],
-          ["Recoil", "React-specific state", "Medium", "~15 KB"]
+          [
+            "useState",
+            "Simple local state",
+            "Low",
+            "0 KB (built-in)"
+          ],
+          [
+            "useReducer",
+            "Complex local state logic",
+            "Low",
+            "0 KB (built-in)"
+          ],
+          [
+            "Context API",
+            "Global state (low frequency)",
+            "Low",
+            "0 KB (built-in)"
+          ],
+          [
+            "Redux",
+            "Large apps with complex state",
+            "High",
+            "~12 KB"
+          ],
+          [
+            "Zustand",
+            "Simple global state",
+            "Medium",
+            "~3 KB"
+          ],
+          [
+            "Jotai",
+            "Atomic state management",
+            "Medium",
+            "~3 KB"
+          ],
+          [
+            "Recoil",
+            "React-specific state",
+            "Medium",
+            "~15 KB"
+          ]
         ]
       }
     },
@@ -149,7 +187,6 @@
       "value": "React provides multiple tools for state management. Start with useState for local state, useReducer for complex logic, and Context API for global state. For large applications, consider dedicated state management libraries like Zustand or Redux."
     }
   ],
-
   "faq": [
     {
       "question": "useState vs useReducer?",
@@ -168,39 +205,54 @@
       "answer": "Moving shared state to the closest common ancestor component."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import { useState, useReducer } from 'react';\n\n// Try different state management approaches\n\n// 1. Simple useState\nfunction SimpleCounter() {\n  const [count, setCount] = useState(0);\n  return (\n    <div>\n      <h3>Simple Counter</h3>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>+1</button>\n    </div>\n  );\n}\n\n// 2. useReducer for complex logic\nconst reducer = (state, action) => {\n  switch (action.type) {\n    case 'increment': return { count: state.count + 1 };\n    case 'decrement': return { count: state.count - 1 };\n    case 'reset': return { count: 0 };\n    default: return state;\n  }\n};\n\nfunction ReducerCounter() {\n  const [state, dispatch] = useReducer(reducer, { count: 0 });\n  return (\n    <div>\n      <h3>Reducer Counter</h3>\n      <p>Count: {state.count}</p>\n      <button onClick={() => dispatch({ type: 'increment' })}>+</button>\n      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>\n      <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>\n    </div>\n  );\n}\n\n// 3. Object state\nfunction FormState() {\n  const [form, setForm] = useState({ name: '', email: '' });\n  \n  const updateField = (field, value) => {\n    setForm(prev => ({ ...prev, [field]: value }));\n  };\n  \n  return (\n    <div>\n      <h3>Form State</h3>\n      <input \n        placeholder=\"Name\"\n        value={form.name}\n        onChange={(e) => updateField('name', e.target.value)}\n      />\n      <input \n        placeholder=\"Email\"\n        value={form.email}\n        onChange={(e) => updateField('email', e.target.value)}\n      />\n      <p>Name: {form.name}</p>\n      <p>Email: {form.email}</p>\n    </div>\n  );\n}\n\n// Main app\nexport default function App() {\n  return (\n    <div>\n      <SimpleCounter />\n      <hr />\n      <ReducerCounter />\n      <hr />\n      <FormState />\n    </div>\n  );\n}"
   },
-
   "quiz": [
     {
       "question": "How do you correctly update object state?",
-      "options": ["object.property = newValue", "setState({ ...object, property: newValue })", "setState(object)", "object = newObject"],
+      "options": [
+        "object.property = newValue",
+        "setState({ ...object, property: newValue })",
+        "setState(object)",
+        "object = newObject"
+      ],
       "answer": 1
     },
     {
       "question": "Which hook is best for complex state logic?",
-      "options": ["useState", "useEffect", "useReducer", "useContext"],
+      "options": [
+        "useState",
+        "useEffect",
+        "useReducer",
+        "useContext"
+      ],
       "answer": 2
     },
     {
       "question": "What is the purpose of functional updates?",
-      "options": ["Better performance", "Avoid stale closures", "Type safety", "Async operations"],
+      "options": [
+        "Better performance",
+        "Avoid stale closures",
+        "Type safety",
+        "Async operations"
+      ],
       "answer": 1
     },
     {
       "question": "When should you lift state up?",
-      "options": ["Always", "Never", "When multiple components need same state", "Only for class components"],
+      "options": [
+        "Always",
+        "Never",
+        "When multiple components need same state",
+        "Only for class components"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "react-introduction",
-    "react-hooks",
-    "react-context",
     "react-forms",
     "react-performance"
   ]

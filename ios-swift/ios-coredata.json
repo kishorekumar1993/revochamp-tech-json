@@ -2,7 +2,6 @@
   "slug": "ios-core-data-persistence",
   "course": "iOS Development",
   "title": "Core Data – Enterprise Persistence and Object Mapping",
-
   "meta": {
     "title": "iOS Core Data Guide – NSPersistentContainer, Contexts & Fetching (2026)",
     "description": "Master Core Data for iOS. Learn about the persistent stack, managed object contexts, and how to perform performant data fetching in native Swift.",
@@ -15,7 +14,6 @@
       "nsfetchrequest"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "Core Data is Apple's framework for managing the model layer of your application. While it can use SQLite as its backing store, it treats your data as a graph of live Swift objects. As an Architect, you should value Core Data for its built-in features like **Undo/Redo support**, **Data Validation**, and **Relationship Management** (e.g., automatically deleting all 'Widgets' when a 'Project' is deleted)."
     },
-    
     {
       "type": "heading",
       "value": "1. The Core Data Stack"
@@ -60,7 +57,6 @@
       "type": "text",
       "value": "To retrieve data, you use an `NSFetchRequest`. You can refine your results using **NSPredicate** (filtering) and **NSSortDescriptor** (ordering), making it highly efficient for searching through thousands of generated project logs."
     },
-    
     {
       "type": "code",
       "language": "swift",
@@ -73,19 +69,46 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Core Data (Native)", "Hive / Sqflite (Flutter)"],
+        "headers": [
+          "Feature",
+          "Core Data (Native)",
+          "Hive / Sqflite (Flutter)"
+        ],
         "rows": [
-          ["Type", "Object-Graph Manager", "Key-Value / SQL"],
-          ["Relationships", "Built-in (To-one, To-many)", "Manual linking"],
-          ["Migrations", "Automated mapping", "Manual script handling"],
-          ["Performance", "Extreme (Lazy loading)", "High"],
-          ["UI Binding", "NSFetchedResultsController", "StreamBuilder / Listenable"],
-          ["Memory Usage", "Efficient (Faulting mechanism)", "Loads objects into memory"]
+          [
+            "Type",
+            "Object-Graph Manager",
+            "Key-Value / SQL"
+          ],
+          [
+            "Relationships",
+            "Built-in (To-one, To-many)",
+            "Manual linking"
+          ],
+          [
+            "Migrations",
+            "Automated mapping",
+            "Manual script handling"
+          ],
+          [
+            "Performance",
+            "Extreme (Lazy loading)",
+            "High"
+          ],
+          [
+            "UI Binding",
+            "NSFetchedResultsController",
+            "StreamBuilder / Listenable"
+          ],
+          [
+            "Memory Usage",
+            "Efficient (Faulting mechanism)",
+            "Loads objects into memory"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Does Core Data run on the main thread?",
@@ -100,15 +123,18 @@
       "answer": "For small configurations, a JSON file or UserDefaults is fine. For complex data with relationships, searching requirements, or large datasets (like the Revochamp project library), Core Data is significantly more robust and performant."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which object acts as the 'scratchpad' for creating and editing Core Data objects?",
-      "options": ["NSPersistentContainer", "NSManagedObjectContext", "NSPersistentStore", "NSEntityDescription"],
+      "options": [
+        "NSPersistentContainer",
+        "NSManagedObjectContext",
+        "NSPersistentStore",
+        "NSEntityDescription"
+      ],
       "answer": 1
     },
     {
@@ -123,16 +149,17 @@
     },
     {
       "question": "Which Core Data feature automatically manages memory by loading only the object's ID until the data is needed?",
-      "options": ["Caching", "Indexing", "Faulting", "Mirroring"],
+      "options": [
+        "Caching",
+        "Indexing",
+        "Faulting",
+        "Mirroring"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "ios-project-structure",
-    "swift-classes-vs-structs",
-    "ios-app-lifecycle",
-    "flutter-method-channels",
-    "clean-architecture-native"
+    "ios-app-lifecycle"
   ]
 }

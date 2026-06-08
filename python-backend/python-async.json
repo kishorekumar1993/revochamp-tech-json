@@ -2,7 +2,6 @@
   "slug": "python-asynchronous",
   "course": "Python",
   "title": "Asynchronous Programming – Concurrency with Asyncio",
-
   "meta": {
     "title": "Python Asyncio Guide – Async/Await, Coroutines & Event Loops (2026)",
     "description": "Master asynchronous programming in Python. Learn how to handle I/O-bound tasks efficiently using async, await, and the asyncio event loop.",
@@ -15,7 +14,6 @@
       "coroutine python"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -61,11 +59,27 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Model", "Best For", "Mechanism"],
+        "headers": [
+          "Model",
+          "Best For",
+          "Mechanism"
+        ],
         "rows": [
-          ["Asyncio", "I/O Bound (API calls, DB, Files)", "Single-threaded cooperative multitasking"],
-          ["Threading", "I/O Bound (Legacy code/libraries)", "Pre-emptive multitasking (OS managed)"],
-          ["Multiprocessing", "CPU Bound (Video encoding, Math)", "True parallelism using multiple CPU cores"]
+          [
+            "Asyncio",
+            "I/O Bound (API calls, DB, Files)",
+            "Single-threaded cooperative multitasking"
+          ],
+          [
+            "Threading",
+            "I/O Bound (Legacy code/libraries)",
+            "Pre-emptive multitasking (OS managed)"
+          ],
+          [
+            "Multiprocessing",
+            "CPU Bound (Video encoding, Math)",
+            "True parallelism using multiple CPU cores"
+          ]
         ]
       }
     },
@@ -82,7 +96,6 @@
       ]
     }
   ],
-
   "faq": [
     {
       "question": "Does async make my code run faster?",
@@ -97,16 +110,19 @@
       "answer": "Yes! FastAPI is built natively for async. Defining routes as 'async def' allows FastAPI to handle requests extremely efficiently using the Uvicorn ASGI server."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import asyncio\n\nasync def say_after(delay, what):\n    await asyncio.sleep(delay)\n    print(what)\n\nasync def main():\n    print(f\"Started at {asyncio.get_event_loop().time()}\")\n    \n    # This runs them concurrently\n    await asyncio.gather(\n        say_after(1, 'hello'),\n        say_after(2, 'world')\n    )\n\n    print(f\"Finished at {asyncio.get_event_loop().time()}\")\n\nasyncio.run(main())"
   },
-
   "quiz": [
     {
       "question": "Which keyword is used to pause a coroutine until the awaited task is complete?",
-      "options": ["wait", "pause", "await", "yield"],
+      "options": [
+        "wait",
+        "pause",
+        "await",
+        "yield"
+      ],
       "answer": 2
     },
     {
@@ -121,16 +137,18 @@
     },
     {
       "question": "Which module is the standard for asynchronous I/O in Python?",
-      "options": ["threading", "multiprocessing", "asyncio", "concurrent.futures"],
+      "options": [
+        "threading",
+        "multiprocessing",
+        "asyncio",
+        "concurrent.futures"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "python-fastapi",
     "python-background-tasks",
-    "python-rest-api",
-    "python-performance-tuning",
-    "python-httpx-guide"
+    "python-rest-api"
   ]
 }

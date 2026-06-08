@@ -2,7 +2,6 @@
   "slug": "android-networking-retrofit",
   "course": "Android Development",
   "title": "Android API Calls – Networking with Retrofit & OkHttp",
-
   "meta": {
     "title": "Android Networking Guide – Retrofit, OkHttp & Coroutines (2026)",
     "description": "Master native Android networking. Learn how to use Retrofit for REST APIs, handle JSON with Gson/Moshi, and manage async calls with Kotlin Coroutines.",
@@ -15,7 +14,6 @@
       "android network security"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "Native Android networking has evolved from manual 'HttpURLConnection' to high-level abstraction libraries. As an Architect, you should view **Retrofit** as your 'Contract Layer' and **OkHttp** as your 'Engine Layer'. This combination handles connection pooling, interceptors (for Auth tokens), and automatic JSON-to-Kotlin object conversion seamlessly."
     },
-    
     {
       "type": "heading",
       "value": "1. Defining the API Interface"
@@ -47,7 +44,6 @@
       "type": "text",
       "value": "Interceptors are the most powerful feature of OkHttp. They allow you to 'intercept' every outgoing request to add Headers (like your AI API Keys) or every incoming response to log errors globally. This is identical to Interceptors in the Dart `dio` package."
     },
-    
     {
       "type": "code",
       "language": "kotlin",
@@ -68,19 +64,46 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Android (Retrofit/OkHttp)", "Flutter (Dio)"],
+        "headers": [
+          "Feature",
+          "Android (Retrofit/OkHttp)",
+          "Flutter (Dio)"
+        ],
         "rows": [
-          ["Type Safety", "Strong (Interface-based)", "Moderate (Dynamic/Generic)"],
-          ["Async Model", "Coroutines (Suspend)", "Futures (Async/Await)"],
-          ["JSON Parsing", "Automatic (Gson/Moshi/Serialization)", "Manual or Code-gen (json_serializable)"],
-          ["Interceptors", "OkHttp Interceptors", "Dio Interceptors"],
-          ["Caching", "OkHttp Cache (Native-level)", "Dio Cache Interceptor"],
-          ["Thread Management", "Explicit via Dispatchers.IO", "Implicit Event Loop"]
+          [
+            "Type Safety",
+            "Strong (Interface-based)",
+            "Moderate (Dynamic/Generic)"
+          ],
+          [
+            "Async Model",
+            "Coroutines (Suspend)",
+            "Futures (Async/Await)"
+          ],
+          [
+            "JSON Parsing",
+            "Automatic (Gson/Moshi/Serialization)",
+            "Manual or Code-gen (json_serializable)"
+          ],
+          [
+            "Interceptors",
+            "OkHttp Interceptors",
+            "Dio Interceptors"
+          ],
+          [
+            "Caching",
+            "OkHttp Cache (Native-level)",
+            "Dio Cache Interceptor"
+          ],
+          [
+            "Thread Management",
+            "Explicit via Dispatchers.IO",
+            "Implicit Event Loop"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Which JSON converter should I use: Gson, Moshi, or Kotlin Serialization?",
@@ -95,34 +118,40 @@
       "answer": "Android restricts cleartext (HTTP) traffic by default. If your local Python AI server uses HTTP instead of HTTPS, you must declare a 'network_security_config.xml' in your Manifest to permit that specific domain."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which library is responsible for the actual HTTP connection and interceptors in the Android stack?",
-      "options": ["Retrofit", "OkHttp", "Gson", "ViewModel"],
+      "options": [
+        "Retrofit",
+        "OkHttp",
+        "Gson",
+        "ViewModel"
+      ],
       "answer": 1
     },
     {
       "question": "True or False: Retrofit suspend functions automatically switch to a background thread if called from the Main thread.",
-      "options": ["True", "False"],
+      "options": [
+        "True",
+        "False"
+      ],
       "answer": 0
     },
     {
       "question": "Which annotation is used to pass a variable into the URL path (e.g., /users/{id})?",
-      "options": ["@Query", "@Body", "@Path", "@Header"],
+      "options": [
+        "@Query",
+        "@Body",
+        "@Path",
+        "@Header"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
-    "kotlin-coroutines",
-    "android-manifest-fundamentals",
-    "flutter-method-channels",
-    "android-room-persistence-library",
-    "clean-architecture-native"
+    "kotlin-coroutines"
   ]
 }

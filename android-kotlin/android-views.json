@@ -2,7 +2,6 @@
   "slug": "android-view-system-fundamentals",
   "course": "Android Development",
   "title": "Android Views – The Native UI Foundation",
-
   "meta": {
     "title": "Android View System Guide – ViewGroups, Lifecycle & Custom Views (2026)",
     "description": "Master the Android View system. Learn about the View hierarchy, ViewGroups, the measurement/layout process, and how to create custom native views.",
@@ -15,7 +14,6 @@
       "measure layout draw"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "In Android, every UI element is a subclass of the `View` class. Views are organized in a tree structure where **ViewGroups** (containers) act as parents that manage the layout of their children. For an Architect, optimizing this 'View Tree' by keeping it shallow is the most effective way to prevent frame drops in native modules."
     },
-    
     {
       "type": "heading",
       "value": "1. Views vs. ViewGroups"
@@ -49,7 +46,6 @@
       "type": "text",
       "value": "When the Android system renders a screen, it traverses the View Tree in a specific order. As a Lead Developer, understanding this 'Pipeline' allows you to debug layout issues and build efficient custom views for Revochamp."
     },
-    
     {
       "type": "list",
       "value": [
@@ -78,19 +74,46 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Android View System", "Flutter Widget System"],
+        "headers": [
+          "Feature",
+          "Android View System",
+          "Flutter Widget System"
+        ],
         "rows": [
-          ["Basic Unit", "View (Mutable Object)", "Widget (Immutable Description)"],
-          ["Composition", "Hierarchical Tree", "Deeply Nested Composition"],
-          ["Updates", "Imperative (view.setText)", "Declarative (setState/Rebuild)"],
-          ["Layout Pass", "Measure -> Layout -> Draw", "Constraint -> Geometry -> Paint"],
-          ["Threading", "Strict UI Thread (Main)", "UI Thread + Render Thread"],
-          ["Styling", "XML Styles / Themes", "ThemeData / Constructor Params"]
+          [
+            "Basic Unit",
+            "View (Mutable Object)",
+            "Widget (Immutable Description)"
+          ],
+          [
+            "Composition",
+            "Hierarchical Tree",
+            "Deeply Nested Composition"
+          ],
+          [
+            "Updates",
+            "Imperative (view.setText)",
+            "Declarative (setState/Rebuild)"
+          ],
+          [
+            "Layout Pass",
+            "Measure -> Layout -> Draw",
+            "Constraint -> Geometry -> Paint"
+          ],
+          [
+            "Threading",
+            "Strict UI Thread (Main)",
+            "UI Thread + Render Thread"
+          ],
+          [
+            "Styling",
+            "XML Styles / Themes",
+            "ThemeData / Constructor Params"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is 'Overdraw' in Android Views?",
@@ -105,34 +128,43 @@
       "answer": "You create a class that extends 'View', override 'onMeasure' to define its size, and override 'onDraw' to paint custom shapes or text using a 'Paint' and 'Canvas' object. This is useful for specialized AI visualizations that standard widgets can't handle."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which stage of the View drawing process determines the exact X and Y coordinates of a view?",
-      "options": ["Measure", "Layout", "Draw", "Inflate"],
+      "options": [
+        "Measure",
+        "Layout",
+        "Draw",
+        "Inflate"
+      ],
       "answer": 1
     },
     {
       "question": "Which ViewGroup is best for creating a flat view hierarchy to improve performance?",
-      "options": ["LinearLayout", "FrameLayout", "ConstraintLayout", "TableLayout"],
+      "options": [
+        "LinearLayout",
+        "FrameLayout",
+        "ConstraintLayout",
+        "TableLayout"
+      ],
       "answer": 2
     },
     {
       "question": "What is the root class of all UI components in the Android SDK?",
-      "options": ["Widget", "View", "Component", "Element"],
+      "options": [
+        "Widget",
+        "View",
+        "Component",
+        "Element"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
     "android-material-ui",
-    "android-recyclerview-deep-dive",
-    "jetpack-compose-basics",
-    "flutter-platform-views",
     "android-project-structure"
   ]
 }

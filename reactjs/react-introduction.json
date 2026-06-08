@@ -1,9 +1,7 @@
-
 {
   "slug": "react-introduction",
   "course": "React",
   "title": "React Introduction – Getting Started with React",
-
   "meta": {
     "title": "React Introduction – Complete Beginner's Guide (2026)",
     "description": "Learn React from scratch. Understand components, JSX, props, state, and hooks. Start building modern web applications with React.",
@@ -16,7 +14,6 @@
       "react for beginners"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -132,15 +129,47 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Hook", "Purpose", "Example"],
+        "headers": [
+          "Hook",
+          "Purpose",
+          "Example"
+        ],
         "rows": [
-          ["useState", "Local state management", "const [count, setCount] = useState(0)"],
-          ["useEffect", "Side effects", "useEffect(() => {}, [])"],
-          ["useContext", "Access context", "const theme = useContext(ThemeContext)"],
-          ["useReducer", "Complex state logic", "const [state, dispatch] = useReducer(reducer, initialState)"],
-          ["useCallback", "Memoized functions", "const memoized = useCallback(() => {}, [deps])"],
-          ["useMemo", "Memoized values", "const memoized = useMemo(() => compute(), [deps])"],
-          ["useRef", "Mutable references", "const inputRef = useRef(null)"]
+          [
+            "useState",
+            "Local state management",
+            "const [count, setCount] = useState(0)"
+          ],
+          [
+            "useEffect",
+            "Side effects",
+            "useEffect(() => {}, [])"
+          ],
+          [
+            "useContext",
+            "Access context",
+            "const theme = useContext(ThemeContext)"
+          ],
+          [
+            "useReducer",
+            "Complex state logic",
+            "const [state, dispatch] = useReducer(reducer, initialState)"
+          ],
+          [
+            "useCallback",
+            "Memoized functions",
+            "const memoized = useCallback(() => {}, [deps])"
+          ],
+          [
+            "useMemo",
+            "Memoized values",
+            "const memoized = useMemo(() => compute(), [deps])"
+          ],
+          [
+            "useRef",
+            "Mutable references",
+            "const inputRef = useRef(null)"
+          ]
         ]
       }
     },
@@ -193,7 +222,6 @@
       "value": "React provides a powerful, component-based approach to building user interfaces. Start with components, props, and state, then gradually explore hooks, context, and advanced patterns. Practice building small apps to reinforce these concepts."
     }
   ],
-
   "faq": [
     {
       "question": "What is React?",
@@ -212,38 +240,54 @@
       "answer": "React is the core library; React DOM provides DOM-specific methods for web apps."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import { useState } from 'react';\n\nfunction TodoApp() {\n  const [todos, setTodos] = useState([]);\n  const [input, setInput] = useState('');\n\n  const addTodo = () => {\n    if (input.trim()) {\n      setTodos([...todos, { id: Date.now(), text: input, completed: false }]);\n      setInput('');\n    }\n  };\n\n  const toggleTodo = (id) => {\n    setTodos(todos.map(todo =>\n      todo.id === id ? { ...todo, completed: !todo.completed } : todo\n    ));\n  };\n\n  return (\n    <div>\n      <h1>Todo List</h1>\n      <div>\n        <input\n          value={input}\n          onChange={(e) => setInput(e.target.value)}\n          onKeyPress={(e) => e.key === 'Enter' && addTodo()}\n          placeholder=\"Add a new todo...\"\n        />\n        <button onClick={addTodo}>Add</button>\n      </div>\n      <ul>\n        {todos.map(todo => (\n          <li key={todo.id}>\n            <input\n              type=\"checkbox\"\n              checked={todo.completed}\n              onChange={() => toggleTodo(todo.id)}\n            />\n            <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>\n              {todo.text}\n            </span>\n          </li>\n        ))}\n      </ul>\n      <p>{todos.length} todo(s) remaining</p>\n    </div>\n  );\n}\n\nexport default TodoApp;"
   },
-
   "quiz": [
     {
       "question": "What is the correct way to create state in React?",
-      "options": ["this.state = {}", "createState()", "useState()", "state()"],
+      "options": [
+        "this.state = {}",
+        "createState()",
+        "useState()",
+        "state()"
+      ],
       "answer": 2
     },
     {
       "question": "What is JSX?",
-      "options": ["JavaScript XML", "Java Syntax Extension", "JSON XHR", "JavaScript XHR"],
+      "options": [
+        "JavaScript XML",
+        "Java Syntax Extension",
+        "JSON XHR",
+        "JavaScript XHR"
+      ],
       "answer": 0
     },
     {
       "question": "Which hook is used for side effects?",
-      "options": ["useState", "useContext", "useEffect", "useReducer"],
+      "options": [
+        "useState",
+        "useContext",
+        "useEffect",
+        "useReducer"
+      ],
       "answer": 2
     },
     {
       "question": "How do you pass data from parent to child?",
-      "options": ["State", "Props", "Hooks", "Context"],
+      "options": [
+        "State",
+        "Props",
+        "Hooks",
+        "Context"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
     "react-components",
-    "react-hooks",
     "react-state",
     "react-jsx",
     "react-events"

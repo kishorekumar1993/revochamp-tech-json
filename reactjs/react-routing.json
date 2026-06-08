@@ -2,7 +2,6 @@
   "slug": "react-routing",
   "course": "React",
   "title": "React Routing – Navigating Single Page Applications",
-
   "meta": {
     "title": "React Router Guide – Declarative Routing for SPAs (2026)",
     "description": "Master navigation in React. Learn how to use React Router to create dynamic routes, handle URL parameters, protected routes, and nested layouts.",
@@ -15,7 +14,6 @@
       "nested routes"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -74,7 +72,6 @@
       "value": "function DashboardLayout() {\n  return (\n    <div className=\"dashboard\">\n      <Sidebar />\n      <div className=\"content\">\n        <Outlet /> {/* Child routes render here */}\n      </div>\n    </div>\n  );\n}\n\n// Config:\n// <Route path=\"/dashboard\" element={<DashboardLayout />}>\n//   <Route path=\"stats\" element={<Stats />} />\n//   <Route path=\"settings\" element={<Settings />} />\n// </Route>"
     }
   ],
-
   "faq": [
     {
       "question": "Link vs NavLink?",
@@ -89,21 +86,29 @@
       "answer": "It's a custom component that checks for authentication before rendering a route, redirecting to login if the user isn't authorized."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import React from 'react';\nimport { BrowserRouter, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom';\n\nconst Home = () => <h3>Home Page</h3>;\nconst About = () => <h3>About Page</h3>;\nconst User = () => {\n  const { name } = useParams();\n  return <h3>Hello, {name}!</h3>;\n};\n\nexport default function App() {\n  return (\n    <BrowserRouter>\n      <div style={{ padding: '20px' }}>\n        <nav style={{ marginBottom: '20px' }}>\n          <Link to=\"/\" style={{ marginRight: '10px' }}>Home</Link>\n          <Link to=\"/about\" style={{ marginRight: '10px' }}>About</Link>\n          <Link to=\"/user/Kishore\">Profile</Link>\n        </nav>\n\n        <div style={{ border: '1px solid #ccc', padding: '10px' }}>\n          <Routes>\n            <Route path=\"/\" element={<Home />} />\n            <Route path=\"/about\" element={<About />} />\n            <Route path=\"/user/:name\" element={<User />} />\n          </Routes>\n        </div>\n      </div>\n    </BrowserRouter>\n  );\n}"
   },
-
   "quiz": [
     {
       "question": "Which hook is used to access dynamic URL segments like /product/:id?",
-      "options": ["useLocation", "useParams", "useNavigate", "useRoute"],
+      "options": [
+        "useLocation",
+        "useParams",
+        "useNavigate",
+        "useRoute"
+      ],
       "answer": 1
     },
     {
       "question": "Which component acts as a placeholder for nested child routes?",
-      "options": ["<Switch />", "<Placeholder />", "<Outlet />", "<Frame />"],
+      "options": [
+        "<Switch />",
+        "<Placeholder />",
+        "<Outlet />",
+        "<Frame />"
+      ],
       "answer": 2
     },
     {
@@ -117,12 +122,8 @@
       "answer": 2
     }
   ],
-
   "related": [
     "react-hooks-intro",
-    "react-nested-layouts",
-    "react-authentication",
-    "react-query-navigation",
     "react-lazy-loading"
   ]
 }

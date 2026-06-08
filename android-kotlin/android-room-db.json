@@ -2,7 +2,6 @@
   "slug": "android-room-persistence-library",
   "course": "Android Development",
   "title": "Android Room – Type-Safe SQLite Persistence",
-
   "meta": {
     "title": "Android Room Database Guide – Entities, DAOs & Migrations (2026)",
     "description": "Master local data persistence in Android. Learn about Room Entities, DAOs, Database configurations, and integrating with Kotlin Coroutines and Flow.",
@@ -16,7 +15,6 @@
       "offline-first android architecture"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -26,7 +24,6 @@
       "type": "text",
       "value": "Room provides a fluent API for database access while leveraging the full power of SQLite. As an Architect, the primary benefit of Room is safety: it checks your SQL queries at compile time. This prevents runtime crashes caused by syntax errors or missing columns—a major pain point in older Android development. Room consists of three major components that work together."
     },
-    
     {
       "type": "heading",
       "value": "1. The Entity (The Table)"
@@ -69,7 +66,6 @@
       "type": "text",
       "value": "When you change your data model (e.g., adding an 'author' field to a project), you must handle migrations. Room requires explicit migration paths to prevent user data loss. As a Lead Developer, you can also export the schema to a JSON file to track database versions in your Git repository."
     },
-    
     {
       "type": "heading",
       "value": "Local Persistence Comparison"
@@ -77,19 +73,46 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Android Room", "Flutter sqflite / Drift"],
+        "headers": [
+          "Feature",
+          "Android Room",
+          "Flutter sqflite / Drift"
+        ],
         "rows": [
-          ["Type Safety", "Compile-time verified SQL", "Drift (Verified) / sqflite (Raw)"],
-          ["Reactive UI", "Native Flow / LiveData", "Streams / Watchers"],
-          ["Boilerplate", "Minimal (Annotations)", "Medium (Code Generation)"],
-          ["Thread Safety", "Mandatory (via Coroutines)", "Implicit (via Async/Await)"],
-          ["Migration", "Manual / Automated Paths", "Manual Migration Logic"],
-          ["Verification", "Compile-time", "Runtime (sqflite) / Compile-time (Drift)"]
+          [
+            "Type Safety",
+            "Compile-time verified SQL",
+            "Drift (Verified) / sqflite (Raw)"
+          ],
+          [
+            "Reactive UI",
+            "Native Flow / LiveData",
+            "Streams / Watchers"
+          ],
+          [
+            "Boilerplate",
+            "Minimal (Annotations)",
+            "Medium (Code Generation)"
+          ],
+          [
+            "Thread Safety",
+            "Mandatory (via Coroutines)",
+            "Implicit (via Async/Await)"
+          ],
+          [
+            "Migration",
+            "Manual / Automated Paths",
+            "Manual Migration Logic"
+          ],
+          [
+            "Verification",
+            "Compile-time",
+            "Runtime (sqflite) / Compile-time (Drift)"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Can I use Room on the Main Thread?",
@@ -104,15 +127,18 @@
       "answer": "Use Room as your 'Single Source of Truth'. Your UI observes a Flow from the DAO. When you fetch new data from your Python AI API, you save it to Room. The UI will automatically update because it is observing the database, not the API directly."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which component in Room is responsible for defining the methods used to access the database?",
-      "options": ["Entity", "DAO", "Database Class", "TypeConverter"],
+      "options": [
+        "Entity",
+        "DAO",
+        "Database Class",
+        "TypeConverter"
+      ],
       "answer": 1
     },
     {
@@ -127,16 +153,17 @@
     },
     {
       "question": "Which keyword should be used in a DAO function to ensure it runs asynchronously within a coroutine?",
-      "options": ["async", "wait", "suspend", "background"],
+      "options": [
+        "async",
+        "wait",
+        "suspend",
+        "background"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "kotlin-coroutines",
-    "android-viewmodel-architecture",
-    "clean-architecture-native",
-    "flutter-offline-caching",
     "android-project-structure"
   ]
 }

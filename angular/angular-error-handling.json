@@ -2,7 +2,6 @@
   "slug": "angular-error-handling",
   "course": "Angular",
   "title": "Angular Error Handling – Building Resilient Apps",
-
   "meta": {
     "title": "Angular Error Handling Guide – Global ErrorHandler & CatchError (2026)",
     "description": "Learn professional error handling in Angular. Master global ErrorHandlers, RxJS catchError for APIs, and user-friendly error boundaries.",
@@ -15,7 +14,6 @@
       "error tracking"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -46,7 +44,6 @@
       "type": "text",
       "value": "Angular provides a default `ErrorHandler` class that logs errors to the browser console. For professional apps like Revochamp, you should override this to send errors to a logging service (like Sentry) or show a global 'Something went wrong' UI notification."
     },
-    
     {
       "type": "code",
       "language": "typescript",
@@ -72,17 +69,36 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Strategy", "Level", "Best Use Case"],
+        "headers": [
+          "Strategy",
+          "Level",
+          "Best Use Case"
+        ],
         "rows": [
-          ["Try-Catch", "Local / Method", "Synchronous logic (JSON parsing, Math)"],
-          ["catchError Operator", "Service / API", "Network failures & data transformation"],
-          ["HttpInterceptor", "Global Network", "Auth failures (401), Server timeouts"],
-          ["Global ErrorHandler", "App-wide", "Unexpected runtime crashes & tracking"]
+          [
+            "Try-Catch",
+            "Local / Method",
+            "Synchronous logic (JSON parsing, Math)"
+          ],
+          [
+            "catchError Operator",
+            "Service / API",
+            "Network failures & data transformation"
+          ],
+          [
+            "HttpInterceptor",
+            "Global Network",
+            "Auth failures (401), Server timeouts"
+          ],
+          [
+            "Global ErrorHandler",
+            "App-wide",
+            "Unexpected runtime crashes & tracking"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Should I use try-catch with HttpClient?",
@@ -97,34 +113,43 @@
       "answer": "It is a specialized class in Angular that provides detailed information about a failed HTTP request, including the status code (e.g., 404), the status text, and the error body returned by the server."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which RxJS operator is used to handle errors in an Observable stream?",
-      "options": ["map", "filter", "catchError", "tap"],
+      "options": [
+        "map",
+        "filter",
+        "catchError",
+        "tap"
+      ],
       "answer": 2
     },
     {
       "question": "Which interface do you implement to create a custom global error handler?",
-      "options": ["ErrorListener", "ErrorHandler", "HttpInterceptor", "AppErrorHandler"],
+      "options": [
+        "ErrorListener",
+        "ErrorHandler",
+        "HttpInterceptor",
+        "AppErrorHandler"
+      ],
       "answer": 1
     },
     {
       "question": "Which HTTP status code typically indicates that a user is unauthorized and might need a redirect?",
-      "options": ["404", "500", "401", "200"],
+      "options": [
+        "404",
+        "500",
+        "401",
+        "200"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "angular-http-client",
-    "angular-interceptors",
-    "rxjs-observables-intro",
-    "angular-services-di",
-    "clean-architecture-frontend"
+    "angular-interceptors"
   ]
 }

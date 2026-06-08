@@ -2,7 +2,6 @@
   "slug": "react-performance",
   "course": "React",
   "title": "React Performance – Optimization Techniques & Bottlenecks",
-
   "meta": {
     "title": "React Performance Guide – Optimizing Renders & Virtualization (2026)",
     "description": "Master React performance optimization. Learn how to diagnose re-renders, use React.memo, useMemo, useCallback, and implement windowing for large datasets.",
@@ -15,7 +14,6 @@
       "code splitting"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -87,18 +85,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Technique", "Problem Solved", "When to use"],
+        "headers": [
+          "Technique",
+          "Problem Solved",
+          "When to use"
+        ],
         "rows": [
-          ["React.memo", "Unnecessary child re-renders", "Pure components with stable props"],
-          ["useCallback", "Changing function references", "Passing functions to memoized children"],
-          ["Lazy Loading", "Large bundle size / slow initial load", "Routes or heavy components"],
-          ["Virtualization", "DOM bloat from large lists", "Lists/Grids with >100 items"],
-          ["useDeferredValue", "UI lag during state updates", "Filtering or heavy visual computations"]
+          [
+            "React.memo",
+            "Unnecessary child re-renders",
+            "Pure components with stable props"
+          ],
+          [
+            "useCallback",
+            "Changing function references",
+            "Passing functions to memoized children"
+          ],
+          [
+            "Lazy Loading",
+            "Large bundle size / slow initial load",
+            "Routes or heavy components"
+          ],
+          [
+            "Virtualization",
+            "DOM bloat from large lists",
+            "Lists/Grids with >100 items"
+          ],
+          [
+            "useDeferredValue",
+            "UI lag during state updates",
+            "Filtering or heavy visual computations"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "Should I use useMemo everywhere?",
@@ -113,16 +134,19 @@
       "answer": "Using React.lazy and Suspense to load parts of your application only when they are needed, reducing the size of the initial JavaScript bundle."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import React, { useState, useMemo } from 'react';\n\nexport default function PerformanceDemo() {\n  const [count, setCount] = useState(0);\n  const [text, setText] = useState('');\n\n  // This heavy calculation only re-runs if 'count' changes\n  // Typing in the input won't trigger this logic!\n  const expensiveValue = useMemo(() => {\n    console.log('Running expensive logic...');\n    let sum = 0;\n    for (let i = 0; i < 1000000; i++) sum += i;\n    return sum + count;\n  }, [count]);\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h3>Performance Optimization</h3>\n      <p>Expensive Result: {expensiveValue}</p>\n      <button onClick={() => setCount(c => c + 1)}>Increment Count (Slow Update)</button>\n      \n      <div style={{ marginTop: '20px' }}>\n        <input \n          placeholder=\"Type here (Fast Update)...\" \n          value={text} \n          onChange={e => setText(e.target.value)} \n        />\n        <p>You typed: {text}</p>\n      </div>\n    </div>\n  );\n}"
   },
-
   "quiz": [
     {
       "question": "Which tool helps identify which components are re-rendering unnecessarily?",
-      "options": ["Redux DevTools", "Chrome Network Tab", "React DevTools Profiler", "Lighthouse"],
+      "options": [
+        "Redux DevTools",
+        "Chrome Network Tab",
+        "React DevTools Profiler",
+        "Lighthouse"
+      ],
       "answer": 2
     },
     {
@@ -136,12 +160,9 @@
       "answer": 1
     }
   ],
-
   "related": [
     "react-use-memo",
     "react-use-callback",
-    "react-memo",
-    "react-code-splitting",
-    "react-windowing"
+    "react-code-splitting"
   ]
 }

@@ -2,7 +2,6 @@
   "slug": "angular-performance-tuning",
   "course": "Angular",
   "title": "Angular Performance – Building High-Speed Apps",
-
   "meta": {
     "title": "Angular Performance Guide – OnPush, Signals & Lazy Loading (2026)",
     "description": "Learn professional performance optimization for Angular. Master ChangeDetectionStrategy.OnPush, trackBy, and the transition to Zoneless applications.",
@@ -15,7 +14,6 @@
       "bundle optimization"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -46,7 +44,6 @@
       "type": "text",
       "value": "When using `*ngFor` to render a list of items (like your generated Flutter widgets), Angular's default behavior is to destroy and re-create every DOM element if the array reference changes. By providing a `trackBy` function, you tell Angular how to uniquely identify items, so it only updates the elements that actually changed."
     },
-    
     {
       "type": "code",
       "language": "typescript",
@@ -67,18 +64,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Technique", "Target Metric", "Impact"],
+        "headers": [
+          "Technique",
+          "Target Metric",
+          "Impact"
+        ],
         "rows": [
-          ["Lazy Loading", "Initial Load Time (LCP)", "High - Reduces bundle size"],
-          ["OnPush Strategy", "Runtime CPU Usage", "Medium - Fewer CD cycles"],
-          ["trackBy Function", "DOM Interaction / Jank", "High - Smoother lists"],
-          ["Pure Pipes", "Execution frequency", "Medium - Memoizes results"],
-          ["Signals", "Total Reactivity", "Critical - Enables Zoneless apps"]
+          [
+            "Lazy Loading",
+            "Initial Load Time (LCP)",
+            "High - Reduces bundle size"
+          ],
+          [
+            "OnPush Strategy",
+            "Runtime CPU Usage",
+            "Medium - Fewer CD cycles"
+          ],
+          [
+            "trackBy Function",
+            "DOM Interaction / Jank",
+            "High - Smoother lists"
+          ],
+          [
+            "Pure Pipes",
+            "Execution frequency",
+            "Medium - Memoizes results"
+          ],
+          [
+            "Signals",
+            "Total Reactivity",
+            "Critical - Enables Zoneless apps"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is 'Tree Shaking'?",
@@ -93,15 +113,18 @@
       "answer": "Use the 'Angular DevTools' Chrome extension to profile change detection cycles. Also, use the browser's Lighthouse tool to measure 'Total Blocking Time' (TBT) and 'Largest Contentful Paint' (LCP)."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which Change Detection strategy only checks a component when its inputs change or an event fires from within?",
-      "options": ["Default", "AlwaysCheck", "OnPush", "Manual"],
+      "options": [
+        "Default",
+        "AlwaysCheck",
+        "OnPush",
+        "Manual"
+      ],
       "answer": 2
     },
     {
@@ -116,16 +139,19 @@
     },
     {
       "question": "Which new feature allows Angular to run without Zone.js for better performance?",
-      "options": ["Directives", "Modules", "Signals", "Decorators"],
+      "options": [
+        "Directives",
+        "Modules",
+        "Signals",
+        "Decorators"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "angular-signals",
     "angular-lazy-loading",
     "angular-lifecycle-hooks",
-    "angular-architecture",
-    "clean-architecture-frontend"
+    "angular-architecture"
   ]
 }

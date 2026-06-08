@@ -2,7 +2,6 @@
   "slug": "android-performance-optimization",
   "course": "Android Development",
   "title": "Android Performance – Speed, Memory, and Battery",
-
   "meta": {
     "title": "Android Performance Guide – Profiling, Junk Reduction & Optimization (2026)",
     "description": "Master Android performance optimization. Learn how to eliminate UI jank, manage memory efficiently, and profile native Android apps for 120 FPS.",
@@ -15,7 +14,6 @@
       "systrace and perfetto"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "Performance in 2026 is measured by three key metrics: **Smoothness** (rendering without frame drops), **Responsiveness** (fast startup and input handling), and **Efficiency** (low battery and memory footprint). As an Architect, you must ensure that Revochamp's native side doesn't 'choke' the device while the AI is thinking."
     },
-    
     {
       "type": "heading",
       "value": "1. Eliminating UI Jank"
@@ -34,7 +31,6 @@
       "type": "text",
       "value": "Jank occurs when the system cannot complete a frame within 16.6ms (for 60Hz) or 8.3ms (for 120Hz). The most common native cause is 'Main Thread Blocking.' In your native Runner, any task that takes longer than 5ms—like parsing a large AI JSON or writing to Room—must be shifted to `Dispatchers.IO` using Coroutines."
     },
-    
     {
       "type": "heading",
       "value": "2. Memory Management and Leaks"
@@ -63,19 +59,46 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Metric", "Android Native", "Flutter (Impeller)"],
+        "headers": [
+          "Metric",
+          "Android Native",
+          "Flutter (Impeller)"
+        ],
         "rows": [
-          ["UI Threading", "Single UI Thread (Main)", "UI + Raster Threads"],
-          ["Jank Detection", "Systrace / Perfetto", "Flutter DevTools Performance"],
-          ["Binary Size", "R8 / ProGuard optimized", "Tree-shaking / AOT"],
-          ["Startup", "Baseline Profiles / Zygote", "Engine Warm-up / SkSL"],
-          ["Memory", "Managed JVM / ART Heap", "Dart VM Heap"],
-          ["Profiling", "Android Studio Profiler", "Flutter DevTools / Timeline"]
+          [
+            "UI Threading",
+            "Single UI Thread (Main)",
+            "UI + Raster Threads"
+          ],
+          [
+            "Jank Detection",
+            "Systrace / Perfetto",
+            "Flutter DevTools Performance"
+          ],
+          [
+            "Binary Size",
+            "R8 / ProGuard optimized",
+            "Tree-shaking / AOT"
+          ],
+          [
+            "Startup",
+            "Baseline Profiles / Zygote",
+            "Engine Warm-up / SkSL"
+          ],
+          [
+            "Memory",
+            "Managed JVM / ART Heap",
+            "Dart VM Heap"
+          ],
+          [
+            "Profiling",
+            "Android Studio Profiler",
+            "Flutter DevTools / Timeline"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is R8 and why does it matter for performance?",
@@ -90,20 +113,28 @@
       "answer": "Strict Mode is a developer tool that catches accidental disk or network access on the main thread. It will 'flash' the screen or crash the app during development to force you to move those tasks to background threads."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "What is the maximum time allowed for a single frame to be processed to maintain a smooth 60 FPS experience?",
-      "options": ["5ms", "16.6ms", "33ms", "100ms"],
+      "options": [
+        "5ms",
+        "16.6ms",
+        "33ms",
+        "100ms"
+      ],
       "answer": 1
     },
     {
       "question": "Which tool is best for identifying memory leaks in a native Android application?",
-      "options": ["Logcat", "Memory Profiler", "Network Inspector", "Database Inspector"],
+      "options": [
+        "Logcat",
+        "Memory Profiler",
+        "Network Inspector",
+        "Database Inspector"
+      ],
       "answer": 1
     },
     {
@@ -117,12 +148,8 @@
       "answer": 2
     }
   ],
-
   "related": [
-    "android-debugging-and-profiling",
-    "android-activity-lifecycle",
     "kotlin-coroutines",
-    "flutter-performance-best-practices",
     "android-project-structure"
   ]
 }

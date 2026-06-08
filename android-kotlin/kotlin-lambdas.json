@@ -2,7 +2,6 @@
   "slug": "kotlin-advanced-lambdas",
   "course": "Kotlin Development",
   "title": "Advanced Lambdas – DSLs, Receivers, and Inlining",
-
   "meta": {
     "title": "Advanced Kotlin Lambdas Guide – Function Types, Receivers & DSLs (2026)",
     "description": "Master advanced functional programming in Kotlin. Learn about lambdas with receivers, inline functions, reified type parameters, and building Type-Safe DSLs.",
@@ -16,7 +15,6 @@
       "functional programming android"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -34,7 +32,6 @@
       "type": "text",
       "value": "A 'Lambda with Receiver' allows you to call methods on a specific object inside the lambda body without any qualifiers. This is exactly how Jetpack Compose and Gradle Kotlin DSL work. In Revochamp, you can use this to create a declarative syntax for defining native Android widgets."
     },
-    
     {
       "type": "code",
       "language": "kotlin",
@@ -48,7 +45,6 @@
       "type": "text",
       "value": "Standard lambdas in Kotlin are converted to anonymous classes at runtime, which can lead to memory pressure. The `inline` keyword tells the compiler to copy the lambda code directly into the call site. For a Lead Developer, this is critical for utility functions that are called thousands of times per second during AI data parsing."
     },
-    
     {
       "type": "code",
       "language": "kotlin",
@@ -82,18 +78,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Kotlin (Advanced)", "Dart (Flutter)"],
+        "headers": [
+          "Feature",
+          "Kotlin (Advanced)",
+          "Dart (Flutter)"
+        ],
         "rows": [
-          ["Receiver Context", "Supported (Type.() -> Unit)", "Limited (Extensions)"],
-          ["Inlining", "Explicit (inline keyword)", "Implicitly optimized by JIT/AOT"],
-          ["Type Reification", "Supported (inline reified)", "Natively supported (Types are real)"],
-          ["Non-local Returns", "Allowed in inline lambdas", "Supported via 'return'"],
-          ["Closure Capture", "Class-based (non-inline)", "Function-based"]
+          [
+            "Receiver Context",
+            "Supported (Type.() -> Unit)",
+            "Limited (Extensions)"
+          ],
+          [
+            "Inlining",
+            "Explicit (inline keyword)",
+            "Implicitly optimized by JIT/AOT"
+          ],
+          [
+            "Type Reification",
+            "Supported (inline reified)",
+            "Natively supported (Types are real)"
+          ],
+          [
+            "Non-local Returns",
+            "Allowed in inline lambdas",
+            "Supported via 'return'"
+          ],
+          [
+            "Closure Capture",
+            "Class-based (non-inline)",
+            "Function-based"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is a 'Non-local Return'?",
@@ -108,15 +127,18 @@
       "answer": "They allow you to create 'Configuration Blocks' that are strictly typed. This prevents developers from setting invalid properties and makes the code self-documenting, which is a core goal of professional engineering."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which keyword allows you to access the type 'T' at runtime within a function?",
-      "options": ["inline", "reified", "generic", "actual"],
+      "options": [
+        "inline",
+        "reified",
+        "generic",
+        "actual"
+      ],
       "answer": 1
     },
     {
@@ -131,16 +153,14 @@
     },
     {
       "question": "Which modifier should be used if you want to pass multiple lambdas to an inline function but only want to inline one of them?",
-      "options": ["crossinline", "noinline", "internal", "lazy"],
+      "options": [
+        "crossinline",
+        "noinline",
+        "internal",
+        "lazy"
+      ],
       "answer": 1
     }
   ],
-
-  "related": [
-    "kotlin-functions-deep-dive",
-    "kotlin-dsl-building",
-    "android-app-performance",
-    "flutter-method-channels",
-    "clean-architecture-native"
-  ]
+  "related": []
 }

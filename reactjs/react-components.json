@@ -2,7 +2,6 @@
   "slug": "react-components",
   "course": "React",
   "title": "React Components – Building Reusable UI Pieces",
-
   "meta": {
     "title": "React Components – Complete Guide to Component Patterns (2026)",
     "description": "Master React components - functional, class, pure, and higher-order components. Learn component patterns, composition, and reusability.",
@@ -14,7 +13,6 @@
       "react composition"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -49,14 +47,40 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Functional", "Class"],
+        "headers": [
+          "Feature",
+          "Functional",
+          "Class"
+        ],
         "rows": [
-          ["State", "useState hook", "this.state"],
-          ["Lifecycle", "useEffect hook", "componentDidMount, etc."],
-          ["Code complexity", "Simple and concise", "More verbose"],
-          ["Performance", "Slightly better", "Slightly slower"],
-          "Learning curve", "Easier", "Steeper",
-          ["Current trend", "✅ Recommended", "Legacy (still valid)"]
+          [
+            "State",
+            "useState hook",
+            "this.state"
+          ],
+          [
+            "Lifecycle",
+            "useEffect hook",
+            "componentDidMount, etc."
+          ],
+          [
+            "Code complexity",
+            "Simple and concise",
+            "More verbose"
+          ],
+          [
+            "Performance",
+            "Slightly better",
+            "Slightly slower"
+          ],
+          "Learning curve",
+          "Easier",
+          "Steeper",
+          [
+            "Current trend",
+            "✅ Recommended",
+            "Legacy (still valid)"
+          ]
         ]
       }
     },
@@ -140,14 +164,42 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Pattern", "Use Case", "Example"],
+        "headers": [
+          "Pattern",
+          "Use Case",
+          "Example"
+        ],
         "rows": [
-          ["Container/Presentational", "Separate logic from UI", "useFetch hook + Display component"],
-          ["Compound Components", "Related components that work together", "Tabs, Accordion, Menu"],
-          ["Render Props", "Share code between components", "Mouse tracker, Data fetcher"],
-          ["Higher-Order Components", "Cross-cutting concerns", "Authentication, Logging"],
-          ["Controlled Components", "Form inputs with parent state", "Input, Select, Checkbox"],
-          ["Custom Hooks", "Reusable stateful logic", "useFetch, useLocalStorage"]
+          [
+            "Container/Presentational",
+            "Separate logic from UI",
+            "useFetch hook + Display component"
+          ],
+          [
+            "Compound Components",
+            "Related components that work together",
+            "Tabs, Accordion, Menu"
+          ],
+          [
+            "Render Props",
+            "Share code between components",
+            "Mouse tracker, Data fetcher"
+          ],
+          [
+            "Higher-Order Components",
+            "Cross-cutting concerns",
+            "Authentication, Logging"
+          ],
+          [
+            "Controlled Components",
+            "Form inputs with parent state",
+            "Input, Select, Checkbox"
+          ],
+          [
+            "Custom Hooks",
+            "Reusable stateful logic",
+            "useFetch, useLocalStorage"
+          ]
         ]
       }
     },
@@ -160,7 +212,6 @@
       "value": "React components are powerful building blocks for UI development. Start with functional components and hooks for new projects. Use composition to build complex UIs from simple pieces. Choose patterns like HOCs, render props, or custom hooks based on your specific needs."
     }
   ],
-
   "faq": [
     {
       "question": "Functional vs class components?",
@@ -179,40 +230,55 @@
       "answer": "Custom hooks are simpler for sharing logic; HOCs are better for augmenting components with additional UI."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import { useState } from 'react';\n\n// Simple functional component\nfunction Button({ onClick, children, variant = 'primary' }) {\n  const styles = {\n    primary: { backgroundColor: '#007bff', color: 'white' },\n    secondary: { backgroundColor: '#6c757d', color: 'white' },\n    danger: { backgroundColor: '#dc3545', color: 'white' }\n  };\n\n  return (\n    <button\n      onClick={onClick}\n      style={{ ...styles[variant], padding: '10px 20px', margin: '5px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}\n    >\n      {children}\n    </button>\n  );\n}\n\n// Component composition example\nfunction Card({ title, children }) {\n  return (\n    <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '1rem', margin: '1rem' }}>\n      <h3>{title}</h3>\n      <div>{children}</div>\n    </div>\n  );\n}\n\n// Compound components pattern\nfunction Toggle({ children }) {\n  const [isOn, setIsOn] = useState(false);\n\n  return (\n    <div>\n      {children({ isOn, toggle: () => setIsOn(!isOn) })}\n    </div>\n  );\n}\n\n// Main app using composition\nfunction App() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div>\n      <h1>React Components Demo</h1>\n      \n      <Card title=\"Button Examples\">\n        <Button onClick={() => alert('Primary clicked!')}>Primary Button</Button>\n        <Button onClick={() => alert('Secondary clicked!')} variant=\"secondary\">Secondary Button</Button>\n        <Button onClick={() => alert('Danger clicked!')} variant=\"danger\">Danger Button</Button>\n      </Card>\n\n      <Card title=\"Counter\">\n        <p>Count: {count}</p>\n        <Button onClick={() => setCount(count + 1)}>Increment</Button>\n        <Button onClick={() => setCount(count - 1)} variant=\"secondary\">Decrement</Button>\n        <Button onClick={() => setCount(0)} variant=\"danger\">Reset</Button>\n      </Card>\n\n      <Card title=\"Toggle Example (Render Props)\">\n        <Toggle>\n          {({ isOn, toggle }) => (\n            <div>\n              <p>The switch is {isOn ? 'ON' : 'OFF'}</p>\n              <Button onClick={toggle} variant={isOn ? 'danger' : 'primary'}>\n                {isOn ? 'Turn Off' : 'Turn On'}\n              </Button>\n            </div>\n          )}\n        </Toggle>\n      </Card>\n    </div>\n  );\n}\n\nexport default App;"
   },
-
   "quiz": [
     {
       "question": "Which component type is recommended for new React code?",
-      "options": ["Class components", "Functional components with hooks", "Pure components", "Factory components"],
+      "options": [
+        "Class components",
+        "Functional components with hooks",
+        "Pure components",
+        "Factory components"
+      ],
       "answer": 1
     },
     {
       "question": "What is React.memo used for?",
-      "options": ["Styling components", "Memoizing values", "Preventing re-renders", "Creating refs"],
+      "options": [
+        "Styling components",
+        "Memoizing values",
+        "Preventing re-renders",
+        "Creating refs"
+      ],
       "answer": 2
     },
     {
       "question": "What is a higher-order component?",
-      "options": ["A component that renders other components", "A function that returns a component", "A component with state", "A component with lifecycle methods"],
+      "options": [
+        "A component that renders other components",
+        "A function that returns a component",
+        "A component with state",
+        "A component with lifecycle methods"
+      ],
       "answer": 1
     },
     {
       "question": "Which pattern is best for related components that share state?",
-      "options": ["Render props", "Higher-order components", "Compound components", "Controlled components"],
+      "options": [
+        "Render props",
+        "Higher-order components",
+        "Compound components",
+        "Controlled components"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "react-introduction",
     "react-props",
-    "react-state",
-    "react-hooks",
-    "react-patterns"
+    "react-state"
   ]
 }

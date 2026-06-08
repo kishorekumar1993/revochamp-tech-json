@@ -2,7 +2,6 @@
   "slug": "ios-uitableview-fundamentals",
   "course": "iOS Development",
   "title": "UITableView – Mastering Native Lists",
-
   "meta": {
     "title": "iOS UITableView Guide – Delegates, DataSources & Cell Reuse (2026)",
     "description": "Master the core of iOS list rendering. Learn how to implement UITableViewDataSource and UITableViewDelegate for high-performance native lists.",
@@ -15,7 +14,6 @@
       "ios native lists"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "A `UITableView` displays a single column of vertically scrolling content, divided into sections and rows. As an Architect, you should understand that it doesn't create a view for every item in your data source. Instead, it uses a **Reuse Queue** to recycle cells that have scrolled off-screen. This is exactly how Flutter's `ListView.builder` stays memory-efficient."
     },
-    
     {
       "type": "heading",
       "value": "1. The Two Core Protocols"
@@ -62,7 +59,6 @@
       "type": "text",
       "value": "In iOS, list locations are identified by an **IndexPath**, which contains both a `section` and a `row`. This allows you to easily group content, such as 'Active Projects' in section 0 and 'Archived Projects' in section 1."
     },
-    
     {
       "type": "heading",
       "value": "UITableView vs. Flutter ListView"
@@ -70,18 +66,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "UITableView (Native)", "ListView (Flutter)"],
+        "headers": [
+          "Feature",
+          "UITableView (Native)",
+          "ListView (Flutter)"
+        ],
         "rows": [
-          ["Reactivity", "Manual (reloadData / performBatchUpdates)", "Automatic (State changes)"],
-          ["Cell Recycling", "Explicit (dequeue)", "Implicit (Viewport-based)"],
-          ["Grouped Styles", "Native 'Grouped' or 'Inset' styles", "Manual styling with Slivers"],
-          ["Interactions", "Built-in Swipe-to-Delete", "Requires Dismissible widget"],
-          ["Complexity", "High (Requires delegate setup)", "Low (Declarative)"]
+          [
+            "Reactivity",
+            "Manual (reloadData / performBatchUpdates)",
+            "Automatic (State changes)"
+          ],
+          [
+            "Cell Recycling",
+            "Explicit (dequeue)",
+            "Implicit (Viewport-based)"
+          ],
+          [
+            "Grouped Styles",
+            "Native 'Grouped' or 'Inset' styles",
+            "Manual styling with Slivers"
+          ],
+          [
+            "Interactions",
+            "Built-in Swipe-to-Delete",
+            "Requires Dismissible widget"
+          ],
+          [
+            "Complexity",
+            "High (Requires delegate setup)",
+            "Low (Declarative)"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is the 'reuseIdentifier'?",
@@ -96,15 +115,18 @@
       "answer": "Usually because 'cellForRowAt' is doing too much work. Avoid image decoding, complex math, or database calls inside this method. Do that work in the background and only assign the final result to the cell's UI elements."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which protocol is responsible for providing the number of rows and the cell content to a UITableView?",
-      "options": ["UITableViewDelegate", "UITableViewDataSource", "UITableViewCell", "UIScrollViewDelegate"],
+      "options": [
+        "UITableViewDelegate",
+        "UITableViewDataSource",
+        "UITableViewCell",
+        "UIScrollViewDelegate"
+      ],
       "answer": 1
     },
     {
@@ -119,16 +141,18 @@
     },
     {
       "question": "Which object represents the specific location (section and row) of a cell in a table view?",
-      "options": ["IndexPoint", "RowLocation", "IndexPath", "CellPosition"],
+      "options": [
+        "IndexPoint",
+        "RowLocation",
+        "IndexPath",
+        "CellPosition"
+      ],
       "answer": 2
     }
   ],
-
   "related": [
     "ios-project-structure",
     "swift-protocols",
-    "ios-app-lifecycle",
-    "flutter-method-channels",
-    "clean-architecture-native"
+    "ios-app-lifecycle"
   ]
 }

@@ -2,7 +2,6 @@
   "slug": "react-api-calls",
   "course": "React",
   "title": "React API Calls – Fetching & Managing Remote Data",
-
   "meta": {
     "title": "React API Integration Guide – Fetch, Axios & Async Patterns (2026)",
     "description": "Learn how to fetch data from APIs in React. Master the Fetch API, Axios, handling loading/error states, and using useEffect for side effects.",
@@ -15,7 +14,6 @@
       "react error handling"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -36,13 +34,37 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Fetch API", "Axios"],
+        "headers": [
+          "Feature",
+          "Fetch API",
+          "Axios"
+        ],
         "rows": [
-          ["Installation", "Built-in (No install)", "Requires `npm install axios`"],
-          ["JSON Parsing", "Manual (`res.json()`)", "Automatic"],
-          ["Error Handling", "Manual (check `res.ok`)", "Automatic for 4xx/5xx status"],
-          ["Interceptors", "No", "Yes (Great for Auth tokens)"],
-          ["Timeout Support", "Manual (AbortController)", "Simple config property"]
+          [
+            "Installation",
+            "Built-in (No install)",
+            "Requires `npm install axios`"
+          ],
+          [
+            "JSON Parsing",
+            "Manual (`res.json()`)",
+            "Automatic"
+          ],
+          [
+            "Error Handling",
+            "Manual (check `res.ok`)",
+            "Automatic for 4xx/5xx status"
+          ],
+          [
+            "Interceptors",
+            "No",
+            "Yes (Great for Auth tokens)"
+          ],
+          [
+            "Timeout Support",
+            "Manual (AbortController)",
+            "Simple config property"
+          ]
         ]
       }
     },
@@ -73,7 +95,6 @@
       ]
     }
   ],
-
   "faq": [
     {
       "question": "Why do I see my API call running twice?",
@@ -88,16 +109,19 @@
       "answer": "It's a function that runs before a request is sent (e.g., to add an Auth token) or after a response is received (e.g., to handle 401 errors globally)."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import React, { useState, useEffect } from 'react';\n\nexport default function GitHubProfile() {\n  const [profile, setProfile] = useState(null);\n  const [loading, setLoading] = useState(false);\n\n  const fetchProfile = async (username) => {\n    setLoading(true);\n    try {\n      const res = await fetch(`https://api.github.com/users/${username}`);\n      const data = await res.json();\n      setProfile(data);\n    } catch (err) {\n      alert('Error fetching user');\n    } finally {\n      setLoading(false);\n    }\n  };\n\n  return (\n    <div style={{ padding: '20px' }}>\n      <h3>GitHub User Finder</h3>\n      <button onClick={() => fetchProfile('kishorekumar-s')}>\n        Load My Profile\n      </button>\n      \n      {loading && <p>Searching...</p>}\n      \n      {profile && (\n        <div style={{ marginTop: '20px' }}>\n          <img src={profile.avatar_url} width=\"100\" style={{ borderRadius: '50%' }} />\n          <h4>{profile.name || profile.login}</h4>\n          <p>{profile.bio}</p>\n          <p>Public Repos: {profile.public_repos}</p>\n        </div>\n      )}\n    </div>\n  );\n}"
   },
-
   "quiz": [
     {
       "question": "Which hook is most appropriate for initiating an API call on component load?",
-      "options": ["useState", "useMemo", "useEffect", "useCallback"],
+      "options": [
+        "useState",
+        "useMemo",
+        "useEffect",
+        "useCallback"
+      ],
       "answer": 2
     },
     {
@@ -121,12 +145,8 @@
       "answer": 2
     }
   ],
-
   "related": [
     "react-use-effect",
-    "react-loading-patterns",
-    "react-query-intro",
-    "react-async-await",
     "react-error-boundaries"
   ]
 }

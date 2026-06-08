@@ -2,7 +2,6 @@
   "slug": "angular-state-management",
   "course": "Angular",
   "title": "Angular State Management – Maintaining Data Flow",
-
   "meta": {
     "title": "Angular State Management Guide – Services, RxJS & NgRx (2026)",
     "description": "Master state management in Angular. Learn when to use simple Services, BehaviorSubjects, or Redux-pattern libraries like NgRx for enterprise applications.",
@@ -15,7 +14,6 @@
       "angular signal state"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -46,7 +44,6 @@
       "language": "typescript",
       "value": "@Injectable({ providedIn: 'root' })\nexport class ProjectStore {\n  // BehaviorSubject holds the current state\n  private _projects = new BehaviorSubject<Project[]>([]);\n  \n  // Expose as a read-only Observable\n  projects$ = this._projects.asObservable();\n\n  updateProjects(newList: Project[]) {\n    this._projects.next(newList);\n  }\n}"
     },
-    
     {
       "type": "heading",
       "value": "3. Level 3: Global State (NgRx / Redux)"
@@ -55,7 +52,6 @@
       "type": "text",
       "value": "For massive applications with complex data dependencies, libraries like **NgRx** implement the Redux pattern. This introduces a strict, unidirectional data flow consisting of Actions, Reducers, and Selectors. While it adds boilerplate, it provides unparalleled predictability and debugging tools like Time-Travel Debugging."
     },
-    
     {
       "type": "heading",
       "value": "State Management Strategy Comparison"
@@ -63,17 +59,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Strategy", "Best For", "Complexity", "Reactivity"],
+        "headers": [
+          "Strategy",
+          "Best For",
+          "Complexity",
+          "Reactivity"
+        ],
         "rows": [
-          ["Local Variables", "UI-only logic (toggles)", "Very Low", "Manual/Standard"],
-          ["Angular Signals", "Modern local state", "Low", "Automatic / Fine-grained"],
-          ["Service + RxJS", "Medium apps / Shared data", "Medium", "Stream-based"],
-          ["NgRx / NGXS", "Large-scale Enterprise", "High", "Unidirectional / Store"]
+          [
+            "Local Variables",
+            "UI-only logic (toggles)",
+            "Very Low",
+            "Manual/Standard"
+          ],
+          [
+            "Angular Signals",
+            "Modern local state",
+            "Low",
+            "Automatic / Fine-grained"
+          ],
+          [
+            "Service + RxJS",
+            "Medium apps / Shared data",
+            "Medium",
+            "Stream-based"
+          ],
+          [
+            "NgRx / NGXS",
+            "Large-scale Enterprise",
+            "High",
+            "Unidirectional / Store"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What is 'Prop Drilling'?",
@@ -88,20 +108,28 @@
       "answer": "Signals (introduced in v16) are a new way to track state that tells Angular exactly which parts of the UI need to update. They are often more performant than RxJS for simple state because they don't require manual subscriptions or unsubscriptions."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which RxJS class is commonly used in services to hold the 'current' value of a state?",
-      "options": ["Subject", "BehaviorSubject", "Observable", "EventEmitter"],
+      "options": [
+        "Subject",
+        "BehaviorSubject",
+        "Observable",
+        "EventEmitter"
+      ],
       "answer": 1
     },
     {
       "question": "In the NgRx pattern, what is responsible for taking the current state and an action to produce a NEW state?",
-      "options": ["Effect", "Selector", "Reducer", "Store"],
+      "options": [
+        "Effect",
+        "Selector",
+        "Reducer",
+        "Store"
+      ],
       "answer": 2
     },
     {
@@ -115,12 +143,7 @@
       "answer": 1
     }
   ],
-
   "related": [
-    "angular-rxjs-observables",
-    "angular-services-di",
-    "angular-architecture",
-    "rxjs-operators",
-    "clean-architecture-frontend"
+    "angular-architecture"
   ]
 }

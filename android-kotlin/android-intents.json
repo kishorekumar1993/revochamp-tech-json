@@ -2,7 +2,6 @@
   "slug": "android-intents-and-communication",
   "course": "Android Development",
   "title": "Android Intents – The Native Communication Bridge",
-
   "meta": {
     "title": "Android Intents Guide – Explicit vs Implicit, Filters & Data Passing (2026)",
     "description": "Master Android Intents. Learn how to launch activities, share data between apps, and use Intent Filters to handle deep links in native Android.",
@@ -15,7 +14,6 @@
       "android share intent"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -25,7 +23,6 @@
       "type": "text",
       "value": "An Intent is a 'passive' data structure that holds an abstract description of an action to be performed. It acts as the glue between different components—even those in different applications. For your Revochamp project, Intents are the mechanism used to transition from your Flutter UI to a native Android 'Preview' or to share a generated code snippet to an external editor."
     },
-    
     {
       "type": "heading",
       "value": "1. Explicit Intents"
@@ -47,7 +44,6 @@
       "type": "text",
       "value": "Implicit intents do not name a specific component. Instead, they declare a general action to be performed (e.g., 'view a map' or 'send an email'). The Android system then finds all apps that can handle that action using **Intent Filters** and lets the user choose. This is vital for Revochamp's 'Export' and 'Share' features."
     },
-    
     {
       "type": "code",
       "language": "kotlin",
@@ -73,18 +69,41 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "Explicit Intent", "Implicit Intent"],
+        "headers": [
+          "Feature",
+          "Explicit Intent",
+          "Implicit Intent"
+        ],
         "rows": [
-          ["Target", "Specific Class (Internal)", "Action Type (System-wide)"],
-          ["Use Case", "Moving between your own screens", "Integrating with other apps"],
-          ["Security", "High (Targets your own code)", "Lower (Needs 'exported' flag)"],
-          ["Flexibility", "Low (Fixed path)", "High (User chooses the app)"],
-          ["Deep Linking", "N/A", "Primary mechanism"]
+          [
+            "Target",
+            "Specific Class (Internal)",
+            "Action Type (System-wide)"
+          ],
+          [
+            "Use Case",
+            "Moving between your own screens",
+            "Integrating with other apps"
+          ],
+          [
+            "Security",
+            "High (Targets your own code)",
+            "Lower (Needs 'exported' flag)"
+          ],
+          [
+            "Flexibility",
+            "Low (Fixed path)",
+            "High (User chooses the app)"
+          ],
+          [
+            "Deep Linking",
+            "N/A",
+            "Primary mechanism"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "How do I pass large amounts of data through an Intent?",
@@ -99,20 +118,28 @@
       "answer": "If no app on the device can handle your implicit intent, the app will crash. In 2026, you must always check if there is an available app using 'resolveActivity' or wrap the 'startActivity' call in a try-catch block."
     }
   ],
-
   "tryEditor": {
     "enabled": false
   },
-
   "quiz": [
     {
       "question": "Which type of Intent is used to launch a specific class within your own application?",
-      "options": ["Implicit Intent", "Explicit Intent", "Broadcast Intent", "Service Intent"],
+      "options": [
+        "Implicit Intent",
+        "Explicit Intent",
+        "Broadcast Intent",
+        "Service Intent"
+      ],
       "answer": 1
     },
     {
       "question": "Where are Intent Filters declared to allow an app to handle deep links?",
-      "options": ["build.gradle.kts", "MainActivity.kt", "AndroidManifest.xml", "res/values/strings.xml"],
+      "options": [
+        "build.gradle.kts",
+        "MainActivity.kt",
+        "AndroidManifest.xml",
+        "res/values/strings.xml"
+      ],
       "answer": 2
     },
     {
@@ -126,12 +153,5 @@
       "answer": 1
     }
   ],
-
-  "related": [
-    "android-manifest-fundamentals",
-    "android-activity-lifecycle",
-    "flutter-method-channels",
-    "android-deep-linking",
-    "android-security-best-practices"
-  ]
+  "related": []
 }

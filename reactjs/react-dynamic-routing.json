@@ -2,7 +2,6 @@
   "slug": "react-dynamic-routing",
   "course": "React",
   "title": "React Dynamic Routing – Handling Variable URLs",
-
   "meta": {
     "title": "Mastering Dynamic Routing in React – URL Parameters & Query Strings (2026)",
     "description": "Learn how to build flexible navigation with Dynamic Routing. Master useParams, useSearchParams, and pattern matching for profiles, products, and search results.",
@@ -15,7 +14,6 @@
       "dynamic segments"
     ]
   },
-
   "content": [
     {
       "type": "heading",
@@ -71,17 +69,36 @@
     {
       "type": "table",
       "value": {
-        "headers": ["Feature", "URL Parameters (:id)", "Search Params (?q=)"],
+        "headers": [
+          "Feature",
+          "URL Parameters (:id)",
+          "Search Params (?q=)"
+        ],
         "rows": [
-          ["Requirement", "Required for the route to match", "Optional/Flexible"],
-          ["Structure", "Part of the path (/user/123)", "Appended at end (?id=123)"],
-          ["Best For", "Identifying a specific resource", "Filtering, sorting, searching"],
-          ["Hook", "useParams()", "useSearchParams()"]
+          [
+            "Requirement",
+            "Required for the route to match",
+            "Optional/Flexible"
+          ],
+          [
+            "Structure",
+            "Part of the path (/user/123)",
+            "Appended at end (?id=123)"
+          ],
+          [
+            "Best For",
+            "Identifying a specific resource",
+            "Filtering, sorting, searching"
+          ],
+          [
+            "Hook",
+            "useParams()",
+            "useSearchParams()"
+          ]
         ]
       }
     }
   ],
-
   "faq": [
     {
       "question": "What happens if a user visits /product/ without an ID?",
@@ -92,30 +109,33 @@
       "answer": "Yes. You can define routes like /authors/:authorId/posts/:postId and destructure both from useParams."
     }
   ],
-
   "tryEditor": {
     "enabled": true,
     "defaultCode": "import React from 'react';\nimport { BrowserRouter, Routes, Route, Link, useParams, useSearchParams } from 'react-router-dom';\n\nconst Product = () => {\n  const { id } = useParams();\n  return <div style={{color: 'blue'}}>📦 Loading Product ID: {id}</div>;\n};\n\nconst Search = () => {\n  const [search] = useSearchParams();\n  const term = search.get('term');\n  return <div>🔍 Filtered by: {term || 'Nothing yet'}</div>;\n};\n\nexport default function App() {\n  return (\n    <BrowserRouter>\n      <div style={{ padding: '20px' }}>\n        <h4>Dynamic Navigation</h4>\n        <ul style={{ display: 'flex', gap: '10px', listStyle: 'none', padding: 0 }}>\n          <li><Link to=\"/product/101\">Laptop</Link></li>\n          <li><Link to=\"/product/202\">Phone</Link></li>\n          <li><Link to=\"/search?term=react\">Search React</Link></li>\n        </ul>\n        \n        <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '10px' }}>\n          <Routes>\n            <Route path=\"/product/:id\" element={<Product />} />\n            <Route path=\"/search\" element={<Search />} />\n          </Routes>\n        </div>\n      </div>\n    </BrowserRouter>\n  );\n}"
   },
-
   "quiz": [
     {
       "question": "Which character is used in a route path to define a dynamic parameter?",
-      "options": ["?", "#", ":", "*"],
+      "options": [
+        "?",
+        "#",
+        ":",
+        "*"
+      ],
       "answer": 2
     },
     {
       "question": "How do you access the value of a dynamic segment in your component?",
-      "options": ["props.match", "useParams()", "useLocation()", "window.location"],
+      "options": [
+        "props.match",
+        "useParams()",
+        "useLocation()",
+        "window.location"
+      ],
       "answer": 1
     }
   ],
-
   "related": [
-    "react-routing",
-    "react-navigation-guards",
-    "react-nested-routes",
-    "react-location-hook",
-    "react-data-fetching"
+    "react-routing"
   ]
 }
